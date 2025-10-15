@@ -30,6 +30,8 @@ const defaultSettings = {
     emojiOnly: true,
     // 是否过滤纯符号字符串
     symbols: true,
+    // 是否过滤特定术语列表中的字符串
+    termFilter: true,
   },
 };
 

@@ -7,6 +7,7 @@
 
 import { loadSettings } from './settings.js';
 import config from '../config.js';
+import IGNORED_TERMS from './ignoredTerms.js';
 
 // --- 常量 ---
 
@@ -129,6 +130,11 @@ export const extractAndProcessText = () => {
                 continue;
             }
             if (filterRules.symbols && !containsLetterOrNumberRegex.test(trimmedText)) {
+                continue;
+            }
+
+            // 规则 4: 如果启用了特定术语过滤，则检查文本是否在忽略列表中
+            if (filterRules.termFilter && IGNORED_TERMS.includes(trimmedText)) {
                 continue;
             }
 

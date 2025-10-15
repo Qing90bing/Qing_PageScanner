@@ -35,6 +35,7 @@ const filterDefinitions = [
   { id: 'filter-contains-chinese', key: 'containsChinese', label: '过滤包含中文的文本' },
   { id: 'filter-emoji-only', key: 'emojiOnly', label: '过滤纯表情符号' },
   { id: 'filter-symbols', key: 'symbols', label: '过滤纯符号' },
+  { id: 'filter-term', key: 'termFilter', label: '过滤特定术语' },
 ];
 
 // --- 私有函数 ---

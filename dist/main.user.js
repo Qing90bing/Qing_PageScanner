@@ -366,7 +366,9 @@ body[data-theme='dark'] {
       // 是否过滤纯表情符号字符串
       emojiOnly: true,
       // 是否过滤纯符号字符串
-      symbols: true
+      symbols: true,
+      // 是否过滤特定术语列表中的字符串
+      termFilter: true
     }
   };
   function loadSettings() {
@@ -430,6 +432,15 @@ body[data-theme='dark'] {
   };
   var config_default = config;
 
+  // src/core/ignoredTerms.js
+  var IGNORED_TERMS = [
+    "Github",
+    "Microsoft",
+    "Tampermonkey",
+    "JavaScript"
+  ];
+  var ignoredTerms_default = IGNORED_TERMS;
+
   // src/core/processor.js
   var numberAndCurrencyRegex = /^[$\€\£\¥\d,.\s]+$/;
   var pureChineseRegex = /^[\u4e00-\u9fa5\s]+$/u;
@@ -472,6 +483,9 @@ body[data-theme='dark'] {
           continue;
         }
         if (filterRules.symbols && !containsLetterOrNumberRegex.test(trimmedText)) {
+          continue;
+        }
+        if (filterRules.termFilter && ignoredTerms_default.includes(trimmedText)) {
           continue;
         }
         uniqueTexts.add(text);
@@ -609,7 +623,8 @@ ${result.join(",\n")}
     { id: "filter-chinese", key: "chinese", label: "\u8FC7\u6EE4\u7EAF\u4E2D\u6587" },
     { id: "filter-contains-chinese", key: "containsChinese", label: "\u8FC7\u6EE4\u5305\u542B\u4E2D\u6587\u7684\u6587\u672C" },
     { id: "filter-emoji-only", key: "emojiOnly", label: "\u8FC7\u6EE4\u7EAF\u8868\u60C5\u7B26\u53F7" },
-    { id: "filter-symbols", key: "symbols", label: "\u8FC7\u6EE4\u7EAF\u7B26\u53F7" }
+    { id: "filter-symbols", key: "symbols", label: "\u8FC7\u6EE4\u7EAF\u7B26\u53F7" },
+    { id: "filter-term", key: "termFilter", label: "\u8FC7\u6EE4\u7279\u5B9A\u672F\u8BED" }
   ];
   function getPanelHTML(settings) {
     const filterCheckboxesHTML = filterDefinitions.map((filter) => createCheckbox(filter.id, filter.label, settings.filterRules[filter.key])).join("");
