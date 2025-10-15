@@ -29,6 +29,39 @@ const numberAndCurrencyRegex = /^[$\€\£\¥\d,.\s]+$/;
  */
 const pureChineseRegex = /^[\u4e00-\u9fa5\s]+$/u;
 
+/**
+ * @private
+ * @readonly
+ * @type {RegExp}
+ * @description 用于检测一个字符串是否包含至少一个中文字符。
+ * u 标志启用了对 Unicode 的支持。
+ * 用于实现“过滤包含中文”的功能。
+ */
+const containsChineseRegex = /[\u4e00-\u9fa5]/u;
+
+/**
+ * @private
+ * @readonly
+ * @type {RegExp}
+ * @description 用于检测一个字符串是否完全由表情符号和空白字符组成。
+ * 这个正则表达式涵盖了常见的表情符号 Unicode 范围。
+ * u 标志启用了对 Unicode 的支持。
+ * 用于实现“过滤纯表情符号”的功能。
+ */
+const emojiOnlyRegex = /^[\p{Emoji}\s]+$/u;
+
+/**
+ * @private
+ * @readonly
+ * @type {RegExp}
+ * @description 用于检测一个字符串是否包含任何语言的字母或任何形式的数字。
+ * `\p{L}` 匹配任何语言的字母 (Letter)。
+ * `\p{N}` 匹配任何形式的数字 (Number)。
+ * u 标志启用了对 Unicode 的支持。
+ * 用于实现“过滤纯符号”的功能（逻辑上是反向使用的）。
+ */
+const containsLetterOrNumberRegex = /[\p{L}\p{N}]/u;
+
 
 // --- 公开函数 ---
 
@@ -82,6 +115,18 @@ export const extractAndProcessText = () => {
         }
         // 如果用户启用了中文过滤，并且文本匹配纯中文正则，则跳过
         if (filterRules.chinese && pureChineseRegex.test(trimmedText)) {
+            continue;
+        }
+        // 如果用户启用了“过滤包含中文”规则，并且文本中含有中文字符，则跳过
+        if (filterRules.containsChinese && containsChineseRegex.test(trimmedText)) {
+            continue;
+        }
+        // 如果用户启用了“过滤纯表情”规则，并且文本只包含表情符号和空格，则跳过
+        if (filterRules.emojiOnly && emojiOnlyRegex.test(trimmedText)) {
+            continue;
+        }
+        // 如果用户启用了“过滤纯符号”规则，并且文本中不包含任何字母或数字，则跳过
+        if (filterRules.symbols && !containsLetterOrNumberRegex.test(trimmedText)) {
             continue;
         }
         

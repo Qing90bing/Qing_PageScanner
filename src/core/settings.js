@@ -25,6 +25,12 @@ const defaultSettings = {
     numbers: true,
     // 是否过滤纯中文字符串
     chinese: true,
+    // 是否过滤包含中文字符的字符串
+    containsChinese: false,
+    // 是否过滤纯表情符号字符串
+    emojiOnly: true,
+    // 是否过滤纯符号字符串
+    symbols: true,
   },
 };
 

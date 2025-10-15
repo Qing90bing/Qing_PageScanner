@@ -52,6 +52,18 @@ function getPanelHTML(settings) {
             <input type="checkbox" id="filter-chinese" ${settings.filterRules.chinese ? 'checked' : ''}>
             <span class="checkmark"></span>
           </label>
+          <label class="checkbox-group" for="filter-contains-chinese">过滤包含中文的文本
+            <input type="checkbox" id="filter-contains-chinese" ${settings.filterRules.containsChinese ? 'checked' : ''}>
+            <span class="checkmark"></span>
+          </label>
+          <label class="checkbox-group" for="filter-emoji-only">过滤纯表情符号
+            <input type="checkbox" id="filter-emoji-only" ${settings.filterRules.emojiOnly ? 'checked' : ''}>
+            <span class="checkmark"></span>
+          </label>
+          <label class="checkbox-group" for="filter-symbols">过滤纯符号
+            <input type="checkbox" id="filter-symbols" ${settings.filterRules.symbols ? 'checked' : ''}>
+            <span class="checkmark"></span>
+          </label>
         </div>
       </div>
       <div class="settings-panel-footer">
@@ -123,12 +135,18 @@ function handleSave() {
   const newTheme = document.getElementById('theme-select').value;
   const filterNumbers = document.getElementById('filter-numbers').checked;
   const filterChinese = document.getElementById('filter-chinese').checked;
+  const filterContainsChinese = document.getElementById('filter-contains-chinese').checked;
+  const filterEmojiOnly = document.getElementById('filter-emoji-only').checked;
+  const filterSymbols = document.getElementById('filter-symbols').checked;
 
   const newSettings = {
     theme: newTheme,
     filterRules: {
       numbers: filterNumbers,
       chinese: filterChinese,
+      containsChinese: filterContainsChinese,
+      emojiOnly: filterEmojiOnly,
+      symbols: filterSymbols,
     },
   };
 

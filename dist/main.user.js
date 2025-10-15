@@ -359,7 +359,13 @@ body[data-theme='dark'] {
       // 是否过滤纯数字和货币符号组成的字符串
       numbers: true,
       // 是否过滤纯中文字符串
-      chinese: true
+      chinese: true,
+      // 是否过滤包含中文字符的字符串
+      containsChinese: false,
+      // 是否过滤纯表情符号字符串
+      emojiOnly: true,
+      // 是否过滤纯符号字符串
+      symbols: true
     }
   };
   function loadSettings() {
@@ -388,6 +394,9 @@ body[data-theme='dark'] {
   // src/core/processor.js
   var numberAndCurrencyRegex = /^[$\€\£\¥\d,.\s]+$/;
   var pureChineseRegex = /^[\u4e00-\u9fa5\s]+$/u;
+  var containsChineseRegex = /[\u4e00-\u9fa5]/u;
+  var emojiOnlyRegex = /^[\p{Emoji}\s]+$/u;
+  var containsLetterOrNumberRegex = /[\p{L}\p{N}]/u;
   var extractAndProcessText = () => {
     const settings = loadSettings();
     const { filterRules } = settings;
@@ -412,6 +421,15 @@ body[data-theme='dark'] {
         continue;
       }
       if (filterRules.chinese && pureChineseRegex.test(trimmedText)) {
+        continue;
+      }
+      if (filterRules.containsChinese && containsChineseRegex.test(trimmedText)) {
+        continue;
+      }
+      if (filterRules.emojiOnly && emojiOnlyRegex.test(trimmedText)) {
+        continue;
+      }
+      if (filterRules.symbols && !containsLetterOrNumberRegex.test(trimmedText)) {
         continue;
       }
       uniqueTexts.add(text);
@@ -559,6 +577,18 @@ ${result.join(",\n")}
             <input type="checkbox" id="filter-chinese" ${settings.filterRules.chinese ? "checked" : ""}>
             <span class="checkmark"></span>
           </label>
+          <label class="checkbox-group" for="filter-contains-chinese">\u8FC7\u6EE4\u5305\u542B\u4E2D\u6587\u7684\u6587\u672C
+            <input type="checkbox" id="filter-contains-chinese" ${settings.filterRules.containsChinese ? "checked" : ""}>
+            <span class="checkmark"></span>
+          </label>
+          <label class="checkbox-group" for="filter-emoji-only">\u8FC7\u6EE4\u7EAF\u8868\u60C5\u7B26\u53F7
+            <input type="checkbox" id="filter-emoji-only" ${settings.filterRules.emojiOnly ? "checked" : ""}>
+            <span class="checkmark"></span>
+          </label>
+          <label class="checkbox-group" for="filter-symbols">\u8FC7\u6EE4\u7EAF\u7B26\u53F7
+            <input type="checkbox" id="filter-symbols" ${settings.filterRules.symbols ? "checked" : ""}>
+            <span class="checkmark"></span>
+          </label>
         </div>
       </div>
       <div class="settings-panel-footer">
@@ -597,11 +627,17 @@ ${result.join(",\n")}
     const newTheme = document.getElementById("theme-select").value;
     const filterNumbers = document.getElementById("filter-numbers").checked;
     const filterChinese = document.getElementById("filter-chinese").checked;
+    const filterContainsChinese = document.getElementById("filter-contains-chinese").checked;
+    const filterEmojiOnly = document.getElementById("filter-emoji-only").checked;
+    const filterSymbols = document.getElementById("filter-symbols").checked;
     const newSettings = {
       theme: newTheme,
       filterRules: {
         numbers: filterNumbers,
-        chinese: filterChinese
+        chinese: filterChinese,
+        containsChinese: filterContainsChinese,
+        emojiOnly: filterEmojiOnly,
+        symbols: filterSymbols
       }
     };
     saveSettings(newSettings);
