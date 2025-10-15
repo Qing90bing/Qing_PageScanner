@@ -8,6 +8,7 @@
 import { loadSettings } from './settings.js';
 import config from '../config.js';
 import IGNORED_TERMS from './ignoredTerms.js';
+import IGNORED_SELECTORS from './ignoredSelectors.js';
 
 // --- 常量 ---
 
@@ -82,19 +83,69 @@ export const extractAndProcessText = () => {
     // 2. 使用 Set 来存储唯一的文本，可以自动去重
     const uniqueTexts = new Set();
 
-    // 3. 根据配置文件中的选择器，获取所有目标元素
+    /**
+     * @private
+     * @description 对单个文本片段进行预处理、过滤，并将有效的文本添加到 uniqueTexts 集合中。
+     * @param {string | null | undefined} rawText - 需要处理的原始文本。
+     */
+    const processAndAddText = (rawText) => {
+        if (!rawText) return;
+
+        // 规则 1: 规范化换行符
+        let text = rawText.replace(/(\r\n|\n|\r)+/g, '\n');
+
+        // 规则 2: 忽略纯空白字符串
+        if (text.trim() === '') {
+            return;
+        }
+
+        const trimmedText = text.trim();
+
+        // 规则 3: 应用过滤规则
+        if (filterRules.numbers && numberAndCurrencyRegex.test(trimmedText)) return;
+        if (filterRules.chinese && pureChineseRegex.test(trimmedText)) return;
+        if (filterRules.containsChinese && containsChineseRegex.test(trimmedText)) return;
+        if (filterRules.emojiOnly && emojiOnlyRegex.test(trimmedText)) return;
+        if (filterRules.symbols && !containsLetterOrNumberRegex.test(trimmedText)) return;
+        if (filterRules.termFilter && IGNORED_TERMS.includes(trimmedText)) return;
+
+        // 如果通过所有过滤，则添加到 Set 中
+        uniqueTexts.add(text);
+    };
+
+    // 3. 提取页面标题
+    processAndAddText(document.title);
+
+    // 4. 根据配置文件中的选择器，获取所有目标元素
     const targetElements = document.querySelectorAll(selectors.join(', '));
 
-    // 4. 遍历每一个目标元素，并在其内部提取文本
+    // 5. 遍历每一个目标元素，提取其属性和内部文本
+    const ignoredSelectorString = IGNORED_SELECTORS.join(', ');
     targetElements.forEach(element => {
-        // 为每个目标元素创建一个 TreeWalker，以高效地遍历其内部的所有文本节点
-        const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null);
+        // 新增：检查元素或其任何父元素是否匹配“禁止扫描”的选择器
+        if (element.closest(ignoredSelectorString)) {
+            return; // 如果匹配，则完全跳过此元素及其后代
+        }
+        // 5.1 提取指定属性的文本
+        const attributesToExtract = ['placeholder', 'alt', 'title', 'aria-label'];
+        // 对于特定类型的 input，也提取其 value
+        if (element.tagName === 'INPUT' && ['button', 'submit', 'reset'].includes(element.type)) {
+            attributesToExtract.push('value');
+        }
+        attributesToExtract.forEach(attr => {
+            const attrValue = element.getAttribute(attr);
+            if (attrValue) {
+                processAndAddText(attrValue);
+            }
+        });
 
+        // 5.2 使用 TreeWalker 高效遍历其内部的所有文本节点
+        const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null);
         while (walker.nextNode()) {
             const node = walker.currentNode;
             const parent = node.parentElement;
 
-            // 5. 进行初步排除，跳过无效的或不需要处理的节点
+            // 5.3 进行初步排除，跳过无效的或不需要处理的节点
             // 排除 <script> 和 <style> 标签内部的文本内容
             if (parent && (parent.tagName === 'SCRIPT' || parent.tagName === 'STYLE')) {
                 continue;
@@ -103,47 +154,12 @@ export const extractAndProcessText = () => {
             if (parent && parent.closest('.text-extractor-fab, .text-extractor-modal-overlay, .settings-panel-overlay')) {
                 continue;
             }
-
-            let text = node.nodeValue || '';
-
-            // 6. 文本预处理与过滤
-            // 规则 1: 将多个连续的换行符合并为一个标准换行符 `\n`，以规范化文本
-            text = text.replace(/(\r\n|\n|\r)+/g, '\n');
-
-            // 规则 2: 如果一个字符串在去除首尾空格后为空，则认为它是无效的，直接跳过
-            if (text.trim() === '') {
-                continue;
-            }
-
-            // 规则 3: 根据从 settings.js 加载的过滤规则，动态地应用过滤
-            const trimmedText = text.trim();
-            if (filterRules.numbers && numberAndCurrencyRegex.test(trimmedText)) {
-                continue;
-            }
-            if (filterRules.chinese && pureChineseRegex.test(trimmedText)) {
-                continue;
-            }
-            if (filterRules.containsChinese && containsChineseRegex.test(trimmedText)) {
-                continue;
-            }
-            if (filterRules.emojiOnly && emojiOnlyRegex.test(trimmedText)) {
-                continue;
-            }
-            if (filterRules.symbols && !containsLetterOrNumberRegex.test(trimmedText)) {
-                continue;
-            }
-
-            // 规则 4: 如果启用了特定术语过滤，则检查文本是否在忽略列表中
-            if (filterRules.termFilter && IGNORED_TERMS.includes(trimmedText)) {
-                continue;
-            }
-
-            // 7. 如果文本通过了所有过滤，则将其添加到 Set 中
-            uniqueTexts.add(text);
+            
+            processAndAddText(node.nodeValue);
         }
     });
 
-    // 8. 将 Set 转换为数组并返回
+    // 6. 将 Set 转换为数组并返回
     return Array.from(uniqueTexts);
 };
 

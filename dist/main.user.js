@@ -407,6 +407,7 @@ body[data-theme='dark'] {
      * selectors: ['.main-content', '.comment-text']
      */
     selectors: [
+      // --- 基础文本元素 ---
       "p",
       // 段落
       "h1",
@@ -420,14 +421,28 @@ body[data-theme='dark'] {
       // 列表项
       "td",
       // 表格单元格
+      "th",
+      // 表头
       "pre",
       // 预格式化文本
       "span",
       // 常用于包裹零散文本
+      "a",
+      // 链接文本
+      "button",
+      // 按钮文本
+      // --- 容器与特定区域 ---
       "article",
       // 文章内容
-      "div"
-      // 通用容器，作为最后的选择
+      "main",
+      // 主要内容区域
+      "div",
+      // 通用容器
+      // --- 新增：覆盖所有元素以检查属性 ---
+      // 通过这个宽泛的选择器，我们可以检查所有元素的
+      // title, alt, placeholder, aria-label 等属性。
+      // processor.js 中的逻辑会确保只提取有内容的属性。
+      "body *"
     ]
   };
   var config_default = config;
@@ -441,6 +456,31 @@ body[data-theme='dark'] {
   ];
   var ignoredTerms_default = IGNORED_TERMS;
 
+  // src/core/ignoredSelectors.js
+  var IGNORED_SELECTORS = [
+    // --- 语义化标签 ---
+    "script",
+    // 脚本
+    "style",
+    // 样式
+    "noscript",
+    // script 禁用时显示的内容
+    "code",
+    // 代码片段
+    "pre",
+    // 预格式化文本，通常用于展示代码
+    "kbd",
+    // 键盘输入
+    // --- 常见的非内容区域 (可以根据需要添加) ---
+    ".no-translate"
+    // 一个通用的、用于明确指示不翻译的类名
+    // '.navbar',
+    // 'header',
+    // 'footer',
+    // '[role="navigation"]',
+  ];
+  var ignoredSelectors_default = IGNORED_SELECTORS;
+
   // src/core/processor.js
   var numberAndCurrencyRegex = /^[$\€\£\¥\d,.\s]+$/;
   var pureChineseRegex = /^[\u4e00-\u9fa5\s]+$/u;
@@ -452,8 +492,38 @@ body[data-theme='dark'] {
     const { filterRules } = settings;
     const { selectors } = config_default;
     const uniqueTexts = /* @__PURE__ */ new Set();
+    const processAndAddText = (rawText) => {
+      if (!rawText) return;
+      let text = rawText.replace(/(\r\n|\n|\r)+/g, "\n");
+      if (text.trim() === "") {
+        return;
+      }
+      const trimmedText = text.trim();
+      if (filterRules.numbers && numberAndCurrencyRegex.test(trimmedText)) return;
+      if (filterRules.chinese && pureChineseRegex.test(trimmedText)) return;
+      if (filterRules.containsChinese && containsChineseRegex.test(trimmedText)) return;
+      if (filterRules.emojiOnly && emojiOnlyRegex.test(trimmedText)) return;
+      if (filterRules.symbols && !containsLetterOrNumberRegex.test(trimmedText)) return;
+      if (filterRules.termFilter && ignoredTerms_default.includes(trimmedText)) return;
+      uniqueTexts.add(text);
+    };
+    processAndAddText(document.title);
     const targetElements = document.querySelectorAll(selectors.join(", "));
+    const ignoredSelectorString = ignoredSelectors_default.join(", ");
     targetElements.forEach((element) => {
+      if (element.closest(ignoredSelectorString)) {
+        return;
+      }
+      const attributesToExtract = ["placeholder", "alt", "title", "aria-label"];
+      if (element.tagName === "INPUT" && ["button", "submit", "reset"].includes(element.type)) {
+        attributesToExtract.push("value");
+      }
+      attributesToExtract.forEach((attr) => {
+        const attrValue = element.getAttribute(attr);
+        if (attrValue) {
+          processAndAddText(attrValue);
+        }
+      });
       const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null);
       while (walker.nextNode()) {
         const node = walker.currentNode;
@@ -464,31 +534,7 @@ body[data-theme='dark'] {
         if (parent && parent.closest(".text-extractor-fab, .text-extractor-modal-overlay, .settings-panel-overlay")) {
           continue;
         }
-        let text = node.nodeValue || "";
-        text = text.replace(/(\r\n|\n|\r)+/g, "\n");
-        if (text.trim() === "") {
-          continue;
-        }
-        const trimmedText = text.trim();
-        if (filterRules.numbers && numberAndCurrencyRegex.test(trimmedText)) {
-          continue;
-        }
-        if (filterRules.chinese && pureChineseRegex.test(trimmedText)) {
-          continue;
-        }
-        if (filterRules.containsChinese && containsChineseRegex.test(trimmedText)) {
-          continue;
-        }
-        if (filterRules.emojiOnly && emojiOnlyRegex.test(trimmedText)) {
-          continue;
-        }
-        if (filterRules.symbols && !containsLetterOrNumberRegex.test(trimmedText)) {
-          continue;
-        }
-        if (filterRules.termFilter && ignoredTerms_default.includes(trimmedText)) {
-          continue;
-        }
-        uniqueTexts.add(text);
+        processAndAddText(node.nodeValue);
       }
     });
     return Array.from(uniqueTexts);

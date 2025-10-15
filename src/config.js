@@ -27,14 +27,27 @@ const config = {
    * selectors: ['.main-content', '.comment-text']
    */
   selectors: [
+    // --- 基础文本元素 ---
     'p', // 段落
     'h1', 'h2', 'h3', 'h4', 'h5', 'h6', // 标题
     'li', // 列表项
     'td', // 表格单元格
+    'th', // 表头
     'pre', // 预格式化文本
     'span', // 常用于包裹零散文本
+    'a',  // 链接文本
+    'button', // 按钮文本
+
+    // --- 容器与特定区域 ---
     'article', // 文章内容
-    'div', // 通用容器，作为最后的选择
+    'main',    // 主要内容区域
+    'div',     // 通用容器
+
+    // --- 新增：覆盖所有元素以检查属性 ---
+    // 通过这个宽泛的选择器，我们可以检查所有元素的
+    // title, alt, placeholder, aria-label 等属性。
+    // processor.js 中的逻辑会确保只提取有内容的属性。
+    'body *',
   ],
 };
 
