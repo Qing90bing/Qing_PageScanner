@@ -1,0 +1,10 @@
+// ==UserScript==
+// @name         网页文本提取工具
+// @namespace    http://tampermonkey.net/
+// @version      0.2.1
+// @description  一键提取网页上的所有可翻译文本，并生成用于翻译工作的格式化数组。
+// @author       Jules
+// @match        *://*/*
+// @grant        GM_addStyle
+// @grant        GM_setClipboard
+// ==/UserScript==
