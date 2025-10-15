@@ -1,0 +1,115 @@
+/* src/assets/styles/main-ui.css */
+
+/* --- 悬浮操作按钮 (FAB) --- */
+.text-extractor-fab {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 56px;
+  height: 56px;
+  background-color: var(--main-primary);
+  border-radius: 50%;
+  box-shadow: 0 4px 8px var(--main-shadow);
+  cursor: pointer;
+  z-index: 9999;
+  transition: background-color 0.3s;
+  /* position: relative; 作为 SVG 绝对定位的基准 (父元素 fixed 已经可以作为基准) */
+}
+.text-extractor-fab:hover { background-color: var(--main-primary-hover); }
+.text-extractor-fab svg {
+  /* 采用绝对定位方案实现完美居中 */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 26px; /* 保持图标尺寸 */
+  height: 26px;
+}
+
+/* --- 文本提取模态框 --- */
+.text-extractor-modal-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background-color: var(--main-overlay-bg);
+  z-index: 10000;
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.text-extractor-modal {
+  background-color: var(--main-bg);
+  color: var(--main-text);
+  width: 80%; max-width: 700px; max-height: 80vh;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px var(--main-shadow);
+  display: flex;
+  flex-direction: column;
+}
+
+.text-extractor-modal-header {
+  padding: 16px;
+  border-bottom: 1px solid var(--main-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.2em;
+  font-weight: 500;
+  color: var(--main-text);
+}
+
+.text-extractor-modal-close {
+  cursor: pointer;
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--main-text);
+}
+
+.text-extractor-modal-content {
+  padding: 16px;
+  overflow-y: auto;
+  flex-grow: 1;
+}
+
+.text-extractor-modal-content textarea {
+  width: 100%;
+  height: 300px;
+  border: 1px solid var(--main-textarea-border);
+  background-color: var(--main-textarea-bg);
+  color: var(--main-text);
+  border-radius: 4px;
+  padding: 8px;
+  font-size: 14px;
+  resize: vertical;
+}
+
+.text-extractor-modal-footer {
+  padding: 16px;
+  border-top: 1px solid var(--main-border);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.text-extractor-copy-btn {
+  padding: 10px 20px;
+  background-color: var(--main-primary);
+  color: var(--main-primary-text);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+.text-extractor-copy-btn:hover { background-color: var(--main-primary-hover); }
+
+/* --- “已复制”提示消息 (Toast) --- */
+.text-extractor-toast {
+  position: fixed; bottom: 100px; right: 30px;
+  background-color: var(--main-toast-bg);
+  color: var(--main-toast-text);
+  padding: 10px 20px;
+  border-radius: 4px;
+  z-index: 10001;
+  opacity: 0;
+  transition: opacity 0.5s;
+}

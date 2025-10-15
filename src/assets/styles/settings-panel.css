@@ -1,0 +1,121 @@
+/* src/assets/styles/settings-panel.css */
+
+.settings-panel-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background-color: var(--main-overlay-bg);
+  z-index: 10002;
+  display: flex; justify-content: center; align-items: center;
+}
+.settings-panel-modal {
+  background-color: var(--main-bg);
+  color: var(--main-text);
+  border: 1px solid var(--main-border);
+  border-radius: 8px;
+  box-shadow: 0 5px 15px var(--main-shadow);
+  width: 90%;
+  max-width: 400px;
+}
+.settings-panel-header, .settings-panel-content, .settings-panel-footer {
+  padding: 16px;
+}
+.settings-panel-header {
+  display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid var(--main-border);
+}
+.settings-panel-header h2 { margin: 0; font-size: 1.1em; }
+.settings-panel-close { cursor: pointer; font-size: 24px; }
+
+.setting-item { margin-bottom: 16px; }
+.setting-item > label { display: block; margin-bottom: 8px; font-weight: 500; }
+.setting-item select {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid var(--main-textarea-border);
+  background-color: var(--main-textarea-bg);
+  color: var(--main-text);
+}
+
+/* -- 全新重构的自定义复选框样式 -- */
+.checkbox-group {
+  display: block;
+  position: relative;
+  padding-left: 30px;
+  margin-top: 12px;
+  cursor: pointer;
+  user-select: none;
+  height: 20px;
+  line-height: 20px;
+  color: var(--main-text);
+}
+
+/* 彻底隐藏原生的复选框 */
+.checkbox-group input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* 创建一个假的复选框容器 */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 18px;
+  width: 18px;
+  background-color: var(--main-textarea-bg);
+  border: 1px solid var(--main-textarea-border);
+  border-radius: 3px;
+  transition: all 0.2s;
+}
+
+/* 当鼠标悬停时，给一个反馈 */
+.checkbox-group:hover input ~ .checkmark {
+  border-color: var(--main-primary);
+}
+
+/* 当复选框被选中时，改变背景和边框颜色 */
+.checkbox-group input:checked ~ .checkmark {
+  background-color: var(--main-primary);
+  border-color: var(--main-primary);
+}
+
+/* 创建勾选标记 (✓)，默认隐藏 */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* 当复选框被选中时，显示勾选标记 */
+.checkbox-group input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* 勾选标记的样式 */
+.checkbox-group .checkmark:after {
+  left: 6px;
+  top: 2px;
+  width: 5px;
+  height: 10px;
+  border: solid var(--main-bg);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+/* -- 结束自定义复选框样式 -- */
+
+.settings-panel-footer {
+  border-top: 1px solid var(--main-border);
+  text-align: right;
+}
+#save-settings-btn {
+  padding: 10px 20px;
+  background-color: var(--main-primary);
+  color: var(--main-primary-text);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+#save-settings-btn:hover { background-color: var(--main-primary-hover); }

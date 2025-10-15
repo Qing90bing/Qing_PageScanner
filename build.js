@@ -23,10 +23,39 @@ async function build() {
 
         const bundledCode = result.outputFiles[0].text;
 
-        // 3. 将头部信息和打包后的代码拼接在一起
-        const finalScript = `${header}\n\n${bundledCode}`;
+        // 3. 读取所有 CSS 文件并合并
+        const stylesDir = 'src/assets/styles';
+        const cssFiles = await fs.readdir(stylesDir);
 
-        // 4. 确保 dist 目录存在
+        // 确保先加载 themes.css，再加载其他样式文件
+        let allCssContent = await fs.readFile('src/assets/themes.css', 'utf-8');
+
+        for (const file of cssFiles) {
+            if (path.extname(file) === '.css') {
+                const content = await fs.readFile(path.join(stylesDir, file), 'utf-8');
+                allCssContent += `\n\n/* --- From ${file} --- */\n${content}`;
+            }
+        }
+
+        // 对合并后的 CSS 内容进行转义
+        const escapedCss = allCssContent.replace(/`/g, '\\`').replace(/\$/g, '\\$');
+
+        // 4. 创建一个用于注入 CSS 的函数
+        const cssInjectionCode = `
+// --- CSS 注入 ---
+(function() {
+    'use strict';
+    const css = \`
+${escapedCss}
+    \`;
+    GM_addStyle(css);
+})();
+`;
+
+        // 5. 将头部、CSS 注入代码和打包后的代码拼接在一起
+        const finalScript = `${header}\n\n${cssInjectionCode}\n\n${bundledCode}`;
+
+        // 6. 确保 dist 目录存在
         await fs.mkdir('dist', { recursive: true });
 
         // 5. 将最终的脚本写入 dist 目录
