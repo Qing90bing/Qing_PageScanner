@@ -1,9 +1,15 @@
 // ==UserScript==
 // @name         网页文本提取工具
+// @name:en-US   Web Text Extraction Tool
+// @namespace    https://github.com/Qing90bing/Qing_PageScanner
 // @namespace    http://tampermonkey.net/
-// @version      0.2.1
-// @description  一键提取网页上的所有可翻译文本，并生成用于翻译工作的格式化数组。
-// @author       Jules
+// @version      1.0.0
+// @description  像扫描仪一样快速“扫描”整个网页，智能识别并捕获所有需要翻译的文本片段，提高你的翻译效率。
+// @description:en-US  Scan the entire web page like a scanner, intelligently identify and capture all text fragments that need translation.
+// @license      MIT
+// @copyright    2025, Qing90bing
+// @author       Qing90bing
+// @supportURL   https://github.com/Qing90bing/Qing_PageScanner/issues
 // @match        *://*/*
 // @grant        GM_addStyle
 // @grant        GM_setClipboard
