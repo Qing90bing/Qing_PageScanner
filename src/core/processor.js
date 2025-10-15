@@ -6,6 +6,7 @@
  */
 
 import { loadSettings } from './settings.js';
+import config from '../config.js';
 
 // --- 常量 ---
 
@@ -72,69 +73,71 @@ const containsLetterOrNumberRegex = /[\p{L}\p{N}]/u;
  * 提取所有文本节点，然后根据用户设置的过滤规则进行筛选，最后返回一个去重后的文本数组。
  */
 export const extractAndProcessText = () => {
-    // 1. 加载最新的用户设置
+    // 1. 加载最新的用户设置和静态配置
     const settings = loadSettings();
     const { filterRules } = settings;
+    const { selectors } = config;
 
     // 2. 使用 Set 来存储唯一的文本，可以自动去重
     const uniqueTexts = new Set();
 
-    // 3. 创建一个 TreeWalker 来高效地遍历页面中所有的文本节点 (Node.TEXT_NODE)
-    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+    // 3. 根据配置文件中的选择器，获取所有目标元素
+    const targetElements = document.querySelectorAll(selectors.join(', '));
 
-    while (walker.nextNode()) {
-        const node = walker.currentNode;
-        const parent = node.parentElement;
+    // 4. 遍历每一个目标元素，并在其内部提取文本
+    targetElements.forEach(element => {
+        // 为每个目标元素创建一个 TreeWalker，以高效地遍历其内部的所有文本节点
+        const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null);
 
-        // 4. 进行初步排除，跳过无效的或不需要处理的节点
-        // 排除 <script> 和 <style> 标签内部的文本内容
-        if (parent && (parent.tagName === 'SCRIPT' || parent.tagName === 'STYLE')) {
-            continue;
-        }
-        // 排除我们自己注入的 UI 元素（悬浮按钮、模态框、设置面板）内的文本
-        if (parent && parent.closest('.text-extractor-fab, .text-extractor-modal-overlay, .settings-panel-overlay')) {
-            continue;
-        }
+        while (walker.nextNode()) {
+            const node = walker.currentNode;
+            const parent = node.parentElement;
 
-        let text = node.nodeValue || '';
+            // 5. 进行初步排除，跳过无效的或不需要处理的节点
+            // 排除 <script> 和 <style> 标签内部的文本内容
+            if (parent && (parent.tagName === 'SCRIPT' || parent.tagName === 'STYLE')) {
+                continue;
+            }
+            // 排除我们自己注入的 UI 元素（悬浮按钮、模态框、设置面板）内的文本
+            if (parent && parent.closest('.text-extractor-fab, .text-extractor-modal-overlay, .settings-panel-overlay')) {
+                continue;
+            }
 
-        // 5. 文本预处理与过滤
-        // 规则 1: 将多个连续的换行符合并为一个标准换行符 `\n`，以规范化文本
-        text = text.replace(/(\r\n|\n|\r)+/g, '\n');
+            let text = node.nodeValue || '';
 
-        // 规则 2: 如果一个字符串在去除首尾空格后为空，则认为它是无效的，直接跳过
-        if (text.trim() === '') {
-            continue;
-        }
-        
-        // 规则 3: 根据从 settings.js 加载的过滤规则，动态地应用过滤
-        const trimmedText = text.trim();
-        // 如果用户启用了数字过滤，并且文本匹配数字/货币正则，则跳过
-        if (filterRules.numbers && numberAndCurrencyRegex.test(trimmedText)) {
-            continue;
-        }
-        // 如果用户启用了中文过滤，并且文本匹配纯中文正则，则跳过
-        if (filterRules.chinese && pureChineseRegex.test(trimmedText)) {
-            continue;
-        }
-        // 如果用户启用了“过滤包含中文”规则，并且文本中含有中文字符，则跳过
-        if (filterRules.containsChinese && containsChineseRegex.test(trimmedText)) {
-            continue;
-        }
-        // 如果用户启用了“过滤纯表情”规则，并且文本只包含表情符号和空格，则跳过
-        if (filterRules.emojiOnly && emojiOnlyRegex.test(trimmedText)) {
-            continue;
-        }
-        // 如果用户启用了“过滤纯符号”规则，并且文本中不包含任何字母或数字，则跳过
-        if (filterRules.symbols && !containsLetterOrNumberRegex.test(trimmedText)) {
-            continue;
-        }
-        
-        // 6. 如果文本通过了所有过滤，则将其添加到 Set 中
-        uniqueTexts.add(text);
-    }
+            // 6. 文本预处理与过滤
+            // 规则 1: 将多个连续的换行符合并为一个标准换行符 `\n`，以规范化文本
+            text = text.replace(/(\r\n|\n|\r)+/g, '\n');
 
-    // 7. 将 Set 转换为数组并返回
+            // 规则 2: 如果一个字符串在去除首尾空格后为空，则认为它是无效的，直接跳过
+            if (text.trim() === '') {
+                continue;
+            }
+
+            // 规则 3: 根据从 settings.js 加载的过滤规则，动态地应用过滤
+            const trimmedText = text.trim();
+            if (filterRules.numbers && numberAndCurrencyRegex.test(trimmedText)) {
+                continue;
+            }
+            if (filterRules.chinese && pureChineseRegex.test(trimmedText)) {
+                continue;
+            }
+            if (filterRules.containsChinese && containsChineseRegex.test(trimmedText)) {
+                continue;
+            }
+            if (filterRules.emojiOnly && emojiOnlyRegex.test(trimmedText)) {
+                continue;
+            }
+            if (filterRules.symbols && !containsLetterOrNumberRegex.test(trimmedText)) {
+                continue;
+            }
+
+            // 7. 如果文本通过了所有过滤，则将其添加到 Set 中
+            uniqueTexts.add(text);
+        }
+    });
+
+    // 8. 将 Set 转换为数组并返回
     return Array.from(uniqueTexts);
 };
 

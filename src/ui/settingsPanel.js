@@ -7,6 +7,7 @@
 
 import { loadSettings, saveSettings } from '../core/settings';
 import { applyTheme } from './theme';
+import { createCheckbox } from './components';
 
 // --- 模块级变量 ---
 
@@ -18,6 +19,24 @@ import { applyTheme } from './theme';
  */
 let settingsPanel = null;
 
+/**
+ * @private
+ * @readonly
+ * @type {Array<Object>}
+ * @description 定义了内容过滤规则的元数据，用于动态生成UI和处理保存逻辑。
+ * 每个对象包含:
+ * - id: DOM元素的ID
+ * - key: 对应 settings.filterRules 中的键名
+ * - label: 显示在UI上的标签文本
+ */
+const filterDefinitions = [
+  { id: 'filter-numbers', key: 'numbers', label: '过滤纯数字/货币' },
+  { id: 'filter-chinese', key: 'chinese', label: '过滤纯中文' },
+  { id: 'filter-contains-chinese', key: 'containsChinese', label: '过滤包含中文的文本' },
+  { id: 'filter-emoji-only', key: 'emojiOnly', label: '过滤纯表情符号' },
+  { id: 'filter-symbols', key: 'symbols', label: '过滤纯符号' },
+];
+
 // --- 私有函数 ---
 
 /**
@@ -27,6 +46,11 @@ let settingsPanel = null;
  * @description 根据传入的设置对象，动态生成设置面板的 HTML 结构。
  */
 function getPanelHTML(settings) {
+  // 使用 filterDefinitions 和 createCheckbox 函数动态生成所有过滤规则的 HTML
+  const filterCheckboxesHTML = filterDefinitions
+    .map(filter => createCheckbox(filter.id, filter.label, settings.filterRules[filter.key]))
+    .join('');
+
   return `
     <div class="settings-panel-modal">
       <div class="settings-panel-header">
@@ -44,26 +68,7 @@ function getPanelHTML(settings) {
         </div>
         <div class="setting-item">
           <label>内容过滤规则</label>
-          <label class="checkbox-group" for="filter-numbers">过滤纯数字/货币
-            <input type="checkbox" id="filter-numbers" ${settings.filterRules.numbers ? 'checked' : ''}>
-            <span class="checkmark"></span>
-          </label>
-          <label class="checkbox-group" for="filter-chinese">过滤纯中文
-            <input type="checkbox" id="filter-chinese" ${settings.filterRules.chinese ? 'checked' : ''}>
-            <span class="checkmark"></span>
-          </label>
-          <label class="checkbox-group" for="filter-contains-chinese">过滤包含中文的文本
-            <input type="checkbox" id="filter-contains-chinese" ${settings.filterRules.containsChinese ? 'checked' : ''}>
-            <span class="checkmark"></span>
-          </label>
-          <label class="checkbox-group" for="filter-emoji-only">过滤纯表情符号
-            <input type="checkbox" id="filter-emoji-only" ${settings.filterRules.emojiOnly ? 'checked' : ''}>
-            <span class="checkmark"></span>
-          </label>
-          <label class="checkbox-group" for="filter-symbols">过滤纯符号
-            <input type="checkbox" id="filter-symbols" ${settings.filterRules.symbols ? 'checked' : ''}>
-            <span class="checkmark"></span>
-          </label>
+          ${filterCheckboxesHTML}
         </div>
       </div>
       <div class="settings-panel-footer">
@@ -133,21 +138,19 @@ function hideSettingsPanel() {
 function handleSave() {
   // 1. 从 DOM 元素中获取用户选择的新设置
   const newTheme = document.getElementById('theme-select').value;
-  const filterNumbers = document.getElementById('filter-numbers').checked;
-  const filterChinese = document.getElementById('filter-chinese').checked;
-  const filterContainsChinese = document.getElementById('filter-contains-chinese').checked;
-  const filterEmojiOnly = document.getElementById('filter-emoji-only').checked;
-  const filterSymbols = document.getElementById('filter-symbols').checked;
+
+  // 使用 filterDefinitions 动态构建 filterRules 对象
+  const newFilterRules = {};
+  filterDefinitions.forEach(filter => {
+    const checkbox = document.getElementById(filter.id);
+    if (checkbox) {
+      newFilterRules[filter.key] = checkbox.checked;
+    }
+  });
 
   const newSettings = {
     theme: newTheme,
-    filterRules: {
-      numbers: filterNumbers,
-      chinese: filterChinese,
-      containsChinese: filterContainsChinese,
-      emojiOnly: filterEmojiOnly,
-      symbols: filterSymbols,
-    },
+    filterRules: newFilterRules,
   };
 
   // 2. 保存设置并应用主题
