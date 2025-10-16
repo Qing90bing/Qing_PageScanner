@@ -41,13 +41,15 @@ export function createMainModal() {
     <div class="text-extractor-modal">
       <div class="text-extractor-modal-header">
         <span>提取的文本</span>
-        <span class="text-extractor-modal-close">&times;</span>
+        <span class="tc-close-button text-extractor-modal-close">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+        </span>
       </div>
       <div class="text-extractor-modal-content">
-        <textarea id="text-extractor-output"></textarea>
+        <textarea id="text-extractor-output" class="tc-textarea"></textarea>
       </div>
       <div class="text-extractor-modal-footer">
-        <button class="text-extractor-copy-btn">一键复制</button>
+        <button class="text-extractor-copy-btn tc-button">一键复制</button>
       </div>
     </div>
   `;

@@ -10,7 +10,7 @@
   background-color: var(--main-bg);
   color: var(--main-text);
   border: 1px solid var(--main-border);
-  border-radius: 8px;
+  border-radius: 16px; /* 增大圆角 */
   box-shadow: 0 5px 15px var(--main-shadow);
   width: 90%;
   max-width: 400px;
@@ -23,18 +23,11 @@
   border-bottom: 1px solid var(--main-border);
 }
 .settings-panel-header h2 { margin: 0; font-size: 1.1em; }
-.settings-panel-close { cursor: pointer; font-size: 24px; }
+/* 关闭按钮的旧样式已被 .tc-close-button 替代，此处可删除或留空 */
+.settings-panel-close {}
 
 .setting-item { margin-bottom: 16px; }
 .setting-item > label { display: block; margin-bottom: 8px; font-weight: 500; }
-.setting-item select {
-  width: 100%;
-  padding: 8px;
-  border-radius: 4px;
-  border: 1px solid var(--main-textarea-border);
-  background-color: var(--main-textarea-bg);
-  color: var(--main-text);
-}
 
 /* -- 全新重构的自定义复选框样式 -- */
 .checkbox-group {
@@ -110,12 +103,3 @@
   border-top: 1px solid var(--main-border);
   text-align: right;
 }
-#save-settings-btn {
-  padding: 10px 20px;
-  background-color: var(--main-primary);
-  color: var(--main-primary-text);
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-#save-settings-btn:hover { background-color: var(--main-primary-hover); }

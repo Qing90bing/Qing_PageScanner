@@ -91,6 +91,97 @@ body[data-theme='dark'] {
 }
 
 
+/* --- From forms.css --- */
+/* src/assets/styles/forms.css */
+
+/* --- 可复用的按钮样式 --- */
+.tc-button {
+  padding: 10px 20px;
+  background-color: var(--main-primary);
+  color: var(--main-primary-text);
+  border: none;
+  border-radius: 999px; /* 完全圆角，胶囊形状 */
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  transition: background-color 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+.tc-button:hover {
+  background-color: var(--main-primary-hover);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.tc-button:active {
+  transform: scale(0.97);
+}
+.tc-button:disabled {
+  background-color: var(--main-disabled);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* --- 可复用的文本框样式 --- */
+.tc-textarea {
+  width: 100%;
+  height: 300px;
+  border: 1px solid var(--main-textarea-border);
+  background-color: var(--main-textarea-bg);
+  color: var(--main-text);
+  border-radius: 8px;
+  padding: 12px;
+  padding-right: 18px; /* 为滚动条轨道留出空间 */
+  font-size: 14px;
+  resize: none; /* 禁用拖拽调整大小 */
+  box-sizing: border-box;
+}
+
+/* 自定义滚动条样式 */
+.tc-textarea::-webkit-scrollbar {
+  width: 6px; /* 更细的滚动条 */
+}
+.tc-textarea::-webkit-scrollbar-track {
+  background: transparent; /* 轨道透明 */
+}
+.tc-textarea::-webkit-scrollbar-thumb {
+  background-color: var(--main-border);
+  border-radius: 3px;
+}
+.tc-textarea::-webkit-scrollbar-thumb:hover {
+  background-color: var(--main-primary);
+}
+.tc-textarea::-webkit-scrollbar-button {
+  display: none; /* 隐藏上下两端的箭头按钮 */
+}
+
+/* --- 可复用的下拉菜单样式 --- */
+.tc-select {
+  /* Box model and appearance */
+  display: block;
+  width: 100%;
+  padding: 10px 36px 10px 12px; /* 右侧留出更多空间给箭头 */
+  border: 1px solid var(--main-textarea-border);
+  border-radius: 8px;
+  background-color: var(--main-textarea-bg);
+  color: var(--main-text);
+  font-size: 14px;
+  cursor: pointer;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  /* Custom arrow icon */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='currentColor'%3E%3Cpath d='M8 11L2 5h12z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 12px; /* 稍微增大箭头尺寸 */
+
+  /* Transitions */
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.tc-select:hover {
+  border-color: var(--main-primary);
+  box-shadow: 0 0 0 2px var(--main-primary-hover-bg, rgba(30, 144, 255, 0.1));
+}
+
 /* --- From live-counter.css --- */
 /* src/assets/styles/live-counter.css */
 
@@ -145,6 +236,12 @@ body[data-theme='dark'] {
     align-items: center;
     gap: 12px; /* 按钮之间的间距 */
     z-index: 9999;
+    opacity: 0; /* 初始透明 */
+    transition: opacity 0.5s ease-out;
+}
+
+.text-extractor-fab-container.fab-container-visible {
+    opacity: 1; /* 最终不透明 */
 }
 
 /* --- 单个悬浮操作按钮 (FAB) --- */
@@ -156,13 +253,20 @@ body[data-theme='dark'] {
     border-radius: 50%;
     box-shadow: 0 4px 8px var(--main-shadow);
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
     color: var(--main-primary-text); /* SVG 图标将继承这个颜色 */
+    border: 1px solid var(--main-border); /* 添加描边 */
 }
 
 .text-extractor-fab:hover {
     background-color: var(--main-primary-hover);
     transform: scale(1.05);
+    box-shadow: 0 6px 12px var(--main-shadow);
+}
+
+.text-extractor-fab:active {
+    transform: scale(0.95); /* 点击时缩小 */
+    transition-duration: 0.1s;
 }
 
 .text-extractor-fab svg {
@@ -189,7 +293,7 @@ body[data-theme='dark'] {
   background-color: var(--main-bg);
   color: var(--main-text);
   width: 80%; max-width: 700px; max-height: 80vh;
-  border-radius: 8px;
+  border-radius: 16px; /* 增大了圆角 */
   box-shadow: 0 5px 15px var(--main-shadow);
   display: flex;
   flex-direction: column;
@@ -206,11 +310,27 @@ body[data-theme='dark'] {
   color: var(--main-text);
 }
 
-.text-extractor-modal-close {
+/* --- 可复用的关闭按钮 --- */
+.tc-close-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
   cursor: pointer;
-  font-size: 24px;
-  font-weight: bold;
   color: var(--main-text);
+  background-color: transparent;
+  transition: background-color 0.2s, transform 0.15s;
+}
+
+.tc-close-button:hover {
+  background-color: var(--main-border);
+}
+
+.tc-close-button:active {
+  transform: scale(0.9);
+  background-color: var(--main-border);
 }
 
 .text-extractor-modal-content {
@@ -219,41 +339,12 @@ body[data-theme='dark'] {
   flex-grow: 1;
 }
 
-.text-extractor-modal-content textarea {
-  width: 100%;
-  height: 300px;
-  border: 1px solid var(--main-textarea-border);
-  background-color: var(--main-textarea-bg);
-  color: var(--main-text);
-  border-radius: 4px;
-  padding: 8px;
-  font-size: 14px;
-  resize: vertical;
-}
-
 .text-extractor-modal-footer {
   padding: 16px;
   border-top: 1px solid var(--main-border);
   display: flex;
   justify-content: flex-end;
   align-items: center;
-}
-
-.text-extractor-copy-btn {
-  padding: 10px 20px;
-  background-color: var(--main-primary);
-  color: var(--main-primary-text);
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s;
-}
-.text-extractor-copy-btn:hover { background-color: var(--main-primary-hover); }
-
-.text-extractor-copy-btn:disabled {
-    background-color: var(--main-disabled);
-    cursor: not-allowed;
 }
 
 /* --- 动态扫描按钮的激活状态 --- */
@@ -389,7 +480,7 @@ body[data-theme='dark'] {
   background-color: var(--main-bg);
   color: var(--main-text);
   border: 1px solid var(--main-border);
-  border-radius: 8px;
+  border-radius: 16px; /* 增大圆角 */
   box-shadow: 0 5px 15px var(--main-shadow);
   width: 90%;
   max-width: 400px;
@@ -402,18 +493,11 @@ body[data-theme='dark'] {
   border-bottom: 1px solid var(--main-border);
 }
 .settings-panel-header h2 { margin: 0; font-size: 1.1em; }
-.settings-panel-close { cursor: pointer; font-size: 24px; }
+/* 关闭按钮的旧样式已被 .tc-close-button 替代，此处可删除或留空 */
+.settings-panel-close {}
 
 .setting-item { margin-bottom: 16px; }
 .setting-item > label { display: block; margin-bottom: 8px; font-weight: 500; }
-.setting-item select {
-  width: 100%;
-  padding: 8px;
-  border-radius: 4px;
-  border: 1px solid var(--main-textarea-border);
-  background-color: var(--main-textarea-bg);
-  color: var(--main-text);
-}
 
 /* -- 全新重构的自定义复选框样式 -- */
 .checkbox-group {
@@ -489,15 +573,6 @@ body[data-theme='dark'] {
   border-top: 1px solid var(--main-border);
   text-align: right;
 }
-#save-settings-btn {
-  padding: 10px 20px;
-  background-color: var(--main-primary);
-  color: var(--main-primary-text);
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-#save-settings-btn:hover { background-color: var(--main-primary-hover); }
 
     `;
     GM_addStyle(css);
@@ -895,13 +970,15 @@ ${result.join(",\n")}
     <div class="text-extractor-modal">
       <div class="text-extractor-modal-header">
         <span>\u63D0\u53D6\u7684\u6587\u672C</span>
-        <span class="text-extractor-modal-close">&times;</span>
+        <span class="tc-close-button text-extractor-modal-close">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+        </span>
       </div>
       <div class="text-extractor-modal-content">
-        <textarea id="text-extractor-output"></textarea>
+        <textarea id="text-extractor-output" class="tc-textarea"></textarea>
       </div>
       <div class="text-extractor-modal-footer">
-        <button class="text-extractor-copy-btn">\u4E00\u952E\u590D\u5236</button>
+        <button class="text-extractor-copy-btn tc-button">\u4E00\u952E\u590D\u5236</button>
       </div>
     </div>
   `;
@@ -987,6 +1064,9 @@ ${result.join(",\n")}
     fabContainer.appendChild(dynamicFab);
     fabContainer.appendChild(staticFab);
     document.body.appendChild(fabContainer);
+    setTimeout(() => {
+      fabContainer.classList.add("fab-container-visible");
+    }, 50);
     function handleSummaryClick() {
       const results = getSessionTexts();
       if (results.length === 0) {
@@ -1059,12 +1139,14 @@ ${result.join(",\n")}
     <div class="settings-panel-modal">
       <div class="settings-panel-header">
         <h2>\u811A\u672C\u8BBE\u7F6E</h2>
-        <span class="settings-panel-close">&times;</span>
+        <span class="tc-close-button settings-panel-close">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+        </span>
       </div>
       <div class="settings-panel-content">
         <div class="setting-item">
           <label for="theme-select">\u754C\u9762\u4E3B\u9898</label>
-          <select id="theme-select">
+          <select id="theme-select" class="tc-select">
             <option value="system" ${settings.theme === "system" ? "selected" : ""}>\u8DDF\u968F\u7CFB\u7EDF</option>
             <option value="light" ${settings.theme === "light" ? "selected" : ""}>\u6D45\u8272\u6A21\u5F0F</option>
             <option value="dark" ${settings.theme === "dark" ? "selected" : ""}>\u6DF1\u8272\u6A21\u5F0F</option>
@@ -1076,7 +1158,7 @@ ${result.join(",\n")}
         </div>
       </div>
       <div class="settings-panel-footer">
-        <button id="save-settings-btn">\u4FDD\u5B58\u5E76\u5E94\u7528</button>
+        <button id="save-settings-btn" class="tc-button">\u4FDD\u5B58\u5E76\u5E94\u7528</button>
       </div>
     </div>
   `;

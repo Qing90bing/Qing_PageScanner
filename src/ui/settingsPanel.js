@@ -56,12 +56,14 @@ function getPanelHTML(settings) {
     <div class="settings-panel-modal">
       <div class="settings-panel-header">
         <h2>脚本设置</h2>
-        <span class="settings-panel-close">&times;</span>
+        <span class="tc-close-button settings-panel-close">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+        </span>
       </div>
       <div class="settings-panel-content">
         <div class="setting-item">
           <label for="theme-select">界面主题</label>
-          <select id="theme-select">
+          <select id="theme-select" class="tc-select">
             <option value="system" ${settings.theme === 'system' ? 'selected' : ''}>跟随系统</option>
             <option value="light" ${settings.theme === 'light' ? 'selected' : ''}>浅色模式</option>
             <option value="dark" ${settings.theme === 'dark' ? 'selected' : ''}>深色模式</option>
@@ -73,7 +75,7 @@ function getPanelHTML(settings) {
         </div>
       </div>
       <div class="settings-panel-footer">
-        <button id="save-settings-btn">保存并应用</button>
+        <button id="save-settings-btn" class="tc-button">保存并应用</button>
       </div>
     </div>
   `;

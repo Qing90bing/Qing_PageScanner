@@ -74,6 +74,11 @@ export function createFab(onStaticExtract) {
     fabContainer.appendChild(staticFab);
     document.body.appendChild(fabContainer);
 
+    // 触发进入动画
+    setTimeout(() => {
+        fabContainer.classList.add('fab-container-visible');
+    }, 50); // 延迟以确保CSS过渡生效
+
     // --- 事件处理逻辑 ---
 
     /**
