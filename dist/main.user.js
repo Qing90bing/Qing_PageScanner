@@ -91,6 +91,47 @@ body[data-theme='dark'] {
 }
 
 
+/* --- From live-counter.css --- */
+/* src/assets/styles/live-counter.css */
+
+.tc-live-counter {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translate(-50%, -150%); /* 初始位置在屏幕外上方 */
+    z-index: 2147483646; /* 比通知低一级 */
+    display: flex; /* 保持flex布局 */
+    align-items: center;
+    padding: 8px 16px;
+    border-radius: 20px; /* 圆角 */
+    background-color: rgba(0, 0, 0, 0.7); /* 半透明背景 */
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    box-shadow: 0 2px 8px var(--main-shadow, rgba(0, 0, 0, 0.2));
+    border: 1px solid var(--main-border, rgba(255, 255, 255, 0.2));
+    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.4s ease;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    opacity: 0; /* 默认不可见 */
+    pointer-events: none; /* 默认不可交互 */
+}
+
+.tc-live-counter.tc-live-counter-visible {
+    transform: translate(-50%, 0); /* 动画结束位置 */
+    opacity: 1; /* 变得可见 */
+    pointer-events: auto; /* 变得可交互 */
+}
+
+.tc-live-counter span {
+    min-width: 20px;
+    text-align: center;
+    margin-left: 8px;
+    padding: 2px 6px;
+    background-color: var(--main-overlay-bg, rgba(255, 255, 255, 0.2));
+    border-radius: 10px;
+}
+
 /* --- From main-ui.css --- */
 /* src/assets/styles/main-ui.css */
 
@@ -215,18 +256,125 @@ body[data-theme='dark'] {
     cursor: not-allowed;
 }
 
-/* --- “已复制”提示消息 (Toast) --- */
-.text-extractor-toast {
-  position: fixed; bottom: 100px; right: 30px;
-  background-color: var(--main-toast-bg);
-  color: var(--main-toast-text);
-  padding: 10px 20px;
-  border-radius: 4px;
-  z-index: 10001;
-  opacity: 0;
-  transition: opacity 0.5s;
+/* --- 动态扫描按钮的激活状态 --- */
+.text-extractor-fab.fab-dynamic.is-recording {
+    background-color: #f39c12; /* 橙色 */
+    animation: tc-breathing 2s ease-in-out infinite;
 }
 
+.text-extractor-fab.fab-dynamic.is-recording:hover {
+    background-color: #e67e22; /* 深一点的橙色 */
+}
+
+@keyframes tc-breathing {
+    0% {
+        box-shadow: 0 4px 8px var(--main-shadow), 0 0 0 0 rgba(243, 156, 18, 0.4);
+    }
+    70% {
+        box-shadow: 0 4px 12px var(--main-shadow), 0 0 0 10px rgba(243, 156, 18, 0);
+    }
+    100% {
+        box-shadow: 0 4px 8px var(--main-shadow), 0 0 0 0 rgba(243, 156, 18, 0);
+    }
+}
+
+
+/* --- From notification.css --- */
+/* src/assets/notification.css */
+
+.tc-notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 2147483647;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.tc-notification {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    border-radius: 8px;
+    background-color: var(--main-bg, #fff);
+    color: var(--main-text, #333);
+    box-shadow: 0 4px 12px var(--main-shadow, rgba(0, 0, 0, 0.15));
+    border: 1px solid var(--main-border, #eee);
+    width: 320px;
+    opacity: 0;
+    transform: translateX(100%);
+    animation: tc-notification-fade-in 0.5s forwards;
+    transition: box-shadow 0.3s;
+}
+
+.tc-notification:hover {
+    box-shadow: 0 6px 16px var(--main-shadow, rgba(0, 0, 0, 0.2));
+}
+
+.tc-notification-icon {
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.tc-notification-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+.tc-notification-info .tc-notification-icon {
+    color: #3498db;
+}
+
+.tc-notification-success .tc-notification-icon {
+    color: #2ecc71;
+}
+
+.tc-notification-content {
+    flex-grow: 1;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.tc-notification-close {
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.3s;
+    padding: 4px;
+}
+
+.tc-notification-close:hover {
+    opacity: 1;
+}
+
+.tc-notification-close svg {
+    width: 16px;
+    height: 16px;
+    stroke: var(--main-text, #333);
+}
+
+@keyframes tc-notification-fade-in {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.tc-notification-fade-out {
+    animation: tc-notification-fade-out 0.5s forwards;
+}
+
+@keyframes tc-notification-fade-out {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
 
 /* --- From settings-panel.css --- */
 /* src/assets/styles/settings-panel.css */
@@ -576,59 +724,160 @@ ${result.join(",\n")}
   var isRecording = false;
   var sessionTexts = /* @__PURE__ */ new Set();
   var observer = null;
+  var onTextAddedCallback = null;
   var numberAndCurrencyRegex2 = /^[$\€\£\¥\d,.\s]+$/;
   var pureChineseRegex2 = /^[\u4e00-\u9fa5\s]+$/u;
   var containsChineseRegex2 = /[\u4e00-\u9fa5]/u;
   var emojiOnlyRegex2 = /^[\p{Emoji}\s]+$/u;
   var containsLetterOrNumberRegex2 = /[\p{L}\p{N}]/u;
   function processAndAddText(rawText, textSet, filterRules) {
-    if (!rawText || typeof rawText !== "string") return;
+    if (!rawText || typeof rawText !== "string") return false;
     let text = rawText.replace(/(\r\n|\n|\r)+/g, "\n").trim();
-    if (text === "") return;
-    if (filterRules.numbers && numberAndCurrencyRegex2.test(text)) return;
-    if (filterRules.chinese && pureChineseRegex2.test(text)) return;
-    if (filterRules.containsChinese && containsChineseRegex2.test(text)) return;
-    if (filterRules.emojiOnly && emojiOnlyRegex2.test(text)) return;
-    if (filterRules.symbols && !containsLetterOrNumberRegex2.test(text)) return;
-    if (filterRules.termFilter && ignoredTerms_default.includes(text)) return;
+    if (text === "") return false;
+    if (filterRules.numbers && numberAndCurrencyRegex2.test(text)) return false;
+    if (filterRules.chinese && pureChineseRegex2.test(text)) return false;
+    if (filterRules.containsChinese && containsChineseRegex2.test(text)) return false;
+    if (filterRules.emojiOnly && emojiOnlyRegex2.test(text)) return false;
+    if (filterRules.symbols && !containsLetterOrNumberRegex2.test(text)) return false;
+    if (filterRules.termFilter && ignoredTerms_default.includes(text)) return false;
+    const originalSize = textSet.size;
     textSet.add(rawText.replace(/(\r\n|\n|\r)+/g, "\n"));
+    return textSet.size > originalSize;
   }
   var handleMutations = (mutations) => {
     const { filterRules } = loadSettings();
     const ignoredSelectorString = ignoredSelectors_default.join(", ");
+    let textAdded = false;
     mutations.forEach((mutation) => {
       mutation.addedNodes.forEach((node) => {
         if (node.nodeType !== Node.ELEMENT_NODE) return;
         if (node.closest(ignoredSelectorString)) return;
         const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
         while (walker.nextNode()) {
-          processAndAddText(walker.currentNode.nodeValue, sessionTexts, filterRules);
+          if (processAndAddText(walker.currentNode.nodeValue, sessionTexts, filterRules)) {
+            textAdded = true;
+          }
         }
       });
     });
+    if (textAdded && onTextAddedCallback) {
+      onTextAddedCallback(sessionTexts.size);
+    }
   };
-  var start = () => {
+  var start = (onUpdate) => {
     if (isRecording) return;
     console.log("\u5F00\u59CB\u65B0\u7684\u63D0\u53D6\u4F1A\u8BDD...");
     isRecording = true;
     sessionTexts.clear();
+    onTextAddedCallback = onUpdate || null;
     const initialTexts = extractAndProcessText();
-    initialTexts.forEach((text) => sessionTexts.add(text));
-    console.log(`\u4F1A\u8BDD\u521D\u59CB\u6355\u83B7\u5230 ${initialTexts.length} \u6761\u6587\u672C\u3002`);
+    const { filterRules } = loadSettings();
+    let textAdded = false;
+    initialTexts.forEach((text) => {
+      if (processAndAddText(text, sessionTexts, filterRules)) {
+        textAdded = true;
+      }
+    });
+    console.log(`\u4F1A\u8BDD\u521D\u59CB\u6355\u83B7\u5230 ${sessionTexts.size} \u6761\u6587\u672C\u3002`);
+    if (onTextAddedCallback) {
+      onTextAddedCallback(sessionTexts.size);
+    }
     observer = new MutationObserver(handleMutations);
     observer.observe(document.body, { childList: true, subtree: true });
   };
   var stop = () => {
-    if (!isRecording) return;
+    if (!isRecording) return [];
     console.log("\u505C\u6B62\u63D0\u53D6\u4F1A\u8BDD\u3002");
     if (observer) {
       observer.disconnect();
       observer = null;
     }
     isRecording = false;
+    onTextAddedCallback = null;
+    return getSessionTexts();
   };
   var isSessionRecording = () => isRecording;
   var getSessionTexts = () => Array.from(sessionTexts);
+
+  // src/ui/components/notification.js
+  var notificationContainer = null;
+  function getNotificationContainer() {
+    if (!notificationContainer) {
+      notificationContainer = document.createElement("div");
+      notificationContainer.className = "tc-notification-container";
+      document.body.appendChild(notificationContainer);
+    }
+    return notificationContainer;
+  }
+  function createNotificationElement(message, type = "info") {
+    const notification = document.createElement("div");
+    notification.className = `tc-notification tc-notification-${type}`;
+    const icon = type === "success" ? `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>` : `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`;
+    notification.innerHTML = `
+        <div class="tc-notification-icon">${icon}</div>
+        <div class="tc-notification-content">${message}</div>
+        <div class="tc-notification-close">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </div>
+    `;
+    const closeButton = notification.querySelector(".tc-notification-close");
+    closeButton.addEventListener("click", () => {
+      notification.classList.add("tc-notification-fade-out");
+      notification.addEventListener("animationend", () => {
+        notification.remove();
+        if (getNotificationContainer().childElementCount === 0) {
+          notificationContainer.remove();
+          notificationContainer = null;
+        }
+      });
+    });
+    return notification;
+  }
+  function showNotification(message, { type = "info", duration = 3e3 } = {}) {
+    const container = getNotificationContainer();
+    const notification = createNotificationElement(message, type);
+    container.appendChild(notification);
+    const timer = setTimeout(() => {
+      notification.querySelector(".tc-notification-close").click();
+    }, duration);
+    notification.querySelector(".tc-notification-close").addEventListener("click", () => {
+      clearTimeout(timer);
+    });
+  }
+
+  // src/ui/components/liveCounter.js
+  var counterElement = null;
+  function createCounterElement() {
+    if (counterElement) return;
+    counterElement = document.createElement("div");
+    counterElement.className = "tc-live-counter";
+    document.body.appendChild(counterElement);
+  }
+  function showLiveCounter() {
+    createCounterElement();
+    requestAnimationFrame(() => {
+      counterElement.classList.add("tc-live-counter-visible");
+    });
+    updateLiveCounter(0);
+  }
+  function hideLiveCounter() {
+    if (!counterElement) return;
+    counterElement.classList.remove("tc-live-counter-visible");
+  }
+  function updateLiveCounter(count) {
+    if (!counterElement) return;
+    counterElement.innerHTML = `\u5DF2\u53D1\u73B0\uFF1A<span>${count}</span>`;
+  }
+
+  // src/ui/components.js
+  function createCheckbox(id, label, isChecked) {
+    return `
+    <label class="checkbox-group" for="${id}">${label}
+      <input type="checkbox" id="${id}" ${isChecked ? "checked" : ""}>
+      <span class="checkmark"></span>
+    </label>
+  `;
+  }
 
   // src/ui/components/mainModal.js
   var modalOverlay = null;
@@ -638,21 +887,6 @@ ${result.join(",\n")}
       closeModal();
     }
   };
-  function showToast() {
-    const toast = document.createElement("div");
-    toast.className = "text-extractor-toast";
-    toast.textContent = "\u5DF2\u590D\u5236!";
-    document.body.appendChild(toast);
-    setTimeout(() => {
-      toast.style.opacity = "1";
-    }, 10);
-    setTimeout(() => {
-      toast.style.opacity = "0";
-      setTimeout(() => {
-        toast.remove();
-      }, 500);
-    }, 2e3);
-  }
   function createMainModal() {
     if (modalOverlay) return;
     modalOverlay = document.createElement("div");
@@ -679,7 +913,7 @@ ${result.join(",\n")}
     copyBtn.addEventListener("click", () => {
       const textToCopy = outputTextarea.value;
       GM_setClipboard(textToCopy, "text");
-      showToast();
+      showNotification("\u5DF2\u590D\u5236\u5230\u526A\u8D34\u677F", { type: "success" });
     });
   }
   function openModal() {
@@ -694,6 +928,7 @@ ${result.join(",\n")}
       const copyBtn = modalOverlay.querySelector(".text-extractor-copy-btn");
       updateModalContent(formattedText, false);
       copyBtn.disabled = false;
+      showNotification(`\u5FEB\u6377\u626B\u63CF\u5B8C\u6210\uFF0C\u53D1\u73B0 ${extractedTexts.length} \u6761\u6587\u672C`, { type: "success" });
     }, 50);
   }
   function closeModal() {
@@ -764,13 +999,21 @@ ${result.join(",\n")}
     }
     function handleDynamicExtractClick() {
       if (isSessionRecording()) {
-        stop();
+        const results = stop();
         dynamicFab.innerHTML = dynamicIcon;
+        dynamicFab.classList.remove("is-recording");
         dynamicFab.title = "\u5F00\u59CB\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD";
+        hideLiveCounter();
+        showNotification(`\u626B\u63CF\u7ED3\u675F\uFF0C\u5171\u53D1\u73B0 ${results.length} \u6761\u6587\u672C`, { type: "success" });
       } else {
-        start();
         dynamicFab.innerHTML = stopIcon;
+        dynamicFab.classList.add("is-recording");
         dynamicFab.title = "\u505C\u6B62\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD";
+        showNotification("\u4F1A\u8BDD\u626B\u63CF\u5DF2\u5F00\u59CB", { type: "info" });
+        showLiveCounter();
+        setTimeout(() => {
+          start(updateLiveCounter);
+        }, 50);
       }
     }
   }
@@ -799,16 +1042,6 @@ ${result.join(",\n")}
       applyTheme("system");
     }
   });
-
-  // src/ui/components.js
-  function createCheckbox(id, label, isChecked) {
-    return `
-    <label class="checkbox-group" for="${id}">${label}
-      <input type="checkbox" id="${id}" ${isChecked ? "checked" : ""}>
-      <span class="checkmark"></span>
-    </label>
-  `;
-  }
 
   // src/ui/settingsPanel.js
   var settingsPanel = null;

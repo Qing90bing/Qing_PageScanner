@@ -1,0 +1,95 @@
+/* src/assets/notification.css */
+
+.tc-notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 2147483647;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.tc-notification {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    border-radius: 8px;
+    background-color: var(--main-bg, #fff);
+    color: var(--main-text, #333);
+    box-shadow: 0 4px 12px var(--main-shadow, rgba(0, 0, 0, 0.15));
+    border: 1px solid var(--main-border, #eee);
+    width: 320px;
+    opacity: 0;
+    transform: translateX(100%);
+    animation: tc-notification-fade-in 0.5s forwards;
+    transition: box-shadow 0.3s;
+}
+
+.tc-notification:hover {
+    box-shadow: 0 6px 16px var(--main-shadow, rgba(0, 0, 0, 0.2));
+}
+
+.tc-notification-icon {
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.tc-notification-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+.tc-notification-info .tc-notification-icon {
+    color: #3498db;
+}
+
+.tc-notification-success .tc-notification-icon {
+    color: #2ecc71;
+}
+
+.tc-notification-content {
+    flex-grow: 1;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.tc-notification-close {
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.3s;
+    padding: 4px;
+}
+
+.tc-notification-close:hover {
+    opacity: 1;
+}
+
+.tc-notification-close svg {
+    width: 16px;
+    height: 16px;
+    stroke: var(--main-text, #333);
+}
+
+@keyframes tc-notification-fade-in {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.tc-notification-fade-out {
+    animation: tc-notification-fade-out 0.5s forwards;
+}
+
+@keyframes tc-notification-fade-out {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}

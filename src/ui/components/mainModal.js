@@ -6,6 +6,7 @@
  */
 
 import { extractAndProcessText, formatTextsForTranslation } from '../../core/processor.js';
+import { showNotification } from '../components.js';
 
 // --- 模块级变量 ---
 
@@ -24,24 +25,6 @@ const handleKeyDown = (event) => {
     closeModal();
   }
 };
-
-/**
- * @private
- * @description 显示一个“已复制”的提示消息。
- */
-function showToast() {
-  const toast = document.createElement('div');
-  toast.className = 'text-extractor-toast';
-  toast.textContent = '已复制!';
-  document.body.appendChild(toast);
-
-  // 动画效果
-  setTimeout(() => { toast.style.opacity = '1'; }, 10);
-  setTimeout(() => {
-    toast.style.opacity = '0';
-    setTimeout(() => { toast.remove(); }, 500);
-  }, 2000);
-}
 
 // --- 公开函数 ---
 
@@ -80,7 +63,8 @@ export function createMainModal() {
   copyBtn.addEventListener('click', () => {
     const textToCopy = outputTextarea.value;
     GM_setClipboard(textToCopy, 'text');
-    showToast();
+    // 使用新的通知系统
+    showNotification('已复制到剪贴板', { type: 'success' });
   });
 }
 
@@ -107,6 +91,9 @@ export function openModal() {
     updateModalContent(formattedText, false);
     // 关键修复：在更新内容后，无论如何都确保复制按钮是启用的
     copyBtn.disabled = false;
+
+    // 显示成功通知
+    showNotification(`快捷扫描完成，发现 ${extractedTexts.length} 条文本`, { type: 'success' });
   }, 50);
 }
 

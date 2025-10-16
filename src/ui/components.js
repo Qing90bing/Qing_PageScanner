@@ -22,3 +22,7 @@ export function createCheckbox(id, label, isChecked) {
     </label>
   `;
 }
+
+// 从新模块中导入
+export { showNotification } from './components/notification.js';
+export { showLiveCounter, hideLiveCounter, updateLiveCounter } from './components/liveCounter.js';

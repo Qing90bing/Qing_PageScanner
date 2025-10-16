@@ -1,0 +1,39 @@
+/* src/assets/styles/live-counter.css */
+
+.tc-live-counter {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translate(-50%, -150%); /* 初始位置在屏幕外上方 */
+    z-index: 2147483646; /* 比通知低一级 */
+    display: flex; /* 保持flex布局 */
+    align-items: center;
+    padding: 8px 16px;
+    border-radius: 20px; /* 圆角 */
+    background-color: rgba(0, 0, 0, 0.7); /* 半透明背景 */
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    box-shadow: 0 2px 8px var(--main-shadow, rgba(0, 0, 0, 0.2));
+    border: 1px solid var(--main-border, rgba(255, 255, 255, 0.2));
+    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.4s ease;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    opacity: 0; /* 默认不可见 */
+    pointer-events: none; /* 默认不可交互 */
+}
+
+.tc-live-counter.tc-live-counter-visible {
+    transform: translate(-50%, 0); /* 动画结束位置 */
+    opacity: 1; /* 变得可见 */
+    pointer-events: auto; /* 变得可交互 */
+}
+
+.tc-live-counter span {
+    min-width: 20px;
+    text-align: center;
+    margin-left: 8px;
+    padding: 2px 6px;
+    background-color: var(--main-overlay-bg, rgba(255, 255, 255, 0.2));
+    border-radius: 10px;
+}

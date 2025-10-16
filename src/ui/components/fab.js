@@ -13,6 +13,7 @@ import { summaryIcon } from '../../assets/summaryIcon.js';
 import * as sessionExtractor from '../../core/sessionExtractor.js';
 import { formatTextsForTranslation } from '../../core/processor.js';
 import { updateModalContent } from './mainModal.js';
+import { showNotification, showLiveCounter, hideLiveCounter, updateLiveCounter } from '../components.js';
 
 /**
  * @private
@@ -99,14 +100,29 @@ export function createFab(onStaticExtract) {
     function handleDynamicExtractClick() {
         if (sessionExtractor.isSessionRecording()) {
             // --- 正在录制 -> 点击停止 ---
-            sessionExtractor.stop();
+            const results = sessionExtractor.stop();
             dynamicFab.innerHTML = dynamicIcon;
+            dynamicFab.classList.remove('is-recording');
             dynamicFab.title = '开始动态扫描会话';
+
+            hideLiveCounter();
+            showNotification(`扫描结束，共发现 ${results.length} 条文本`, { type: 'success' });
+
         } else {
             // --- 未在录制 -> 点击开始 ---
-            sessionExtractor.start();
+            // 1. 立即更新UI，提供即时反馈
             dynamicFab.innerHTML = stopIcon;
+            dynamicFab.classList.add('is-recording');
             dynamicFab.title = '停止动态扫描会话';
+
+            showNotification('会话扫描已开始', { type: 'info' });
+            showLiveCounter(); // 这会显示初始的“0”
+
+            // 2. 将耗时的扫描任务放入异步队列，防止阻塞UI渲染
+            setTimeout(() => {
+                // 在开始录制时，传递一个回调函数用于更新计数器
+                sessionExtractor.start(updateLiveCounter);
+            }, 50); // 50ms的延迟足以让浏览器先完成UI的重绘
         }
     }
 }
