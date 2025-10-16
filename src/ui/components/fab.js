@@ -2,27 +2,111 @@
 
 /**
  * @module fab
- * @description 负责创建和管理悬浮操作按钮（Floating Action Button）。
+ * @description 负责创建和管理所有悬浮操作按钮。
  */
 
 import { translateIcon } from '../../assets/icon.js';
+import { dynamicIcon } from '../../assets/dynamicIcon.js';
+import { stopIcon } from '../../assets/stopIcon.js';
+import { summaryIcon } from '../../assets/summaryIcon.js';
+
+import * as sessionExtractor from '../../core/sessionExtractor.js';
+import { formatTextsForTranslation } from '../../core/processor.js';
+import { updateModalContent } from './mainModal.js';
 
 /**
- * @description 创建并初始化悬浮操作按钮。
- * @param {function} onClick - 当按钮被点击时要执行的回调函数。
- * @returns {HTMLElement} - 创建的 FAB 元素。
+ * @private
+ * @description 创建一个单独的悬浮按钮。
+ * @param {string} className - 按钮的 CSS 类名。
+ * @param {string} innerHTML - 按钮内部的 SVG 图标。
+ * @param {string} title - 鼠标悬停时显示的提示文本。
+ * @param {function} onClick - 点击事件的回调函数。
+ * @returns {HTMLElement} - 创建的按钮元素。
  */
-export function createFab(onClick) {
-  // 1. 创建按钮的 DOM 元素
-  const fab = document.createElement('div');
-  fab.className = 'text-extractor-fab';
-  fab.innerHTML = translateIcon; // 从 icon.js 导入 SVG 图标
+function createSingleFab(className, innerHTML, title, onClick) {
+    const fab = document.createElement('div');
+    fab.className = `text-extractor-fab ${className}`;
+    fab.innerHTML = innerHTML;
+    fab.title = title;
+    fab.addEventListener('click', onClick);
+    return fab;
+}
 
-  // 2. 绑定点击事件
-  fab.addEventListener('click', onClick);
+/**
+ * @description 创建并初始化所有悬浮操作按钮。
+ * @param {function} onStaticExtract - “静态提取”按钮的点击回调函数。
+ */
+export function createFab(onStaticExtract) {
+    // 创建一个容器来包裹所有的 FAB
+    const fabContainer = document.createElement('div');
+    fabContainer.className = 'text-extractor-fab-container';
 
-  // 3. 将按钮添加到页面中
-  document.body.appendChild(fab);
+    // --- 创建三个按钮 ---
 
-  return fab;
+    // 1. 总结按钮 (最上方)
+    const summaryFab = createSingleFab(
+        'fab-summary',
+        summaryIcon,
+        '查看会话总结',
+        handleSummaryClick
+    );
+
+    // 2. 动态扫描按钮 (中间)
+    const dynamicFab = createSingleFab(
+        'fab-dynamic',
+        dynamicIcon,
+        '开始动态扫描会话',
+        handleDynamicExtractClick
+    );
+
+    // 3. 静态扫描按钮 (最下方)
+    const staticFab = createSingleFab(
+        'fab-static',
+        translateIcon,
+        '快捷提取当前页面所有文本',
+        onStaticExtract
+    );
+
+    // --- 添加到页面 ---
+    fabContainer.appendChild(summaryFab);
+    fabContainer.appendChild(dynamicFab);
+    fabContainer.appendChild(staticFab);
+    document.body.appendChild(fabContainer);
+
+    // --- 事件处理逻辑 ---
+
+    /**
+     * @private
+     * @description 处理“查看总结”按钮的点击事件。
+     */
+    function handleSummaryClick() {
+        const results = sessionExtractor.getSessionTexts();
+        if (results.length === 0) {
+            // 如果没有文本，显示提示信息
+            const message = "当前没有总结文本。\n\n- 点击 [动态扫描] 按钮开始一个新会话，收集动态内容。\n- 点击 [静态扫描] 按钮可进行一次性的快捷提取。";
+            updateModalContent(message, true);
+        } else {
+            // 如果有文本，格式化并显示
+            const formattedText = formatTextsForTranslation(results);
+            updateModalContent(formattedText, true);
+        }
+    }
+
+    /**
+     * @private
+     * @description 处理“动态扫描”按钮的点击事件。
+     */
+    function handleDynamicExtractClick() {
+        if (sessionExtractor.isSessionRecording()) {
+            // --- 正在录制 -> 点击停止 ---
+            sessionExtractor.stop();
+            dynamicFab.innerHTML = dynamicIcon;
+            dynamicFab.title = '开始动态扫描会话';
+        } else {
+            // --- 未在录制 -> 点击开始 ---
+            sessionExtractor.start();
+            dynamicFab.innerHTML = stopIcon;
+            dynamicFab.title = '停止动态扫描会话';
+        }
+    }
 }

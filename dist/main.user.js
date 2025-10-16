@@ -94,30 +94,44 @@ body[data-theme='dark'] {
 /* --- From main-ui.css --- */
 /* src/assets/styles/main-ui.css */
 
-/* --- 悬浮操作按钮 (FAB) --- */
-.text-extractor-fab {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  width: 56px;
-  height: 56px;
-  background-color: var(--main-primary);
-  border-radius: 50%;
-  box-shadow: 0 4px 8px var(--main-shadow);
-  cursor: pointer;
-  z-index: 9999;
-  transition: background-color 0.3s;
-  /* position: relative; 作为 SVG 绝对定位的基准 (父元素 fixed 已经可以作为基准) */
+/* --- 悬浮操作按钮容器 --- */
+.text-extractor-fab-container {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    display: flex;
+    flex-direction: column; /* 垂直排列 */
+    align-items: center;
+    gap: 12px; /* 按钮之间的间距 */
+    z-index: 9999;
 }
-.text-extractor-fab:hover { background-color: var(--main-primary-hover); }
+
+/* --- 单个悬浮操作按钮 (FAB) --- */
+.text-extractor-fab {
+    position: relative; /* 为SVG定位提供基准 */
+    width: 56px;
+    height: 56px;
+    background-color: var(--main-primary);
+    border-radius: 50%;
+    box-shadow: 0 4px 8px var(--main-shadow);
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    color: var(--main-primary-text); /* SVG 图标将继承这个颜色 */
+}
+
+.text-extractor-fab:hover {
+    background-color: var(--main-primary-hover);
+    transform: scale(1.05);
+}
+
 .text-extractor-fab svg {
-  /* 采用绝对定位方案实现完美居中 */
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 26px; /* 保持图标尺寸 */
-  height: 26px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 26px;
+    height: 26px;
+    fill: currentColor; /* 关键：让 SVG 的 fill 颜色继承自父元素的 color 属性 */
 }
 
 /* --- 文本提取模态框 --- */
@@ -195,6 +209,11 @@ body[data-theme='dark'] {
   transition: background-color 0.3s;
 }
 .text-extractor-copy-btn:hover { background-color: var(--main-primary-hover); }
+
+.text-extractor-copy-btn:disabled {
+    background-color: var(--main-disabled);
+    cursor: not-allowed;
+}
 
 /* --- “已复制”提示消息 (Toast) --- */
 .text-extractor-toast {
@@ -341,15 +360,14 @@ body[data-theme='dark'] {
   // src/assets/icon.js
   var translateIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="m476-80 182-480h84L924-80h-84l-43-122H603L560-80h-84ZM160-200l-56-56 202-202q-35-35-63.5-80T190-640h84q20 39 40 68t48 58q33-33 68.5-92.5T484-720H40v-80h280v-80h80v80h280v80H564q-21 72-63 148t-83 116l96 98-30 82-122-125-202 201Zm468-72h144l-72-204-72 204Z"/></svg>`;
 
-  // src/ui/components/fab.js
-  function createFab(onClick) {
-    const fab = document.createElement("div");
-    fab.className = "text-extractor-fab";
-    fab.innerHTML = translateIcon;
-    fab.addEventListener("click", onClick);
-    document.body.appendChild(fab);
-    return fab;
-  }
+  // src/assets/dynamicIcon.js
+  var dynamicIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M200-766v572q-17-17-32-36t-28-39v-422q13-20 28-39t32-36Zm160-96v764q-21-7-41-15.5T280-133v-694q19-11 39-19.5t41-15.5Zm280 749v-734q106 47 173 145t67 222q0 124-67 222T640-113ZM480-80q-10 0-20-.5T440-82v-796q10-1 20-1.5t20-.5q20 0 40 2t40 6v784q-20 4-40 6t-40 2Z"/></svg>`;
+
+  // src/assets/stopIcon.js
+  var stopIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M280-280v-400h400v400H280Z"/></svg>`;
+
+  // src/assets/summaryIcon.js
+  var summaryIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M280-280h280v-80H280v80Zm0-160h400v-80H280v80Zm0-160h400v-80H280v80Zm-80 480q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/></svg>`;
 
   // src/core/settings.js
   var defaultSettings = {
@@ -492,7 +510,7 @@ body[data-theme='dark'] {
     const { filterRules } = settings;
     const { selectors } = config_default;
     const uniqueTexts = /* @__PURE__ */ new Set();
-    const processAndAddText = (rawText) => {
+    const processAndAddText2 = (rawText) => {
       if (!rawText) return;
       let text = rawText.replace(/(\r\n|\n|\r)+/g, "\n");
       if (text.trim() === "") {
@@ -507,7 +525,7 @@ body[data-theme='dark'] {
       if (filterRules.termFilter && ignoredTerms_default.includes(trimmedText)) return;
       uniqueTexts.add(text);
     };
-    processAndAddText(document.title);
+    processAndAddText2(document.title);
     const targetElements = document.querySelectorAll(selectors.join(", "));
     const ignoredSelectorString = ignoredSelectors_default.join(", ");
     targetElements.forEach((element) => {
@@ -521,7 +539,7 @@ body[data-theme='dark'] {
       attributesToExtract.forEach((attr) => {
         const attrValue = element.getAttribute(attr);
         if (attrValue) {
-          processAndAddText(attrValue);
+          processAndAddText2(attrValue);
         }
       });
       const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null);
@@ -534,7 +552,7 @@ body[data-theme='dark'] {
         if (parent && parent.closest(".text-extractor-fab, .text-extractor-modal-overlay, .settings-panel-overlay")) {
           continue;
         }
-        processAndAddText(node.nodeValue);
+        processAndAddText2(node.nodeValue);
       }
     });
     return Array.from(uniqueTexts);
@@ -553,6 +571,64 @@ body[data-theme='dark'] {
 ${result.join(",\n")}
 ]`;
   };
+
+  // src/core/sessionExtractor.js
+  var isRecording = false;
+  var sessionTexts = /* @__PURE__ */ new Set();
+  var observer = null;
+  var numberAndCurrencyRegex2 = /^[$\€\£\¥\d,.\s]+$/;
+  var pureChineseRegex2 = /^[\u4e00-\u9fa5\s]+$/u;
+  var containsChineseRegex2 = /[\u4e00-\u9fa5]/u;
+  var emojiOnlyRegex2 = /^[\p{Emoji}\s]+$/u;
+  var containsLetterOrNumberRegex2 = /[\p{L}\p{N}]/u;
+  function processAndAddText(rawText, textSet, filterRules) {
+    if (!rawText || typeof rawText !== "string") return;
+    let text = rawText.replace(/(\r\n|\n|\r)+/g, "\n").trim();
+    if (text === "") return;
+    if (filterRules.numbers && numberAndCurrencyRegex2.test(text)) return;
+    if (filterRules.chinese && pureChineseRegex2.test(text)) return;
+    if (filterRules.containsChinese && containsChineseRegex2.test(text)) return;
+    if (filterRules.emojiOnly && emojiOnlyRegex2.test(text)) return;
+    if (filterRules.symbols && !containsLetterOrNumberRegex2.test(text)) return;
+    if (filterRules.termFilter && ignoredTerms_default.includes(text)) return;
+    textSet.add(rawText.replace(/(\r\n|\n|\r)+/g, "\n"));
+  }
+  var handleMutations = (mutations) => {
+    const { filterRules } = loadSettings();
+    const ignoredSelectorString = ignoredSelectors_default.join(", ");
+    mutations.forEach((mutation) => {
+      mutation.addedNodes.forEach((node) => {
+        if (node.nodeType !== Node.ELEMENT_NODE) return;
+        if (node.closest(ignoredSelectorString)) return;
+        const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
+        while (walker.nextNode()) {
+          processAndAddText(walker.currentNode.nodeValue, sessionTexts, filterRules);
+        }
+      });
+    });
+  };
+  var start = () => {
+    if (isRecording) return;
+    console.log("\u5F00\u59CB\u65B0\u7684\u63D0\u53D6\u4F1A\u8BDD...");
+    isRecording = true;
+    sessionTexts.clear();
+    const initialTexts = extractAndProcessText();
+    initialTexts.forEach((text) => sessionTexts.add(text));
+    console.log(`\u4F1A\u8BDD\u521D\u59CB\u6355\u83B7\u5230 ${initialTexts.length} \u6761\u6587\u672C\u3002`);
+    observer = new MutationObserver(handleMutations);
+    observer.observe(document.body, { childList: true, subtree: true });
+  };
+  var stop = () => {
+    if (!isRecording) return;
+    console.log("\u505C\u6B62\u63D0\u53D6\u4F1A\u8BDD\u3002");
+    if (observer) {
+      observer.disconnect();
+      observer = null;
+    }
+    isRecording = false;
+  };
+  var isSessionRecording = () => isRecording;
+  var getSessionTexts = () => Array.from(sessionTexts);
 
   // src/ui/components/mainModal.js
   var modalOverlay = null;
@@ -611,19 +687,91 @@ ${result.join(",\n")}
       console.error("\u6A21\u6001\u6846\u5C1A\u672A\u521D\u59CB\u5316\u3002");
       return;
     }
-    outputTextarea.value = "\u6587\u672C\u63D0\u53D6\u4E2D...";
-    modalOverlay.style.display = "flex";
-    document.addEventListener("keydown", handleKeyDown);
+    updateModalContent("\u6587\u672C\u63D0\u53D6\u4E2D...", true);
     setTimeout(() => {
       const extractedTexts = extractAndProcessText();
       const formattedText = formatTextsForTranslation(extractedTexts);
-      outputTextarea.value = formattedText;
+      const copyBtn = modalOverlay.querySelector(".text-extractor-copy-btn");
+      updateModalContent(formattedText, false);
+      copyBtn.disabled = false;
     }, 50);
   }
   function closeModal() {
     if (modalOverlay) {
       modalOverlay.style.display = "none";
       document.removeEventListener("keydown", handleKeyDown);
+    }
+  }
+  function updateModalContent(content, shouldOpen = false) {
+    if (!modalOverlay) {
+      console.error("\u6A21\u6001\u6846\u5C1A\u672A\u521D\u59CB\u5316\u3002");
+      return;
+    }
+    const copyBtn = modalOverlay.querySelector(".text-extractor-copy-btn");
+    const isData = content.trim().startsWith("[");
+    outputTextarea.value = content;
+    copyBtn.disabled = !isData;
+    outputTextarea.readOnly = !isData;
+    if (shouldOpen) {
+      modalOverlay.style.display = "flex";
+      document.addEventListener("keydown", handleKeyDown);
+    }
+  }
+
+  // src/ui/components/fab.js
+  function createSingleFab(className, innerHTML, title, onClick) {
+    const fab = document.createElement("div");
+    fab.className = `text-extractor-fab ${className}`;
+    fab.innerHTML = innerHTML;
+    fab.title = title;
+    fab.addEventListener("click", onClick);
+    return fab;
+  }
+  function createFab(onStaticExtract) {
+    const fabContainer = document.createElement("div");
+    fabContainer.className = "text-extractor-fab-container";
+    const summaryFab = createSingleFab(
+      "fab-summary",
+      summaryIcon,
+      "\u67E5\u770B\u4F1A\u8BDD\u603B\u7ED3",
+      handleSummaryClick
+    );
+    const dynamicFab = createSingleFab(
+      "fab-dynamic",
+      dynamicIcon,
+      "\u5F00\u59CB\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD",
+      handleDynamicExtractClick
+    );
+    const staticFab = createSingleFab(
+      "fab-static",
+      translateIcon,
+      "\u5FEB\u6377\u63D0\u53D6\u5F53\u524D\u9875\u9762\u6240\u6709\u6587\u672C",
+      onStaticExtract
+    );
+    fabContainer.appendChild(summaryFab);
+    fabContainer.appendChild(dynamicFab);
+    fabContainer.appendChild(staticFab);
+    document.body.appendChild(fabContainer);
+    function handleSummaryClick() {
+      const results = getSessionTexts();
+      if (results.length === 0) {
+        const message = "\u5F53\u524D\u6CA1\u6709\u603B\u7ED3\u6587\u672C\u3002\n\n- \u70B9\u51FB [\u52A8\u6001\u626B\u63CF] \u6309\u94AE\u5F00\u59CB\u4E00\u4E2A\u65B0\u4F1A\u8BDD\uFF0C\u6536\u96C6\u52A8\u6001\u5185\u5BB9\u3002\n- \u70B9\u51FB [\u9759\u6001\u626B\u63CF] \u6309\u94AE\u53EF\u8FDB\u884C\u4E00\u6B21\u6027\u7684\u5FEB\u6377\u63D0\u53D6\u3002";
+        updateModalContent(message, true);
+      } else {
+        const formattedText = formatTextsForTranslation(results);
+        updateModalContent(formattedText, true);
+      }
+    }
+    function handleDynamicExtractClick() {
+      if (isSessionRecording()) {
+        stop();
+        dynamicFab.innerHTML = dynamicIcon;
+        dynamicFab.title = "\u5F00\u59CB\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD";
+      } else {
+        start();
+        dynamicFab.innerHTML = stopIcon;
+        dynamicFab.title = "\u505C\u6B62\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD";
+      }
     }
   }
 

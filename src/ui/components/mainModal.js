@@ -94,15 +94,19 @@ export function openModal() {
     return;
   }
 
-  outputTextarea.value = '文本提取中...';
-  modalOverlay.style.display = 'flex';
-  document.addEventListener('keydown', handleKeyDown);
+  // 先显示“提取中”的提示，并打开模态框
+  updateModalContent('文本提取中...', true);
 
   // 异步提取文本，避免 UI 阻塞
   setTimeout(() => {
     const extractedTexts = extractAndProcessText();
     const formattedText = formatTextsForTranslation(extractedTexts);
-    outputTextarea.value = formattedText;
+    const copyBtn = modalOverlay.querySelector('.text-extractor-copy-btn');
+
+    // 提取完成后，再次调用 updateModalContent 更新最终内容
+    updateModalContent(formattedText, false);
+    // 关键修复：在更新内容后，无论如何都确保复制按钮是启用的
+    copyBtn.disabled = false;
   }, 50);
 }
 
@@ -115,4 +119,31 @@ export function closeModal() {
     modalOverlay.style.display = 'none';
     document.removeEventListener('keydown', handleKeyDown);
   }
+}
+
+/**
+ * @public
+ * @description 更新模态框中的文本内容，并可选择是否打开它。
+ * @param {string} content - 要显示在文本区域的新内容。
+ * @param {boolean} [shouldOpen=false] - 是否在更新后打开模态框。
+ */
+export function updateModalContent(content, shouldOpen = false) {
+    if (!modalOverlay) {
+        console.error("模态框尚未初始化。");
+        return;
+    }
+
+    const copyBtn = modalOverlay.querySelector('.text-extractor-copy-btn');
+
+    // 检查内容是否为我们的格式化数据
+    const isData = content.trim().startsWith('[');
+
+    outputTextarea.value = content;
+    copyBtn.disabled = !isData; // 如果不是数据，则禁用复制按钮
+    outputTextarea.readOnly = !isData; // 如果是提示信息，则设为只读
+
+    if (shouldOpen) {
+        modalOverlay.style.display = 'flex';
+        document.addEventListener('keydown', handleKeyDown);
+    }
 }

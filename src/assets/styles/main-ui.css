@@ -1,29 +1,43 @@
 /* src/assets/styles/main-ui.css */
 
-/* --- 悬浮操作按钮 (FAB) --- */
-.text-extractor-fab {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  width: 56px;
-  height: 56px;
-  background-color: var(--main-primary);
-  border-radius: 50%;
-  box-shadow: 0 4px 8px var(--main-shadow);
-  cursor: pointer;
-  z-index: 9999;
-  transition: background-color 0.3s;
-  /* position: relative; 作为 SVG 绝对定位的基准 (父元素 fixed 已经可以作为基准) */
+/* --- 悬浮操作按钮容器 --- */
+.text-extractor-fab-container {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    display: flex;
+    flex-direction: column; /* 垂直排列 */
+    align-items: center;
+    gap: 12px; /* 按钮之间的间距 */
+    z-index: 9999;
 }
-.text-extractor-fab:hover { background-color: var(--main-primary-hover); }
+
+/* --- 单个悬浮操作按钮 (FAB) --- */
+.text-extractor-fab {
+    position: relative; /* 为SVG定位提供基准 */
+    width: 56px;
+    height: 56px;
+    background-color: var(--main-primary);
+    border-radius: 50%;
+    box-shadow: 0 4px 8px var(--main-shadow);
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    color: var(--main-primary-text); /* SVG 图标将继承这个颜色 */
+}
+
+.text-extractor-fab:hover {
+    background-color: var(--main-primary-hover);
+    transform: scale(1.05);
+}
+
 .text-extractor-fab svg {
-  /* 采用绝对定位方案实现完美居中 */
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 26px; /* 保持图标尺寸 */
-  height: 26px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 26px;
+    height: 26px;
+    fill: currentColor; /* 关键：让 SVG 的 fill 颜色继承自父元素的 color 属性 */
 }
 
 /* --- 文本提取模态框 --- */
@@ -101,6 +115,11 @@
   transition: background-color 0.3s;
 }
 .text-extractor-copy-btn:hover { background-color: var(--main-primary-hover); }
+
+.text-extractor-copy-btn:disabled {
+    background-color: var(--main-disabled);
+    cursor: not-allowed;
+}
 
 /* --- “已复制”提示消息 (Toast) --- */
 .text-extractor-toast {
