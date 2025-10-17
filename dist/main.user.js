@@ -91,6 +91,93 @@ body[data-theme='dark'] {
 }
 
 
+/* --- From custom-select.css --- */
+/* src/assets/styles/custom-select.css */
+
+.custom-select-container {
+  position: relative;
+  width: 100%;
+  user-select: none;
+}
+
+.custom-select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border: 1px solid var(--main-textarea-border);
+  border-radius: 8px;
+  background-color: var(--main-textarea-bg);
+  color: var(--main-text);
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.custom-select-trigger:hover {
+  border-color: var(--main-primary);
+  box-shadow: 0 0 0 2px rgba(30, 144, 255, 0.1);
+}
+
+.custom-select-container.open .custom-select-trigger {
+  border-color: var(--main-primary);
+  box-shadow: 0 0 0 2px rgba(30, 144, 255, 0.2);
+}
+
+.custom-select-arrow {
+  transition: transform 0.3s ease;
+}
+
+.custom-select-container.open .custom-select-arrow {
+  transform: rotate(180deg);
+}
+
+.custom-select-options {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background-color: var(--main-bg);
+  border: 1px solid var(--main-border);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px var(--main-shadow);
+  z-index: 10003; /* 比设置面板高一级 */
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.3s ease-out, opacity 0.2s ease-out;
+  visibility: hidden;
+}
+
+.custom-select-container.open .custom-select-options {
+  visibility: visible;
+  opacity: 1;
+  max-height: 200px; /* 或者一个足够大的值 */
+}
+
+.custom-select-option {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  gap: 8px;
+}
+
+.custom-select-option:hover {
+  background-color: var(--main-border);
+}
+
+.custom-select-option.selected {
+  font-weight: 600;
+  color: var(--main-primary);
+}
+
+.custom-select-option .option-icon {
+    display: flex;
+    align-items: center;
+}
+
 /* --- From forms.css --- */
 /* src/assets/styles/forms.css */
 
@@ -590,7 +677,7 @@ body[data-theme='dark'] {
   var stopIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M280-280v-400h400v400H280Z"/></svg>`;
 
   // src/assets/summaryIcon.js
-  var summaryIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M280-280h280v-80H280v80Zm0-160h400v-80H280v80Zm0-160h400v-80H280v80Zm-80 480q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/></svg>`;
+  var summaryIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M280-280h280v-80H280v80Zm0-160h400v-80H280v80Zm0-160h400v-80H280v80Zm-80 480q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/></svg>`;
 
   // src/core/settings.js
   var defaultSettings = {
@@ -954,6 +1041,25 @@ ${result.join(",\n")}
   `;
   }
 
+  // src/ui/components/iconTitle.js
+  function createIconTitle(iconSVG, text) {
+    const container = document.createElement("div");
+    container.style.display = "flex";
+    container.style.alignItems = "center";
+    container.style.gap = "8px";
+    const iconWrapper = document.createElement("span");
+    iconWrapper.innerHTML = iconSVG;
+    iconWrapper.style.display = "flex";
+    iconWrapper.style.alignItems = "center";
+    const textNode = document.createTextNode(text);
+    container.appendChild(iconWrapper);
+    container.appendChild(textNode);
+    return container;
+  }
+
+  // src/assets/copyIcon.js
+  var copyIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M120-220v-80h80v80h-80Zm0-140v-80h80v80h-80Zm0-140v-80h80v80h-80ZM260-80v-80h80v80h-80Zm100-160q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480Zm40 240v-80h80v80h-80Zm-200 0q-33 0-56.5-23.5T120-160h80v80Zm340 0v-80h80q0 33-23.5 56.5T540-80ZM120-640q0-33 23.5-56.5T200-720v80h-80Zm420 80Z"/></svg>`;
+
   // src/ui/components/mainModal.js
   var modalOverlay = null;
   var outputTextarea = null;
@@ -969,7 +1075,7 @@ ${result.join(",\n")}
     modalOverlay.innerHTML = `
     <div class="text-extractor-modal">
       <div class="text-extractor-modal-header">
-        <span>\u63D0\u53D6\u7684\u6587\u672C</span>
+        <div id="main-modal-title-container"></div>
         <span class="tc-close-button text-extractor-modal-close">
           <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
         </span>
@@ -983,9 +1089,15 @@ ${result.join(",\n")}
     </div>
   `;
     document.body.appendChild(modalOverlay);
+    const titleContainer = document.getElementById("main-modal-title-container");
+    const titleElement = createIconTitle(summaryIcon, "\u63D0\u53D6\u7684\u6587\u672C");
+    titleContainer.appendChild(titleElement);
     outputTextarea = document.getElementById("text-extractor-output");
     const closeBtn = modalOverlay.querySelector(".text-extractor-modal-close");
     const copyBtn = modalOverlay.querySelector(".text-extractor-copy-btn");
+    copyBtn.innerHTML = "";
+    const copyBtnContent = createIconTitle(copyIcon, "\u590D\u5236");
+    copyBtn.appendChild(copyBtnContent);
     closeBtn.addEventListener("click", closeModal);
     copyBtn.addEventListener("click", () => {
       const textToCopy = outputTextarea.value;
@@ -1123,8 +1235,158 @@ ${result.join(",\n")}
     }
   });
 
+  // src/assets/settingsIcon.js
+  var settingsIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z"/></svg>`;
+
+  // src/assets/themeIcon.js
+  var themeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 32.5-156t88-127Q256-817 330-848.5T488-880q80 0 151 27.5t124.5 76q53.5 48.5 85 115T880-518q0 115-70 176.5T640-280h-74q-9 0-12.5 5t-3.5 11q0 12 15 34.5t15 51.5q0 50-27.5 74T480-80Zm0-400Zm-220 40q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120-160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm200 0q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120 160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17ZM480-160q9 0 14.5-5t5.5-13q0-14-15-33t-15-57q0-42 29-67t71-25h70q66 0 113-38.5T800-518q0-121-92.5-201.5T488-800q-136 0-232 93t-96 227q0 133 93.5 226.5T480-160Z"/></svg>`;
+
+  // src/assets/filterIcon.js
+  var filterIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M440-160q-17 0-28.5-11.5T400-200v-240L168-736q-15-20-4.5-42t36.5-22h560q26 0 36.5 22t-4.5 42L560-440v240q0 17-11.5 28.5T520-160h-80Zm40-308 198-252H282l198 252Zm0 0Z"/></svg>`;
+
+  // src/assets/saveIcon.js
+  var saveIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z"/></svg>`;
+
+  // src/ui/components/customSelect.js
+  var CustomSelect = class {
+    /**
+     * @param {HTMLElement} parentElement - 组件将被附加到的父容器。
+     * @param {Array<Object>} options - 选项数组，每个对象包含 { value, label, icon }。
+     * @param {string} initialValue - 初始选中的值。
+     */
+    constructor(parentElement, options, initialValue) {
+      this.parentElement = parentElement;
+      this.options = options;
+      this.currentValue = initialValue;
+      this.isOpen = false;
+      this.render();
+      this.bindEvents();
+    }
+    /**
+     * @private
+     * @description 渲染组件的 HTML 结构。
+     */
+    render() {
+      this.container = document.createElement("div");
+      this.container.className = "custom-select-container";
+      const initialOption = this.options.find((opt) => opt.value === this.currentValue);
+      this.container.innerHTML = `
+            <div class="custom-select-trigger">
+                <div class="selected-option-content"></div>
+                <div class="custom-select-arrow">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg>
+                </div>
+            </div>
+            <div class="custom-select-options"></div>
+        `;
+      this.parentElement.appendChild(this.container);
+      this.trigger = this.container.querySelector(".custom-select-trigger");
+      this.optionsContainer = this.container.querySelector(".custom-select-options");
+      this.selectedContent = this.container.querySelector(".selected-option-content");
+      this.populateOptions();
+      this.updateSelectedContent(initialOption);
+    }
+    /**
+     * @private
+     * @description 填充选项列表。
+     */
+    populateOptions() {
+      this.options.forEach((option) => {
+        const optionEl = document.createElement("div");
+        optionEl.className = "custom-select-option";
+        optionEl.dataset.value = option.value;
+        if (option.value === this.currentValue) {
+          optionEl.classList.add("selected");
+        }
+        const optionContent = createIconTitle(option.icon, option.label);
+        optionEl.appendChild(optionContent);
+        this.optionsContainer.appendChild(optionEl);
+      });
+    }
+    /**
+     * @private
+     * @description 更新触发器区域显示的内容。
+     * @param {Object} option - 被选中的选项对象。
+     */
+    updateSelectedContent(option) {
+      const content = createIconTitle(option.icon, option.label);
+      this.selectedContent.innerHTML = "";
+      this.selectedContent.appendChild(content);
+    }
+    /**
+     * @private
+     * @description 绑定所有必要的事件监听器。
+     */
+    bindEvents() {
+      this.trigger.addEventListener("click", () => this.toggle());
+      this.optionsContainer.addEventListener("click", (e) => {
+        const optionEl = e.target.closest(".custom-select-option");
+        if (optionEl) {
+          this.select(optionEl.dataset.value);
+        }
+      });
+      document.addEventListener("click", (e) => {
+        if (!this.container.contains(e.target)) {
+          this.close();
+        }
+      });
+    }
+    /**
+     * @public
+     * @description 切换下拉菜单的打开/关闭状态。
+     */
+    toggle() {
+      this.isOpen = !this.isOpen;
+      this.container.classList.toggle("open", this.isOpen);
+    }
+    /**
+     * @public
+     * @description 关闭下拉菜单。
+     */
+    close() {
+      if (this.isOpen) {
+        this.isOpen = false;
+        this.container.classList.remove("open");
+      }
+    }
+    /**
+     * @public
+     * @description 选择一个选项。
+     * @param {string} value - 要选择的选项的 value。
+     */
+    select(value) {
+      if (value === this.currentValue) {
+        this.close();
+        return;
+      }
+      this.currentValue = value;
+      const selectedOption = this.options.find((opt) => opt.value === value);
+      this.updateSelectedContent(selectedOption);
+      this.optionsContainer.querySelector(".custom-select-option.selected")?.classList.remove("selected");
+      this.optionsContainer.querySelector(`[data-value="${value}"]`).classList.add("selected");
+      this.close();
+    }
+    /**
+     * @public
+     * @returns {string} - 返回当前选中的值。
+     */
+    getValue() {
+      return this.currentValue;
+    }
+  };
+
+  // src/assets/systemThemeIcon.js
+  var systemThemeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M320-120v-80h80v-80H160q-33 0-56.5-23.5T80-360v-400q0-33 23.5-56.5T160-840h640q33 0 56.5 23.5T880-760v400q0 33-23.5 56.5T800-280H560v80h80v80H320ZM160-360h640v-400H160v400Zm0 0v-400 400Z"/></svg>`;
+
+  // src/assets/lightThemeIcon.js
+  var lightThemeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm0 80q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Zm326-268Z"/></svg>`;
+
+  // src/assets/darkThemeIcon.js
+  var darkThemeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Zm0-80q88 0 158-48.5T740-375q-20 5-40 8t-40 3q-123 0-209.5-86.5T364-660q0-20 3-40t8-40q-78 32-126.5 102T200-480q0 116 82 198t198 82Zm-10-270Z"/></svg>`;
+
   // src/ui/settingsPanel.js
   var settingsPanel = null;
+  var themeSelectComponent = null;
   var filterDefinitions = [
     { id: "filter-numbers", key: "numbers", label: "\u8FC7\u6EE4\u7EAF\u6570\u5B57/\u8D27\u5E01" },
     { id: "filter-chinese", key: "chinese", label: "\u8FC7\u6EE4\u7EAF\u4E2D\u6587" },
@@ -1138,22 +1400,18 @@ ${result.join(",\n")}
     return `
     <div class="settings-panel-modal">
       <div class="settings-panel-header">
-        <h2>\u811A\u672C\u8BBE\u7F6E</h2>
+        <div id="settings-panel-title-container"></div>
         <span class="tc-close-button settings-panel-close">
             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
         </span>
       </div>
       <div class="settings-panel-content">
         <div class="setting-item">
-          <label for="theme-select">\u754C\u9762\u4E3B\u9898</label>
-          <select id="theme-select" class="tc-select">
-            <option value="system" ${settings.theme === "system" ? "selected" : ""}>\u8DDF\u968F\u7CFB\u7EDF</option>
-            <option value="light" ${settings.theme === "light" ? "selected" : ""}>\u6D45\u8272\u6A21\u5F0F</option>
-            <option value="dark" ${settings.theme === "dark" ? "selected" : ""}>\u6DF1\u8272\u6A21\u5F0F</option>
-          </select>
+          <div id="theme-setting-title-container"></div>
+          <div id="custom-select-wrapper"></div>
         </div>
         <div class="setting-item">
-          <label>\u5185\u5BB9\u8FC7\u6EE4\u89C4\u5219</label>
+          <div id="filter-setting-title-container"></div>
           ${filterCheckboxesHTML}
         </div>
       </div>
@@ -1178,8 +1436,30 @@ ${result.join(",\n")}
     settingsPanel.className = "settings-panel-overlay";
     settingsPanel.innerHTML = getPanelHTML(currentSettings);
     document.body.appendChild(settingsPanel);
+    const titleContainer = document.getElementById("settings-panel-title-container");
+    const titleElement = createIconTitle(settingsIcon, "\u811A\u672C\u8BBE\u7F6E");
+    titleContainer.appendChild(titleElement);
+    const themeTitleContainer = document.getElementById("theme-setting-title-container");
+    const themeTitleElement = createIconTitle(themeIcon, "\u754C\u9762\u4E3B\u9898");
+    themeTitleContainer.appendChild(themeTitleElement);
+    themeTitleContainer.style.marginBottom = "8px";
+    const filterTitleContainer = document.getElementById("filter-setting-title-container");
+    const filterTitleElement = createIconTitle(filterIcon, "\u5185\u5BB9\u8FC7\u6EE4\u89C4\u5219");
+    filterTitleContainer.appendChild(filterTitleElement);
+    filterTitleContainer.style.marginBottom = "8px";
+    const selectWrapper = document.getElementById("custom-select-wrapper");
+    const themeOptions = [
+      { value: "system", label: "\u8DDF\u968F\u7CFB\u7EDF", icon: systemThemeIcon },
+      { value: "light", label: "\u6D45\u8272\u6A21\u5F0F", icon: lightThemeIcon },
+      { value: "dark", label: "\u6DF1\u8272\u6A21\u5F0F", icon: darkThemeIcon }
+    ];
+    themeSelectComponent = new CustomSelect(selectWrapper, themeOptions, currentSettings.theme);
+    const saveBtn = settingsPanel.querySelector("#save-settings-btn");
+    saveBtn.innerHTML = "";
+    const saveBtnContent = createIconTitle(saveIcon, "\u4FDD\u5B58\u5E76\u5E94\u7528");
+    saveBtn.appendChild(saveBtnContent);
     settingsPanel.querySelector(".settings-panel-close").addEventListener("click", hideSettingsPanel);
-    settingsPanel.querySelector("#save-settings-btn").addEventListener("click", handleSave);
+    saveBtn.addEventListener("click", handleSave);
     document.addEventListener("keydown", handleKeyDown2);
   }
   function hideSettingsPanel() {
@@ -1190,7 +1470,7 @@ ${result.join(",\n")}
     }
   }
   function handleSave() {
-    const newTheme = document.getElementById("theme-select").value;
+    const newTheme = themeSelectComponent.getValue();
     const newFilterRules = {};
     filterDefinitions.forEach((filter) => {
       const checkbox = document.getElementById(filter.id);

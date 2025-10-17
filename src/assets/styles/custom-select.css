@@ -1,0 +1,85 @@
+/* src/assets/styles/custom-select.css */
+
+.custom-select-container {
+  position: relative;
+  width: 100%;
+  user-select: none;
+}
+
+.custom-select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border: 1px solid var(--main-textarea-border);
+  border-radius: 8px;
+  background-color: var(--main-textarea-bg);
+  color: var(--main-text);
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.custom-select-trigger:hover {
+  border-color: var(--main-primary);
+  box-shadow: 0 0 0 2px rgba(30, 144, 255, 0.1);
+}
+
+.custom-select-container.open .custom-select-trigger {
+  border-color: var(--main-primary);
+  box-shadow: 0 0 0 2px rgba(30, 144, 255, 0.2);
+}
+
+.custom-select-arrow {
+  transition: transform 0.3s ease;
+}
+
+.custom-select-container.open .custom-select-arrow {
+  transform: rotate(180deg);
+}
+
+.custom-select-options {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background-color: var(--main-bg);
+  border: 1px solid var(--main-border);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px var(--main-shadow);
+  z-index: 10003; /* 比设置面板高一级 */
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.3s ease-out, opacity 0.2s ease-out;
+  visibility: hidden;
+}
+
+.custom-select-container.open .custom-select-options {
+  visibility: visible;
+  opacity: 1;
+  max-height: 200px; /* 或者一个足够大的值 */
+}
+
+.custom-select-option {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  gap: 8px;
+}
+
+.custom-select-option:hover {
+  background-color: var(--main-border);
+}
+
+.custom-select-option.selected {
+  font-weight: 600;
+  color: var(--main-primary);
+}
+
+.custom-select-option .option-icon {
+    display: flex;
+    align-items: center;
+}

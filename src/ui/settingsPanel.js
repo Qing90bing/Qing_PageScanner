@@ -8,6 +8,15 @@
 import { loadSettings, saveSettings } from '../core/settings';
 import { applyTheme } from './theme';
 import { createCheckbox } from './components';
+import { createIconTitle } from './components/iconTitle.js';
+import { settingsIcon } from '../assets/settingsIcon.js';
+import { themeIcon } from '../assets/themeIcon.js';
+import { filterIcon } from '../assets/filterIcon.js';
+import { saveIcon } from '../assets/saveIcon.js';
+import { CustomSelect } from './components/customSelect.js';
+import { systemThemeIcon } from '../assets/systemThemeIcon.js';
+import { lightThemeIcon } from '../assets/lightThemeIcon.js';
+import { darkThemeIcon } from '../assets/darkThemeIcon.js';
 
 // --- 模块级变量 ---
 
@@ -18,6 +27,7 @@ import { createCheckbox } from './components';
  * 当面板关闭时，此变量会被重置为 null。
  */
 let settingsPanel = null;
+let themeSelectComponent = null;
 
 /**
  * @private
@@ -55,22 +65,18 @@ function getPanelHTML(settings) {
   return `
     <div class="settings-panel-modal">
       <div class="settings-panel-header">
-        <h2>脚本设置</h2>
+        <div id="settings-panel-title-container"></div>
         <span class="tc-close-button settings-panel-close">
             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
         </span>
       </div>
       <div class="settings-panel-content">
         <div class="setting-item">
-          <label for="theme-select">界面主题</label>
-          <select id="theme-select" class="tc-select">
-            <option value="system" ${settings.theme === 'system' ? 'selected' : ''}>跟随系统</option>
-            <option value="light" ${settings.theme === 'light' ? 'selected' : ''}>浅色模式</option>
-            <option value="dark" ${settings.theme === 'dark' ? 'selected' : ''}>深色模式</option>
-          </select>
+          <div id="theme-setting-title-container"></div>
+          <div id="custom-select-wrapper"></div>
         </div>
         <div class="setting-item">
-          <label>内容过滤规则</label>
+          <div id="filter-setting-title-container"></div>
           ${filterCheckboxesHTML}
         </div>
       </div>
@@ -112,9 +118,40 @@ function showSettingsPanel() {
   settingsPanel.innerHTML = getPanelHTML(currentSettings);
   document.body.appendChild(settingsPanel);
 
+  // 创建并插入标题
+  const titleContainer = document.getElementById('settings-panel-title-container');
+  const titleElement = createIconTitle(settingsIcon, '脚本设置');
+  titleContainer.appendChild(titleElement);
+
+  // 创建并插入“界面主题”标题
+  const themeTitleContainer = document.getElementById('theme-setting-title-container');
+  const themeTitleElement = createIconTitle(themeIcon, '界面主题');
+  themeTitleContainer.appendChild(themeTitleElement);
+  themeTitleContainer.style.marginBottom = '8px'; // 添加一些间距
+
+  // 创建并插入“内容过滤规则”标题
+  const filterTitleContainer = document.getElementById('filter-setting-title-container');
+  const filterTitleElement = createIconTitle(filterIcon, '内容过滤规则');
+  filterTitleContainer.appendChild(filterTitleElement);
+  filterTitleContainer.style.marginBottom = '8px'; // 添加一些间距
+
+  // 实例化自定义下拉菜单
+  const selectWrapper = document.getElementById('custom-select-wrapper');
+  const themeOptions = [
+    { value: 'system', label: '跟随系统', icon: systemThemeIcon },
+    { value: 'light', label: '浅色模式', icon: lightThemeIcon },
+    { value: 'dark', label: '深色模式', icon: darkThemeIcon }
+  ];
+  themeSelectComponent = new CustomSelect(selectWrapper, themeOptions, currentSettings.theme);
+
   // 2. 绑定事件监听器
+  const saveBtn = settingsPanel.querySelector('#save-settings-btn');
+  saveBtn.innerHTML = ''; // 清空原始内容
+  const saveBtnContent = createIconTitle(saveIcon, '保存并应用');
+  saveBtn.appendChild(saveBtnContent);
+
   settingsPanel.querySelector('.settings-panel-close').addEventListener('click', hideSettingsPanel);
-  settingsPanel.querySelector('#save-settings-btn').addEventListener('click', handleSave);
+  saveBtn.addEventListener('click', handleSave);
   document.addEventListener('keydown', handleKeyDown);
 }
 
@@ -139,8 +176,8 @@ function hideSettingsPanel() {
  * 它会从 UI 元素中收集当前的设置值，保存它们，应用新主题，并关闭面板。
  */
 function handleSave() {
-  // 1. 从 DOM 元素中获取用户选择的新设置
-  const newTheme = document.getElementById('theme-select').value;
+  // 1. 从组件和 DOM 元素中获取用户选择的新设置
+  const newTheme = themeSelectComponent.getValue();
 
   // 使用 filterDefinitions 动态构建 filterRules 对象
   const newFilterRules = {};

@@ -7,6 +7,9 @@
 
 import { extractAndProcessText, formatTextsForTranslation } from '../../core/processor.js';
 import { showNotification } from '../components.js';
+import { createIconTitle } from './iconTitle.js';
+import { summaryIcon } from '../../assets/summaryIcon.js';
+import { copyIcon } from '../../assets/copyIcon.js';
 
 // --- 模块级变量 ---
 
@@ -40,7 +43,7 @@ export function createMainModal() {
   modalOverlay.innerHTML = `
     <div class="text-extractor-modal">
       <div class="text-extractor-modal-header">
-        <span>提取的文本</span>
+        <div id="main-modal-title-container"></div>
         <span class="tc-close-button text-extractor-modal-close">
           <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
         </span>
@@ -55,10 +58,20 @@ export function createMainModal() {
   `;
   document.body.appendChild(modalOverlay);
 
+  // 创建并插入标题
+  const titleContainer = document.getElementById('main-modal-title-container');
+  const titleElement = createIconTitle(summaryIcon, '提取的文本');
+  titleContainer.appendChild(titleElement);
+
   // 获取内部元素的引用
   outputTextarea = document.getElementById('text-extractor-output');
   const closeBtn = modalOverlay.querySelector('.text-extractor-modal-close');
   const copyBtn = modalOverlay.querySelector('.text-extractor-copy-btn');
+
+  // 更新复制按钮内容
+  copyBtn.innerHTML = ''; // 清空原始内容
+  const copyBtnContent = createIconTitle(copyIcon, '复制');
+  copyBtn.appendChild(copyBtnContent);
 
   // 绑定关闭和复制事件
   closeBtn.addEventListener('click', closeModal);
