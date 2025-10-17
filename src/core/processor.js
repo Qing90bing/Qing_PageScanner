@@ -91,8 +91,11 @@ export const extractAndProcessText = () => {
     const processAndAddText = (rawText) => {
         if (!rawText) return;
 
+        // 新增规则：Unicode 标准化，修复特殊字符（如组合字符）的显示问题
+        const normalizedText = rawText.normalize('NFC');
+
         // 规则 1: 规范化换行符
-        let text = rawText.replace(/(\r\n|\n|\r)+/g, '\n');
+        let text = normalizedText.replace(/(\r\n|\n|\r)+/g, '\n');
 
         // 规则 2: 忽略纯空白字符串
         if (text.trim() === '') {

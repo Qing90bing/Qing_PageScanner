@@ -221,6 +221,7 @@ body[data-theme='dark'] {
   border-radius: 8px;
   padding: 12px;
   padding-right: 18px; /* 为滚动条轨道留出空间 */
+  font-family: Menlo, Monaco, 'Courier New', monospace, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei';
   font-size: 14px;
   resize: none; /* 禁用拖拽调整大小 */
   box-sizing: border-box;
@@ -415,8 +416,8 @@ body[data-theme='dark'] {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 1.2em;
-  font-weight: 500;
+  font-size: 18px;
+  font-weight: bold;
   color: var(--main-text);
 }
 
@@ -675,13 +676,21 @@ body[data-theme='dark'] {
 .settings-panel-header {
   display: flex; justify-content: space-between; align-items: center;
   border-bottom: 1px solid var(--main-border);
+  font-weight: bold;
+  font-size: 18px;
 }
-.settings-panel-header h2 { margin: 0; font-size: 1.1em; }
 /* 关闭按钮的旧样式已被 .tc-close-button 替代，此处可删除或留空 */
 .settings-panel-close {}
 
 .setting-item { margin-bottom: 16px; }
 .setting-item > label { display: block; margin-bottom: 8px; font-weight: 500; }
+
+/* -- 新增：为分组小标题单独设置加粗 -- */
+#theme-setting-title-container,
+#filter-setting-title-container {
+  font-weight: bold;
+  font-size: 16px;
+}
 
 /* -- 全新重构的自定义复选框样式 -- */
 .checkbox-group {
@@ -924,7 +933,8 @@ body[data-theme='dark'] {
     const uniqueTexts = /* @__PURE__ */ new Set();
     const processAndAddText2 = (rawText) => {
       if (!rawText) return;
-      let text = rawText.replace(/(\r\n|\n|\r)+/g, "\n");
+      const normalizedText = rawText.normalize("NFC");
+      let text = normalizedText.replace(/(\r\n|\n|\r)+/g, "\n");
       if (text.trim() === "") {
         return;
       }
