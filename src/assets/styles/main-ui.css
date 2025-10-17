@@ -111,6 +111,7 @@
   padding: 16px;
   overflow-y: auto;
   flex-grow: 1;
+  display: flex; /* 新增：启用flexbox布局 */
 }
 
 .text-extractor-modal-footer {

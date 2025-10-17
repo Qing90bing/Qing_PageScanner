@@ -1,0 +1,50 @@
+/* src/assets/styles/placeholder.css */
+
+#modal-placeholder {
+    display: none; /* 默认隐藏 */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: var(--text-color-secondary);
+    padding: 20px;
+    /* height: 100%; */ /* 移除此行以避免影响父容器高度 */
+    box-sizing: border-box;
+    /* 确保占位符本身也能填满其容器空间 */
+    width: 100%;
+    height: 100%;
+}
+
+.placeholder-icon {
+    margin-bottom: 16px;
+    color: var(--text-color-secondary); /* 将颜色设置移到这里 */
+}
+
+.placeholder-icon svg {
+    width: 48px;
+    height: 48px;
+    /* fill 属性现在由 "currentColor" 在SVG代码中控制，会自动继承父元素的color */
+}
+
+#modal-placeholder p {
+    margin: 4px 0;
+    font-size: 14px;
+}
+
+.placeholder-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px; /* 图标和文字之间的间距 */
+    color: var(--text-color-primary);
+}
+
+.placeholder-action-icon svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor; /* 继承父元素颜色 */
+    vertical-align: middle;
+}
+
+#modal-placeholder strong {
+    font-weight: 600;
+}

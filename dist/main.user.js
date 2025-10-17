@@ -214,7 +214,7 @@ body[data-theme='dark'] {
 /* --- 可复用的文本框样式 --- */
 .tc-textarea {
   width: 100%;
-  height: 300px;
+  height: 100%; /* 修改：填满父容器 */
   border: 1px solid var(--main-textarea-border);
   background-color: var(--main-textarea-bg);
   color: var(--main-text);
@@ -429,6 +429,7 @@ body[data-theme='dark'] {
   padding: 16px;
   overflow-y: auto;
   flex-grow: 1;
+  display: flex; /* 新增：启用flexbox布局 */
 }
 
 .text-extractor-modal-footer {
@@ -557,6 +558,58 @@ body[data-theme='dark'] {
         opacity: 0;
         transform: translateX(100%);
     }
+}
+
+/* --- From placeholder.css --- */
+/* src/assets/styles/placeholder.css */
+
+#modal-placeholder {
+    display: none; /* 默认隐藏 */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: var(--text-color-secondary);
+    padding: 20px;
+    /* height: 100%; */ /* 移除此行以避免影响父容器高度 */
+    box-sizing: border-box;
+    /* 确保占位符本身也能填满其容器空间 */
+    width: 100%;
+    height: 100%;
+}
+
+.placeholder-icon {
+    margin-bottom: 16px;
+    color: var(--text-color-secondary); /* 将颜色设置移到这里 */
+}
+
+.placeholder-icon svg {
+    width: 48px;
+    height: 48px;
+    /* fill 属性现在由 "currentColor" 在SVG代码中控制，会自动继承父元素的color */
+}
+
+#modal-placeholder p {
+    margin: 4px 0;
+    font-size: 14px;
+}
+
+.placeholder-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px; /* 图标和文字之间的间距 */
+    color: var(--text-color-primary);
+}
+
+.placeholder-action-icon svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor; /* 继承父元素颜色 */
+    vertical-align: middle;
+}
+
+#modal-placeholder strong {
+    font-weight: 600;
 }
 
 /* --- From settings-panel.css --- */
@@ -776,7 +829,12 @@ body[data-theme='dark'] {
       // title, alt, placeholder, aria-label 等属性。
       // processor.js 中的逻辑会确保只提取有内容的属性。
       "body *"
-    ]
+    ],
+    /**
+     * @property {string} modalContentHeight - 主模态框内容区域的默认高度。
+     * 可以使用任何有效的CSS高度值（例如 '400px', '80vh'）。
+     */
+    modalContentHeight: "400px"
   };
   var config_default = config;
 
@@ -1065,9 +1123,14 @@ ${result.join(",\n")}
   // src/assets/copyIcon.js
   var copyIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M120-220v-80h80v80h-80Zm0-140v-80h80v80h-80Zm0-140v-80h80v80h-80ZM260-80v-80h80v80h-80Zm100-160q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480Zm40 240v-80h80v80h-80Zm-200 0q-33 0-56.5-23.5T120-160h80v80Zm340 0v-80h80q0 33-23.5 56.5T540-80ZM120-640q0-33 23.5-56.5T200-720v80h-80Zm420 80Z"/></svg>`;
 
+  // src/assets/infoIcon.js
+  var infoIcon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>';
+
   // src/ui/components/mainModal.js
   var modalOverlay = null;
   var outputTextarea = null;
+  var placeholder = null;
+  var SHOW_PLACEHOLDER = "::show_placeholder::";
   var handleKeyDown = (event) => {
     if (event.key === "Escape") {
       closeModal();
@@ -1086,6 +1149,7 @@ ${result.join(",\n")}
         </span>
       </div>
       <div class="text-extractor-modal-content">
+        <div id="modal-placeholder"></div>
         <textarea id="text-extractor-output" class="tc-textarea"></textarea>
       </div>
       <div class="text-extractor-modal-footer">
@@ -1094,12 +1158,27 @@ ${result.join(",\n")}
     </div>
   `;
     document.body.appendChild(modalOverlay);
+    const modalContent = modalOverlay.querySelector(".text-extractor-modal-content");
+    if (config_default.modalContentHeight) {
+      modalContent.style.height = config_default.modalContentHeight;
+    }
     const titleContainer = document.getElementById("main-modal-title-container");
     const titleElement = createIconTitle(summaryIcon, "\u63D0\u53D6\u7684\u6587\u672C");
     titleContainer.appendChild(titleElement);
     outputTextarea = document.getElementById("text-extractor-output");
+    placeholder = document.getElementById("modal-placeholder");
     const closeBtn = modalOverlay.querySelector(".text-extractor-modal-close");
     const copyBtn = modalOverlay.querySelector(".text-extractor-copy-btn");
+    placeholder.innerHTML = `
+    <div class="placeholder-icon">${infoIcon}</div>
+    <p>\u5F53\u524D\u6CA1\u6709\u603B\u7ED3\u6587\u672C</p>
+    <p class="placeholder-actions">
+      \u70B9\u51FB <span class="placeholder-action-icon">${dynamicIcon}</span><strong>[\u52A8\u6001\u626B\u63CF]</strong> \u6309\u94AE\u5F00\u59CB\u4E00\u4E2A\u65B0\u7684\u626B\u63CF\u4F1A\u8BDD
+    </p>
+    <p class="placeholder-actions">
+      \u70B9\u51FB <span class="placeholder-action-icon">${translateIcon}</span><strong>[\u9759\u6001\u626B\u63CF]</strong> \u6309\u94AE\u53EF\u8FDB\u884C\u4E00\u6B21\u6027\u7684\u5FEB\u6377\u63D0\u53D6
+    </p>
+  `;
     copyBtn.innerHTML = "";
     const copyBtnContent = createIconTitle(copyIcon, "\u590D\u5236");
     copyBtn.appendChild(copyBtnContent);
@@ -1137,10 +1216,18 @@ ${result.join(",\n")}
       return;
     }
     const copyBtn = modalOverlay.querySelector(".text-extractor-copy-btn");
-    const isData = content.trim().startsWith("[");
-    outputTextarea.value = content;
-    copyBtn.disabled = !isData;
-    outputTextarea.readOnly = !isData;
+    if (content === SHOW_PLACEHOLDER) {
+      placeholder.style.display = "flex";
+      outputTextarea.style.display = "none";
+      copyBtn.disabled = true;
+    } else {
+      placeholder.style.display = "none";
+      outputTextarea.style.display = "block";
+      const isData = content.trim().startsWith("[");
+      outputTextarea.value = content;
+      copyBtn.disabled = !isData;
+      outputTextarea.readOnly = !isData;
+    }
     if (shouldOpen) {
       modalOverlay.style.display = "flex";
       document.addEventListener("keydown", handleKeyDown);
@@ -1187,8 +1274,7 @@ ${result.join(",\n")}
     function handleSummaryClick() {
       const results = getSessionTexts();
       if (results.length === 0) {
-        const message = "\u5F53\u524D\u6CA1\u6709\u603B\u7ED3\u6587\u672C\u3002\n\n- \u70B9\u51FB [\u52A8\u6001\u626B\u63CF] \u6309\u94AE\u5F00\u59CB\u4E00\u4E2A\u65B0\u4F1A\u8BDD\uFF0C\u6536\u96C6\u52A8\u6001\u5185\u5BB9\u3002\n- \u70B9\u51FB [\u9759\u6001\u626B\u63CF] \u6309\u94AE\u53EF\u8FDB\u884C\u4E00\u6B21\u6027\u7684\u5FEB\u6377\u63D0\u53D6\u3002";
-        updateModalContent(message, true);
+        updateModalContent(SHOW_PLACEHOLDER, true);
       } else {
         const formattedText = formatTextsForTranslation(results);
         updateModalContent(formattedText, true);

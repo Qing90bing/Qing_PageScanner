@@ -49,6 +49,12 @@ const config = {
     // processor.js 中的逻辑会确保只提取有内容的属性。
     'body *',
   ],
+
+  /**
+   * @property {string} modalContentHeight - 主模态框内容区域的默认高度。
+   * 可以使用任何有效的CSS高度值（例如 '400px', '80vh'）。
+   */
+  modalContentHeight: '400px',
 };
 
 export default config;

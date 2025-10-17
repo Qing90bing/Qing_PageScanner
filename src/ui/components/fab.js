@@ -12,7 +12,7 @@ import { summaryIcon } from '../../assets/summaryIcon.js';
 
 import * as sessionExtractor from '../../core/sessionExtractor.js';
 import { formatTextsForTranslation } from '../../core/processor.js';
-import { updateModalContent } from './mainModal.js';
+import { updateModalContent, SHOW_PLACEHOLDER } from './mainModal.js';
 import { showNotification, showLiveCounter, hideLiveCounter, updateLiveCounter } from '../components.js';
 
 /**
@@ -88,9 +88,8 @@ export function createFab(onStaticExtract) {
     function handleSummaryClick() {
         const results = sessionExtractor.getSessionTexts();
         if (results.length === 0) {
-            // 如果没有文本，显示提示信息
-            const message = "当前没有总结文本。\n\n- 点击 [动态扫描] 按钮开始一个新会话，收集动态内容。\n- 点击 [静态扫描] 按钮可进行一次性的快捷提取。";
-            updateModalContent(message, true);
+            // 如果没有文本，显示占位符提示
+            updateModalContent(SHOW_PLACEHOLDER, true);
         } else {
             // 如果有文本，格式化并显示
             const formattedText = formatTextsForTranslation(results);
