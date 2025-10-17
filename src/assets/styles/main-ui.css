@@ -58,9 +58,19 @@
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   background-color: var(--main-overlay-bg);
   z-index: 10000;
-  display: none;
+  display: flex;
   justify-content: center;
   align-items: center;
+  /* --- 新增：动画相关属性 --- */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s;
+}
+
+/* 新增：可见状态 */
+.text-extractor-modal-overlay.is-visible {
+  opacity: 1;
+  visibility: visible;
 }
 
 .text-extractor-modal {
@@ -71,6 +81,14 @@
   box-shadow: 0 5px 15px var(--main-shadow);
   display: flex;
   flex-direction: column;
+  /* --- 新增：动画相关属性 --- */
+  transform: scale(0.95);
+  transition: transform 0.3s ease;
+}
+
+/* 新增：可见状态下的模态框样式 */
+.text-extractor-modal-overlay.is-visible .text-extractor-modal {
+    transform: scale(1);
 }
 
 .text-extractor-modal-header {

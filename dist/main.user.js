@@ -376,9 +376,19 @@ body[data-theme='dark'] {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   background-color: var(--main-overlay-bg);
   z-index: 10000;
-  display: none;
+  display: flex;
   justify-content: center;
   align-items: center;
+  /* --- 新增：动画相关属性 --- */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s;
+}
+
+/* 新增：可见状态 */
+.text-extractor-modal-overlay.is-visible {
+  opacity: 1;
+  visibility: visible;
 }
 
 .text-extractor-modal {
@@ -389,6 +399,14 @@ body[data-theme='dark'] {
   box-shadow: 0 5px 15px var(--main-shadow);
   display: flex;
   flex-direction: column;
+  /* --- 新增：动画相关属性 --- */
+  transform: scale(0.95);
+  transition: transform 0.3s ease;
+}
+
+/* 新增：可见状态下的模态框样式 */
+.text-extractor-modal-overlay.is-visible .text-extractor-modal {
+    transform: scale(1);
 }
 
 .text-extractor-modal-header {
@@ -619,8 +637,21 @@ body[data-theme='dark'] {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   background-color: var(--main-overlay-bg);
   z-index: 10002;
-  display: flex; justify-content: center; align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* --- 新增：动画相关属性 --- */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s;
 }
+
+/* 新增：可见状态 */
+.settings-panel-overlay.is-visible {
+    opacity: 1;
+    visibility: visible;
+}
+
 .settings-panel-modal {
   background-color: var(--main-bg);
   color: var(--main-text);
@@ -629,6 +660,14 @@ body[data-theme='dark'] {
   box-shadow: 0 5px 15px var(--main-shadow);
   width: 90%;
   max-width: 400px;
+  /* --- 新增：动画相关属性 --- */
+  transform: scale(0.95);
+  transition: transform 0.3s ease;
+}
+
+/* 新增：可见状态下的模态框样式 */
+.settings-panel-overlay.is-visible .settings-panel-modal {
+    transform: scale(1);
 }
 .settings-panel-header, .settings-panel-content, .settings-panel-footer {
   padding: 16px;
@@ -1206,7 +1245,7 @@ ${result.join(",\n")}
   }
   function closeModal() {
     if (modalOverlay) {
-      modalOverlay.style.display = "none";
+      modalOverlay.classList.remove("is-visible");
       document.removeEventListener("keydown", handleKeyDown);
     }
   }
@@ -1229,7 +1268,7 @@ ${result.join(",\n")}
       outputTextarea.readOnly = !isData;
     }
     if (shouldOpen) {
-      modalOverlay.style.display = "flex";
+      modalOverlay.classList.add("is-visible");
       document.addEventListener("keydown", handleKeyDown);
     }
   }
@@ -1519,7 +1558,7 @@ ${result.join(",\n")}
   };
   function showSettingsPanel() {
     if (settingsPanel) {
-      settingsPanel.style.display = "flex";
+      setTimeout(() => settingsPanel.classList.add("is-visible"), 10);
       return;
     }
     const currentSettings = loadSettings();
@@ -1527,6 +1566,11 @@ ${result.join(",\n")}
     settingsPanel.className = "settings-panel-overlay";
     settingsPanel.innerHTML = getPanelHTML(currentSettings);
     document.body.appendChild(settingsPanel);
+    setTimeout(() => {
+      if (settingsPanel) {
+        settingsPanel.classList.add("is-visible");
+      }
+    }, 10);
     const titleContainer = document.getElementById("settings-panel-title-container");
     const titleElement = createIconTitle(settingsIcon, "\u811A\u672C\u8BBE\u7F6E");
     titleContainer.appendChild(titleElement);
@@ -1556,8 +1600,13 @@ ${result.join(",\n")}
   function hideSettingsPanel() {
     if (settingsPanel) {
       document.removeEventListener("keydown", handleKeyDown2);
-      settingsPanel.remove();
-      settingsPanel = null;
+      settingsPanel.classList.remove("is-visible");
+      setTimeout(() => {
+        if (settingsPanel) {
+          settingsPanel.remove();
+          settingsPanel = null;
+        }
+      }, 300);
     }
   }
   function handleSave() {

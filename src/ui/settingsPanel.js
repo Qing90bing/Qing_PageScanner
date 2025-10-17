@@ -105,7 +105,8 @@ const handleKeyDown = (event) => {
 function showSettingsPanel() {
   // 如果面板已存在（例如，被错误地隐藏而未移除），则直接显示并返回
   if (settingsPanel) {
-    settingsPanel.style.display = 'flex';
+    // 确保即使面板已存在，也能触发动画
+    setTimeout(() => settingsPanel.classList.add('is-visible'), 10);
     return;
   }
 
@@ -117,6 +118,14 @@ function showSettingsPanel() {
   settingsPanel.className = 'settings-panel-overlay';
   settingsPanel.innerHTML = getPanelHTML(currentSettings);
   document.body.appendChild(settingsPanel);
+
+  // --- 新增：触发淡入动画 ---
+  // 使用 setTimeout 确保浏览器有时间渲染元素，从而使过渡生效
+  setTimeout(() => {
+    if (settingsPanel) { // 检查面板是否仍然存在
+      settingsPanel.classList.add('is-visible');
+    }
+  }, 10); // 短暂延迟
 
   // 创建并插入标题
   const titleContainer = document.getElementById('settings-panel-title-container');
@@ -161,12 +170,19 @@ function showSettingsPanel() {
  */
 function hideSettingsPanel() {
   if (settingsPanel) {
-    // 移除 Esc 键的监听器，避免内存泄漏或不必要的监听
+    // 移除 Esc 键的监听器
     document.removeEventListener('keydown', handleKeyDown);
-    // 从 DOM 中移除面板元素
-    settingsPanel.remove();
-    // 重置变量，确保下次打开时会重新创建
-    settingsPanel = null;
+
+    // 1. 移除 'is-visible' 类以触发淡出动画
+    settingsPanel.classList.remove('is-visible');
+
+    // 2. 在动画结束后（300毫秒）再移除 DOM 元素
+    setTimeout(() => {
+        if (settingsPanel) {
+            settingsPanel.remove();
+            settingsPanel = null; // 重置变量
+        }
+    }, 300); // 这个时间应与 CSS transition 的持续时间匹配
   }
 }
 

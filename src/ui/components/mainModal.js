@@ -144,7 +144,8 @@ export function openModal() {
  */
 export function closeModal() {
   if (modalOverlay) {
-    modalOverlay.style.display = 'none';
+    // 改为移除 class 来触发 CSS 动画
+    modalOverlay.classList.remove('is-visible');
     document.removeEventListener('keydown', handleKeyDown);
   }
 }
@@ -182,7 +183,8 @@ export function updateModalContent(content, shouldOpen = false) {
     }
 
     if (shouldOpen) {
-        modalOverlay.style.display = 'flex';
+        // 改为添加 class 来触发 CSS 动画
+        modalOverlay.classList.add('is-visible');
         document.addEventListener('keydown', handleKeyDown);
     }
 }
