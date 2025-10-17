@@ -81,7 +81,7 @@ function getPanelHTML(settings) {
         </div>
       </div>
       <div class="settings-panel-footer">
-        <button id="save-settings-btn" class="tc-button">保存并应用</button>
+        <button id="save-settings-btn" class="tc-button">保存</button>
       </div>
     </div>
   `;
@@ -147,7 +147,7 @@ function showSettingsPanel() {
   // 2. 绑定事件监听器
   const saveBtn = settingsPanel.querySelector('#save-settings-btn');
   saveBtn.innerHTML = ''; // 清空原始内容
-  const saveBtnContent = createIconTitle(saveIcon, '保存并应用');
+  const saveBtnContent = createIconTitle(saveIcon, '保存');
   saveBtn.appendChild(saveBtnContent);
 
   settingsPanel.querySelector('.settings-panel-close').addEventListener('click', hideSettingsPanel);
@@ -172,7 +172,7 @@ function hideSettingsPanel() {
 
 /**
  * @private
- * @description 处理“保存并应用”按钮的点击事件。
+ * @description 处理“保存”按钮的点击事件。
  * 它会从 UI 元素中收集当前的设置值，保存它们，应用新主题，并关闭面板。
  */
 function handleSave() {

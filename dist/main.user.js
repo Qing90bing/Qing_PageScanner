@@ -1416,7 +1416,7 @@ ${result.join(",\n")}
         </div>
       </div>
       <div class="settings-panel-footer">
-        <button id="save-settings-btn" class="tc-button">\u4FDD\u5B58\u5E76\u5E94\u7528</button>
+        <button id="save-settings-btn" class="tc-button">\u4FDD\u5B58</button>
       </div>
     </div>
   `;
@@ -1456,7 +1456,7 @@ ${result.join(",\n")}
     themeSelectComponent = new CustomSelect(selectWrapper, themeOptions, currentSettings.theme);
     const saveBtn = settingsPanel.querySelector("#save-settings-btn");
     saveBtn.innerHTML = "";
-    const saveBtnContent = createIconTitle(saveIcon, "\u4FDD\u5B58\u5E76\u5E94\u7528");
+    const saveBtnContent = createIconTitle(saveIcon, "\u4FDD\u5B58");
     saveBtn.appendChild(saveBtnContent);
     settingsPanel.querySelector(".settings-panel-close").addEventListener("click", hideSettingsPanel);
     saveBtn.addEventListener("click", handleSave);
