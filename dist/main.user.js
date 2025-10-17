@@ -598,7 +598,6 @@ body[data-theme='dark'] {
 }
 
 .placeholder-icon {
-    margin-bottom: 16px;
     color: var(--text-color-secondary); /* 将颜色设置移到这里 */
 }
 
