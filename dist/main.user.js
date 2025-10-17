@@ -72,6 +72,8 @@ body[data-theme='light'] {
   --main-toast-text: var(--color-toast-text);
   --main-textarea-bg: var(--color-textarea-bg);
   --main-textarea-border: var(--color-textarea-border);
+  --main-disabled: #cccccc;
+  --main-disabled-text: #666666;
 }
 
 /* 根据 data-theme 属性应用深色主题 */
@@ -88,6 +90,8 @@ body[data-theme='dark'] {
   --main-toast-text: var(--dark-color-toast-text);
   --main-textarea-bg: var(--dark-color-textarea-bg);
   --main-textarea-border: var(--dark-color-textarea-border);
+  --main-disabled: #444444;
+  --main-disabled-text: #888888;
 }
 
 
@@ -202,6 +206,7 @@ body[data-theme='dark'] {
 }
 .tc-button:disabled {
   background-color: var(--main-disabled);
+  color: var(--main-disabled-text);
   cursor: not-allowed;
   box-shadow: none;
 }
