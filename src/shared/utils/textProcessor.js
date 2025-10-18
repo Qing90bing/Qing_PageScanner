@@ -7,64 +7,8 @@
 
 import { loadSettings } from '../../features/settings/logic.js';
 import config from '../../config.js';
-import IGNORED_TERMS from './ignoredTerms.js';
 import IGNORED_SELECTORS from './ignoredSelectors.js';
-
-// --- 常量 ---
-
-/**
- * @private
- * @readonly
- * @type {RegExp}
- * @description 用于检测一个字符串是否只包含数字、逗号、小数点、空格和常见货币符号（$, €, £, ¥）。
- * 用于实现“过滤纯数字/货币”的功能。
- */
-const numberAndCurrencyRegex = /^[$\€\£\¥\d,.\s]+$/;
-
-/**
- * @private
- * @readonly
- * @type {RegExp}
- * @description 用于检测一个字符串是否完全由中文字符和空白字符组成。
- * `\u4e00-\u9fa5` 是中文字符的 Unicode 范围。
- * `u` 标志启用了对 Unicode 的支持。
- * 用于实现“过滤纯中文”的功能。
- */
-const pureChineseRegex = /^[\u4e00-\u9fa5\s]+$/u;
-
-/**
- * @private
- * @readonly
- * @type {RegExp}
- * @description 用于检测一个字符串是否包含至少一个中文字符。
- * u 标志启用了对 Unicode 的支持。
- * 用于实现“过滤包含中文”的功能。
- */
-const containsChineseRegex = /[\u4e00-\u9fa5]/u;
-
-/**
- * @private
- * @readonly
- * @type {RegExp}
- * @description 用于检测一个字符串是否完全由表情符号和空白字符组成。
- * 这个正则表达式涵盖了常见的表情符号 Unicode 范围。
- * u 标志启用了对 Unicode 的支持。
- * 用于实现“过滤纯表情符号”的功能。
- */
-const emojiOnlyRegex = /^[\p{Emoji}\s]+$/u;
-
-/**
- * @private
- * @readonly
- * @type {RegExp}
- * @description 用于检测一个字符串是否包含任何语言的字母或任何形式的数字。
- * `\p{L}` 匹配任何语言的字母 (Letter)。
- * `\p{N}` 匹配任何形式的数字 (Number)。
- * u 标志启用了对 Unicode 的支持。
- * 用于实现“过滤纯符号”的功能（逻辑上是反向使用的）。
- */
-const containsLetterOrNumberRegex = /[\p{L}\p{N}]/u;
-
+import { shouldFilter } from './filterLogic.js'; // 导入新的通用过滤函数
 
 // --- 公开函数 ---
 
@@ -91,26 +35,23 @@ export const extractAndProcessText = () => {
     const processAndAddText = (rawText) => {
         if (!rawText) return;
 
-        // 新增规则：Unicode 标准化，修复特殊字符（如组合字符）的显示问题
+        // Unicode 标准化，修复特殊字符（如组合字符）的显示问题
         const normalizedText = rawText.normalize('NFC');
 
-        // 规则 1: 规范化换行符
+        // 规范化换行符
         let text = normalizedText.replace(/(\r\n|\n|\r)+/g, '\n');
 
-        // 规则 2: 忽略纯空白字符串
+        // 忽略纯空白字符串
         if (text.trim() === '') {
             return;
         }
 
         const trimmedText = text.trim();
 
-        // 规则 3: 应用过滤规则
-        if (filterRules.numbers && numberAndCurrencyRegex.test(trimmedText)) return;
-        if (filterRules.chinese && pureChineseRegex.test(trimmedText)) return;
-        if (filterRules.containsChinese && containsChineseRegex.test(trimmedText)) return;
-        if (filterRules.emojiOnly && emojiOnlyRegex.test(trimmedText)) return;
-        if (filterRules.symbols && !containsLetterOrNumberRegex.test(trimmedText)) return;
-        if (filterRules.termFilter && IGNORED_TERMS.includes(trimmedText)) return;
+        // 使用重构后的通用函数来应用所有过滤规则
+        if (shouldFilter(trimmedText, filterRules)) {
+            return;
+        }
 
         // 如果通过所有过滤，则添加到 Set 中
         uniqueTexts.add(text);
@@ -125,7 +66,7 @@ export const extractAndProcessText = () => {
     // 5. 遍历每一个目标元素，提取其属性和内部文本
     const ignoredSelectorString = IGNORED_SELECTORS.join(', ');
     targetElements.forEach(element => {
-        // 新增：检查元素或其任何父元素是否匹配“禁止扫描”的选择器
+        // 检查元素或其任何父元素是否匹配“禁止扫描”的选择器
         if (element.closest(ignoredSelectorString)) {
             return; // 如果匹配，则完全跳过此元素及其后代
         }
@@ -171,18 +112,10 @@ export const extractAndProcessText = () => {
  * @param {string[]} texts - 需要被格式化的文本字符串数组。
  * @returns {string} 一个格式化后的字符串，可以直接复制用于翻译工作流。
  * @description 将一个字符串数组转换成特定的二维数组格式的字符串，例如 `[["text1", ""], ["text2", ""]]`。
- * 这个格式通常用于某些翻译平台或工具。
  */
 export const formatTextsForTranslation = (texts) => {
-    // 1. 遍历数组中的每一个文本字符串
     const result = texts.map(text =>
-        // 2. 对每个字符串进行处理：
-        //    - 将字符串中的双引号 " 转义为 \"
-        //    - 将字符串中的换行符 \n 转义为 \\n
-        //    - 然后按照 `["...", ""]` 的格式包裹起来
         `    ["${text.replace(/"/g, '\\"').replace(/\n/g, '\\n')}", ""]`
     );
-
-    // 3. 将处理后的所有字符串用逗号和换行符连接起来，并用 `[\n...\n]` 包裹，形成最终的格式
     return `[\n${result.join(',\n')}\n]`;
 };

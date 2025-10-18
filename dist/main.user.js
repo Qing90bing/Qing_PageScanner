@@ -164,7 +164,8 @@
       containsChinese: false,
       emojiOnly: true,
       symbols: true,
-      termFilter: true
+      termFilter: true,
+      singleLetter: false
     }
   };
   function loadSettings() {
@@ -189,6 +190,16 @@
     }
     setValue("script_settings", JSON.stringify(settings));
   }
+  var IGNORED_SELECTORS = [
+    "script",
+    "style",
+    "noscript",
+    "code",
+    "pre",
+    "kbd",
+    ".no-translate"
+  ];
+  var ignoredSelectors_default = IGNORED_SELECTORS;
   var IGNORED_TERMS = [
     "Github",
     "Microsoft",
@@ -224,21 +235,22 @@
     "AI"
   ];
   var ignoredTerms_default = IGNORED_TERMS;
-  var IGNORED_SELECTORS = [
-    "script",
-    "style",
-    "noscript",
-    "code",
-    "pre",
-    "kbd",
-    ".no-translate"
-  ];
-  var ignoredSelectors_default = IGNORED_SELECTORS;
   var numberAndCurrencyRegex = /^[$\€\£\¥\d,.\s]+$/;
   var pureChineseRegex = /^[\u4e00-\u9fa5\s]+$/u;
   var containsChineseRegex = /[\u4e00-\u9fa5]/u;
   var emojiOnlyRegex = /^[\p{Emoji}\s]+$/u;
   var containsLetterOrNumberRegex = /[\p{L}\p{N}]/u;
+  var singleLetterRegex = /^[a-zA-Z]$/;
+  function shouldFilter(text, filterRules) {
+    if (filterRules.numbers && numberAndCurrencyRegex.test(text)) return true;
+    if (filterRules.chinese && pureChineseRegex.test(text)) return true;
+    if (filterRules.containsChinese && containsChineseRegex.test(text)) return true;
+    if (filterRules.emojiOnly && emojiOnlyRegex.test(text)) return true;
+    if (filterRules.symbols && !containsLetterOrNumberRegex.test(text)) return true;
+    if (filterRules.termFilter && ignoredTerms_default.includes(text)) return true;
+    if (filterRules.singleLetter && singleLetterRegex.test(text)) return true;
+    return false;
+  }
   var extractAndProcessText = () => {
     const settings = loadSettings();
     const { filterRules } = settings;
@@ -252,12 +264,9 @@
         return;
       }
       const trimmedText = text.trim();
-      if (filterRules.numbers && numberAndCurrencyRegex.test(trimmedText)) return;
-      if (filterRules.chinese && pureChineseRegex.test(trimmedText)) return;
-      if (filterRules.containsChinese && containsChineseRegex.test(trimmedText)) return;
-      if (filterRules.emojiOnly && emojiOnlyRegex.test(trimmedText)) return;
-      if (filterRules.symbols && !containsLetterOrNumberRegex.test(trimmedText)) return;
-      if (filterRules.termFilter && ignoredTerms_default.includes(trimmedText)) return;
+      if (shouldFilter(trimmedText, filterRules)) {
+        return;
+      }
       uniqueTexts.add(text);
     };
     processAndAddText2(document.title);
@@ -294,9 +303,7 @@
   };
   var formatTextsForTranslation = (texts) => {
     const result = texts.map(
-      (text) => (
-        `    ["${text.replace(/"/g, '\\"').replace(/\n/g, "\\n")}", ""]`
-      )
+      (text) => `    ["${text.replace(/"/g, '\\"').replace(/\n/g, "\\n")}", ""]`
     );
     return `[
 ${result.join(",\n")}
@@ -537,23 +544,16 @@ ${result.join(",\n")}
   var sessionTexts =  new Set();
   var observer = null;
   var onTextAddedCallback = null;
-  var numberAndCurrencyRegex2 = /^[$\€\£\¥\d,.\s]+$/;
-  var pureChineseRegex2 = /^[\u4e00-\u9fa5\s]+$/u;
-  var containsChineseRegex2 = /[\u4e00-\u9fa5]/u;
-  var emojiOnlyRegex2 = /^[\p{Emoji}\s]+$/u;
-  var containsLetterOrNumberRegex2 = /[\p{L}\p{N}]/u;
   function processAndAddText(rawText, textSet, filterRules) {
     if (!rawText || typeof rawText !== "string") return false;
-    let text = rawText.replace(/(\r\n|\n|\r)+/g, "\n").trim();
-    if (text === "") return false;
-    if (filterRules.numbers && numberAndCurrencyRegex2.test(text)) return false;
-    if (filterRules.chinese && pureChineseRegex2.test(text)) return false;
-    if (filterRules.containsChinese && containsChineseRegex2.test(text)) return false;
-    if (filterRules.emojiOnly && emojiOnlyRegex2.test(text)) return false;
-    if (filterRules.symbols && !containsLetterOrNumberRegex2.test(text)) return false;
-    if (filterRules.termFilter && ignoredTerms_default.includes(text)) return false;
+    const normalizedText = rawText.normalize("NFC");
+    let textForFiltering = normalizedText.replace(/(\r\n|\n|\r)+/g, "\n").trim();
+    if (textForFiltering === "") return false;
+    if (shouldFilter(textForFiltering, filterRules)) {
+      return false;
+    }
     const originalSize = textSet.size;
-    textSet.add(rawText.replace(/(\r\n|\n|\r)+/g, "\n"));
+    textSet.add(normalizedText.replace(/(\r\n|\n|\r)+/g, "\n"));
     return textSet.size > originalSize;
   }
   var handleMutations = (mutations) => {
@@ -584,11 +584,8 @@ ${result.join(",\n")}
     onTextAddedCallback = onUpdate || null;
     const initialTexts = extractAndProcessText();
     const { filterRules } = loadSettings();
-    let textAdded = false;
     initialTexts.forEach((text) => {
-      if (processAndAddText(text, sessionTexts, filterRules)) {
-        textAdded = true;
-      }
+      processAndAddText(text, sessionTexts, filterRules);
     });
     console.log(`\u4F1A\u8BDD\u521D\u59CB\u6355\u83B7\u5230 ${sessionTexts.size} \u6761\u6587\u672C\u3002`);
     if (onTextAddedCallback) {
@@ -821,7 +818,8 @@ ${result.join(",\n")}
     { id: "filter-contains-chinese", key: "containsChinese", label: "\u8FC7\u6EE4\u5305\u542B\u4E2D\u6587\u7684\u6587\u672C" },
     { id: "filter-emoji-only", key: "emojiOnly", label: "\u8FC7\u6EE4\u7EAF\u8868\u60C5\u7B26\u53F7" },
     { id: "filter-symbols", key: "symbols", label: "\u8FC7\u6EE4\u7EAF\u7B26\u53F7" },
-    { id: "filter-term", key: "termFilter", label: "\u8FC7\u6EE4\u7279\u5B9A\u672F\u8BED" }
+    { id: "filter-term", key: "termFilter", label: "\u8FC7\u6EE4\u7279\u5B9A\u672F\u8BED" },
+    { id: "filter-single-letter", key: "singleLetter", label: "\u8FC7\u6EE4\u7EAF\u5355\u4E2A\u82F1\u6587\u5B57\u6BCD" }
   ];
   var handleKeyDown2 = (event) => {
     if (event.key === "Escape") {

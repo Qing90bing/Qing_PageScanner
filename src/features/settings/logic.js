@@ -33,6 +33,8 @@ const defaultSettings = {
     symbols: true,
     // 是否过滤特定术语列表中的字符串
     termFilter: true,
+    // 是否过滤纯单个英文字母
+    singleLetter: false,
   },
 };
 

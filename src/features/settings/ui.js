@@ -33,6 +33,7 @@ const filterDefinitions = [
   { id: 'filter-emoji-only', key: 'emojiOnly', label: '过滤纯表情符号' },
   { id: 'filter-symbols', key: 'symbols', label: '过滤纯符号' },
   { id: 'filter-term', key: 'termFilter', label: '过滤特定术语' },
+  { id: 'filter-single-letter', key: 'singleLetter', label: '过滤纯单个英文字母' },
 ];
 
 // --- 私有函数 ---

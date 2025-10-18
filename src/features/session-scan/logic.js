@@ -8,7 +8,7 @@
 import { extractAndProcessText } from '../../shared/utils/textProcessor.js';
 import { loadSettings } from '../settings/logic.js';
 import IGNORED_SELECTORS from '../../shared/utils/ignoredSelectors.js';
-import IGNORED_TERMS from '../../shared/utils/ignoredTerms.js';
+import { shouldFilter } from '../../shared/utils/filterLogic.js'; // 导入新的通用过滤函数
 
 // --- 模块级变量 ---
 let isRecording = false;
@@ -16,27 +16,23 @@ let sessionTexts = new Set();
 let observer = null;
 let onTextAddedCallback = null; // 用于更新UI的回调
 
-// --- 辅助函数 (从 processor.js 中借鉴并简化) ---
-const numberAndCurrencyRegex = /^[$\€\£\¥\d,.\s]+$/;
-const pureChineseRegex = /^[\u4e00-\u9fa5\s]+$/u;
-const containsChineseRegex = /[\u4e00-\u9fa5]/u;
-const emojiOnlyRegex = /^[\p{Emoji}\s]+$/u;
-const containsLetterOrNumberRegex = /[\p{L}\p{N}]/u;
-
+// --- 辅助函数 ---
 function processAndAddText(rawText, textSet, filterRules) {
     if (!rawText || typeof rawText !== 'string') return false;
-    let text = rawText.replace(/(\r\n|\n|\r)+/g, '\n').trim();
-    if (text === '') return false;
 
-    if (filterRules.numbers && numberAndCurrencyRegex.test(text)) return false;
-    if (filterRules.chinese && pureChineseRegex.test(text)) return false;
-    if (filterRules.containsChinese && containsChineseRegex.test(text)) return false;
-    if (filterRules.emojiOnly && emojiOnlyRegex.test(text)) return false;
-    if (filterRules.symbols && !containsLetterOrNumberRegex.test(text)) return false;
-    if (filterRules.termFilter && IGNORED_TERMS.includes(text)) return false;
+    // 规范化并 trim 文本以供过滤检查
+    const normalizedText = rawText.normalize('NFC');
+    let textForFiltering = normalizedText.replace(/(\r\n|\n|\r)+/g, '\n').trim();
+    if (textForFiltering === '') return false;
+
+    // 使用重构后的通用函数来应用所有过滤规则
+    if (shouldFilter(textForFiltering, filterRules)) {
+        return false;
+    }
 
     const originalSize = textSet.size;
-    textSet.add(rawText.replace(/(\r\n|\n|\r)+/g, '\n')); // 添加未 trimmed 的版本
+    // 添加原始的、未 trimmed 的版本，但规范化换行符
+    textSet.add(normalizedText.replace(/(\r\n|\n|\r)+/g, '\n'));
 
     // 返回一个布尔值，指示是否添加了新文本
     return textSet.size > originalSize;
@@ -53,7 +49,6 @@ const handleMutations = (mutations) => {
             if (node.nodeType !== Node.ELEMENT_NODE) return;
             if (node.closest(ignoredSelectorString)) return;
 
-            // 使用一个简单的 TreeWalker 只处理新节点
             const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
             while(walker.nextNode()) {
                 if (processAndAddText(walker.currentNode.nodeValue, sessionTexts, filterRules)) {
@@ -63,7 +58,6 @@ const handleMutations = (mutations) => {
         });
     });
 
-    // 在处理完所有突变后，如果确实添加了新文本，则调用一次回调
     if (textAdded && onTextAddedCallback) {
         onTextAddedCallback(sessionTexts.size);
     }
@@ -78,20 +72,15 @@ export const start = (onUpdate) => {
     sessionTexts.clear();
     onTextAddedCallback = onUpdate || null;
 
-    // 关键修复：使用原始的、可靠的函数获取初始文本
     const initialTexts = extractAndProcessText();
     const { filterRules } = loadSettings();
-    let textAdded = false;
 
-    // 使用我们自己的处理函数来添加，确保过滤和回调被触发
     initialTexts.forEach(text => {
-        if (processAndAddText(text, sessionTexts, filterRules)) {
-            textAdded = true;
-        }
+        // 这里调用的 processAndAddText 已经是重构后的版本
+        processAndAddText(text, sessionTexts, filterRules);
     });
     console.log(`会话初始捕获到 ${sessionTexts.size} 条文本。`);
 
-    // 立即使用初始计数值调用一次回调，以设置UI的初始状态
     if (onTextAddedCallback) {
         onTextAddedCallback(sessionTexts.size);
     }
@@ -108,8 +97,8 @@ export const stop = () => {
         observer = null;
     }
     isRecording = false;
-    onTextAddedCallback = null; // 清理回调
-    return getSessionTexts(); // 返回最终结果
+    onTextAddedCallback = null;
+    return getSessionTexts();
 };
 
 export const isSessionRecording = () => isRecording;
