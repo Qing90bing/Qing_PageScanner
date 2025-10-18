@@ -221,7 +221,7 @@ body[data-theme='dark'] {
   border-radius: 8px;
   padding: 12px;
   padding-right: 18px; /* 为滚动条轨道留出空间 */
-  font-family: Menlo, Monaco, 'Courier New', monospace, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei';
+  font-family: Menlo, Monaco,'Cascadia Code','PingFang SC';
   font-size: 14px;
   resize: none; /* 禁用拖拽调整大小 */
   box-sizing: border-box;
