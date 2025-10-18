@@ -20,25 +20,9 @@ import { darkThemeIcon } from '../assets/darkThemeIcon.js';
 
 // --- 模块级变量 ---
 
-/**
- * @private
- * @type {HTMLElement|null}
- * @description 用于存储设置面板 DOM 元素的引用，以便在显示和隐藏时进行操作。
- * 当面板关闭时，此变量会被重置为 null。
- */
 let settingsPanel = null;
 let themeSelectComponent = null;
 
-/**
- * @private
- * @readonly
- * @type {Array<Object>}
- * @description 定义了内容过滤规则的元数据，用于动态生成UI和处理保存逻辑。
- * 每个对象包含:
- * - id: DOM元素的ID
- * - key: 对应 settings.filterRules 中的键名
- * - label: 显示在UI上的标签文本
- */
 const filterDefinitions = [
   { id: 'filter-numbers', key: 'numbers', label: '过滤纯数字/货币' },
   { id: 'filter-chinese', key: 'chinese', label: '过滤纯中文' },
@@ -52,44 +36,6 @@ const filterDefinitions = [
 
 /**
  * @private
- * @param {object} settings - 当前的设置对象。
- * @returns {string} - 设置面板的 innerHTML 字符串。
- * @description 根据传入的设置对象，动态生成设置面板的 HTML 结构。
- */
-function getPanelHTML(settings) {
-  // 使用 filterDefinitions 和 createCheckbox 函数动态生成所有过滤规则的 HTML
-  const filterCheckboxesHTML = filterDefinitions
-    .map(filter => createCheckbox(filter.id, filter.label, settings.filterRules[filter.key]))
-    .join('');
-
-  return `
-    <div class="settings-panel-modal">
-      <div class="settings-panel-header">
-        <div id="settings-panel-title-container"></div>
-        <span class="tc-close-button settings-panel-close">
-            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
-        </span>
-      </div>
-      <div class="settings-panel-content">
-        <div class="setting-item">
-          <div id="theme-setting-title-container"></div>
-          <div id="custom-select-wrapper"></div>
-        </div>
-        <div class="setting-item">
-          <div id="filter-setting-title-container"></div>
-          ${filterCheckboxesHTML}
-        </div>
-      </div>
-      <div class="settings-panel-footer">
-        <button id="save-settings-btn" class="tc-button">保存</button>
-      </div>
-    </div>
-  `;
-}
-
-/**
- * @private
- * @param {KeyboardEvent} event - 键盘事件对象。
  * @description 监听全局键盘事件，当按下 "Escape" 键时关闭设置面板。
  */
 const handleKeyDown = (event) => {
@@ -100,51 +46,117 @@ const handleKeyDown = (event) => {
 
 /**
  * @private
- * @description 显示设置面板。如果面板已存在，则直接显示；否则，创建新的面板并添加到页面中。
+ * @description 创建并构建设置面板的 DOM 结构。
+ * @param {object} settings - 当前的设置对象。
+ * @returns {HTMLElement} - 构建好的设置面板模态框元素。
+ */
+function buildPanelDOM(settings) {
+    const modal = document.createElement('div');
+    modal.className = 'settings-panel-modal';
+
+    // --- Header ---
+    const header = document.createElement('div');
+    header.className = 'settings-panel-header';
+    const titleContainer = document.createElement('div');
+    titleContainer.id = 'settings-panel-title-container';
+    const closeBtn = document.createElement('span');
+    closeBtn.className = 'tc-close-button settings-panel-close';
+    const closeIconSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    closeIconSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    closeIconSvg.setAttribute('height', '24px');
+    closeIconSvg.setAttribute('viewBox', '0 -960 960 960');
+    closeIconSvg.setAttribute('width', '24px');
+    closeIconSvg.setAttribute('fill', 'currentColor');
+    const closeIconPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    closeIconPath.setAttribute('d', 'm256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z');
+    closeIconSvg.appendChild(closeIconPath);
+    closeBtn.appendChild(closeIconSvg);
+    header.appendChild(titleContainer);
+    header.appendChild(closeBtn);
+
+    // --- Content ---
+    const content = document.createElement('div');
+    content.className = 'settings-panel-content';
+
+    // Theme setting
+    const themeItem = document.createElement('div');
+    themeItem.className = 'setting-item';
+    const themeTitleContainer = document.createElement('div');
+    themeTitleContainer.id = 'theme-setting-title-container';
+    const selectWrapper = document.createElement('div');
+    selectWrapper.id = 'custom-select-wrapper';
+    themeItem.appendChild(themeTitleContainer);
+    themeItem.appendChild(selectWrapper);
+
+    // Filter setting
+    const filterItem = document.createElement('div');
+    filterItem.className = 'setting-item';
+    const filterTitleContainer = document.createElement('div');
+    filterTitleContainer.id = 'filter-setting-title-container';
+    filterItem.appendChild(filterTitleContainer);
+
+    // Dynamically create checkboxes and append them
+    filterDefinitions.forEach(filter => {
+        const checkboxElement = createCheckbox(filter.id, filter.label, settings.filterRules[filter.key]);
+        filterItem.appendChild(checkboxElement);
+    });
+
+    content.appendChild(themeItem);
+    content.appendChild(filterItem);
+
+    // --- Footer ---
+    const footer = document.createElement('div');
+    footer.className = 'settings-panel-footer';
+    const saveBtn = document.createElement('button');
+    saveBtn.id = 'save-settings-btn';
+    saveBtn.className = 'tc-button';
+    footer.appendChild(saveBtn);
+
+    modal.appendChild(header);
+    modal.appendChild(content);
+    modal.appendChild(footer);
+
+    return modal;
+}
+
+
+/**
+ * @private
+ * @description 显示设置面板。
  */
 function showSettingsPanel() {
-  // 如果面板已存在（例如，被错误地隐藏而未移除），则直接显示并返回
   if (settingsPanel) {
-    // 确保即使面板已存在，也能触发动画
     setTimeout(() => settingsPanel.classList.add('is-visible'), 10);
     return;
   }
 
-  // 样式现在通过 build.js 全局注入，此处不再需要 GM_addStyle 调用。
-
-  // 1. 创建面板 DOM 元素
   const currentSettings = loadSettings();
   settingsPanel = document.createElement('div');
   settingsPanel.className = 'settings-panel-overlay';
-  settingsPanel.innerHTML = getPanelHTML(currentSettings);
+
+  const panelModal = buildPanelDOM(currentSettings);
+  settingsPanel.appendChild(panelModal);
+
   document.body.appendChild(settingsPanel);
 
-  // --- 新增：触发淡入动画 ---
-  // 使用 setTimeout 确保浏览器有时间渲染元素，从而使过渡生效
   setTimeout(() => {
-    if (settingsPanel) { // 检查面板是否仍然存在
+    if (settingsPanel) {
       settingsPanel.classList.add('is-visible');
     }
-  }, 10); // 短暂延迟
+  }, 10);
 
-  // 创建并插入标题
+  // --- Populate Titles and Components ---
   const titleContainer = document.getElementById('settings-panel-title-container');
-  const titleElement = createIconTitle(settingsIcon, '脚本设置');
-  titleContainer.appendChild(titleElement);
+  titleContainer.appendChild(createIconTitle(settingsIcon, '脚本设置'));
 
-  // 创建并插入“界面主题”标题
   const themeTitleContainer = document.getElementById('theme-setting-title-container');
-  const themeTitleElement = createIconTitle(themeIcon, '界面主题');
-  themeTitleContainer.appendChild(themeTitleElement);
-  themeTitleContainer.style.marginBottom = '8px'; // 添加一些间距
+  themeTitleContainer.appendChild(createIconTitle(themeIcon, '界面主题'));
+  themeTitleContainer.style.marginBottom = '8px';
 
-  // 创建并插入“内容过滤规则”标题
   const filterTitleContainer = document.getElementById('filter-setting-title-container');
-  const filterTitleElement = createIconTitle(filterIcon, '内容过滤规则');
-  filterTitleContainer.appendChild(filterTitleElement);
-  filterTitleContainer.style.marginBottom = '8px'; // 添加一些间距
+  filterTitleContainer.appendChild(createIconTitle(filterIcon, '内容过滤规则'));
+  filterTitleContainer.style.marginBottom = '8px';
 
-  // 实例化自定义下拉菜单
   const selectWrapper = document.getElementById('custom-select-wrapper');
   const themeOptions = [
     { value: 'system', label: '跟随系统', icon: systemThemeIcon },
@@ -153,12 +165,10 @@ function showSettingsPanel() {
   ];
   themeSelectComponent = new CustomSelect(selectWrapper, themeOptions, currentSettings.theme);
 
-  // 2. 绑定事件监听器
   const saveBtn = settingsPanel.querySelector('#save-settings-btn');
-  saveBtn.innerHTML = ''; // 清空原始内容
-  const saveBtnContent = createIconTitle(saveIcon, '保存');
-  saveBtn.appendChild(saveBtnContent);
+  saveBtn.appendChild(createIconTitle(saveIcon, '保存'));
 
+  // --- Bind Events ---
   settingsPanel.querySelector('.settings-panel-close').addEventListener('click', hideSettingsPanel);
   saveBtn.addEventListener('click', handleSave);
   document.addEventListener('keydown', handleKeyDown);
@@ -166,36 +176,27 @@ function showSettingsPanel() {
 
 /**
  * @private
- * @description 隐藏并从 DOM 中彻底移除设置面板，同时清理事件监听器。
+ * @description 隐藏并从 DOM 中彻底移除设置面板。
  */
 function hideSettingsPanel() {
   if (settingsPanel) {
-    // 移除 Esc 键的监听器
     document.removeEventListener('keydown', handleKeyDown);
-
-    // 1. 移除 'is-visible' 类以触发淡出动画
     settingsPanel.classList.remove('is-visible');
-
-    // 2. 在动画结束后（300毫秒）再移除 DOM 元素
     setTimeout(() => {
         if (settingsPanel) {
             settingsPanel.remove();
-            settingsPanel = null; // 重置变量
+            settingsPanel = null;
         }
-    }, 300); // 这个时间应与 CSS transition 的持续时间匹配
+    }, 300);
   }
 }
 
 /**
  * @private
  * @description 处理“保存”按钮的点击事件。
- * 它会从 UI 元素中收集当前的设置值，保存它们，应用新主题，并关闭面板。
  */
 function handleSave() {
-  // 1. 从组件和 DOM 元素中获取用户选择的新设置
   const newTheme = themeSelectComponent.getValue();
-
-  // 使用 filterDefinitions 动态构建 filterRules 对象
   const newFilterRules = {};
   filterDefinitions.forEach(filter => {
     const checkbox = document.getElementById(filter.id);
@@ -209,12 +210,10 @@ function handleSave() {
     filterRules: newFilterRules,
   };
 
-  // 2. 保存设置并应用主题
   saveSettings(newSettings);
   applyTheme(newSettings.theme);
 
-  // 3. 提示用户并关闭面板
-  alert('设置已保存！'); // 简单的用户反馈
+  alert('设置已保存！');
   hideSettingsPanel();
 }
 
@@ -222,7 +221,7 @@ function handleSave() {
 
 /**
  * @public
- * @description 初始化设置面板功能。主要任务是在油猴菜单中注册一个“打开设置”的命令。
+ * @description 初始化设置面板功能。
  */
 export function initSettingsPanel() {
   GM_registerMenuCommand('打开设置', showSettingsPanel);

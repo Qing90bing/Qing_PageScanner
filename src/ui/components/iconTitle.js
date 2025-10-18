@@ -1,4 +1,5 @@
 // src/ui/components/iconTitle.js
+import { createSVGFromString } from '../utils.js';
 
 /**
  * @description 创建一个包含图标和文本的标题元素。
@@ -13,11 +14,16 @@ export function createIconTitle(iconSVG, text) {
     container.style.gap = '8px'; // 图标和文字的间距
 
     const iconWrapper = document.createElement('span');
-    iconWrapper.innerHTML = iconSVG;
     iconWrapper.style.display = 'flex';
     iconWrapper.style.alignItems = 'center';
 
-    const textNode = document.createTextNode(text);
+    const svgElement = createSVGFromString(iconSVG);
+    if (svgElement) {
+        iconWrapper.appendChild(svgElement);
+    }
+
+    const textNode = document.createElement('span');
+    textNode.textContent = text;
 
     container.appendChild(iconWrapper);
     container.appendChild(textNode);

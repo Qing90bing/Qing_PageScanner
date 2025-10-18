@@ -14,20 +14,26 @@ import * as sessionExtractor from '../../core/sessionExtractor.js';
 import { formatTextsForTranslation } from '../../core/processor.js';
 import { updateModalContent, SHOW_PLACEHOLDER } from './mainModal.js';
 import { showNotification, showLiveCounter, hideLiveCounter, updateLiveCounter } from '../components.js';
+import { createSVGFromString } from '../utils.js';
 
 /**
  * @private
  * @description 创建一个单独的悬浮按钮。
  * @param {string} className - 按钮的 CSS 类名。
- * @param {string} innerHTML - 按钮内部的 SVG 图标。
+ * @param {string} iconSVGString - 按钮内部的 SVG 图标字符串。
  * @param {string} title - 鼠标悬停时显示的提示文本。
  * @param {function} onClick - 点击事件的回调函数。
  * @returns {HTMLElement} - 创建的按钮元素。
  */
-function createSingleFab(className, innerHTML, title, onClick) {
+function createSingleFab(className, iconSVGString, title, onClick) {
     const fab = document.createElement('div');
     fab.className = `text-extractor-fab ${className}`;
-    fab.innerHTML = innerHTML;
+
+    const svgIcon = createSVGFromString(iconSVGString);
+    if (svgIcon) {
+        fab.appendChild(svgIcon);
+    }
+
     fab.title = title;
     fab.addEventListener('click', onClick);
     return fab;
@@ -99,13 +105,29 @@ export function createFab(onStaticExtract) {
 
     /**
      * @private
+     * @description 安全地更新 FAB 的图标。
+     * @param {HTMLElement} fabElement - 要更新的 FAB 元素。
+     * @param {string} iconSVGString - 新的 SVG 图标字符串。
+     */
+    function setFabIcon(fabElement, iconSVGString) {
+        while (fabElement.firstChild) {
+            fabElement.removeChild(fabElement.firstChild);
+        }
+        const newIcon = createSVGFromString(iconSVGString);
+        if (newIcon) {
+            fabElement.appendChild(newIcon);
+        }
+    }
+
+    /**
+     * @private
      * @description 处理“动态扫描”按钮的点击事件。
      */
     function handleDynamicExtractClick() {
         if (sessionExtractor.isSessionRecording()) {
             // --- 正在录制 -> 点击停止 ---
             const results = sessionExtractor.stop();
-            dynamicFab.innerHTML = dynamicIcon;
+            setFabIcon(dynamicFab, dynamicIcon);
             dynamicFab.classList.remove('is-recording');
             dynamicFab.title = '开始动态扫描会话';
 
@@ -115,7 +137,7 @@ export function createFab(onStaticExtract) {
         } else {
             // --- 未在录制 -> 点击开始 ---
             // 1. 立即更新UI，提供即时反馈
-            dynamicFab.innerHTML = stopIcon;
+            setFabIcon(dynamicFab, stopIcon);
             dynamicFab.classList.add('is-recording');
             dynamicFab.title = '停止动态扫描会话';
 

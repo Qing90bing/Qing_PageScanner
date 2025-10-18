@@ -6,6 +6,7 @@
  */
 
 import { createIconTitle } from './iconTitle.js';
+import { createSVGFromString } from '../utils.js';
 
 export class CustomSelect {
     /**
@@ -25,29 +26,40 @@ export class CustomSelect {
 
     /**
      * @private
-     * @description 渲染组件的 HTML 结构。
+     * @description 渲染组件的 DOM 结构。
      */
     render() {
         this.container = document.createElement('div');
         this.container.className = 'custom-select-container';
 
-        const initialOption = this.options.find(opt => opt.value === this.currentValue);
+        // 1. 创建触发器
+        this.trigger = document.createElement('div');
+        this.trigger.className = 'custom-select-trigger';
 
-        this.container.innerHTML = `
-            <div class="custom-select-trigger">
-                <div class="selected-option-content"></div>
-                <div class="custom-select-arrow">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg>
-                </div>
-            </div>
-            <div class="custom-select-options"></div>
-        `;
+        this.selectedContent = document.createElement('div');
+        this.selectedContent.className = 'selected-option-content';
 
+        const arrowDiv = document.createElement('div');
+        arrowDiv.className = 'custom-select-arrow';
+        const arrowSVG = createSVGFromString(`<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg>`);
+        if (arrowSVG) {
+            arrowDiv.appendChild(arrowSVG);
+        }
+
+        this.trigger.appendChild(this.selectedContent);
+        this.trigger.appendChild(arrowDiv);
+
+        // 2. 创建选项容器
+        this.optionsContainer = document.createElement('div');
+        this.optionsContainer.className = 'custom-select-options';
+
+        // 3. 组装并附加到父元素
+        this.container.appendChild(this.trigger);
+        this.container.appendChild(this.optionsContainer);
         this.parentElement.appendChild(this.container);
-        this.trigger = this.container.querySelector('.custom-select-trigger');
-        this.optionsContainer = this.container.querySelector('.custom-select-options');
-        this.selectedContent = this.container.querySelector('.selected-option-content');
 
+        // 4. 填充内容
+        const initialOption = this.options.find(opt => opt.value === this.currentValue);
         this.populateOptions();
         this.updateSelectedContent(initialOption);
     }
@@ -79,8 +91,12 @@ export class CustomSelect {
      * @param {Object} option - 被选中的选项对象。
      */
     updateSelectedContent(option) {
+        // 清空现有内容
+        while (this.selectedContent.firstChild) {
+            this.selectedContent.removeChild(this.selectedContent.firstChild);
+        }
+
         const content = createIconTitle(option.icon, option.label);
-        this.selectedContent.innerHTML = '';
         this.selectedContent.appendChild(content);
     }
 
@@ -142,7 +158,10 @@ export class CustomSelect {
 
         // 更新选项列表中的 'selected' 类
         this.optionsContainer.querySelector('.custom-select-option.selected')?.classList.remove('selected');
-        this.optionsContainer.querySelector(`[data-value="${value}"]`).classList.add('selected');
+        const newSelectedOptionEl = this.optionsContainer.querySelector(`[data-value="${value}"]`);
+        if (newSelectedOptionEl) {
+            newSelectedOptionEl.classList.add('selected');
+        }
 
         this.close();
     }

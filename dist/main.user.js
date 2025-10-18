@@ -1072,8 +1072,53 @@ ${result.join(",\n")}
   var isSessionRecording = () => isRecording;
   var getSessionTexts = () => Array.from(sessionTexts);
 
+  // src/ui/utils.js
+  var trustedTypePolicy = null;
+  var policyCreated = false;
+  function createTrustedTypePolicy() {
+    if (policyCreated) {
+      return trustedTypePolicy;
+    }
+    if (window.trustedTypes && window.trustedTypes.createPolicy) {
+      try {
+        trustedTypePolicy = window.trustedTypes.createPolicy("script-svg-policy", {
+          createHTML: (input) => {
+            return input;
+          }
+        });
+      } catch (e) {
+        if (e.message.includes("already exists")) {
+          trustedTypePolicy = window.trustedTypes.policies.get("script-svg-policy");
+        } else {
+          console.error("\u521B\u5EFA Trusted Type \u7B56\u7565\u5931\u8D25:", e);
+        }
+      }
+    }
+    policyCreated = true;
+    return trustedTypePolicy;
+  }
+  function createSVGFromString(svgString) {
+    if (!svgString || typeof svgString !== "string") return null;
+    const policy = createTrustedTypePolicy();
+    let sanitizedSVG = svgString.trim();
+    if (policy) {
+      sanitizedSVG = policy.createHTML(sanitizedSVG);
+    }
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(sanitizedSVG, "image/svg+xml");
+    const svgNode = doc.documentElement;
+    if (!svgNode || svgNode.nodeName.toLowerCase() !== "svg" || svgNode.querySelector("parsererror")) {
+      console.error("\u65E0\u6548\u6216\u89E3\u6790\u5931\u8D25\u7684 SVG \u5B57\u7B26\u4E32:", svgString);
+      return null;
+    }
+    return document.importNode(svgNode, true);
+  }
+
   // src/ui/components/notification.js
   var notificationContainer = null;
+  var successIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`;
+  var infoIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`;
+  var closeIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
   function getNotificationContainer() {
     if (!notificationContainer) {
       notificationContainer = document.createElement("div");
@@ -1085,20 +1130,30 @@ ${result.join(",\n")}
   function createNotificationElement(message, type = "info") {
     const notification = document.createElement("div");
     notification.className = `tc-notification tc-notification-${type}`;
-    const icon = type === "success" ? `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>` : `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`;
-    notification.innerHTML = `
-        <div class="tc-notification-icon">${icon}</div>
-        <div class="tc-notification-content">${message}</div>
-        <div class="tc-notification-close">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-        </div>
-    `;
-    const closeButton = notification.querySelector(".tc-notification-close");
-    closeButton.addEventListener("click", () => {
+    const iconDiv = document.createElement("div");
+    iconDiv.className = "tc-notification-icon";
+    const iconSVGString = type === "success" ? successIconSVG : infoIconSVG;
+    const iconElement = createSVGFromString(iconSVGString);
+    if (iconElement) {
+      iconDiv.appendChild(iconElement);
+    }
+    const contentDiv = document.createElement("div");
+    contentDiv.className = "tc-notification-content";
+    contentDiv.textContent = message;
+    const closeDiv = document.createElement("div");
+    closeDiv.className = "tc-notification-close";
+    const closeIconElement = createSVGFromString(closeIconSVG);
+    if (closeIconElement) {
+      closeDiv.appendChild(closeIconElement);
+    }
+    notification.appendChild(iconDiv);
+    notification.appendChild(contentDiv);
+    notification.appendChild(closeDiv);
+    closeDiv.addEventListener("click", () => {
       notification.classList.add("tc-notification-fade-out");
       notification.addEventListener("animationend", () => {
         notification.remove();
-        if (getNotificationContainer().childElementCount === 0) {
+        if (notificationContainer && notificationContainer.childElementCount === 0) {
           notificationContainer.remove();
           notificationContainer = null;
         }
@@ -1111,11 +1166,17 @@ ${result.join(",\n")}
     const notification = createNotificationElement(message, type);
     container.appendChild(notification);
     const timer = setTimeout(() => {
-      notification.querySelector(".tc-notification-close").click();
+      const closeButton2 = notification.querySelector(".tc-notification-close");
+      if (closeButton2) {
+        closeButton2.click();
+      }
     }, duration);
-    notification.querySelector(".tc-notification-close").addEventListener("click", () => {
-      clearTimeout(timer);
-    });
+    const closeButton = notification.querySelector(".tc-notification-close");
+    if (closeButton) {
+      closeButton.addEventListener("click", () => {
+        clearTimeout(timer);
+      });
+    }
   }
 
   // src/ui/components/liveCounter.js
@@ -1139,17 +1200,33 @@ ${result.join(",\n")}
   }
   function updateLiveCounter(count) {
     if (!counterElement) return;
-    counterElement.innerHTML = `\u5DF2\u53D1\u73B0\uFF1A<span>${count}</span>`;
+    while (counterElement.firstChild) {
+      counterElement.removeChild(counterElement.firstChild);
+    }
+    const textNode = document.createTextNode("\u5DF2\u53D1\u73B0\uFF1A");
+    const countSpan = document.createElement("span");
+    countSpan.textContent = count;
+    counterElement.appendChild(textNode);
+    counterElement.appendChild(countSpan);
   }
 
   // src/ui/components.js
-  function createCheckbox(id, label, isChecked) {
-    return `
-    <label class="checkbox-group" for="${id}">${label}
-      <input type="checkbox" id="${id}" ${isChecked ? "checked" : ""}>
-      <span class="checkmark"></span>
-    </label>
-  `;
+  function createCheckbox(id, labelText, isChecked) {
+    const label = document.createElement("label");
+    label.className = "checkbox-group";
+    label.htmlFor = id;
+    label.appendChild(document.createTextNode(labelText));
+    const input = document.createElement("input");
+    input.type = "checkbox";
+    input.id = id;
+    if (isChecked) {
+      input.checked = true;
+    }
+    const checkmark = document.createElement("span");
+    checkmark.className = "checkmark";
+    label.appendChild(input);
+    label.appendChild(checkmark);
+    return label;
   }
 
   // src/ui/components/iconTitle.js
@@ -1159,10 +1236,14 @@ ${result.join(",\n")}
     container.style.alignItems = "center";
     container.style.gap = "8px";
     const iconWrapper = document.createElement("span");
-    iconWrapper.innerHTML = iconSVG;
     iconWrapper.style.display = "flex";
     iconWrapper.style.alignItems = "center";
-    const textNode = document.createTextNode(text);
+    const svgElement = createSVGFromString(iconSVG);
+    if (svgElement) {
+      iconWrapper.appendChild(svgElement);
+    }
+    const textNode = document.createElement("span");
+    textNode.textContent = text;
     container.appendChild(iconWrapper);
     container.appendChild(textNode);
     return container;
@@ -1188,46 +1269,84 @@ ${result.join(",\n")}
     if (modalOverlay) return;
     modalOverlay = document.createElement("div");
     modalOverlay.className = "text-extractor-modal-overlay";
-    modalOverlay.innerHTML = `
-    <div class="text-extractor-modal">
-      <div class="text-extractor-modal-header">
-        <div id="main-modal-title-container"></div>
-        <span class="tc-close-button text-extractor-modal-close">
-          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
-        </span>
-      </div>
-      <div class="text-extractor-modal-content">
-        <div id="modal-placeholder"></div>
-        <textarea id="text-extractor-output" class="tc-textarea"></textarea>
-      </div>
-      <div class="text-extractor-modal-footer">
-        <button class="text-extractor-copy-btn tc-button">\u4E00\u952E\u590D\u5236</button>
-      </div>
-    </div>
-  `;
+    const modal = document.createElement("div");
+    modal.className = "text-extractor-modal";
+    const modalHeader = document.createElement("div");
+    modalHeader.className = "text-extractor-modal-header";
+    const titleContainer = document.createElement("div");
+    titleContainer.id = "main-modal-title-container";
+    const closeBtn = document.createElement("span");
+    closeBtn.className = "tc-close-button text-extractor-modal-close";
+    const closeIconSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    closeIconSvg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+    closeIconSvg.setAttribute("height", "24px");
+    closeIconSvg.setAttribute("viewBox", "0 -960 960 960");
+    closeIconSvg.setAttribute("width", "24px");
+    closeIconSvg.setAttribute("fill", "currentColor");
+    const closeIconPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    closeIconPath.setAttribute("d", "m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z");
+    closeIconSvg.appendChild(closeIconPath);
+    closeBtn.appendChild(closeIconSvg);
+    modalHeader.appendChild(titleContainer);
+    modalHeader.appendChild(closeBtn);
+    const modalContent = document.createElement("div");
+    modalContent.className = "text-extractor-modal-content";
+    placeholder = document.createElement("div");
+    placeholder.id = "modal-placeholder";
+    outputTextarea = document.createElement("textarea");
+    outputTextarea.id = "text-extractor-output";
+    outputTextarea.className = "tc-textarea";
+    modalContent.appendChild(placeholder);
+    modalContent.appendChild(outputTextarea);
+    const modalFooter = document.createElement("div");
+    modalFooter.className = "text-extractor-modal-footer";
+    const copyBtn = document.createElement("button");
+    copyBtn.className = "text-extractor-copy-btn tc-button";
+    modalFooter.appendChild(copyBtn);
+    modal.appendChild(modalHeader);
+    modal.appendChild(modalContent);
+    modal.appendChild(modalFooter);
+    modalOverlay.appendChild(modal);
     document.body.appendChild(modalOverlay);
-    const modalContent = modalOverlay.querySelector(".text-extractor-modal-content");
     if (config_default.modalContentHeight) {
       modalContent.style.height = config_default.modalContentHeight;
     }
-    const titleContainer = document.getElementById("main-modal-title-container");
     const titleElement = createIconTitle(summaryIcon, "\u63D0\u53D6\u7684\u6587\u672C");
     titleContainer.appendChild(titleElement);
-    outputTextarea = document.getElementById("text-extractor-output");
-    placeholder = document.getElementById("modal-placeholder");
-    const closeBtn = modalOverlay.querySelector(".text-extractor-modal-close");
-    const copyBtn = modalOverlay.querySelector(".text-extractor-copy-btn");
-    placeholder.innerHTML = `
-    <div class="placeholder-icon">${infoIcon}</div>
-    <p>\u5F53\u524D\u6CA1\u6709\u603B\u7ED3\u6587\u672C</p>
-    <p class="placeholder-actions">
-      \u70B9\u51FB <span class="placeholder-action-icon">${dynamicIcon}</span><strong>[\u52A8\u6001\u626B\u63CF]</strong> \u6309\u94AE\u5F00\u59CB\u4E00\u4E2A\u65B0\u7684\u626B\u63CF\u4F1A\u8BDD
-    </p>
-    <p class="placeholder-actions">
-      \u70B9\u51FB <span class="placeholder-action-icon">${translateIcon}</span><strong>[\u9759\u6001\u626B\u63CF]</strong> \u6309\u94AE\u53EF\u8FDB\u884C\u4E00\u6B21\u6027\u7684\u5FEB\u6377\u63D0\u53D6
-    </p>
-  `;
-    copyBtn.innerHTML = "";
+    const placeholderIconDiv = document.createElement("div");
+    placeholderIconDiv.className = "placeholder-icon";
+    const infoIconSVG2 = createSVGFromString(infoIcon);
+    if (infoIconSVG2) placeholderIconDiv.appendChild(infoIconSVG2);
+    const p1 = document.createElement("p");
+    p1.textContent = "\u5F53\u524D\u6CA1\u6709\u603B\u7ED3\u6587\u672C";
+    const p2 = document.createElement("p");
+    p2.className = "placeholder-actions";
+    p2.append("\u70B9\u51FB ");
+    const span2 = document.createElement("span");
+    span2.className = "placeholder-action-icon";
+    const dynamicIconSVG = createSVGFromString(dynamicIcon);
+    if (dynamicIconSVG) span2.appendChild(dynamicIconSVG);
+    p2.appendChild(span2);
+    const strong2 = document.createElement("strong");
+    strong2.textContent = "[\u52A8\u6001\u626B\u63CF]";
+    p2.appendChild(strong2);
+    p2.append(" \u6309\u94AE\u5F00\u59CB\u4E00\u4E2A\u65B0\u7684\u626B\u63CF\u4F1A\u8BDD");
+    const p3 = document.createElement("p");
+    p3.className = "placeholder-actions";
+    p3.append("\u70B9\u51FB ");
+    const span3 = document.createElement("span");
+    span3.className = "placeholder-action-icon";
+    const translateIconSVG = createSVGFromString(translateIcon);
+    if (translateIconSVG) span3.appendChild(translateIconSVG);
+    p3.appendChild(span3);
+    const strong3 = document.createElement("strong");
+    strong3.textContent = "[\u9759\u6001\u626B\u63CF]";
+    p3.appendChild(strong3);
+    p3.append(" \u6309\u94AE\u53EF\u8FDB\u884C\u4E00\u6B21\u6027\u7684\u5FEB\u6377\u63D0\u53D6");
+    placeholder.appendChild(placeholderIconDiv);
+    placeholder.appendChild(p1);
+    placeholder.appendChild(p2);
+    placeholder.appendChild(p3);
     const copyBtnContent = createIconTitle(copyIcon, "\u590D\u5236");
     copyBtn.appendChild(copyBtnContent);
     closeBtn.addEventListener("click", closeModal);
@@ -1248,7 +1367,9 @@ ${result.join(",\n")}
       const formattedText = formatTextsForTranslation(extractedTexts);
       const copyBtn = modalOverlay.querySelector(".text-extractor-copy-btn");
       updateModalContent(formattedText, false);
-      copyBtn.disabled = false;
+      if (copyBtn) {
+        copyBtn.disabled = false;
+      }
       showNotification(`\u5FEB\u6377\u626B\u63CF\u5B8C\u6210\uFF0C\u53D1\u73B0 ${extractedTexts.length} \u6761\u6587\u672C`, { type: "success" });
     }, 50);
   }
@@ -1267,13 +1388,13 @@ ${result.join(",\n")}
     if (content === SHOW_PLACEHOLDER) {
       placeholder.style.display = "flex";
       outputTextarea.style.display = "none";
-      copyBtn.disabled = true;
+      if (copyBtn) copyBtn.disabled = true;
     } else {
       placeholder.style.display = "none";
       outputTextarea.style.display = "block";
       const isData = content.trim().startsWith("[");
       outputTextarea.value = content;
-      copyBtn.disabled = !isData;
+      if (copyBtn) copyBtn.disabled = !isData;
       outputTextarea.readOnly = !isData;
     }
     if (shouldOpen) {
@@ -1283,10 +1404,13 @@ ${result.join(",\n")}
   }
 
   // src/ui/components/fab.js
-  function createSingleFab(className, innerHTML, title, onClick) {
+  function createSingleFab(className, iconSVGString, title, onClick) {
     const fab = document.createElement("div");
     fab.className = `text-extractor-fab ${className}`;
-    fab.innerHTML = innerHTML;
+    const svgIcon = createSVGFromString(iconSVGString);
+    if (svgIcon) {
+      fab.appendChild(svgIcon);
+    }
     fab.title = title;
     fab.addEventListener("click", onClick);
     return fab;
@@ -1328,16 +1452,25 @@ ${result.join(",\n")}
         updateModalContent(formattedText, true);
       }
     }
+    function setFabIcon(fabElement, iconSVGString) {
+      while (fabElement.firstChild) {
+        fabElement.removeChild(fabElement.firstChild);
+      }
+      const newIcon = createSVGFromString(iconSVGString);
+      if (newIcon) {
+        fabElement.appendChild(newIcon);
+      }
+    }
     function handleDynamicExtractClick() {
       if (isSessionRecording()) {
         const results = stop();
-        dynamicFab.innerHTML = dynamicIcon;
+        setFabIcon(dynamicFab, dynamicIcon);
         dynamicFab.classList.remove("is-recording");
         dynamicFab.title = "\u5F00\u59CB\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD";
         hideLiveCounter();
         showNotification(`\u626B\u63CF\u7ED3\u675F\uFF0C\u5171\u53D1\u73B0 ${results.length} \u6761\u6587\u672C`, { type: "success" });
       } else {
-        dynamicFab.innerHTML = stopIcon;
+        setFabIcon(dynamicFab, stopIcon);
         dynamicFab.classList.add("is-recording");
         dynamicFab.title = "\u505C\u6B62\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD";
         showNotification("\u4F1A\u8BDD\u626B\u63CF\u5DF2\u5F00\u59CB", { type: "info" });
@@ -1403,25 +1536,29 @@ ${result.join(",\n")}
     }
     /**
      * @private
-     * @description 渲染组件的 HTML 结构。
+     * @description 渲染组件的 DOM 结构。
      */
     render() {
       this.container = document.createElement("div");
       this.container.className = "custom-select-container";
-      const initialOption = this.options.find((opt) => opt.value === this.currentValue);
-      this.container.innerHTML = `
-            <div class="custom-select-trigger">
-                <div class="selected-option-content"></div>
-                <div class="custom-select-arrow">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg>
-                </div>
-            </div>
-            <div class="custom-select-options"></div>
-        `;
+      this.trigger = document.createElement("div");
+      this.trigger.className = "custom-select-trigger";
+      this.selectedContent = document.createElement("div");
+      this.selectedContent.className = "selected-option-content";
+      const arrowDiv = document.createElement("div");
+      arrowDiv.className = "custom-select-arrow";
+      const arrowSVG = createSVGFromString(`<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg>`);
+      if (arrowSVG) {
+        arrowDiv.appendChild(arrowSVG);
+      }
+      this.trigger.appendChild(this.selectedContent);
+      this.trigger.appendChild(arrowDiv);
+      this.optionsContainer = document.createElement("div");
+      this.optionsContainer.className = "custom-select-options";
+      this.container.appendChild(this.trigger);
+      this.container.appendChild(this.optionsContainer);
       this.parentElement.appendChild(this.container);
-      this.trigger = this.container.querySelector(".custom-select-trigger");
-      this.optionsContainer = this.container.querySelector(".custom-select-options");
-      this.selectedContent = this.container.querySelector(".selected-option-content");
+      const initialOption = this.options.find((opt) => opt.value === this.currentValue);
       this.populateOptions();
       this.updateSelectedContent(initialOption);
     }
@@ -1448,8 +1585,10 @@ ${result.join(",\n")}
      * @param {Object} option - 被选中的选项对象。
      */
     updateSelectedContent(option) {
+      while (this.selectedContent.firstChild) {
+        this.selectedContent.removeChild(this.selectedContent.firstChild);
+      }
       const content = createIconTitle(option.icon, option.label);
-      this.selectedContent.innerHTML = "";
       this.selectedContent.appendChild(content);
     }
     /**
@@ -1502,7 +1641,10 @@ ${result.join(",\n")}
       const selectedOption = this.options.find((opt) => opt.value === value);
       this.updateSelectedContent(selectedOption);
       this.optionsContainer.querySelector(".custom-select-option.selected")?.classList.remove("selected");
-      this.optionsContainer.querySelector(`[data-value="${value}"]`).classList.add("selected");
+      const newSelectedOptionEl = this.optionsContainer.querySelector(`[data-value="${value}"]`);
+      if (newSelectedOptionEl) {
+        newSelectedOptionEl.classList.add("selected");
+      }
       this.close();
     }
     /**
@@ -1534,37 +1676,64 @@ ${result.join(",\n")}
     { id: "filter-symbols", key: "symbols", label: "\u8FC7\u6EE4\u7EAF\u7B26\u53F7" },
     { id: "filter-term", key: "termFilter", label: "\u8FC7\u6EE4\u7279\u5B9A\u672F\u8BED" }
   ];
-  function getPanelHTML(settings) {
-    const filterCheckboxesHTML = filterDefinitions.map((filter) => createCheckbox(filter.id, filter.label, settings.filterRules[filter.key])).join("");
-    return `
-    <div class="settings-panel-modal">
-      <div class="settings-panel-header">
-        <div id="settings-panel-title-container"></div>
-        <span class="tc-close-button settings-panel-close">
-            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
-        </span>
-      </div>
-      <div class="settings-panel-content">
-        <div class="setting-item">
-          <div id="theme-setting-title-container"></div>
-          <div id="custom-select-wrapper"></div>
-        </div>
-        <div class="setting-item">
-          <div id="filter-setting-title-container"></div>
-          ${filterCheckboxesHTML}
-        </div>
-      </div>
-      <div class="settings-panel-footer">
-        <button id="save-settings-btn" class="tc-button">\u4FDD\u5B58</button>
-      </div>
-    </div>
-  `;
-  }
   var handleKeyDown2 = (event) => {
     if (event.key === "Escape") {
       hideSettingsPanel();
     }
   };
+  function buildPanelDOM(settings) {
+    const modal = document.createElement("div");
+    modal.className = "settings-panel-modal";
+    const header = document.createElement("div");
+    header.className = "settings-panel-header";
+    const titleContainer = document.createElement("div");
+    titleContainer.id = "settings-panel-title-container";
+    const closeBtn = document.createElement("span");
+    closeBtn.className = "tc-close-button settings-panel-close";
+    const closeIconSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    closeIconSvg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+    closeIconSvg.setAttribute("height", "24px");
+    closeIconSvg.setAttribute("viewBox", "0 -960 960 960");
+    closeIconSvg.setAttribute("width", "24px");
+    closeIconSvg.setAttribute("fill", "currentColor");
+    const closeIconPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    closeIconPath.setAttribute("d", "m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z");
+    closeIconSvg.appendChild(closeIconPath);
+    closeBtn.appendChild(closeIconSvg);
+    header.appendChild(titleContainer);
+    header.appendChild(closeBtn);
+    const content = document.createElement("div");
+    content.className = "settings-panel-content";
+    const themeItem = document.createElement("div");
+    themeItem.className = "setting-item";
+    const themeTitleContainer = document.createElement("div");
+    themeTitleContainer.id = "theme-setting-title-container";
+    const selectWrapper = document.createElement("div");
+    selectWrapper.id = "custom-select-wrapper";
+    themeItem.appendChild(themeTitleContainer);
+    themeItem.appendChild(selectWrapper);
+    const filterItem = document.createElement("div");
+    filterItem.className = "setting-item";
+    const filterTitleContainer = document.createElement("div");
+    filterTitleContainer.id = "filter-setting-title-container";
+    filterItem.appendChild(filterTitleContainer);
+    filterDefinitions.forEach((filter) => {
+      const checkboxElement = createCheckbox(filter.id, filter.label, settings.filterRules[filter.key]);
+      filterItem.appendChild(checkboxElement);
+    });
+    content.appendChild(themeItem);
+    content.appendChild(filterItem);
+    const footer = document.createElement("div");
+    footer.className = "settings-panel-footer";
+    const saveBtn = document.createElement("button");
+    saveBtn.id = "save-settings-btn";
+    saveBtn.className = "tc-button";
+    footer.appendChild(saveBtn);
+    modal.appendChild(header);
+    modal.appendChild(content);
+    modal.appendChild(footer);
+    return modal;
+  }
   function showSettingsPanel() {
     if (settingsPanel) {
       setTimeout(() => settingsPanel.classList.add("is-visible"), 10);
@@ -1573,7 +1742,8 @@ ${result.join(",\n")}
     const currentSettings = loadSettings();
     settingsPanel = document.createElement("div");
     settingsPanel.className = "settings-panel-overlay";
-    settingsPanel.innerHTML = getPanelHTML(currentSettings);
+    const panelModal = buildPanelDOM(currentSettings);
+    settingsPanel.appendChild(panelModal);
     document.body.appendChild(settingsPanel);
     setTimeout(() => {
       if (settingsPanel) {
@@ -1581,15 +1751,12 @@ ${result.join(",\n")}
       }
     }, 10);
     const titleContainer = document.getElementById("settings-panel-title-container");
-    const titleElement = createIconTitle(settingsIcon, "\u811A\u672C\u8BBE\u7F6E");
-    titleContainer.appendChild(titleElement);
+    titleContainer.appendChild(createIconTitle(settingsIcon, "\u811A\u672C\u8BBE\u7F6E"));
     const themeTitleContainer = document.getElementById("theme-setting-title-container");
-    const themeTitleElement = createIconTitle(themeIcon, "\u754C\u9762\u4E3B\u9898");
-    themeTitleContainer.appendChild(themeTitleElement);
+    themeTitleContainer.appendChild(createIconTitle(themeIcon, "\u754C\u9762\u4E3B\u9898"));
     themeTitleContainer.style.marginBottom = "8px";
     const filterTitleContainer = document.getElementById("filter-setting-title-container");
-    const filterTitleElement = createIconTitle(filterIcon, "\u5185\u5BB9\u8FC7\u6EE4\u89C4\u5219");
-    filterTitleContainer.appendChild(filterTitleElement);
+    filterTitleContainer.appendChild(createIconTitle(filterIcon, "\u5185\u5BB9\u8FC7\u6EE4\u89C4\u5219"));
     filterTitleContainer.style.marginBottom = "8px";
     const selectWrapper = document.getElementById("custom-select-wrapper");
     const themeOptions = [
@@ -1599,9 +1766,7 @@ ${result.join(",\n")}
     ];
     themeSelectComponent = new CustomSelect(selectWrapper, themeOptions, currentSettings.theme);
     const saveBtn = settingsPanel.querySelector("#save-settings-btn");
-    saveBtn.innerHTML = "";
-    const saveBtnContent = createIconTitle(saveIcon, "\u4FDD\u5B58");
-    saveBtn.appendChild(saveBtnContent);
+    saveBtn.appendChild(createIconTitle(saveIcon, "\u4FDD\u5B58"));
     settingsPanel.querySelector(".settings-panel-close").addEventListener("click", hideSettingsPanel);
     saveBtn.addEventListener("click", handleSave);
     document.addEventListener("keydown", handleKeyDown2);

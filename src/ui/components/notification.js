@@ -1,7 +1,14 @@
 // src/ui/components/notification.js
+import { createSVGFromString } from '../utils.js';
 
 // 存储通知的容器
 let notificationContainer = null;
+
+// SVG 图标字符串常量
+const successIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`;
+const infoIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`;
+const closeIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+
 
 /**
  * 创建并管理通知容器
@@ -26,26 +33,36 @@ function createNotificationElement(message, type = 'info') {
     const notification = document.createElement('div');
     notification.className = `tc-notification tc-notification-${type}`;
 
-    // 根据类型选择图标
-    const icon = type === 'success'
-        ? `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`
-        : `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`;
+    const iconDiv = document.createElement('div');
+    iconDiv.className = 'tc-notification-icon';
+    const iconSVGString = type === 'success' ? successIconSVG : infoIconSVG;
+    const iconElement = createSVGFromString(iconSVGString);
+    if (iconElement) {
+        iconDiv.appendChild(iconElement);
+    }
 
-    notification.innerHTML = `
-        <div class="tc-notification-icon">${icon}</div>
-        <div class="tc-notification-content">${message}</div>
-        <div class="tc-notification-close">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-        </div>
-    `;
+    const contentDiv = document.createElement('div');
+    contentDiv.className = 'tc-notification-content';
+    contentDiv.textContent = message;
+
+    const closeDiv = document.createElement('div');
+    closeDiv.className = 'tc-notification-close';
+    const closeIconElement = createSVGFromString(closeIconSVG);
+    if (closeIconElement) {
+        closeDiv.appendChild(closeIconElement);
+    }
+
+    notification.appendChild(iconDiv);
+    notification.appendChild(contentDiv);
+    notification.appendChild(closeDiv);
 
     // 关闭按钮事件
-    const closeButton = notification.querySelector('.tc-notification-close');
-    closeButton.addEventListener('click', () => {
+    closeDiv.addEventListener('click', () => {
         notification.classList.add('tc-notification-fade-out');
         notification.addEventListener('animationend', () => {
             notification.remove();
-            if (getNotificationContainer().childElementCount === 0) {
+            // 检查容器是否为空，如果是，则也移除容器
+            if (notificationContainer && notificationContainer.childElementCount === 0) {
                 notificationContainer.remove();
                 notificationContainer = null;
             }
@@ -70,12 +87,17 @@ export function showNotification(message, { type = 'info', duration = 3000 } = {
 
     // 自动关闭计时器
     const timer = setTimeout(() => {
-        // 触发关闭动画
-        notification.querySelector('.tc-notification-close').click();
+        const closeButton = notification.querySelector('.tc-notification-close');
+        if (closeButton) {
+            closeButton.click();
+        }
     }, duration);
 
     // 如果用户手动关闭，则清除计时器
-    notification.querySelector('.tc-notification-close').addEventListener('click', () => {
-        clearTimeout(timer);
-    });
+    const closeButton = notification.querySelector('.tc-notification-close');
+    if (closeButton) {
+        closeButton.addEventListener('click', () => {
+            clearTimeout(timer);
+        });
+    }
 }

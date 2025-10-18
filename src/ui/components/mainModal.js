@@ -9,6 +9,7 @@ import config from '../../config.js';
 import { extractAndProcessText, formatTextsForTranslation } from '../../core/processor.js';
 import { showNotification } from '../components.js';
 import { createIconTitle } from './iconTitle.js';
+import { createSVGFromString } from '../utils.js';
 import { summaryIcon } from '../../assets/summaryIcon.js';
 import { copyIcon } from '../../assets/copyIcon.js';
 import { infoIcon } from '../../assets/infoIcon.js';
@@ -22,7 +23,6 @@ let outputTextarea = null; // 文本输出区域
 let placeholder = null; // 提示信息容器
 export const SHOW_PLACEHOLDER = '::show_placeholder::'; // 特殊标识符
 
-// --- 私有函数 ---
 
 /**
  * @private
@@ -44,67 +44,121 @@ const handleKeyDown = (event) => {
 export function createMainModal() {
   if (modalOverlay) return; // 防止重复创建
 
+  // --- 创建 DOM 结构 ---
   modalOverlay = document.createElement('div');
   modalOverlay.className = 'text-extractor-modal-overlay';
-  modalOverlay.innerHTML = `
-    <div class="text-extractor-modal">
-      <div class="text-extractor-modal-header">
-        <div id="main-modal-title-container"></div>
-        <span class="tc-close-button text-extractor-modal-close">
-          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
-        </span>
-      </div>
-      <div class="text-extractor-modal-content">
-        <div id="modal-placeholder"></div>
-        <textarea id="text-extractor-output" class="tc-textarea"></textarea>
-      </div>
-      <div class="text-extractor-modal-footer">
-        <button class="text-extractor-copy-btn tc-button">一键复制</button>
-      </div>
-    </div>
-  `;
+
+  const modal = document.createElement('div');
+  modal.className = 'text-extractor-modal';
+
+  const modalHeader = document.createElement('div');
+  modalHeader.className = 'text-extractor-modal-header';
+
+  const titleContainer = document.createElement('div');
+  titleContainer.id = 'main-modal-title-container';
+
+  const closeBtn = document.createElement('span');
+  closeBtn.className = 'tc-close-button text-extractor-modal-close';
+  const closeIconSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  closeIconSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+  closeIconSvg.setAttribute('height', '24px');
+  closeIconSvg.setAttribute('viewBox', '0 -960 960 960');
+  closeIconSvg.setAttribute('width', '24px');
+  closeIconSvg.setAttribute('fill', 'currentColor');
+  const closeIconPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  closeIconPath.setAttribute('d', 'm256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z');
+  closeIconSvg.appendChild(closeIconPath);
+  closeBtn.appendChild(closeIconSvg);
+
+  modalHeader.appendChild(titleContainer);
+  modalHeader.appendChild(closeBtn);
+
+  const modalContent = document.createElement('div');
+  modalContent.className = 'text-extractor-modal-content';
+
+  placeholder = document.createElement('div');
+  placeholder.id = 'modal-placeholder';
+
+  outputTextarea = document.createElement('textarea');
+  outputTextarea.id = 'text-extractor-output';
+  outputTextarea.className = 'tc-textarea';
+
+  modalContent.appendChild(placeholder);
+  modalContent.appendChild(outputTextarea);
+
+  const modalFooter = document.createElement('div');
+  modalFooter.className = 'text-extractor-modal-footer';
+
+  const copyBtn = document.createElement('button');
+  copyBtn.className = 'text-extractor-copy-btn tc-button';
+
+  modalFooter.appendChild(copyBtn);
+
+  modal.appendChild(modalHeader);
+  modal.appendChild(modalContent);
+  modal.appendChild(modalFooter);
+  modalOverlay.appendChild(modal);
+
   document.body.appendChild(modalOverlay);
 
-  // 应用可配置的高度
-  const modalContent = modalOverlay.querySelector('.text-extractor-modal-content');
+  // --- 配置和内容填充 ---
+
   if (config.modalContentHeight) {
     modalContent.style.height = config.modalContentHeight;
   }
 
-  // 创建并插入标题
-  const titleContainer = document.getElementById('main-modal-title-container');
   const titleElement = createIconTitle(summaryIcon, '提取的文本');
   titleContainer.appendChild(titleElement);
 
-  // 获取内部元素的引用
-  outputTextarea = document.getElementById('text-extractor-output');
-  placeholder = document.getElementById('modal-placeholder');
-  const closeBtn = modalOverlay.querySelector('.text-extractor-modal-close');
-  const copyBtn = modalOverlay.querySelector('.text-extractor-copy-btn');
+  // 填充占位符内容
+  const placeholderIconDiv = document.createElement('div');
+  placeholderIconDiv.className = 'placeholder-icon';
+  const infoIconSVG = createSVGFromString(infoIcon);
+  if (infoIconSVG) placeholderIconDiv.appendChild(infoIconSVG);
 
-  // --- 填充占位符内容 ---
-  placeholder.innerHTML = `
-    <div class="placeholder-icon">${infoIcon}</div>
-    <p>当前没有总结文本</p>
-    <p class="placeholder-actions">
-      点击 <span class="placeholder-action-icon">${dynamicIcon}</span><strong>[动态扫描]</strong> 按钮开始一个新的扫描会话
-    </p>
-    <p class="placeholder-actions">
-      点击 <span class="placeholder-action-icon">${translateIcon}</span><strong>[静态扫描]</strong> 按钮可进行一次性的快捷提取
-    </p>
-  `;
+  const p1 = document.createElement('p');
+  p1.textContent = '当前没有总结文本';
+
+  const p2 = document.createElement('p');
+  p2.className = 'placeholder-actions';
+  p2.append('点击 ');
+  const span2 = document.createElement('span');
+  span2.className = 'placeholder-action-icon';
+  const dynamicIconSVG = createSVGFromString(dynamicIcon);
+  if (dynamicIconSVG) span2.appendChild(dynamicIconSVG);
+  p2.appendChild(span2);
+  const strong2 = document.createElement('strong');
+  strong2.textContent = '[动态扫描]';
+  p2.appendChild(strong2);
+  p2.append(' 按钮开始一个新的扫描会话');
+
+  const p3 = document.createElement('p');
+  p3.className = 'placeholder-actions';
+  p3.append('点击 ');
+  const span3 = document.createElement('span');
+  span3.className = 'placeholder-action-icon';
+  const translateIconSVG = createSVGFromString(translateIcon);
+  if (translateIconSVG) span3.appendChild(translateIconSVG);
+  p3.appendChild(span3);
+  const strong3 = document.createElement('strong');
+  strong3.textContent = '[静态扫描]';
+  p3.appendChild(strong3);
+  p3.append(' 按钮可进行一次性的快捷提取');
+
+  placeholder.appendChild(placeholderIconDiv);
+  placeholder.appendChild(p1);
+  placeholder.appendChild(p2);
+  placeholder.appendChild(p3);
 
   // 更新复制按钮内容
-  copyBtn.innerHTML = ''; // 清空原始内容
   const copyBtnContent = createIconTitle(copyIcon, '复制');
   copyBtn.appendChild(copyBtnContent);
 
-  // 绑定关闭和复制事件
+  // 绑定事件
   closeBtn.addEventListener('click', closeModal);
   copyBtn.addEventListener('click', () => {
     const textToCopy = outputTextarea.value;
     GM_setClipboard(textToCopy, 'text');
-    // 使用新的通知系统
     showNotification('已复制到剪贴板', { type: 'success' });
   });
 }
@@ -119,21 +173,18 @@ export function openModal() {
     return;
   }
 
-  // 先显示“提取中”的提示，并打开模态框
   updateModalContent('文本提取中...', true);
 
-  // 异步提取文本，避免 UI 阻塞
   setTimeout(() => {
     const extractedTexts = extractAndProcessText();
     const formattedText = formatTextsForTranslation(extractedTexts);
     const copyBtn = modalOverlay.querySelector('.text-extractor-copy-btn');
 
-    // 提取完成后，再次调用 updateModalContent 更新最终内容
     updateModalContent(formattedText, false);
-    // 关键修复：在更新内容后，无论如何都确保复制按钮是启用的
-    copyBtn.disabled = false;
+    if(copyBtn) {
+        copyBtn.disabled = false;
+    }
 
-    // 显示成功通知
     showNotification(`快捷扫描完成，发现 ${extractedTexts.length} 条文本`, { type: 'success' });
   }, 50);
 }
@@ -144,7 +195,6 @@ export function openModal() {
  */
 export function closeModal() {
   if (modalOverlay) {
-    // 改为移除 class 来触发 CSS 动画
     modalOverlay.classList.remove('is-visible');
     document.removeEventListener('keydown', handleKeyDown);
   }
@@ -165,25 +215,20 @@ export function updateModalContent(content, shouldOpen = false) {
     const copyBtn = modalOverlay.querySelector('.text-extractor-copy-btn');
 
     if (content === SHOW_PLACEHOLDER) {
-        // 显示占位符，隐藏文本区域
         placeholder.style.display = 'flex';
         outputTextarea.style.display = 'none';
-        copyBtn.disabled = true; // 在占位符视图中禁用复制
+        if (copyBtn) copyBtn.disabled = true;
     } else {
-        // 显示文本区域，隐藏占位符
         placeholder.style.display = 'none';
         outputTextarea.style.display = 'block';
 
-        // 检查内容是否为我们的格式化数据
         const isData = content.trim().startsWith('[');
-
         outputTextarea.value = content;
-        copyBtn.disabled = !isData; // 如果不是数据，则禁用复制按钮
-        outputTextarea.readOnly = !isData; // 如果是提示信息，则设为只读
+        if (copyBtn) copyBtn.disabled = !isData;
+        outputTextarea.readOnly = !isData;
     }
 
     if (shouldOpen) {
-        // 改为添加 class 来触发 CSS 动画
         modalOverlay.classList.add('is-visible');
         document.addEventListener('keydown', handleKeyDown);
     }

@@ -41,5 +41,16 @@ export function hideLiveCounter() {
  */
 export function updateLiveCounter(count) {
     if (!counterElement) return;
-    counterElement.innerHTML = `已发现：<span>${count}</span>`;
+
+    // 清空现有内容
+    while (counterElement.firstChild) {
+        counterElement.removeChild(counterElement.firstChild);
+    }
+
+    const textNode = document.createTextNode('已发现：');
+    const countSpan = document.createElement('span');
+    countSpan.textContent = count;
+
+    counterElement.appendChild(textNode);
+    counterElement.appendChild(countSpan);
 }
