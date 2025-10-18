@@ -5,11 +5,12 @@
  * @description 负责创建和管理主界面的模态框（文本提取结果窗口）。
  */
 
+import { setClipboard } from '../services/tampermonkey.js';
 import config from '../../config.js';
-import { extractAndProcessText, formatTextsForTranslation } from '../../core/processor.js';
-import { showNotification } from '../components.js';
+import { extractAndProcessText, formatTextsForTranslation } from '../utils/textProcessor.js';
+import { showNotification } from './notification.js';
 import { createIconTitle } from './iconTitle.js';
-import { createSVGFromString } from '../utils.js';
+import { createSVGFromString } from '../utils/dom.js';
 import { summaryIcon } from '../../assets/summaryIcon.js';
 import { copyIcon } from '../../assets/copyIcon.js';
 import { infoIcon } from '../../assets/infoIcon.js';
@@ -158,7 +159,7 @@ export function createMainModal() {
   closeBtn.addEventListener('click', closeModal);
   copyBtn.addEventListener('click', () => {
     const textToCopy = outputTextarea.value;
-    GM_setClipboard(textToCopy, 'text');
+    setClipboard(textToCopy);
     showNotification('已复制到剪贴板', { type: 'success' });
   });
 }

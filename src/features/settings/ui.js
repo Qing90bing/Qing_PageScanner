@@ -5,18 +5,19 @@
  * @description 负责创建、显示、隐藏和管理设置面板的用户界面和交互。
  */
 
-import { loadSettings, saveSettings } from '../core/settings';
-import { applyTheme } from './theme';
-import { createCheckbox } from './components';
-import { createIconTitle } from './components/iconTitle.js';
-import { settingsIcon } from '../assets/settingsIcon.js';
-import { themeIcon } from '../assets/themeIcon.js';
-import { filterIcon } from '../assets/filterIcon.js';
-import { saveIcon } from '../assets/saveIcon.js';
-import { CustomSelect } from './components/customSelect.js';
-import { systemThemeIcon } from '../assets/systemThemeIcon.js';
-import { lightThemeIcon } from '../assets/lightThemeIcon.js';
-import { darkThemeIcon } from '../assets/darkThemeIcon.js';
+import { registerMenuCommand } from '../../shared/services/tampermonkey.js';
+import { loadSettings, saveSettings } from './logic.js';
+import { applyTheme } from '../../shared/ui/theme.js';
+import { createCheckbox } from '../../shared/ui/checkbox.js';
+import { createIconTitle } from '../../shared/ui/iconTitle.js';
+import { settingsIcon } from '../../assets/settingsIcon.js';
+import { themeIcon } from '../../assets/themeIcon.js';
+import { filterIcon } from '../../assets/filterIcon.js';
+import { saveIcon } from '../../assets/saveIcon.js';
+import { CustomSelect } from '../../shared/ui/components/customSelect.js';
+import { systemThemeIcon } from '../../assets/systemThemeIcon.js';
+import { lightThemeIcon } from '../../assets/lightThemeIcon.js';
+import { darkThemeIcon } from '../../assets/darkThemeIcon.js';
 
 // --- 模块级变量 ---
 
@@ -224,5 +225,5 @@ function handleSave() {
  * @description 初始化设置面板功能。
  */
 export function initSettingsPanel() {
-  GM_registerMenuCommand('打开设置', showSettingsPanel);
+  registerMenuCommand('打开设置', showSettingsPanel);
 }

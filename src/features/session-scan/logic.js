@@ -5,10 +5,10 @@
  * @description 负责管理一个持续的文本提取“会话”。
  */
 
-import { extractAndProcessText } from './processor.js';
-import { loadSettings } from './settings.js';
-import IGNORED_SELECTORS from './ignoredSelectors.js';
-import IGNORED_TERMS from './ignoredTerms.js';
+import { extractAndProcessText } from '../../shared/utils/textProcessor.js';
+import { loadSettings } from '../settings/logic.js';
+import IGNORED_SELECTORS from '../../shared/utils/ignoredSelectors.js';
+import IGNORED_TERMS from '../../shared/utils/ignoredTerms.js';
 
 // --- 模块级变量 ---
 let isRecording = false;

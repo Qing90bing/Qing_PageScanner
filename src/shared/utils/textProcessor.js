@@ -5,8 +5,8 @@
  * @description 包含了脚本的核心文本处理功能，负责从页面 DOM 中提取、过滤和格式化文本。
  */
 
-import { loadSettings } from './settings.js';
-import config from '../config.js';
+import { loadSettings } from '../../features/settings/logic.js';
+import config from '../../config.js';
 import IGNORED_TERMS from './ignoredTerms.js';
 import IGNORED_SELECTORS from './ignoredSelectors.js';
 

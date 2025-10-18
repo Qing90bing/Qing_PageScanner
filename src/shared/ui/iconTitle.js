@@ -1,5 +1,5 @@
 // src/ui/components/iconTitle.js
-import { createSVGFromString } from '../utils.js';
+import { createSVGFromString } from '../../shared/utils/dom.js';
 
 /**
  * @description 创建一个包含图标和文本的标题元素。

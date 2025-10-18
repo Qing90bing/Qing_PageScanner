@@ -1,9 +1,4 @@
-// src/ui/components.js
-
-/**
- * @module ui/components
- * @description 存放可复用的UI组件生成函数，以减少代码重复并提高UI一致性。
- */
+// src/shared/ui/checkbox.js
 
 /**
  * @public
@@ -34,7 +29,3 @@ export function createCheckbox(id, labelText, isChecked) {
 
   return label;
 }
-
-// 从新模块中导入
-export { showNotification } from './components/notification.js';
-export { showLiveCounter, hideLiveCounter, updateLiveCounter } from './components/liveCounter.js';

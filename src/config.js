@@ -55,6 +55,14 @@ const config = {
    * 可以使用任何有效的CSS高度值（例如 '400px', '80vh'）。
    */
   modalContentHeight: '400px',
+
+  /**
+   * @property {object} notification - 通知系统的相关配置。
+   * @property {number} notification.duration - 通知的默认显示时长（毫秒）。
+   */
+  notification: {
+    duration: 3000,
+  },
 };
 
 export default config;

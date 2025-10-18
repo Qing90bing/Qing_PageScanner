@@ -1,3 +1,4 @@
+import { getValue, setValue } from '../../shared/services/tampermonkey.js';
 // src/core/settings.js
 
 /**
@@ -46,7 +47,7 @@ const defaultSettings = {
  */
 export function loadSettings() {
   // 从存储中读取名为 'script_settings' 的值，如果不存在则返回 null
-  const savedSettings = GM_getValue('script_settings', null);
+  const savedSettings = getValue('script_settings', null);
 
   if (savedSettings) {
     try {
@@ -79,5 +80,5 @@ export function saveSettings(settings) {
   }
 
   // 将设置对象序列化为 JSON 字符串并保存
-  GM_setValue('script_settings', JSON.stringify(settings));
+  setValue('script_settings', JSON.stringify(settings));
 }

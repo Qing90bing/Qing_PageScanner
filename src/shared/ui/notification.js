@@ -1,5 +1,6 @@
 // src/ui/components/notification.js
-import { createSVGFromString } from '../utils.js';
+import { createSVGFromString } from '../../shared/utils/dom.js';
+import config from '../../config.js';
 
 // 存储通知的容器
 let notificationContainer = null;
@@ -73,13 +74,14 @@ function createNotificationElement(message, type = 'info') {
 }
 
 /**
+/**
  * 显示一个通知
  * @param {string} message - 要显示的消息
  * @param {object} options - 配置项
  * @param {string} [options.type='info'] - 通知类型 ('info', 'success')
- * @param {number} [options.duration=3000] - 显示时长 (毫秒)
+ * @param {number} [options.duration=config.notification.duration] - 显示时长 (毫秒)
  */
-export function showNotification(message, { type = 'info', duration = 3000 } = {}) {
+export function showNotification(message, { type = 'info', duration = config.notification.duration } = {}) {
     const container = getNotificationContainer();
     const notification = createNotificationElement(message, type);
 

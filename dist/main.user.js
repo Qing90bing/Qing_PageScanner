@@ -20,758 +20,24 @@
 // ==/UserScript==
 
 
-
-// --- CSS 注入 ---
-(function() {
-    'use strict';
-    const css = `
-/* src/assets/themes.css */
-/* 这个文件只定义颜色变量和主题切换逻辑 */
-
-:root {
-  /* 浅色模式颜色变量 */
-  --color-bg: #ffffff;
-  --color-text: #333333;
-  --color-border: #e0e0e0;
-  --color-overlay-bg: rgba(0,0,0,0.5);
-  --color-shadow: rgba(0,0,0,0.2);
-  --color-primary: #1a73e8;
-  --color-primary-hover: #185abc;
-  --color-primary-text: #ffffff;
-  --color-toast-bg: #333333;
-  --color-toast-text: #ffffff;
-  --color-textarea-bg: #ffffff;
-  --color-textarea-border: #cccccc;
-
-  /* 深色模式颜色变量 */
-  --dark-color-bg: #2d2d2d;
-  --dark-color-text: #f0f0f0;
-  --dark-color-border: #555555;
-  --dark-color-overlay-bg: rgba(0,0,0,0.7);
-  --dark-color-shadow: rgba(0,0,0,0.4);
-  --dark-color-primary: #1e90ff;
-  --dark-color-primary-hover: #1c86ee;
-  --dark-color-primary-text: #ffffff;
-  --dark-color-toast-bg: #eeeeee;
-  --dark-color-toast-text: #111111;
-  --dark-color-textarea-bg: #3a3a3a;
-  --dark-color-textarea-border: #666666;
-}
-
-/* 根据 data-theme 属性应用浅色主题 */
-body[data-theme='light'] {
-  --main-bg: var(--color-bg);
-  --main-text: var(--color-text);
-  --main-border: var(--color-border);
-  --main-overlay-bg: var(--color-overlay-bg);
-  --main-shadow: var(--color-shadow);
-  --main-primary: var(--color-primary);
-  --main-primary-hover: var(--color-primary-hover);
-  --main-primary-text: var(--color-primary-text);
-  --main-toast-bg: var(--color-toast-bg);
-  --main-toast-text: var(--color-toast-text);
-  --main-textarea-bg: var(--color-textarea-bg);
-  --main-textarea-border: var(--color-textarea-border);
-  --main-disabled: #cccccc;
-  --main-disabled-text: #666666;
-}
-
-/* 根据 data-theme 属性应用深色主题 */
-body[data-theme='dark'] {
-  --main-bg: var(--dark-color-bg);
-  --main-text: var(--dark-color-text);
-  --main-border: var(--dark-color-border);
-  --main-overlay-bg: var(--dark-color-overlay-bg);
-  --main-shadow: var(--dark-color-shadow);
-  --main-primary: var(--dark-color-primary);
-  --main-primary-hover: var(--dark-color-primary-hover);
-  --main-primary-text: var(--dark-color-primary-text);
-  --main-toast-bg: var(--dark-color-toast-bg);
-  --main-toast-text: var(--dark-color-toast-text);
-  --main-textarea-bg: var(--dark-color-textarea-bg);
-  --main-textarea-border: var(--dark-color-textarea-border);
-  --main-disabled: #444444;
-  --main-disabled-text: #888888;
-}
-
-
-/* --- From custom-select.css --- */
-/* src/assets/styles/custom-select.css */
-
-.custom-select-container {
-  position: relative;
-  width: 100%;
-  user-select: none;
-}
-
-.custom-select-trigger {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 12px;
-  border: 1px solid var(--main-textarea-border);
-  border-radius: 8px;
-  background-color: var(--main-textarea-bg);
-  color: var(--main-text);
-  font-size: 14px;
-  cursor: pointer;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.custom-select-trigger:hover {
-  border-color: var(--main-primary);
-  box-shadow: 0 0 0 2px rgba(30, 144, 255, 0.1);
-}
-
-.custom-select-container.open .custom-select-trigger {
-  border-color: var(--main-primary);
-  box-shadow: 0 0 0 2px rgba(30, 144, 255, 0.2);
-}
-
-.custom-select-arrow {
-  transition: transform 0.3s ease;
-}
-
-.custom-select-container.open .custom-select-arrow {
-  transform: rotate(180deg);
-}
-
-.custom-select-options {
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 0;
-  right: 0;
-  background-color: var(--main-bg);
-  border: 1px solid var(--main-border);
-  border-radius: 8px;
-  box-shadow: 0 4px 12px var(--main-shadow);
-  z-index: 10003; /* 比设置面板高一级 */
-  max-height: 0;
-  overflow: hidden;
-  opacity: 0;
-  transition: max-height 0.3s ease-out, opacity 0.2s ease-out;
-  visibility: hidden;
-}
-
-.custom-select-container.open .custom-select-options {
-  visibility: visible;
-  opacity: 1;
-  max-height: 200px; /* 或者一个足够大的值 */
-}
-
-.custom-select-option {
-  display: flex;
-  align-items: center;
-  padding: 10px 12px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  gap: 8px;
-}
-
-.custom-select-option:hover {
-  background-color: var(--main-border);
-}
-
-.custom-select-option.selected {
-  font-weight: 600;
-  color: var(--main-primary);
-}
-
-.custom-select-option .option-icon {
-    display: flex;
-    align-items: center;
-}
-
-/* --- From forms.css --- */
-/* src/assets/styles/forms.css */
-
-/* --- 可复用的按钮样式 --- */
-.tc-button {
-  padding: 10px 20px;
-  background-color: var(--main-primary);
-  color: var(--main-primary-text);
-  border: none;
-  border-radius: 999px; /* 完全圆角，胶囊形状 */
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 500;
-  transition: background-color 0.2s, transform 0.15s, box-shadow 0.2s;
-}
-.tc-button:hover {
-  background-color: var(--main-primary-hover);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-}
-.tc-button:active {
-  transform: scale(0.97);
-}
-.tc-button:disabled {
-  background-color: var(--main-disabled);
-  color: var(--main-disabled-text);
-  cursor: not-allowed;
-  box-shadow: none;
-}
-
-/* --- 可复用的文本框样式 --- */
-.tc-textarea {
-  width: 100%;
-  height: 100%; /* 修改：填满父容器 */
-  border: 1px solid var(--main-textarea-border);
-  background-color: var(--main-textarea-bg);
-  color: var(--main-text);
-  border-radius: 8px;
-  padding: 12px;
-  padding-right: 18px; /* 为滚动条轨道留出空间 */
-  font-family: Menlo, Monaco,'Cascadia Code','PingFang SC';
-  font-size: 14px;
-  resize: none; /* 禁用拖拽调整大小 */
-  box-sizing: border-box;
-}
-
-/* 自定义滚动条样式 */
-.tc-textarea::-webkit-scrollbar {
-  width: 6px; /* 更细的滚动条 */
-}
-.tc-textarea::-webkit-scrollbar-track {
-  background: transparent; /* 轨道透明 */
-}
-.tc-textarea::-webkit-scrollbar-thumb {
-  background-color: var(--main-border);
-  border-radius: 3px;
-}
-.tc-textarea::-webkit-scrollbar-thumb:hover {
-  background-color: var(--main-primary);
-}
-.tc-textarea::-webkit-scrollbar-button {
-  display: none; /* 隐藏上下两端的箭头按钮 */
-}
-
-/* --- 可复用的下拉菜单样式 --- */
-.tc-select {
-  /* Box model and appearance */
-  display: block;
-  width: 100%;
-  padding: 10px 36px 10px 12px; /* 右侧留出更多空间给箭头 */
-  border: 1px solid var(--main-textarea-border);
-  border-radius: 8px;
-  background-color: var(--main-textarea-bg);
-  color: var(--main-text);
-  font-size: 14px;
-  cursor: pointer;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-
-  /* Custom arrow icon */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='currentColor'%3E%3Cpath d='M8 11L2 5h12z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  background-size: 12px; /* 稍微增大箭头尺寸 */
-
-  /* Transitions */
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-.tc-select:hover {
-  border-color: var(--main-primary);
-  box-shadow: 0 0 0 2px var(--main-primary-hover-bg, rgba(30, 144, 255, 0.1));
-}
-
-/* --- From live-counter.css --- */
-/* src/assets/styles/live-counter.css */
-
-.tc-live-counter {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translate(-50%, -150%); /* 初始位置在屏幕外上方 */
-    z-index: 2147483646; /* 比通知低一级 */
-    display: flex; /* 保持flex布局 */
-    align-items: center;
-    padding: 8px 16px;
-    border-radius: 20px; /* 圆角 */
-    background-color: rgba(0, 0, 0, 0.7); /* 半透明背景 */
-    color: #fff;
-    font-size: 14px;
-    font-weight: bold;
-    box-shadow: 0 2px 8px var(--main-shadow, rgba(0, 0, 0, 0.2));
-    border: 1px solid var(--main-border, rgba(255, 255, 255, 0.2));
-    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.4s ease;
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-    opacity: 0; /* 默认不可见 */
-    pointer-events: none; /* 默认不可交互 */
-}
-
-.tc-live-counter.tc-live-counter-visible {
-    transform: translate(-50%, 0); /* 动画结束位置 */
-    opacity: 1; /* 变得可见 */
-    pointer-events: auto; /* 变得可交互 */
-}
-
-.tc-live-counter span {
-    min-width: 20px;
-    text-align: center;
-    margin-left: 8px;
-    padding: 2px 6px;
-    background-color: var(--main-overlay-bg, rgba(255, 255, 255, 0.2));
-    border-radius: 10px;
-}
-
-/* --- From main-ui.css --- */
-/* src/assets/styles/main-ui.css */
-
-/* --- 悬浮操作按钮容器 --- */
-.text-extractor-fab-container {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    display: flex;
-    flex-direction: column; /* 垂直排列 */
-    align-items: center;
-    gap: 12px; /* 按钮之间的间距 */
-    z-index: 9999;
-    opacity: 0; /* 初始透明 */
-    transition: opacity 0.5s ease-out;
-}
-
-.text-extractor-fab-container.fab-container-visible {
-    opacity: 1; /* 最终不透明 */
-}
-
-/* --- 单个悬浮操作按钮 (FAB) --- */
-.text-extractor-fab {
-    position: relative; /* 为SVG定位提供基准 */
-    width: 56px;
-    height: 56px;
-    background-color: var(--main-primary);
-    border-radius: 50%;
-    box-shadow: 0 4px 8px var(--main-shadow);
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
-    color: var(--main-primary-text); /* SVG 图标将继承这个颜色 */
-    border: 1px solid var(--main-border); /* 添加描边 */
-}
-
-.text-extractor-fab:hover {
-    background-color: var(--main-primary-hover);
-    transform: scale(1.05);
-    box-shadow: 0 6px 12px var(--main-shadow);
-}
-
-.text-extractor-fab:active {
-    transform: scale(0.95); /* 点击时缩小 */
-    transition-duration: 0.1s;
-}
-
-.text-extractor-fab svg {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 26px;
-    height: 26px;
-    fill: currentColor; /* 关键：让 SVG 的 fill 颜色继承自父元素的 color 属性 */
-}
-
-/* --- 文本提取模态框 --- */
-.text-extractor-modal-overlay {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background-color: var(--main-overlay-bg);
-  z-index: 10000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  /* --- 新增：动画相关属性 --- */
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s;
-}
-
-/* 新增：可见状态 */
-.text-extractor-modal-overlay.is-visible {
-  opacity: 1;
-  visibility: visible;
-}
-
-.text-extractor-modal {
-  background-color: var(--main-bg);
-  color: var(--main-text);
-  width: 80%; max-width: 700px; max-height: 80vh;
-  border-radius: 16px; /* 增大了圆角 */
-  box-shadow: 0 5px 15px var(--main-shadow);
-  display: flex;
-  flex-direction: column;
-  /* --- 新增：动画相关属性 --- */
-  transform: scale(0.95);
-  transition: transform 0.3s ease;
-}
-
-/* 新增：可见状态下的模态框样式 */
-.text-extractor-modal-overlay.is-visible .text-extractor-modal {
-    transform: scale(1);
-}
-
-.text-extractor-modal-header {
-  padding: 16px;
-  border-bottom: 1px solid var(--main-border);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 18px;
-  font-weight: bold;
-  color: var(--main-text);
-}
-
-/* --- 可复用的关闭按钮 --- */
-.tc-close-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  cursor: pointer;
-  color: var(--main-text);
-  background-color: transparent;
-  transition: background-color 0.2s, transform 0.15s;
-}
-
-.tc-close-button:hover {
-  background-color: var(--main-border);
-}
-
-.tc-close-button:active {
-  transform: scale(0.9);
-  background-color: var(--main-border);
-}
-
-.text-extractor-modal-content {
-  padding: 16px;
-  overflow-y: auto;
-  flex-grow: 1;
-  display: flex; /* 新增：启用flexbox布局 */
-}
-
-.text-extractor-modal-footer {
-  padding: 16px;
-  border-top: 1px solid var(--main-border);
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-}
-
-/* --- 动态扫描按钮的激活状态 --- */
-.text-extractor-fab.fab-dynamic.is-recording {
-    background-color: #f39c12; /* 橙色 */
-    animation: tc-breathing 2s ease-in-out infinite;
-}
-
-.text-extractor-fab.fab-dynamic.is-recording:hover {
-    background-color: #e67e22; /* 深一点的橙色 */
-}
-
-@keyframes tc-breathing {
-    0% {
-        box-shadow: 0 4px 8px var(--main-shadow), 0 0 0 0 rgba(243, 156, 18, 0.4);
-    }
-    70% {
-        box-shadow: 0 4px 12px var(--main-shadow), 0 0 0 10px rgba(243, 156, 18, 0);
-    }
-    100% {
-        box-shadow: 0 4px 8px var(--main-shadow), 0 0 0 0 rgba(243, 156, 18, 0);
-    }
-}
-
-
-/* --- From notification.css --- */
-/* src/assets/notification.css */
-
-.tc-notification-container {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 2147483647;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.tc-notification {
-    display: flex;
-    align-items: center;
-    padding: 12px 16px;
-    border-radius: 8px;
-    background-color: var(--main-bg, #fff);
-    color: var(--main-text, #333);
-    box-shadow: 0 4px 12px var(--main-shadow, rgba(0, 0, 0, 0.15));
-    border: 1px solid var(--main-border, #eee);
-    width: 320px;
-    opacity: 0;
-    transform: translateX(100%);
-    animation: tc-notification-fade-in 0.5s forwards;
-    transition: box-shadow 0.3s;
-}
-
-.tc-notification:hover {
-    box-shadow: 0 6px 16px var(--main-shadow, rgba(0, 0, 0, 0.2));
-}
-
-.tc-notification-icon {
-    margin-right: 12px;
-    display: flex;
-    align-items: center;
-}
-
-.tc-notification-icon svg {
-    width: 20px;
-    height: 20px;
-}
-
-.tc-notification-info .tc-notification-icon {
-    color: #3498db;
-}
-
-.tc-notification-success .tc-notification-icon {
-    color: #2ecc71;
-}
-
-.tc-notification-content {
-    flex-grow: 1;
-    font-size: 14px;
-    line-height: 1.4;
-}
-
-.tc-notification-close {
-    cursor: pointer;
-    opacity: 0.6;
-    transition: opacity 0.3s;
-    padding: 4px;
-}
-
-.tc-notification-close:hover {
-    opacity: 1;
-}
-
-.tc-notification-close svg {
-    width: 16px;
-    height: 16px;
-    stroke: var(--main-text, #333);
-}
-
-@keyframes tc-notification-fade-in {
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-.tc-notification-fade-out {
-    animation: tc-notification-fade-out 0.5s forwards;
-}
-
-@keyframes tc-notification-fade-out {
-    from {
-        opacity: 1;
-        transform: translateX(0);
-    }
-    to {
-        opacity: 0;
-        transform: translateX(100%);
-    }
-}
-
-/* --- From placeholder.css --- */
-/* src/assets/styles/placeholder.css */
-
-#modal-placeholder {
-    display: none; /* 默认隐藏 */
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    color: var(--text-color-secondary);
-    padding: 20px;
-    /* height: 100%; */ /* 移除此行以避免影响父容器高度 */
-    box-sizing: border-box;
-    /* 确保占位符本身也能填满其容器空间 */
-    width: 100%;
-    height: 100%;
-}
-
-.placeholder-icon {
-    color: var(--text-color-secondary); /* 将颜色设置移到这里 */
-}
-
-.placeholder-icon svg {
-    width: 48px;
-    height: 48px;
-    /* fill 属性现在由 "currentColor" 在SVG代码中控制，会自动继承父元素的color */
-}
-
-#modal-placeholder p {
-    margin: 4px 0;
-    font-size: 14px;
-}
-
-.placeholder-actions {
-    display: flex;
-    align-items: center;
-    gap: 6px; /* 图标和文字之间的间距 */
-    color: var(--text-color-primary);
-}
-
-.placeholder-action-icon svg {
-    width: 18px;
-    height: 18px;
-    fill: currentColor; /* 继承父元素颜色 */
-    vertical-align: middle;
-}
-
-#modal-placeholder strong {
-    font-weight: 600;
-}
-
-/* --- From settings-panel.css --- */
-/* src/assets/styles/settings-panel.css */
-
-.settings-panel-overlay {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background-color: var(--main-overlay-bg);
-  z-index: 10002;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  /* --- 新增：动画相关属性 --- */
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s;
-}
-
-/* 新增：可见状态 */
-.settings-panel-overlay.is-visible {
-    opacity: 1;
-    visibility: visible;
-}
-
-.settings-panel-modal {
-  background-color: var(--main-bg);
-  color: var(--main-text);
-  border: 1px solid var(--main-border);
-  border-radius: 16px; /* 增大圆角 */
-  box-shadow: 0 5px 15px var(--main-shadow);
-  width: 90%;
-  max-width: 400px;
-  /* --- 新增：动画相关属性 --- */
-  transform: scale(0.95);
-  transition: transform 0.3s ease;
-}
-
-/* 新增：可见状态下的模态框样式 */
-.settings-panel-overlay.is-visible .settings-panel-modal {
-    transform: scale(1);
-}
-.settings-panel-header, .settings-panel-content, .settings-panel-footer {
-  padding: 16px;
-}
-.settings-panel-header {
-  display: flex; justify-content: space-between; align-items: center;
-  border-bottom: 1px solid var(--main-border);
-  font-weight: bold;
-  font-size: 18px;
-}
-/* 关闭按钮的旧样式已被 .tc-close-button 替代，此处可删除或留空 */
-.settings-panel-close {}
-
-.setting-item { margin-bottom: 16px; }
-.setting-item > label { display: block; margin-bottom: 8px; font-weight: 500; }
-
-/* -- 新增：为分组小标题单独设置加粗 -- */
-#theme-setting-title-container,
-#filter-setting-title-container {
-  font-weight: bold;
-  font-size: 16px;
-}
-
-/* -- 全新重构的自定义复选框样式 -- */
-.checkbox-group {
-  display: block;
-  position: relative;
-  padding-left: 30px;
-  margin-top: 12px;
-  cursor: pointer;
-  user-select: none;
-  height: 20px;
-  line-height: 20px;
-  color: var(--main-text);
-}
-
-/* 彻底隐藏原生的复选框 */
-.checkbox-group input {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-  height: 0;
-  width: 0;
-}
-
-/* 创建一个假的复选框容器 */
-.checkmark {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 18px;
-  width: 18px;
-  background-color: var(--main-textarea-bg);
-  border: 1px solid var(--main-textarea-border);
-  border-radius: 3px;
-  transition: all 0.2s;
-}
-
-/* 当鼠标悬停时，给一个反馈 */
-.checkbox-group:hover input ~ .checkmark {
-  border-color: var(--main-primary);
-}
-
-/* 当复选框被选中时，改变背景和边框颜色 */
-.checkbox-group input:checked ~ .checkmark {
-  background-color: var(--main-primary);
-  border-color: var(--main-primary);
-}
-
-/* 创建勾选标记 (✓)，默认隐藏 */
-.checkmark:after {
-  content: "";
-  position: absolute;
-  display: none;
-}
-
-/* 当复选框被选中时，显示勾选标记 */
-.checkbox-group input:checked ~ .checkmark:after {
-  display: block;
-}
-
-/* 勾选标记的样式 */
-.checkbox-group .checkmark:after {
-  left: 6px;
-  top: 2px;
-  width: 5px;
-  height: 10px;
-  border: solid var(--main-bg);
-  border-width: 0 2px 2px 0;
-  transform: rotate(45deg);
-}
-/* -- 结束自定义复选框样式 -- */
-
-.settings-panel-footer {
-  border-top: 1px solid var(--main-border);
-  text-align: right;
-}
-
-    `;
-    GM_addStyle(css);
-})();
-
-
 (() => {
+  // src/shared/services/tampermonkey.js
+  var registerMenuCommand = (caption, commandFunc) => {
+    return GM_registerMenuCommand(caption, commandFunc);
+  };
+  var setClipboard = (text) => {
+    GM_setClipboard(text, "text");
+  };
+  var getValue = (key, defaultValue) => {
+    return GM_getValue(key, defaultValue);
+  };
+  var setValue = (key, value) => {
+    return GM_setValue(key, value);
+  };
+  var addStyle = (css) => {
+    GM_addStyle(css);
+  };
+
   // src/assets/icon.js
   var translateIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="m476-80 182-480h84L924-80h-84l-43-122H603L560-80h-84ZM160-200l-56-56 202-202q-35-35-63.5-80T190-640h84q20 39 40 68t48 58q33-33 68.5-92.5T484-720H40v-80h280v-80h80v80h280v80H564q-21 72-63 148t-83 116l96 98-30 82-122-125-202 201Zm468-72h144l-72-204-72 204Z"/></svg>`;
 
@@ -784,47 +50,98 @@ body[data-theme='dark'] {
   // src/assets/summaryIcon.js
   var summaryIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M280-280h280v-80H280v80Zm0-160h400v-80H280v80Zm0-160h400v-80H280v80Zm-80 480q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/></svg>`;
 
-  // src/core/settings.js
-  var defaultSettings = {
-    // 主题设置, 可选值: 'light', 'dark', 'system'
-    theme: "system",
-    // 过滤规则设置
-    filterRules: {
-      // 是否过滤纯数字和货币符号组成的字符串
-      numbers: true,
-      // 是否过滤纯中文字符串
-      chinese: true,
-      // 是否过滤包含中文字符的字符串
-      containsChinese: false,
-      // 是否过滤纯表情符号字符串
-      emojiOnly: true,
-      // 是否过滤纯符号字符串
-      symbols: true,
-      // 是否过滤特定术语列表中的字符串
-      termFilter: true
+  // src/shared/utils/dom.js
+  var trustedTypePolicy = null;
+  var policyCreated = false;
+  function createTrustedTypePolicy() {
+    if (policyCreated) {
+      return trustedTypePolicy;
     }
-  };
-  function loadSettings() {
-    const savedSettings = GM_getValue("script_settings", null);
-    if (savedSettings) {
+    if (window.trustedTypes && window.trustedTypes.createPolicy) {
       try {
-        return {
-          ...defaultSettings,
-          ...JSON.parse(savedSettings)
-        };
-      } catch (error) {
-        console.error("\u89E3\u6790\u5DF2\u4FDD\u5B58\u7684\u8BBE\u7F6E\u65F6\u51FA\u9519:", error);
-        return defaultSettings;
+        trustedTypePolicy = window.trustedTypes.createPolicy("script-svg-policy", {
+          createHTML: (input) => {
+            return input;
+          }
+        });
+      } catch (e) {
+        if (e.message.includes("already exists")) {
+          trustedTypePolicy = window.trustedTypes.policies.get("script-svg-policy");
+        } else {
+          console.error("\u521B\u5EFA Trusted Type \u7B56\u7565\u5931\u8D25:", e);
+        }
       }
     }
-    return defaultSettings;
+    policyCreated = true;
+    return trustedTypePolicy;
   }
-  function saveSettings(settings) {
-    if (typeof settings !== "object" || settings === null) {
-      console.error("\u5C1D\u8BD5\u4FDD\u5B58\u7684\u8BBE\u7F6E\u4E0D\u662F\u4E00\u4E2A\u6709\u6548\u7684\u5BF9\u8C61:", settings);
-      return;
+  function createSVGFromString(svgString) {
+    if (!svgString || typeof svgString !== "string") return null;
+    const policy = createTrustedTypePolicy();
+    let sanitizedSVG = svgString.trim();
+    if (policy) {
+      sanitizedSVG = policy.createHTML(sanitizedSVG);
     }
-    GM_setValue("script_settings", JSON.stringify(settings));
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(sanitizedSVG, "image/svg+xml");
+    const svgNode = doc.documentElement;
+    if (!svgNode || svgNode.nodeName.toLowerCase() !== "svg" || svgNode.querySelector("parsererror")) {
+      console.error("\u65E0\u6548\u6216\u89E3\u6790\u5931\u8D25\u7684 SVG \u5B57\u7B26\u4E32:", svgString);
+      return null;
+    }
+    return document.importNode(svgNode, true);
+  }
+
+  // src/shared/ui/components/fab.js
+  function createSingleFab(className, iconSVGString, title, onClick) {
+    const fab = document.createElement("div");
+    fab.className = `text-extractor-fab ${className}`;
+    const svgIcon = createSVGFromString(iconSVGString);
+    if (svgIcon) {
+      fab.appendChild(svgIcon);
+    }
+    fab.title = title;
+    fab.addEventListener("click", onClick);
+    return fab;
+  }
+  function createFab({ onStaticExtract, onDynamicExtract, onSummary }) {
+    const fabContainer = document.createElement("div");
+    fabContainer.className = "text-extractor-fab-container";
+    const summaryFab = createSingleFab(
+      "fab-summary",
+      summaryIcon,
+      "\u67E5\u770B\u4F1A\u8BDD\u603B\u7ED3",
+      onSummary
+    );
+    const dynamicFab = createSingleFab(
+      "fab-dynamic",
+      dynamicIcon,
+      "\u5F00\u59CB\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD",
+      () => onDynamicExtract(dynamicFab)
+      // 将fab元素本身传回去，方便UI更新
+    );
+    const staticFab = createSingleFab(
+      "fab-static",
+      translateIcon,
+      "\u5FEB\u6377\u63D0\u53D6\u5F53\u524D\u9875\u9762\u6240\u6709\u6587\u672C",
+      onStaticExtract
+    );
+    fabContainer.appendChild(summaryFab);
+    fabContainer.appendChild(dynamicFab);
+    fabContainer.appendChild(staticFab);
+    document.body.appendChild(fabContainer);
+    setTimeout(() => {
+      fabContainer.classList.add("fab-container-visible");
+    }, 50);
+  }
+  function setFabIcon(fabElement, iconSVGString) {
+    while (fabElement.firstChild) {
+      fabElement.removeChild(fabElement.firstChild);
+    }
+    const newIcon = createSVGFromString(iconSVGString);
+    if (newIcon) {
+      fabElement.appendChild(newIcon);
+    }
   }
 
   // src/config.js
@@ -881,11 +198,61 @@ body[data-theme='dark'] {
      * @property {string} modalContentHeight - 主模态框内容区域的默认高度。
      * 可以使用任何有效的CSS高度值（例如 '400px', '80vh'）。
      */
-    modalContentHeight: "400px"
+    modalContentHeight: "400px",
+    /**
+     * @property {object} notification - 通知系统的相关配置。
+     * @property {number} notification.duration - 通知的默认显示时长（毫秒）。
+     */
+    notification: {
+      duration: 3e3
+    }
   };
   var config_default = config;
 
-  // src/core/ignoredTerms.js
+  // src/features/settings/logic.js
+  var defaultSettings = {
+    // 主题设置, 可选值: 'light', 'dark', 'system'
+    theme: "system",
+    // 过滤规则设置
+    filterRules: {
+      // 是否过滤纯数字和货币符号组成的字符串
+      numbers: true,
+      // 是否过滤纯中文字符串
+      chinese: true,
+      // 是否过滤包含中文字符的字符串
+      containsChinese: false,
+      // 是否过滤纯表情符号字符串
+      emojiOnly: true,
+      // 是否过滤纯符号字符串
+      symbols: true,
+      // 是否过滤特定术语列表中的字符串
+      termFilter: true
+    }
+  };
+  function loadSettings() {
+    const savedSettings = getValue("script_settings", null);
+    if (savedSettings) {
+      try {
+        return {
+          ...defaultSettings,
+          ...JSON.parse(savedSettings)
+        };
+      } catch (error) {
+        console.error("\u89E3\u6790\u5DF2\u4FDD\u5B58\u7684\u8BBE\u7F6E\u65F6\u51FA\u9519:", error);
+        return defaultSettings;
+      }
+    }
+    return defaultSettings;
+  }
+  function saveSettings(settings) {
+    if (typeof settings !== "object" || settings === null) {
+      console.error("\u5C1D\u8BD5\u4FDD\u5B58\u7684\u8BBE\u7F6E\u4E0D\u662F\u4E00\u4E2A\u6709\u6548\u7684\u5BF9\u8C61:", settings);
+      return;
+    }
+    setValue("script_settings", JSON.stringify(settings));
+  }
+
+  // src/shared/utils/ignoredTerms.js
   var IGNORED_TERMS = [
     "Github",
     "Microsoft",
@@ -922,7 +289,7 @@ body[data-theme='dark'] {
   ];
   var ignoredTerms_default = IGNORED_TERMS;
 
-  // src/core/ignoredSelectors.js
+  // src/shared/utils/ignoredSelectors.js
   var IGNORED_SELECTORS = [
     // --- 语义化标签 ---
     "script",
@@ -947,7 +314,7 @@ body[data-theme='dark'] {
   ];
   var ignoredSelectors_default = IGNORED_SELECTORS;
 
-  // src/core/processor.js
+  // src/shared/utils/textProcessor.js
   var numberAndCurrencyRegex = /^[$\€\£\¥\d,.\s]+$/;
   var pureChineseRegex = /^[\u4e00-\u9fa5\s]+$/u;
   var containsChineseRegex = /[\u4e00-\u9fa5]/u;
@@ -1021,128 +388,7 @@ ${result.join(",\n")}
 ]`;
   };
 
-  // src/core/sessionExtractor.js
-  var isRecording = false;
-  var sessionTexts = /* @__PURE__ */ new Set();
-  var observer = null;
-  var onTextAddedCallback = null;
-  var numberAndCurrencyRegex2 = /^[$\€\£\¥\d,.\s]+$/;
-  var pureChineseRegex2 = /^[\u4e00-\u9fa5\s]+$/u;
-  var containsChineseRegex2 = /[\u4e00-\u9fa5]/u;
-  var emojiOnlyRegex2 = /^[\p{Emoji}\s]+$/u;
-  var containsLetterOrNumberRegex2 = /[\p{L}\p{N}]/u;
-  function processAndAddText(rawText, textSet, filterRules) {
-    if (!rawText || typeof rawText !== "string") return false;
-    let text = rawText.replace(/(\r\n|\n|\r)+/g, "\n").trim();
-    if (text === "") return false;
-    if (filterRules.numbers && numberAndCurrencyRegex2.test(text)) return false;
-    if (filterRules.chinese && pureChineseRegex2.test(text)) return false;
-    if (filterRules.containsChinese && containsChineseRegex2.test(text)) return false;
-    if (filterRules.emojiOnly && emojiOnlyRegex2.test(text)) return false;
-    if (filterRules.symbols && !containsLetterOrNumberRegex2.test(text)) return false;
-    if (filterRules.termFilter && ignoredTerms_default.includes(text)) return false;
-    const originalSize = textSet.size;
-    textSet.add(rawText.replace(/(\r\n|\n|\r)+/g, "\n"));
-    return textSet.size > originalSize;
-  }
-  var handleMutations = (mutations) => {
-    const { filterRules } = loadSettings();
-    const ignoredSelectorString = ignoredSelectors_default.join(", ");
-    let textAdded = false;
-    mutations.forEach((mutation) => {
-      mutation.addedNodes.forEach((node) => {
-        if (node.nodeType !== Node.ELEMENT_NODE) return;
-        if (node.closest(ignoredSelectorString)) return;
-        const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
-        while (walker.nextNode()) {
-          if (processAndAddText(walker.currentNode.nodeValue, sessionTexts, filterRules)) {
-            textAdded = true;
-          }
-        }
-      });
-    });
-    if (textAdded && onTextAddedCallback) {
-      onTextAddedCallback(sessionTexts.size);
-    }
-  };
-  var start = (onUpdate) => {
-    if (isRecording) return;
-    console.log("\u5F00\u59CB\u65B0\u7684\u63D0\u53D6\u4F1A\u8BDD...");
-    isRecording = true;
-    sessionTexts.clear();
-    onTextAddedCallback = onUpdate || null;
-    const initialTexts = extractAndProcessText();
-    const { filterRules } = loadSettings();
-    let textAdded = false;
-    initialTexts.forEach((text) => {
-      if (processAndAddText(text, sessionTexts, filterRules)) {
-        textAdded = true;
-      }
-    });
-    console.log(`\u4F1A\u8BDD\u521D\u59CB\u6355\u83B7\u5230 ${sessionTexts.size} \u6761\u6587\u672C\u3002`);
-    if (onTextAddedCallback) {
-      onTextAddedCallback(sessionTexts.size);
-    }
-    observer = new MutationObserver(handleMutations);
-    observer.observe(document.body, { childList: true, subtree: true });
-  };
-  var stop = () => {
-    if (!isRecording) return [];
-    console.log("\u505C\u6B62\u63D0\u53D6\u4F1A\u8BDD\u3002");
-    if (observer) {
-      observer.disconnect();
-      observer = null;
-    }
-    isRecording = false;
-    onTextAddedCallback = null;
-    return getSessionTexts();
-  };
-  var isSessionRecording = () => isRecording;
-  var getSessionTexts = () => Array.from(sessionTexts);
-
-  // src/ui/utils.js
-  var trustedTypePolicy = null;
-  var policyCreated = false;
-  function createTrustedTypePolicy() {
-    if (policyCreated) {
-      return trustedTypePolicy;
-    }
-    if (window.trustedTypes && window.trustedTypes.createPolicy) {
-      try {
-        trustedTypePolicy = window.trustedTypes.createPolicy("script-svg-policy", {
-          createHTML: (input) => {
-            return input;
-          }
-        });
-      } catch (e) {
-        if (e.message.includes("already exists")) {
-          trustedTypePolicy = window.trustedTypes.policies.get("script-svg-policy");
-        } else {
-          console.error("\u521B\u5EFA Trusted Type \u7B56\u7565\u5931\u8D25:", e);
-        }
-      }
-    }
-    policyCreated = true;
-    return trustedTypePolicy;
-  }
-  function createSVGFromString(svgString) {
-    if (!svgString || typeof svgString !== "string") return null;
-    const policy = createTrustedTypePolicy();
-    let sanitizedSVG = svgString.trim();
-    if (policy) {
-      sanitizedSVG = policy.createHTML(sanitizedSVG);
-    }
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(sanitizedSVG, "image/svg+xml");
-    const svgNode = doc.documentElement;
-    if (!svgNode || svgNode.nodeName.toLowerCase() !== "svg" || svgNode.querySelector("parsererror")) {
-      console.error("\u65E0\u6548\u6216\u89E3\u6790\u5931\u8D25\u7684 SVG \u5B57\u7B26\u4E32:", svgString);
-      return null;
-    }
-    return document.importNode(svgNode, true);
-  }
-
-  // src/ui/components/notification.js
+  // src/shared/ui/notification.js
   var notificationContainer = null;
   var successIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`;
   var infoIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`;
@@ -1189,7 +435,7 @@ ${result.join(",\n")}
     });
     return notification;
   }
-  function showNotification(message, { type = "info", duration = 3e3 } = {}) {
+  function showNotification(message, { type = "info", duration = config_default.notification.duration } = {}) {
     const container = getNotificationContainer();
     const notification = createNotificationElement(message, type);
     container.appendChild(notification);
@@ -1207,57 +453,7 @@ ${result.join(",\n")}
     }
   }
 
-  // src/ui/components/liveCounter.js
-  var counterElement = null;
-  function createCounterElement() {
-    if (counterElement) return;
-    counterElement = document.createElement("div");
-    counterElement.className = "tc-live-counter";
-    document.body.appendChild(counterElement);
-  }
-  function showLiveCounter() {
-    createCounterElement();
-    requestAnimationFrame(() => {
-      counterElement.classList.add("tc-live-counter-visible");
-    });
-    updateLiveCounter(0);
-  }
-  function hideLiveCounter() {
-    if (!counterElement) return;
-    counterElement.classList.remove("tc-live-counter-visible");
-  }
-  function updateLiveCounter(count) {
-    if (!counterElement) return;
-    while (counterElement.firstChild) {
-      counterElement.removeChild(counterElement.firstChild);
-    }
-    const textNode = document.createTextNode("\u5DF2\u53D1\u73B0\uFF1A");
-    const countSpan = document.createElement("span");
-    countSpan.textContent = count;
-    counterElement.appendChild(textNode);
-    counterElement.appendChild(countSpan);
-  }
-
-  // src/ui/components.js
-  function createCheckbox(id, labelText, isChecked) {
-    const label = document.createElement("label");
-    label.className = "checkbox-group";
-    label.htmlFor = id;
-    label.appendChild(document.createTextNode(labelText));
-    const input = document.createElement("input");
-    input.type = "checkbox";
-    input.id = id;
-    if (isChecked) {
-      input.checked = true;
-    }
-    const checkmark = document.createElement("span");
-    checkmark.className = "checkmark";
-    label.appendChild(input);
-    label.appendChild(checkmark);
-    return label;
-  }
-
-  // src/ui/components/iconTitle.js
+  // src/shared/ui/iconTitle.js
   function createIconTitle(iconSVG, text) {
     const container = document.createElement("div");
     container.style.display = "flex";
@@ -1283,7 +479,7 @@ ${result.join(",\n")}
   // src/assets/infoIcon.js
   var infoIcon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>';
 
-  // src/ui/components/mainModal.js
+  // src/shared/ui/mainModal.js
   var modalOverlay = null;
   var outputTextarea = null;
   var placeholder = null;
@@ -1380,7 +576,7 @@ ${result.join(",\n")}
     closeBtn.addEventListener("click", closeModal);
     copyBtn.addEventListener("click", () => {
       const textToCopy = outputTextarea.value;
-      GM_setClipboard(textToCopy, "text");
+      setClipboard(textToCopy);
       showNotification("\u5DF2\u590D\u5236\u5230\u526A\u8D34\u677F", { type: "success" });
     });
   }
@@ -1431,92 +627,162 @@ ${result.join(",\n")}
     }
   }
 
-  // src/ui/components/fab.js
-  function createSingleFab(className, iconSVGString, title, onClick) {
-    const fab = document.createElement("div");
-    fab.className = `text-extractor-fab ${className}`;
-    const svgIcon = createSVGFromString(iconSVGString);
-    if (svgIcon) {
-      fab.appendChild(svgIcon);
-    }
-    fab.title = title;
-    fab.addEventListener("click", onClick);
-    return fab;
+  // src/features/quick-scan/ui.js
+  function handleQuickScanClick() {
+    openModal();
   }
-  function createFab(onStaticExtract) {
-    const fabContainer = document.createElement("div");
-    fabContainer.className = "text-extractor-fab-container";
-    const summaryFab = createSingleFab(
-      "fab-summary",
-      summaryIcon,
-      "\u67E5\u770B\u4F1A\u8BDD\u603B\u7ED3",
-      handleSummaryClick
-    );
-    const dynamicFab = createSingleFab(
-      "fab-dynamic",
-      dynamicIcon,
-      "\u5F00\u59CB\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD",
-      handleDynamicExtractClick
-    );
-    const staticFab = createSingleFab(
-      "fab-static",
-      translateIcon,
-      "\u5FEB\u6377\u63D0\u53D6\u5F53\u524D\u9875\u9762\u6240\u6709\u6587\u672C",
-      onStaticExtract
-    );
-    fabContainer.appendChild(summaryFab);
-    fabContainer.appendChild(dynamicFab);
-    fabContainer.appendChild(staticFab);
-    document.body.appendChild(fabContainer);
-    setTimeout(() => {
-      fabContainer.classList.add("fab-container-visible");
-    }, 50);
-    function handleSummaryClick() {
-      const results = getSessionTexts();
-      if (results.length === 0) {
-        updateModalContent(SHOW_PLACEHOLDER, true);
-      } else {
-        const formattedText = formatTextsForTranslation(results);
-        updateModalContent(formattedText, true);
-      }
+
+  // src/features/session-scan/logic.js
+  var isRecording = false;
+  var sessionTexts = /* @__PURE__ */ new Set();
+  var observer = null;
+  var onTextAddedCallback = null;
+  var numberAndCurrencyRegex2 = /^[$\€\£\¥\d,.\s]+$/;
+  var pureChineseRegex2 = /^[\u4e00-\u9fa5\s]+$/u;
+  var containsChineseRegex2 = /[\u4e00-\u9fa5]/u;
+  var emojiOnlyRegex2 = /^[\p{Emoji}\s]+$/u;
+  var containsLetterOrNumberRegex2 = /[\p{L}\p{N}]/u;
+  function processAndAddText(rawText, textSet, filterRules) {
+    if (!rawText || typeof rawText !== "string") return false;
+    let text = rawText.replace(/(\r\n|\n|\r)+/g, "\n").trim();
+    if (text === "") return false;
+    if (filterRules.numbers && numberAndCurrencyRegex2.test(text)) return false;
+    if (filterRules.chinese && pureChineseRegex2.test(text)) return false;
+    if (filterRules.containsChinese && containsChineseRegex2.test(text)) return false;
+    if (filterRules.emojiOnly && emojiOnlyRegex2.test(text)) return false;
+    if (filterRules.symbols && !containsLetterOrNumberRegex2.test(text)) return false;
+    if (filterRules.termFilter && ignoredTerms_default.includes(text)) return false;
+    const originalSize = textSet.size;
+    textSet.add(rawText.replace(/(\r\n|\n|\r)+/g, "\n"));
+    return textSet.size > originalSize;
+  }
+  var handleMutations = (mutations) => {
+    const { filterRules } = loadSettings();
+    const ignoredSelectorString = ignoredSelectors_default.join(", ");
+    let textAdded = false;
+    mutations.forEach((mutation) => {
+      mutation.addedNodes.forEach((node) => {
+        if (node.nodeType !== Node.ELEMENT_NODE) return;
+        if (node.closest(ignoredSelectorString)) return;
+        const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
+        while (walker.nextNode()) {
+          if (processAndAddText(walker.currentNode.nodeValue, sessionTexts, filterRules)) {
+            textAdded = true;
+          }
+        }
+      });
+    });
+    if (textAdded && onTextAddedCallback) {
+      onTextAddedCallback(sessionTexts.size);
     }
-    function setFabIcon(fabElement, iconSVGString) {
-      while (fabElement.firstChild) {
-        fabElement.removeChild(fabElement.firstChild);
+  };
+  var start = (onUpdate) => {
+    if (isRecording) return;
+    console.log("\u5F00\u59CB\u65B0\u7684\u63D0\u53D6\u4F1A\u8BDD...");
+    isRecording = true;
+    sessionTexts.clear();
+    onTextAddedCallback = onUpdate || null;
+    const initialTexts = extractAndProcessText();
+    const { filterRules } = loadSettings();
+    let textAdded = false;
+    initialTexts.forEach((text) => {
+      if (processAndAddText(text, sessionTexts, filterRules)) {
+        textAdded = true;
       }
-      const newIcon = createSVGFromString(iconSVGString);
-      if (newIcon) {
-        fabElement.appendChild(newIcon);
-      }
+    });
+    console.log(`\u4F1A\u8BDD\u521D\u59CB\u6355\u83B7\u5230 ${sessionTexts.size} \u6761\u6587\u672C\u3002`);
+    if (onTextAddedCallback) {
+      onTextAddedCallback(sessionTexts.size);
     }
-    function handleDynamicExtractClick() {
-      if (isSessionRecording()) {
-        const results = stop();
-        setFabIcon(dynamicFab, dynamicIcon);
-        dynamicFab.classList.remove("is-recording");
-        dynamicFab.title = "\u5F00\u59CB\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD";
-        hideLiveCounter();
-        showNotification(`\u626B\u63CF\u7ED3\u675F\uFF0C\u5171\u53D1\u73B0 ${results.length} \u6761\u6587\u672C`, { type: "success" });
-      } else {
-        setFabIcon(dynamicFab, stopIcon);
-        dynamicFab.classList.add("is-recording");
-        dynamicFab.title = "\u505C\u6B62\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD";
-        showNotification("\u4F1A\u8BDD\u626B\u63CF\u5DF2\u5F00\u59CB", { type: "info" });
-        showLiveCounter();
-        setTimeout(() => {
-          start(updateLiveCounter);
-        }, 50);
-      }
+    observer = new MutationObserver(handleMutations);
+    observer.observe(document.body, { childList: true, subtree: true });
+  };
+  var stop = () => {
+    if (!isRecording) return [];
+    console.log("\u505C\u6B62\u63D0\u53D6\u4F1A\u8BDD\u3002");
+    if (observer) {
+      observer.disconnect();
+      observer = null;
+    }
+    isRecording = false;
+    onTextAddedCallback = null;
+    return getSessionTexts();
+  };
+  var isSessionRecording = () => isRecording;
+  var getSessionTexts = () => Array.from(sessionTexts);
+
+  // src/features/session-scan/liveCounterUI.js
+  var counterElement = null;
+  function createCounterElement() {
+    if (counterElement) return;
+    counterElement = document.createElement("div");
+    counterElement.className = "tc-live-counter";
+    document.body.appendChild(counterElement);
+  }
+  function showLiveCounter() {
+    createCounterElement();
+    requestAnimationFrame(() => {
+      counterElement.classList.add("tc-live-counter-visible");
+    });
+    updateLiveCounter(0);
+  }
+  function hideLiveCounter() {
+    if (!counterElement) return;
+    counterElement.classList.remove("tc-live-counter-visible");
+  }
+  function updateLiveCounter(count) {
+    if (!counterElement) return;
+    while (counterElement.firstChild) {
+      counterElement.removeChild(counterElement.firstChild);
+    }
+    const textNode = document.createTextNode("\u5DF2\u53D1\u73B0\uFF1A");
+    const countSpan = document.createElement("span");
+    countSpan.textContent = count;
+    counterElement.appendChild(textNode);
+    counterElement.appendChild(countSpan);
+  }
+
+  // src/features/session-scan/ui.js
+  function handleSummaryClick() {
+    const results = getSessionTexts();
+    if (results.length === 0) {
+      updateModalContent(SHOW_PLACEHOLDER, true);
+    } else {
+      const formattedText = formatTextsForTranslation(results);
+      updateModalContent(formattedText, true);
+    }
+  }
+  function handleDynamicExtractClick(dynamicFab) {
+    if (isSessionRecording()) {
+      const results = stop();
+      setFabIcon(dynamicFab, dynamicIcon);
+      dynamicFab.classList.remove("is-recording");
+      dynamicFab.title = "\u5F00\u59CB\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD";
+      hideLiveCounter();
+      showNotification(`\u626B\u63CF\u7ED3\u675F\uFF0C\u5171\u53D1\u73B0 ${results.length} \u6761\u6587\u672C`, { type: "success" });
+    } else {
+      setFabIcon(dynamicFab, stopIcon);
+      dynamicFab.classList.add("is-recording");
+      dynamicFab.title = "\u505C\u6B62\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD";
+      showNotification("\u4F1A\u8BDD\u626B\u63CF\u5DF2\u5F00\u59CB", { type: "info" });
+      showLiveCounter();
+      setTimeout(() => {
+        start(updateLiveCounter);
+      }, 50);
     }
   }
 
-  // src/ui/index.js
+  // src/shared/ui/entry.js
   function initUI() {
     createMainModal();
-    createFab(openModal);
+    createFab({
+      onStaticExtract: handleQuickScanClick,
+      onDynamicExtract: handleDynamicExtractClick,
+      onSummary: handleSummaryClick
+    });
   }
 
-  // src/ui/theme.js
+  // src/shared/ui/theme.js
   function initTheme() {
     const { theme } = loadSettings();
     applyTheme(theme);
@@ -1535,6 +801,25 @@ ${result.join(",\n")}
     }
   });
 
+  // src/shared/ui/checkbox.js
+  function createCheckbox(id, labelText, isChecked) {
+    const label = document.createElement("label");
+    label.className = "checkbox-group";
+    label.htmlFor = id;
+    label.appendChild(document.createTextNode(labelText));
+    const input = document.createElement("input");
+    input.type = "checkbox";
+    input.id = id;
+    if (isChecked) {
+      input.checked = true;
+    }
+    const checkmark = document.createElement("span");
+    checkmark.className = "checkmark";
+    label.appendChild(input);
+    label.appendChild(checkmark);
+    return label;
+  }
+
   // src/assets/settingsIcon.js
   var settingsIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z"/></svg>`;
 
@@ -1547,7 +832,7 @@ ${result.join(",\n")}
   // src/assets/saveIcon.js
   var saveIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z"/></svg>`;
 
-  // src/ui/components/customSelect.js
+  // src/shared/ui/components/customSelect.js
   var CustomSelect = class {
     /**
      * @param {HTMLElement} parentElement - 组件将被附加到的父容器。
@@ -1693,7 +978,7 @@ ${result.join(",\n")}
   // src/assets/darkThemeIcon.js
   var darkThemeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Zm0-80q88 0 158-48.5T740-375q-20 5-40 8t-40 3q-123 0-209.5-86.5T364-660q0-20 3-40t8-40q-78 32-126.5 102T200-480q0 116 82 198t198 82Zm-10-270Z"/></svg>`;
 
-  // src/ui/settingsPanel.js
+  // src/features/settings/ui.js
   var settingsPanel = null;
   var themeSelectComponent = null;
   var filterDefinitions = [
@@ -1830,14 +1115,761 @@ ${result.join(",\n")}
     hideSettingsPanel();
   }
   function initSettingsPanel() {
-    GM_registerMenuCommand("\u6253\u5F00\u8BBE\u7F6E", showSettingsPanel);
+    registerMenuCommand("\u6253\u5F00\u8BBE\u7F6E", showSettingsPanel);
+  }
+
+  // src/features/settings/index.js
+  function initialize() {
+    initSettingsPanel();
   }
 
   // src/main.js
-  (function() {
+  addStyle(`/* src/assets/themes.css */
+/* \u8FD9\u4E2A\u6587\u4EF6\u53EA\u5B9A\u4E49\u989C\u8272\u53D8\u91CF\u548C\u4E3B\u9898\u5207\u6362\u903B\u8F91 */
+
+:root {
+  /* \u6D45\u8272\u6A21\u5F0F\u989C\u8272\u53D8\u91CF */
+  --color-bg: #ffffff;
+  --color-text: #333333;
+  --color-border: #e0e0e0;
+  --color-overlay-bg: rgba(0,0,0,0.5);
+  --color-shadow: rgba(0,0,0,0.2);
+  --color-primary: #1a73e8;
+  --color-primary-hover: #185abc;
+  --color-primary-text: #ffffff;
+  --color-toast-bg: #333333;
+  --color-toast-text: #ffffff;
+  --color-textarea-bg: #ffffff;
+  --color-textarea-border: #cccccc;
+
+  /* \u6DF1\u8272\u6A21\u5F0F\u989C\u8272\u53D8\u91CF */
+  --dark-color-bg: #2d2d2d;
+  --dark-color-text: #f0f0f0;
+  --dark-color-border: #555555;
+  --dark-color-overlay-bg: rgba(0,0,0,0.7);
+  --dark-color-shadow: rgba(0,0,0,0.4);
+  --dark-color-primary: #1e90ff;
+  --dark-color-primary-hover: #1c86ee;
+  --dark-color-primary-text: #ffffff;
+  --dark-color-toast-bg: #eeeeee;
+  --dark-color-toast-text: #111111;
+  --dark-color-textarea-bg: #3a3a3a;
+  --dark-color-textarea-border: #666666;
+}
+
+/* \u6839\u636E data-theme \u5C5E\u6027\u5E94\u7528\u6D45\u8272\u4E3B\u9898 */
+body[data-theme='light'] {
+  --main-bg: var(--color-bg);
+  --main-text: var(--color-text);
+  --main-border: var(--color-border);
+  --main-overlay-bg: var(--color-overlay-bg);
+  --main-shadow: var(--color-shadow);
+  --main-primary: var(--color-primary);
+  --main-primary-hover: var(--color-primary-hover);
+  --main-primary-text: var(--color-primary-text);
+  --main-toast-bg: var(--color-toast-bg);
+  --main-toast-text: var(--color-toast-text);
+  --main-textarea-bg: var(--color-textarea-bg);
+  --main-textarea-border: var(--color-textarea-border);
+  --main-disabled: #cccccc;
+  --main-disabled-text: #666666;
+}
+
+/* \u6839\u636E data-theme \u5C5E\u6027\u5E94\u7528\u6DF1\u8272\u4E3B\u9898 */
+body[data-theme='dark'] {
+  --main-bg: var(--dark-color-bg);
+  --main-text: var(--dark-color-text);
+  --main-border: var(--dark-color-border);
+  --main-overlay-bg: var(--dark-color-overlay-bg);
+  --main-shadow: var(--dark-color-shadow);
+  --main-primary: var(--dark-color-primary);
+  --main-primary-hover: var(--dark-color-primary-hover);
+  --main-primary-text: var(--dark-color-primary-text);
+  --main-toast-bg: var(--dark-color-toast-bg);
+  --main-toast-text: var(--dark-color-toast-text);
+  --main-textarea-bg: var(--dark-color-textarea-bg);
+  --main-textarea-border: var(--dark-color-textarea-border);
+  --main-disabled: #444444;
+  --main-disabled-text: #888888;
+}
+
+
+/* --- From custom-select.css --- */
+/* src/assets/styles/custom-select.css */
+
+.custom-select-container {
+  position: relative;
+  width: 100%;
+  user-select: none;
+}
+
+.custom-select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border: 1px solid var(--main-textarea-border);
+  border-radius: 8px;
+  background-color: var(--main-textarea-bg);
+  color: var(--main-text);
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.custom-select-trigger:hover {
+  border-color: var(--main-primary);
+  box-shadow: 0 0 0 2px rgba(30, 144, 255, 0.1);
+}
+
+.custom-select-container.open .custom-select-trigger {
+  border-color: var(--main-primary);
+  box-shadow: 0 0 0 2px rgba(30, 144, 255, 0.2);
+}
+
+.custom-select-arrow {
+  transition: transform 0.3s ease;
+}
+
+.custom-select-container.open .custom-select-arrow {
+  transform: rotate(180deg);
+}
+
+.custom-select-options {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background-color: var(--main-bg);
+  border: 1px solid var(--main-border);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px var(--main-shadow);
+  z-index: 10003; /* \u6BD4\u8BBE\u7F6E\u9762\u677F\u9AD8\u4E00\u7EA7 */
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.3s ease-out, opacity 0.2s ease-out;
+  visibility: hidden;
+}
+
+.custom-select-container.open .custom-select-options {
+  visibility: visible;
+  opacity: 1;
+  max-height: 200px; /* \u6216\u8005\u4E00\u4E2A\u8DB3\u591F\u5927\u7684\u503C */
+}
+
+.custom-select-option {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  gap: 8px;
+}
+
+.custom-select-option:hover {
+  background-color: var(--main-border);
+}
+
+.custom-select-option.selected {
+  font-weight: 600;
+  color: var(--main-primary);
+}
+
+.custom-select-option .option-icon {
+    display: flex;
+    align-items: center;
+}
+
+/* --- From forms.css --- */
+/* src/assets/styles/forms.css */
+
+/* --- \u53EF\u590D\u7528\u7684\u6309\u94AE\u6837\u5F0F --- */
+.tc-button {
+  padding: 10px 20px;
+  background-color: var(--main-primary);
+  color: var(--main-primary-text);
+  border: none;
+  border-radius: 999px; /* \u5B8C\u5168\u5706\u89D2\uFF0C\u80F6\u56CA\u5F62\u72B6 */
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  transition: background-color 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+.tc-button:hover {
+  background-color: var(--main-primary-hover);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.tc-button:active {
+  transform: scale(0.97);
+}
+.tc-button:disabled {
+  background-color: var(--main-disabled);
+  color: var(--main-disabled-text);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* --- \u53EF\u590D\u7528\u7684\u6587\u672C\u6846\u6837\u5F0F --- */
+.tc-textarea {
+  width: 100%;
+  height: 100%; /* \u4FEE\u6539\uFF1A\u586B\u6EE1\u7236\u5BB9\u5668 */
+  border: 1px solid var(--main-textarea-border);
+  background-color: var(--main-textarea-bg);
+  color: var(--main-text);
+  border-radius: 8px;
+  padding: 12px;
+  padding-right: 18px; /* \u4E3A\u6EDA\u52A8\u6761\u8F68\u9053\u7559\u51FA\u7A7A\u95F4 */
+  font-family: Menlo, Monaco,'Cascadia Code','PingFang SC';
+  font-size: 14px;
+  resize: none; /* \u7981\u7528\u62D6\u62FD\u8C03\u6574\u5927\u5C0F */
+  box-sizing: border-box;
+}
+
+/* \u81EA\u5B9A\u4E49\u6EDA\u52A8\u6761\u6837\u5F0F */
+.tc-textarea::-webkit-scrollbar {
+  width: 6px; /* \u66F4\u7EC6\u7684\u6EDA\u52A8\u6761 */
+}
+.tc-textarea::-webkit-scrollbar-track {
+  background: transparent; /* \u8F68\u9053\u900F\u660E */
+}
+.tc-textarea::-webkit-scrollbar-thumb {
+  background-color: var(--main-border);
+  border-radius: 3px;
+}
+.tc-textarea::-webkit-scrollbar-thumb:hover {
+  background-color: var(--main-primary);
+}
+.tc-textarea::-webkit-scrollbar-button {
+  display: none; /* \u9690\u85CF\u4E0A\u4E0B\u4E24\u7AEF\u7684\u7BAD\u5934\u6309\u94AE */
+}
+
+/* --- \u53EF\u590D\u7528\u7684\u4E0B\u62C9\u83DC\u5355\u6837\u5F0F --- */
+.tc-select {
+  /* Box model and appearance */
+  display: block;
+  width: 100%;
+  padding: 10px 36px 10px 12px; /* \u53F3\u4FA7\u7559\u51FA\u66F4\u591A\u7A7A\u95F4\u7ED9\u7BAD\u5934 */
+  border: 1px solid var(--main-textarea-border);
+  border-radius: 8px;
+  background-color: var(--main-textarea-bg);
+  color: var(--main-text);
+  font-size: 14px;
+  cursor: pointer;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  /* Custom arrow icon */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='currentColor'%3E%3Cpath d='M8 11L2 5h12z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 12px; /* \u7A0D\u5FAE\u589E\u5927\u7BAD\u5934\u5C3A\u5BF8 */
+
+  /* Transitions */
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.tc-select:hover {
+  border-color: var(--main-primary);
+  box-shadow: 0 0 0 2px var(--main-primary-hover-bg, rgba(30, 144, 255, 0.1));
+}
+
+/* --- From live-counter.css --- */
+/* src/assets/styles/live-counter.css */
+
+.tc-live-counter {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translate(-50%, -150%); /* \u521D\u59CB\u4F4D\u7F6E\u5728\u5C4F\u5E55\u5916\u4E0A\u65B9 */
+    z-index: 2147483646; /* \u6BD4\u901A\u77E5\u4F4E\u4E00\u7EA7 */
+    display: flex; /* \u4FDD\u6301flex\u5E03\u5C40 */
+    align-items: center;
+    padding: 8px 16px;
+    border-radius: 20px; /* \u5706\u89D2 */
+    background-color: rgba(0, 0, 0, 0.7); /* \u534A\u900F\u660E\u80CC\u666F */
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    box-shadow: 0 2px 8px var(--main-shadow, rgba(0, 0, 0, 0.2));
+    border: 1px solid var(--main-border, rgba(255, 255, 255, 0.2));
+    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.4s ease;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    opacity: 0; /* \u9ED8\u8BA4\u4E0D\u53EF\u89C1 */
+    pointer-events: none; /* \u9ED8\u8BA4\u4E0D\u53EF\u4EA4\u4E92 */
+}
+
+.tc-live-counter.tc-live-counter-visible {
+    transform: translate(-50%, 0); /* \u52A8\u753B\u7ED3\u675F\u4F4D\u7F6E */
+    opacity: 1; /* \u53D8\u5F97\u53EF\u89C1 */
+    pointer-events: auto; /* \u53D8\u5F97\u53EF\u4EA4\u4E92 */
+}
+
+.tc-live-counter span {
+    min-width: 20px;
+    text-align: center;
+    margin-left: 8px;
+    padding: 2px 6px;
+    background-color: var(--main-overlay-bg, rgba(255, 255, 255, 0.2));
+    border-radius: 10px;
+}
+
+/* --- From main-ui.css --- */
+/* src/assets/styles/main-ui.css */
+
+/* --- \u60AC\u6D6E\u64CD\u4F5C\u6309\u94AE\u5BB9\u5668 --- */
+.text-extractor-fab-container {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    display: flex;
+    flex-direction: column; /* \u5782\u76F4\u6392\u5217 */
+    align-items: center;
+    gap: 12px; /* \u6309\u94AE\u4E4B\u95F4\u7684\u95F4\u8DDD */
+    z-index: 9999;
+    opacity: 0; /* \u521D\u59CB\u900F\u660E */
+    transition: opacity 0.5s ease-out;
+}
+
+.text-extractor-fab-container.fab-container-visible {
+    opacity: 1; /* \u6700\u7EC8\u4E0D\u900F\u660E */
+}
+
+/* --- \u5355\u4E2A\u60AC\u6D6E\u64CD\u4F5C\u6309\u94AE (FAB) --- */
+.text-extractor-fab {
+    position: relative; /* \u4E3ASVG\u5B9A\u4F4D\u63D0\u4F9B\u57FA\u51C6 */
+    width: 56px;
+    height: 56px;
+    background-color: var(--main-primary);
+    border-radius: 50%;
+    box-shadow: 0 4px 8px var(--main-shadow);
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+    color: var(--main-primary-text); /* SVG \u56FE\u6807\u5C06\u7EE7\u627F\u8FD9\u4E2A\u989C\u8272 */
+    border: 1px solid var(--main-border); /* \u6DFB\u52A0\u63CF\u8FB9 */
+}
+
+.text-extractor-fab:hover {
+    background-color: var(--main-primary-hover);
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px var(--main-shadow);
+}
+
+.text-extractor-fab:active {
+    transform: scale(0.95); /* \u70B9\u51FB\u65F6\u7F29\u5C0F */
+    transition-duration: 0.1s;
+}
+
+.text-extractor-fab svg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 26px;
+    height: 26px;
+    fill: currentColor; /* \u5173\u952E\uFF1A\u8BA9 SVG \u7684 fill \u989C\u8272\u7EE7\u627F\u81EA\u7236\u5143\u7D20\u7684 color \u5C5E\u6027 */
+}
+
+/* --- \u6587\u672C\u63D0\u53D6\u6A21\u6001\u6846 --- */
+.text-extractor-modal-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background-color: var(--main-overlay-bg);
+  z-index: 10000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* --- \u65B0\u589E\uFF1A\u52A8\u753B\u76F8\u5173\u5C5E\u6027 --- */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s;
+}
+
+/* \u65B0\u589E\uFF1A\u53EF\u89C1\u72B6\u6001 */
+.text-extractor-modal-overlay.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.text-extractor-modal {
+  background-color: var(--main-bg);
+  color: var(--main-text);
+  width: 80%; max-width: 700px; max-height: 80vh;
+  border-radius: 16px; /* \u589E\u5927\u4E86\u5706\u89D2 */
+  box-shadow: 0 5px 15px var(--main-shadow);
+  display: flex;
+  flex-direction: column;
+  /* --- \u65B0\u589E\uFF1A\u52A8\u753B\u76F8\u5173\u5C5E\u6027 --- */
+  transform: scale(0.95);
+  transition: transform 0.3s ease;
+}
+
+/* \u65B0\u589E\uFF1A\u53EF\u89C1\u72B6\u6001\u4E0B\u7684\u6A21\u6001\u6846\u6837\u5F0F */
+.text-extractor-modal-overlay.is-visible .text-extractor-modal {
+    transform: scale(1);
+}
+
+.text-extractor-modal-header {
+  padding: 16px;
+  border-bottom: 1px solid var(--main-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--main-text);
+}
+
+/* --- \u53EF\u590D\u7528\u7684\u5173\u95ED\u6309\u94AE --- */
+.tc-close-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--main-text);
+  background-color: transparent;
+  transition: background-color 0.2s, transform 0.15s;
+}
+
+.tc-close-button:hover {
+  background-color: var(--main-border);
+}
+
+.tc-close-button:active {
+  transform: scale(0.9);
+  background-color: var(--main-border);
+}
+
+.text-extractor-modal-content {
+  padding: 16px;
+  overflow-y: auto;
+  flex-grow: 1;
+  display: flex; /* \u65B0\u589E\uFF1A\u542F\u7528flexbox\u5E03\u5C40 */
+}
+
+.text-extractor-modal-footer {
+  padding: 16px;
+  border-top: 1px solid var(--main-border);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+/* --- \u52A8\u6001\u626B\u63CF\u6309\u94AE\u7684\u6FC0\u6D3B\u72B6\u6001 --- */
+.text-extractor-fab.fab-dynamic.is-recording {
+    background-color: #f39c12; /* \u6A59\u8272 */
+    animation: tc-breathing 2s ease-in-out infinite;
+}
+
+.text-extractor-fab.fab-dynamic.is-recording:hover {
+    background-color: #e67e22; /* \u6DF1\u4E00\u70B9\u7684\u6A59\u8272 */
+}
+
+@keyframes tc-breathing {
+    0% {
+        box-shadow: 0 4px 8px var(--main-shadow), 0 0 0 0 rgba(243, 156, 18, 0.4);
+    }
+    70% {
+        box-shadow: 0 4px 12px var(--main-shadow), 0 0 0 10px rgba(243, 156, 18, 0);
+    }
+    100% {
+        box-shadow: 0 4px 8px var(--main-shadow), 0 0 0 0 rgba(243, 156, 18, 0);
+    }
+}
+
+
+/* --- From notification.css --- */
+/* src/assets/notification.css */
+
+.tc-notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 2147483647;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.tc-notification {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    border-radius: 8px;
+    background-color: var(--main-bg, #fff);
+    color: var(--main-text, #333);
+    box-shadow: 0 4px 12px var(--main-shadow, rgba(0, 0, 0, 0.15));
+    border: 1px solid var(--main-border, #eee);
+    width: 320px;
+    opacity: 0;
+    transform: translateX(100%);
+    animation: tc-notification-fade-in 0.5s forwards;
+    transition: box-shadow 0.3s;
+}
+
+.tc-notification:hover {
+    box-shadow: 0 6px 16px var(--main-shadow, rgba(0, 0, 0, 0.2));
+}
+
+.tc-notification-icon {
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.tc-notification-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+.tc-notification-info .tc-notification-icon {
+    color: #3498db;
+}
+
+.tc-notification-success .tc-notification-icon {
+    color: #2ecc71;
+}
+
+.tc-notification-content {
+    flex-grow: 1;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.tc-notification-close {
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.3s;
+    padding: 4px;
+}
+
+.tc-notification-close:hover {
+    opacity: 1;
+}
+
+.tc-notification-close svg {
+    width: 16px;
+    height: 16px;
+    stroke: var(--main-text, #333);
+}
+
+@keyframes tc-notification-fade-in {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.tc-notification-fade-out {
+    animation: tc-notification-fade-out 0.5s forwards;
+}
+
+@keyframes tc-notification-fade-out {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
+
+/* --- From placeholder.css --- */
+/* src/assets/styles/placeholder.css */
+
+#modal-placeholder {
+    display: none; /* \u9ED8\u8BA4\u9690\u85CF */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: var(--text-color-secondary);
+    padding: 20px;
+    /* height: 100%; */ /* \u79FB\u9664\u6B64\u884C\u4EE5\u907F\u514D\u5F71\u54CD\u7236\u5BB9\u5668\u9AD8\u5EA6 */
+    box-sizing: border-box;
+    /* \u786E\u4FDD\u5360\u4F4D\u7B26\u672C\u8EAB\u4E5F\u80FD\u586B\u6EE1\u5176\u5BB9\u5668\u7A7A\u95F4 */
+    width: 100%;
+    height: 100%;
+}
+
+.placeholder-icon {
+    color: var(--text-color-secondary); /* \u5C06\u989C\u8272\u8BBE\u7F6E\u79FB\u5230\u8FD9\u91CC */
+}
+
+.placeholder-icon svg {
+    width: 48px;
+    height: 48px;
+    /* fill \u5C5E\u6027\u73B0\u5728\u7531 "currentColor" \u5728SVG\u4EE3\u7801\u4E2D\u63A7\u5236\uFF0C\u4F1A\u81EA\u52A8\u7EE7\u627F\u7236\u5143\u7D20\u7684color */
+}
+
+#modal-placeholder p {
+    margin: 4px 0;
+    font-size: 14px;
+}
+
+.placeholder-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px; /* \u56FE\u6807\u548C\u6587\u5B57\u4E4B\u95F4\u7684\u95F4\u8DDD */
+    color: var(--text-color-primary);
+}
+
+.placeholder-action-icon svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor; /* \u7EE7\u627F\u7236\u5143\u7D20\u989C\u8272 */
+    vertical-align: middle;
+}
+
+#modal-placeholder strong {
+    font-weight: 600;
+}
+
+/* --- From settings-panel.css --- */
+/* src/assets/styles/settings-panel.css */
+
+.settings-panel-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background-color: var(--main-overlay-bg);
+  z-index: 10002;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* --- \u65B0\u589E\uFF1A\u52A8\u753B\u76F8\u5173\u5C5E\u6027 --- */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s;
+}
+
+/* \u65B0\u589E\uFF1A\u53EF\u89C1\u72B6\u6001 */
+.settings-panel-overlay.is-visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.settings-panel-modal {
+  background-color: var(--main-bg);
+  color: var(--main-text);
+  border: 1px solid var(--main-border);
+  border-radius: 16px; /* \u589E\u5927\u5706\u89D2 */
+  box-shadow: 0 5px 15px var(--main-shadow);
+  width: 90%;
+  max-width: 400px;
+  /* --- \u65B0\u589E\uFF1A\u52A8\u753B\u76F8\u5173\u5C5E\u6027 --- */
+  transform: scale(0.95);
+  transition: transform 0.3s ease;
+}
+
+/* \u65B0\u589E\uFF1A\u53EF\u89C1\u72B6\u6001\u4E0B\u7684\u6A21\u6001\u6846\u6837\u5F0F */
+.settings-panel-overlay.is-visible .settings-panel-modal {
+    transform: scale(1);
+}
+.settings-panel-header, .settings-panel-content, .settings-panel-footer {
+  padding: 16px;
+}
+.settings-panel-header {
+  display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid var(--main-border);
+  font-weight: bold;
+  font-size: 18px;
+}
+/* \u5173\u95ED\u6309\u94AE\u7684\u65E7\u6837\u5F0F\u5DF2\u88AB .tc-close-button \u66FF\u4EE3\uFF0C\u6B64\u5904\u53EF\u5220\u9664\u6216\u7559\u7A7A */
+.settings-panel-close {}
+
+.setting-item { margin-bottom: 16px; }
+.setting-item > label { display: block; margin-bottom: 8px; font-weight: 500; }
+
+/* -- \u65B0\u589E\uFF1A\u4E3A\u5206\u7EC4\u5C0F\u6807\u9898\u5355\u72EC\u8BBE\u7F6E\u52A0\u7C97 -- */
+#theme-setting-title-container,
+#filter-setting-title-container {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+/* -- \u5168\u65B0\u91CD\u6784\u7684\u81EA\u5B9A\u4E49\u590D\u9009\u6846\u6837\u5F0F -- */
+.checkbox-group {
+  display: block;
+  position: relative;
+  padding-left: 30px;
+  margin-top: 12px;
+  cursor: pointer;
+  user-select: none;
+  height: 20px;
+  line-height: 20px;
+  color: var(--main-text);
+}
+
+/* \u5F7B\u5E95\u9690\u85CF\u539F\u751F\u7684\u590D\u9009\u6846 */
+.checkbox-group input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* \u521B\u5EFA\u4E00\u4E2A\u5047\u7684\u590D\u9009\u6846\u5BB9\u5668 */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 18px;
+  width: 18px;
+  background-color: var(--main-textarea-bg);
+  border: 1px solid var(--main-textarea-border);
+  border-radius: 3px;
+  transition: all 0.2s;
+}
+
+/* \u5F53\u9F20\u6807\u60AC\u505C\u65F6\uFF0C\u7ED9\u4E00\u4E2A\u53CD\u9988 */
+.checkbox-group:hover input ~ .checkmark {
+  border-color: var(--main-primary);
+}
+
+/* \u5F53\u590D\u9009\u6846\u88AB\u9009\u4E2D\u65F6\uFF0C\u6539\u53D8\u80CC\u666F\u548C\u8FB9\u6846\u989C\u8272 */
+.checkbox-group input:checked ~ .checkmark {
+  background-color: var(--main-primary);
+  border-color: var(--main-primary);
+}
+
+/* \u521B\u5EFA\u52FE\u9009\u6807\u8BB0 (\u2713)\uFF0C\u9ED8\u8BA4\u9690\u85CF */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* \u5F53\u590D\u9009\u6846\u88AB\u9009\u4E2D\u65F6\uFF0C\u663E\u793A\u52FE\u9009\u6807\u8BB0 */
+.checkbox-group input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* \u52FE\u9009\u6807\u8BB0\u7684\u6837\u5F0F */
+.checkbox-group .checkmark:after {
+  left: 6px;
+  top: 2px;
+  width: 5px;
+  height: 10px;
+  border: solid var(--main-bg);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+/* -- \u7ED3\u675F\u81EA\u5B9A\u4E49\u590D\u9009\u6846\u6837\u5F0F -- */
+
+.settings-panel-footer {
+  border-top: 1px solid var(--main-border);
+  text-align: right;
+}
+`);
+  function main() {
     "use strict";
     initTheme();
+    initialize();
     initUI();
-    initSettingsPanel();
-  })();
+  }
+  main();
 })();

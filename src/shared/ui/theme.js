@@ -1,5 +1,5 @@
 // src/ui/theme.js
-import { loadSettings } from '../core/settings';
+import { loadSettings } from '../../features/settings/logic.js';
 
 /**
  * 初始化并应用主题
