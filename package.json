@@ -21,5 +21,8 @@
   "homepage": "https://github.com/Qing90bing/Qing_PageScanner#readme",
   "devDependencies": {
     "esbuild": "^0.25.10"
+  },
+  "dependencies": {
+    "strip-comments": "^2.0.1"
   }
 }

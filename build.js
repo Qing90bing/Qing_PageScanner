@@ -3,6 +3,7 @@
 import esbuild from 'esbuild';
 import fs from 'fs/promises';
 import path from 'path';
+import strip from 'strip-comments';
 
 // --- 主构建函数 ---
 async function build() {
@@ -41,8 +42,17 @@ async function build() {
 
         const bundledCode = result.outputFiles[0].text;
 
-        // 5. 将头部、CSS 注入代码和打包后的代码拼接在一起
-        const finalScript = `${header}\n\n${bundledCode}`;
+        // --- 新增代码清理步骤 ---
+        console.log('开始清理代码...');
+        // 使用 strip-comments 安全地移除注释，同时保留格式
+        let codeWithoutComments = strip(bundledCode);
+        // 移除所有纯空白行
+        let cleanedCode = codeWithoutComments.split('\n').filter(line => line.trim() !== '').join('\n');
+        console.log('代码清理完成。');
+        // --- 清理步骤结束 ---
+
+        // 5. 将头部、CSS 注入代码和清理后的代码拼接在一起
+        const finalScript = `${header}\n\n${cleanedCode}`;
 
         // 6. 确保 dist 目录存在
         await fs.mkdir('dist', { recursive: true });

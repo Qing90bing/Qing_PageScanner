@@ -21,7 +21,6 @@
 
 
 (() => {
-  // src/shared/services/tampermonkey.js
   var registerMenuCommand = (caption, commandFunc) => {
     return GM_registerMenuCommand(caption, commandFunc);
   };
@@ -37,20 +36,10 @@
   var addStyle = (css) => {
     GM_addStyle(css);
   };
-
-  // src/assets/icon.js
   var translateIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="m476-80 182-480h84L924-80h-84l-43-122H603L560-80h-84ZM160-200l-56-56 202-202q-35-35-63.5-80T190-640h84q20 39 40 68t48 58q33-33 68.5-92.5T484-720H40v-80h280v-80h80v80h280v80H564q-21 72-63 148t-83 116l96 98-30 82-122-125-202 201Zm468-72h144l-72-204-72 204Z"/></svg>`;
-
-  // src/assets/dynamicIcon.js
   var dynamicIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M200-766v572q-17-17-32-36t-28-39v-422q13-20 28-39t32-36Zm160-96v764q-21-7-41-15.5T280-133v-694q19-11 39-19.5t41-15.5Zm280 749v-734q106 47 173 145t67 222q0 124-67 222T640-113ZM480-80q-10 0-20-.5T440-82v-796q10-1 20-1.5t20-.5q20 0 40 2t40 6v784q-20 4-40 6t-40 2Z"/></svg>`;
-
-  // src/assets/stopIcon.js
   var stopIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M280-280v-400h400v400H280Z"/></svg>`;
-
-  // src/assets/summaryIcon.js
   var summaryIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M280-280h280v-80H280v80Zm0-160h400v-80H280v80Zm0-160h400v-80H280v80Zm-80 480q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/></svg>`;
-
-  // src/shared/utils/dom.js
   var trustedTypePolicy = null;
   var policyCreated = false;
   function createTrustedTypePolicy() {
@@ -91,8 +80,6 @@
     }
     return document.importNode(svgNode, true);
   }
-
-  // src/shared/ui/components/fab.js
   function createSingleFab(className, iconSVGString, title, onClick) {
     const fab = document.createElement("div");
     fab.className = `text-extractor-fab ${className}`;
@@ -118,7 +105,6 @@
       dynamicIcon,
       "\u5F00\u59CB\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD",
       () => onDynamicExtract(dynamicFab)
-      // 将fab元素本身传回去，方便UI更新
     );
     const staticFab = createSingleFab(
       "fab-static",
@@ -143,89 +129,41 @@
       fabElement.appendChild(newIcon);
     }
   }
-
-  // src/config.js
   var config = {
-    /**
-     * 定义了文本提取的目标CSS选择器。
-     * 默认情况下，脚本会尝试从以下标签和类名中提取文本。
-     * 你可以根据需要添加、修改或删除这些选择器，以适应特定的网站或需求。
-     * @example
-     * // 只提取文章段落和标题
-     * selectors: ['article p', 'h1', 'h2']
-     * // 针对特定网站的定制
-     * selectors: ['.main-content', '.comment-text']
-     */
-    selectors: [
-      // --- 基础文本元素 ---
+        selectors: [
       "p",
-      // 段落
       "h1",
       "h2",
       "h3",
       "h4",
       "h5",
       "h6",
-      // 标题
       "li",
-      // 列表项
       "td",
-      // 表格单元格
       "th",
-      // 表头
       "pre",
-      // 预格式化文本
       "span",
-      // 常用于包裹零散文本
       "a",
-      // 链接文本
       "button",
-      // 按钮文本
-      // --- 容器与特定区域 ---
       "article",
-      // 文章内容
       "main",
-      // 主要内容区域
       "div",
-      // 通用容器
-      // --- 新增：覆盖所有元素以检查属性 ---
-      // 通过这个宽泛的选择器，我们可以检查所有元素的
-      // title, alt, placeholder, aria-label 等属性。
-      // processor.js 中的逻辑会确保只提取有内容的属性。
       "body *"
     ],
-    /**
-     * @property {string} modalContentHeight - 主模态框内容区域的默认高度。
-     * 可以使用任何有效的CSS高度值（例如 '400px', '80vh'）。
-     */
-    modalContentHeight: "400px",
-    /**
-     * @property {object} notification - 通知系统的相关配置。
-     * @property {number} notification.duration - 通知的默认显示时长（毫秒）。
-     */
-    notification: {
+        modalContentHeight: "400px",
+        notification: {
       duration: 3e3
     }
   };
   var config_default = config;
-
-  // src/features/settings/logic.js
   var defaultSettings = {
-    // 主题设置, 可选值: 'light', 'dark', 'system'
     theme: "system",
-    // 过滤规则设置
     filterRules: {
-      // 是否过滤纯数字和货币符号组成的字符串
       numbers: true,
-      // 是否过滤纯中文字符串
       chinese: true,
-      // 是否过滤包含中文字符的字符串
       containsChinese: false,
-      // 是否过滤纯表情符号字符串
       emojiOnly: true,
-      // 是否过滤纯符号字符串
       symbols: true,
-      // 是否过滤特定术语列表中的字符串
       termFilter: true
     }
   };
@@ -251,8 +189,6 @@
     }
     setValue("script_settings", JSON.stringify(settings));
   }
-
-  // src/shared/utils/ignoredTerms.js
   var IGNORED_TERMS = [
     "Github",
     "Microsoft",
@@ -288,33 +224,16 @@
     "AI"
   ];
   var ignoredTerms_default = IGNORED_TERMS;
-
-  // src/shared/utils/ignoredSelectors.js
   var IGNORED_SELECTORS = [
-    // --- 语义化标签 ---
     "script",
-    // 脚本
     "style",
-    // 样式
     "noscript",
-    // script 禁用时显示的内容
     "code",
-    // 代码片段
     "pre",
-    // 预格式化文本，通常用于展示代码
     "kbd",
-    // 键盘输入
-    // --- 常见的非内容区域 (可以根据需要添加) ---
     ".no-translate"
-    // 一个通用的、用于明确指示不翻译的类名
-    // '.navbar',
-    // 'header',
-    // 'footer',
-    // '[role="navigation"]',
   ];
   var ignoredSelectors_default = IGNORED_SELECTORS;
-
-  // src/shared/utils/textProcessor.js
   var numberAndCurrencyRegex = /^[$\€\£\¥\d,.\s]+$/;
   var pureChineseRegex = /^[\u4e00-\u9fa5\s]+$/u;
   var containsChineseRegex = /[\u4e00-\u9fa5]/u;
@@ -324,7 +243,7 @@
     const settings = loadSettings();
     const { filterRules } = settings;
     const { selectors } = config_default;
-    const uniqueTexts = /* @__PURE__ */ new Set();
+    const uniqueTexts =  new Set();
     const processAndAddText2 = (rawText) => {
       if (!rawText) return;
       const normalizedText = rawText.normalize("NFC");
@@ -376,10 +295,6 @@
   var formatTextsForTranslation = (texts) => {
     const result = texts.map(
       (text) => (
-        // 2. 对每个字符串进行处理：
-        //    - 将字符串中的双引号 " 转义为 \"
-        //    - 将字符串中的换行符 \n 转义为 \\n
-        //    - 然后按照 `["...", ""]` 的格式包裹起来
         `    ["${text.replace(/"/g, '\\"').replace(/\n/g, "\\n")}", ""]`
       )
     );
@@ -387,8 +302,6 @@
 ${result.join(",\n")}
 ]`;
   };
-
-  // src/shared/ui/notification.js
   var notificationContainer = null;
   var successIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`;
   var infoIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`;
@@ -452,8 +365,6 @@ ${result.join(",\n")}
       });
     }
   }
-
-  // src/shared/ui/iconTitle.js
   function createIconTitle(iconSVG, text) {
     const container = document.createElement("div");
     container.style.display = "flex";
@@ -472,14 +383,8 @@ ${result.join(",\n")}
     container.appendChild(textNode);
     return container;
   }
-
-  // src/assets/copyIcon.js
   var copyIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M120-220v-80h80v80h-80Zm0-140v-80h80v80h-80Zm0-140v-80h80v80h-80ZM260-80v-80h80v80h-80Zm100-160q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480Zm40 240v-80h80v80h-80Zm-200 0q-33 0-56.5-23.5T120-160h80v80Zm340 0v-80h80q0 33-23.5 56.5T540-80ZM120-640q0-33 23.5-56.5T200-720v80h-80Zm420 80Z"/></svg>`;
-
-  // src/assets/infoIcon.js
   var infoIcon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>';
-
-  // src/shared/ui/mainModal.js
   var modalOverlay = null;
   var outputTextarea = null;
   var placeholder = null;
@@ -626,15 +531,11 @@ ${result.join(",\n")}
       document.addEventListener("keydown", handleKeyDown);
     }
   }
-
-  // src/features/quick-scan/ui.js
   function handleQuickScanClick() {
     openModal();
   }
-
-  // src/features/session-scan/logic.js
   var isRecording = false;
-  var sessionTexts = /* @__PURE__ */ new Set();
+  var sessionTexts =  new Set();
   var observer = null;
   var onTextAddedCallback = null;
   var numberAndCurrencyRegex2 = /^[$\€\£\¥\d,.\s]+$/;
@@ -710,8 +611,6 @@ ${result.join(",\n")}
   };
   var isSessionRecording = () => isRecording;
   var getSessionTexts = () => Array.from(sessionTexts);
-
-  // src/features/session-scan/liveCounterUI.js
   var counterElement = null;
   function createCounterElement() {
     if (counterElement) return;
@@ -741,8 +640,6 @@ ${result.join(",\n")}
     counterElement.appendChild(textNode);
     counterElement.appendChild(countSpan);
   }
-
-  // src/features/session-scan/ui.js
   function handleSummaryClick() {
     const results = getSessionTexts();
     if (results.length === 0) {
@@ -771,8 +668,6 @@ ${result.join(",\n")}
       }, 50);
     }
   }
-
-  // src/shared/ui/entry.js
   function initUI() {
     createMainModal();
     createFab({
@@ -781,8 +676,6 @@ ${result.join(",\n")}
       onSummary: handleSummaryClick
     });
   }
-
-  // src/shared/ui/theme.js
   function initTheme() {
     const { theme } = loadSettings();
     applyTheme(theme);
@@ -800,8 +693,6 @@ ${result.join(",\n")}
       applyTheme("system");
     }
   });
-
-  // src/shared/ui/checkbox.js
   function createCheckbox(id, labelText, isChecked) {
     const label = document.createElement("label");
     label.className = "checkbox-group";
@@ -819,27 +710,12 @@ ${result.join(",\n")}
     label.appendChild(checkmark);
     return label;
   }
-
-  // src/assets/settingsIcon.js
   var settingsIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z"/></svg>`;
-
-  // src/assets/themeIcon.js
   var themeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 32.5-156t88-127Q256-817 330-848.5T488-880q80 0 151 27.5t124.5 76q53.5 48.5 85 115T880-518q0 115-70 176.5T640-280h-74q-9 0-12.5 5t-3.5 11q0 12 15 34.5t15 51.5q0 50-27.5 74T480-80Zm0-400Zm-220 40q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120-160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm200 0q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120 160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17ZM480-160q9 0 14.5-5t5.5-13q0-14-15-33t-15-57q0-42 29-67t71-25h70q66 0 113-38.5T800-518q0-121-92.5-201.5T488-800q-136 0-232 93t-96 227q0 133 93.5 226.5T480-160Z"/></svg>`;
-
-  // src/assets/filterIcon.js
   var filterIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M440-160q-17 0-28.5-11.5T400-200v-240L168-736q-15-20-4.5-42t36.5-22h560q26 0 36.5 22t-4.5 42L560-440v240q0 17-11.5 28.5T520-160h-80Zm40-308 198-252H282l198 252Zm0 0Z"/></svg>`;
-
-  // src/assets/saveIcon.js
   var saveIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z"/></svg>`;
-
-  // src/shared/ui/components/customSelect.js
   var CustomSelect = class {
-    /**
-     * @param {HTMLElement} parentElement - 组件将被附加到的父容器。
-     * @param {Array<Object>} options - 选项数组，每个对象包含 { value, label, icon }。
-     * @param {string} initialValue - 初始选中的值。
-     */
-    constructor(parentElement, options, initialValue) {
+        constructor(parentElement, options, initialValue) {
       this.parentElement = parentElement;
       this.options = options;
       this.currentValue = initialValue;
@@ -847,11 +723,7 @@ ${result.join(",\n")}
       this.render();
       this.bindEvents();
     }
-    /**
-     * @private
-     * @description 渲染组件的 DOM 结构。
-     */
-    render() {
+        render() {
       this.container = document.createElement("div");
       this.container.className = "custom-select-container";
       this.trigger = document.createElement("div");
@@ -875,11 +747,7 @@ ${result.join(",\n")}
       this.populateOptions();
       this.updateSelectedContent(initialOption);
     }
-    /**
-     * @private
-     * @description 填充选项列表。
-     */
-    populateOptions() {
+        populateOptions() {
       this.options.forEach((option) => {
         const optionEl = document.createElement("div");
         optionEl.className = "custom-select-option";
@@ -892,23 +760,14 @@ ${result.join(",\n")}
         this.optionsContainer.appendChild(optionEl);
       });
     }
-    /**
-     * @private
-     * @description 更新触发器区域显示的内容。
-     * @param {Object} option - 被选中的选项对象。
-     */
-    updateSelectedContent(option) {
+        updateSelectedContent(option) {
       while (this.selectedContent.firstChild) {
         this.selectedContent.removeChild(this.selectedContent.firstChild);
       }
       const content = createIconTitle(option.icon, option.label);
       this.selectedContent.appendChild(content);
     }
-    /**
-     * @private
-     * @description 绑定所有必要的事件监听器。
-     */
-    bindEvents() {
+        bindEvents() {
       this.trigger.addEventListener("click", () => this.toggle());
       this.optionsContainer.addEventListener("click", (e) => {
         const optionEl = e.target.closest(".custom-select-option");
@@ -922,30 +781,17 @@ ${result.join(",\n")}
         }
       });
     }
-    /**
-     * @public
-     * @description 切换下拉菜单的打开/关闭状态。
-     */
-    toggle() {
+        toggle() {
       this.isOpen = !this.isOpen;
       this.container.classList.toggle("open", this.isOpen);
     }
-    /**
-     * @public
-     * @description 关闭下拉菜单。
-     */
-    close() {
+        close() {
       if (this.isOpen) {
         this.isOpen = false;
         this.container.classList.remove("open");
       }
     }
-    /**
-     * @public
-     * @description 选择一个选项。
-     * @param {string} value - 要选择的选项的 value。
-     */
-    select(value) {
+        select(value) {
       if (value === this.currentValue) {
         this.close();
         return;
@@ -960,25 +806,13 @@ ${result.join(",\n")}
       }
       this.close();
     }
-    /**
-     * @public
-     * @returns {string} - 返回当前选中的值。
-     */
-    getValue() {
+        getValue() {
       return this.currentValue;
     }
   };
-
-  // src/assets/systemThemeIcon.js
   var systemThemeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M320-120v-80h80v-80H160q-33 0-56.5-23.5T80-360v-400q0-33 23.5-56.5T160-840h640q33 0 56.5 23.5T880-760v400q0 33-23.5 56.5T800-280H560v80h80v80H320ZM160-360h640v-400H160v400Zm0 0v-400 400Z"/></svg>`;
-
-  // src/assets/lightThemeIcon.js
   var lightThemeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm0 80q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Zm326-268Z"/></svg>`;
-
-  // src/assets/darkThemeIcon.js
   var darkThemeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Zm0-80q88 0 158-48.5T740-375q-20 5-40 8t-40 3q-123 0-209.5-86.5T364-660q0-20 3-40t8-40q-78 32-126.5 102T200-480q0 116 82 198t198 82Zm-10-270Z"/></svg>`;
-
-  // src/features/settings/ui.js
   var settingsPanel = null;
   var themeSelectComponent = null;
   var filterDefinitions = [
@@ -1117,16 +951,11 @@ ${result.join(",\n")}
   function initSettingsPanel() {
     registerMenuCommand("\u6253\u5F00\u8BBE\u7F6E", showSettingsPanel);
   }
-
-  // src/features/settings/index.js
   function initialize() {
     initSettingsPanel();
   }
-
-  // src/main.js
   addStyle(`/* src/assets/themes.css */
 /* \u8FD9\u4E2A\u6587\u4EF6\u53EA\u5B9A\u4E49\u989C\u8272\u53D8\u91CF\u548C\u4E3B\u9898\u5207\u6362\u903B\u8F91 */
-
 :root {
   /* \u6D45\u8272\u6A21\u5F0F\u989C\u8272\u53D8\u91CF */
   --color-bg: #ffffff;
@@ -1141,7 +970,6 @@ ${result.join(",\n")}
   --color-toast-text: #ffffff;
   --color-textarea-bg: #ffffff;
   --color-textarea-border: #cccccc;
-
   /* \u6DF1\u8272\u6A21\u5F0F\u989C\u8272\u53D8\u91CF */
   --dark-color-bg: #2d2d2d;
   --dark-color-text: #f0f0f0;
@@ -1156,7 +984,6 @@ ${result.join(",\n")}
   --dark-color-textarea-bg: #3a3a3a;
   --dark-color-textarea-border: #666666;
 }
-
 /* \u6839\u636E data-theme \u5C5E\u6027\u5E94\u7528\u6D45\u8272\u4E3B\u9898 */
 body[data-theme='light'] {
   --main-bg: var(--color-bg);
@@ -1174,7 +1001,6 @@ body[data-theme='light'] {
   --main-disabled: #cccccc;
   --main-disabled-text: #666666;
 }
-
 /* \u6839\u636E data-theme \u5C5E\u6027\u5E94\u7528\u6DF1\u8272\u4E3B\u9898 */
 body[data-theme='dark'] {
   --main-bg: var(--dark-color-bg);
@@ -1192,17 +1018,13 @@ body[data-theme='dark'] {
   --main-disabled: #444444;
   --main-disabled-text: #888888;
 }
-
-
 /* --- From custom-select.css --- */
 /* src/assets/styles/custom-select.css */
-
 .custom-select-container {
   position: relative;
   width: 100%;
   user-select: none;
 }
-
 .custom-select-trigger {
   display: flex;
   align-items: center;
@@ -1216,25 +1038,20 @@ body[data-theme='dark'] {
   cursor: pointer;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
-
 .custom-select-trigger:hover {
   border-color: var(--main-primary);
   box-shadow: 0 0 0 2px rgba(30, 144, 255, 0.1);
 }
-
 .custom-select-container.open .custom-select-trigger {
   border-color: var(--main-primary);
   box-shadow: 0 0 0 2px rgba(30, 144, 255, 0.2);
 }
-
 .custom-select-arrow {
   transition: transform 0.3s ease;
 }
-
 .custom-select-container.open .custom-select-arrow {
   transform: rotate(180deg);
 }
-
 .custom-select-options {
   position: absolute;
   top: calc(100% + 4px);
@@ -1251,13 +1068,11 @@ body[data-theme='dark'] {
   transition: max-height 0.3s ease-out, opacity 0.2s ease-out;
   visibility: hidden;
 }
-
 .custom-select-container.open .custom-select-options {
   visibility: visible;
   opacity: 1;
   max-height: 200px; /* \u6216\u8005\u4E00\u4E2A\u8DB3\u591F\u5927\u7684\u503C */
 }
-
 .custom-select-option {
   display: flex;
   align-items: center;
@@ -1266,24 +1081,19 @@ body[data-theme='dark'] {
   transition: background-color 0.2s;
   gap: 8px;
 }
-
 .custom-select-option:hover {
   background-color: var(--main-border);
 }
-
 .custom-select-option.selected {
   font-weight: 600;
   color: var(--main-primary);
 }
-
 .custom-select-option .option-icon {
     display: flex;
     align-items: center;
 }
-
 /* --- From forms.css --- */
 /* src/assets/styles/forms.css */
-
 /* --- \u53EF\u590D\u7528\u7684\u6309\u94AE\u6837\u5F0F --- */
 .tc-button {
   padding: 10px 20px;
@@ -1309,7 +1119,6 @@ body[data-theme='dark'] {
   cursor: not-allowed;
   box-shadow: none;
 }
-
 /* --- \u53EF\u590D\u7528\u7684\u6587\u672C\u6846\u6837\u5F0F --- */
 .tc-textarea {
   width: 100%;
@@ -1325,7 +1134,6 @@ body[data-theme='dark'] {
   resize: none; /* \u7981\u7528\u62D6\u62FD\u8C03\u6574\u5927\u5C0F */
   box-sizing: border-box;
 }
-
 /* \u81EA\u5B9A\u4E49\u6EDA\u52A8\u6761\u6837\u5F0F */
 .tc-textarea::-webkit-scrollbar {
   width: 6px; /* \u66F4\u7EC6\u7684\u6EDA\u52A8\u6761 */
@@ -1343,7 +1151,6 @@ body[data-theme='dark'] {
 .tc-textarea::-webkit-scrollbar-button {
   display: none; /* \u9690\u85CF\u4E0A\u4E0B\u4E24\u7AEF\u7684\u7BAD\u5934\u6309\u94AE */
 }
-
 /* --- \u53EF\u590D\u7528\u7684\u4E0B\u62C9\u83DC\u5355\u6837\u5F0F --- */
 .tc-select {
   /* Box model and appearance */
@@ -1359,13 +1166,11 @@ body[data-theme='dark'] {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-
   /* Custom arrow icon */
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='currentColor'%3E%3Cpath d='M8 11L2 5h12z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
   background-size: 12px; /* \u7A0D\u5FAE\u589E\u5927\u7BAD\u5934\u5C3A\u5BF8 */
-
   /* Transitions */
   transition: border-color 0.2s, box-shadow 0.2s;
 }
@@ -1373,10 +1178,8 @@ body[data-theme='dark'] {
   border-color: var(--main-primary);
   box-shadow: 0 0 0 2px var(--main-primary-hover-bg, rgba(30, 144, 255, 0.1));
 }
-
 /* --- From live-counter.css --- */
 /* src/assets/styles/live-counter.css */
-
 .tc-live-counter {
     position: fixed;
     top: 20px;
@@ -1399,13 +1202,11 @@ body[data-theme='dark'] {
     opacity: 0; /* \u9ED8\u8BA4\u4E0D\u53EF\u89C1 */
     pointer-events: none; /* \u9ED8\u8BA4\u4E0D\u53EF\u4EA4\u4E92 */
 }
-
 .tc-live-counter.tc-live-counter-visible {
     transform: translate(-50%, 0); /* \u52A8\u753B\u7ED3\u675F\u4F4D\u7F6E */
     opacity: 1; /* \u53D8\u5F97\u53EF\u89C1 */
     pointer-events: auto; /* \u53D8\u5F97\u53EF\u4EA4\u4E92 */
 }
-
 .tc-live-counter span {
     min-width: 20px;
     text-align: center;
@@ -1414,10 +1215,8 @@ body[data-theme='dark'] {
     background-color: var(--main-overlay-bg, rgba(255, 255, 255, 0.2));
     border-radius: 10px;
 }
-
 /* --- From main-ui.css --- */
 /* src/assets/styles/main-ui.css */
-
 /* --- \u60AC\u6D6E\u64CD\u4F5C\u6309\u94AE\u5BB9\u5668 --- */
 .text-extractor-fab-container {
     position: fixed;
@@ -1431,11 +1230,9 @@ body[data-theme='dark'] {
     opacity: 0; /* \u521D\u59CB\u900F\u660E */
     transition: opacity 0.5s ease-out;
 }
-
 .text-extractor-fab-container.fab-container-visible {
     opacity: 1; /* \u6700\u7EC8\u4E0D\u900F\u660E */
 }
-
 /* --- \u5355\u4E2A\u60AC\u6D6E\u64CD\u4F5C\u6309\u94AE (FAB) --- */
 .text-extractor-fab {
     position: relative; /* \u4E3ASVG\u5B9A\u4F4D\u63D0\u4F9B\u57FA\u51C6 */
@@ -1449,18 +1246,15 @@ body[data-theme='dark'] {
     color: var(--main-primary-text); /* SVG \u56FE\u6807\u5C06\u7EE7\u627F\u8FD9\u4E2A\u989C\u8272 */
     border: 1px solid var(--main-border); /* \u6DFB\u52A0\u63CF\u8FB9 */
 }
-
 .text-extractor-fab:hover {
     background-color: var(--main-primary-hover);
     transform: scale(1.05);
     box-shadow: 0 6px 12px var(--main-shadow);
 }
-
 .text-extractor-fab:active {
     transform: scale(0.95); /* \u70B9\u51FB\u65F6\u7F29\u5C0F */
     transition-duration: 0.1s;
 }
-
 .text-extractor-fab svg {
     position: absolute;
     top: 50%;
@@ -1470,7 +1264,6 @@ body[data-theme='dark'] {
     height: 26px;
     fill: currentColor; /* \u5173\u952E\uFF1A\u8BA9 SVG \u7684 fill \u989C\u8272\u7EE7\u627F\u81EA\u7236\u5143\u7D20\u7684 color \u5C5E\u6027 */
 }
-
 /* --- \u6587\u672C\u63D0\u53D6\u6A21\u6001\u6846 --- */
 .text-extractor-modal-overlay {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -1484,13 +1277,11 @@ body[data-theme='dark'] {
   visibility: hidden;
   transition: opacity 0.3s ease, visibility 0.3s;
 }
-
 /* \u65B0\u589E\uFF1A\u53EF\u89C1\u72B6\u6001 */
 .text-extractor-modal-overlay.is-visible {
   opacity: 1;
   visibility: visible;
 }
-
 .text-extractor-modal {
   background-color: var(--main-bg);
   color: var(--main-text);
@@ -1503,12 +1294,10 @@ body[data-theme='dark'] {
   transform: scale(0.95);
   transition: transform 0.3s ease;
 }
-
 /* \u65B0\u589E\uFF1A\u53EF\u89C1\u72B6\u6001\u4E0B\u7684\u6A21\u6001\u6846\u6837\u5F0F */
 .text-extractor-modal-overlay.is-visible .text-extractor-modal {
     transform: scale(1);
 }
-
 .text-extractor-modal-header {
   padding: 16px;
   border-bottom: 1px solid var(--main-border);
@@ -1519,7 +1308,6 @@ body[data-theme='dark'] {
   font-weight: bold;
   color: var(--main-text);
 }
-
 /* --- \u53EF\u590D\u7528\u7684\u5173\u95ED\u6309\u94AE --- */
 .tc-close-button {
   display: flex;
@@ -1533,23 +1321,19 @@ body[data-theme='dark'] {
   background-color: transparent;
   transition: background-color 0.2s, transform 0.15s;
 }
-
 .tc-close-button:hover {
   background-color: var(--main-border);
 }
-
 .tc-close-button:active {
   transform: scale(0.9);
   background-color: var(--main-border);
 }
-
 .text-extractor-modal-content {
   padding: 16px;
   overflow-y: auto;
   flex-grow: 1;
   display: flex; /* \u65B0\u589E\uFF1A\u542F\u7528flexbox\u5E03\u5C40 */
 }
-
 .text-extractor-modal-footer {
   padding: 16px;
   border-top: 1px solid var(--main-border);
@@ -1557,17 +1341,14 @@ body[data-theme='dark'] {
   justify-content: flex-end;
   align-items: center;
 }
-
 /* --- \u52A8\u6001\u626B\u63CF\u6309\u94AE\u7684\u6FC0\u6D3B\u72B6\u6001 --- */
 .text-extractor-fab.fab-dynamic.is-recording {
     background-color: #f39c12; /* \u6A59\u8272 */
     animation: tc-breathing 2s ease-in-out infinite;
 }
-
 .text-extractor-fab.fab-dynamic.is-recording:hover {
     background-color: #e67e22; /* \u6DF1\u4E00\u70B9\u7684\u6A59\u8272 */
 }
-
 @keyframes tc-breathing {
     0% {
         box-shadow: 0 4px 8px var(--main-shadow), 0 0 0 0 rgba(243, 156, 18, 0.4);
@@ -1579,11 +1360,8 @@ body[data-theme='dark'] {
         box-shadow: 0 4px 8px var(--main-shadow), 0 0 0 0 rgba(243, 156, 18, 0);
     }
 }
-
-
 /* --- From notification.css --- */
 /* src/assets/notification.css */
-
 .tc-notification-container {
     position: fixed;
     top: 20px;
@@ -1593,7 +1371,6 @@ body[data-theme='dark'] {
     flex-direction: column;
     gap: 10px;
 }
-
 .tc-notification {
     display: flex;
     align-items: center;
@@ -1609,64 +1386,52 @@ body[data-theme='dark'] {
     animation: tc-notification-fade-in 0.5s forwards;
     transition: box-shadow 0.3s;
 }
-
 .tc-notification:hover {
     box-shadow: 0 6px 16px var(--main-shadow, rgba(0, 0, 0, 0.2));
 }
-
 .tc-notification-icon {
     margin-right: 12px;
     display: flex;
     align-items: center;
 }
-
 .tc-notification-icon svg {
     width: 20px;
     height: 20px;
 }
-
 .tc-notification-info .tc-notification-icon {
     color: #3498db;
 }
-
 .tc-notification-success .tc-notification-icon {
     color: #2ecc71;
 }
-
 .tc-notification-content {
     flex-grow: 1;
     font-size: 14px;
     line-height: 1.4;
 }
-
 .tc-notification-close {
     cursor: pointer;
     opacity: 0.6;
     transition: opacity 0.3s;
     padding: 4px;
 }
-
 .tc-notification-close:hover {
     opacity: 1;
 }
-
 .tc-notification-close svg {
     width: 16px;
     height: 16px;
     stroke: var(--main-text, #333);
 }
-
 @keyframes tc-notification-fade-in {
     to {
         opacity: 1;
         transform: translateX(0);
     }
 }
-
 .tc-notification-fade-out {
     animation: tc-notification-fade-out 0.5s forwards;
 }
-
 @keyframes tc-notification-fade-out {
     from {
         opacity: 1;
@@ -1677,10 +1442,8 @@ body[data-theme='dark'] {
         transform: translateX(100%);
     }
 }
-
 /* --- From placeholder.css --- */
 /* src/assets/styles/placeholder.css */
-
 #modal-placeholder {
     display: none; /* \u9ED8\u8BA4\u9690\u85CF */
     flex-direction: column;
@@ -1695,43 +1458,35 @@ body[data-theme='dark'] {
     width: 100%;
     height: 100%;
 }
-
 .placeholder-icon {
     color: var(--text-color-secondary); /* \u5C06\u989C\u8272\u8BBE\u7F6E\u79FB\u5230\u8FD9\u91CC */
 }
-
 .placeholder-icon svg {
     width: 48px;
     height: 48px;
     /* fill \u5C5E\u6027\u73B0\u5728\u7531 "currentColor" \u5728SVG\u4EE3\u7801\u4E2D\u63A7\u5236\uFF0C\u4F1A\u81EA\u52A8\u7EE7\u627F\u7236\u5143\u7D20\u7684color */
 }
-
 #modal-placeholder p {
     margin: 4px 0;
     font-size: 14px;
 }
-
 .placeholder-actions {
     display: flex;
     align-items: center;
     gap: 6px; /* \u56FE\u6807\u548C\u6587\u5B57\u4E4B\u95F4\u7684\u95F4\u8DDD */
     color: var(--text-color-primary);
 }
-
 .placeholder-action-icon svg {
     width: 18px;
     height: 18px;
     fill: currentColor; /* \u7EE7\u627F\u7236\u5143\u7D20\u989C\u8272 */
     vertical-align: middle;
 }
-
 #modal-placeholder strong {
     font-weight: 600;
 }
-
 /* --- From settings-panel.css --- */
 /* src/assets/styles/settings-panel.css */
-
 .settings-panel-overlay {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   background-color: var(--main-overlay-bg);
@@ -1744,13 +1499,11 @@ body[data-theme='dark'] {
   visibility: hidden;
   transition: opacity 0.3s ease, visibility 0.3s;
 }
-
 /* \u65B0\u589E\uFF1A\u53EF\u89C1\u72B6\u6001 */
 .settings-panel-overlay.is-visible {
     opacity: 1;
     visibility: visible;
 }
-
 .settings-panel-modal {
   background-color: var(--main-bg);
   color: var(--main-text);
@@ -1763,7 +1516,6 @@ body[data-theme='dark'] {
   transform: scale(0.95);
   transition: transform 0.3s ease;
 }
-
 /* \u65B0\u589E\uFF1A\u53EF\u89C1\u72B6\u6001\u4E0B\u7684\u6A21\u6001\u6846\u6837\u5F0F */
 .settings-panel-overlay.is-visible .settings-panel-modal {
     transform: scale(1);
@@ -1779,17 +1531,14 @@ body[data-theme='dark'] {
 }
 /* \u5173\u95ED\u6309\u94AE\u7684\u65E7\u6837\u5F0F\u5DF2\u88AB .tc-close-button \u66FF\u4EE3\uFF0C\u6B64\u5904\u53EF\u5220\u9664\u6216\u7559\u7A7A */
 .settings-panel-close {}
-
 .setting-item { margin-bottom: 16px; }
 .setting-item > label { display: block; margin-bottom: 8px; font-weight: 500; }
-
 /* -- \u65B0\u589E\uFF1A\u4E3A\u5206\u7EC4\u5C0F\u6807\u9898\u5355\u72EC\u8BBE\u7F6E\u52A0\u7C97 -- */
 #theme-setting-title-container,
 #filter-setting-title-container {
   font-weight: bold;
   font-size: 16px;
 }
-
 /* -- \u5168\u65B0\u91CD\u6784\u7684\u81EA\u5B9A\u4E49\u590D\u9009\u6846\u6837\u5F0F -- */
 .checkbox-group {
   display: block;
@@ -1802,7 +1551,6 @@ body[data-theme='dark'] {
   line-height: 20px;
   color: var(--main-text);
 }
-
 /* \u5F7B\u5E95\u9690\u85CF\u539F\u751F\u7684\u590D\u9009\u6846 */
 .checkbox-group input {
   position: absolute;
@@ -1811,7 +1559,6 @@ body[data-theme='dark'] {
   height: 0;
   width: 0;
 }
-
 /* \u521B\u5EFA\u4E00\u4E2A\u5047\u7684\u590D\u9009\u6846\u5BB9\u5668 */
 .checkmark {
   position: absolute;
@@ -1824,30 +1571,25 @@ body[data-theme='dark'] {
   border-radius: 3px;
   transition: all 0.2s;
 }
-
 /* \u5F53\u9F20\u6807\u60AC\u505C\u65F6\uFF0C\u7ED9\u4E00\u4E2A\u53CD\u9988 */
 .checkbox-group:hover input ~ .checkmark {
   border-color: var(--main-primary);
 }
-
 /* \u5F53\u590D\u9009\u6846\u88AB\u9009\u4E2D\u65F6\uFF0C\u6539\u53D8\u80CC\u666F\u548C\u8FB9\u6846\u989C\u8272 */
 .checkbox-group input:checked ~ .checkmark {
   background-color: var(--main-primary);
   border-color: var(--main-primary);
 }
-
 /* \u521B\u5EFA\u52FE\u9009\u6807\u8BB0 (\u2713)\uFF0C\u9ED8\u8BA4\u9690\u85CF */
 .checkmark:after {
   content: "";
   position: absolute;
   display: none;
 }
-
 /* \u5F53\u590D\u9009\u6846\u88AB\u9009\u4E2D\u65F6\uFF0C\u663E\u793A\u52FE\u9009\u6807\u8BB0 */
 .checkbox-group input:checked ~ .checkmark:after {
   display: block;
 }
-
 /* \u52FE\u9009\u6807\u8BB0\u7684\u6837\u5F0F */
 .checkbox-group .checkmark:after {
   left: 6px;
@@ -1859,7 +1601,6 @@ body[data-theme='dark'] {
   transform: rotate(45deg);
 }
 /* -- \u7ED3\u675F\u81EA\u5B9A\u4E49\u590D\u9009\u6846\u6837\u5F0F -- */
-
 .settings-panel-footer {
   border-top: 1px solid var(--main-border);
   text-align: right;
