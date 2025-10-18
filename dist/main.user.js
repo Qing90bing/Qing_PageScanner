@@ -1039,6 +1039,7 @@ body[data-theme='dark'] {
 }
 .custom-select-arrow {
   transition: transform 0.3s ease;
+  transform-origin: center;
 }
 .custom-select-container.open .custom-select-arrow {
   transform: rotate(180deg);
