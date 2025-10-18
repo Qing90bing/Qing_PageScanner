@@ -164,7 +164,8 @@
       containsChinese: false,
       emojiOnly: true,
       symbols: true,
-      termFilter: true
+      termFilter: true,
+      singleLetter: false
     }
   };
   function loadSettings() {
@@ -239,6 +240,7 @@
   var containsChineseRegex = /[\u4e00-\u9fa5]/u;
   var emojiOnlyRegex = /^[\p{Emoji}\s]+$/u;
   var containsLetterOrNumberRegex = /[\p{L}\p{N}]/u;
+  var singleLetterRegex = /^[a-zA-Z]$/;
   var extractAndProcessText = () => {
     const settings = loadSettings();
     const { filterRules } = settings;
@@ -258,6 +260,7 @@
       if (filterRules.emojiOnly && emojiOnlyRegex.test(trimmedText)) return;
       if (filterRules.symbols && !containsLetterOrNumberRegex.test(trimmedText)) return;
       if (filterRules.termFilter && ignoredTerms_default.includes(trimmedText)) return;
+      if (filterRules.singleLetter && singleLetterRegex.test(trimmedText)) return;
       uniqueTexts.add(text);
     };
     processAndAddText2(document.title);
@@ -542,6 +545,7 @@ ${result.join(",\n")}
   var containsChineseRegex2 = /[\u4e00-\u9fa5]/u;
   var emojiOnlyRegex2 = /^[\p{Emoji}\s]+$/u;
   var containsLetterOrNumberRegex2 = /[\p{L}\p{N}]/u;
+  var singleLetterRegex2 = /^[a-zA-Z]$/;
   function processAndAddText(rawText, textSet, filterRules) {
     if (!rawText || typeof rawText !== "string") return false;
     let text = rawText.replace(/(\r\n|\n|\r)+/g, "\n").trim();
@@ -552,6 +556,7 @@ ${result.join(",\n")}
     if (filterRules.emojiOnly && emojiOnlyRegex2.test(text)) return false;
     if (filterRules.symbols && !containsLetterOrNumberRegex2.test(text)) return false;
     if (filterRules.termFilter && ignoredTerms_default.includes(text)) return false;
+    if (filterRules.singleLetter && singleLetterRegex2.test(text)) return false;
     const originalSize = textSet.size;
     textSet.add(rawText.replace(/(\r\n|\n|\r)+/g, "\n"));
     return textSet.size > originalSize;
@@ -821,7 +826,8 @@ ${result.join(",\n")}
     { id: "filter-contains-chinese", key: "containsChinese", label: "\u8FC7\u6EE4\u5305\u542B\u4E2D\u6587\u7684\u6587\u672C" },
     { id: "filter-emoji-only", key: "emojiOnly", label: "\u8FC7\u6EE4\u7EAF\u8868\u60C5\u7B26\u53F7" },
     { id: "filter-symbols", key: "symbols", label: "\u8FC7\u6EE4\u7EAF\u7B26\u53F7" },
-    { id: "filter-term", key: "termFilter", label: "\u8FC7\u6EE4\u7279\u5B9A\u672F\u8BED" }
+    { id: "filter-term", key: "termFilter", label: "\u8FC7\u6EE4\u7279\u5B9A\u672F\u8BED" },
+    { id: "filter-single-letter", key: "singleLetter", label: "\u8FC7\u6EE4\u7EAF\u5355\u4E2A\u82F1\u6587\u5B57\u6BCD" }
   ];
   var handleKeyDown2 = (event) => {
     if (event.key === "Escape") {

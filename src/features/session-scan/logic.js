@@ -22,6 +22,7 @@ const pureChineseRegex = /^[\u4e00-\u9fa5\s]+$/u;
 const containsChineseRegex = /[\u4e00-\u9fa5]/u;
 const emojiOnlyRegex = /^[\p{Emoji}\s]+$/u;
 const containsLetterOrNumberRegex = /[\p{L}\p{N}]/u;
+const singleLetterRegex = /^[a-zA-Z]$/;
 
 function processAndAddText(rawText, textSet, filterRules) {
     if (!rawText || typeof rawText !== 'string') return false;
@@ -34,6 +35,7 @@ function processAndAddText(rawText, textSet, filterRules) {
     if (filterRules.emojiOnly && emojiOnlyRegex.test(text)) return false;
     if (filterRules.symbols && !containsLetterOrNumberRegex.test(text)) return false;
     if (filterRules.termFilter && IGNORED_TERMS.includes(text)) return false;
+    if (filterRules.singleLetter && singleLetterRegex.test(text)) return false;
 
     const originalSize = textSet.size;
     textSet.add(rawText.replace(/(\r\n|\n|\r)+/g, '\n')); // 添加未 trimmed 的版本

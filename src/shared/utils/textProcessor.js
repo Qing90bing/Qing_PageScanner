@@ -65,6 +65,15 @@ const emojiOnlyRegex = /^[\p{Emoji}\s]+$/u;
  */
 const containsLetterOrNumberRegex = /[\p{L}\p{N}]/u;
 
+/**
+ * @private
+ * @readonly
+ * @type {RegExp}
+ * @description 用于检测一个字符串是否只包含一个英文字母（不区分大小写）。
+ * 用于实现“过滤纯单个英文字母”的功能。
+ */
+const singleLetterRegex = /^[a-zA-Z]$/;
+
 
 // --- 公开函数 ---
 
@@ -111,6 +120,7 @@ export const extractAndProcessText = () => {
         if (filterRules.emojiOnly && emojiOnlyRegex.test(trimmedText)) return;
         if (filterRules.symbols && !containsLetterOrNumberRegex.test(trimmedText)) return;
         if (filterRules.termFilter && IGNORED_TERMS.includes(trimmedText)) return;
+        if (filterRules.singleLetter && singleLetterRegex.test(trimmedText)) return;
 
         // 如果通过所有过滤，则添加到 Set 中
         uniqueTexts.add(text);
