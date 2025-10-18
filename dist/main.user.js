@@ -302,10 +302,10 @@
 ${result.join(",\n")}
 ]`;
   };
+  var infoIcon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>';
+  var successIcon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q65 0 123 19t107 53l-58 59q-38-24-81-37.5T480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160q133 0 226.5-93.5T800-480q0-18-2-36t-6-35l65-65q11 32 17 66t6 70q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-56-216L254-466l56-56 114 114 400-401 56 56-456 457Z"/></svg>';
+  var closeIcon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>';
   var notificationContainer = null;
-  var successIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`;
-  var infoIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`;
-  var closeIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
   function getNotificationContainer() {
     if (!notificationContainer) {
       notificationContainer = document.createElement("div");
@@ -319,7 +319,7 @@ ${result.join(",\n")}
     notification.className = `tc-notification tc-notification-${type}`;
     const iconDiv = document.createElement("div");
     iconDiv.className = "tc-notification-icon";
-    const iconSVGString = type === "success" ? successIconSVG : infoIconSVG;
+    const iconSVGString = type === "success" ? successIcon : infoIcon;
     const iconElement = createSVGFromString(iconSVGString);
     if (iconElement) {
       iconDiv.appendChild(iconElement);
@@ -329,7 +329,7 @@ ${result.join(",\n")}
     contentDiv.textContent = message;
     const closeDiv = document.createElement("div");
     closeDiv.className = "tc-notification-close";
-    const closeIconElement = createSVGFromString(closeIconSVG);
+    const closeIconElement = createSVGFromString(closeIcon);
     if (closeIconElement) {
       closeDiv.appendChild(closeIconElement);
     }
@@ -384,7 +384,6 @@ ${result.join(",\n")}
     return container;
   }
   var copyIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M120-220v-80h80v80h-80Zm0-140v-80h80v80h-80Zm0-140v-80h80v80h-80ZM260-80v-80h80v80h-80Zm100-160q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480Zm40 240v-80h80v80h-80Zm-200 0q-33 0-56.5-23.5T120-160h80v80Zm340 0v-80h80q0 33-23.5 56.5T540-80ZM120-640q0-33 23.5-56.5T200-720v80h-80Zm420 80Z"/></svg>`;
-  var infoIcon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>';
   var modalOverlay = null;
   var outputTextarea = null;
   var placeholder = null;
@@ -444,8 +443,8 @@ ${result.join(",\n")}
     titleContainer.appendChild(titleElement);
     const placeholderIconDiv = document.createElement("div");
     placeholderIconDiv.className = "placeholder-icon";
-    const infoIconSVG2 = createSVGFromString(infoIcon);
-    if (infoIconSVG2) placeholderIconDiv.appendChild(infoIconSVG2);
+    const infoIconSVG = createSVGFromString(infoIcon);
+    if (infoIconSVG) placeholderIconDiv.appendChild(infoIconSVG);
     const p1 = document.createElement("p");
     p1.textContent = "\u5F53\u524D\u6CA1\u6709\u603B\u7ED3\u6587\u672C";
     const p2 = document.createElement("p");
@@ -714,6 +713,7 @@ ${result.join(",\n")}
   var themeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 32.5-156t88-127Q256-817 330-848.5T488-880q80 0 151 27.5t124.5 76q53.5 48.5 85 115T880-518q0 115-70 176.5T640-280h-74q-9 0-12.5 5t-3.5 11q0 12 15 34.5t15 51.5q0 50-27.5 74T480-80Zm0-400Zm-220 40q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120-160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm200 0q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120 160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17ZM480-160q9 0 14.5-5t5.5-13q0-14-15-33t-15-57q0-42 29-67t71-25h70q66 0 113-38.5T800-518q0-121-92.5-201.5T488-800q-136 0-232 93t-96 227q0 133 93.5 226.5T480-160Z"/></svg>`;
   var filterIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M440-160q-17 0-28.5-11.5T400-200v-240L168-736q-15-20-4.5-42t36.5-22h560q26 0 36.5 22t-4.5 42L560-440v240q0 17-11.5 28.5T520-160h-80Zm40-308 198-252H282l198 252Zm0 0Z"/></svg>`;
   var saveIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z"/></svg>`;
+  var arrowDownIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>`;
   var CustomSelect = class {
         constructor(parentElement, options, initialValue) {
       this.parentElement = parentElement;
@@ -732,7 +732,7 @@ ${result.join(",\n")}
       this.selectedContent.className = "selected-option-content";
       const arrowDiv = document.createElement("div");
       arrowDiv.className = "custom-select-arrow";
-      const arrowSVG = createSVGFromString(`<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg>`);
+      const arrowSVG = createSVGFromString(arrowDownIcon);
       if (arrowSVG) {
         arrowDiv.appendChild(arrowSVG);
       }
@@ -837,16 +837,7 @@ ${result.join(",\n")}
     titleContainer.id = "settings-panel-title-container";
     const closeBtn = document.createElement("span");
     closeBtn.className = "tc-close-button settings-panel-close";
-    const closeIconSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    closeIconSvg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-    closeIconSvg.setAttribute("height", "24px");
-    closeIconSvg.setAttribute("viewBox", "0 -960 960 960");
-    closeIconSvg.setAttribute("width", "24px");
-    closeIconSvg.setAttribute("fill", "currentColor");
-    const closeIconPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    closeIconPath.setAttribute("d", "m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z");
-    closeIconSvg.appendChild(closeIconPath);
-    closeBtn.appendChild(closeIconSvg);
+    closeBtn.appendChild(createSVGFromString(closeIcon));
     header.appendChild(titleContainer);
     header.appendChild(closeBtn);
     const content = document.createElement("div");
