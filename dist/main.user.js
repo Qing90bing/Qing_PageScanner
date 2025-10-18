@@ -1126,6 +1126,9 @@ body[data-theme='dark'] {
   resize: none; /* \u7981\u7528\u62D6\u62FD\u8C03\u6574\u5927\u5C0F */
   box-sizing: border-box;
 }
+.tc-textarea:focus {
+  outline: none;
+}
 /* \u81EA\u5B9A\u4E49\u6EDA\u52A8\u6761\u6837\u5F0F */
 .tc-textarea::-webkit-scrollbar {
   width: 6px; /* \u66F4\u7EC6\u7684\u6EDA\u52A8\u6761 */
