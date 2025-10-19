@@ -40,43 +40,40 @@
   var dynamicIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M200-766v572q-17-17-32-36t-28-39v-422q13-20 28-39t32-36Zm160-96v764q-21-7-41-15.5T280-133v-694q19-11 39-19.5t41-15.5Zm280 749v-734q106 47 173 145t67 222q0 124-67 222T640-113ZM480-80q-10 0-20-.5T440-82v-796q10-1 20-1.5t20-.5q20 0 40 2t40 6v784q-20 4-40 6t-40 2Z"/></svg>`;
   var stopIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M280-280v-400h400v400H280Z"/></svg>`;
   var summaryIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M280-280h280v-80H280v80Zm0-160h400v-80H280v80Zm0-160h400v-80H280v80Zm-80 480q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/></svg>`;
-  var tooltipElement = null;
+  var currentTooltip = null;
   var hideTimeout = null;
+  function removeAllTooltips() {
+    document.querySelectorAll(".text-extractor-tooltip").forEach((tip) => tip.remove());
+    currentTooltip = null;
+  }
   function showTooltip(targetElement, text) {
-    if (tooltipElement) {
-      hideTooltip(true);
-    }
     clearTimeout(hideTimeout);
-    tooltipElement = document.createElement("div");
-    tooltipElement.className = "text-extractor-tooltip";
-    tooltipElement.textContent = text;
-    document.body.appendChild(tooltipElement);
+    removeAllTooltips();
+    const tooltip = document.createElement("div");
+    tooltip.className = "text-extractor-tooltip";
+    tooltip.textContent = text;
+    document.body.appendChild(tooltip);
+    currentTooltip = tooltip;
     const targetRect = targetElement.getBoundingClientRect();
-    const tooltipRect = tooltipElement.getBoundingClientRect();
+    const tooltipRect = tooltip.getBoundingClientRect();
     const top = targetRect.top + targetRect.height / 2 - tooltipRect.height / 2;
     const left = targetRect.left - tooltipRect.width - 12;
-    tooltipElement.style.top = `${top}px`;
-    tooltipElement.style.left = `${left}px`;
+    tooltip.style.top = `${top}px`;
+    tooltip.style.left = `${left}px`;
     requestAnimationFrame(() => {
-      tooltipElement.classList.add("is-visible");
+      if (tooltip === currentTooltip) {
+        tooltip.classList.add("is-visible");
+      }
     });
   }
-  function hideTooltip(immediate = false) {
-    if (!tooltipElement) return;
-    const el = tooltipElement;
-    tooltipElement = null;
-    if (immediate) {
-      if (el.parentNode) {
-        el.parentNode.removeChild(el);
-      }
-    } else {
-      el.classList.remove("is-visible");
-      hideTimeout = setTimeout(() => {
-        if (el.parentNode) {
-          el.parentNode.removeChild(el);
-        }
-      }, 200);
-    }
+  function hideTooltip() {
+    if (!currentTooltip) return;
+    const tooltipToHide = currentTooltip;
+    currentTooltip = null;
+    tooltipToHide.classList.remove("is-visible");
+    hideTimeout = setTimeout(() => {
+      tooltipToHide.remove();
+    }, 200);
   }
   var trustedTypePolicy = null;
   var policyCreated = false;

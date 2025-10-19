@@ -1,7 +1,16 @@
 // src/shared/ui/components/tooltip.js
 
-let tooltipElement = null;
+let currentTooltip = null;
 let hideTimeout = null;
+
+/**
+ * 强制从 DOM 中移除所有现存的 tooltip 实例。
+ * 这是为了防止在快速的鼠标悬停事件中出现重复的提示框。
+ */
+function removeAllTooltips() {
+    document.querySelectorAll('.text-extractor-tooltip').forEach(tip => tip.remove());
+    currentTooltip = null;
+}
 
 /**
  * 显示提示框
@@ -9,56 +18,49 @@ let hideTimeout = null;
  * @param {string} text - 提示框中显示的文本
  */
 export function showTooltip(targetElement, text) {
-    // 如果已存在提示，先清除
-    if (tooltipElement) {
-        hideTooltip(true);
-    }
+    // 1. 始终先清理掉旧的提示和隐藏计时器
     clearTimeout(hideTimeout);
+    removeAllTooltips();
 
-    // 创建新的提示元素
-    tooltipElement = document.createElement('div');
-    tooltipElement.className = 'text-extractor-tooltip';
-    tooltipElement.textContent = text;
-    document.body.appendChild(tooltipElement);
+    // 2. 创建新的提示元素
+    const tooltip = document.createElement('div');
+    tooltip.className = 'text-extractor-tooltip';
+    tooltip.textContent = text;
+    document.body.appendChild(tooltip);
+    currentTooltip = tooltip; // 将新创建的注册为当前活动的提示
 
-    // 计算位置
+    // 3. 计算并设置位置
     const targetRect = targetElement.getBoundingClientRect();
-    const tooltipRect = tooltipElement.getBoundingClientRect();
+    const tooltipRect = tooltip.getBoundingClientRect();
 
-    // 定位在目标元素左侧，并垂直居中
     const top = targetRect.top + (targetRect.height / 2) - (tooltipRect.height / 2);
     const left = targetRect.left - tooltipRect.width - 12; // 12px 间距
 
-    tooltipElement.style.top = `${top}px`;
-    tooltipElement.style.left = `${left}px`;
+    tooltip.style.top = `${top}px`;
+    tooltip.style.left = `${left}px`;
 
-    // 延迟一帧后添加入场动画类
+    // 4. 延迟一帧后添加入场动画类，确保动画平滑
     requestAnimationFrame(() => {
-        tooltipElement.classList.add('is-visible');
+        // 再次检查，确保在我们准备显示它时，它仍然是那个“当前”的提示框
+        if (tooltip === currentTooltip) {
+            tooltip.classList.add('is-visible');
+        }
     });
 }
 
 /**
  * 隐藏提示框
- * @param {boolean} immediate - 是否立即移除，跳过动画
  */
-export function hideTooltip(immediate = false) {
-    if (!tooltipElement) return;
+export function hideTooltip() {
+    if (!currentTooltip) return;
 
-    const el = tooltipElement;
-    tooltipElement = null; // 立即清除引用
+    const tooltipToHide = currentTooltip;
+    currentTooltip = null; // 立刻注销，表示当前已无活动提示
 
-    if (immediate) {
-        if (el.parentNode) {
-            el.parentNode.removeChild(el);
-        }
-    } else {
-        el.classList.remove('is-visible');
-        // 等待动画结束后再移除DOM元素
-        hideTimeout = setTimeout(() => {
-            if (el.parentNode) {
-                el.parentNode.removeChild(el);
-            }
-        }, 200); // 对应CSS中的 transition 时间
-    }
+    tooltipToHide.classList.remove('is-visible');
+
+    // 等待动画结束后再从 DOM 中移除元素
+    hideTimeout = setTimeout(() => {
+        tooltipToHide.remove();
+    }, 200); // 必须与 CSS 中的 transition 时间一致
 }
