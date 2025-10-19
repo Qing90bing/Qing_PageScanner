@@ -37,12 +37,15 @@ function createSingleFab(className, iconSVGString, title, onClick) {
 
 /**
  * @description 创建并初始化所有悬浮操作按钮。
- * @param {object} callbacks - 包含所有按钮点击事件回调的对象。
- * @param {function} callbacks.onStaticExtract - “静态提取”按钮的点击回调。
- * @param {function} callbacks.onDynamicExtract - “动态扫描”按钮的点击回调。
- * @param {function} callbacks.onSummary - “查看总结”按钮的点击回调。
+ * @param {object} options - 配置对象。
+ * @param {object} options.callbacks - 包含所有按钮点击事件回调的对象。
+ * @param {function} options.callbacks.onStaticExtract - “静态提取”按钮的点击回调。
+ * @param {function} options.callbacks.onDynamicExtract - “动态扫描”按钮的点击回调。
+ * @param {function} options.callbacks.onSummary - “查看总结”按钮的点击回调。
+ * @param {boolean} options.isVisible - 按钮创建后是否立即可见。
  */
-export function createFab({ onStaticExtract, onDynamicExtract, onSummary }) {
+export function createFab({ callbacks, isVisible }) {
+    const { onStaticExtract, onDynamicExtract, onSummary } = callbacks;
     // 创建一个容器来包裹所有的 FAB
     const fabContainer = document.createElement('div');
     fabContainer.className = 'text-extractor-fab-container';
@@ -79,10 +82,13 @@ export function createFab({ onStaticExtract, onDynamicExtract, onSummary }) {
     fabContainer.appendChild(staticFab);
     document.body.appendChild(fabContainer);
 
-    // 触发进入动画
-    setTimeout(() => {
-        fabContainer.classList.add('fab-container-visible');
-    }, 50); // 延迟以确保CSS过渡生效
+    // 根据初始设置决定是否显示
+    if (isVisible) {
+        // 触发进入动画
+        setTimeout(() => {
+            fabContainer.classList.add('fab-container-visible');
+        }, 50); // 延迟以确保CSS过渡生效
+    }
 }
 
 /**

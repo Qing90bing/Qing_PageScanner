@@ -27,6 +27,9 @@
   box-shadow: 0 5px 15px var(--main-shadow);
   width: 90%;
   max-width: 400px;
+  max-height: 85vh; /* 与主模态框保持一致 */
+  display: flex; /* 启用flexbox以控制内部布局 */
+  flex-direction: column; /* 垂直布局 */
   /* --- 新增：动画相关属性 --- */
   transform: scale(0.95);
   transition: transform 0.3s ease;
@@ -37,7 +40,13 @@
     transform: scale(1);
 }
 .settings-panel-header, .settings-panel-content, .settings-panel-footer {
-  padding: 16px;
+  padding: 20px;
+}
+.settings-panel-content {
+    /* 对内容区域的padding做微调，以适应滚动条，并确保视觉上与其他部分对齐 */
+    padding-right: 18px;
+    overflow-y: auto; /* 当内容溢出时显示滚动条 */
+    flex-grow: 1; /* 占据所有可用垂直空间 */
 }
 .settings-panel-header {
   display: flex; justify-content: space-between; align-items: center;
@@ -51,11 +60,11 @@
 .setting-item { margin-bottom: 16px; }
 .setting-item > label { display: block; margin-bottom: 8px; font-weight: 500; }
 
-/* -- 新增：为分组小标题单独设置加粗 -- */
-#theme-setting-title-container,
-#filter-setting-title-container {
+/* -- 设置分组标题的统一新样式 -- */
+.setting-title-container {
   font-weight: bold;
   font-size: 16px;
+  margin-bottom: 8px;
 }
 
 /* -- 全新重构的自定义复选框样式 -- */
@@ -131,4 +140,22 @@
 .settings-panel-footer {
   border-top: 1px solid var(--main-border);
   text-align: right;
+}
+
+/* -- 为设置面板内容区域应用自定义滚动条 -- */
+.settings-panel-content::-webkit-scrollbar {
+  width: 6px;
+}
+.settings-panel-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+.settings-panel-content::-webkit-scrollbar-thumb {
+  background-color: var(--main-border);
+  border-radius: 3px;
+}
+.settings-panel-content::-webkit-scrollbar-thumb:hover {
+  background-color: var(--main-primary);
+}
+.settings-panel-content::-webkit-scrollbar-button {
+  display: none;
 }

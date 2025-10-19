@@ -11,11 +11,13 @@
     gap: 12px; /* 按钮之间的间距 */
     z-index: 9999;
     opacity: 0; /* 初始透明 */
-    transition: opacity 0.5s ease-out;
+    visibility: hidden; /* 初始隐藏 */
+    transition: opacity 0.3s ease, visibility 0.3s;
 }
 
 .text-extractor-fab-container.fab-container-visible {
     opacity: 1; /* 最终不透明 */
+    visibility: visible; /* 最终可见 */
 }
 
 /* --- 单个悬浮操作按钮 (FAB) --- */
@@ -92,7 +94,7 @@
 }
 
 .text-extractor-modal-header {
-  padding: 16px;
+  padding: 18px;
   border-bottom: 1px solid var(--main-border);
   display: flex;
   justify-content: space-between;
@@ -126,14 +128,14 @@
 }
 
 .text-extractor-modal-content {
-  padding: 16px;
+  padding: 18px;
   overflow-y: auto;
   flex-grow: 1;
   display: flex; /* 新增：启用flexbox布局 */
 }
 
 .text-extractor-modal-footer {
-  padding: 16px;
+  padding: 18px;
   border-top: 1px solid var(--main-border);
   display: flex;
   justify-content: flex-end;

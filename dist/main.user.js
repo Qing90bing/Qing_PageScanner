@@ -91,7 +91,8 @@
     fab.addEventListener("click", onClick);
     return fab;
   }
-  function createFab({ onStaticExtract, onDynamicExtract, onSummary }) {
+  function createFab({ callbacks, isVisible }) {
+    const { onStaticExtract, onDynamicExtract, onSummary } = callbacks;
     const fabContainer = document.createElement("div");
     fabContainer.className = "text-extractor-fab-container";
     const summaryFab = createSingleFab(
@@ -116,9 +117,11 @@
     fabContainer.appendChild(dynamicFab);
     fabContainer.appendChild(staticFab);
     document.body.appendChild(fabContainer);
-    setTimeout(() => {
-      fabContainer.classList.add("fab-container-visible");
-    }, 50);
+    if (isVisible) {
+      setTimeout(() => {
+        fabContainer.classList.add("fab-container-visible");
+      }, 50);
+    }
   }
   function setFabIcon(fabElement, iconSVGString) {
     while (fabElement.firstChild) {
@@ -158,6 +161,7 @@
   var config_default = config;
   var defaultSettings = {
     theme: "system",
+    showFab: true,
     filterRules: {
       numbers: true,
       chinese: true,
@@ -699,11 +703,15 @@ ${result.join(",\n")}
     }
   }
   function initUI() {
+    const settings = loadSettings();
     createMainModal();
     createFab({
-      onStaticExtract: handleQuickScanClick,
-      onDynamicExtract: handleDynamicExtractClick,
-      onSummary: handleSummaryClick
+      callbacks: {
+        onStaticExtract: handleQuickScanClick,
+        onDynamicExtract: handleDynamicExtractClick,
+        onSummary: handleSummaryClick
+      },
+      isVisible: settings.showFab
     });
   }
   function initTheme() {
@@ -844,6 +852,7 @@ ${result.join(",\n")}
   var systemThemeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M320-120v-80h80v-80H160q-33 0-56.5-23.5T80-360v-400q0-33 23.5-56.5T160-840h640q33 0 56.5 23.5T880-760v400q0 33-23.5 56.5T800-280H560v80h80v80H320ZM160-360h640v-400H160v400Zm0 0v-400 400Z"/></svg>`;
   var lightThemeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm0 80q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Zm326-268Z"/></svg>`;
   var darkThemeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Zm0-80q88 0 158-48.5T740-375q-20 5-40 8t-40 3q-123 0-209.5-86.5T364-660q0-20 3-40t8-40q-78 32-126.5 102T200-480q0 116 82 198t198 82Zm-10-270Z"/></svg>`;
+  var relatedSettingsIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M320-280h320v-400H320v400Zm80-80v-240h160v240H400Zm40-120h80v-80h-80v80ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/></svg>`;
   var settingsPanel = null;
   var themeSelectComponent = null;
   var filterDefinitions = [
@@ -854,6 +863,9 @@ ${result.join(",\n")}
     { id: "filter-symbols", key: "symbols", label: "\u8FC7\u6EE4\u7EAF\u7B26\u53F7" },
     { id: "filter-term", key: "termFilter", label: "\u8FC7\u6EE4\u7279\u5B9A\u672F\u8BED" },
     { id: "filter-single-letter", key: "singleLetter", label: "\u8FC7\u6EE4\u7EAF\u5355\u4E2A\u82F1\u6587\u5B57\u6BCD" }
+  ];
+  var relatedSettingsDefinitions = [
+    { id: "show-fab", key: "showFab", label: "\u663E\u793A\u60AC\u6D6E\u6309\u94AE" }
   ];
   var handleKeyDown2 = (event) => {
     if (event.key === "Escape") {
@@ -878,20 +890,33 @@ ${result.join(",\n")}
     themeItem.className = "setting-item";
     const themeTitleContainer = document.createElement("div");
     themeTitleContainer.id = "theme-setting-title-container";
+    themeTitleContainer.className = "setting-title-container";
     const selectWrapper = document.createElement("div");
     selectWrapper.id = "custom-select-wrapper";
     themeItem.appendChild(themeTitleContainer);
     themeItem.appendChild(selectWrapper);
+    const relatedItem = document.createElement("div");
+    relatedItem.className = "setting-item";
+    const relatedTitleContainer = document.createElement("div");
+    relatedTitleContainer.id = "related-setting-title-container";
+    relatedTitleContainer.className = "setting-title-container";
+    relatedItem.appendChild(relatedTitleContainer);
+    relatedSettingsDefinitions.forEach((setting) => {
+      const checkboxElement = createCheckbox(setting.id, setting.label, settings[setting.key]);
+      relatedItem.appendChild(checkboxElement);
+    });
     const filterItem = document.createElement("div");
     filterItem.className = "setting-item";
     const filterTitleContainer = document.createElement("div");
     filterTitleContainer.id = "filter-setting-title-container";
+    filterTitleContainer.className = "setting-title-container";
     filterItem.appendChild(filterTitleContainer);
     filterDefinitions.forEach((filter) => {
       const checkboxElement = createCheckbox(filter.id, filter.label, settings.filterRules[filter.key]);
       filterItem.appendChild(checkboxElement);
     });
     content.appendChild(themeItem);
+    content.appendChild(relatedItem);
     content.appendChild(filterItem);
     const footer = document.createElement("div");
     footer.className = "settings-panel-footer";
@@ -924,10 +949,10 @@ ${result.join(",\n")}
     titleContainer.appendChild(createIconTitle(settingsIcon, "\u811A\u672C\u8BBE\u7F6E"));
     const themeTitleContainer = document.getElementById("theme-setting-title-container");
     themeTitleContainer.appendChild(createIconTitle(themeIcon, "\u754C\u9762\u4E3B\u9898"));
-    themeTitleContainer.style.marginBottom = "8px";
+    const relatedTitleContainer = document.getElementById("related-setting-title-container");
+    relatedTitleContainer.appendChild(createIconTitle(relatedSettingsIcon, "\u76F8\u5173\u8BBE\u7F6E"));
     const filterTitleContainer = document.getElementById("filter-setting-title-container");
     filterTitleContainer.appendChild(createIconTitle(filterIcon, "\u5185\u5BB9\u8FC7\u6EE4\u89C4\u5219"));
-    filterTitleContainer.style.marginBottom = "8px";
     const selectWrapper = document.getElementById("custom-select-wrapper");
     const themeOptions = [
       { value: "system", label: "\u8DDF\u968F\u7CFB\u7EDF", icon: systemThemeIcon },
@@ -956,19 +981,31 @@ ${result.join(",\n")}
   function handleSave() {
     const newTheme = themeSelectComponent.getValue();
     const newFilterRules = {};
+    const newRelatedSettings = {};
     filterDefinitions.forEach((filter) => {
       const checkbox = document.getElementById(filter.id);
       if (checkbox) {
         newFilterRules[filter.key] = checkbox.checked;
       }
     });
+    relatedSettingsDefinitions.forEach((setting) => {
+      const checkbox = document.getElementById(setting.id);
+      if (checkbox) {
+        newRelatedSettings[setting.key] = checkbox.checked;
+      }
+    });
     const newSettings = {
       theme: newTheme,
+      ...newRelatedSettings,
       filterRules: newFilterRules
     };
     saveSettings(newSettings);
     applyTheme(newSettings.theme);
-    alert("\u8BBE\u7F6E\u5DF2\u4FDD\u5B58\uFF01");
+    const fabContainer = document.querySelector(".text-extractor-fab-container");
+    if (fabContainer) {
+      fabContainer.classList.toggle("fab-container-visible", newSettings.showFab);
+    }
+    showNotification("\u8BBE\u7F6E\u5DF2\u4FDD\u5B58\uFF01", { type: "success" });
     hideSettingsPanel();
   }
   function initSettingsPanel() {
@@ -1280,10 +1317,12 @@ body[data-theme='dark'] {
     gap: 12px; /* \u6309\u94AE\u4E4B\u95F4\u7684\u95F4\u8DDD */
     z-index: 9999;
     opacity: 0; /* \u521D\u59CB\u900F\u660E */
-    transition: opacity 0.5s ease-out;
+    visibility: hidden; /* \u521D\u59CB\u9690\u85CF */
+    transition: opacity 0.3s ease, visibility 0.3s;
 }
 .text-extractor-fab-container.fab-container-visible {
     opacity: 1; /* \u6700\u7EC8\u4E0D\u900F\u660E */
+    visibility: visible; /* \u6700\u7EC8\u53EF\u89C1 */
 }
 /* --- \u5355\u4E2A\u60AC\u6D6E\u64CD\u4F5C\u6309\u94AE (FAB) --- */
 .text-extractor-fab {
@@ -1351,7 +1390,7 @@ body[data-theme='dark'] {
     transform: scale(1);
 }
 .text-extractor-modal-header {
-  padding: 16px;
+  padding: 18px;
   border-bottom: 1px solid var(--main-border);
   display: flex;
   justify-content: space-between;
@@ -1381,13 +1420,13 @@ body[data-theme='dark'] {
   background-color: var(--main-border);
 }
 .text-extractor-modal-content {
-  padding: 16px;
+  padding: 18px;
   overflow-y: auto;
   flex-grow: 1;
   display: flex; /* \u65B0\u589E\uFF1A\u542F\u7528flexbox\u5E03\u5C40 */
 }
 .text-extractor-modal-footer {
-  padding: 16px;
+  padding: 18px;
   border-top: 1px solid var(--main-border);
   display: flex;
   justify-content: flex-end;
@@ -1564,6 +1603,9 @@ body[data-theme='dark'] {
   box-shadow: 0 5px 15px var(--main-shadow);
   width: 90%;
   max-width: 400px;
+  max-height: 85vh; /* \u4E0E\u4E3B\u6A21\u6001\u6846\u4FDD\u6301\u4E00\u81F4 */
+  display: flex; /* \u542F\u7528flexbox\u4EE5\u63A7\u5236\u5185\u90E8\u5E03\u5C40 */
+  flex-direction: column; /* \u5782\u76F4\u5E03\u5C40 */
   /* --- \u65B0\u589E\uFF1A\u52A8\u753B\u76F8\u5173\u5C5E\u6027 --- */
   transform: scale(0.95);
   transition: transform 0.3s ease;
@@ -1573,7 +1615,13 @@ body[data-theme='dark'] {
     transform: scale(1);
 }
 .settings-panel-header, .settings-panel-content, .settings-panel-footer {
-  padding: 16px;
+  padding: 20px;
+}
+.settings-panel-content {
+    /* \u5BF9\u5185\u5BB9\u533A\u57DF\u7684padding\u505A\u5FAE\u8C03\uFF0C\u4EE5\u9002\u5E94\u6EDA\u52A8\u6761\uFF0C\u5E76\u786E\u4FDD\u89C6\u89C9\u4E0A\u4E0E\u5176\u4ED6\u90E8\u5206\u5BF9\u9F50 */
+    padding-right: 18px;
+    overflow-y: auto; /* \u5F53\u5185\u5BB9\u6EA2\u51FA\u65F6\u663E\u793A\u6EDA\u52A8\u6761 */
+    flex-grow: 1; /* \u5360\u636E\u6240\u6709\u53EF\u7528\u5782\u76F4\u7A7A\u95F4 */
 }
 .settings-panel-header {
   display: flex; justify-content: space-between; align-items: center;
@@ -1585,11 +1633,11 @@ body[data-theme='dark'] {
 .settings-panel-close {}
 .setting-item { margin-bottom: 16px; }
 .setting-item > label { display: block; margin-bottom: 8px; font-weight: 500; }
-/* -- \u65B0\u589E\uFF1A\u4E3A\u5206\u7EC4\u5C0F\u6807\u9898\u5355\u72EC\u8BBE\u7F6E\u52A0\u7C97 -- */
-#theme-setting-title-container,
-#filter-setting-title-container {
+/* -- \u8BBE\u7F6E\u5206\u7EC4\u6807\u9898\u7684\u7EDF\u4E00\u65B0\u6837\u5F0F -- */
+.setting-title-container {
   font-weight: bold;
   font-size: 16px;
+  margin-bottom: 8px;
 }
 /* -- \u5168\u65B0\u91CD\u6784\u7684\u81EA\u5B9A\u4E49\u590D\u9009\u6846\u6837\u5F0F -- */
 .checkbox-group {
@@ -1656,6 +1704,23 @@ body[data-theme='dark'] {
 .settings-panel-footer {
   border-top: 1px solid var(--main-border);
   text-align: right;
+}
+/* -- \u4E3A\u8BBE\u7F6E\u9762\u677F\u5185\u5BB9\u533A\u57DF\u5E94\u7528\u81EA\u5B9A\u4E49\u6EDA\u52A8\u6761 -- */
+.settings-panel-content::-webkit-scrollbar {
+  width: 6px;
+}
+.settings-panel-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+.settings-panel-content::-webkit-scrollbar-thumb {
+  background-color: var(--main-border);
+  border-radius: 3px;
+}
+.settings-panel-content::-webkit-scrollbar-thumb:hover {
+  background-color: var(--main-primary);
+}
+.settings-panel-content::-webkit-scrollbar-button {
+  display: none;
 }
 `);
   function main() {

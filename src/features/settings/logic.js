@@ -19,6 +19,8 @@ import { getValue, setValue } from '../../shared/services/tampermonkey.js';
 const defaultSettings = {
   // 主题设置, 可选值: 'light', 'dark', 'system'
   theme: 'system',
+  // 是否显示悬浮按钮
+  showFab: true,
   // 过滤规则设置
   filterRules: {
     // 是否过滤纯数字和货币符号组成的字符串

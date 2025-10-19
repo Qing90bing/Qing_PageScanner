@@ -8,6 +8,7 @@
 import { registerMenuCommand } from '../../shared/services/tampermonkey.js';
 import { loadSettings, saveSettings } from './logic.js';
 import { applyTheme } from '../../shared/ui/theme.js';
+import { showNotification } from '../../shared/ui/notification.js';
 import { createCheckbox } from '../../shared/ui/checkbox.js';
 import { createIconTitle } from '../../shared/ui/iconTitle.js';
 import { createSVGFromString } from '../../shared/utils/dom.js';
@@ -20,6 +21,7 @@ import { CustomSelect } from '../../shared/ui/components/customSelect.js';
 import { systemThemeIcon } from '../../assets/systemThemeIcon.js';
 import { lightThemeIcon } from '../../assets/lightThemeIcon.js';
 import { darkThemeIcon } from '../../assets/darkThemeIcon.js';
+import { relatedSettingsIcon } from '../../assets/relatedSettingsIcon.js';
 
 // --- 模块级变量 ---
 
@@ -34,6 +36,10 @@ const filterDefinitions = [
   { id: 'filter-symbols', key: 'symbols', label: '过滤纯符号' },
   { id: 'filter-term', key: 'termFilter', label: '过滤特定术语' },
   { id: 'filter-single-letter', key: 'singleLetter', label: '过滤纯单个英文字母' },
+];
+
+const relatedSettingsDefinitions = [
+    { id: 'show-fab', key: 'showFab', label: '显示悬浮按钮' },
 ];
 
 // --- 私有函数 ---
@@ -78,16 +84,31 @@ function buildPanelDOM(settings) {
     themeItem.className = 'setting-item';
     const themeTitleContainer = document.createElement('div');
     themeTitleContainer.id = 'theme-setting-title-container';
+    themeTitleContainer.className = 'setting-title-container';
     const selectWrapper = document.createElement('div');
     selectWrapper.id = 'custom-select-wrapper';
     themeItem.appendChild(themeTitleContainer);
     themeItem.appendChild(selectWrapper);
+
+    // Related settings
+    const relatedItem = document.createElement('div');
+    relatedItem.className = 'setting-item';
+    const relatedTitleContainer = document.createElement('div');
+    relatedTitleContainer.id = 'related-setting-title-container';
+    relatedTitleContainer.className = 'setting-title-container';
+    relatedItem.appendChild(relatedTitleContainer);
+
+    relatedSettingsDefinitions.forEach(setting => {
+        const checkboxElement = createCheckbox(setting.id, setting.label, settings[setting.key]);
+        relatedItem.appendChild(checkboxElement);
+    });
 
     // Filter setting
     const filterItem = document.createElement('div');
     filterItem.className = 'setting-item';
     const filterTitleContainer = document.createElement('div');
     filterTitleContainer.id = 'filter-setting-title-container';
+    filterTitleContainer.className = 'setting-title-container';
     filterItem.appendChild(filterTitleContainer);
 
     // Dynamically create checkboxes and append them
@@ -97,6 +118,7 @@ function buildPanelDOM(settings) {
     });
 
     content.appendChild(themeItem);
+    content.appendChild(relatedItem);
     content.appendChild(filterItem);
 
     // --- Footer ---
@@ -146,11 +168,12 @@ function showSettingsPanel() {
 
   const themeTitleContainer = document.getElementById('theme-setting-title-container');
   themeTitleContainer.appendChild(createIconTitle(themeIcon, '界面主题'));
-  themeTitleContainer.style.marginBottom = '8px';
+
+  const relatedTitleContainer = document.getElementById('related-setting-title-container');
+  relatedTitleContainer.appendChild(createIconTitle(relatedSettingsIcon, '相关设置'));
 
   const filterTitleContainer = document.getElementById('filter-setting-title-container');
   filterTitleContainer.appendChild(createIconTitle(filterIcon, '内容过滤规则'));
-  filterTitleContainer.style.marginBottom = '8px';
 
   const selectWrapper = document.getElementById('custom-select-wrapper');
   const themeOptions = [
@@ -193,6 +216,8 @@ function hideSettingsPanel() {
 function handleSave() {
   const newTheme = themeSelectComponent.getValue();
   const newFilterRules = {};
+  const newRelatedSettings = {};
+
   filterDefinitions.forEach(filter => {
     const checkbox = document.getElementById(filter.id);
     if (checkbox) {
@@ -200,15 +225,29 @@ function handleSave() {
     }
   });
 
+  relatedSettingsDefinitions.forEach(setting => {
+    const checkbox = document.getElementById(setting.id);
+    if (checkbox) {
+        newRelatedSettings[setting.key] = checkbox.checked;
+    }
+  });
+
   const newSettings = {
     theme: newTheme,
+    ...newRelatedSettings,
     filterRules: newFilterRules,
   };
 
   saveSettings(newSettings);
   applyTheme(newSettings.theme);
 
-  alert('设置已保存！');
+  // --- 即时应用悬浮按钮可见性 ---
+  const fabContainer = document.querySelector('.text-extractor-fab-container');
+  if (fabContainer) {
+      fabContainer.classList.toggle('fab-container-visible', newSettings.showFab);
+  }
+
+  showNotification('设置已保存！', { type: 'success' });
   hideSettingsPanel();
 }
 
