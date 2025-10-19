@@ -16,13 +16,16 @@ import { copyIcon } from '../../assets/copyIcon.js';
 import { infoIcon } from '../../assets/infoIcon.js';
 import { dynamicIcon } from '../../assets/dynamicIcon.js';
 import { translateIcon } from '../../assets/icon.js';
+import { loadingSpinner } from '../../assets/loadingSpinner.js';
 
 // --- 模块级变量 ---
 
 let modalOverlay = null; // 模态框遮罩层
 let outputTextarea = null; // 文本输出区域
 let placeholder = null; // 提示信息容器
+let loadingContainer = null; // 加载动画容器
 export const SHOW_PLACEHOLDER = '::show_placeholder::'; // 特殊标识符
+export const SHOW_LOADING = '::show_loading::'; // 加载状态标识符
 
 
 /**
@@ -86,6 +89,17 @@ export function createMainModal() {
 
   modalContent.appendChild(placeholder);
   modalContent.appendChild(outputTextarea);
+
+  // 创建加载动画覆盖层
+  loadingContainer = document.createElement('div');
+  loadingContainer.className = 'gm-loading-overlay';
+  const spinner = document.createElement('div');
+  spinner.className = 'gm-loading-spinner';
+  const spinnerSVG = createSVGFromString(loadingSpinner);
+  if (spinnerSVG) spinner.appendChild(spinnerSVG);
+  loadingContainer.appendChild(spinner);
+  modalContent.appendChild(loadingContainer);
+
 
   const modalFooter = document.createElement('div');
   modalFooter.className = 'text-extractor-modal-footer';
@@ -168,13 +182,35 @@ export function createMainModal() {
  * @public
  * @description 显示主模态框并开始提取文本。
  */
+/**
+ * @private
+ * @description 显示加载动画并禁用文本区域。
+ */
+function showLoading() {
+  if (loadingContainer) loadingContainer.classList.add('is-visible');
+  if (outputTextarea) outputTextarea.disabled = true;
+}
+
+/**
+ * @private
+ * @description 隐藏加载动画并启用文本区域。
+ */
+function hideLoading() {
+  if (loadingContainer) loadingContainer.classList.remove('is-visible');
+  if (outputTextarea) outputTextarea.disabled = false;
+}
+
+/**
+ * @public
+ * @description 显示主模态框并开始提取文本。
+ */
 export function openModal() {
   if (!modalOverlay) {
     console.error("模态框尚未初始化。");
     return;
   }
 
-  updateModalContent('文本提取中...', true);
+  updateModalContent(SHOW_LOADING, true);
 
   setTimeout(() => {
     const extractedTexts = extractAndProcessText();
@@ -215,11 +251,19 @@ export function updateModalContent(content, shouldOpen = false) {
 
     const copyBtn = modalOverlay.querySelector('.text-extractor-copy-btn');
 
-    if (content === SHOW_PLACEHOLDER) {
+    if (content === SHOW_LOADING) {
+        placeholder.style.display = 'none';
+        outputTextarea.style.display = 'block';
+        outputTextarea.value = '';
+        showLoading();
+        if (copyBtn) copyBtn.disabled = true;
+    } else if (content === SHOW_PLACEHOLDER) {
+        hideLoading();
         placeholder.style.display = 'flex';
         outputTextarea.style.display = 'none';
         if (copyBtn) copyBtn.disabled = true;
     } else {
+        hideLoading();
         placeholder.style.display = 'none';
         outputTextarea.style.display = 'block';
 

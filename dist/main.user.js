@@ -391,10 +391,20 @@ ${result.join(",\n")}
     return container;
   }
   var copyIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M120-220v-80h80v80h-80Zm0-140v-80h80v80h-80Zm0-140v-80h80v80h-80ZM260-80v-80h80v80h-80Zm100-160q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480Zm40 240v-80h80v80h-80Zm-200 0q-33 0-56.5-23.5T120-160h80v80Zm340 0v-80h80q0 33-23.5 56.5T540-80ZM120-640q0-33 23.5-56.5T200-720v80h-80Zm420 80Z"/></svg>`;
+  var loadingSpinner = `
+  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25"/>
+    <path d="M12,4a8,8,0,0,1,7.89,6.7A1.53,1.53,0,0,0,21.38,12h0a1.5,1.5,0,0,0,1.48-1.75,11,11,0,0,0-21.72,0A1.5,1.5,0,0,0,2.62,12h0a1.53,1.53,0,0,0,1.49-1.3A8,8,0,0,1,12,4Z">
+      <animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="0.75s" repeatCount="indefinite"/>
+    </path>
+  </svg>
+`;
   var modalOverlay = null;
   var outputTextarea = null;
   var placeholder = null;
+  var loadingContainer = null;
   var SHOW_PLACEHOLDER = "::show_placeholder::";
+  var SHOW_LOADING = "::show_loading::";
   var handleKeyDown = (event) => {
     if (event.key === "Escape") {
       closeModal();
@@ -433,6 +443,14 @@ ${result.join(",\n")}
     outputTextarea.className = "tc-textarea";
     modalContent.appendChild(placeholder);
     modalContent.appendChild(outputTextarea);
+    loadingContainer = document.createElement("div");
+    loadingContainer.className = "gm-loading-overlay";
+    const spinner = document.createElement("div");
+    spinner.className = "gm-loading-spinner";
+    const spinnerSVG = createSVGFromString(loadingSpinner);
+    if (spinnerSVG) spinner.appendChild(spinnerSVG);
+    loadingContainer.appendChild(spinner);
+    modalContent.appendChild(loadingContainer);
     const modalFooter = document.createElement("div");
     modalFooter.className = "text-extractor-modal-footer";
     const copyBtn = document.createElement("button");
@@ -491,12 +509,20 @@ ${result.join(",\n")}
       showNotification("\u5DF2\u590D\u5236\u5230\u526A\u8D34\u677F", { type: "success" });
     });
   }
+  function showLoading() {
+    if (loadingContainer) loadingContainer.classList.add("is-visible");
+    if (outputTextarea) outputTextarea.disabled = true;
+  }
+  function hideLoading() {
+    if (loadingContainer) loadingContainer.classList.remove("is-visible");
+    if (outputTextarea) outputTextarea.disabled = false;
+  }
   function openModal() {
     if (!modalOverlay) {
       console.error("\u6A21\u6001\u6846\u5C1A\u672A\u521D\u59CB\u5316\u3002");
       return;
     }
-    updateModalContent("\u6587\u672C\u63D0\u53D6\u4E2D...", true);
+    updateModalContent(SHOW_LOADING, true);
     setTimeout(() => {
       const extractedTexts = extractAndProcessText();
       const formattedText = formatTextsForTranslation(extractedTexts);
@@ -520,11 +546,19 @@ ${result.join(",\n")}
       return;
     }
     const copyBtn = modalOverlay.querySelector(".text-extractor-copy-btn");
-    if (content === SHOW_PLACEHOLDER) {
+    if (content === SHOW_LOADING) {
+      placeholder.style.display = "none";
+      outputTextarea.style.display = "block";
+      outputTextarea.value = "";
+      showLoading();
+      if (copyBtn) copyBtn.disabled = true;
+    } else if (content === SHOW_PLACEHOLDER) {
+      hideLoading();
       placeholder.style.display = "flex";
       outputTextarea.style.display = "none";
       if (copyBtn) copyBtn.disabled = true;
     } else {
+      hideLoading();
       placeholder.style.display = "none";
       outputTextarea.style.display = "block";
       const isData = content.trim().startsWith("[");
@@ -1207,6 +1241,31 @@ body[data-theme='dark'] {
     padding: 2px 6px;
     background-color: var(--main-overlay-bg, rgba(255, 255, 255, 0.2));
     border-radius: 10px;
+}
+/* --- From loading.css --- */
+.gm-loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(128, 128, 128, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s, visibility 0.2s;
+}
+.gm-loading-overlay.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+.gm-loading-spinner svg {
+  width: 48px;
+  height: 48px;
+  color: var(--color-icon);
 }
 /* --- From main-ui.css --- */
 /* src/assets/styles/main-ui.css */
