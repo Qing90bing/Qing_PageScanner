@@ -40,6 +40,44 @@
   var dynamicIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M200-766v572q-17-17-32-36t-28-39v-422q13-20 28-39t32-36Zm160-96v764q-21-7-41-15.5T280-133v-694q19-11 39-19.5t41-15.5Zm280 749v-734q106 47 173 145t67 222q0 124-67 222T640-113ZM480-80q-10 0-20-.5T440-82v-796q10-1 20-1.5t20-.5q20 0 40 2t40 6v784q-20 4-40 6t-40 2Z"/></svg>`;
   var stopIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M280-280v-400h400v400H280Z"/></svg>`;
   var summaryIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M280-280h280v-80H280v80Zm0-160h400v-80H280v80Zm0-160h400v-80H280v80Zm-80 480q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/></svg>`;
+  var tooltipElement = null;
+  var hideTimeout = null;
+  function showTooltip(targetElement, text) {
+    if (tooltipElement) {
+      hideTooltip(true);
+    }
+    clearTimeout(hideTimeout);
+    tooltipElement = document.createElement("div");
+    tooltipElement.className = "text-extractor-tooltip";
+    tooltipElement.textContent = text;
+    document.body.appendChild(tooltipElement);
+    const targetRect = targetElement.getBoundingClientRect();
+    const tooltipRect = tooltipElement.getBoundingClientRect();
+    const top = targetRect.top + targetRect.height / 2 - tooltipRect.height / 2;
+    const left = targetRect.left - tooltipRect.width - 12;
+    tooltipElement.style.top = `${top}px`;
+    tooltipElement.style.left = `${left}px`;
+    requestAnimationFrame(() => {
+      tooltipElement.classList.add("is-visible");
+    });
+  }
+  function hideTooltip(immediate = false) {
+    if (!tooltipElement) return;
+    const el = tooltipElement;
+    tooltipElement = null;
+    if (immediate) {
+      if (el.parentNode) {
+        el.parentNode.removeChild(el);
+      }
+    } else {
+      el.classList.remove("is-visible");
+      hideTimeout = setTimeout(() => {
+        if (el.parentNode) {
+          el.parentNode.removeChild(el);
+        }
+      }, 200);
+    }
+  }
   var trustedTypePolicy = null;
   var policyCreated = false;
   function createTrustedTypePolicy() {
@@ -87,8 +125,13 @@
     if (svgIcon) {
       fab.appendChild(svgIcon);
     }
-    fab.title = title;
     fab.addEventListener("click", onClick);
+    fab.addEventListener("mouseenter", () => {
+      showTooltip(fab, title);
+    });
+    fab.addEventListener("mouseleave", () => {
+      hideTooltip();
+    });
     return fab;
   }
   function createFab({ callbacks, isVisible }) {
@@ -98,19 +141,19 @@
     const summaryFab = createSingleFab(
       "fab-summary",
       summaryIcon,
-      "\u67E5\u770B\u4F1A\u8BDD\u603B\u7ED3",
+      "\u67E5\u770B\u603B\u7ED3\u6587\u672C",
       onSummary
     );
     const dynamicFab = createSingleFab(
       "fab-dynamic",
       dynamicIcon,
-      "\u5F00\u59CB\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD",
+      "\u52A8\u6001\u626B\u63CF",
       () => onDynamicExtract(dynamicFab)
     );
     const staticFab = createSingleFab(
       "fab-static",
       translateIcon,
-      "\u5FEB\u6377\u63D0\u53D6\u5F53\u524D\u9875\u9762\u6240\u6709\u6587\u672C",
+      "\u9759\u6001\u626B\u63CF",
       onStaticExtract
     );
     fabContainer.appendChild(summaryFab);
@@ -1030,6 +1073,8 @@ ${result.join(",\n")}
   --color-toast-text: #ffffff;
   --color-textarea-bg: #ffffff;
   --color-textarea-border: #cccccc;
+  --color-tooltip-bg: #333333; /* \u63D0\u793A\u80CC\u666F */
+  --color-tooltip-text: #ffffff; /* \u63D0\u793A\u6587\u672C */
   /* \u6DF1\u8272\u6A21\u5F0F\u989C\u8272\u53D8\u91CF */
   --dark-color-bg: #2d2d2d;
   --dark-color-text: #f0f0f0;
@@ -1043,6 +1088,8 @@ ${result.join(",\n")}
   --dark-color-toast-text: #111111;
   --dark-color-textarea-bg: #3a3a3a;
   --dark-color-textarea-border: #666666;
+  --dark-color-tooltip-bg: #e0e0e0; /* \u63D0\u793A\u80CC\u666F */
+  --dark-color-tooltip-text: #111111; /* \u63D0\u793A\u6587\u672C */
 }
 /* \u6839\u636E data-theme \u5C5E\u6027\u5E94\u7528\u6D45\u8272\u4E3B\u9898 */
 body[data-theme='light'] {
@@ -1058,6 +1105,8 @@ body[data-theme='light'] {
   --main-toast-text: var(--color-toast-text);
   --main-textarea-bg: var(--color-textarea-bg);
   --main-textarea-border: var(--color-textarea-border);
+  --main-tooltip-bg: var(--color-tooltip-bg);
+  --main-tooltip-text: var(--color-tooltip-text);
   --main-disabled: #cccccc;
   --main-disabled-text: #666666;
 }
@@ -1075,6 +1124,8 @@ body[data-theme='dark'] {
   --main-toast-text: var(--dark-color-toast-text);
   --main-textarea-bg: var(--dark-color-textarea-bg);
   --main-textarea-border: var(--dark-color-textarea-border);
+  --main-tooltip-bg: var(--dark-color-tooltip-bg);
+  --main-tooltip-text: var(--dark-color-tooltip-text);
   --main-disabled: #444444;
   --main-disabled-text: #888888;
 }
@@ -1721,6 +1772,29 @@ body[data-theme='dark'] {
 }
 .settings-panel-content::-webkit-scrollbar-button {
   display: none;
+}
+/* --- From tooltip.css --- */
+/* src/assets/styles/tooltip.css */
+.text-extractor-tooltip {
+    position: fixed;
+    z-index: 10001; /* \u6BD4\u60AC\u6D6E\u6309\u94AE\u66F4\u9AD8 */
+    background-color: var(--main-tooltip-bg);
+    color: var(--main-tooltip-text);
+    padding: 8px 12px;
+    border-radius: 16px;
+    border: 1px solid var(--main-border);
+    font-size: 14px;
+    font-weight: bold;
+    pointer-events: none; /* \u786E\u4FDD\u63D0\u793A\u672C\u8EAB\u4E0D\u4F1A\u5E72\u6270\u9F20\u6807\u4E8B\u4EF6 */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s;
+    box-shadow: 0 2px 5px var(--main-shadow);
+    white-space: nowrap; /* \u9632\u6B62\u6587\u672C\u6362\u884C */
+}
+.text-extractor-tooltip.is-visible {
+    opacity: 1;
+    visibility: visible;
 }
 `);
   function main() {

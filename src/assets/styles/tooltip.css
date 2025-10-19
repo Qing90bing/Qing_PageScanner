@@ -1,0 +1,24 @@
+/* src/assets/styles/tooltip.css */
+
+.text-extractor-tooltip {
+    position: fixed;
+    z-index: 10001; /* 比悬浮按钮更高 */
+    background-color: var(--main-tooltip-bg);
+    color: var(--main-tooltip-text);
+    padding: 8px 12px;
+    border-radius: 16px;
+    border: 1px solid var(--main-border);
+    font-size: 14px;
+    font-weight: bold;
+    pointer-events: none; /* 确保提示本身不会干扰鼠标事件 */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s;
+    box-shadow: 0 2px 5px var(--main-shadow);
+    white-space: nowrap; /* 防止文本换行 */
+}
+
+.text-extractor-tooltip.is-visible {
+    opacity: 1;
+    visibility: visible;
+}

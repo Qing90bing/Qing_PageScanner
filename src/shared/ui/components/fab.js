@@ -9,6 +9,7 @@ import { translateIcon } from '../../../assets/icon.js';
 import { dynamicIcon } from '../../../assets/dynamicIcon.js';
 import { stopIcon } from '../../../assets/stopIcon.js';
 import { summaryIcon } from '../../../assets/summaryIcon.js';
+import { showTooltip, hideTooltip } from './tooltip.js';
 
 import { createSVGFromString } from '../../utils/dom.js';
 
@@ -30,8 +31,16 @@ function createSingleFab(className, iconSVGString, title, onClick) {
         fab.appendChild(svgIcon);
     }
 
-    fab.title = title;
     fab.addEventListener('click', onClick);
+
+    // 使用自定义的 Tooltip
+    fab.addEventListener('mouseenter', () => {
+        showTooltip(fab, title);
+    });
+    fab.addEventListener('mouseleave', () => {
+        hideTooltip();
+    });
+
     return fab;
 }
 
@@ -56,7 +65,7 @@ export function createFab({ callbacks, isVisible }) {
     const summaryFab = createSingleFab(
         'fab-summary',
         summaryIcon,
-        '查看会话总结',
+        '查看总结文本', // <-- 更新文本
         onSummary
     );
 
@@ -64,7 +73,7 @@ export function createFab({ callbacks, isVisible }) {
     const dynamicFab = createSingleFab(
         'fab-dynamic',
         dynamicIcon,
-        '开始动态扫描会话',
+        '动态扫描', // <-- 更新文本
         () => onDynamicExtract(dynamicFab) // 将fab元素本身传回去，方便UI更新
     );
 
@@ -72,7 +81,7 @@ export function createFab({ callbacks, isVisible }) {
     const staticFab = createSingleFab(
         'fab-static',
         translateIcon,
-        '快捷提取当前页面所有文本',
+        '静态扫描', // <-- 更新文本
         onStaticExtract
     );
 

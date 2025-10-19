@@ -15,6 +15,8 @@
   --color-toast-text: #ffffff;
   --color-textarea-bg: #ffffff;
   --color-textarea-border: #cccccc;
+  --color-tooltip-bg: #333333; /* 提示背景 */
+  --color-tooltip-text: #ffffff; /* 提示文本 */
 
   /* 深色模式颜色变量 */
   --dark-color-bg: #2d2d2d;
@@ -29,6 +31,8 @@
   --dark-color-toast-text: #111111;
   --dark-color-textarea-bg: #3a3a3a;
   --dark-color-textarea-border: #666666;
+  --dark-color-tooltip-bg: #e0e0e0; /* 提示背景 */
+  --dark-color-tooltip-text: #111111; /* 提示文本 */
 }
 
 /* 根据 data-theme 属性应用浅色主题 */
@@ -45,6 +49,8 @@ body[data-theme='light'] {
   --main-toast-text: var(--color-toast-text);
   --main-textarea-bg: var(--color-textarea-bg);
   --main-textarea-border: var(--color-textarea-border);
+  --main-tooltip-bg: var(--color-tooltip-bg);
+  --main-tooltip-text: var(--color-tooltip-text);
   --main-disabled: #cccccc;
   --main-disabled-text: #666666;
 }
@@ -63,6 +69,8 @@ body[data-theme='dark'] {
   --main-toast-text: var(--dark-color-toast-text);
   --main-textarea-bg: var(--dark-color-textarea-bg);
   --main-textarea-border: var(--dark-color-textarea-border);
+  --main-tooltip-bg: var(--dark-color-tooltip-bg);
+  --main-tooltip-text: var(--dark-color-tooltip-text);
   --main-disabled: #444444;
   --main-disabled-text: #888888;
 }
