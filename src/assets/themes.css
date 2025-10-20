@@ -1,7 +1,7 @@
 /* src/assets/themes.css */
 /* 这个文件只定义颜色变量和主题切换逻辑 */
 
-:root {
+:host {
   /* 浅色模式颜色变量 */
   --color-bg: #ffffff;
   --color-text: #333333;
@@ -36,7 +36,7 @@
 }
 
 /* 根据 data-theme 属性应用浅色主题 */
-body[data-theme='light'] {
+:host([data-theme='light']) {
   --main-bg: var(--color-bg);
   --main-text: var(--color-text);
   --main-border: var(--color-border);
@@ -56,7 +56,7 @@ body[data-theme='light'] {
 }
 
 /* 根据 data-theme 属性应用深色主题 */
-body[data-theme='dark'] {
+:host([data-theme='dark']) {
   --main-bg: var(--dark-color-bg);
   --main-text: var(--dark-color-text);
   --main-border: var(--dark-color-border);

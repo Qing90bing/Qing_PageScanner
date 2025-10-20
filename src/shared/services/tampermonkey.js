@@ -43,10 +43,3 @@ export const setValue = (key, value) => {
   return GM_setValue(key, value);
 };
 
-/**
- * 向文档中注入CSS样式。
- * @param {string} css - 要注入的CSS字符串。
- */
-export const addStyle = (css) => {
-  GM_addStyle(css);
-};

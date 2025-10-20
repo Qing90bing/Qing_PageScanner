@@ -1,4 +1,5 @@
 // src/ui/components/liveCounter.js
+import { uiContainer } from '../../shared/ui/uiContainer.js';
 
 let counterElement = null;
 
@@ -10,7 +11,7 @@ function createCounterElement() {
 
     counterElement = document.createElement('div');
     counterElement.className = 'tc-live-counter';
-    document.body.appendChild(counterElement);
+    uiContainer.appendChild(counterElement);
 }
 
 /**

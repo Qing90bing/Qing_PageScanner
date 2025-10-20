@@ -12,11 +12,12 @@ let notificationContainer = null;
  * 创建并管理通知容器
  * @returns {HTMLElement} 通知容器元素
  */
+import { uiContainer } from './uiContainer.js';
 function getNotificationContainer() {
     if (!notificationContainer) {
         notificationContainer = document.createElement('div');
         notificationContainer.className = 'tc-notification-container';
-        document.body.appendChild(notificationContainer);
+        uiContainer.appendChild(notificationContainer);
     }
     return notificationContainer;
 }

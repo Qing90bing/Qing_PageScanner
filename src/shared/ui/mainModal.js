@@ -17,6 +17,7 @@ import { infoIcon } from '../../assets/infoIcon.js';
 import { dynamicIcon } from '../../assets/dynamicIcon.js';
 import { translateIcon } from '../../assets/icon.js';
 import { loadingSpinner } from '../../assets/loadingSpinner.js';
+import { uiContainer } from './uiContainer.js';
 
 // --- 模块级变量 ---
 
@@ -51,6 +52,7 @@ export function createMainModal() {
   // --- 创建 DOM 结构 ---
   modalOverlay = document.createElement('div');
   modalOverlay.className = 'text-extractor-modal-overlay';
+  modalOverlay.tabIndex = -1; // 允许元素通过编程方式聚焦，以便监听键盘事件
 
   const modal = document.createElement('div');
   modal.className = 'text-extractor-modal';
@@ -114,7 +116,7 @@ export function createMainModal() {
   modal.appendChild(modalFooter);
   modalOverlay.appendChild(modal);
 
-  document.body.appendChild(modalOverlay);
+  uiContainer.appendChild(modalOverlay);
 
   // --- 配置和内容填充 ---
 
@@ -233,7 +235,7 @@ export function openModal() {
 export function closeModal() {
   if (modalOverlay) {
     modalOverlay.classList.remove('is-visible');
-    document.removeEventListener('keydown', handleKeyDown);
+    modalOverlay.removeEventListener('keydown', handleKeyDown);
   }
 }
 
@@ -275,6 +277,8 @@ export function updateModalContent(content, shouldOpen = false) {
 
     if (shouldOpen) {
         modalOverlay.classList.add('is-visible');
-        document.addEventListener('keydown', handleKeyDown);
+        modalOverlay.addEventListener('keydown', handleKeyDown);
+        // 聚焦模态框以便接收键盘事件
+        modalOverlay.focus();
     }
 }

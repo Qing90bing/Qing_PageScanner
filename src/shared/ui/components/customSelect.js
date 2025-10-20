@@ -115,12 +115,20 @@ export class CustomSelect {
             }
         });
 
-        document.addEventListener('click', (e) => {
-            if (!this.container.contains(e.target)) {
-                this.close();
-            }
-        });
+        // 全局点击事件将在 toggle 方法中动态处理
     }
+
+    /**
+     * @private
+     * @description 处理点击组件外部的事件。
+     */
+    handleDocumentClick = (e) => {
+        // e.composedPath() 可以跨越 Shadow DOM 的边界
+        const path = e.composedPath();
+        if (!path.includes(this.container)) {
+            this.close();
+        }
+    };
 
     /**
      * @public
@@ -129,6 +137,11 @@ export class CustomSelect {
     toggle() {
         this.isOpen = !this.isOpen;
         this.container.classList.toggle('open', this.isOpen);
+        if (this.isOpen) {
+            document.addEventListener('click', this.handleDocumentClick, true);
+        } else {
+            document.removeEventListener('click', this.handleDocumentClick, true);
+        }
     }
 
     /**
@@ -139,6 +152,7 @@ export class CustomSelect {
         if (this.isOpen) {
             this.isOpen = false;
             this.container.classList.remove('open');
+            document.removeEventListener('click', this.handleDocumentClick, true);
         }
     }
 

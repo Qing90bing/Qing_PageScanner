@@ -22,6 +22,7 @@ import { systemThemeIcon } from '../../assets/systemThemeIcon.js';
 import { lightThemeIcon } from '../../assets/lightThemeIcon.js';
 import { darkThemeIcon } from '../../assets/darkThemeIcon.js';
 import { relatedSettingsIcon } from '../../assets/relatedSettingsIcon.js';
+import { uiContainer } from '../../shared/ui/uiContainer.js';
 
 // --- 模块级变量 ---
 
@@ -150,11 +151,12 @@ function showSettingsPanel() {
   const currentSettings = loadSettings();
   settingsPanel = document.createElement('div');
   settingsPanel.className = 'settings-panel-overlay';
+  settingsPanel.tabIndex = -1; // 允许元素通过编程方式聚焦
 
   const panelModal = buildPanelDOM(currentSettings);
   settingsPanel.appendChild(panelModal);
 
-  document.body.appendChild(settingsPanel);
+  uiContainer.appendChild(settingsPanel);
 
   setTimeout(() => {
     if (settingsPanel) {
@@ -163,19 +165,19 @@ function showSettingsPanel() {
   }, 10);
 
   // --- Populate Titles and Components ---
-  const titleContainer = document.getElementById('settings-panel-title-container');
+  const titleContainer = settingsPanel.querySelector('#settings-panel-title-container');
   titleContainer.appendChild(createIconTitle(settingsIcon, '脚本设置'));
 
-  const themeTitleContainer = document.getElementById('theme-setting-title-container');
+  const themeTitleContainer = settingsPanel.querySelector('#theme-setting-title-container');
   themeTitleContainer.appendChild(createIconTitle(themeIcon, '界面主题'));
 
-  const relatedTitleContainer = document.getElementById('related-setting-title-container');
+  const relatedTitleContainer = settingsPanel.querySelector('#related-setting-title-container');
   relatedTitleContainer.appendChild(createIconTitle(relatedSettingsIcon, '相关设置'));
 
-  const filterTitleContainer = document.getElementById('filter-setting-title-container');
+  const filterTitleContainer = settingsPanel.querySelector('#filter-setting-title-container');
   filterTitleContainer.appendChild(createIconTitle(filterIcon, '内容过滤规则'));
 
-  const selectWrapper = document.getElementById('custom-select-wrapper');
+  const selectWrapper = settingsPanel.querySelector('#custom-select-wrapper');
   const themeOptions = [
     { value: 'system', label: '跟随系统', icon: systemThemeIcon },
     { value: 'light', label: '浅色模式', icon: lightThemeIcon },
@@ -189,7 +191,8 @@ function showSettingsPanel() {
   // --- Bind Events ---
   settingsPanel.querySelector('.settings-panel-close').addEventListener('click', hideSettingsPanel);
   saveBtn.addEventListener('click', handleSave);
-  document.addEventListener('keydown', handleKeyDown);
+  settingsPanel.addEventListener('keydown', handleKeyDown);
+  settingsPanel.focus();
 }
 
 /**
@@ -198,7 +201,7 @@ function showSettingsPanel() {
  */
 function hideSettingsPanel() {
   if (settingsPanel) {
-    document.removeEventListener('keydown', handleKeyDown);
+    settingsPanel.removeEventListener('keydown', handleKeyDown);
     settingsPanel.classList.remove('is-visible');
     setTimeout(() => {
         if (settingsPanel) {
@@ -219,14 +222,14 @@ function handleSave() {
   const newRelatedSettings = {};
 
   filterDefinitions.forEach(filter => {
-    const checkbox = document.getElementById(filter.id);
+    const checkbox = settingsPanel.querySelector(`#${filter.id}`);
     if (checkbox) {
       newFilterRules[filter.key] = checkbox.checked;
     }
   });
 
   relatedSettingsDefinitions.forEach(setting => {
-    const checkbox = document.getElementById(setting.id);
+    const checkbox = settingsPanel.querySelector(`#${setting.id}`);
     if (checkbox) {
         newRelatedSettings[setting.key] = checkbox.checked;
     }
@@ -242,7 +245,7 @@ function handleSave() {
   applyTheme(newSettings.theme);
 
   // --- 即时应用悬浮按钮可见性 ---
-  const fabContainer = document.querySelector('.text-extractor-fab-container');
+  const fabContainer = uiContainer.querySelector('.text-extractor-fab-container');
   if (fabContainer) {
       fabContainer.classList.toggle('fab-container-visible', newSettings.showFab);
   }

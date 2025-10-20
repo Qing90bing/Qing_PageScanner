@@ -21,29 +21,22 @@
 
 
 (() => {
-  var registerMenuCommand = (caption, commandFunc) => {
-    return GM_registerMenuCommand(caption, commandFunc);
-  };
-  var setClipboard = (text) => {
-    GM_setClipboard(text, "text");
-  };
-  var getValue = (key, defaultValue) => {
-    return GM_getValue(key, defaultValue);
-  };
-  var setValue = (key, value) => {
-    return GM_setValue(key, value);
-  };
-  var addStyle = (css) => {
-    GM_addStyle(css);
-  };
   var translateIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="m476-80 182-480h84L924-80h-84l-43-122H603L560-80h-84ZM160-200l-56-56 202-202q-35-35-63.5-80T190-640h84q20 39 40 68t48 58q33-33 68.5-92.5T484-720H40v-80h280v-80h80v80h280v80H564q-21 72-63 148t-83 116l96 98-30 82-122-125-202 201Zm468-72h144l-72-204-72 204Z"/></svg>`;
   var dynamicIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M200-766v572q-17-17-32-36t-28-39v-422q13-20 28-39t32-36Zm160-96v764q-21-7-41-15.5T280-133v-694q19-11 39-19.5t41-15.5Zm280 749v-734q106 47 173 145t67 222q0 124-67 222T640-113ZM480-80q-10 0-20-.5T440-82v-796q10-1 20-1.5t20-.5q20 0 40 2t40 6v784q-20 4-40 6t-40 2Z"/></svg>`;
   var stopIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M280-280v-400h400v400H280Z"/></svg>`;
   var summaryIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M280-280h280v-80H280v80Zm0-160h400v-80H280v80Zm0-160h400v-80H280v80Zm-80 480q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/></svg>`;
+  function createUIContainer() {
+    const container = document.createElement("div");
+    container.id = "text-extractor-container";
+    document.body.appendChild(container);
+    const shadowRoot = container.attachShadow({ mode: "open" });
+    return shadowRoot;
+  }
+  var uiContainer = createUIContainer();
   var currentTooltip = null;
   var hideTimeout = null;
   function removeAllTooltips() {
-    document.querySelectorAll(".text-extractor-tooltip").forEach((tip) => tip.remove());
+    uiContainer.querySelectorAll(".text-extractor-tooltip").forEach((tip) => tip.remove());
     currentTooltip = null;
   }
   function showTooltip(targetElement, text) {
@@ -52,7 +45,7 @@
     const tooltip = document.createElement("div");
     tooltip.className = "text-extractor-tooltip";
     tooltip.textContent = text;
-    document.body.appendChild(tooltip);
+    uiContainer.appendChild(tooltip);
     currentTooltip = tooltip;
     const targetRect = targetElement.getBoundingClientRect();
     const tooltipRect = tooltip.getBoundingClientRect();
@@ -156,7 +149,7 @@
     fabContainer.appendChild(summaryFab);
     fabContainer.appendChild(dynamicFab);
     fabContainer.appendChild(staticFab);
-    document.body.appendChild(fabContainer);
+    uiContainer.appendChild(fabContainer);
     if (isVisible) {
       setTimeout(() => {
         fabContainer.classList.add("fab-container-visible");
@@ -172,6 +165,18 @@
       fabElement.appendChild(newIcon);
     }
   }
+  var registerMenuCommand = (caption, commandFunc) => {
+    return GM_registerMenuCommand(caption, commandFunc);
+  };
+  var setClipboard = (text) => {
+    GM_setClipboard(text, "text");
+  };
+  var getValue = (key, defaultValue) => {
+    return GM_getValue(key, defaultValue);
+  };
+  var setValue = (key, value) => {
+    return GM_setValue(key, value);
+  };
   var config = {
         selectors: [
       "p",
@@ -361,7 +366,7 @@ ${result.join(",\n")}
     if (!notificationContainer) {
       notificationContainer = document.createElement("div");
       notificationContainer.className = "tc-notification-container";
-      document.body.appendChild(notificationContainer);
+      uiContainer.appendChild(notificationContainer);
     }
     return notificationContainer;
   }
@@ -458,6 +463,7 @@ ${result.join(",\n")}
     if (modalOverlay) return;
     modalOverlay = document.createElement("div");
     modalOverlay.className = "text-extractor-modal-overlay";
+    modalOverlay.tabIndex = -1;
     const modal = document.createElement("div");
     modal.className = "text-extractor-modal";
     const modalHeader = document.createElement("div");
@@ -504,7 +510,7 @@ ${result.join(",\n")}
     modal.appendChild(modalContent);
     modal.appendChild(modalFooter);
     modalOverlay.appendChild(modal);
-    document.body.appendChild(modalOverlay);
+    uiContainer.appendChild(modalOverlay);
     if (config_default.modalContentHeight) {
       modalContent.style.height = config_default.modalContentHeight;
     }
@@ -581,7 +587,7 @@ ${result.join(",\n")}
   function closeModal() {
     if (modalOverlay) {
       modalOverlay.classList.remove("is-visible");
-      document.removeEventListener("keydown", handleKeyDown);
+      modalOverlay.removeEventListener("keydown", handleKeyDown);
     }
   }
   function updateModalContent(content, shouldOpen = false) {
@@ -612,7 +618,8 @@ ${result.join(",\n")}
     }
     if (shouldOpen) {
       modalOverlay.classList.add("is-visible");
-      document.addEventListener("keydown", handleKeyDown);
+      modalOverlay.addEventListener("keydown", handleKeyDown);
+      modalOverlay.focus();
     }
   }
   function handleQuickScanClick() {
@@ -690,7 +697,7 @@ ${result.join(",\n")}
     if (counterElement) return;
     counterElement = document.createElement("div");
     counterElement.className = "tc-live-counter";
-    document.body.appendChild(counterElement);
+    uiContainer.appendChild(counterElement);
   }
   function showLiveCounter() {
     createCounterElement();
@@ -763,7 +770,7 @@ ${result.join(",\n")}
     if (theme === "system") {
       finalTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
     }
-    document.body.setAttribute("data-theme", finalTheme);
+    uiContainer.host.setAttribute("data-theme", finalTheme);
   }
   window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
     const { theme } = loadSettings();
@@ -854,20 +861,27 @@ ${result.join(",\n")}
           this.select(optionEl.dataset.value);
         }
       });
-      document.addEventListener("click", (e) => {
-        if (!this.container.contains(e.target)) {
-          this.close();
-        }
-      });
     }
+        handleDocumentClick = (e) => {
+      const path = e.composedPath();
+      if (!path.includes(this.container)) {
+        this.close();
+      }
+    };
         toggle() {
       this.isOpen = !this.isOpen;
       this.container.classList.toggle("open", this.isOpen);
+      if (this.isOpen) {
+        document.addEventListener("click", this.handleDocumentClick, true);
+      } else {
+        document.removeEventListener("click", this.handleDocumentClick, true);
+      }
     }
         close() {
       if (this.isOpen) {
         this.isOpen = false;
         this.container.classList.remove("open");
+        document.removeEventListener("click", this.handleDocumentClick, true);
       }
     }
         select(value) {
@@ -977,23 +991,24 @@ ${result.join(",\n")}
     const currentSettings = loadSettings();
     settingsPanel = document.createElement("div");
     settingsPanel.className = "settings-panel-overlay";
+    settingsPanel.tabIndex = -1;
     const panelModal = buildPanelDOM(currentSettings);
     settingsPanel.appendChild(panelModal);
-    document.body.appendChild(settingsPanel);
+    uiContainer.appendChild(settingsPanel);
     setTimeout(() => {
       if (settingsPanel) {
         settingsPanel.classList.add("is-visible");
       }
     }, 10);
-    const titleContainer = document.getElementById("settings-panel-title-container");
+    const titleContainer = settingsPanel.querySelector("#settings-panel-title-container");
     titleContainer.appendChild(createIconTitle(settingsIcon, "\u811A\u672C\u8BBE\u7F6E"));
-    const themeTitleContainer = document.getElementById("theme-setting-title-container");
+    const themeTitleContainer = settingsPanel.querySelector("#theme-setting-title-container");
     themeTitleContainer.appendChild(createIconTitle(themeIcon, "\u754C\u9762\u4E3B\u9898"));
-    const relatedTitleContainer = document.getElementById("related-setting-title-container");
+    const relatedTitleContainer = settingsPanel.querySelector("#related-setting-title-container");
     relatedTitleContainer.appendChild(createIconTitle(relatedSettingsIcon, "\u76F8\u5173\u8BBE\u7F6E"));
-    const filterTitleContainer = document.getElementById("filter-setting-title-container");
+    const filterTitleContainer = settingsPanel.querySelector("#filter-setting-title-container");
     filterTitleContainer.appendChild(createIconTitle(filterIcon, "\u5185\u5BB9\u8FC7\u6EE4\u89C4\u5219"));
-    const selectWrapper = document.getElementById("custom-select-wrapper");
+    const selectWrapper = settingsPanel.querySelector("#custom-select-wrapper");
     const themeOptions = [
       { value: "system", label: "\u8DDF\u968F\u7CFB\u7EDF", icon: systemThemeIcon },
       { value: "light", label: "\u6D45\u8272\u6A21\u5F0F", icon: lightThemeIcon },
@@ -1004,11 +1019,12 @@ ${result.join(",\n")}
     saveBtn.appendChild(createIconTitle(saveIcon, "\u4FDD\u5B58"));
     settingsPanel.querySelector(".settings-panel-close").addEventListener("click", hideSettingsPanel);
     saveBtn.addEventListener("click", handleSave);
-    document.addEventListener("keydown", handleKeyDown2);
+    settingsPanel.addEventListener("keydown", handleKeyDown2);
+    settingsPanel.focus();
   }
   function hideSettingsPanel() {
     if (settingsPanel) {
-      document.removeEventListener("keydown", handleKeyDown2);
+      settingsPanel.removeEventListener("keydown", handleKeyDown2);
       settingsPanel.classList.remove("is-visible");
       setTimeout(() => {
         if (settingsPanel) {
@@ -1023,13 +1039,13 @@ ${result.join(",\n")}
     const newFilterRules = {};
     const newRelatedSettings = {};
     filterDefinitions.forEach((filter) => {
-      const checkbox = document.getElementById(filter.id);
+      const checkbox = settingsPanel.querySelector(`#${filter.id}`);
       if (checkbox) {
         newFilterRules[filter.key] = checkbox.checked;
       }
     });
     relatedSettingsDefinitions.forEach((setting) => {
-      const checkbox = document.getElementById(setting.id);
+      const checkbox = settingsPanel.querySelector(`#${setting.id}`);
       if (checkbox) {
         newRelatedSettings[setting.key] = checkbox.checked;
       }
@@ -1041,7 +1057,7 @@ ${result.join(",\n")}
     };
     saveSettings(newSettings);
     applyTheme(newSettings.theme);
-    const fabContainer = document.querySelector(".text-extractor-fab-container");
+    const fabContainer = uiContainer.querySelector(".text-extractor-fab-container");
     if (fabContainer) {
       fabContainer.classList.toggle("fab-container-visible", newSettings.showFab);
     }
@@ -1054,9 +1070,11 @@ ${result.join(",\n")}
   function initialize() {
     initSettingsPanel();
   }
-  addStyle(`/* src/assets/themes.css */
+  function main() {
+    const styleElement = document.createElement("style");
+    styleElement.textContent = `/* src/assets/themes.css */
 /* \u8FD9\u4E2A\u6587\u4EF6\u53EA\u5B9A\u4E49\u989C\u8272\u53D8\u91CF\u548C\u4E3B\u9898\u5207\u6362\u903B\u8F91 */
-:root {
+:host {
   /* \u6D45\u8272\u6A21\u5F0F\u989C\u8272\u53D8\u91CF */
   --color-bg: #ffffff;
   --color-text: #333333;
@@ -1089,7 +1107,7 @@ ${result.join(",\n")}
   --dark-color-tooltip-text: #111111; /* \u63D0\u793A\u6587\u672C */
 }
 /* \u6839\u636E data-theme \u5C5E\u6027\u5E94\u7528\u6D45\u8272\u4E3B\u9898 */
-body[data-theme='light'] {
+:host([data-theme='light']) {
   --main-bg: var(--color-bg);
   --main-text: var(--color-text);
   --main-border: var(--color-border);
@@ -1108,7 +1126,7 @@ body[data-theme='light'] {
   --main-disabled-text: #666666;
 }
 /* \u6839\u636E data-theme \u5C5E\u6027\u5E94\u7528\u6DF1\u8272\u4E3B\u9898 */
-body[data-theme='dark'] {
+:host([data-theme='dark']) {
   --main-bg: var(--dark-color-bg);
   --main-text: var(--dark-color-text);
   --main-border: var(--dark-color-border);
@@ -1793,8 +1811,8 @@ body[data-theme='dark'] {
     opacity: 1;
     visibility: visible;
 }
-`);
-  function main() {
+`;
+    uiContainer.appendChild(styleElement);
     "use strict";
     initTheme();
     initialize();

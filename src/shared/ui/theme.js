@@ -1,5 +1,6 @@
 // src/ui/theme.js
 import { loadSettings } from '../../features/settings/logic.js';
+import { uiContainer } from './uiContainer.js';
 
 /**
  * 初始化并应用主题
@@ -20,8 +21,8 @@ export function applyTheme(theme) {
     finalTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   }
 
-  // 在 body 元素上设置 data-theme 属性
-  document.body.setAttribute('data-theme', finalTheme);
+  // 在 Shadow DOM 宿主元素上设置 data-theme 属性
+  uiContainer.host.setAttribute('data-theme', finalTheme);
 }
 
 // 监听系统颜色方案变化

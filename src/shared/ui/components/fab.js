@@ -12,6 +12,7 @@ import { summaryIcon } from '../../../assets/summaryIcon.js';
 import { showTooltip, hideTooltip } from './tooltip.js';
 
 import { createSVGFromString } from '../../utils/dom.js';
+import { uiContainer } from '../uiContainer.js';
 
 /**
  * @private
@@ -89,7 +90,7 @@ export function createFab({ callbacks, isVisible }) {
     fabContainer.appendChild(summaryFab);
     fabContainer.appendChild(dynamicFab);
     fabContainer.appendChild(staticFab);
-    document.body.appendChild(fabContainer);
+    uiContainer.appendChild(fabContainer);
 
     // 根据初始设置决定是否显示
     if (isVisible) {

@@ -3,12 +3,13 @@
 let currentTooltip = null;
 let hideTimeout = null;
 
+import { uiContainer } from '../uiContainer.js';
 /**
  * 强制从 DOM 中移除所有现存的 tooltip 实例。
  * 这是为了防止在快速的鼠标悬停事件中出现重复的提示框。
  */
 function removeAllTooltips() {
-    document.querySelectorAll('.text-extractor-tooltip').forEach(tip => tip.remove());
+    uiContainer.querySelectorAll('.text-extractor-tooltip').forEach(tip => tip.remove());
     currentTooltip = null;
 }
 
@@ -26,7 +27,7 @@ export function showTooltip(targetElement, text) {
     const tooltip = document.createElement('div');
     tooltip.className = 'text-extractor-tooltip';
     tooltip.textContent = text;
-    document.body.appendChild(tooltip);
+    uiContainer.appendChild(tooltip);
     currentTooltip = tooltip; // 将新创建的注册为当前活动的提示
 
     // 3. 计算并设置位置
