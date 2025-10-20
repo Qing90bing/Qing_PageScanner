@@ -5,10 +5,9 @@
  * @description 负责创建和管理所有悬浮操作按钮。
  */
 
-import { translateIcon } from '../../../assets/icon.js';
-import { dynamicIcon } from '../../../assets/dynamicIcon.js';
-import { stopIcon } from '../../../assets/stopIcon.js';
-import { summaryIcon } from '../../../assets/summaryIcon.js';
+import { translateIcon } from '../../../assets/icons/icon.js';
+import { dynamicIcon } from '../../../assets/icons/dynamicIcon.js';
+import { summaryIcon } from '../../../assets/icons/summaryIcon.js';
 import { showTooltip, hideTooltip } from './tooltip.js';
 
 import { createSVGFromString } from '../../utils/dom.js';

@@ -18,10 +18,10 @@ async function build() {
         const cssFiles = await fs.readdir(stylesDir);
 
         // 确保先加载 themes.css，再加载其他样式文件
-        let allCssContent = await fs.readFile('src/assets/themes.css', 'utf-8');
+        let allCssContent = await fs.readFile('src/assets/styles/themes.css', 'utf-8');
 
         for (const file of cssFiles) {
-            if (path.extname(file) === '.css') {
+             if (path.extname(file) === '.css' && file !== 'themes.css') {
                 const content = await fs.readFile(path.join(stylesDir, file), 'utf-8');
                 allCssContent += `\n\n/* --- From ${file} --- */\n${content}`;
             }

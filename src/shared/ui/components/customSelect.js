@@ -7,7 +7,7 @@
 
 import { createIconTitle } from '../iconTitle.js';
 import { createSVGFromString } from '../../utils/dom.js';
-import { arrowDownIcon } from '../../../assets/arrowDownIcon.js';
+import { arrowDownIcon } from '../../../assets/icons/arrowDownIcon.js';
 
 export class CustomSelect {
     /**

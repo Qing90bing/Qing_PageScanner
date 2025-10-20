@@ -6,8 +6,8 @@ import * as sessionExtractor from './logic.js';
 import { showNotification } from '../../shared/ui/notification.js';
 import { showLiveCounter, hideLiveCounter, updateLiveCounter } from './liveCounterUI.js';
 import { setFabIcon } from '../../shared/ui/components/fab.js';
-import { dynamicIcon } from '../../assets/dynamicIcon.js';
-import { stopIcon } from '../../assets/stopIcon.js';
+import { dynamicIcon } from '../../assets/icons/dynamicIcon.js';
+import { stopIcon } from '../../assets/icons/stopIcon.js';
 
 /**
  * 处理“查看总结”按钮的点击事件。

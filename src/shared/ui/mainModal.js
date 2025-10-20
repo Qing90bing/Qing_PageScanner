@@ -6,17 +6,18 @@
  */
 
 import { setClipboard } from '../services/tampermonkey.js';
-import config from '../../config.js';
+import config from '../config.js';
 import { extractAndProcessText, formatTextsForTranslation } from '../utils/textProcessor.js';
 import { showNotification } from './notification.js';
 import { createIconTitle } from './iconTitle.js';
 import { createSVGFromString } from '../utils/dom.js';
-import { summaryIcon } from '../../assets/summaryIcon.js';
-import { copyIcon } from '../../assets/copyIcon.js';
-import { infoIcon } from '../../assets/infoIcon.js';
-import { dynamicIcon } from '../../assets/dynamicIcon.js';
-import { translateIcon } from '../../assets/icon.js';
-import { loadingSpinner } from '../../assets/loadingSpinner.js';
+import { summaryIcon } from '../../assets/icons/summaryIcon.js';
+import { copyIcon } from '../../assets/icons/copyIcon.js';
+import { infoIcon } from '../../assets/icons/infoIcon.js';
+import { dynamicIcon } from '../../assets/icons/dynamicIcon.js';
+import { translateIcon } from '../../assets/icons/icon.js';
+import { loadingSpinner } from '../../assets/icons/loadingSpinner.js';
+import { closeIcon } from '../../assets/icons/closeIcon.js';
 import { uiContainer } from './uiContainer.js';
 
 // --- 模块级变量 ---
@@ -65,16 +66,7 @@ export function createMainModal() {
 
   const closeBtn = document.createElement('span');
   closeBtn.className = 'tc-close-button text-extractor-modal-close';
-  const closeIconSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  closeIconSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-  closeIconSvg.setAttribute('height', '24px');
-  closeIconSvg.setAttribute('viewBox', '0 -960 960 960');
-  closeIconSvg.setAttribute('width', '24px');
-  closeIconSvg.setAttribute('fill', 'currentColor');
-  const closeIconPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  closeIconPath.setAttribute('d', 'm256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z');
-  closeIconSvg.appendChild(closeIconPath);
-  closeBtn.appendChild(closeIconSvg);
+  closeBtn.appendChild(createSVGFromString(closeIcon));
 
   modalHeader.appendChild(titleContainer);
   modalHeader.appendChild(closeBtn);

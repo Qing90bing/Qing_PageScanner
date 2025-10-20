@@ -6,7 +6,7 @@
  */
 
 import { loadSettings } from '../../features/settings/logic.js';
-import config from '../../config.js';
+import config from '../config.js';
 import IGNORED_SELECTORS from './ignoredSelectors.js';
 import { shouldFilter } from './filterLogic.js'; // 导入新的通用过滤函数
 

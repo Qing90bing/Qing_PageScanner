@@ -1,9 +1,11 @@
-// src/ui/components/notification.js
-import { createSVGFromString } from '../../shared/utils/dom.js';
-import config from '../../config.js';
-import { infoIcon } from '../../assets/infoIcon.js';
-import { successIcon } from '../../assets/successIcon.js';
-import { closeIcon } from '../../assets/closeIcon.js';
+// src/shared/ui/notification.js
+
+import { createSVGFromString } from '../utils/dom.js';
+import config from '../config.js';
+import { infoIcon } from '../../assets/icons/infoIcon.js';
+import { successIcon } from '../../assets/icons/successIcon.js';
+import { closeIcon } from '../../assets/icons/closeIcon.js';
+import { uiContainer } from './uiContainer.js';
 
 // 存储通知的容器
 let notificationContainer = null;
@@ -12,7 +14,6 @@ let notificationContainer = null;
  * 创建并管理通知容器
  * @returns {HTMLElement} 通知容器元素
  */
-import { uiContainer } from './uiContainer.js';
 function getNotificationContainer() {
     if (!notificationContainer) {
         notificationContainer = document.createElement('div');
