@@ -1,0 +1,77 @@
+/* src/assets/styles/modal-addons.css */
+
+/* --- 文本区域容器 --- */
+.tc-textarea-container {
+    display: flex;
+    flex-grow: 1;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--main-textarea-border);
+    border-radius: 8px;
+}
+
+/* --- 行号区域 --- */
+.tc-line-numbers {
+    width: 40px;
+    padding: 10px 0; /* 移除左右padding，由max-width控制 */
+    text-align: right;
+    max-width: 0;
+    opacity: 0;
+    margin-right: 0;
+    transition: max-width 0.3s ease, opacity 0.3s ease, padding 0.3s ease, margin-right 0.3s ease;
+    color: var(--tc-secondary-text-color);
+    background-color: var(--tc-secondary-bg-color);
+    overflow: hidden; /* 隐藏自身的滚动条 */
+    user-select: none; /* 防止用户选中行号 */
+    font-family: Menlo, Monaco,'Cascadia Code','PingFang SC';
+    font-size: 14px; /* 与文本框字体大小一致 */
+    line-height: 1.5; /* 与文本框行高一致 */
+    border-right: 1px solid var(--tc-border-color);
+    box-sizing: border-box;
+}
+
+.tc-line-numbers > div {
+    white-space: nowrap;
+}
+
+/* --- 调整原始文本框样式 --- */
+.tc-textarea-container .tc-textarea {
+    border: none;
+    border-radius: 0;
+    flex-grow: 1;
+    resize: none;
+    line-height: 1.5;
+    font-size: 14px;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.tc-textarea-container .tc-textarea:focus {
+    outline: none; /* 移除默认的聚焦轮廓 */
+    box-shadow: none;
+}
+
+.tc-line-numbers.is-visible {
+    max-width: 40px;
+    opacity: 1;
+    padding: 10px 4px;
+    margin-right: 4px; /* 添加一些间距 */
+}
+
+/* --- 统计信息容器 --- */
+.tc-stats-container {
+    font-size: 14px;
+    font-family: Menlo, Monaco,'Cascadia Code','PingFang SC';
+    color: var(--tc-secondary-text-color);
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.tc-stats-container.is-visible {
+    opacity: 1;
+    visibility: visible;
+}

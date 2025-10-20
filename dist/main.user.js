@@ -206,6 +206,8 @@
   var defaultSettings = {
     theme: "system",
     showFab: true,
+    showLineNumbers: true,
+    showStatistics: true,
     filterRules: {
       numbers: true,
       chinese: true,
@@ -449,8 +451,11 @@ ${result.join(",\n")}
 `;
   var modalOverlay = null;
   var outputTextarea = null;
+  var lineNumbersDiv = null;
+  var statsContainer = null;
   var placeholder = null;
   var loadingContainer = null;
+  var canvasContext = null;
   var SHOW_PLACEHOLDER = "::show_placeholder::";
   var SHOW_LOADING = "::show_loading::";
   var handleKeyDown = (event) => {
@@ -478,11 +483,17 @@ ${result.join(",\n")}
     modalContent.className = "text-extractor-modal-content";
     placeholder = document.createElement("div");
     placeholder.id = "modal-placeholder";
+    const textareaContainer = document.createElement("div");
+    textareaContainer.className = "tc-textarea-container";
+    lineNumbersDiv = document.createElement("div");
+    lineNumbersDiv.className = "tc-line-numbers";
     outputTextarea = document.createElement("textarea");
     outputTextarea.id = "text-extractor-output";
     outputTextarea.className = "tc-textarea";
+    textareaContainer.appendChild(lineNumbersDiv);
+    textareaContainer.appendChild(outputTextarea);
     modalContent.appendChild(placeholder);
-    modalContent.appendChild(outputTextarea);
+    modalContent.appendChild(textareaContainer);
     loadingContainer = document.createElement("div");
     loadingContainer.className = "gm-loading-overlay";
     const spinner = document.createElement("div");
@@ -493,8 +504,11 @@ ${result.join(",\n")}
     modalContent.appendChild(loadingContainer);
     const modalFooter = document.createElement("div");
     modalFooter.className = "text-extractor-modal-footer";
+    statsContainer = document.createElement("div");
+    statsContainer.className = "tc-stats-container";
     const copyBtn = document.createElement("button");
     copyBtn.className = "text-extractor-copy-btn tc-button";
+    modalFooter.appendChild(statsContainer);
     modalFooter.appendChild(copyBtn);
     modal.appendChild(modalHeader);
     modal.appendChild(modalContent);
@@ -548,6 +562,77 @@ ${result.join(",\n")}
       setClipboard(textToCopy);
       showNotification("\u5DF2\u590D\u5236\u5230\u526A\u8D34\u677F", { type: "success" });
     });
+    outputTextarea.addEventListener("input", () => {
+      updateLineNumbers();
+      updateStatistics();
+    });
+    outputTextarea.addEventListener("scroll", () => {
+      lineNumbersDiv.scrollTop = outputTextarea.scrollTop;
+    });
+    updateModalAddonsVisibility();
+    const canvas = document.createElement("canvas");
+    canvasContext = canvas.getContext("2d");
+    const textareaStyles = window.getComputedStyle(outputTextarea);
+    canvasContext.font = `${textareaStyles.fontSize} ${textareaStyles.fontFamily}`;
+    const resizeObserver = new ResizeObserver(() => {
+      lineNumbersDiv.style.height = outputTextarea.clientHeight + "px";
+      updateLineNumbers();
+    });
+    resizeObserver.observe(outputTextarea);
+  }
+  function calcStringLines(sentence, width) {
+    if (!width || !canvasContext) return 1;
+    const words = sentence.split("");
+    let lineCount = 0;
+    let currentLine = "";
+    for (let i = 0; i < words.length; i++) {
+      const wordWidth = canvasContext.measureText(words[i]).width;
+      const lineWidth = canvasContext.measureText(currentLine).width;
+      if (lineWidth + wordWidth > width) {
+        lineCount++;
+        currentLine = words[i];
+      } else {
+        currentLine += words[i];
+      }
+    }
+    if (currentLine.trim() !== "" || sentence === "") {
+      lineCount++;
+    }
+    return lineCount;
+  }
+  function calcLines() {
+    const lines = outputTextarea.value.split("\n");
+    const textareaStyles = window.getComputedStyle(outputTextarea);
+    const paddingLeft = parseFloat(textareaStyles.paddingLeft);
+    const paddingRight = parseFloat(textareaStyles.paddingRight);
+    const textareaContentWidth = outputTextarea.clientWidth - paddingLeft - paddingRight;
+    const numLines = lines.map((lineString) => calcStringLines(lineString, textareaContentWidth));
+    let lineNumbers = [];
+    let i = 1;
+    while (numLines.length > 0) {
+      const numLinesOfSentence = numLines.shift();
+      lineNumbers.push(i);
+      if (numLinesOfSentence > 1) {
+        Array(numLinesOfSentence - 1).fill("").forEach(() => lineNumbers.push(""));
+      }
+      i++;
+    }
+    return lineNumbers;
+  }
+  function updateStatistics() {
+    const text = outputTextarea.value;
+    const lineCount = text.split("\n").length;
+    const charCount = text.length;
+    statsContainer.textContent = `\u884C: ${lineCount} | \u5B57\u7B26\u6570: ${charCount}`;
+  }
+  function updateLineNumbers() {
+    const lines = calcLines();
+    const lineElements = lines.map((line) => {
+      const div = document.createElement("div");
+      div.textContent = line === "" ? "\xA0" : line;
+      return div;
+    });
+    lineNumbersDiv.replaceChildren(...lineElements);
   }
   function showLoading() {
     if (loadingContainer) loadingContainer.classList.add("is-visible");
@@ -588,28 +673,42 @@ ${result.join(",\n")}
     const copyBtn = modalOverlay.querySelector(".text-extractor-copy-btn");
     if (content === SHOW_LOADING) {
       placeholder.style.display = "none";
-      outputTextarea.style.display = "block";
+      outputTextarea.parentElement.style.display = "flex";
       outputTextarea.value = "";
       showLoading();
       if (copyBtn) copyBtn.disabled = true;
     } else if (content === SHOW_PLACEHOLDER) {
       hideLoading();
       placeholder.style.display = "flex";
-      outputTextarea.style.display = "none";
+      outputTextarea.parentElement.style.display = "none";
       if (copyBtn) copyBtn.disabled = true;
     } else {
       hideLoading();
       placeholder.style.display = "none";
-      outputTextarea.style.display = "block";
+      outputTextarea.parentElement.style.display = "flex";
       const isData = content.trim().startsWith("[");
       outputTextarea.value = content;
       if (copyBtn) copyBtn.disabled = !isData;
       outputTextarea.readOnly = !isData;
+      updateStatistics();
+      updateLineNumbers();
     }
+    updateModalAddonsVisibility();
     if (shouldOpen) {
       modalOverlay.classList.add("is-visible");
       modalOverlay.addEventListener("keydown", handleKeyDown);
       modalOverlay.focus();
+    }
+  }
+  function updateModalAddonsVisibility() {
+    if (!modalOverlay) return;
+    const settings = loadSettings();
+    if (lineNumbersDiv) {
+      lineNumbersDiv.classList.toggle("is-visible", settings.showLineNumbers);
+    }
+    if (statsContainer) {
+      const hasContent = outputTextarea && outputTextarea.parentElement.style.display !== "none";
+      statsContainer.classList.toggle("is-visible", settings.showStatistics && hasContent);
     }
   }
   function handleQuickScanClick() {
@@ -903,7 +1002,9 @@ ${result.join(",\n")}
     { id: "filter-single-letter", key: "singleLetter", label: "\u8FC7\u6EE4\u7EAF\u5355\u4E2A\u82F1\u6587\u5B57\u6BCD" }
   ];
   var relatedSettingsDefinitions = [
-    { id: "show-fab", key: "showFab", label: "\u663E\u793A\u60AC\u6D6E\u6309\u94AE" }
+    { id: "show-fab", key: "showFab", label: "\u663E\u793A\u60AC\u6D6E\u6309\u94AE" },
+    { id: "show-line-numbers", key: "showLineNumbers", label: "\u663E\u793A\u884C\u53F7" },
+    { id: "show-statistics", key: "showStatistics", label: "\u663E\u793A\u7EDF\u8BA1\u4FE1\u606F" }
   ];
   function buildPanelDOM(settings) {
     const modal = document.createElement("div");
@@ -1052,6 +1153,7 @@ ${result.join(",\n")}
     if (fabContainer) {
       fabContainer.classList.toggle("fab-container-visible", newSettings.showFab);
     }
+    updateModalAddonsVisibility();
     showNotification("\u8BBE\u7F6E\u5DF2\u4FDD\u5B58\uFF01", { type: "success" });
     hideSettingsPanel();
   }
@@ -1240,7 +1342,7 @@ ${result.join(",\n")}
 /* --- \u53EF\u590D\u7528\u7684\u6587\u672C\u6846\u6837\u5F0F --- */
 .tc-textarea {
   width: 100%;
-  height: 100%; /* \u4FEE\u6539\uFF1A\u586B\u6EE1\u7236\u5BB9\u5668 */
+  height: 100%;
   border: 1px solid var(--main-textarea-border);
   background-color: var(--main-textarea-bg);
   color: var(--main-text);
@@ -1251,6 +1353,7 @@ ${result.join(",\n")}
   font-size: 14px;
   resize: none; /* \u7981\u7528\u62D6\u62FD\u8C03\u6574\u5927\u5C0F */
   box-sizing: border-box;
+  line-height: 1.5;
 }
 .tc-textarea:focus {
   outline: none;
@@ -1507,6 +1610,76 @@ ${result.join(",\n")}
     100% {
         box-shadow: 0 4px 8px var(--main-shadow), 0 0 0 0 rgba(243, 156, 18, 0);
     }
+}
+/* --- From modal-addons.css --- */
+/* src/assets/styles/modal-addons.css */
+/* --- \u6587\u672C\u533A\u57DF\u5BB9\u5668 --- */
+.tc-textarea-container {
+    display: flex;
+    flex-grow: 1;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--main-textarea-border);
+    border-radius: 8px;
+}
+/* --- \u884C\u53F7\u533A\u57DF --- */
+.tc-line-numbers {
+    width: 40px;
+    padding: 10px 0; /* \u79FB\u9664\u5DE6\u53F3padding\uFF0C\u7531max-width\u63A7\u5236 */
+    text-align: right;
+    max-width: 0;
+    opacity: 0;
+    margin-right: 0;
+    transition: max-width 0.3s ease, opacity 0.3s ease, padding 0.3s ease, margin-right 0.3s ease;
+    color: var(--tc-secondary-text-color);
+    background-color: var(--tc-secondary-bg-color);
+    overflow: hidden; /* \u9690\u85CF\u81EA\u8EAB\u7684\u6EDA\u52A8\u6761 */
+    user-select: none; /* \u9632\u6B62\u7528\u6237\u9009\u4E2D\u884C\u53F7 */
+    font-family: Menlo, Monaco,'Cascadia Code','PingFang SC';
+    font-size: 14px; /* \u4E0E\u6587\u672C\u6846\u5B57\u4F53\u5927\u5C0F\u4E00\u81F4 */
+    line-height: 1.5; /* \u4E0E\u6587\u672C\u6846\u884C\u9AD8\u4E00\u81F4 */
+    border-right: 1px solid var(--tc-border-color);
+    box-sizing: border-box;
+}
+.tc-line-numbers > div {
+    white-space: nowrap;
+}
+/* --- \u8C03\u6574\u539F\u59CB\u6587\u672C\u6846\u6837\u5F0F --- */
+.tc-textarea-container .tc-textarea {
+    border: none;
+    border-radius: 0;
+    flex-grow: 1;
+    resize: none;
+    line-height: 1.5;
+    font-size: 14px;
+    padding: 10px;
+    box-sizing: border-box;
+}
+.tc-textarea-container .tc-textarea:focus {
+    outline: none; /* \u79FB\u9664\u9ED8\u8BA4\u7684\u805A\u7126\u8F6E\u5ED3 */
+    box-shadow: none;
+}
+.tc-line-numbers.is-visible {
+    max-width: 40px;
+    opacity: 1;
+    padding: 10px 4px;
+    margin-right: 4px; /* \u6DFB\u52A0\u4E00\u4E9B\u95F4\u8DDD */
+}
+/* --- \u7EDF\u8BA1\u4FE1\u606F\u5BB9\u5668 --- */
+.tc-stats-container {
+    font-size: 14px;
+    font-family: Menlo, Monaco,'Cascadia Code','PingFang SC';
+    color: var(--tc-secondary-text-color);
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.tc-stats-container.is-visible {
+    opacity: 1;
+    visibility: visible;
 }
 /* --- From notification.css --- */
 /* src/assets/notification.css */

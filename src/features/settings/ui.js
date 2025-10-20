@@ -17,6 +17,7 @@ import { themeIcon } from '../../assets/icons/themeIcon.js';
 import { filterIcon } from '../../assets/icons/filterIcon.js';
 import { saveIcon } from '../../assets/icons/saveIcon.js';
 import { relatedSettingsIcon } from '../../assets/icons/relatedSettingsIcon.js';
+import { updateModalAddonsVisibility } from '../../shared/ui/mainModal.js';
 
 // --- 模块级变量 ---
 
@@ -146,6 +147,9 @@ function handleSave() {
   if (fabContainer) {
       fabContainer.classList.toggle('fab-container-visible', newSettings.showFab);
   }
+
+  // 即时更新模态框附加组件的可见性
+  updateModalAddonsVisibility();
 
   showNotification('设置已保存！', { type: 'success' });
   hideSettingsPanel();

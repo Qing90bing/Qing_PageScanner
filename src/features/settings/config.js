@@ -12,4 +12,6 @@ export const filterDefinitions = [
 
 export const relatedSettingsDefinitions = [
     { id: 'show-fab', key: 'showFab', label: '显示悬浮按钮' },
+    { id: 'show-line-numbers', key: 'showLineNumbers', label: '显示行号' },
+    { id: 'show-statistics', key: 'showStatistics', label: '显示统计信息' },
 ];

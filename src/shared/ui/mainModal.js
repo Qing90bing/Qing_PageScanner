@@ -19,13 +19,17 @@ import { translateIcon } from '../../assets/icons/icon.js';
 import { loadingSpinner } from '../../assets/icons/loadingSpinner.js';
 import { closeIcon } from '../../assets/icons/closeIcon.js';
 import { uiContainer } from './uiContainer.js';
+import { loadSettings } from '../../features/settings/logic.js';
 
 // --- 模块级变量 ---
 
 let modalOverlay = null; // 模态框遮罩层
 let outputTextarea = null; // 文本输出区域
+let lineNumbersDiv = null; // 行号显示区域
+let statsContainer = null; // 统计信息容器
 let placeholder = null; // 提示信息容器
 let loadingContainer = null; // 加载动画容器
+let canvasContext = null; // 用于文本宽度计算的Canvas上下文
 export const SHOW_PLACEHOLDER = '::show_placeholder::'; // 特殊标识符
 export const SHOW_LOADING = '::show_loading::'; // 加载状态标识符
 
@@ -77,12 +81,21 @@ export function createMainModal() {
   placeholder = document.createElement('div');
   placeholder.id = 'modal-placeholder';
 
+  const textareaContainer = document.createElement('div');
+  textareaContainer.className = 'tc-textarea-container';
+
+  lineNumbersDiv = document.createElement('div');
+  lineNumbersDiv.className = 'tc-line-numbers';
+
   outputTextarea = document.createElement('textarea');
   outputTextarea.id = 'text-extractor-output';
   outputTextarea.className = 'tc-textarea';
 
+  textareaContainer.appendChild(lineNumbersDiv);
+  textareaContainer.appendChild(outputTextarea);
+
   modalContent.appendChild(placeholder);
-  modalContent.appendChild(outputTextarea);
+  modalContent.appendChild(textareaContainer);
 
   // 创建加载动画覆盖层
   loadingContainer = document.createElement('div');
@@ -98,9 +111,13 @@ export function createMainModal() {
   const modalFooter = document.createElement('div');
   modalFooter.className = 'text-extractor-modal-footer';
 
+  statsContainer = document.createElement('div');
+  statsContainer.className = 'tc-stats-container';
+
   const copyBtn = document.createElement('button');
   copyBtn.className = 'text-extractor-copy-btn tc-button';
 
+  modalFooter.appendChild(statsContainer);
   modalFooter.appendChild(copyBtn);
 
   modal.appendChild(modalHeader);
@@ -170,6 +187,116 @@ export function createMainModal() {
     setClipboard(textToCopy);
     showNotification('已复制到剪贴板', { type: 'success' });
   });
+
+  outputTextarea.addEventListener('input', () => {
+    updateLineNumbers();
+    updateStatistics();
+  });
+
+  outputTextarea.addEventListener('scroll', () => {
+    lineNumbersDiv.scrollTop = outputTextarea.scrollTop;
+  });
+
+  // 根据设置更新UI元素的可见性
+  updateModalAddonsVisibility();
+
+  // 初始化用于文本测量的Canvas
+  const canvas = document.createElement('canvas');
+  canvasContext = canvas.getContext('2d');
+  const textareaStyles = window.getComputedStyle(outputTextarea);
+  canvasContext.font = `${textareaStyles.fontSize} ${textareaStyles.fontFamily}`;
+
+  // 监听textarea尺寸变化以更新行号
+  const resizeObserver = new ResizeObserver(() => {
+    // 同步行号容器的高度
+    lineNumbersDiv.style.height = outputTextarea.clientHeight + 'px';
+    updateLineNumbers();
+  });
+  resizeObserver.observe(outputTextarea);
+}
+
+/**
+ * @private
+ * @description 计算单个字符串在给定宽度下会占据多少行（视觉换行）。
+ * @param {string} sentence - 要计算的字符串。
+ * @param {number} width - 容器的内容宽度。
+ * @returns {number} 占据的行数。
+ */
+function calcStringLines(sentence, width) {
+    if (!width || !canvasContext) return 1;
+
+    const words = sentence.split('');
+    let lineCount = 0;
+    let currentLine = '';
+
+    for (let i = 0; i < words.length; i++) {
+        const wordWidth = canvasContext.measureText(words[i]).width;
+        const lineWidth = canvasContext.measureText(currentLine).width;
+
+        if (lineWidth + wordWidth > width) {
+            lineCount++;
+            currentLine = words[i];
+        } else {
+            currentLine += words[i];
+        }
+    }
+    if (currentLine.trim() !== '' || sentence === '') {
+        lineCount++;
+    }
+    return lineCount;
+}
+
+/**
+ * @private
+ * @description 计算文本区域内所有内容的视觉总行数，并生成行号数组。
+ * @returns {Array<string|number>} 行号数组，空行用 '' 表示。
+ */
+function calcLines() {
+    const lines = outputTextarea.value.split('\n');
+    const textareaStyles = window.getComputedStyle(outputTextarea);
+
+    const paddingLeft = parseFloat(textareaStyles.paddingLeft);
+    const paddingRight = parseFloat(textareaStyles.paddingRight);
+    const textareaContentWidth = outputTextarea.clientWidth - paddingLeft - paddingRight;
+
+    const numLines = lines.map(lineString => calcStringLines(lineString, textareaContentWidth));
+
+    let lineNumbers = [];
+    let i = 1;
+    while (numLines.length > 0) {
+        const numLinesOfSentence = numLines.shift();
+        lineNumbers.push(i);
+        if (numLinesOfSentence > 1) {
+            Array(numLinesOfSentence - 1).fill('').forEach(() => lineNumbers.push(''));
+        }
+        i++;
+    }
+    return lineNumbers;
+}
+
+/**
+ * @private
+ * @description 更新统计信息。
+ */
+function updateStatistics() {
+    const text = outputTextarea.value;
+    const lineCount = text.split('\n').length;
+    const charCount = text.length;
+    statsContainer.textContent = `行: ${lineCount} | 字符数: ${charCount}`;
+}
+
+/**
+ * @private
+ * @description 更新行号。
+ */
+function updateLineNumbers() {
+    const lines = calcLines();
+    const lineElements = lines.map(line => {
+        const div = document.createElement('div');
+        div.textContent = line === '' ? '\u00A0' : line; // 使用 Unicode 替代 &nbsp;
+        return div;
+    });
+    lineNumbersDiv.replaceChildren(...lineElements);
 }
 
 /**
@@ -247,30 +374,55 @@ export function updateModalContent(content, shouldOpen = false) {
 
     if (content === SHOW_LOADING) {
         placeholder.style.display = 'none';
-        outputTextarea.style.display = 'block';
+        outputTextarea.parentElement.style.display = 'flex';
         outputTextarea.value = '';
         showLoading();
         if (copyBtn) copyBtn.disabled = true;
     } else if (content === SHOW_PLACEHOLDER) {
         hideLoading();
         placeholder.style.display = 'flex';
-        outputTextarea.style.display = 'none';
+        outputTextarea.parentElement.style.display = 'none';
         if (copyBtn) copyBtn.disabled = true;
     } else {
         hideLoading();
         placeholder.style.display = 'none';
-        outputTextarea.style.display = 'block';
+        outputTextarea.parentElement.style.display = 'flex';
 
         const isData = content.trim().startsWith('[');
         outputTextarea.value = content;
         if (copyBtn) copyBtn.disabled = !isData;
         outputTextarea.readOnly = !isData;
+
+        updateStatistics();
+        updateLineNumbers();
     }
+
+    // 更新附加组件的可见性
+    updateModalAddonsVisibility();
 
     if (shouldOpen) {
         modalOverlay.classList.add('is-visible');
         modalOverlay.addEventListener('keydown', handleKeyDown);
         // 聚焦模态框以便接收键盘事件
         modalOverlay.focus();
+    }
+}
+
+/**
+ * @public
+ * @description 根据当前设置更新附加组件（行号、统计）的可见性。
+ */
+export function updateModalAddonsVisibility() {
+    if (!modalOverlay) return;
+
+    const settings = loadSettings();
+
+    if (lineNumbersDiv) {
+        lineNumbersDiv.classList.toggle('is-visible', settings.showLineNumbers);
+    }
+
+    if (statsContainer) {
+        const hasContent = outputTextarea && outputTextarea.parentElement.style.display !== 'none';
+        statsContainer.classList.toggle('is-visible', settings.showStatistics && hasContent);
     }
 }

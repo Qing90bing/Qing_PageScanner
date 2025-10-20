@@ -21,6 +21,10 @@ const defaultSettings = {
   theme: 'system',
   // 是否显示悬浮按钮
   showFab: true,
+  // 是否显示行号
+  showLineNumbers: true,
+  // 是否显示统计信息
+  showStatistics: true,
   // 过滤规则设置
   filterRules: {
     // 是否过滤纯数字和货币符号组成的字符串

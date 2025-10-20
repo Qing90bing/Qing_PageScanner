@@ -29,7 +29,7 @@
 /* --- 可复用的文本框样式 --- */
 .tc-textarea {
   width: 100%;
-  height: 100%; /* 修改：填满父容器 */
+  height: 100%;
   border: 1px solid var(--main-textarea-border);
   background-color: var(--main-textarea-bg);
   color: var(--main-text);
@@ -40,6 +40,7 @@
   font-size: 14px;
   resize: none; /* 禁用拖拽调整大小 */
   box-sizing: border-box;
+  line-height: 1.5;
 }
 
 .tc-textarea:focus {
