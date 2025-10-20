@@ -1,14 +1,8 @@
 // src/features/settings/panelBuilder.js
 
 import { createCheckbox } from '../../shared/ui/checkbox.js';
-import { createIconTitle } from '../../shared/ui/iconTitle.js';
 import { createSVGFromString } from '../../shared/utils/dom.js';
-import { settingsIcon } from '../../assets/icons/settingsIcon.js';
-import { themeIcon } from '../../assets/icons/themeIcon.js';
-import { filterIcon } from '../../assets/icons/filterIcon.js';
-import { saveIcon } from '../../assets/icons/saveIcon.js';
 import { closeIcon } from '../../assets/icons/closeIcon.js';
-import { relatedSettingsIcon } from '../../assets/icons/relatedSettingsIcon.js';
 import { filterDefinitions, relatedSettingsDefinitions } from './config.js';
 
 /**
