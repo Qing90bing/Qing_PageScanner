@@ -456,6 +456,7 @@ ${result.join(",\n")}
   var placeholder = null;
   var loadingContainer = null;
   var canvasContext = null;
+  var currentLineMap = [];
   var SHOW_PLACEHOLDER = "::show_placeholder::";
   var SHOW_LOADING = "::show_loading::";
   var handleKeyDown = (event) => {
@@ -562,10 +563,13 @@ ${result.join(",\n")}
       setClipboard(textToCopy);
       showNotification("\u5DF2\u590D\u5236\u5230\u526A\u8D34\u677F", { type: "success" });
     });
-    outputTextarea.addEventListener("input", () => {
+    const handleTextareaUpdate = () => {
       updateLineNumbers();
       updateStatistics();
-    });
+    };
+    outputTextarea.addEventListener("input", handleTextareaUpdate);
+    outputTextarea.addEventListener("click", updateActiveLine);
+    outputTextarea.addEventListener("keyup", updateActiveLine);
     outputTextarea.addEventListener("scroll", () => {
       lineNumbersDiv.scrollTop = outputTextarea.scrollTop;
     });
@@ -606,18 +610,20 @@ ${result.join(",\n")}
     const paddingLeft = parseFloat(textareaStyles.paddingLeft);
     const paddingRight = parseFloat(textareaStyles.paddingRight);
     const textareaContentWidth = outputTextarea.clientWidth - paddingLeft - paddingRight;
-    const numLines = lines.map((lineString) => calcStringLines(lineString, textareaContentWidth));
     let lineNumbers = [];
-    let i = 1;
-    while (numLines.length > 0) {
-      const numLinesOfSentence = numLines.shift();
-      lineNumbers.push(i);
+    let lineMap = [];
+    lines.forEach((lineString, realLineIndex) => {
+      const numLinesOfSentence = calcStringLines(lineString, textareaContentWidth);
+      lineNumbers.push(realLineIndex + 1);
+      lineMap.push(realLineIndex);
       if (numLinesOfSentence > 1) {
-        Array(numLinesOfSentence - 1).fill("").forEach(() => lineNumbers.push(""));
+        for (let i = 0; i < numLinesOfSentence - 1; i++) {
+          lineNumbers.push("");
+          lineMap.push(realLineIndex);
+        }
       }
-      i++;
-    }
-    return lineNumbers;
+    });
+    return { lineNumbers, lineMap };
   }
   function updateStatistics() {
     const text = outputTextarea.value;
@@ -626,13 +632,58 @@ ${result.join(",\n")}
     statsContainer.textContent = `\u884C: ${lineCount} | \u5B57\u7B26\u6570: ${charCount}`;
   }
   function updateLineNumbers() {
-    const lines = calcLines();
-    const lineElements = lines.map((line) => {
+    const { lineNumbers, lineMap } = calcLines();
+    currentLineMap = lineMap;
+    const lineElements = lineNumbers.map((line) => {
       const div = document.createElement("div");
       div.textContent = line === "" ? "\xA0" : line;
       return div;
     });
     lineNumbersDiv.replaceChildren(...lineElements);
+    updateActiveLine();
+  }
+  function updateActiveLine() {
+    if (!lineNumbersDiv || !lineNumbersDiv.classList.contains("is-visible") || !outputTextarea) return;
+    const textarea = outputTextarea;
+    const text = textarea.value;
+    const selectionEnd = textarea.selectionEnd;
+    const textBeforeCursor = text.substring(0, selectionEnd);
+    const cursorRealLineIndex = textBeforeCursor.split("\n").length - 1;
+    const realLines = text.split("\n");
+    let positionInRealLine = selectionEnd;
+    for (let i = 0; i < cursorRealLineIndex; i++) {
+      positionInRealLine -= realLines[i].length + 1;
+    }
+    const textareaStyles = window.getComputedStyle(textarea);
+    const paddingLeft = parseFloat(textareaStyles.paddingLeft);
+    const paddingRight = parseFloat(textareaStyles.paddingRight);
+    const textareaContentWidth = textarea.clientWidth - paddingLeft - paddingRight;
+    const lineContent = realLines[cursorRealLineIndex];
+    let visualLineOffset = 0;
+    let currentLine = "";
+    for (let i = 0; i < lineContent.length; i++) {
+      const char = lineContent[i];
+      const nextLine = currentLine + char;
+      if (canvasContext.measureText(nextLine).width > textareaContentWidth) {
+        visualLineOffset++;
+        currentLine = char;
+      } else {
+        currentLine = nextLine;
+      }
+      if (i >= positionInRealLine - 1 && positionInRealLine > 0) {
+        break;
+      }
+    }
+    const firstVisualIndexOfRealLine = currentLineMap.indexOf(cursorRealLineIndex);
+    if (firstVisualIndexOfRealLine === -1) return;
+    const finalVisualLineIndex = firstVisualIndexOfRealLine + visualLineOffset;
+    const lineDivs = lineNumbersDiv.children;
+    for (let i = 0; i < lineDivs.length; i++) {
+      lineDivs[i].classList.remove("is-active");
+    }
+    if (lineDivs[finalVisualLineIndex]) {
+      lineDivs[finalVisualLineIndex].classList.add("is-active");
+    }
   }
   function showLoading() {
     if (loadingContainer) loadingContainer.classList.add("is-visible");
@@ -692,6 +743,7 @@ ${result.join(",\n")}
       outputTextarea.readOnly = !isData;
       updateStatistics();
       updateLineNumbers();
+      setTimeout(updateActiveLine, 0);
     }
     updateModalAddonsVisibility();
     if (shouldOpen) {
@@ -1183,6 +1235,8 @@ ${result.join(",\n")}
   --color-textarea-border: #cccccc;
   --color-tooltip-bg: #333333; /* \u63D0\u793A\u80CC\u666F */
   --color-tooltip-text: #ffffff; /* \u63D0\u793A\u6587\u672C */
+  --color-line-number-text: #888888; /* \u884C\u53F7\u6587\u672C */
+  --color-line-number-active-text: #000000; /* \u6FC0\u6D3B\u884C\u53F7\u6587\u672C */
   /* \u6DF1\u8272\u6A21\u5F0F\u989C\u8272\u53D8\u91CF */
   --dark-color-bg: #2d2d2d;
   --dark-color-text: #f0f0f0;
@@ -1198,6 +1252,8 @@ ${result.join(",\n")}
   --dark-color-textarea-border: #666666;
   --dark-color-tooltip-bg: #e0e0e0; /* \u63D0\u793A\u80CC\u666F */
   --dark-color-tooltip-text: #111111; /* \u63D0\u793A\u6587\u672C */
+  --dark-color-line-number-text: #777777; /* \u884C\u53F7\u6587\u672C */
+  --dark-color-line-number-active-text: #ffffff; /* \u6FC0\u6D3B\u884C\u53F7\u6587\u672C */
 }
 /* \u6839\u636E data-theme \u5C5E\u6027\u5E94\u7528\u6D45\u8272\u4E3B\u9898 */
 :host([data-theme='light']) {
@@ -1217,6 +1273,8 @@ ${result.join(",\n")}
   --main-tooltip-text: var(--color-tooltip-text);
   --main-disabled: #cccccc;
   --main-disabled-text: #666666;
+  --main-line-number-text: var(--color-line-number-text);
+  --main-line-number-active-text: var(--color-line-number-active-text);
 }
 /* \u6839\u636E data-theme \u5C5E\u6027\u5E94\u7528\u6DF1\u8272\u4E3B\u9898 */
 :host([data-theme='dark']) {
@@ -1236,6 +1294,8 @@ ${result.join(",\n")}
   --main-tooltip-text: var(--dark-color-tooltip-text);
   --main-disabled: #444444;
   --main-disabled-text: #888888;
+  --main-line-number-text: var(--dark-color-line-number-text);
+  --main-line-number-active-text: var(--dark-color-line-number-active-text);
 }
 /* --- From custom-select.css --- */
 /* src/assets/styles/custom-select.css */
@@ -1631,7 +1691,7 @@ ${result.join(",\n")}
     opacity: 0;
     margin-right: 0;
     transition: max-width 0.3s ease, opacity 0.3s ease, padding 0.3s ease, margin-right 0.3s ease;
-    color: var(--tc-secondary-text-color);
+    color: var(--main-line-number-text);
     background-color: var(--tc-secondary-bg-color);
     overflow: hidden; /* \u9690\u85CF\u81EA\u8EAB\u7684\u6EDA\u52A8\u6761 */
     user-select: none; /* \u9632\u6B62\u7528\u6237\u9009\u4E2D\u884C\u53F7 */
@@ -1643,6 +1703,12 @@ ${result.join(",\n")}
 }
 .tc-line-numbers > div {
     white-space: nowrap;
+    padding: 0 4px;
+    box-sizing: border-box;
+}
+.tc-line-numbers > div.is-active {
+    font-weight: bold;
+    color: var(--main-line-number-active-text);
 }
 /* --- \u8C03\u6574\u539F\u59CB\u6587\u672C\u6846\u6837\u5F0F --- */
 .tc-textarea-container .tc-textarea {

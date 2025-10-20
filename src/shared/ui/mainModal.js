@@ -30,6 +30,7 @@ let statsContainer = null; // 统计信息容器
 let placeholder = null; // 提示信息容器
 let loadingContainer = null; // 加载动画容器
 let canvasContext = null; // 用于文本宽度计算的Canvas上下文
+let currentLineMap = []; // 当前的行号映射关系
 export const SHOW_PLACEHOLDER = '::show_placeholder::'; // 特殊标识符
 export const SHOW_LOADING = '::show_loading::'; // 加载状态标识符
 
@@ -188,13 +189,17 @@ export function createMainModal() {
     showNotification('已复制到剪贴板', { type: 'success' });
   });
 
-  outputTextarea.addEventListener('input', () => {
-    updateLineNumbers();
-    updateStatistics();
-  });
+  // --- 文本区域事件监听 ---
+  const handleTextareaUpdate = () => {
+      updateLineNumbers();
+      updateStatistics();
+  };
 
+  outputTextarea.addEventListener('input', handleTextareaUpdate);
+  outputTextarea.addEventListener('click', updateActiveLine);
+  outputTextarea.addEventListener('keyup', updateActiveLine);
   outputTextarea.addEventListener('scroll', () => {
-    lineNumbersDiv.scrollTop = outputTextarea.scrollTop;
+      lineNumbersDiv.scrollTop = outputTextarea.scrollTop;
   });
 
   // 根据设置更新UI元素的可见性
@@ -248,8 +253,8 @@ function calcStringLines(sentence, width) {
 
 /**
  * @private
- * @description 计算文本区域内所有内容的视觉总行数，并生成行号数组。
- * @returns {Array<string|number>} 行号数组，空行用 '' 表示。
+ * @description 计算文本区域内所有内容的视觉总行数，并生成行号数组和映射。
+ * @returns {{lineNumbers: Array<string|number>, lineMap: Array<number>}} 包含行号数组和视觉行到真实行映射的对象。
  */
 function calcLines() {
     const lines = outputTextarea.value.split('\n');
@@ -259,19 +264,26 @@ function calcLines() {
     const paddingRight = parseFloat(textareaStyles.paddingRight);
     const textareaContentWidth = outputTextarea.clientWidth - paddingLeft - paddingRight;
 
-    const numLines = lines.map(lineString => calcStringLines(lineString, textareaContentWidth));
-
     let lineNumbers = [];
-    let i = 1;
-    while (numLines.length > 0) {
-        const numLinesOfSentence = numLines.shift();
-        lineNumbers.push(i);
+    let lineMap = []; // 映射：visualLineIndex -> realLineIndex
+
+    lines.forEach((lineString, realLineIndex) => {
+        const numLinesOfSentence = calcStringLines(lineString, textareaContentWidth);
+
+        // 添加主行号和映射
+        lineNumbers.push(realLineIndex + 1);
+        lineMap.push(realLineIndex);
+
+        // 为自动换行添加空行号和映射
         if (numLinesOfSentence > 1) {
-            Array(numLinesOfSentence - 1).fill('').forEach(() => lineNumbers.push(''));
+            for (let i = 0; i < numLinesOfSentence - 1; i++) {
+                lineNumbers.push('');
+                lineMap.push(realLineIndex);
+            }
         }
-        i++;
-    }
-    return lineNumbers;
+    });
+
+    return { lineNumbers, lineMap };
 }
 
 /**
@@ -290,13 +302,79 @@ function updateStatistics() {
  * @description 更新行号。
  */
 function updateLineNumbers() {
-    const lines = calcLines();
-    const lineElements = lines.map(line => {
+    const { lineNumbers, lineMap } = calcLines();
+    currentLineMap = lineMap; // 保存映射以供 updateActiveLine 使用
+
+    const lineElements = lineNumbers.map(line => {
         const div = document.createElement('div');
-        div.textContent = line === '' ? '\u00A0' : line; // 使用 Unicode 替代 &nbsp;
+        div.textContent = line === '' ? '\u00A0' : line;
         return div;
     });
     lineNumbersDiv.replaceChildren(...lineElements);
+    updateActiveLine();
+}
+
+/**
+ * @private
+ * @description 根据光标位置更新活动行号的样式。
+ */
+function updateActiveLine() {
+    if (!lineNumbersDiv || !lineNumbersDiv.classList.contains('is-visible') || !outputTextarea) return;
+
+    const textarea = outputTextarea;
+    const text = textarea.value;
+    const selectionEnd = textarea.selectionEnd;
+
+    // 1. 确定光标所在的“真实”行索引
+    const textBeforeCursor = text.substring(0, selectionEnd);
+    const cursorRealLineIndex = textBeforeCursor.split('\n').length - 1;
+
+    // 2. 计算光标在该真实行内的相对字符位置
+    const realLines = text.split('\n');
+    let positionInRealLine = selectionEnd;
+    for (let i = 0; i < cursorRealLineIndex; i++) {
+        positionInRealLine -= (realLines[i].length + 1); // +1 for the newline character
+    }
+
+    // 3. 计算该真实行因自动换行产生了多少视觉行，并确定光标在第几个视觉换行中
+    const textareaStyles = window.getComputedStyle(textarea);
+    const paddingLeft = parseFloat(textareaStyles.paddingLeft);
+    const paddingRight = parseFloat(textareaStyles.paddingRight);
+    const textareaContentWidth = textarea.clientWidth - paddingLeft - paddingRight;
+
+    const lineContent = realLines[cursorRealLineIndex];
+    let visualLineOffset = 0;
+    let currentLine = '';
+
+    for (let i = 0; i < lineContent.length; i++) {
+        const char = lineContent[i];
+        const nextLine = currentLine + char;
+        if (canvasContext.measureText(nextLine).width > textareaContentWidth) {
+            visualLineOffset++;
+            currentLine = char;
+        } else {
+            currentLine = nextLine;
+        }
+        if (i >= positionInRealLine - 1 && positionInRealLine > 0) {
+            break;
+        }
+    }
+
+    // 4. 找到该真实行在视觉行列表中的起始索引
+    const firstVisualIndexOfRealLine = currentLineMap.indexOf(cursorRealLineIndex);
+    if (firstVisualIndexOfRealLine === -1) return;
+
+    // 5. 计算最终的视觉行索引
+    const finalVisualLineIndex = firstVisualIndexOfRealLine + visualLineOffset;
+
+    // 6. 更新UI
+    const lineDivs = lineNumbersDiv.children;
+    for (let i = 0; i < lineDivs.length; i++) {
+        lineDivs[i].classList.remove('is-active');
+    }
+    if (lineDivs[finalVisualLineIndex]) {
+        lineDivs[finalVisualLineIndex].classList.add('is-active');
+    }
 }
 
 /**
@@ -395,6 +473,8 @@ export function updateModalContent(content, shouldOpen = false) {
 
         updateStatistics();
         updateLineNumbers();
+        // 确保在内容更新后，光标在起始位置时能正确高亮第一行
+        setTimeout(updateActiveLine, 0);
     }
 
     // 更新附加组件的可见性

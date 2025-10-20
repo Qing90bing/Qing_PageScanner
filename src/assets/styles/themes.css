@@ -17,6 +17,8 @@
   --color-textarea-border: #cccccc;
   --color-tooltip-bg: #333333; /* 提示背景 */
   --color-tooltip-text: #ffffff; /* 提示文本 */
+  --color-line-number-text: #888888; /* 行号文本 */
+  --color-line-number-active-text: #000000; /* 激活行号文本 */
 
   /* 深色模式颜色变量 */
   --dark-color-bg: #2d2d2d;
@@ -33,6 +35,8 @@
   --dark-color-textarea-border: #666666;
   --dark-color-tooltip-bg: #e0e0e0; /* 提示背景 */
   --dark-color-tooltip-text: #111111; /* 提示文本 */
+  --dark-color-line-number-text: #777777; /* 行号文本 */
+  --dark-color-line-number-active-text: #ffffff; /* 激活行号文本 */
 }
 
 /* 根据 data-theme 属性应用浅色主题 */
@@ -53,6 +57,8 @@
   --main-tooltip-text: var(--color-tooltip-text);
   --main-disabled: #cccccc;
   --main-disabled-text: #666666;
+  --main-line-number-text: var(--color-line-number-text);
+  --main-line-number-active-text: var(--color-line-number-active-text);
 }
 
 /* 根据 data-theme 属性应用深色主题 */
@@ -73,4 +79,6 @@
   --main-tooltip-text: var(--dark-color-tooltip-text);
   --main-disabled: #444444;
   --main-disabled-text: #888888;
+  --main-line-number-text: var(--dark-color-line-number-text);
+  --main-line-number-active-text: var(--dark-color-line-number-active-text);
 }

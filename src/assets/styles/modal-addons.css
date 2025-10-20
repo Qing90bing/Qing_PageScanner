@@ -19,7 +19,7 @@
     opacity: 0;
     margin-right: 0;
     transition: max-width 0.3s ease, opacity 0.3s ease, padding 0.3s ease, margin-right 0.3s ease;
-    color: var(--tc-secondary-text-color);
+    color: var(--main-line-number-text);
     background-color: var(--tc-secondary-bg-color);
     overflow: hidden; /* 隐藏自身的滚动条 */
     user-select: none; /* 防止用户选中行号 */
@@ -32,6 +32,13 @@
 
 .tc-line-numbers > div {
     white-space: nowrap;
+    padding: 0 4px;
+    box-sizing: border-box;
+}
+
+.tc-line-numbers > div.is-active {
+    font-weight: bold;
+    color: var(--main-line-number-active-text);
 }
 
 /* --- 调整原始文本框样式 --- */
