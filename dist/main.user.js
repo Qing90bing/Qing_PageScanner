@@ -338,7 +338,7 @@
       while (walker.nextNode()) {
         const node = walker.currentNode;
         const parent = node.parentElement;
-        if (parent && (parent.tagName === "SCRIPT" || parent.tagName === "STYLE")) {
+        if (parent && (parent.tagName === "SCRIPT" || parent.tagName === "STYLE" || parent.closest(ignoredSelectorString))) {
           continue;
         }
         if (parent && parent.closest(".text-extractor-fab, .text-extractor-modal-overlay, .settings-panel-overlay")) {

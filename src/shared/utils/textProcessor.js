@@ -91,7 +91,7 @@ export const extractAndProcessText = () => {
 
             // 5.3 进行初步排除，跳过无效的或不需要处理的节点
             // 排除 <script> 和 <style> 标签内部的文本内容
-            if (parent && (parent.tagName === 'SCRIPT' || parent.tagName === 'STYLE')) {
+            if (parent && (parent.tagName === 'SCRIPT' || parent.tagName === 'STYLE' || parent.closest(ignoredSelectorString))) {
                 continue;
             }
             // 排除我们自己注入的 UI 元素（悬浮按钮、模态框、设置面板）内的文本
