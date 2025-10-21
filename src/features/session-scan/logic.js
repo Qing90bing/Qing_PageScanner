@@ -9,6 +9,7 @@ import { extractAndProcessText } from '../../shared/utils/textProcessor.js';
 import { loadSettings } from '../settings/logic.js';
 import IGNORED_SELECTORS from '../../shared/utils/ignoredSelectors.js';
 import { shouldFilter } from '../../shared/utils/filterLogic.js'; // 导入新的通用过滤函数
+import { log } from '../../shared/utils/logger.js';
 
 // --- 模块级变量 ---
 let isRecording = false;
@@ -26,7 +27,9 @@ function processAndAddText(rawText, textSet, filterRules) {
     if (textForFiltering === '') return false;
 
     // 使用重构后的通用函数来应用所有过滤规则
-    if (shouldFilter(textForFiltering, filterRules)) {
+    const filterReason = shouldFilter(textForFiltering, filterRules);
+    if (filterReason) {
+        log(`文本已过滤: "${textForFiltering}" (原因: ${filterReason})`);
         return false;
     }
 
@@ -42,7 +45,6 @@ function processAndAddText(rawText, textSet, filterRules) {
 const handleMutations = (mutations) => {
     const { filterRules } = loadSettings();
     const ignoredSelectorString = IGNORED_SELECTORS.join(', ');
-    let textAdded = false;
 
     mutations.forEach(mutation => {
         mutation.addedNodes.forEach(node => {
@@ -51,23 +53,26 @@ const handleMutations = (mutations) => {
 
             const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
             while(walker.nextNode()) {
-                if (processAndAddText(walker.currentNode.nodeValue, sessionTexts, filterRules)) {
-                    textAdded = true;
+                const textNode = walker.currentNode;
+                if (processAndAddText(textNode.nodeValue, sessionTexts, filterRules)) {
+                    const newCount = sessionTexts.size;
+                    // 立即打印合并后的日志
+                    log(`[会话扫描] 新增: "${textNode.nodeValue.trim()}" (当前总数: ${newCount})`);
+                    // 立即更新UI
+                    if (onTextAddedCallback) {
+                        onTextAddedCallback(newCount);
+                    }
                 }
             }
         });
     });
-
-    if (textAdded && onTextAddedCallback) {
-        onTextAddedCallback(sessionTexts.size);
-    }
 };
 
 
 // --- 公开函数 ---
 export const start = (onUpdate) => {
     if (isRecording) return;
-    console.log('开始新的提取会话...');
+    log('会话扫描：初始扫描开始...');
     isRecording = true;
     sessionTexts.clear();
     onTextAddedCallback = onUpdate || null;
@@ -76,14 +81,18 @@ export const start = (onUpdate) => {
     const { filterRules } = loadSettings();
 
     initialTexts.forEach(text => {
-        // 这里调用的 processAndAddText 已经是重构后的版本
-        processAndAddText(text, sessionTexts, filterRules);
+        if (processAndAddText(text, sessionTexts, filterRules)) {
+            const newCount = sessionTexts.size;
+            // 立即打印合并后的日志
+            log(`[会话扫描] 新增: "${text.trim()}" (当前总数: ${newCount})`);
+            // 立即更新UI
+            if (onTextAddedCallback) {
+                onTextAddedCallback(newCount);
+            }
+        }
     });
-    console.log(`会话初始捕获到 ${sessionTexts.size} 条文本。`);
 
-    if (onTextAddedCallback) {
-        onTextAddedCallback(sessionTexts.size);
-    }
+    // 不再需要单独的完成日志
 
     observer = new MutationObserver(handleMutations);
     observer.observe(document.body, { childList: true, subtree: true });
@@ -91,7 +100,7 @@ export const start = (onUpdate) => {
 
 export const stop = () => {
     if (!isRecording) return [];
-    console.log('停止提取会话。');
+    log('[会话扫描] 已停止。');
     if (observer) {
         observer.disconnect();
         observer = null;

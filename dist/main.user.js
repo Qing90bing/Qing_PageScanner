@@ -208,6 +208,7 @@
     showFab: true,
     showLineNumbers: true,
     showStatistics: true,
+    enableDebugLogging: false,
     filterRules: {
       numbers: true,
       chinese: true,
@@ -215,17 +216,19 @@
       emojiOnly: true,
       symbols: true,
       termFilter: true,
-      singleLetter: false
+      singleLetter: false,
+      repeatingChars: true
     }
   };
   function loadSettings() {
     const savedSettings = getValue("script_settings", null);
     if (savedSettings) {
       try {
-        return {
+        const loadedSettings = {
           ...defaultSettings,
           ...JSON.parse(savedSettings)
         };
+        return loadedSettings;
       } catch (error) {
         console.error("\u89E3\u6790\u5DF2\u4FDD\u5B58\u7684\u8BBE\u7F6E\u65F6\u51FA\u9519:", error);
         return defaultSettings;
@@ -285,21 +288,77 @@
     "AI"
   ];
   var ignoredTerms_default = IGNORED_TERMS;
-  var numberAndCurrencyRegex = /^[$\€\£\¥\d,.\s]+$/;
-  var pureChineseRegex = /^[\u4e00-\u9fa5\s]+$/u;
-  var containsChineseRegex = /[\u4e00-\u9fa5]/u;
-  var emojiOnlyRegex = /^[\p{Emoji}\s]+$/u;
-  var containsLetterOrNumberRegex = /[\p{L}\p{N}]/u;
-  var singleLetterRegex = /^[a-zA-Z]$/;
+  var filterDefinitions = [
+    { id: "filter-numbers", key: "numbers", label: "\u8FC7\u6EE4\u7EAF\u6570\u5B57/\u8D27\u5E01" },
+    { id: "filter-chinese", key: "chinese", label: "\u8FC7\u6EE4\u7EAF\u4E2D\u6587" },
+    { id: "filter-contains-chinese", key: "containsChinese", label: "\u8FC7\u6EE4\u5305\u542B\u4E2D\u6587\u7684\u6587\u672C" },
+    { id: "filter-emoji-only", key: "emojiOnly", label: "\u8FC7\u6EE4\u7EAF\u8868\u60C5\u7B26\u53F7" },
+    { id: "filter-symbols", key: "symbols", label: "\u8FC7\u6EE4\u7EAF\u7B26\u53F7" },
+    { id: "filter-term", key: "termFilter", label: "\u8FC7\u6EE4\u7279\u5B9A\u672F\u8BED" },
+    { id: "filter-single-letter", key: "singleLetter", label: "\u8FC7\u6EE4\u7EAF\u5355\u4E2A\u82F1\u6587\u5B57\u6BCD" },
+    { id: "filter-repeating-chars", key: "repeatingChars", label: "\u8FC7\u6EE4\u5355\u4E00\u91CD\u590D\u5B57\u7B26" }
+  ];
+  var relatedSettingsDefinitions = [
+    { id: "show-fab", key: "showFab", label: "\u663E\u793A\u60AC\u6D6E\u6309\u94AE" },
+    { id: "show-line-numbers", key: "showLineNumbers", label: "\u663E\u793A\u884C\u53F7" },
+    { id: "show-statistics", key: "showStatistics", label: "\u663E\u793A\u7EDF\u8BA1\u4FE1\u606F" },
+    { id: "enable-debug-logging", key: "enableDebugLogging", label: "\u542F\u7528\u8C03\u8BD5\u65E5\u5FD7" }
+  ];
+  var filterConfigMap = new Map(filterDefinitions.map((def) => [def.key, def.label]));
+  var ruleChecks =  new Map([
+    ["numbers", {
+      regex: /^[$\€\£\¥\d,.\s]+$/,
+      label: filterConfigMap.get("numbers")
+    }],
+    ["chinese", {
+      regex: /^[\u4e00-\u9fa5\s]+$/u,
+      label: filterConfigMap.get("chinese")
+    }],
+    ["containsChinese", {
+      regex: /[\u4e00-\u9fa5]/u,
+      label: filterConfigMap.get("containsChinese")
+    }],
+    ["emojiOnly", {
+      regex: /^[\p{Emoji}\s]+$/u,
+      label: filterConfigMap.get("emojiOnly")
+    }],
+    ["symbols", {
+      test: (text) => !/[\p{L}\p{N}]/u.test(text),
+      label: filterConfigMap.get("symbols")
+    }],
+    ["termFilter", {
+      test: (text) => ignoredTerms_default.includes(text),
+      label: filterConfigMap.get("termFilter")
+    }],
+    ["singleLetter", {
+      regex: /^[a-zA-Z]$/,
+      label: filterConfigMap.get("singleLetter")
+    }],
+    ["repeatingChars", {
+      regex: /^\s*(.)\1+\s*$/,
+      label: filterConfigMap.get("repeatingChars")
+    }]
+  ]);
   function shouldFilter(text, filterRules) {
-    if (filterRules.numbers && numberAndCurrencyRegex.test(text)) return true;
-    if (filterRules.chinese && pureChineseRegex.test(text)) return true;
-    if (filterRules.containsChinese && containsChineseRegex.test(text)) return true;
-    if (filterRules.emojiOnly && emojiOnlyRegex.test(text)) return true;
-    if (filterRules.symbols && !containsLetterOrNumberRegex.test(text)) return true;
-    if (filterRules.termFilter && ignoredTerms_default.includes(text)) return true;
-    if (filterRules.singleLetter && singleLetterRegex.test(text)) return true;
-    return false;
+    for (const [key, rule] of ruleChecks.entries()) {
+      if (filterRules[key]) {
+        const isFiltered = rule.regex ? rule.regex.test(text) : rule.test(text);
+        if (isFiltered) {
+          return rule.label;
+        }
+      }
+    }
+    return null;
+  }
+  var LOG_PREFIX = "[\u6587\u672C\u63D0\u53D6\u811A\u672C-Debug]";
+  var isDebugEnabled = false;
+  function updateLoggerState(isEnabled) {
+    isDebugEnabled = isEnabled;
+  }
+  function log(...args) {
+    if (isDebugEnabled) {
+      console.log(LOG_PREFIX, ...args);
+    }
   }
   var extractAndProcessText = () => {
     const settings = loadSettings();
@@ -314,7 +373,9 @@
         return;
       }
       const trimmedText = text.trim();
-      if (shouldFilter(trimmedText, filterRules)) {
+      const filterReason = shouldFilter(trimmedText, filterRules);
+      if (filterReason) {
+        log(`\u6587\u672C\u5DF2\u8FC7\u6EE4: "${trimmedText}" (\u539F\u56E0: ${filterReason})`);
         return;
       }
       uniqueTexts.add(text);
@@ -775,7 +836,9 @@ ${result.join(",\n")}
     const normalizedText = rawText.normalize("NFC");
     let textForFiltering = normalizedText.replace(/(\r\n|\n|\r)+/g, "\n").trim();
     if (textForFiltering === "") return false;
-    if (shouldFilter(textForFiltering, filterRules)) {
+    const filterReason = shouldFilter(textForFiltering, filterRules);
+    if (filterReason) {
+      log(`\u6587\u672C\u5DF2\u8FC7\u6EE4: "${textForFiltering}" (\u539F\u56E0: ${filterReason})`);
       return false;
     }
     const originalSize = textSet.size;
@@ -785,44 +848,47 @@ ${result.join(",\n")}
   var handleMutations = (mutations) => {
     const { filterRules } = loadSettings();
     const ignoredSelectorString = ignoredSelectors_default.join(", ");
-    let textAdded = false;
     mutations.forEach((mutation) => {
       mutation.addedNodes.forEach((node) => {
         if (node.nodeType !== Node.ELEMENT_NODE) return;
         if (node.closest(ignoredSelectorString)) return;
         const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
         while (walker.nextNode()) {
-          if (processAndAddText(walker.currentNode.nodeValue, sessionTexts, filterRules)) {
-            textAdded = true;
+          const textNode = walker.currentNode;
+          if (processAndAddText(textNode.nodeValue, sessionTexts, filterRules)) {
+            const newCount = sessionTexts.size;
+            log(`[\u4F1A\u8BDD\u626B\u63CF] \u65B0\u589E: "${textNode.nodeValue.trim()}" (\u5F53\u524D\u603B\u6570: ${newCount})`);
+            if (onTextAddedCallback) {
+              onTextAddedCallback(newCount);
+            }
           }
         }
       });
     });
-    if (textAdded && onTextAddedCallback) {
-      onTextAddedCallback(sessionTexts.size);
-    }
   };
   var start = (onUpdate) => {
     if (isRecording) return;
-    console.log("\u5F00\u59CB\u65B0\u7684\u63D0\u53D6\u4F1A\u8BDD...");
+    log("\u4F1A\u8BDD\u626B\u63CF\uFF1A\u521D\u59CB\u626B\u63CF\u5F00\u59CB...");
     isRecording = true;
     sessionTexts.clear();
     onTextAddedCallback = onUpdate || null;
     const initialTexts = extractAndProcessText();
     const { filterRules } = loadSettings();
     initialTexts.forEach((text) => {
-      processAndAddText(text, sessionTexts, filterRules);
+      if (processAndAddText(text, sessionTexts, filterRules)) {
+        const newCount = sessionTexts.size;
+        log(`[\u4F1A\u8BDD\u626B\u63CF] \u65B0\u589E: "${text.trim()}" (\u5F53\u524D\u603B\u6570: ${newCount})`);
+        if (onTextAddedCallback) {
+          onTextAddedCallback(newCount);
+        }
+      }
     });
-    console.log(`\u4F1A\u8BDD\u521D\u59CB\u6355\u83B7\u5230 ${sessionTexts.size} \u6761\u6587\u672C\u3002`);
-    if (onTextAddedCallback) {
-      onTextAddedCallback(sessionTexts.size);
-    }
     observer = new MutationObserver(handleMutations);
     observer.observe(document.body, { childList: true, subtree: true });
   };
   var stop = () => {
     if (!isRecording) return [];
-    console.log("\u505C\u6B62\u63D0\u53D6\u4F1A\u8BDD\u3002");
+    log("[\u4F1A\u8BDD\u626B\u63CF] \u5DF2\u505C\u6B62\u3002");
     if (observer) {
       observer.disconnect();
       observer = null;
@@ -1044,20 +1110,6 @@ ${result.join(",\n")}
     label.appendChild(checkmark);
     return label;
   }
-  var filterDefinitions = [
-    { id: "filter-numbers", key: "numbers", label: "\u8FC7\u6EE4\u7EAF\u6570\u5B57/\u8D27\u5E01" },
-    { id: "filter-chinese", key: "chinese", label: "\u8FC7\u6EE4\u7EAF\u4E2D\u6587" },
-    { id: "filter-contains-chinese", key: "containsChinese", label: "\u8FC7\u6EE4\u5305\u542B\u4E2D\u6587\u7684\u6587\u672C" },
-    { id: "filter-emoji-only", key: "emojiOnly", label: "\u8FC7\u6EE4\u7EAF\u8868\u60C5\u7B26\u53F7" },
-    { id: "filter-symbols", key: "symbols", label: "\u8FC7\u6EE4\u7EAF\u7B26\u53F7" },
-    { id: "filter-term", key: "termFilter", label: "\u8FC7\u6EE4\u7279\u5B9A\u672F\u8BED" },
-    { id: "filter-single-letter", key: "singleLetter", label: "\u8FC7\u6EE4\u7EAF\u5355\u4E2A\u82F1\u6587\u5B57\u6BCD" }
-  ];
-  var relatedSettingsDefinitions = [
-    { id: "show-fab", key: "showFab", label: "\u663E\u793A\u60AC\u6D6E\u6309\u94AE" },
-    { id: "show-line-numbers", key: "showLineNumbers", label: "\u663E\u793A\u884C\u53F7" },
-    { id: "show-statistics", key: "showStatistics", label: "\u663E\u793A\u7EDF\u8BA1\u4FE1\u606F" }
-  ];
   function buildPanelDOM(settings) {
     const modal = document.createElement("div");
     modal.className = "settings-panel-modal";
@@ -1128,6 +1180,7 @@ ${result.join(",\n")}
     }
   };
   function showSettingsPanel() {
+    log("\u6B63\u5728\u6253\u5F00\u8BBE\u7F6E\u9762\u677F...");
     if (settingsPanel) {
       setTimeout(() => settingsPanel.classList.add("is-visible"), 10);
       return;
@@ -1168,6 +1221,7 @@ ${result.join(",\n")}
   }
   function hideSettingsPanel() {
     if (settingsPanel) {
+      log("\u6B63\u5728\u5173\u95ED\u8BBE\u7F6E\u9762\u677F...");
       settingsPanel.removeEventListener("keydown", handleKeyDown2);
       settingsPanel.classList.remove("is-visible");
       setTimeout(() => {
@@ -1199,6 +1253,8 @@ ${result.join(",\n")}
       ...newRelatedSettings,
       filterRules: newFilterRules
     };
+    log("\u5373\u5C06\u4FDD\u5B58\u8BBE\u7F6E\uFF0C\u8C03\u8BD5\u65E5\u5FD7\u72B6\u6001\u5C06\u66F4\u65B0\u4E3A:", newSettings.enableDebugLogging);
+    updateLoggerState(newSettings.enableDebugLogging);
     saveSettings(newSettings);
     applyTheme(newSettings.theme);
     const fabContainer = uiContainer.querySelector(".text-extractor-fab-container");
@@ -1216,6 +1272,10 @@ ${result.join(",\n")}
     initSettingsPanel();
   }
   function main() {
+    const settings = loadSettings();
+    updateLoggerState(settings.enableDebugLogging);
+    log("\u811A\u672C\u5F00\u59CB\u521D\u59CB\u5316...");
+    log("\u521D\u59CB\u8BBE\u7F6E\u5DF2\u52A0\u8F7D:", settings);
     const styleElement = document.createElement("style");
     styleElement.textContent = `/* src/assets/themes.css */
 /* \u8FD9\u4E2A\u6587\u4EF6\u53EA\u5B9A\u4E49\u989C\u8272\u53D8\u91CF\u548C\u4E3B\u9898\u5207\u6362\u903B\u8F91 */

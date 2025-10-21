@@ -25,6 +25,8 @@ const defaultSettings = {
   showLineNumbers: true,
   // 是否显示统计信息
   showStatistics: true,
+  // 是否启用调试日志
+  enableDebugLogging: false,
   // 过滤规则设置
   filterRules: {
     // 是否过滤纯数字和货币符号组成的字符串
@@ -41,6 +43,8 @@ const defaultSettings = {
     termFilter: true,
     // 是否过滤纯单个英文字母
     singleLetter: false,
+    // 是否过滤单一重复字符
+    repeatingChars: true,
   },
 };
 
@@ -61,10 +65,11 @@ export function loadSettings() {
     try {
       // 使用默认设置作为基础，然后用保存的设置覆盖它
       // 这样即使用户的存储中缺少新的设置项，也能获得默认值
-      return {
+      const loadedSettings = {
         ...defaultSettings,
         ...JSON.parse(savedSettings),
       };
+      return loadedSettings;
     } catch (error) {
       console.error("解析已保存的设置时出错:", error);
       // 如果解析失败，返回默认设置以保证脚本能继续运行

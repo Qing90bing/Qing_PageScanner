@@ -9,6 +9,7 @@ import { loadSettings } from '../../features/settings/logic.js';
 import config from '../config.js';
 import IGNORED_SELECTORS from './ignoredSelectors.js';
 import { shouldFilter } from './filterLogic.js'; // 导入新的通用过滤函数
+import { log } from './logger.js';
 
 // --- 公开函数 ---
 
@@ -49,7 +50,9 @@ export const extractAndProcessText = () => {
         const trimmedText = text.trim();
 
         // 使用重构后的通用函数来应用所有过滤规则
-        if (shouldFilter(trimmedText, filterRules)) {
+        const filterReason = shouldFilter(trimmedText, filterRules);
+        if (filterReason) {
+            log(`文本已过滤: "${trimmedText}" (原因: ${filterReason})`);
             return;
         }
 

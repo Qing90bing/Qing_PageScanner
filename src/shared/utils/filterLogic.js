@@ -7,31 +7,66 @@
  */
 
 import IGNORED_TERMS from './ignoredTerms.js';
+import { filterDefinitions } from '../../features/settings/config.js';
 
-// --- 正则表达式定义 ---
+// 将配置转换为更易于查找的映射
+const filterConfigMap = new Map(filterDefinitions.map(def => [def.key, def.label]));
 
-const numberAndCurrencyRegex = /^[$\€\£\¥\d,.\s]+$/;
-const pureChineseRegex = /^[\u4e00-\u9fa5\s]+$/u;
-const containsChineseRegex = /[\u4e00-\u9fa5]/u;
-const emojiOnlyRegex = /^[\p{Emoji}\s]+$/u;
-const containsLetterOrNumberRegex = /[\p{L}\p{N}]/u;
-const singleLetterRegex = /^[a-zA-Z]$/;
+// --- 规则检查函数映射 ---
+
+const ruleChecks = new Map([
+  ['numbers', {
+    regex: /^[$\€\£\¥\d,.\s]+$/,
+    label: filterConfigMap.get('numbers')
+  }],
+  ['chinese', {
+    regex: /^[\u4e00-\u9fa5\s]+$/u,
+    label: filterConfigMap.get('chinese')
+  }],
+  ['containsChinese', {
+    regex: /[\u4e00-\u9fa5]/u,
+    label: filterConfigMap.get('containsChinese')
+  }],
+  ['emojiOnly', {
+    regex: /^[\p{Emoji}\s]+$/u,
+    label: filterConfigMap.get('emojiOnly')
+  }],
+  ['symbols', {
+    // 这个逻辑比较特殊，是“不包含字母或数字”，所以我们用一个函数来处理
+    test: (text) => !/[\p{L}\p{N}]/u.test(text),
+    label: filterConfigMap.get('symbols')
+  }],
+  ['termFilter', {
+    test: (text) => IGNORED_TERMS.includes(text),
+    label: filterConfigMap.get('termFilter')
+  }],
+  ['singleLetter', {
+    regex: /^[a-zA-Z]$/,
+    label: filterConfigMap.get('singleLetter')
+  }],
+  ['repeatingChars', {
+    regex: /^\s*(.)\1+\s*$/,
+    label: filterConfigMap.get('repeatingChars')
+  }]
+]);
 
 /**
  * @public
  * @description 根据提供的一组规则，判断一个文本字符串是否应该被过滤。
  * @param {string} text - 需要检查的文本（注意：此函数期望传入的是已经 trim() 过的文本）。
  * @param {object} filterRules - 从设置中加载的过滤规则配置对象。
- * @returns {boolean} - 如果文本应该被过滤，则返回 true；否则返回 false。
+ * @returns {string|null} - 如果文本应该被过滤，则返回过滤原因的字符串；否则返回 null。
  */
 export function shouldFilter(text, filterRules) {
-  if (filterRules.numbers && numberAndCurrencyRegex.test(text)) return true;
-  if (filterRules.chinese && pureChineseRegex.test(text)) return true;
-  if (filterRules.containsChinese && containsChineseRegex.test(text)) return true;
-  if (filterRules.emojiOnly && emojiOnlyRegex.test(text)) return true;
-  if (filterRules.symbols && !containsLetterOrNumberRegex.test(text)) return true;
-  if (filterRules.termFilter && IGNORED_TERMS.includes(text)) return true;
-  if (filterRules.singleLetter && singleLetterRegex.test(text)) return true;
+  for (const [key, rule] of ruleChecks.entries()) {
+    // 检查该规则是否在用户设置中被启用
+    if (filterRules[key]) {
+      const isFiltered = rule.regex ? rule.regex.test(text) : rule.test(text);
+      if (isFiltered) {
+        return rule.label; // 如果匹配，返回规则的标签作为原因
+      }
+    }
+  }
 
-  return false;
+  return null; // 如果所有启用的规则都没有匹配，则不过滤
 }

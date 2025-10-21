@@ -3,6 +3,7 @@
 import { registerMenuCommand } from '../../shared/services/tampermonkey.js';
 import { loadSettings, saveSettings } from './logic.js';
 import { applyTheme } from '../../shared/ui/theme.js';
+import { log, updateLoggerState } from '../../shared/utils/logger.js';
 import { showNotification } from '../../shared/ui/notification.js';
 import { createIconTitle } from '../../shared/ui/iconTitle.js';
 import { CustomSelect } from '../../shared/ui/components/customSelect.js';
@@ -41,6 +42,7 @@ const handleKeyDown = (event) => {
  * @description 显示设置面板。
  */
 function showSettingsPanel() {
+  log('正在打开设置面板...');
   if (settingsPanel) {
     setTimeout(() => settingsPanel.classList.add('is-visible'), 10);
     return;
@@ -99,6 +101,7 @@ function showSettingsPanel() {
  */
 function hideSettingsPanel() {
   if (settingsPanel) {
+    log('正在关闭设置面板...');
     settingsPanel.removeEventListener('keydown', handleKeyDown);
     settingsPanel.classList.remove('is-visible');
     setTimeout(() => {
@@ -139,6 +142,8 @@ function handleSave() {
     filterRules: newFilterRules,
   };
 
+  log('即将保存设置，调试日志状态将更新为:', newSettings.enableDebugLogging);
+  updateLoggerState(newSettings.enableDebugLogging); // 立即更新日志记录器状态
   saveSettings(newSettings);
   applyTheme(newSettings.theme);
 
