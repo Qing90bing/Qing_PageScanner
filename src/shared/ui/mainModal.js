@@ -1,43 +1,23 @@
-// src/ui/components/mainModal.js
+// src/shared/ui/mainModal.js
 
 /**
  * @module mainModal
  * @description 负责创建和管理主界面的模态框（文本提取结果窗口）。
+ *              该模块作为总协调器，整合来自 ./mainModal/ 子模块的功能。
  */
 
-import { setClipboard } from '../services/tampermonkey.js';
-import config from '../config.js';
 import { extractAndProcessText, formatTextsForTranslation } from '../utils/textProcessor.js';
 import { showNotification } from './notification.js';
-import { createIconTitle } from './iconTitle.js';
-import { createSVGFromString } from '../utils/dom.js';
-import { summaryIcon } from '../../assets/icons/summaryIcon.js';
-import { copyIcon } from '../../assets/icons/copyIcon.js';
-import clearIcon from '../../assets/icons/clearIcon.js';
-import { infoIcon } from '../../assets/icons/infoIcon.js';
-import { dynamicIcon } from '../../assets/icons/dynamicIcon.js';
-import { translateIcon } from '../../assets/icons/icon.js';
-import { loadingSpinner } from '../../assets/icons/loadingSpinner.js';
-import { closeIcon } from '../../assets/icons/closeIcon.js';
-import { uiContainer } from './uiContainer.js';
 import { loadSettings } from '../../features/settings/logic.js';
 import { log } from '../utils/logger.js';
-import { showConfirmationModal } from './confirmationModal.js';
-import warningIcon from '../../assets/icons/warningIcon.js';
-
-// --- 模块级变量 ---
-
-let modalOverlay = null; // 模态框遮罩层
-let outputTextarea = null; // 文本输出区域
-let lineNumbersDiv = null; // 行号显示区域
-let statsContainer = null; // 统计信息容器
-let placeholder = null; // 提示信息容器
-let loadingContainer = null; // 加载动画容器
-let canvasContext = null; // 用于文本宽度计算的Canvas上下文
-let currentLineMap = []; // 当前的行号映射关系
-export const SHOW_PLACEHOLDER = '::show_placeholder::'; // 特殊标识符
-export const SHOW_LOADING = '::show_loading::'; // 加载状态标识符
-
+import * as state from './mainModal/modalState.js';
+// 重新导出常量以保持API兼容性
+export { SHOW_PLACEHOLDER, SHOW_LOADING } from './mainModal/modalState.js';
+import { createModalLayout } from './mainModal/modalLayout.js';
+import { populateModalHeader } from './mainModal/modalHeader.js';
+import { populateModalContent, showLoading, hideLoading } from './mainModal/modalContent.js';
+import { populateModalFooter, updateStatistics } from './mainModal/modalFooter.js';
+import { initializeLineNumbers, updateLineNumbers, updateActiveLine } from './mainModal/lineNumberLogic.js';
 
 /**
  * @private
@@ -45,398 +25,44 @@ export const SHOW_LOADING = '::show_loading::'; // 加载状态标识符
  * @param {KeyboardEvent} event - 键盘事件。
  */
 const handleKeyDown = (event) => {
-  if (event.key === 'Escape') {
-    closeModal();
-  }
+    if (event.key === 'Escape') {
+        closeModal();
+    }
 };
-
-// --- 公开函数 ---
 
 /**
  * @public
  * @description 创建并初始化主模态框。只在第一次调用时创建 DOM。
  */
 export function createMainModal() {
-  if (modalOverlay) return; // 防止重复创建
+    if (state.modalOverlay) return; // 防止重复创建
 
-  // --- 创建 DOM 结构 ---
-  modalOverlay = document.createElement('div');
-  modalOverlay.className = 'text-extractor-modal-overlay';
-  modalOverlay.tabIndex = -1; // 允许元素通过编程方式聚焦，以便监听键盘事件
+    // 1. 创建基础布局
+    const { modalHeader, modalContent, modalFooter } = createModalLayout();
 
-  const modal = document.createElement('div');
-  modal.className = 'text-extractor-modal';
+    // 2. 填充各个部分，并传入回调函数以解决循环依赖
+    populateModalHeader(modalHeader, closeModal);
+    populateModalContent(modalContent);
+    populateModalFooter(modalFooter, updateModalContent);
 
-  const modalHeader = document.createElement('div');
-  modalHeader.className = 'text-extractor-modal-header';
+    // 3. 初始化行号功能
+    initializeLineNumbers();
 
-  const titleContainer = document.createElement('div');
-  titleContainer.id = 'main-modal-title-container';
+    // 4. 绑定文本区域事件
+    const handleTextareaUpdate = () => {
+        updateLineNumbers();
+        updateStatistics();
+    };
 
-  const closeBtn = document.createElement('span');
-  closeBtn.className = 'tc-close-button text-extractor-modal-close';
-  closeBtn.appendChild(createSVGFromString(closeIcon));
-
-  modalHeader.appendChild(titleContainer);
-  modalHeader.appendChild(closeBtn);
-
-  const modalContent = document.createElement('div');
-  modalContent.className = 'text-extractor-modal-content';
-
-  placeholder = document.createElement('div');
-  placeholder.id = 'modal-placeholder';
-
-  const textareaContainer = document.createElement('div');
-  textareaContainer.className = 'tc-textarea-container';
-
-  lineNumbersDiv = document.createElement('div');
-  lineNumbersDiv.className = 'tc-line-numbers';
-
-  outputTextarea = document.createElement('textarea');
-  outputTextarea.id = 'text-extractor-output';
-  outputTextarea.className = 'tc-textarea';
-
-  textareaContainer.appendChild(lineNumbersDiv);
-  textareaContainer.appendChild(outputTextarea);
-
-  modalContent.appendChild(placeholder);
-  modalContent.appendChild(textareaContainer);
-
-  // 创建加载动画覆盖层
-  loadingContainer = document.createElement('div');
-  loadingContainer.className = 'gm-loading-overlay';
-  const spinner = document.createElement('div');
-  spinner.className = 'gm-loading-spinner';
-  const spinnerSVG = createSVGFromString(loadingSpinner);
-  if (spinnerSVG) spinner.appendChild(spinnerSVG);
-  loadingContainer.appendChild(spinner);
-  modalContent.appendChild(loadingContainer);
-
-
-  const modalFooter = document.createElement('div');
-  modalFooter.className = 'text-extractor-modal-footer';
-
-  statsContainer = document.createElement('div');
-  statsContainer.className = 'tc-stats-container';
-
-  const footerButtonContainer = document.createElement('div');
-  footerButtonContainer.className = 'tc-footer-buttons';
-
-  const clearBtn = document.createElement('button');
-  clearBtn.className = 'text-extractor-clear-btn tc-button';
-  clearBtn.disabled = true;
-
-  const copyBtn = document.createElement('button');
-  copyBtn.className = 'text-extractor-copy-btn tc-button';
-  copyBtn.disabled = true;
-
-  footerButtonContainer.appendChild(clearBtn);
-  footerButtonContainer.appendChild(copyBtn);
-
-  modalFooter.appendChild(statsContainer);
-  modalFooter.appendChild(footerButtonContainer);
-
-  modal.appendChild(modalHeader);
-  modal.appendChild(modalContent);
-  modal.appendChild(modalFooter);
-  modalOverlay.appendChild(modal);
-
-  uiContainer.appendChild(modalOverlay);
-
-  // --- 配置和内容填充 ---
-
-  if (config.modalContentHeight) {
-    modalContent.style.height = config.modalContentHeight;
-  }
-
-  const titleElement = createIconTitle(summaryIcon, '提取的文本');
-  titleContainer.appendChild(titleElement);
-
-  // 填充占位符内容
-  const placeholderIconDiv = document.createElement('div');
-  placeholderIconDiv.className = 'placeholder-icon';
-  const infoIconSVG = createSVGFromString(infoIcon);
-  if (infoIconSVG) placeholderIconDiv.appendChild(infoIconSVG);
-
-  const p1 = document.createElement('p');
-  p1.textContent = '当前没有总结文本';
-
-  const p2 = document.createElement('p');
-  p2.className = 'placeholder-actions';
-  p2.append('点击 ');
-  const span2 = document.createElement('span');
-  span2.className = 'placeholder-action-icon';
-  const dynamicIconSVG = createSVGFromString(dynamicIcon);
-  if (dynamicIconSVG) span2.appendChild(dynamicIconSVG);
-  p2.appendChild(span2);
-  const strong2 = document.createElement('strong');
-  strong2.textContent = '[动态扫描]';
-  p2.appendChild(strong2);
-  p2.append(' 按钮开始一个新的扫描会话');
-
-  const p3 = document.createElement('p');
-  p3.className = 'placeholder-actions';
-  p3.append('点击 ');
-  const span3 = document.createElement('span');
-  span3.className = 'placeholder-action-icon';
-  const translateIconSVG = createSVGFromString(translateIcon);
-  if (translateIconSVG) span3.appendChild(translateIconSVG);
-  p3.appendChild(span3);
-  const strong3 = document.createElement('strong');
-  strong3.textContent = '[静态扫描]';
-  p3.appendChild(strong3);
-  p3.append(' 按钮可进行一次性的快捷提取');
-
-  placeholder.appendChild(placeholderIconDiv);
-  placeholder.appendChild(p1);
-  placeholder.appendChild(p2);
-  placeholder.appendChild(p3);
-
-  // 更新按钮内容
-  const copyBtnContent = createIconTitle(copyIcon, '复制');
-  copyBtn.appendChild(copyBtnContent);
-  const clearBtnContent = createIconTitle(clearIcon, '清空');
-  clearBtn.appendChild(clearBtnContent);
-
-  // 绑定事件
-  closeBtn.addEventListener('click', closeModal);
-  copyBtn.addEventListener('click', () => {
-    const textToCopy = outputTextarea.value;
-    if (textToCopy && !copyBtn.disabled) {
-      log(`复制按钮被点击，复制了 ${textToCopy.length} 个字符。`);
-      setClipboard(textToCopy);
-      showNotification('已复制到剪贴板', { type: 'success' });
-    } else {
-      log('复制按钮被点击，但没有内容可复制或按钮被禁用。');
-      showNotification('没有内容可复制', { type: 'info' });
-    }
-  });
-
-  clearBtn.addEventListener('click', async () => {
-    if (clearBtn.disabled) return;
-
-    const confirmed = await showConfirmationModal(
-      '你确认要清空吗？此操作不可撤销。',
-      warningIcon
-    );
-
-    if (confirmed) {
-      log('用户确认清空文本。');
-      updateModalContent(SHOW_PLACEHOLDER);
-      showNotification('内容已清空', { type: 'success' });
-    } else {
-      log('用户取消了清空操作。');
-    }
-  });
-
-  // --- 文本区域事件监听 ---
-  const handleTextareaUpdate = () => {
-      updateLineNumbers();
-      updateStatistics();
-  };
-
-  outputTextarea.addEventListener('input', handleTextareaUpdate);
-  outputTextarea.addEventListener('click', updateActiveLine);
-  outputTextarea.addEventListener('keyup', updateActiveLine);
-  outputTextarea.addEventListener('scroll', () => {
-      lineNumbersDiv.scrollTop = outputTextarea.scrollTop;
-  });
-
-  // 根据设置更新UI元素的可见性
-  updateModalAddonsVisibility();
-
-  // 初始化用于文本测量的Canvas
-  const canvas = document.createElement('canvas');
-  canvasContext = canvas.getContext('2d');
-  const textareaStyles = window.getComputedStyle(outputTextarea);
-  canvasContext.font = `${textareaStyles.fontSize} ${textareaStyles.fontFamily}`;
-
-  // 监听textarea尺寸变化以更新行号
-  const resizeObserver = new ResizeObserver(() => {
-    // 同步行号容器的高度
-    lineNumbersDiv.style.height = outputTextarea.clientHeight + 'px';
-    updateLineNumbers();
-  });
-  resizeObserver.observe(outputTextarea);
-}
-
-/**
- * @private
- * @description 计算单个字符串在给定宽度下会占据多少行（视觉换行）。
- * @param {string} sentence - 要计算的字符串。
- * @param {number} width - 容器的内容宽度。
- * @returns {number} 占据的行数。
- */
-function calcStringLines(sentence, width) {
-    if (!width || !canvasContext) return 1;
-
-    const words = sentence.split('');
-    let lineCount = 0;
-    let currentLine = '';
-
-    for (let i = 0; i < words.length; i++) {
-        const wordWidth = canvasContext.measureText(words[i]).width;
-        const lineWidth = canvasContext.measureText(currentLine).width;
-
-        if (lineWidth + wordWidth > width) {
-            lineCount++;
-            currentLine = words[i];
-        } else {
-            currentLine += words[i];
-        }
-    }
-    if (currentLine.trim() !== '' || sentence === '') {
-        lineCount++;
-    }
-    return lineCount;
-}
-
-/**
- * @private
- * @description 计算文本区域内所有内容的视觉总行数，并生成行号数组和映射。
- * @returns {{lineNumbers: Array<string|number>, lineMap: Array<number>}} 包含行号数组和视觉行到真实行映射的对象。
- */
-function calcLines() {
-    const lines = outputTextarea.value.split('\n');
-    const textareaStyles = window.getComputedStyle(outputTextarea);
-
-    const paddingLeft = parseFloat(textareaStyles.paddingLeft);
-    const paddingRight = parseFloat(textareaStyles.paddingRight);
-    const textareaContentWidth = outputTextarea.clientWidth - paddingLeft - paddingRight;
-
-    let lineNumbers = [];
-    let lineMap = []; // 映射：visualLineIndex -> realLineIndex
-
-    lines.forEach((lineString, realLineIndex) => {
-        const numLinesOfSentence = calcStringLines(lineString, textareaContentWidth);
-
-        // 添加主行号和映射
-        lineNumbers.push(realLineIndex + 1);
-        lineMap.push(realLineIndex);
-
-        // 为自动换行添加空行号和映射
-        if (numLinesOfSentence > 1) {
-            for (let i = 0; i < numLinesOfSentence - 1; i++) {
-                lineNumbers.push('');
-                lineMap.push(realLineIndex);
-            }
-        }
+    state.outputTextarea.addEventListener('input', handleTextareaUpdate);
+    state.outputTextarea.addEventListener('click', updateActiveLine);
+    state.outputTextarea.addEventListener('keyup', updateActiveLine);
+    state.outputTextarea.addEventListener('scroll', () => {
+        state.lineNumbersDiv.scrollTop = state.outputTextarea.scrollTop;
     });
 
-    return { lineNumbers, lineMap };
-}
-
-/**
- * @private
- * @description 更新统计信息。
- */
-function updateStatistics() {
-    const text = outputTextarea.value;
-    const lineCount = text.split('\n').length;
-    const charCount = text.length;
-    statsContainer.textContent = `行: ${lineCount} | 字符数: ${charCount}`;
-}
-
-/**
- * @private
- * @description 更新行号。
- */
-function updateLineNumbers() {
-    const { lineNumbers, lineMap } = calcLines();
-    currentLineMap = lineMap; // 保存映射以供 updateActiveLine 使用
-
-    const lineElements = lineNumbers.map(line => {
-        const div = document.createElement('div');
-        div.textContent = line === '' ? '\u00A0' : line;
-        return div;
-    });
-    lineNumbersDiv.replaceChildren(...lineElements);
-    updateActiveLine();
-}
-
-/**
- * @private
- * @description 根据光标位置更新活动行号的样式。
- */
-function updateActiveLine() {
-    if (!lineNumbersDiv || !lineNumbersDiv.classList.contains('is-visible') || !outputTextarea) return;
-
-    const textarea = outputTextarea;
-    const text = textarea.value;
-    const selectionEnd = textarea.selectionEnd;
-
-    // 1. 确定光标所在的“真实”行索引
-    const textBeforeCursor = text.substring(0, selectionEnd);
-    const cursorRealLineIndex = textBeforeCursor.split('\n').length - 1;
-
-    // 2. 计算光标在该真实行内的相对字符位置
-    const realLines = text.split('\n');
-    let positionInRealLine = selectionEnd;
-    for (let i = 0; i < cursorRealLineIndex; i++) {
-        positionInRealLine -= (realLines[i].length + 1); // +1 for the newline character
-    }
-
-    // 3. 计算该真实行因自动换行产生了多少视觉行，并确定光标在第几个视觉换行中
-    const textareaStyles = window.getComputedStyle(textarea);
-    const paddingLeft = parseFloat(textareaStyles.paddingLeft);
-    const paddingRight = parseFloat(textareaStyles.paddingRight);
-    const textareaContentWidth = textarea.clientWidth - paddingLeft - paddingRight;
-
-    const lineContent = realLines[cursorRealLineIndex];
-    let visualLineOffset = 0;
-    let currentLine = '';
-
-    for (let i = 0; i < lineContent.length; i++) {
-        const char = lineContent[i];
-        const nextLine = currentLine + char;
-        if (canvasContext.measureText(nextLine).width > textareaContentWidth) {
-            visualLineOffset++;
-            currentLine = char;
-        } else {
-            currentLine = nextLine;
-        }
-        if (i >= positionInRealLine - 1 && positionInRealLine > 0) {
-            break;
-        }
-    }
-
-    // 4. 找到该真实行在视觉行列表中的起始索引
-    const firstVisualIndexOfRealLine = currentLineMap.indexOf(cursorRealLineIndex);
-    if (firstVisualIndexOfRealLine === -1) return;
-
-    // 5. 计算最终的视觉行索引
-    const finalVisualLineIndex = firstVisualIndexOfRealLine + visualLineOffset;
-
-    // 6. 更新UI
-    const lineDivs = lineNumbersDiv.children;
-    for (let i = 0; i < lineDivs.length; i++) {
-        lineDivs[i].classList.remove('is-active');
-    }
-    if (lineDivs[finalVisualLineIndex]) {
-        lineDivs[finalVisualLineIndex].classList.add('is-active');
-    }
-}
-
-/**
- * @public
- * @description 显示主模态框并开始提取文本。
- */
-/**
- * @private
- * @description 显示加载动画并禁用文本区域。
- */
-function showLoading() {
-  if (loadingContainer) loadingContainer.classList.add('is-visible');
-  if (outputTextarea) outputTextarea.disabled = true;
-}
-
-/**
- * @private
- * @description 隐藏加载动画并启用文本区域。
- */
-function hideLoading() {
-  if (loadingContainer) loadingContainer.classList.remove('is-visible');
-  if (outputTextarea) outputTextarea.disabled = false;
+    // 5. 根据设置更新UI元素的可见性
+    updateModalAddonsVisibility();
 }
 
 /**
@@ -444,26 +70,27 @@ function hideLoading() {
  * @description 显示主模态框并开始提取文本。
  */
 export function openModal() {
-  if (!modalOverlay) {
-    console.error("模态框尚未初始化。");
-    return;
-  }
-  log('正在打开主模态框...');
-
-  updateModalContent(SHOW_LOADING, true);
-
-  setTimeout(() => {
-    const extractedTexts = extractAndProcessText();
-    const formattedText = formatTextsForTranslation(extractedTexts);
-    const copyBtn = modalOverlay.querySelector('.text-extractor-copy-btn');
-
-    updateModalContent(formattedText, false);
-    if(copyBtn) {
-        copyBtn.disabled = false;
+    if (!state.modalOverlay) {
+        console.error("模态框尚未初始化。");
+        return;
     }
+    log('正在打开主模态框...');
 
-    showNotification(`快捷扫描完成，发现 ${extractedTexts.length} 条文本`, { type: 'success' });
-  }, 50);
+    updateModalContent(state.SHOW_LOADING, true);
+
+    setTimeout(() => {
+        const extractedTexts = extractAndProcessText();
+        const formattedText = formatTextsForTranslation(extractedTexts);
+
+        updateModalContent(formattedText);
+
+        const copyBtn = state.modalOverlay.querySelector('.text-extractor-copy-btn');
+        if (copyBtn) {
+            copyBtn.disabled = !formattedText;
+        }
+
+        showNotification(`快捷扫描完成，发现 ${extractedTexts.length} 条文本`, { type: 'success' });
+    }, 50);
 }
 
 /**
@@ -471,11 +98,11 @@ export function openModal() {
  * @description 关闭主模态框并清理事件监听器。
  */
 export function closeModal() {
-  if (modalOverlay && modalOverlay.classList.contains('is-visible')) {
-    log('正在关闭主模态框...');
-    modalOverlay.classList.remove('is-visible');
-    modalOverlay.removeEventListener('keydown', handleKeyDown);
-  }
+    if (state.modalOverlay && state.modalOverlay.classList.contains('is-visible')) {
+        log('正在关闭主模态框...');
+        state.modalOverlay.classList.remove('is-visible');
+        state.modalOverlay.removeEventListener('keydown', handleKeyDown);
+    }
 }
 
 /**
@@ -485,56 +112,53 @@ export function closeModal() {
  * @param {boolean} [shouldOpen=false] - 是否在更新后打开模态框。
  */
 export function updateModalContent(content, shouldOpen = false) {
-    if (!modalOverlay) {
+    if (!state.modalOverlay) {
         console.error("模态框尚未初始化。");
         return;
     }
 
-    const copyBtn = modalOverlay.querySelector('.text-extractor-copy-btn');
-    const clearBtn = modalOverlay.querySelector('.text-extractor-clear-btn');
+    const copyBtn = state.modalOverlay.querySelector('.text-extractor-copy-btn');
+    const clearBtn = state.modalOverlay.querySelector('.text-extractor-clear-btn');
+    const textareaContainer = state.outputTextarea.parentElement;
 
     const setButtonsDisabled = (disabled) => {
         if (copyBtn) copyBtn.disabled = disabled;
         if (clearBtn) clearBtn.disabled = disabled;
     };
 
-    const textareaContainer = outputTextarea.parentElement;
-
-    if (content === SHOW_LOADING) {
-        placeholder.classList.remove('is-visible');
+    if (content === state.SHOW_LOADING) {
+        state.placeholder.classList.remove('is-visible');
         textareaContainer.classList.add('is-visible');
-        outputTextarea.value = '';
+        state.outputTextarea.value = '';
         showLoading();
         setButtonsDisabled(true);
-    } else if (content === SHOW_PLACEHOLDER) {
+    } else if (content === state.SHOW_PLACEHOLDER) {
         hideLoading();
         textareaContainer.classList.remove('is-visible');
-        placeholder.classList.add('is-visible');
+        state.placeholder.classList.add('is-visible');
         setButtonsDisabled(true);
     } else {
         hideLoading();
-        placeholder.classList.remove('is-visible');
+        state.placeholder.classList.remove('is-visible');
         textareaContainer.classList.add('is-visible');
 
         const isData = content && content.trim().length > 0;
-        outputTextarea.value = content;
+        state.outputTextarea.value = content;
         setButtonsDisabled(!isData);
-        outputTextarea.readOnly = !isData;
+        state.outputTextarea.readOnly = !isData;
 
-        updateStatistics();
-        updateLineNumbers();
-        // 确保在内容更新后，光标在起始位置时能正确高亮第一行
+        // 手动触发一次更新，以确保统计和行号正确显示
+        state.outputTextarea.dispatchEvent(new Event('input'));
+
         setTimeout(updateActiveLine, 0);
     }
 
-    // 更新附加组件的可见性
     updateModalAddonsVisibility();
 
     if (shouldOpen) {
-        modalOverlay.classList.add('is-visible');
-        modalOverlay.addEventListener('keydown', handleKeyDown);
-        // 聚焦模态框以便接收键盘事件
-        modalOverlay.focus();
+        state.modalOverlay.classList.add('is-visible');
+        state.modalOverlay.addEventListener('keydown', handleKeyDown);
+        state.modalOverlay.focus();
     }
 }
 
@@ -543,16 +167,16 @@ export function updateModalContent(content, shouldOpen = false) {
  * @description 根据当前设置更新附加组件（行号、统计）的可见性。
  */
 export function updateModalAddonsVisibility() {
-    if (!modalOverlay) return;
+    if (!state.modalOverlay) return;
 
     const settings = loadSettings();
 
-    if (lineNumbersDiv) {
-        lineNumbersDiv.classList.toggle('is-visible', settings.showLineNumbers);
+    if (state.lineNumbersDiv) {
+        state.lineNumbersDiv.classList.toggle('is-visible', settings.showLineNumbers);
     }
 
-    if (statsContainer) {
-        const hasContent = outputTextarea && outputTextarea.parentElement.style.display !== 'none';
-        statsContainer.classList.toggle('is-visible', settings.showStatistics && hasContent);
+    if (state.statsContainer) {
+        const hasContent = state.outputTextarea && state.outputTextarea.parentElement.classList.contains('is-visible');
+        state.statsContainer.classList.toggle('is-visible', settings.showStatistics && hasContent);
     }
 }

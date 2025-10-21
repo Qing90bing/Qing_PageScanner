@@ -176,33 +176,6 @@
   var setValue = (key, value) => {
     return GM_setValue(key, value);
   };
-  var config = {
-        selectors: [
-      "p",
-      "h1",
-      "h2",
-      "h3",
-      "h4",
-      "h5",
-      "h6",
-      "li",
-      "td",
-      "th",
-      "pre",
-      "span",
-      "a",
-      "button",
-      "article",
-      "main",
-      "div",
-      "body *"
-    ],
-        modalContentHeight: "400px",
-        notification: {
-      duration: 3e3
-    }
-  };
-  var config_default = config;
   var LOG_PREFIX = "[\u6587\u672C\u63D0\u53D6\u811A\u672C-Debug]";
   var isDebugEnabled = false;
   function updateLoggerState(isEnabled) {
@@ -269,6 +242,33 @@
     });
     setValue("script_settings", JSON.stringify(newSettings));
   }
+  var config = {
+        selectors: [
+      "p",
+      "h1",
+      "h2",
+      "h3",
+      "h4",
+      "h5",
+      "h6",
+      "li",
+      "td",
+      "th",
+      "pre",
+      "span",
+      "a",
+      "button",
+      "article",
+      "main",
+      "div",
+      "body *"
+    ],
+        modalContentHeight: "400px",
+        notification: {
+      duration: 3e3
+    }
+  };
+  var config_default = config;
   var IGNORED_SELECTORS = [
     "script",
     "style",
@@ -499,6 +499,60 @@ ${result.join(",\n")}
       });
     }
   }
+  var modalOverlay = null;
+  var outputTextarea = null;
+  var lineNumbersDiv = null;
+  var statsContainer = null;
+  var placeholder = null;
+  var loadingContainer = null;
+  var canvasContext = null;
+  var currentLineMap = [];
+  var SHOW_PLACEHOLDER = "::show_placeholder::";
+  var SHOW_LOADING = "::show_loading::";
+  function setModalOverlay(element) {
+    modalOverlay = element;
+  }
+  function setOutputTextarea(element) {
+    outputTextarea = element;
+  }
+  function setLineNumbersDiv(element) {
+    lineNumbersDiv = element;
+  }
+  function setStatsContainer(element) {
+    statsContainer = element;
+  }
+  function setPlaceholder(element) {
+    placeholder = element;
+  }
+  function setLoadingContainer(element) {
+    loadingContainer = element;
+  }
+  function setCanvasContext(context) {
+    canvasContext = context;
+  }
+  function setCurrentLineMap(map) {
+    currentLineMap = map;
+  }
+  function createModalLayout() {
+    const modalOverlay2 = document.createElement("div");
+    modalOverlay2.className = "text-extractor-modal-overlay";
+    modalOverlay2.tabIndex = -1;
+    setModalOverlay(modalOverlay2);
+    const modal = document.createElement("div");
+    modal.className = "text-extractor-modal";
+    const modalHeader = document.createElement("div");
+    modalHeader.className = "text-extractor-modal-header";
+    const modalContent = document.createElement("div");
+    modalContent.className = "text-extractor-modal-content";
+    const modalFooter = document.createElement("div");
+    modalFooter.className = "text-extractor-modal-footer";
+    modal.appendChild(modalHeader);
+    modal.appendChild(modalContent);
+    modal.appendChild(modalFooter);
+    modalOverlay2.appendChild(modal);
+    uiContainer.appendChild(modalOverlay2);
+    return { modal, modalHeader, modalContent, modalFooter };
+  }
   function createIconTitle(iconSVG, text) {
     const container = document.createElement("div");
     container.style.display = "flex";
@@ -517,9 +571,18 @@ ${result.join(",\n")}
     container.appendChild(textNode);
     return container;
   }
-  var copyIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M120-220v-80h80v80h-80Zm0-140v-80h80v80h-80Zm0-140v-80h80v80h-80ZM260-80v-80h80v80h-80Zm100-160q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480Zm40 240v-80h80v80h-80Zm-200 0q-33 0-56.5-23.5T120-160h80v80Zm340 0v-80h80q0 33-23.5 56.5T540-80ZM120-640q0-33 23.5-56.5T200-720v80h-80Zm420 80Z"/></svg>`;
-  var clearIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M120-40v-280q0-83 58.5-141.5T320-520h40v-320q0-33 23.5-56.5T440-920h80q33 0 56.5 23.5T600-840v320h40q83 0 141.5 58.5T840-320v280H120Zm80-80h80v-120q0-17 11.5-28.5T320-280q17 0 28.5 11.5T360-240v120h80v-120q0-17 11.5-28.5T480-280q17 0 28.5 11.5T520-240v120h80v-120q0-17 11.5-28.5T640-280q17 0 28.5 11.5T680-240v120h80v-200q0-50-35-85t-85-35H320q-50 0-85 35t-35 85v200Zm320-400v-320h-80v320h80Zm0 0h-80 80Z"/></svg>`;
-  var clearIcon_default = clearIcon;
+  function populateModalHeader(modalHeader, closeCallback) {
+    const titleContainer = document.createElement("div");
+    titleContainer.id = "main-modal-title-container";
+    const closeBtn = document.createElement("span");
+    closeBtn.className = "tc-close-button text-extractor-modal-close";
+    closeBtn.appendChild(createSVGFromString(closeIcon));
+    const titleElement = createIconTitle(summaryIcon, "\u63D0\u53D6\u7684\u6587\u672C");
+    titleContainer.appendChild(titleElement);
+    modalHeader.appendChild(titleContainer);
+    modalHeader.appendChild(closeBtn);
+    closeBtn.addEventListener("click", closeCallback);
+  }
   var loadingSpinner = `
   <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
     <path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25"/>
@@ -528,6 +591,89 @@ ${result.join(",\n")}
     </path>
   </svg>
 `;
+  function createPlaceholder() {
+    const placeholder2 = document.createElement("div");
+    placeholder2.id = "modal-placeholder";
+    const placeholderIconDiv = document.createElement("div");
+    placeholderIconDiv.className = "placeholder-icon";
+    const infoIconSVG = createSVGFromString(infoIcon);
+    if (infoIconSVG) placeholderIconDiv.appendChild(infoIconSVG);
+    const p1 = document.createElement("p");
+    p1.textContent = "\u5F53\u524D\u6CA1\u6709\u603B\u7ED3\u6587\u672C";
+    const p2 = document.createElement("p");
+    p2.className = "placeholder-actions";
+    p2.append("\u70B9\u51FB ");
+    const span2 = document.createElement("span");
+    span2.className = "placeholder-action-icon";
+    const dynamicIconSVG = createSVGFromString(dynamicIcon);
+    if (dynamicIconSVG) span2.appendChild(dynamicIconSVG);
+    p2.appendChild(span2);
+    const strong2 = document.createElement("strong");
+    strong2.textContent = "[\u52A8\u6001\u626B\u63CF]";
+    p2.appendChild(strong2);
+    p2.append(" \u6309\u94AE\u5F00\u59CB\u4E00\u4E2A\u65B0\u7684\u626B\u63CF\u4F1A\u8BDD");
+    const p3 = document.createElement("p");
+    p3.className = "placeholder-actions";
+    p3.append("\u70B9\u51FB ");
+    const span3 = document.createElement("span");
+    span3.className = "placeholder-action-icon";
+    const translateIconSVG = createSVGFromString(translateIcon);
+    if (translateIconSVG) span3.appendChild(translateIconSVG);
+    p3.appendChild(span3);
+    const strong3 = document.createElement("strong");
+    strong3.textContent = "[\u9759\u6001\u626B\u63CF]";
+    p3.appendChild(strong3);
+    p3.append(" \u6309\u94AE\u53EF\u8FDB\u884C\u4E00\u6B21\u6027\u7684\u5FEB\u6377\u63D0\u53D6");
+    placeholder2.appendChild(placeholderIconDiv);
+    placeholder2.appendChild(p1);
+    placeholder2.appendChild(p2);
+    placeholder2.appendChild(p3);
+    return placeholder2;
+  }
+  function createLoadingSpinner() {
+    const loadingContainer2 = document.createElement("div");
+    loadingContainer2.className = "gm-loading-overlay";
+    const spinner = document.createElement("div");
+    spinner.className = "gm-loading-spinner";
+    const spinnerSVG = createSVGFromString(loadingSpinner);
+    if (spinnerSVG) spinner.appendChild(spinnerSVG);
+    loadingContainer2.appendChild(spinner);
+    return loadingContainer2;
+  }
+  function populateModalContent(modalContent) {
+    if (config_default.modalContentHeight) {
+      modalContent.style.height = config_default.modalContentHeight;
+    }
+    const placeholder2 = createPlaceholder();
+    setPlaceholder(placeholder2);
+    const textareaContainer = document.createElement("div");
+    textareaContainer.className = "tc-textarea-container";
+    const lineNumbersDiv2 = document.createElement("div");
+    lineNumbersDiv2.className = "tc-line-numbers";
+    setLineNumbersDiv(lineNumbersDiv2);
+    const outputTextarea2 = document.createElement("textarea");
+    outputTextarea2.id = "text-extractor-output";
+    outputTextarea2.className = "tc-textarea";
+    setOutputTextarea(outputTextarea2);
+    textareaContainer.appendChild(lineNumbersDiv2);
+    textareaContainer.appendChild(outputTextarea2);
+    const loadingContainer2 = createLoadingSpinner();
+    setLoadingContainer(loadingContainer2);
+    modalContent.appendChild(placeholder2);
+    modalContent.appendChild(textareaContainer);
+    modalContent.appendChild(loadingContainer2);
+  }
+  function showLoading() {
+    if (loadingContainer) loadingContainer.classList.add("is-visible");
+    if (outputTextarea) outputTextarea.disabled = true;
+  }
+  function hideLoading() {
+    if (loadingContainer) loadingContainer.classList.remove("is-visible");
+    if (outputTextarea) outputTextarea.disabled = false;
+  }
+  var copyIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M120-220v-80h80v80h-80Zm0-140v-80h80v80h-80Zm0-140v-80h80v80h-80ZM260-80v-80h80v80h-80Zm100-160q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480Zm40 240v-80h80v80h-80Zm-200 0q-33 0-56.5-23.5T120-160h80v80Zm340 0v-80h80q0 33-23.5 56.5T540-80ZM120-640q0-33 23.5-56.5T200-720v80h-80Zm420 80Z"/></svg>`;
+  var clearIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M120-40v-280q0-83 58.5-141.5T320-520h40v-320q0-33 23.5-56.5T440-920h80q33 0 56.5 23.5T600-840v320h40q83 0 141.5 58.5T840-320v280H120Zm80-80h80v-120q0-17 11.5-28.5T320-280q17 0 28.5 11.5T360-240v120h80v-120q0-17 11.5-28.5T480-280q17 0 28.5 11.5T520-240v120h80v-120q0-17 11.5-28.5T640-280q17 0 28.5 11.5T680-240v120h80v-200q0-50-35-85t-85-35H320q-50 0-85 35t-35 85v200Zm320-400v-320h-80v320h80Zm0 0h-80 80Z"/></svg>`;
+  var clearIcon_default = clearIcon;
   var modalContainer = null;
   var resolvePromise = null;
   function showConfirmationModal(text, iconSVG) {
@@ -584,64 +730,10 @@ ${result.join(",\n")}
   }
   var warningIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m40-120 440-760 440 760H40Zm138-80h604L480-720 178-200Zm302-40q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Zm40-100Z"/></svg>`;
   var warningIcon_default = warningIcon;
-  var modalOverlay = null;
-  var outputTextarea = null;
-  var lineNumbersDiv = null;
-  var statsContainer = null;
-  var placeholder = null;
-  var loadingContainer = null;
-  var canvasContext = null;
-  var currentLineMap = [];
-  var SHOW_PLACEHOLDER = "::show_placeholder::";
-  var SHOW_LOADING = "::show_loading::";
-  var handleKeyDown = (event) => {
-    if (event.key === "Escape") {
-      closeModal();
-    }
-  };
-  function createMainModal() {
-    if (modalOverlay) return;
-    modalOverlay = document.createElement("div");
-    modalOverlay.className = "text-extractor-modal-overlay";
-    modalOverlay.tabIndex = -1;
-    const modal = document.createElement("div");
-    modal.className = "text-extractor-modal";
-    const modalHeader = document.createElement("div");
-    modalHeader.className = "text-extractor-modal-header";
-    const titleContainer = document.createElement("div");
-    titleContainer.id = "main-modal-title-container";
-    const closeBtn = document.createElement("span");
-    closeBtn.className = "tc-close-button text-extractor-modal-close";
-    closeBtn.appendChild(createSVGFromString(closeIcon));
-    modalHeader.appendChild(titleContainer);
-    modalHeader.appendChild(closeBtn);
-    const modalContent = document.createElement("div");
-    modalContent.className = "text-extractor-modal-content";
-    placeholder = document.createElement("div");
-    placeholder.id = "modal-placeholder";
-    const textareaContainer = document.createElement("div");
-    textareaContainer.className = "tc-textarea-container";
-    lineNumbersDiv = document.createElement("div");
-    lineNumbersDiv.className = "tc-line-numbers";
-    outputTextarea = document.createElement("textarea");
-    outputTextarea.id = "text-extractor-output";
-    outputTextarea.className = "tc-textarea";
-    textareaContainer.appendChild(lineNumbersDiv);
-    textareaContainer.appendChild(outputTextarea);
-    modalContent.appendChild(placeholder);
-    modalContent.appendChild(textareaContainer);
-    loadingContainer = document.createElement("div");
-    loadingContainer.className = "gm-loading-overlay";
-    const spinner = document.createElement("div");
-    spinner.className = "gm-loading-spinner";
-    const spinnerSVG = createSVGFromString(loadingSpinner);
-    if (spinnerSVG) spinner.appendChild(spinnerSVG);
-    loadingContainer.appendChild(spinner);
-    modalContent.appendChild(loadingContainer);
-    const modalFooter = document.createElement("div");
-    modalFooter.className = "text-extractor-modal-footer";
-    statsContainer = document.createElement("div");
-    statsContainer.className = "tc-stats-container";
+  function populateModalFooter(modalFooter, updateContentCallback) {
+    const statsContainer2 = document.createElement("div");
+    statsContainer2.className = "tc-stats-container";
+    setStatsContainer(statsContainer2);
     const footerButtonContainer = document.createElement("div");
     footerButtonContainer.className = "tc-footer-buttons";
     const clearBtn = document.createElement("button");
@@ -650,59 +742,14 @@ ${result.join(",\n")}
     const copyBtn = document.createElement("button");
     copyBtn.className = "text-extractor-copy-btn tc-button";
     copyBtn.disabled = true;
-    footerButtonContainer.appendChild(clearBtn);
-    footerButtonContainer.appendChild(copyBtn);
-    modalFooter.appendChild(statsContainer);
-    modalFooter.appendChild(footerButtonContainer);
-    modal.appendChild(modalHeader);
-    modal.appendChild(modalContent);
-    modal.appendChild(modalFooter);
-    modalOverlay.appendChild(modal);
-    uiContainer.appendChild(modalOverlay);
-    if (config_default.modalContentHeight) {
-      modalContent.style.height = config_default.modalContentHeight;
-    }
-    const titleElement = createIconTitle(summaryIcon, "\u63D0\u53D6\u7684\u6587\u672C");
-    titleContainer.appendChild(titleElement);
-    const placeholderIconDiv = document.createElement("div");
-    placeholderIconDiv.className = "placeholder-icon";
-    const infoIconSVG = createSVGFromString(infoIcon);
-    if (infoIconSVG) placeholderIconDiv.appendChild(infoIconSVG);
-    const p1 = document.createElement("p");
-    p1.textContent = "\u5F53\u524D\u6CA1\u6709\u603B\u7ED3\u6587\u672C";
-    const p2 = document.createElement("p");
-    p2.className = "placeholder-actions";
-    p2.append("\u70B9\u51FB ");
-    const span2 = document.createElement("span");
-    span2.className = "placeholder-action-icon";
-    const dynamicIconSVG = createSVGFromString(dynamicIcon);
-    if (dynamicIconSVG) span2.appendChild(dynamicIconSVG);
-    p2.appendChild(span2);
-    const strong2 = document.createElement("strong");
-    strong2.textContent = "[\u52A8\u6001\u626B\u63CF]";
-    p2.appendChild(strong2);
-    p2.append(" \u6309\u94AE\u5F00\u59CB\u4E00\u4E2A\u65B0\u7684\u626B\u63CF\u4F1A\u8BDD");
-    const p3 = document.createElement("p");
-    p3.className = "placeholder-actions";
-    p3.append("\u70B9\u51FB ");
-    const span3 = document.createElement("span");
-    span3.className = "placeholder-action-icon";
-    const translateIconSVG = createSVGFromString(translateIcon);
-    if (translateIconSVG) span3.appendChild(translateIconSVG);
-    p3.appendChild(span3);
-    const strong3 = document.createElement("strong");
-    strong3.textContent = "[\u9759\u6001\u626B\u63CF]";
-    p3.appendChild(strong3);
-    p3.append(" \u6309\u94AE\u53EF\u8FDB\u884C\u4E00\u6B21\u6027\u7684\u5FEB\u6377\u63D0\u53D6");
-    placeholder.appendChild(placeholderIconDiv);
-    placeholder.appendChild(p1);
-    placeholder.appendChild(p2);
-    placeholder.appendChild(p3);
     const copyBtnContent = createIconTitle(copyIcon, "\u590D\u5236");
     copyBtn.appendChild(copyBtnContent);
     const clearBtnContent = createIconTitle(clearIcon_default, "\u6E05\u7A7A");
     clearBtn.appendChild(clearBtnContent);
-    closeBtn.addEventListener("click", closeModal);
+    footerButtonContainer.appendChild(clearBtn);
+    footerButtonContainer.appendChild(copyBtn);
+    modalFooter.appendChild(statsContainer2);
+    modalFooter.appendChild(footerButtonContainer);
     copyBtn.addEventListener("click", () => {
       const textToCopy = outputTextarea.value;
       if (textToCopy && !copyBtn.disabled) {
@@ -722,32 +769,19 @@ ${result.join(",\n")}
       );
       if (confirmed) {
         log("\u7528\u6237\u786E\u8BA4\u6E05\u7A7A\u6587\u672C\u3002");
-        updateModalContent(SHOW_PLACEHOLDER);
+        updateContentCallback(SHOW_PLACEHOLDER);
         showNotification("\u5185\u5BB9\u5DF2\u6E05\u7A7A", { type: "success" });
       } else {
         log("\u7528\u6237\u53D6\u6D88\u4E86\u6E05\u7A7A\u64CD\u4F5C\u3002");
       }
     });
-    const handleTextareaUpdate = () => {
-      updateLineNumbers();
-      updateStatistics();
-    };
-    outputTextarea.addEventListener("input", handleTextareaUpdate);
-    outputTextarea.addEventListener("click", updateActiveLine);
-    outputTextarea.addEventListener("keyup", updateActiveLine);
-    outputTextarea.addEventListener("scroll", () => {
-      lineNumbersDiv.scrollTop = outputTextarea.scrollTop;
-    });
-    updateModalAddonsVisibility();
-    const canvas = document.createElement("canvas");
-    canvasContext = canvas.getContext("2d");
-    const textareaStyles = window.getComputedStyle(outputTextarea);
-    canvasContext.font = `${textareaStyles.fontSize} ${textareaStyles.fontFamily}`;
-    const resizeObserver = new ResizeObserver(() => {
-      lineNumbersDiv.style.height = outputTextarea.clientHeight + "px";
-      updateLineNumbers();
-    });
-    resizeObserver.observe(outputTextarea);
+  }
+  function updateStatistics() {
+    if (!statsContainer || !outputTextarea) return;
+    const text = outputTextarea.value;
+    const lineCount = text.split("\n").length;
+    const charCount = text.length;
+    statsContainer.textContent = `\u884C: ${lineCount} | \u5B57\u7B26\u6570: ${charCount}`;
   }
   function calcStringLines(sentence, width) {
     if (!width || !canvasContext) return 1;
@@ -789,23 +823,6 @@ ${result.join(",\n")}
       }
     });
     return { lineNumbers, lineMap };
-  }
-  function updateStatistics() {
-    const text = outputTextarea.value;
-    const lineCount = text.split("\n").length;
-    const charCount = text.length;
-    statsContainer.textContent = `\u884C: ${lineCount} | \u5B57\u7B26\u6570: ${charCount}`;
-  }
-  function updateLineNumbers() {
-    const { lineNumbers, lineMap } = calcLines();
-    currentLineMap = lineMap;
-    const lineElements = lineNumbers.map((line) => {
-      const div = document.createElement("div");
-      div.textContent = line === "" ? "\xA0" : line;
-      return div;
-    });
-    lineNumbersDiv.replaceChildren(...lineElements);
-    updateActiveLine();
   }
   function updateActiveLine() {
     if (!lineNumbersDiv || !lineNumbersDiv.classList.contains("is-visible") || !outputTextarea) return;
@@ -850,13 +867,54 @@ ${result.join(",\n")}
       lineDivs[finalVisualLineIndex].classList.add("is-active");
     }
   }
-  function showLoading() {
-    if (loadingContainer) loadingContainer.classList.add("is-visible");
-    if (outputTextarea) outputTextarea.disabled = true;
+  function updateLineNumbers() {
+    if (!lineNumbersDiv || !outputTextarea) return;
+    const { lineNumbers, lineMap } = calcLines();
+    setCurrentLineMap(lineMap);
+    const lineElements = lineNumbers.map((line) => {
+      const div = document.createElement("div");
+      div.textContent = line === "" ? "\xA0" : line;
+      return div;
+    });
+    lineNumbersDiv.replaceChildren(...lineElements);
+    updateActiveLine();
   }
-  function hideLoading() {
-    if (loadingContainer) loadingContainer.classList.remove("is-visible");
-    if (outputTextarea) outputTextarea.disabled = false;
+  function initializeLineNumbers() {
+    const canvas = document.createElement("canvas");
+    const canvasContext2 = canvas.getContext("2d");
+    const textareaStyles = window.getComputedStyle(outputTextarea);
+    canvasContext2.font = `${textareaStyles.fontSize} ${textareaStyles.fontFamily}`;
+    setCanvasContext(canvasContext2);
+    const resizeObserver = new ResizeObserver(() => {
+      if (!lineNumbersDiv || !outputTextarea) return;
+      lineNumbersDiv.style.height = outputTextarea.clientHeight + "px";
+      updateLineNumbers();
+    });
+    resizeObserver.observe(outputTextarea);
+  }
+  var handleKeyDown = (event) => {
+    if (event.key === "Escape") {
+      closeModal();
+    }
+  };
+  function createMainModal() {
+    if (modalOverlay) return;
+    const { modalHeader, modalContent, modalFooter } = createModalLayout();
+    populateModalHeader(modalHeader, closeModal);
+    populateModalContent(modalContent);
+    populateModalFooter(modalFooter, updateModalContent);
+    initializeLineNumbers();
+    const handleTextareaUpdate = () => {
+      updateLineNumbers();
+      updateStatistics();
+    };
+    outputTextarea.addEventListener("input", handleTextareaUpdate);
+    outputTextarea.addEventListener("click", updateActiveLine);
+    outputTextarea.addEventListener("keyup", updateActiveLine);
+    outputTextarea.addEventListener("scroll", () => {
+      lineNumbersDiv.scrollTop = outputTextarea.scrollTop;
+    });
+    updateModalAddonsVisibility();
   }
   function openModal() {
     if (!modalOverlay) {
@@ -868,10 +926,10 @@ ${result.join(",\n")}
     setTimeout(() => {
       const extractedTexts = extractAndProcessText();
       const formattedText = formatTextsForTranslation(extractedTexts);
+      updateModalContent(formattedText);
       const copyBtn = modalOverlay.querySelector(".text-extractor-copy-btn");
-      updateModalContent(formattedText, false);
       if (copyBtn) {
-        copyBtn.disabled = false;
+        copyBtn.disabled = !formattedText;
       }
       showNotification(`\u5FEB\u6377\u626B\u63CF\u5B8C\u6210\uFF0C\u53D1\u73B0 ${extractedTexts.length} \u6761\u6587\u672C`, { type: "success" });
     }, 50);
@@ -890,11 +948,11 @@ ${result.join(",\n")}
     }
     const copyBtn = modalOverlay.querySelector(".text-extractor-copy-btn");
     const clearBtn = modalOverlay.querySelector(".text-extractor-clear-btn");
+    const textareaContainer = outputTextarea.parentElement;
     const setButtonsDisabled = (disabled) => {
       if (copyBtn) copyBtn.disabled = disabled;
       if (clearBtn) clearBtn.disabled = disabled;
     };
-    const textareaContainer = outputTextarea.parentElement;
     if (content === SHOW_LOADING) {
       placeholder.classList.remove("is-visible");
       textareaContainer.classList.add("is-visible");
@@ -914,8 +972,7 @@ ${result.join(",\n")}
       outputTextarea.value = content;
       setButtonsDisabled(!isData);
       outputTextarea.readOnly = !isData;
-      updateStatistics();
-      updateLineNumbers();
+      outputTextarea.dispatchEvent(new Event("input"));
       setTimeout(updateActiveLine, 0);
     }
     updateModalAddonsVisibility();
@@ -932,7 +989,7 @@ ${result.join(",\n")}
       lineNumbersDiv.classList.toggle("is-visible", settings.showLineNumbers);
     }
     if (statsContainer) {
-      const hasContent = outputTextarea && outputTextarea.parentElement.style.display !== "none";
+      const hasContent = outputTextarea && outputTextarea.parentElement.classList.contains("is-visible");
       statsContainer.classList.toggle("is-visible", settings.showStatistics && hasContent);
     }
   }
