@@ -6,12 +6,12 @@
  */
 
 import { setClipboard } from '../../services/tampermonkey.js';
-import { showNotification } from '../notification.js';
+import { showNotification } from '../components/notification.js';
 import { createIconTitle } from '../iconTitle.js';
 import { copyIcon } from '../../../assets/icons/copyIcon.js';
 import clearIcon from '../../../assets/icons/clearIcon.js';
 import { log } from '../../utils/logger.js';
-import { showConfirmationModal } from '../confirmationModal.js';
+import { showConfirmationModal } from '../components/confirmationModal.js';
 import warningIcon from '../../../assets/icons/warningIcon.js';
 import * as state from './modalState.js';
 import { SHOW_PLACEHOLDER } from './modalState.js';

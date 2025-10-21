@@ -1,6 +1,6 @@
 // src/shared/ui/confirmationModal.js
-import { createSVGFromString } from '../utils/dom';
-import { uiContainer } from './uiContainer.js'; // 直接导入Shadow DOM根
+import { createSVGFromString } from '../../utils/dom.js';
+import { uiContainer } from '../uiContainer.js'; // 直接导入Shadow DOM根
 
 let modalContainer = null;
 let resolvePromise = null;

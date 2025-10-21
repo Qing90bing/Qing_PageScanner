@@ -1,11 +1,11 @@
 // src/shared/ui/notification.js
 
-import { createSVGFromString } from '../utils/dom.js';
-import config from '../config.js';
-import { infoIcon } from '../../assets/icons/infoIcon.js';
-import { successIcon } from '../../assets/icons/successIcon.js';
-import { closeIcon } from '../../assets/icons/closeIcon.js';
-import { uiContainer } from './uiContainer.js';
+import { createSVGFromString } from '../../utils/dom.js';
+import config from '../../config.js';
+import { infoIcon } from '../../../assets/icons/infoIcon.js';
+import { successIcon } from '../../../assets/icons/successIcon.js';
+import { closeIcon } from '../../../assets/icons/closeIcon.js';
+import { uiContainer } from '../uiContainer.js';
 
 // 存储通知的容器
 let notificationContainer = null;

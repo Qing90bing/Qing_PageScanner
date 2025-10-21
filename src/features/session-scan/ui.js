@@ -1,9 +1,9 @@
 // src/features/session-scan/ui.js
 
 import { updateModalContent, SHOW_PLACEHOLDER } from '../../shared/ui/mainModal.js';
-import { formatTextsForTranslation } from '../../shared/utils/textProcessor.js';
+import { formatTextsForTranslation } from '../../shared/utils/formatting.js';
 import * as sessionExtractor from './logic.js';
-import { showNotification } from '../../shared/ui/notification.js';
+import { showNotification } from '../../shared/ui/components/notification.js';
 import { showLiveCounter, hideLiveCounter, updateLiveCounter } from './liveCounterUI.js';
 import { setFabIcon } from '../../shared/ui/components/fab.js';
 import { dynamicIcon } from '../../assets/icons/dynamicIcon.js';

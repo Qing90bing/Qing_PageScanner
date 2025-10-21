@@ -4,7 +4,7 @@ import { registerMenuCommand } from '../../shared/services/tampermonkey.js';
 import { loadSettings, saveSettings } from './logic.js';
 import { applyTheme } from '../../shared/ui/theme.js';
 import { log, updateLoggerState } from '../../shared/utils/logger.js';
-import { showNotification } from '../../shared/ui/notification.js';
+import { showNotification } from '../../shared/ui/components/notification.js';
 import { createIconTitle } from '../../shared/ui/iconTitle.js';
 import { CustomSelect } from '../../shared/ui/components/customSelect.js';
 import { systemThemeIcon } from '../../assets/icons/systemThemeIcon.js';

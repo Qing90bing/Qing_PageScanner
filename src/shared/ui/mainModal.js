@@ -6,8 +6,9 @@
  *              该模块作为总协调器，整合来自 ./mainModal/ 子模块的功能。
  */
 
-import { extractAndProcessText, formatTextsForTranslation } from '../utils/textProcessor.js';
-import { showNotification } from './notification.js';
+import { extractAndProcessText } from '../utils/textProcessor.js';
+import { formatTextsForTranslation } from '../utils/formatting.js';
+import { showNotification } from './components/notification.js';
 import { loadSettings } from '../../features/settings/logic.js';
 import { log } from '../utils/logger.js';
 import * as state from './mainModal/modalState.js';
