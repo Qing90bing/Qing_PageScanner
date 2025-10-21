@@ -203,6 +203,16 @@
     }
   };
   var config_default = config;
+  var LOG_PREFIX = "[\u6587\u672C\u63D0\u53D6\u811A\u672C-Debug]";
+  var isDebugEnabled = false;
+  function updateLoggerState(isEnabled) {
+    isDebugEnabled = isEnabled;
+  }
+  function log(...args) {
+    if (isDebugEnabled) {
+      console.log(LOG_PREFIX, ...args);
+    }
+  }
   var defaultSettings = {
     theme: "system",
     showFab: true,
@@ -236,12 +246,28 @@
     }
     return defaultSettings;
   }
-  function saveSettings(settings) {
-    if (typeof settings !== "object" || settings === null) {
-      console.error("\u5C1D\u8BD5\u4FDD\u5B58\u7684\u8BBE\u7F6E\u4E0D\u662F\u4E00\u4E2A\u6709\u6548\u7684\u5BF9\u8C61:", settings);
+  function saveSettings(newSettings) {
+    if (typeof newSettings !== "object" || newSettings === null) {
+      console.error("\u5C1D\u8BD5\u4FDD\u5B58\u7684\u8BBE\u7F6E\u4E0D\u662F\u4E00\u4E2A\u6709\u6548\u7684\u5BF9\u8C61:", newSettings);
       return;
     }
-    setValue("script_settings", JSON.stringify(settings));
+    const oldSettings = loadSettings();
+    Object.keys(newSettings).forEach((key) => {
+      if (key !== "filterRules") {
+        if (oldSettings[key] !== newSettings[key]) {
+          log(`\u8BBE\u7F6E '${key}' \u5DF2\u4ECE '${oldSettings[key]}' \u66F4\u6539\u4E3A '${newSettings[key]}'`);
+        }
+      }
+    });
+    const oldRules = oldSettings.filterRules || {};
+    const newRules = newSettings.filterRules || {};
+    Object.keys(newRules).forEach((key) => {
+      if (oldRules[key] !== newRules[key]) {
+        const status = newRules[key] ? "\u542F\u7528" : "\u7981\u7528";
+        log(`\u8FC7\u6EE4\u89C4\u5219 '${key}' \u5DF2\u88AB${status}`);
+      }
+    });
+    setValue("script_settings", JSON.stringify(newSettings));
   }
   var IGNORED_SELECTORS = [
     "script",
@@ -349,16 +375,6 @@
       }
     }
     return null;
-  }
-  var LOG_PREFIX = "[\u6587\u672C\u63D0\u53D6\u811A\u672C-Debug]";
-  var isDebugEnabled = false;
-  function updateLoggerState(isEnabled) {
-    isDebugEnabled = isEnabled;
-  }
-  function log(...args) {
-    if (isDebugEnabled) {
-      console.log(LOG_PREFIX, ...args);
-    }
   }
   var extractAndProcessText = () => {
     const settings = loadSettings();
@@ -621,8 +637,14 @@ ${result.join(",\n")}
     closeBtn.addEventListener("click", closeModal);
     copyBtn.addEventListener("click", () => {
       const textToCopy = outputTextarea.value;
-      setClipboard(textToCopy);
-      showNotification("\u5DF2\u590D\u5236\u5230\u526A\u8D34\u677F", { type: "success" });
+      if (textToCopy) {
+        log(`\u590D\u5236\u6309\u94AE\u88AB\u70B9\u51FB\uFF0C\u590D\u5236\u4E86 ${textToCopy.length} \u4E2A\u5B57\u7B26\u3002`);
+        setClipboard(textToCopy);
+        showNotification("\u5DF2\u590D\u5236\u5230\u526A\u8D34\u677F", { type: "success" });
+      } else {
+        log("\u590D\u5236\u6309\u94AE\u88AB\u70B9\u51FB\uFF0C\u4F46\u6CA1\u6709\u5185\u5BB9\u53EF\u590D\u5236\u3002");
+        showNotification("\u6CA1\u6709\u5185\u5BB9\u53EF\u590D\u5236", { type: "info" });
+      }
     });
     const handleTextareaUpdate = () => {
       updateLineNumbers();
@@ -759,6 +781,7 @@ ${result.join(",\n")}
       console.error("\u6A21\u6001\u6846\u5C1A\u672A\u521D\u59CB\u5316\u3002");
       return;
     }
+    log("\u6B63\u5728\u6253\u5F00\u4E3B\u6A21\u6001\u6846...");
     updateModalContent(SHOW_LOADING, true);
     setTimeout(() => {
       const extractedTexts = extractAndProcessText();
@@ -772,7 +795,8 @@ ${result.join(",\n")}
     }, 50);
   }
   function closeModal() {
-    if (modalOverlay) {
+    if (modalOverlay && modalOverlay.classList.contains("is-visible")) {
+      log("\u6B63\u5728\u5173\u95ED\u4E3B\u6A21\u6001\u6846...");
       modalOverlay.classList.remove("is-visible");
       modalOverlay.removeEventListener("keydown", handleKeyDown);
     }
@@ -1220,7 +1244,7 @@ ${result.join(",\n")}
     settingsPanel.focus();
   }
   function hideSettingsPanel() {
-    if (settingsPanel) {
+    if (settingsPanel && settingsPanel.classList.contains("is-visible")) {
       log("\u6B63\u5728\u5173\u95ED\u8BBE\u7F6E\u9762\u677F...");
       settingsPanel.removeEventListener("keydown", handleKeyDown2);
       settingsPanel.classList.remove("is-visible");
@@ -1233,6 +1257,7 @@ ${result.join(",\n")}
     }
   }
   function handleSave() {
+    log("\u6B63\u5728\u4FDD\u5B58\u8BBE\u7F6E...");
     const newTheme = themeSelectComponent.getValue();
     const newFilterRules = {};
     const newRelatedSettings = {};

@@ -100,7 +100,7 @@ function showSettingsPanel() {
  * @description 隐藏并从 DOM 中彻底移除设置面板。
  */
 function hideSettingsPanel() {
-  if (settingsPanel) {
+  if (settingsPanel && settingsPanel.classList.contains('is-visible')) {
     log('正在关闭设置面板...');
     settingsPanel.removeEventListener('keydown', handleKeyDown);
     settingsPanel.classList.remove('is-visible');
@@ -118,6 +118,7 @@ function hideSettingsPanel() {
  * @description 处理“保存”按钮的点击事件。
  */
 function handleSave() {
+  log('正在保存设置...');
   const newTheme = themeSelectComponent.getValue();
   const newFilterRules = {};
   const newRelatedSettings = {};

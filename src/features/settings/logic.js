@@ -1,4 +1,5 @@
 import { getValue, setValue } from '../../shared/services/tampermonkey.js';
+import { log } from '../../shared/utils/logger.js';
 // src/core/settings.js
 
 /**
@@ -86,12 +87,34 @@ export function loadSettings() {
  * @param {object} settings - 需要保存到存储中的设置对象。
  * @description 将用户的设置对象转换为 JSON 字符串，并保存到 Tampermonkey 存储中。
  */
-export function saveSettings(settings) {
-  if (typeof settings !== 'object' || settings === null) {
-    console.error("尝试保存的设置不是一个有效的对象:", settings);
+export function saveSettings(newSettings) {
+  if (typeof newSettings !== 'object' || newSettings === null) {
+    console.error("尝试保存的设置不是一个有效的对象:", newSettings);
     return;
   }
 
+  const oldSettings = loadSettings();
+
+  // 比较顶层设置
+  Object.keys(newSettings).forEach(key => {
+    if (key !== 'filterRules') {
+      if (oldSettings[key] !== newSettings[key]) {
+        log(`设置 '${key}' 已从 '${oldSettings[key]}' 更改为 '${newSettings[key]}'`);
+      }
+    }
+  });
+
+  // 比较 filterRules
+  const oldRules = oldSettings.filterRules || {};
+  const newRules = newSettings.filterRules || {};
+  Object.keys(newRules).forEach(key => {
+    if (oldRules[key] !== newRules[key]) {
+      const status = newRules[key] ? '启用' : '禁用';
+      log(`过滤规则 '${key}' 已被${status}`);
+    }
+  });
+
+
   // 将设置对象序列化为 JSON 字符串并保存
-  setValue('script_settings', JSON.stringify(settings));
+  setValue('script_settings', JSON.stringify(newSettings));
 }

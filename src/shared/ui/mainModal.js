@@ -20,6 +20,7 @@ import { loadingSpinner } from '../../assets/icons/loadingSpinner.js';
 import { closeIcon } from '../../assets/icons/closeIcon.js';
 import { uiContainer } from './uiContainer.js';
 import { loadSettings } from '../../features/settings/logic.js';
+import { log } from '../utils/logger.js';
 
 // --- 模块级变量 ---
 
@@ -185,8 +186,14 @@ export function createMainModal() {
   closeBtn.addEventListener('click', closeModal);
   copyBtn.addEventListener('click', () => {
     const textToCopy = outputTextarea.value;
-    setClipboard(textToCopy);
-    showNotification('已复制到剪贴板', { type: 'success' });
+    if (textToCopy) {
+      log(`复制按钮被点击，复制了 ${textToCopy.length} 个字符。`);
+      setClipboard(textToCopy);
+      showNotification('已复制到剪贴板', { type: 'success' });
+    } else {
+      log('复制按钮被点击，但没有内容可复制。');
+      showNotification('没有内容可复制', { type: 'info' });
+    }
   });
 
   // --- 文本区域事件监听 ---
@@ -408,6 +415,7 @@ export function openModal() {
     console.error("模态框尚未初始化。");
     return;
   }
+  log('正在打开主模态框...');
 
   updateModalContent(SHOW_LOADING, true);
 
@@ -430,7 +438,8 @@ export function openModal() {
  * @description 关闭主模态框并清理事件监听器。
  */
 export function closeModal() {
-  if (modalOverlay) {
+  if (modalOverlay && modalOverlay.classList.contains('is-visible')) {
+    log('正在关闭主模态框...');
     modalOverlay.classList.remove('is-visible');
     modalOverlay.removeEventListener('keydown', handleKeyDown);
   }
