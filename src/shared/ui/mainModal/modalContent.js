@@ -11,7 +11,7 @@ import { infoIcon } from '../../../assets/icons/infoIcon.js';
 import { dynamicIcon } from '../../../assets/icons/dynamicIcon.js';
 import { translateIcon } from '../../../assets/icons/icon.js';
 import { loadingSpinner } from '../../../assets/icons/loadingSpinner.js';
-import config from '../../config.js';
+import { appConfig } from '../../../features/settings/config.js';
 
 /**
  * @description 创建占位符元素。
@@ -83,8 +83,8 @@ function createLoadingSpinner() {
  * @param {HTMLElement} modalContent - 模态框内容区的容器元素。
  */
 export function populateModalContent(modalContent) {
-    if (config.modalContentHeight) {
-        modalContent.style.height = config.modalContentHeight;
+    if (appConfig.ui.modalContentHeight) {
+        modalContent.style.height = appConfig.ui.modalContentHeight;
     }
 
     const placeholder = createPlaceholder();

@@ -6,8 +6,7 @@
  */
 
 import { loadSettings } from '../../features/settings/logic.js';
-import config from '../config.js';
-import IGNORED_SELECTORS from './ignoredSelectors.js';
+import { appConfig } from '../../features/settings/config.js';
 import { shouldFilter } from './filterLogic.js'; // 导入新的通用过滤函数
 import { log } from './logger.js';
 
@@ -23,7 +22,6 @@ export const extractAndProcessText = () => {
     // 1. 加载最新的用户设置和静态配置
     const settings = loadSettings();
     const { filterRules } = settings;
-    const { selectors } = config;
 
     // 2. 使用 Set 来存储唯一的文本，可以自动去重
     const uniqueTexts = new Set();
@@ -64,27 +62,35 @@ export const extractAndProcessText = () => {
     processAndAddText(document.title);
 
     // 4. 根据配置文件中的选择器，获取所有目标元素
-    const targetElements = document.querySelectorAll(selectors.join(', '));
+    const targetElements = document.querySelectorAll(appConfig.scanner.targetSelectors.join(', '));
 
     // 5. 遍历每一个目标元素，提取其属性和内部文本
-    const ignoredSelectorString = IGNORED_SELECTORS.join(', ');
+    const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(', ');
     targetElements.forEach(element => {
         // 检查元素或其任何父元素是否匹配“禁止扫描”的选择器
         if (element.closest(ignoredSelectorString)) {
             return; // 如果匹配，则完全跳过此元素及其后代
         }
         // 5.1 提取指定属性的文本
-        const attributesToExtract = ['placeholder', 'alt', 'title', 'aria-label'];
+        const attributesToExtract = appConfig.scanner.attributesToExtract;
         // 对于特定类型的 input，也提取其 value
         if (element.tagName === 'INPUT' && ['button', 'submit', 'reset'].includes(element.type)) {
-            attributesToExtract.push('value');
+            // 创建一个副本以避免修改原始配置
+            const dynamicAttributes = [...attributesToExtract, 'value'];
+            dynamicAttributes.forEach(attr => {
+                const attrValue = element.getAttribute(attr);
+                if (attrValue) {
+                    processAndAddText(attrValue);
+                }
+            });
+        } else {
+            attributesToExtract.forEach(attr => {
+                const attrValue = element.getAttribute(attr);
+                if (attrValue) {
+                    processAndAddText(attrValue);
+                }
+            });
         }
-        attributesToExtract.forEach(attr => {
-            const attrValue = element.getAttribute(attr);
-            if (attrValue) {
-                processAndAddText(attrValue);
-            }
-        });
 
         // 5.2 使用 TreeWalker 高效遍历其内部的所有文本节点
         const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null);

@@ -67,6 +67,67 @@
       tooltipToHide.remove();
     }, 200);
   }
+  var filterDefinitions = [
+    { id: "filter-numbers", key: "numbers", label: "\u8FC7\u6EE4\u7EAF\u6570\u5B57/\u8D27\u5E01" },
+    { id: "filter-chinese", key: "chinese", label: "\u8FC7\u6EE4\u7EAF\u4E2D\u6587" },
+    { id: "filter-contains-chinese", key: "containsChinese", label: "\u8FC7\u6EE4\u5305\u542B\u4E2D\u6587\u7684\u6587\u672C" },
+    { id: "filter-emoji-only", key: "emojiOnly", label: "\u8FC7\u6EE4\u7EAF\u8868\u60C5\u7B26\u53F7" },
+    { id: "filter-symbols", key: "symbols", label: "\u8FC7\u6EE4\u7EAF\u7B26\u53F7" },
+    { id: "filter-term", key: "termFilter", label: "\u8FC7\u6EE4\u7279\u5B9A\u672F\u8BED" },
+    { id: "filter-single-letter", key: "singleLetter", label: "\u8FC7\u6EE4\u7EAF\u5355\u4E2A\u82F1\u6587\u5B57\u6BCD" },
+    { id: "filter-repeating-chars", key: "repeatingChars", label: "\u8FC7\u6EE4\u5355\u4E00\u91CD\u590D\u5B57\u7B26" }
+  ];
+  var relatedSettingsDefinitions = [
+    { id: "show-fab", key: "showFab", label: "\u663E\u793A\u60AC\u6D6E\u6309\u94AE" },
+    { id: "show-line-numbers", key: "showLineNumbers", label: "\u663E\u793A\u884C\u53F7" },
+    { id: "show-statistics", key: "showStatistics", label: "\u663E\u793A\u7EDF\u8BA1\u4FE1\u606F" },
+    { id: "enable-debug-logging", key: "enableDebugLogging", label: "\u542F\u7528\u8C03\u8BD5\u65E5\u5FD7" }
+  ];
+  var appConfig = {
+    ui: {
+      fabAnimationDelay: 50,
+      tooltips: {
+        summary: "\u67E5\u770B\u603B\u7ED3\u6587\u672C",
+        dynamicScan: "\u52A8\u6001\u626B\u63CF",
+        staticScan: "\u9759\u6001\u626B\u63CF"
+      },
+      liveCounterPrefix: "\u5DF2\u53D1\u73B0\uFF1A",
+      modalContentHeight: "400px",
+      notificationDuration: 3e3
+    },
+    scanner: {
+      targetSelectors: [
+        "p",
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5",
+        "h6",
+        "li",
+        "td",
+        "th",
+        "pre",
+        "span",
+        "a",
+        "button",
+        "article",
+        "main",
+        "div",
+        "body *"
+      ],
+      attributesToExtract: ["placeholder", "alt", "title", "aria-label"],
+      ignoredSelectors: [
+        "script",
+        "style",
+        "noscript",
+        "code",
+        "pre",
+        "kbd",
+        ".no-translate"
+      ]
+    }
+  };
   var trustedTypePolicy = null;
   var policyCreated = false;
   function createTrustedTypePolicy() {
@@ -130,19 +191,19 @@
     const summaryFab = createSingleFab(
       "fab-summary",
       summaryIcon,
-      "\u67E5\u770B\u603B\u7ED3\u6587\u672C",
+      appConfig.ui.tooltips.summary,
       onSummary
     );
     const dynamicFab = createSingleFab(
       "fab-dynamic",
       dynamicIcon,
-      "\u52A8\u6001\u626B\u63CF",
+      appConfig.ui.tooltips.dynamicScan,
       () => onDynamicExtract(dynamicFab)
     );
     const staticFab = createSingleFab(
       "fab-static",
       translateIcon,
-      "\u9759\u6001\u626B\u63CF",
+      appConfig.ui.tooltips.staticScan,
       onStaticExtract
     );
     fabContainer.appendChild(summaryFab);
@@ -152,7 +213,7 @@
     if (isVisible) {
       setTimeout(() => {
         fabContainer.classList.add("fab-container-visible");
-      }, 50);
+      }, appConfig.ui.fabAnimationDelay);
     }
   }
   function setFabIcon(fabElement, iconSVGString) {
@@ -242,43 +303,6 @@
     });
     setValue("script_settings", JSON.stringify(newSettings));
   }
-  var config = {
-        selectors: [
-      "p",
-      "h1",
-      "h2",
-      "h3",
-      "h4",
-      "h5",
-      "h6",
-      "li",
-      "td",
-      "th",
-      "pre",
-      "span",
-      "a",
-      "button",
-      "article",
-      "main",
-      "div",
-      "body *"
-    ],
-        modalContentHeight: "400px",
-        notification: {
-      duration: 3e3
-    }
-  };
-  var config_default = config;
-  var IGNORED_SELECTORS = [
-    "script",
-    "style",
-    "noscript",
-    "code",
-    "pre",
-    "kbd",
-    ".no-translate"
-  ];
-  var ignoredSelectors_default = IGNORED_SELECTORS;
   var IGNORED_TERMS = [
     "Github",
     "Microsoft",
@@ -314,22 +338,6 @@
     "AI"
   ];
   var ignoredTerms_default = IGNORED_TERMS;
-  var filterDefinitions = [
-    { id: "filter-numbers", key: "numbers", label: "\u8FC7\u6EE4\u7EAF\u6570\u5B57/\u8D27\u5E01" },
-    { id: "filter-chinese", key: "chinese", label: "\u8FC7\u6EE4\u7EAF\u4E2D\u6587" },
-    { id: "filter-contains-chinese", key: "containsChinese", label: "\u8FC7\u6EE4\u5305\u542B\u4E2D\u6587\u7684\u6587\u672C" },
-    { id: "filter-emoji-only", key: "emojiOnly", label: "\u8FC7\u6EE4\u7EAF\u8868\u60C5\u7B26\u53F7" },
-    { id: "filter-symbols", key: "symbols", label: "\u8FC7\u6EE4\u7EAF\u7B26\u53F7" },
-    { id: "filter-term", key: "termFilter", label: "\u8FC7\u6EE4\u7279\u5B9A\u672F\u8BED" },
-    { id: "filter-single-letter", key: "singleLetter", label: "\u8FC7\u6EE4\u7EAF\u5355\u4E2A\u82F1\u6587\u5B57\u6BCD" },
-    { id: "filter-repeating-chars", key: "repeatingChars", label: "\u8FC7\u6EE4\u5355\u4E00\u91CD\u590D\u5B57\u7B26" }
-  ];
-  var relatedSettingsDefinitions = [
-    { id: "show-fab", key: "showFab", label: "\u663E\u793A\u60AC\u6D6E\u6309\u94AE" },
-    { id: "show-line-numbers", key: "showLineNumbers", label: "\u663E\u793A\u884C\u53F7" },
-    { id: "show-statistics", key: "showStatistics", label: "\u663E\u793A\u7EDF\u8BA1\u4FE1\u606F" },
-    { id: "enable-debug-logging", key: "enableDebugLogging", label: "\u542F\u7528\u8C03\u8BD5\u65E5\u5FD7" }
-  ];
   var filterConfigMap = new Map(filterDefinitions.map((def) => [def.key, def.label]));
   var ruleChecks =  new Map([
     ["numbers", {
@@ -379,7 +387,6 @@
   var extractAndProcessText = () => {
     const settings = loadSettings();
     const { filterRules } = settings;
-    const { selectors } = config_default;
     const uniqueTexts =  new Set();
     const processAndAddText2 = (rawText) => {
       if (!rawText) return;
@@ -397,22 +404,29 @@
       uniqueTexts.add(text);
     };
     processAndAddText2(document.title);
-    const targetElements = document.querySelectorAll(selectors.join(", "));
-    const ignoredSelectorString = ignoredSelectors_default.join(", ");
+    const targetElements = document.querySelectorAll(appConfig.scanner.targetSelectors.join(", "));
+    const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(", ");
     targetElements.forEach((element) => {
       if (element.closest(ignoredSelectorString)) {
         return;
       }
-      const attributesToExtract = ["placeholder", "alt", "title", "aria-label"];
+      const attributesToExtract = appConfig.scanner.attributesToExtract;
       if (element.tagName === "INPUT" && ["button", "submit", "reset"].includes(element.type)) {
-        attributesToExtract.push("value");
+        const dynamicAttributes = [...attributesToExtract, "value"];
+        dynamicAttributes.forEach((attr) => {
+          const attrValue = element.getAttribute(attr);
+          if (attrValue) {
+            processAndAddText2(attrValue);
+          }
+        });
+      } else {
+        attributesToExtract.forEach((attr) => {
+          const attrValue = element.getAttribute(attr);
+          if (attrValue) {
+            processAndAddText2(attrValue);
+          }
+        });
       }
-      attributesToExtract.forEach((attr) => {
-        const attrValue = element.getAttribute(attr);
-        if (attrValue) {
-          processAndAddText2(attrValue);
-        }
-      });
       const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null);
       while (walker.nextNode()) {
         const node = walker.currentNode;
@@ -482,7 +496,7 @@ ${result.join(",\n")}
     });
     return notification;
   }
-  function showNotification(message, { type = "info", duration = config_default.notification.duration } = {}) {
+  function showNotification(message, { type = "info", duration = appConfig.ui.notificationDuration } = {}) {
     const container = getNotificationContainer();
     const notification = createNotificationElement(message, type);
     container.appendChild(notification);
@@ -641,8 +655,8 @@ ${result.join(",\n")}
     return loadingContainer2;
   }
   function populateModalContent(modalContent) {
-    if (config_default.modalContentHeight) {
-      modalContent.style.height = config_default.modalContentHeight;
+    if (appConfig.ui.modalContentHeight) {
+      modalContent.style.height = appConfig.ui.modalContentHeight;
     }
     const placeholder2 = createPlaceholder();
     setPlaceholder(placeholder2);
@@ -1016,7 +1030,7 @@ ${result.join(",\n")}
   }
   var handleMutations = (mutations) => {
     const { filterRules } = loadSettings();
-    const ignoredSelectorString = ignoredSelectors_default.join(", ");
+    const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(", ");
     mutations.forEach((mutation) => {
       mutation.addedNodes.forEach((node) => {
         if (node.nodeType !== Node.ELEMENT_NODE) return;
@@ -1091,7 +1105,7 @@ ${result.join(",\n")}
     while (counterElement.firstChild) {
       counterElement.removeChild(counterElement.firstChild);
     }
-    const textNode = document.createTextNode("\u5DF2\u53D1\u73B0\uFF1A");
+    const textNode = document.createTextNode(appConfig.ui.liveCounterPrefix);
     const countSpan = document.createElement("span");
     countSpan.textContent = count;
     counterElement.appendChild(textNode);

@@ -7,7 +7,7 @@
 
 import { extractAndProcessText } from '../../shared/utils/textProcessor.js';
 import { loadSettings } from '../settings/logic.js';
-import IGNORED_SELECTORS from '../../shared/utils/ignoredSelectors.js';
+import { appConfig } from '../settings/config.js';
 import { shouldFilter } from '../../shared/utils/filterLogic.js'; // 导入新的通用过滤函数
 import { log } from '../../shared/utils/logger.js';
 
@@ -44,7 +44,7 @@ function processAndAddText(rawText, textSet, filterRules) {
 // --- MutationObserver 回调 ---
 const handleMutations = (mutations) => {
     const { filterRules } = loadSettings();
-    const ignoredSelectorString = IGNORED_SELECTORS.join(', ');
+    const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(', ');
 
     mutations.forEach(mutation => {
         mutation.addedNodes.forEach(node => {

@@ -9,6 +9,7 @@ import { translateIcon } from '../../../assets/icons/icon.js';
 import { dynamicIcon } from '../../../assets/icons/dynamicIcon.js';
 import { summaryIcon } from '../../../assets/icons/summaryIcon.js';
 import { showTooltip, hideTooltip } from './tooltip.js';
+import { appConfig } from '../../../features/settings/config.js';
 
 import { createSVGFromString } from '../../utils/dom.js';
 import { uiContainer } from '../uiContainer.js';
@@ -65,7 +66,7 @@ export function createFab({ callbacks, isVisible }) {
     const summaryFab = createSingleFab(
         'fab-summary',
         summaryIcon,
-        '查看总结文本', // <-- 更新文本
+        appConfig.ui.tooltips.summary,
         onSummary
     );
 
@@ -73,7 +74,7 @@ export function createFab({ callbacks, isVisible }) {
     const dynamicFab = createSingleFab(
         'fab-dynamic',
         dynamicIcon,
-        '动态扫描', // <-- 更新文本
+        appConfig.ui.tooltips.dynamicScan,
         () => onDynamicExtract(dynamicFab) // 将fab元素本身传回去，方便UI更新
     );
 
@@ -81,7 +82,7 @@ export function createFab({ callbacks, isVisible }) {
     const staticFab = createSingleFab(
         'fab-static',
         translateIcon,
-        '静态扫描', // <-- 更新文本
+        appConfig.ui.tooltips.staticScan,
         onStaticExtract
     );
 
@@ -96,7 +97,7 @@ export function createFab({ callbacks, isVisible }) {
         // 触发进入动画
         setTimeout(() => {
             fabContainer.classList.add('fab-container-visible');
-        }, 50); // 延迟以确保CSS过渡生效
+        }, appConfig.ui.fabAnimationDelay); // 延迟以确保CSS过渡生效
     }
 }
 
