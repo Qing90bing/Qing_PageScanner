@@ -17,15 +17,31 @@ async function build() {
         const stylesDir = 'src/assets/styles';
         const cssFiles = await fs.readdir(stylesDir);
 
-        // 确保先加载 themes.css，再加载其他样式文件
-        let allCssContent = await fs.readFile('src/assets/styles/themes.css', 'utf-8');
+        // 确保 themes.css 始终最先被加载，然后加载所有其他 CSS 文件
+        let allCssContent = '';
+        const themeFile = 'themes.css';
 
-        for (const file of cssFiles) {
-             if (path.extname(file) === '.css' && file !== 'themes.css') {
-                const content = await fs.readFile(path.join(stylesDir, file), 'utf-8');
-                allCssContent += `\n\n/* --- From ${file} --- */\n${content}`;
+        // 先筛选出所有 .css 文件
+        const filteredCssFiles = cssFiles.filter(file => path.extname(file) === '.css');
+
+        // 将 themes.css 移到列表的开头
+        const sortedCssFiles = filteredCssFiles.sort((a, b) => {
+            if (a === themeFile) return -1;
+            if (b === themeFile) return 1;
+            return 0;
+        });
+
+        // 依次读取和拼接文件内容
+        for (const file of sortedCssFiles) {
+            const content = await fs.readFile(path.join(stylesDir, file), 'utf-8');
+            if (allCssContent) {
+                 allCssContent += `\n\n/* --- From ${file} --- */\n`;
             }
+            allCssContent += content;
         }
+
+        // 读取确认模态框的 CSS 内容以供独立注入
+        const confirmationModalCss = await fs.readFile('src/assets/styles/confirmationModal.css', 'utf-8');
 
         // 2. 从 src/main.js 开始打包应用程序代码
         const result = await esbuild.build({
@@ -37,6 +53,8 @@ async function build() {
             define: {
                 // 将合并后的 CSS 内容作为全局常量注入到代码中
                 '__INJECTED_CSS__': JSON.stringify(allCssContent),
+                // 单独注入确认模态框的CSS
+                '__CONFIRMATION_MODAL_CSS__': JSON.stringify(confirmationModalCss),
             }
         });
 

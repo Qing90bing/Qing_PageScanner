@@ -518,6 +518,8 @@ ${result.join(",\n")}
     return container;
   }
   var copyIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M120-220v-80h80v80h-80Zm0-140v-80h80v80h-80Zm0-140v-80h80v80h-80ZM260-80v-80h80v80h-80Zm100-160q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480Zm40 240v-80h80v80h-80Zm-200 0q-33 0-56.5-23.5T120-160h80v80Zm340 0v-80h80q0 33-23.5 56.5T540-80ZM120-640q0-33 23.5-56.5T200-720v80h-80Zm420 80Z"/></svg>`;
+  var clearIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M120-40v-280q0-83 58.5-141.5T320-520h40v-320q0-33 23.5-56.5T440-920h80q33 0 56.5 23.5T600-840v320h40q83 0 141.5 58.5T840-320v280H120Zm80-80h80v-120q0-17 11.5-28.5T320-280q17 0 28.5 11.5T360-240v120h80v-120q0-17 11.5-28.5T480-280q17 0 28.5 11.5T520-240v120h80v-120q0-17 11.5-28.5T640-280q17 0 28.5 11.5T680-240v120h80v-200q0-50-35-85t-85-35H320q-50 0-85 35t-35 85v200Zm320-400v-320h-80v320h80Zm0 0h-80 80Z"/></svg>`;
+  var clearIcon_default = clearIcon;
   var loadingSpinner = `
   <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
     <path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25"/>
@@ -526,6 +528,62 @@ ${result.join(",\n")}
     </path>
   </svg>
 `;
+  var modalContainer = null;
+  var resolvePromise = null;
+  function showConfirmationModal(text, iconSVG) {
+    return new Promise((resolve) => {
+      resolvePromise = resolve;
+      if (!modalContainer) {
+        modalContainer = document.createElement("div");
+        modalContainer.className = "confirmation-modal-overlay";
+        const modalContent = document.createElement("div");
+        modalContent.className = "confirmation-modal-content";
+        const iconContainer = document.createElement("div");
+        iconContainer.className = "confirmation-modal-icon";
+        const textContainer = document.createElement("p");
+        textContainer.className = "confirmation-modal-text";
+        const buttonContainer = document.createElement("div");
+        buttonContainer.className = "confirmation-modal-buttons";
+        const confirmButton = document.createElement("button");
+        confirmButton.className = "confirmation-modal-button confirm";
+        confirmButton.textContent = "\u786E\u8BA4";
+        const cancelButton = document.createElement("button");
+        cancelButton.className = "confirmation-modal-button cancel";
+        cancelButton.textContent = "\u53D6\u6D88";
+        buttonContainer.append(cancelButton, confirmButton);
+        modalContent.append(iconContainer, textContainer, buttonContainer);
+        modalContainer.append(modalContent);
+        uiContainer.append(modalContainer);
+        confirmButton.addEventListener("click", () => handleConfirmation(true));
+        cancelButton.addEventListener("click", () => handleConfirmation(false));
+        modalContainer.addEventListener("click", (e) => {
+          if (e.target === modalContainer) {
+            handleConfirmation(false);
+          }
+        });
+      }
+      modalContainer.querySelector(".confirmation-modal-icon").replaceChildren(createSVGFromString(iconSVG));
+      modalContainer.querySelector(".confirmation-modal-text").textContent = text;
+      setTimeout(() => {
+        modalContainer.classList.add("is-visible");
+      }, 50);
+    });
+  }
+  function handleConfirmation(confirmed) {
+    if (modalContainer) {
+      modalContainer.classList.remove("is-visible");
+      setTimeout(() => {
+        modalContainer.remove();
+        modalContainer = null;
+        if (resolvePromise) {
+          resolvePromise(confirmed);
+          resolvePromise = null;
+        }
+      }, 300);
+    }
+  }
+  var warningIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m40-120 440-760 440 760H40Zm138-80h604L480-720 178-200Zm302-40q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Zm40-100Z"/></svg>`;
+  var warningIcon_default = warningIcon;
   var modalOverlay = null;
   var outputTextarea = null;
   var lineNumbersDiv = null;
@@ -584,10 +642,18 @@ ${result.join(",\n")}
     modalFooter.className = "text-extractor-modal-footer";
     statsContainer = document.createElement("div");
     statsContainer.className = "tc-stats-container";
+    const footerButtonContainer = document.createElement("div");
+    footerButtonContainer.className = "tc-footer-buttons";
+    const clearBtn = document.createElement("button");
+    clearBtn.className = "text-extractor-clear-btn tc-button";
+    clearBtn.disabled = true;
     const copyBtn = document.createElement("button");
     copyBtn.className = "text-extractor-copy-btn tc-button";
+    copyBtn.disabled = true;
+    footerButtonContainer.appendChild(clearBtn);
+    footerButtonContainer.appendChild(copyBtn);
     modalFooter.appendChild(statsContainer);
-    modalFooter.appendChild(copyBtn);
+    modalFooter.appendChild(footerButtonContainer);
     modal.appendChild(modalHeader);
     modal.appendChild(modalContent);
     modal.appendChild(modalFooter);
@@ -634,16 +700,32 @@ ${result.join(",\n")}
     placeholder.appendChild(p3);
     const copyBtnContent = createIconTitle(copyIcon, "\u590D\u5236");
     copyBtn.appendChild(copyBtnContent);
+    const clearBtnContent = createIconTitle(clearIcon_default, "\u6E05\u7A7A");
+    clearBtn.appendChild(clearBtnContent);
     closeBtn.addEventListener("click", closeModal);
     copyBtn.addEventListener("click", () => {
       const textToCopy = outputTextarea.value;
-      if (textToCopy) {
+      if (textToCopy && !copyBtn.disabled) {
         log(`\u590D\u5236\u6309\u94AE\u88AB\u70B9\u51FB\uFF0C\u590D\u5236\u4E86 ${textToCopy.length} \u4E2A\u5B57\u7B26\u3002`);
         setClipboard(textToCopy);
         showNotification("\u5DF2\u590D\u5236\u5230\u526A\u8D34\u677F", { type: "success" });
       } else {
-        log("\u590D\u5236\u6309\u94AE\u88AB\u70B9\u51FB\uFF0C\u4F46\u6CA1\u6709\u5185\u5BB9\u53EF\u590D\u5236\u3002");
+        log("\u590D\u5236\u6309\u94AE\u88AB\u70B9\u51FB\uFF0C\u4F46\u6CA1\u6709\u5185\u5BB9\u53EF\u590D\u5236\u6216\u6309\u94AE\u88AB\u7981\u7528\u3002");
         showNotification("\u6CA1\u6709\u5185\u5BB9\u53EF\u590D\u5236", { type: "info" });
+      }
+    });
+    clearBtn.addEventListener("click", async () => {
+      if (clearBtn.disabled) return;
+      const confirmed = await showConfirmationModal(
+        "\u4F60\u786E\u8BA4\u8981\u6E05\u7A7A\u5417\uFF1F\u6B64\u64CD\u4F5C\u4E0D\u53EF\u64A4\u9500\u3002",
+        warningIcon_default
+      );
+      if (confirmed) {
+        log("\u7528\u6237\u786E\u8BA4\u6E05\u7A7A\u6587\u672C\u3002");
+        updateModalContent(SHOW_PLACEHOLDER);
+        showNotification("\u5185\u5BB9\u5DF2\u6E05\u7A7A", { type: "success" });
+      } else {
+        log("\u7528\u6237\u53D6\u6D88\u4E86\u6E05\u7A7A\u64CD\u4F5C\u3002");
       }
     });
     const handleTextareaUpdate = () => {
@@ -807,24 +889,29 @@ ${result.join(",\n")}
       return;
     }
     const copyBtn = modalOverlay.querySelector(".text-extractor-copy-btn");
+    const clearBtn = modalOverlay.querySelector(".text-extractor-clear-btn");
+    const setButtonsDisabled = (disabled) => {
+      if (copyBtn) copyBtn.disabled = disabled;
+      if (clearBtn) clearBtn.disabled = disabled;
+    };
     if (content === SHOW_LOADING) {
       placeholder.style.display = "none";
       outputTextarea.parentElement.style.display = "flex";
       outputTextarea.value = "";
       showLoading();
-      if (copyBtn) copyBtn.disabled = true;
+      setButtonsDisabled(true);
     } else if (content === SHOW_PLACEHOLDER) {
       hideLoading();
       placeholder.style.display = "flex";
       outputTextarea.parentElement.style.display = "none";
-      if (copyBtn) copyBtn.disabled = true;
+      setButtonsDisabled(true);
     } else {
       hideLoading();
       placeholder.style.display = "none";
       outputTextarea.parentElement.style.display = "flex";
-      const isData = content.trim().startsWith("[");
+      const isData = content && content.trim().length > 0;
       outputTextarea.value = content;
-      if (copyBtn) copyBtn.disabled = !isData;
+      setButtonsDisabled(!isData);
       outputTextarea.readOnly = !isData;
       updateStatistics();
       updateLineNumbers();
@@ -1382,6 +1469,90 @@ ${result.join(",\n")}
   --main-line-number-text: var(--dark-color-line-number-text);
   --main-line-number-active-text: var(--dark-color-line-number-active-text);
 }
+/* --- From confirmationModal.css --- */
+/* src/assets/styles/confirmationModal.css */
+/*
+  \u6B64\u6587\u4EF6\u7684\u6837\u5F0F\u73B0\u5728\u5C06\u901A\u8FC7JS\u76F4\u63A5\u6CE8\u5165\u5230\u7EC4\u4EF6\u4E2D\uFF0C
+  \u4E0D\u518D\u4F9D\u8D56\u4E8E\u5916\u90E8CSS\u53D8\u91CF\uFF0C\u4EE5\u786E\u4FDD\u7EDD\u5BF9\u7684\u6837\u5F0F\u5C01\u88C5\u3002
+*/
+.confirmation-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--main-overlay-bg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2147483647;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.confirmation-modal-overlay.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+.confirmation-modal-content {
+  background-color: var(--main-bg);
+  color: var(--main-text);
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+  width: 320px;
+  box-shadow: 0 10px 30px var(--main-shadow);
+  transform: scale(0.95);
+  transition: transform 0.3s ease;
+}
+.confirmation-modal-overlay.is-visible .confirmation-modal-content {
+    transform: scale(1);
+}
+.confirmation-modal-icon {
+  margin-bottom: 20px;
+}
+.confirmation-modal-icon svg {
+  width: 56px;
+  height: 56px;
+  fill: var(--main-text);
+}
+.confirmation-modal-text {
+  font-size: 16px;
+  margin: 0 0 25px;
+  line-height: 1.6;
+}
+.confirmation-modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+.confirmation-modal-button {
+  border: none;
+  padding: 12px 24px;
+  border-radius: 9999px;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+.confirmation-modal-button:hover {
+    /* \u79FB\u9664\u5411\u4E0A\u79FB\u52A8\u7684\u6548\u679C */
+}
+.confirmation-modal-button.confirm {
+  background-color: var(--main-primary);
+  color: var(--main-primary-text);
+}
+.confirmation-modal-button.confirm:hover {
+  background-color: var(--main-primary-hover);
+}
+.confirmation-modal-button.cancel {
+  background-color: transparent;
+  color: var(--main-text);
+  border: 1px solid var(--main-border);
+}
+.confirmation-modal-button.cancel:hover {
+  background-color: var(--main-shadow);
+}
 /* --- From custom-select.css --- */
 /* src/assets/styles/custom-select.css */
 .custom-select-container {
@@ -1734,8 +1905,14 @@ ${result.join(",\n")}
   padding: 18px;
   border-top: 1px solid var(--main-border);
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between; /* \u4FEE\u6539\uFF1A\u8BA9\u5185\u5BB9\u4E24\u7AEF\u5BF9\u9F50 */
   align-items: center;
+}
+/* --- \u9875\u811A\u6309\u94AE\u5BB9\u5668 --- */
+.tc-footer-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* \u65B0\u589E\uFF1A\u6309\u94AE\u4E4B\u95F4\u7684\u95F4\u8DDD */
 }
 /* --- \u52A8\u6001\u626B\u63CF\u6309\u94AE\u7684\u6FC0\u6D3B\u72B6\u6001 --- */
 .text-extractor-fab.fab-dynamic.is-recording {

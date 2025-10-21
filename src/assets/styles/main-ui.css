@@ -138,8 +138,15 @@
   padding: 18px;
   border-top: 1px solid var(--main-border);
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between; /* 修改：让内容两端对齐 */
   align-items: center;
+}
+
+/* --- 页脚按钮容器 --- */
+.tc-footer-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* 新增：按钮之间的间距 */
 }
 
 /* --- 动态扫描按钮的激活状态 --- */

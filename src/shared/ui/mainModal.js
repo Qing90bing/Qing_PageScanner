@@ -13,6 +13,7 @@ import { createIconTitle } from './iconTitle.js';
 import { createSVGFromString } from '../utils/dom.js';
 import { summaryIcon } from '../../assets/icons/summaryIcon.js';
 import { copyIcon } from '../../assets/icons/copyIcon.js';
+import clearIcon from '../../assets/icons/clearIcon.js';
 import { infoIcon } from '../../assets/icons/infoIcon.js';
 import { dynamicIcon } from '../../assets/icons/dynamicIcon.js';
 import { translateIcon } from '../../assets/icons/icon.js';
@@ -21,6 +22,8 @@ import { closeIcon } from '../../assets/icons/closeIcon.js';
 import { uiContainer } from './uiContainer.js';
 import { loadSettings } from '../../features/settings/logic.js';
 import { log } from '../utils/logger.js';
+import { showConfirmationModal } from './confirmationModal.js';
+import warningIcon from '../../assets/icons/warningIcon.js';
 
 // --- 模块级变量 ---
 
@@ -116,11 +119,22 @@ export function createMainModal() {
   statsContainer = document.createElement('div');
   statsContainer.className = 'tc-stats-container';
 
+  const footerButtonContainer = document.createElement('div');
+  footerButtonContainer.className = 'tc-footer-buttons';
+
+  const clearBtn = document.createElement('button');
+  clearBtn.className = 'text-extractor-clear-btn tc-button';
+  clearBtn.disabled = true;
+
   const copyBtn = document.createElement('button');
   copyBtn.className = 'text-extractor-copy-btn tc-button';
+  copyBtn.disabled = true;
+
+  footerButtonContainer.appendChild(clearBtn);
+  footerButtonContainer.appendChild(copyBtn);
 
   modalFooter.appendChild(statsContainer);
-  modalFooter.appendChild(copyBtn);
+  modalFooter.appendChild(footerButtonContainer);
 
   modal.appendChild(modalHeader);
   modal.appendChild(modalContent);
@@ -178,21 +192,40 @@ export function createMainModal() {
   placeholder.appendChild(p2);
   placeholder.appendChild(p3);
 
-  // 更新复制按钮内容
+  // 更新按钮内容
   const copyBtnContent = createIconTitle(copyIcon, '复制');
   copyBtn.appendChild(copyBtnContent);
+  const clearBtnContent = createIconTitle(clearIcon, '清空');
+  clearBtn.appendChild(clearBtnContent);
 
   // 绑定事件
   closeBtn.addEventListener('click', closeModal);
   copyBtn.addEventListener('click', () => {
     const textToCopy = outputTextarea.value;
-    if (textToCopy) {
+    if (textToCopy && !copyBtn.disabled) {
       log(`复制按钮被点击，复制了 ${textToCopy.length} 个字符。`);
       setClipboard(textToCopy);
       showNotification('已复制到剪贴板', { type: 'success' });
     } else {
-      log('复制按钮被点击，但没有内容可复制。');
+      log('复制按钮被点击，但没有内容可复制或按钮被禁用。');
       showNotification('没有内容可复制', { type: 'info' });
+    }
+  });
+
+  clearBtn.addEventListener('click', async () => {
+    if (clearBtn.disabled) return;
+
+    const confirmed = await showConfirmationModal(
+      '你确认要清空吗？此操作不可撤销。',
+      warningIcon
+    );
+
+    if (confirmed) {
+      log('用户确认清空文本。');
+      updateModalContent(SHOW_PLACEHOLDER);
+      showNotification('内容已清空', { type: 'success' });
+    } else {
+      log('用户取消了清空操作。');
     }
   });
 
@@ -458,26 +491,32 @@ export function updateModalContent(content, shouldOpen = false) {
     }
 
     const copyBtn = modalOverlay.querySelector('.text-extractor-copy-btn');
+    const clearBtn = modalOverlay.querySelector('.text-extractor-clear-btn');
+
+    const setButtonsDisabled = (disabled) => {
+        if (copyBtn) copyBtn.disabled = disabled;
+        if (clearBtn) clearBtn.disabled = disabled;
+    };
 
     if (content === SHOW_LOADING) {
         placeholder.style.display = 'none';
         outputTextarea.parentElement.style.display = 'flex';
         outputTextarea.value = '';
         showLoading();
-        if (copyBtn) copyBtn.disabled = true;
+        setButtonsDisabled(true);
     } else if (content === SHOW_PLACEHOLDER) {
         hideLoading();
         placeholder.style.display = 'flex';
         outputTextarea.parentElement.style.display = 'none';
-        if (copyBtn) copyBtn.disabled = true;
+        setButtonsDisabled(true);
     } else {
         hideLoading();
         placeholder.style.display = 'none';
         outputTextarea.parentElement.style.display = 'flex';
 
-        const isData = content.trim().startsWith('[');
+        const isData = content && content.trim().length > 0;
         outputTextarea.value = content;
-        if (copyBtn) copyBtn.disabled = !isData;
+        setButtonsDisabled(!isData);
         outputTextarea.readOnly = !isData;
 
         updateStatistics();
