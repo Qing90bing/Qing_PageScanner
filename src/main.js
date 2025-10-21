@@ -36,5 +36,10 @@ function main() {
     initUI();
 }
 
-// 启动应用程序
-main();
+// 确保 DOM 加载完成后再执行脚本
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', main);
+} else {
+    // DOMContentLoaded 已经触发
+    main();
+}

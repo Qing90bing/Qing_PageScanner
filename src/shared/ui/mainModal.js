@@ -498,21 +498,23 @@ export function updateModalContent(content, shouldOpen = false) {
         if (clearBtn) clearBtn.disabled = disabled;
     };
 
+    const textareaContainer = outputTextarea.parentElement;
+
     if (content === SHOW_LOADING) {
-        placeholder.style.display = 'none';
-        outputTextarea.parentElement.style.display = 'flex';
+        placeholder.classList.remove('is-visible');
+        textareaContainer.classList.add('is-visible');
         outputTextarea.value = '';
         showLoading();
         setButtonsDisabled(true);
     } else if (content === SHOW_PLACEHOLDER) {
         hideLoading();
-        placeholder.style.display = 'flex';
-        outputTextarea.parentElement.style.display = 'none';
+        textareaContainer.classList.remove('is-visible');
+        placeholder.classList.add('is-visible');
         setButtonsDisabled(true);
     } else {
         hideLoading();
-        placeholder.style.display = 'none';
-        outputTextarea.parentElement.style.display = 'flex';
+        placeholder.classList.remove('is-visible');
+        textareaContainer.classList.add('is-visible');
 
         const isData = content && content.trim().length > 0;
         outputTextarea.value = content;

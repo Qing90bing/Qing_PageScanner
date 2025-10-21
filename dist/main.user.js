@@ -894,21 +894,22 @@ ${result.join(",\n")}
       if (copyBtn) copyBtn.disabled = disabled;
       if (clearBtn) clearBtn.disabled = disabled;
     };
+    const textareaContainer = outputTextarea.parentElement;
     if (content === SHOW_LOADING) {
-      placeholder.style.display = "none";
-      outputTextarea.parentElement.style.display = "flex";
+      placeholder.classList.remove("is-visible");
+      textareaContainer.classList.add("is-visible");
       outputTextarea.value = "";
       showLoading();
       setButtonsDisabled(true);
     } else if (content === SHOW_PLACEHOLDER) {
       hideLoading();
-      placeholder.style.display = "flex";
-      outputTextarea.parentElement.style.display = "none";
+      textareaContainer.classList.remove("is-visible");
+      placeholder.classList.add("is-visible");
       setButtonsDisabled(true);
     } else {
       hideLoading();
-      placeholder.style.display = "none";
-      outputTextarea.parentElement.style.display = "flex";
+      placeholder.classList.remove("is-visible");
+      textareaContainer.classList.add("is-visible");
       const isData = content && content.trim().length > 0;
       outputTextarea.value = content;
       setButtonsDisabled(!isData);
@@ -1843,11 +1844,13 @@ ${result.join(",\n")}
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease, visibility 0.3s;
+  pointer-events: none; /* \u65B0\u589E\uFF1A\u9ED8\u8BA4\u4E0D\u62E6\u622A\u9F20\u6807\u4E8B\u4EF6 */
 }
 /* \u65B0\u589E\uFF1A\u53EF\u89C1\u72B6\u6001 */
 .text-extractor-modal-overlay.is-visible {
   opacity: 1;
   visibility: visible;
+  pointer-events: auto; /* \u65B0\u589E\uFF1A\u53EF\u89C1\u65F6\u6062\u590D\u4E8B\u4EF6\u62E6\u622A */
 }
 .text-extractor-modal {
   background-color: var(--main-bg);
@@ -1900,6 +1903,21 @@ ${result.join(",\n")}
   overflow-y: auto;
   flex-grow: 1;
   display: flex; /* \u65B0\u589E\uFF1A\u542F\u7528flexbox\u5E03\u5C40 */
+  position: relative; /* \u65B0\u589E\uFF1A\u4E3A\u5B50\u5143\u7D20\u7684\u7EDD\u5BF9\u5B9A\u4F4D\u63D0\u4F9B\u57FA\u51C6 */
+}
+/* \u65B0\u589E\uFF1A\u6587\u672C\u533A\u57DF\u5BB9\u5668\u7684\u52A8\u753B\u6837\u5F0F */
+.tc-textarea-container {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+    width: 100%; /* \u786E\u4FDD\u5B83\u586B\u6EE1\u7236\u5BB9\u5668 */
+    height: 100%;
+    display: flex; /* \u4FDD\u6301\u5176flex\u5E03\u5C40 */
+    box-sizing: border-box; /* \u65B0\u589E\uFF1A\u4FEE\u6B63\u5C3A\u5BF8\u8BA1\u7B97 */
+}
+.tc-textarea-container.is-visible {
+    opacity: 1;
+    visibility: visible;
 }
 .text-extractor-modal-footer {
   padding: 18px;
@@ -2094,18 +2112,26 @@ ${result.join(",\n")}
 /* --- From placeholder.css --- */
 /* src/assets/styles/placeholder.css */
 #modal-placeholder {
-    display: none; /* \u9ED8\u8BA4\u9690\u85CF */
+    display: flex; /* \u6539\u4E3Aflex\u4EE5\u4FBF\u5E94\u7528flex\u5C5E\u6027 */
+    opacity: 0; /* \u521D\u59CB\u900F\u660E */
+    visibility: hidden; /* \u521D\u59CB\u9690\u85CF */
+    transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out; /* \u8FC7\u6E21\u6548\u679C */
     flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
     color: var(--text-color-secondary);
     padding: 20px;
-    /* height: 100%; */ /* \u79FB\u9664\u6B64\u884C\u4EE5\u907F\u514D\u5F71\u54CD\u7236\u5BB9\u5668\u9AD8\u5EA6 */
     box-sizing: border-box;
-    /* \u786E\u4FDD\u5360\u4F4D\u7B26\u672C\u8EAB\u4E5F\u80FD\u586B\u6EE1\u5176\u5BB9\u5668\u7A7A\u95F4 */
     width: 100%;
     height: 100%;
+    position: absolute; /* \u8BA9\u5B83\u548C\u6587\u672C\u533A\u57DF\u91CD\u53E0 */
+    top: 0;
+    left: 0;
+}
+#modal-placeholder.is-visible {
+    opacity: 1; /* \u53EF\u89C1\u72B6\u6001 */
+    visibility: visible;
 }
 .placeholder-icon {
     color: var(--text-color-secondary); /* \u5C06\u989C\u8272\u8BBE\u7F6E\u79FB\u5230\u8FD9\u91CC */
@@ -2310,5 +2336,9 @@ ${result.join(",\n")}
     initialize();
     initUI();
   }
-  main();
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", main);
+  } else {
+    main();
+  }
 })();
