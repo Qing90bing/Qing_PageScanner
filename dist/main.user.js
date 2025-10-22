@@ -796,6 +796,7 @@ ${result.join(",\n")}
   var loadingContainer = null;
   var canvasContext = null;
   var currentLineMap = [];
+  var currentMode = "quick-scan";
   var SHOW_PLACEHOLDER = "::show_placeholder::";
   var SHOW_LOADING = "::show_loading::";
   function setModalOverlay(element) {
@@ -822,7 +823,85 @@ ${result.join(",\n")}
   function setCurrentLineMap(map) {
     currentLineMap = map;
   }
-  // src/shared/ui/mainModal/modalLayout.js
+  function setCurrentMode(mode) {
+    currentMode = mode;
+  }
+  var isRecording = false;
+  var sessionTexts =  new Set();
+  var observer = null;
+  var onTextAddedCallback = null;
+  function processAndAddText(rawText, textSet, filterRules) {
+    if (!rawText || typeof rawText !== "string") return false;
+    const normalizedText = rawText.normalize("NFC");
+    let textForFiltering = normalizedText.replace(/(\r\n|\n|\r)+/g, "\n").trim();
+    if (textForFiltering === "") return false;
+    const filterReason = shouldFilter(textForFiltering, filterRules);
+    if (filterReason) {
+      log(`\u6587\u672C\u5DF2\u8FC7\u6EE4: "${textForFiltering}" (\u539F\u56E0: ${filterReason})`);
+      return false;
+    }
+    const originalSize = textSet.size;
+    textSet.add(normalizedText.replace(/(\r\n|\n|\r)+/g, "\n"));
+    return textSet.size > originalSize;
+  }
+  var handleMutations = (mutations) => {
+    const { filterRules } = loadSettings();
+    const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(", ");
+    mutations.forEach((mutation) => {
+      mutation.addedNodes.forEach((node) => {
+        if (node.nodeType !== Node.ELEMENT_NODE) return;
+        if (node.closest(ignoredSelectorString)) return;
+        const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
+        while (walker.nextNode()) {
+          const textNode = walker.currentNode;
+          if (processAndAddText(textNode.nodeValue, sessionTexts, filterRules)) {
+            const newCount = sessionTexts.size;
+            log(`[\u4F1A\u8BDD\u626B\u63CF] \u65B0\u589E: "${textNode.nodeValue.trim()}" (\u5F53\u524D\u603B\u6570: ${newCount})`);
+            if (onTextAddedCallback) {
+              onTextAddedCallback(newCount);
+            }
+          }
+        }
+      });
+    });
+  };
+  var start = (onUpdate) => {
+    if (isRecording) return;
+    log("\u4F1A\u8BDD\u626B\u63CF\uFF1A\u521D\u59CB\u626B\u63CF\u5F00\u59CB...");
+    isRecording = true;
+    sessionTexts.clear();
+    onTextAddedCallback = onUpdate || null;
+    const initialTexts = extractAndProcessText();
+    const { filterRules } = loadSettings();
+    initialTexts.forEach((text) => {
+      if (processAndAddText(text, sessionTexts, filterRules)) {
+        const newCount = sessionTexts.size;
+        log(`[\u4F1A\u8BDD\u626B\u63CF] \u65B0\u589E: "${text.trim()}" (\u5F53\u524D\u603B\u6570: ${newCount})`);
+        if (onTextAddedCallback) {
+          onTextAddedCallback(newCount);
+        }
+      }
+    });
+    observer = new MutationObserver(handleMutations);
+    observer.observe(document.body, { childList: true, subtree: true });
+  };
+  var stop = () => {
+    if (!isRecording) return [];
+    log("[\u4F1A\u8BDD\u626B\u63CF] \u5DF2\u505C\u6B62\u3002");
+    if (observer) {
+      observer.disconnect();
+      observer = null;
+    }
+    isRecording = false;
+    onTextAddedCallback = null;
+    return getSessionTexts();
+  };
+  var isSessionRecording = () => isRecording;
+  var getSessionTexts = () => Array.from(sessionTexts);
+  function clearSessionTexts() {
+    sessionTexts.clear();
+    log("[\u4F1A\u8BDD\u626B\u63CF] \u4F1A\u8BDD\u6570\u636E\u5DF2\u6E05\u7A7A\u3002");
+  }
   function createModalLayout() {
     const modalOverlay2 = document.createElement("div");
     modalOverlay2.className = "text-extractor-modal-overlay";
@@ -1022,7 +1101,7 @@ ${result.join(",\n")}
   }
   var warningIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m40-120 440-760 440 760H40Zm138-80h604L480-720 178-200Zm302-40q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Zm40-100Z"/></svg>`;
   var warningIcon_default = warningIcon;
-  function populateModalFooter(modalFooter, updateContentCallback) {
+  function populateModalFooter(modalFooter, updateContentCallback, clearSessionCallback) {
     const statsContainer2 = document.createElement("div");
     statsContainer2.className = "tc-stats-container";
     setStatsContainer(statsContainer2);
@@ -1060,8 +1139,14 @@ ${result.join(",\n")}
         warningIcon_default
       );
       if (confirmed) {
-        log("\u7528\u6237\u786E\u8BA4\u6E05\u7A7A\u6587\u672C\u3002");
-        updateContentCallback(SHOW_PLACEHOLDER);
+        if (currentMode === "session-scan" && clearSessionCallback) {
+          log("\u7528\u6237\u786E\u8BA4\u6E05\u7A7A\u4F1A\u8BDD\u626B\u63CF\u6587\u672C\uFF0C\u6B63\u5728\u8C03\u7528\u56DE\u8C03...");
+          clearSessionCallback();
+          updateContentCallback(SHOW_PLACEHOLDER, true, "session-scan");
+        } else {
+          log("\u7528\u6237\u786E\u8BA4\u6E05\u7A7A\u5FEB\u901F\u626B\u63CF\u6587\u672C\u3002");
+          updateContentCallback(SHOW_PLACEHOLDER, false, "quick-scan");
+        }
         showNotification(t("contentCleared"), { type: "success" });
       } else {
         log("\u7528\u6237\u53D6\u6D88\u4E86\u6E05\u7A7A\u64CD\u4F5C\u3002");
@@ -1189,12 +1274,12 @@ ${result.join(",\n")}
       closeModal();
     }
   };
-  function createMainModal() {
+  function createMainModal({ clearSessionCallback }) {
     if (modalOverlay) return;
     const { modalHeader, modalContent, modalFooter } = createModalLayout();
     populateModalHeader(modalHeader, closeModal);
     populateModalContent(modalContent);
-    populateModalFooter(modalFooter, updateModalContent);
+    populateModalFooter(modalFooter, updateModalContent, clearSessionCallback);
     initializeLineNumbers();
     const handleTextareaUpdate = () => {
       updateLineNumbers();
@@ -1214,11 +1299,11 @@ ${result.join(",\n")}
       return;
     }
     log("\u6B63\u5728\u6253\u5F00\u4E3B\u6A21\u6001\u6846...");
-    updateModalContent(SHOW_LOADING, true);
+    updateModalContent(SHOW_LOADING, true, "quick-scan");
     setTimeout(() => {
       const extractedTexts = extractAndProcessText();
       const formattedText = formatTextsForTranslation(extractedTexts);
-      updateModalContent(formattedText);
+      updateModalContent(formattedText, false, "quick-scan");
       const copyBtn = modalOverlay.querySelector(".text-extractor-copy-btn");
       if (copyBtn) {
         copyBtn.disabled = !formattedText;
@@ -1234,17 +1319,20 @@ ${result.join(",\n")}
       modalOverlay.removeEventListener("keydown", handleKeyDown);
     }
   }
-  function updateModalContent(content, shouldOpen = false) {
+  function updateModalContent(content, shouldOpen = false, mode = "quick-scan") {
     if (!modalOverlay) {
       console.error("\u6A21\u6001\u6846\u5C1A\u672A\u521D\u59CB\u5316\u3002");
       return;
     }
+    setCurrentMode(mode);
     const copyBtn = modalOverlay.querySelector(".text-extractor-copy-btn");
     const clearBtn = modalOverlay.querySelector(".text-extractor-clear-btn");
     const textareaContainer = outputTextarea.parentElement;
     const setButtonsDisabled = (disabled) => {
       if (copyBtn) copyBtn.disabled = disabled;
-      if (clearBtn) clearBtn.disabled = disabled;
+      if (clearBtn) {
+        clearBtn.disabled = isSessionRecording() || disabled;
+      }
     };
     if (content === SHOW_LOADING) {
       placeholder.classList.remove("is-visible");
@@ -1289,78 +1377,6 @@ ${result.join(",\n")}
   function handleQuickScanClick() {
     openModal();
   }
-  var isRecording = false;
-  var sessionTexts =  new Set();
-  var observer = null;
-  var onTextAddedCallback = null;
-  function processAndAddText(rawText, textSet, filterRules) {
-    if (!rawText || typeof rawText !== "string") return false;
-    const normalizedText = rawText.normalize("NFC");
-    let textForFiltering = normalizedText.replace(/(\r\n|\n|\r)+/g, "\n").trim();
-    if (textForFiltering === "") return false;
-    const filterReason = shouldFilter(textForFiltering, filterRules);
-    if (filterReason) {
-      log(`\u6587\u672C\u5DF2\u8FC7\u6EE4: "${textForFiltering}" (\u539F\u56E0: ${filterReason})`);
-      return false;
-    }
-    const originalSize = textSet.size;
-    textSet.add(normalizedText.replace(/(\r\n|\n|\r)+/g, "\n"));
-    return textSet.size > originalSize;
-  }
-  var handleMutations = (mutations) => {
-    const { filterRules } = loadSettings();
-    const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(", ");
-    mutations.forEach((mutation) => {
-      mutation.addedNodes.forEach((node) => {
-        if (node.nodeType !== Node.ELEMENT_NODE) return;
-        if (node.closest(ignoredSelectorString)) return;
-        const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
-        while (walker.nextNode()) {
-          const textNode = walker.currentNode;
-          if (processAndAddText(textNode.nodeValue, sessionTexts, filterRules)) {
-            const newCount = sessionTexts.size;
-            log(`[\u4F1A\u8BDD\u626B\u63CF] \u65B0\u589E: "${textNode.nodeValue.trim()}" (\u5F53\u524D\u603B\u6570: ${newCount})`);
-            if (onTextAddedCallback) {
-              onTextAddedCallback(newCount);
-            }
-          }
-        }
-      });
-    });
-  };
-  var start = (onUpdate) => {
-    if (isRecording) return;
-    log("\u4F1A\u8BDD\u626B\u63CF\uFF1A\u521D\u59CB\u626B\u63CF\u5F00\u59CB...");
-    isRecording = true;
-    sessionTexts.clear();
-    onTextAddedCallback = onUpdate || null;
-    const initialTexts = extractAndProcessText();
-    const { filterRules } = loadSettings();
-    initialTexts.forEach((text) => {
-      if (processAndAddText(text, sessionTexts, filterRules)) {
-        const newCount = sessionTexts.size;
-        log(`[\u4F1A\u8BDD\u626B\u63CF] \u65B0\u589E: "${text.trim()}" (\u5F53\u524D\u603B\u6570: ${newCount})`);
-        if (onTextAddedCallback) {
-          onTextAddedCallback(newCount);
-        }
-      }
-    });
-    observer = new MutationObserver(handleMutations);
-    observer.observe(document.body, { childList: true, subtree: true });
-  };
-  var stop = () => {
-    if (!isRecording) return [];
-    log("[\u4F1A\u8BDD\u626B\u63CF] \u5DF2\u505C\u6B62\u3002");
-    if (observer) {
-      observer.disconnect();
-      observer = null;
-    }
-    isRecording = false;
-    onTextAddedCallback = null;
-    return getSessionTexts();
-  };
-  var isSessionRecording = () => isRecording;
-  var getSessionTexts = () => Array.from(sessionTexts);
   var counterElement = null;
   function createCounterElement() {
     if (counterElement) return;
@@ -1394,10 +1410,10 @@ ${result.join(",\n")}
   function handleSummaryClick() {
     const results = getSessionTexts();
     if (results.length === 0) {
-      updateModalContent(SHOW_PLACEHOLDER, true);
+      updateModalContent(SHOW_PLACEHOLDER, true, "session-scan");
     } else {
       const formattedText = formatTextsForTranslation(results);
-      updateModalContent(formattedText, true);
+      updateModalContent(formattedText, true, "session-scan");
     }
   }
   function handleDynamicExtractClick(dynamicFab) {
@@ -1422,7 +1438,9 @@ ${result.join(",\n")}
   }
   function initUI() {
     const settings = loadSettings();
-    createMainModal();
+    createMainModal({
+      clearSessionCallback: clearSessionTexts
+    });
     createFab({
       callbacks: {
         onStaticExtract: handleQuickScanClick,

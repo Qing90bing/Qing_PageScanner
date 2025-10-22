@@ -17,10 +17,10 @@ import { simpleTemplate } from '../../shared/utils/templating.js';
 export function handleSummaryClick() {
     const results = sessionExtractor.getSessionTexts();
     if (results.length === 0) {
-        updateModalContent(SHOW_PLACEHOLDER, true);
+        updateModalContent(SHOW_PLACEHOLDER, true, 'session-scan');
     } else {
         const formattedText = formatTextsForTranslation(results);
-        updateModalContent(formattedText, true);
+        updateModalContent(formattedText, true, 'session-scan');
     }
 }
 

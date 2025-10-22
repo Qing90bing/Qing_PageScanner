@@ -14,6 +14,7 @@ import { log } from '../utils/logger.js';
 import { t } from '../i18n/index.js';
 import { simpleTemplate } from '../utils/templating.js';
 import * as state from './mainModal/modalState.js';
+import { isSessionRecording } from '../../features/session-scan/logic.js';
 
 // 重新导出常量以保持API兼容性
 export { SHOW_PLACEHOLDER, SHOW_LOADING } from './mainModal/modalState.js';
@@ -37,17 +38,19 @@ const handleKeyDown = (event) => {
 /**
  * @public
  * @description 创建并初始化主模态框。只在第一次调用时创建 DOM。
+ * @param {object} callbacks - 包含回调函数的对象。
+ * @param {Function} callbacks.clearSessionCallback - 用于清空会话扫描数据的回调。
  */
-export function createMainModal() {
+export function createMainModal({ clearSessionCallback }) {
     if (state.modalOverlay) return; // 防止重复创建
 
     // 1. 创建基础布局
     const { modalHeader, modalContent, modalFooter } = createModalLayout();
 
-    // 2. 填充各个部分，并传入回调函数以解决循环依赖
+    // 2. 填充各个部分，并传入回调函数
     populateModalHeader(modalHeader, closeModal);
     populateModalContent(modalContent);
-    populateModalFooter(modalFooter, updateModalContent);
+    populateModalFooter(modalFooter, updateModalContent, clearSessionCallback);
 
     // 3. 初始化行号功能
     initializeLineNumbers();
@@ -80,13 +83,13 @@ export function openModal() {
     }
     log('正在打开主模态框...');
 
-    updateModalContent(state.SHOW_LOADING, true);
+    updateModalContent(state.SHOW_LOADING, true, 'quick-scan');
 
     setTimeout(() => {
         const extractedTexts = extractAndProcessText();
         const formattedText = formatTextsForTranslation(extractedTexts);
 
-        updateModalContent(formattedText);
+        updateModalContent(formattedText, false, 'quick-scan');
 
         const copyBtn = state.modalOverlay.querySelector('.text-extractor-copy-btn');
         if (copyBtn) {
@@ -115,12 +118,15 @@ export function closeModal() {
  * @description 更新模态框中的文本内容，并可选择是否打开它。
  * @param {string} content - 要显示在文本区域的新内容。
  * @param {boolean} [shouldOpen=false] - 是否在更新后打开模态框。
+ * @param {string} [mode='quick-scan'] - 模态框的模式 ('quick-scan' 或 'session-scan')。
  */
-export function updateModalContent(content, shouldOpen = false) {
+export function updateModalContent(content, shouldOpen = false, mode = 'quick-scan') {
     if (!state.modalOverlay) {
         console.error("模态框尚未初始化。");
         return;
     }
+
+    state.setCurrentMode(mode);
 
     const copyBtn = state.modalOverlay.querySelector('.text-extractor-copy-btn');
     const clearBtn = state.modalOverlay.querySelector('.text-extractor-clear-btn');
@@ -128,7 +134,10 @@ export function updateModalContent(content, shouldOpen = false) {
 
     const setButtonsDisabled = (disabled) => {
         if (copyBtn) copyBtn.disabled = disabled;
-        if (clearBtn) clearBtn.disabled = disabled;
+        if (clearBtn) {
+            // 如果会话正在录制，则强制禁用清空按钮
+            clearBtn.disabled = isSessionRecording() || disabled;
+        }
     };
 
     if (content === state.SHOW_LOADING) {

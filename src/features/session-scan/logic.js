@@ -1,4 +1,4 @@
-// src/core/sessionExtractor.js
+// src/features/session-scan/logic.js
 
 /**
  * @module core/sessionExtractor
@@ -10,6 +10,7 @@ import { loadSettings } from '../settings/logic.js';
 import { appConfig } from '../settings/config.js';
 import { shouldFilter } from '../../shared/utils/filterLogic.js'; // 导入新的通用过滤函数
 import { log } from '../../shared/utils/logger.js';
+import { updateModalContent, SHOW_PLACEHOLDER } from '../../shared/ui/mainModal.js';
 
 // --- 模块级变量 ---
 let isRecording = false;
@@ -113,3 +114,11 @@ export const stop = () => {
 export const isSessionRecording = () => isRecording;
 
 export const getSessionTexts = () => Array.from(sessionTexts);
+
+/**
+ * @description 清空会话期间收集的所有文本。
+ */
+export function clearSessionTexts() {
+    sessionTexts.clear();
+    log('[会话扫描] 会话数据已清空。');
+}

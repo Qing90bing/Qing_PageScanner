@@ -21,8 +21,9 @@ import { SHOW_PLACEHOLDER } from './modalState.js';
  * @description 填充模态框页脚元素。
  * @param {HTMLElement} modalFooter - 模态框页脚的容器元素。
  * @param {Function} updateContentCallback - 需要更新内容时调用的回调函数。
+ * @param {Function} clearSessionCallback - 清空会话扫描数据的回调函数。
  */
-export function populateModalFooter(modalFooter, updateContentCallback) {
+export function populateModalFooter(modalFooter, updateContentCallback, clearSessionCallback) {
     const statsContainer = document.createElement('div');
     statsContainer.className = 'tc-stats-container';
     state.setStatsContainer(statsContainer);
@@ -71,8 +72,14 @@ export function populateModalFooter(modalFooter, updateContentCallback) {
         );
 
         if (confirmed) {
-            log('用户确认清空文本。');
-            updateContentCallback(SHOW_PLACEHOLDER);
+            if (state.currentMode === 'session-scan' && clearSessionCallback) {
+                log('用户确认清空会话扫描文本，正在调用回调...');
+                clearSessionCallback();
+                updateContentCallback(SHOW_PLACEHOLDER, true, 'session-scan');
+            } else {
+                log('用户确认清空快速扫描文本。');
+                updateContentCallback(SHOW_PLACEHOLDER, false, 'quick-scan');
+            }
             showNotification(t('contentCleared'), { type: 'success' });
         } else {
             log('用户取消了清空操作。');

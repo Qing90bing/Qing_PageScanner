@@ -16,6 +16,7 @@ export let loadingContainer = null;
 // --- 状态与上下文 ---
 export let canvasContext = null; // 用于文本宽度计算的Canvas上下文
 export let currentLineMap = []; // 当前的行号映射关系
+export let currentMode = 'quick-scan'; // 模态框的当前模式, 默认为 'quick-scan'
 
 // --- 公共常量 ---
 export const SHOW_PLACEHOLDER = '::show_placeholder::'; // 特殊标识符
@@ -31,3 +32,4 @@ export function setPlaceholder(element) { placeholder = element; }
 export function setLoadingContainer(element) { loadingContainer = element; }
 export function setCanvasContext(context) { canvasContext = context; }
 export function setCurrentLineMap(map) { currentLineMap = map; }
+export function setCurrentMode(mode) { currentMode = mode; }
