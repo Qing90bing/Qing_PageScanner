@@ -18,6 +18,8 @@ import { log } from '../../shared/utils/logger.js';
  * 这也确保了在未来版本中添加新设置项时，老用户能平滑过渡。
  */
 const defaultSettings = {
+  // 语言设置, 'auto' 表示自动检测
+  language: 'auto',
   // 主题设置, 可选值: 'light', 'dark', 'system'
   theme: 'system',
   // 是否显示悬浮按钮

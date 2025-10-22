@@ -1,6 +1,6 @@
 // src/ui/components/liveCounter.js
 import { uiContainer } from '../../shared/ui/uiContainer.js';
-import { appConfig } from '../settings/config.js';
+import { t } from '../../shared/i18n/index.js';
 
 let counterElement = null;
 
@@ -49,7 +49,7 @@ export function updateLiveCounter(count) {
         counterElement.removeChild(counterElement.firstChild);
     }
 
-    const textNode = document.createTextNode(appConfig.ui.liveCounterPrefix);
+    const textNode = document.createTextNode(t('discovered'));
     const countSpan = document.createElement('span');
     countSpan.textContent = count;
 

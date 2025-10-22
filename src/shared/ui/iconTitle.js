@@ -13,19 +13,20 @@ export function createIconTitle(iconSVG, text) {
     container.style.alignItems = 'center';
     container.style.gap = '8px'; // 图标和文字的间距
 
-    const iconWrapper = document.createElement('span');
-    iconWrapper.style.display = 'flex';
-    iconWrapper.style.alignItems = 'center';
+    if (iconSVG) {
+        const iconWrapper = document.createElement('span');
+        iconWrapper.style.display = 'flex';
+        iconWrapper.style.alignItems = 'center';
 
-    const svgElement = createSVGFromString(iconSVG);
-    if (svgElement) {
-        iconWrapper.appendChild(svgElement);
+        const svgElement = createSVGFromString(iconSVG);
+        if (svgElement) {
+            iconWrapper.appendChild(svgElement);
+            container.appendChild(iconWrapper);
+        }
     }
 
     const textNode = document.createElement('span');
     textNode.textContent = text;
-
-    container.appendChild(iconWrapper);
     container.appendChild(textNode);
 
     return container;

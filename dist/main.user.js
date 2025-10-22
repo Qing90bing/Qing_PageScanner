@@ -17,6 +17,7 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
+// @grant        GM_unregisterMenuCommand
 // ==/UserScript==
 
 
@@ -67,21 +68,294 @@
       tooltipToHide.remove();
     }, 200);
   }
+  var themeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 32.5-156t88-127Q256-817 330-848.5T488-880q80 0 151 27.5t124.5 76q53.5 48.5 85 115T880-518q0 115-70 176.5T640-280h-74q-9 0-12.5 5t-3.5 11q0 12 15 34.5t15 51.5q0 50-27.5 74T480-80Zm0-400Zm-220 40q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120-160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm200 0q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120 160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17ZM480-160q9 0 14.5-5t5.5-13q0-14-15-33t-15-57q0-42 29-67t71-25h70q66 0 113-38.5T800-518q0-121-92.5-201.5T488-800q-136 0-232 93t-96 227q0 133 93.5 226.5T480-160Z"/></svg>`;
+  var languageIcon_default = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-155.5t86-127Q252-817 325-848.5T480-880q83 0 155.5 31.5t127 86q54.5 54.5 86 127T880-480q0 82-31.5 155t-86 127.5q-54.5 54.5-127 86T480-80Zm0-82q26-36 45-75t31-83H404q12 44 31 83t45 75Zm-104-16q-18-33-31.5-68.5T322-320H204q29 50 72.5 87t99.5 55Zm208 0q56-18 99.5-55t72.5-87H638q-9 38-22.5 73.5T584-178ZM170-400h136q-3-20-4.5-39.5T300-480q0-21 1.5-40.5T306-560H170q-5 20-7.5 39.5T160-480q0 21 2.5 40.5T170-400Zm216 0h188q3-20 4.5-39.5T580-480q0-21-1.5-40.5T574-560H386q-3 20-4.5 39.5T380-480q0 21 1.5 40.5T386-400Zm268 0h136q5-20 7.5-39.5T800-480q0-21-2.5-40.5T790-560H654q3 20 4.5 39.5T660-480q0 21-1.5 40.5T654-400Zm-16-240h118q-29-50-72.5-87T584-782q18 33 31.5 68.5T638-640Zm-234 0h152q-12-44-31-83t-45-75q-26 36-45 75t-31 83Zm-200 0h118q9-38 22.5-73.5T376-782q-56 18-99.5 55T204-640Z"/></svg>`;
+  var en_default = {
+    settings: "Settings",
+    theme: "Theme",
+    language: "Language",
+    quickScan: "Quick Scan",
+    sessionScan: "Session Scan",
+    scan: "Scan",
+    stop: "Stop",
+    resume: "Resume",
+    clear: "Clear",
+    copy: "Copy",
+    copiedToClipboard: "Copied to clipboard!",
+    noTextSelected: "No text selected",
+    textExtractionResults: "Extracted Text",
+    totalCharacters: "Total characters",
+    totalLines: "Total lines",
+    settingsSaved: "Settings saved!",
+    save: "Save",
+    language_en: "English",
+    language_zh_CN: "\u7B80\u4F53\u4E2D\u6587",
+    language_zh_TW: "\u7E41\u9AD4\u4E2D\u6587",
+    theme_light: "Light",
+    theme_dark: "Dark",
+    theme_system: "System",
+    discovered: "Discovered: ",
+    startSessionScan: "Start dynamic scan session",
+    stopSessionScan: "Stop dynamic scan session",
+    scanFinished: "Scan finished, {count} texts found",
+    sessionScanStarted: "Session scan started",
+    modalInitError: "Modal not initialized.",
+    quickScanFinished: "Quick scan finished, {count} texts found",
+    noSummaryText: "No summary text available",
+    placeholder_click: "Click the ",
+    placeholder_dynamicScan: "[Dynamic Scan]",
+    placeholder_startNewScanSession: " button to start a new scanning session",
+    placeholder_staticScan: "[Static Scan]",
+    placeholder_performOneTimeScan: " button for a one-time quick extraction",
+    nothingToCopy: "Nothing to copy",
+    clearConfirmation: "Are you sure you want to clear the content? This action cannot be undone.",
+    contentCleared: "Content cleared",
+    stats_lines: "Lines",
+    stats_chars: "Chars",
+    relatedSettings: "Related Settings",
+    filterRules: "Content Filtering Rules",
+    filter_numbers: "Filter numbers/currency",
+    filter_chinese: "Filter pure Chinese",
+    filter_contains_chinese: "Filter text containing Chinese",
+    filter_emoji_only: "Filter emoji-only text",
+    filter_symbols: "Filter symbol-only text",
+    filter_term: "Filter specific terms",
+    filter_single_letter: "Filter single English letters",
+    filter_repeating_chars: "Filter single repeating characters",
+    setting_show_fab: "Show floating button",
+    setting_show_line_numbers: "Show line numbers",
+    setting_show_statistics: "Show statistics",
+    setting_enable_debug_logging: "Enable debug logging"
+  };
+  var zh_CN_default = {
+    settings: "\u8BBE\u7F6E",
+    theme: "\u754C\u9762\u4E3B\u9898",
+    language: "\u8BED\u8A00\u8BBE\u7F6E",
+    quickScan: "\u5FEB\u901F\u626B\u63CF",
+    sessionScan: "\u4F1A\u8BDD\u626B\u63CF",
+    scan: "\u626B\u63CF",
+    stop: "\u505C\u6B62",
+    resume: "\u7EE7\u7EED",
+    clear: "\u6E05\u7A7A",
+    copy: "\u590D\u5236",
+    copiedToClipboard: "\u5DF2\u590D\u5236\u5230\u526A\u8D34\u677F!",
+    noTextSelected: "\u672A\u9009\u62E9\u6587\u672C",
+    textExtractionResults: "\u63D0\u53D6\u7684\u6587\u672C",
+    totalCharacters: "\u603B\u5B57\u6570",
+    totalLines: "\u603B\u884C\u6570",
+    settingsSaved: "\u8BBE\u7F6E\u5DF2\u4FDD\u5B58\uFF01",
+    save: "\u4FDD\u5B58",
+    language_en: "English",
+    language_zh_CN: "\u7B80\u4F53\u4E2D\u6587",
+    language_zh_TW: "\u7E41\u9AD4\u4E2D\u6587",
+    theme_light: "\u6D45\u8272",
+    theme_dark: "\u6DF1\u8272",
+    theme_system: "\u8DDF\u968F\u7CFB\u7EDF",
+    discovered: "\u5DF2\u53D1\u73B0\uFF1A",
+    startSessionScan: "\u5F00\u59CB\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD",
+    stopSessionScan: "\u505C\u6B62\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD",
+    scanFinished: "\u626B\u63CF\u7ED3\u675F\uFF0C\u5171\u53D1\u73B0 {count} \u6761\u6587\u672C",
+    sessionScanStarted: "\u4F1A\u8BDD\u626B\u63CF\u5DF2\u5F00\u59CB",
+    modalInitError: "\u6A21\u6001\u6846\u5C1A\u672A\u521D\u59CB\u5316\u3002",
+    quickScanFinished: "\u5FEB\u6377\u626B\u63CF\u5B8C\u6210\uFF0C\u53D1\u73B0 {count} \u6761\u6587\u672C",
+    noSummaryText: "\u5F53\u524D\u6CA1\u6709\u603B\u7ED3\u6587\u672C",
+    placeholder_click: "\u70B9\u51FB ",
+    placeholder_dynamicScan: "[\u52A8\u6001\u626B\u63CF]",
+    placeholder_startNewScanSession: " \u6309\u94AE\u5F00\u59CB\u4E00\u4E2A\u65B0\u7684\u626B\u63CF\u4F1A\u8BDD",
+    placeholder_staticScan: "[\u9759\u6001\u626B\u63CF]",
+    placeholder_performOneTimeScan: " \u6309\u94AE\u53EF\u8FDB\u884C\u4E00\u6B21\u6027\u7684\u5FEB\u6377\u63D0\u53D6",
+    nothingToCopy: "\u6CA1\u6709\u5185\u5BB9\u53EF\u590D\u5236",
+    clearConfirmation: "\u4F60\u786E\u8BA4\u8981\u6E05\u7A7A\u5417\uFF1F\u6B64\u64CD\u4F5C\u4E0D\u53EF\u64A4\u9500\u3002",
+    contentCleared: "\u5185\u5BB9\u5DF2\u6E05\u7A7A",
+    stats_lines: "\u884C",
+    stats_chars: "\u5B57\u7B26\u6570",
+    relatedSettings: "\u76F8\u5173\u8BBE\u7F6E",
+    filterRules: "\u5185\u5BB9\u8FC7\u6EE4\u89C4\u5219",
+    filter_numbers: "\u8FC7\u6EE4\u7EAF\u6570\u5B57/\u8D27\u5E01",
+    filter_chinese: "\u8FC7\u6EE4\u7EAF\u4E2D\u6587",
+    filter_contains_chinese: "\u8FC7\u6EE4\u5305\u542B\u4E2D\u6587\u7684\u6587\u672C",
+    filter_emoji_only: "\u8FC7\u6EE4\u7EAF\u8868\u60C5\u7B26\u53F7",
+    filter_symbols: "\u8FC7\u6EE4\u7EAF\u7B26\u53F7",
+    filter_term: "\u8FC7\u6EE4\u7279\u5B9A\u672F\u8BED",
+    filter_single_letter: "\u8FC7\u6EE4\u7EAF\u5355\u4E2A\u82F1\u6587\u5B57\u6BCD",
+    filter_repeating_chars: "\u8FC7\u6EE4\u5355\u4E00\u91CD\u590D\u5B57\u7B26",
+    setting_show_fab: "\u663E\u793A\u60AC\u6D6E\u6309\u94AE",
+    setting_show_line_numbers: "\u663E\u793A\u884C\u53F7",
+    setting_show_statistics: "\u663E\u793A\u7EDF\u8BA1\u4FE1\u606F",
+    setting_enable_debug_logging: "\u542F\u7528\u8C03\u8BD5\u65E5\u5FD7"
+  };
+  var zh_TW_default = {
+    settings: "\u8A2D\u5B9A",
+    theme: "\u4ECB\u9762\u4E3B\u984C",
+    language: "\u8A9E\u8A00\u8A2D\u5B9A",
+    quickScan: "\u5FEB\u901F\u6383\u63CF",
+    sessionScan: "\u6703\u8A71\u6383\u63CF",
+    scan: "\u6383\u63CF",
+    stop: "\u505C\u6B62",
+    resume: "\u7E7C\u7E8C",
+    clear: "\u6E05\u7A7A",
+    copy: "\u8907\u88FD",
+    copiedToClipboard: "\u5DF2\u8907\u88FD\u5230\u526A\u8CBC\u7C3F\uFF01",
+    noTextSelected: "\u672A\u9078\u64C7\u6587\u672C",
+    textExtractionResults: "\u63D0\u53D6\u7684\u6587\u672C",
+    totalCharacters: "\u7E3D\u5B57\u6578",
+    totalLines: "\u7E3D\u884C\u6578",
+    settingsSaved: "\u8A2D\u5B9A\u5DF2\u5132\u5B58\uFF01",
+    save: "\u5132\u5B58",
+    language_en: "English",
+    language_zh_CN: "\u7B80\u4F53\u4E2D\u6587",
+    language_zh_TW: "\u7E41\u9AD4\u4E2D\u6587",
+    theme_light: "\u6DFA\u8272",
+    theme_dark: "\u6DF1\u8272",
+    theme_system: "\u8DDF\u96A8\u7CFB\u7D71",
+    discovered: "\u5DF2\u767C\u73FE\uFF1A",
+    startSessionScan: "\u958B\u59CB\u52D5\u614B\u6383\u63CF\u6703\u8A71",
+    stopSessionScan: "\u505C\u6B62\u52D5\u614B\u6383\u63CF\u6703\u8A71",
+    scanFinished: "\u6383\u63CF\u7D50\u675F\uFF0C\u5171\u767C\u73FE {count} \u689D\u6587\u672C",
+    sessionScanStarted: "\u6703\u8A71\u6383\u63CF\u5DF2\u958B\u59CB",
+    modalInitError: "\u6A21\u614B\u6846\u5C1A\u672A\u521D\u59CB\u5316\u3002",
+    quickScanFinished: "\u5FEB\u6377\u6383\u63CF\u5B8C\u6210\uFF0C\u767C\u73FE {count} \u689D\u6587\u672C",
+    noSummaryText: "\u7576\u524D\u6C92\u6709\u7E3D\u7D50\u6587\u672C",
+    placeholder_click: "\u9EDE\u64CA ",
+    placeholder_dynamicScan: "[\u52D5\u614B\u6383\u63CF]",
+    placeholder_startNewScanSession: " \u6309\u9215\u958B\u59CB\u4E00\u500B\u65B0\u7684\u6383\u63CF\u6703\u8A71",
+    placeholder_staticScan: "[\u975C\u614B\u6383\u63CF]",
+    placeholder_performOneTimeScan: " \u6309\u9215\u53EF\u9032\u884C\u4E00\u6B21\u6027\u7684\u5FEB\u6377\u63D0\u53D6",
+    nothingToCopy: "\u6C92\u6709\u5167\u5BB9\u53EF\u8907\u88FD",
+    clearConfirmation: "\u4F60\u78BA\u8A8D\u8981\u6E05\u7A7A\u55CE\uFF1F\u6B64\u64CD\u4F5C\u4E0D\u53EF\u64A4\u92B7\u3002",
+    contentCleared: "\u5167\u5BB9\u5DF2\u6E05\u7A7A",
+    stats_lines: "\u884C",
+    stats_chars: "\u5B57\u7B26\u6578",
+    relatedSettings: "\u76F8\u95DC\u8A2D\u5B9A",
+    filterRules: "\u5167\u5BB9\u904E\u6FFE\u898F\u5247",
+    filter_numbers: "\u904E\u6FFE\u7D14\u6578\u5B57/\u8CA8\u5E63",
+    filter_chinese: "\u904E\u6FFE\u7D14\u4E2D\u6587",
+    filter_contains_chinese: "\u904E\u6FFE\u5305\u542B\u4E2D\u6587\u7684\u6587\u672C",
+    filter_emoji_only: "\u904E\u6FFE\u7D14\u8868\u60C5\u7B26\u865F",
+    filter_symbols: "\u904E\u6FFE\u7D14\u7B26\u865F",
+    filter_term: "\u904E\u6FFE\u7279\u5B9A\u8853\u8A9E",
+    filter_single_letter: "\u904E\u6FFE\u7D14\u55AE\u500B\u82F1\u6587\u5B57\u6BCD",
+    filter_repeating_chars: "\u904E\u6FFE\u55AE\u4E00\u91CD\u8907\u5B57\u7B26",
+    setting_show_fab: "\u986F\u793A\u61F8\u6D6E\u6309\u9215",
+    setting_show_line_numbers: "\u986F\u793A\u884C\u865F",
+    setting_show_statistics: "\u986F\u793A\u7D71\u8A08\u8CC7\u8A0A",
+    setting_enable_debug_logging: "\u555F\u7528\u5075\u932F\u65E5\u8A8C"
+  };
+  var events = {};
+  function on(eventName, callback) {
+    if (!events[eventName]) {
+      events[eventName] = [];
+    }
+    events[eventName].push(callback);
+    return () => {
+      events[eventName] = events[eventName].filter((cb) => cb !== callback);
+    };
+  }
+  function fire(eventName, data) {
+    if (events[eventName]) {
+      events[eventName].forEach((callback) => {
+        try {
+          callback(data);
+        } catch (error) {
+          console.error(`\u5728 '${eventName}' \u4E8B\u4EF6\u7684\u56DE\u8C03\u4E2D\u53D1\u751F\u9519\u8BEF:`, error);
+        }
+      });
+    }
+  }
+  var LOG_PREFIX = "[\u6587\u672C\u63D0\u53D6\u811A\u672C-Debug]";
+  var isDebugEnabled = false;
+  function updateLoggerState(isEnabled) {
+    isDebugEnabled = isEnabled;
+  }
+  function log(...args) {
+    if (isDebugEnabled) {
+      console.log(LOG_PREFIX, ...args);
+    }
+  }
+  var translations = {
+    en: en_default,
+    "zh-CN": zh_CN_default,
+    "zh-TW": zh_TW_default
+  };
+  var currentLanguage = "en";
+  var currentTranslations = translations.en;
+  function setLanguage(lang) {
+    if (translations[lang]) {
+      currentLanguage = lang;
+      currentTranslations = translations[lang];
+      log(`\u8BED\u8A00\u5DF2\u5207\u6362\u81F3: ${lang}`);
+      fire("languageChanged", lang);
+    } else {
+      log(`\u8BED\u8A00 '${lang}' \u4E0D\u5B58\u5728\uFF0C\u56DE\u9000\u5230 'en'\u3002`, "warn");
+      currentLanguage = "en";
+      currentTranslations = translations.en;
+    }
+  }
+  function t(key) {
+    return currentTranslations[key] || key;
+  }
+  function getAvailableLanguages() {
+    return [
+      { value: "en", label: translations.en.language_en },
+      { value: "zh-CN", label: translations["zh-CN"].language_zh_CN },
+      { value: "zh-TW", label: translations["zh-TW"].language_zh_TW }
+    ];
+  }
+  function initI18n(savedLang) {
+    let langToSet = savedLang;
+    if (!langToSet || langToSet === "auto") {
+      const browserLang = navigator.language;
+      if (browserLang.startsWith("zh-CN")) {
+        langToSet = "zh-CN";
+      } else if (browserLang.startsWith("zh-TW") || browserLang.startsWith("zh-HK") || browserLang.startsWith("zh")) {
+        langToSet = "zh-TW";
+      } else {
+        langToSet = "en";
+      }
+      log(`\u672A\u627E\u5230\u5DF2\u4FDD\u5B58\u7684\u8BED\u8A00\u8BBE\u7F6E\uFF0C\u6839\u636E\u6D4F\u89C8\u5668\u8BED\u8A00 (${browserLang}) \u81EA\u52A8\u9009\u62E9: ${langToSet}`);
+    } else {
+      log(`\u52A0\u8F7D\u5DF2\u4FDD\u5B58\u7684\u8BED\u8A00\u8BBE\u7F6E: ${savedLang}`);
+    }
+    setLanguage(langToSet);
+  }
+  var selectSettingsDefinitions = [
+    {
+      id: "theme-select",
+      key: "theme",
+      label: "theme",
+      icon: themeIcon,
+      options: [
+        { value: "light", label: "theme_light" },
+        { value: "dark", label: "theme_dark" },
+        { value: "system", label: "theme_system" }
+      ]
+    },
+    {
+      id: "language-select",
+      key: "language",
+      label: "language",
+      icon: languageIcon_default,
+      options: getAvailableLanguages().map((lang) => ({
+        value: lang.value,
+        label: `language_${lang.value.replace("-", "_")}`
+      }))
+    }
+  ];
   var filterDefinitions = [
-    { id: "filter-numbers", key: "numbers", label: "\u8FC7\u6EE4\u7EAF\u6570\u5B57/\u8D27\u5E01" },
-    { id: "filter-chinese", key: "chinese", label: "\u8FC7\u6EE4\u7EAF\u4E2D\u6587" },
-    { id: "filter-contains-chinese", key: "containsChinese", label: "\u8FC7\u6EE4\u5305\u542B\u4E2D\u6587\u7684\u6587\u672C" },
-    { id: "filter-emoji-only", key: "emojiOnly", label: "\u8FC7\u6EE4\u7EAF\u8868\u60C5\u7B26\u53F7" },
-    { id: "filter-symbols", key: "symbols", label: "\u8FC7\u6EE4\u7EAF\u7B26\u53F7" },
-    { id: "filter-term", key: "termFilter", label: "\u8FC7\u6EE4\u7279\u5B9A\u672F\u8BED" },
-    { id: "filter-single-letter", key: "singleLetter", label: "\u8FC7\u6EE4\u7EAF\u5355\u4E2A\u82F1\u6587\u5B57\u6BCD" },
-    { id: "filter-repeating-chars", key: "repeatingChars", label: "\u8FC7\u6EE4\u5355\u4E00\u91CD\u590D\u5B57\u7B26" }
+    { id: "filter-numbers", key: "numbers", label: "filter_numbers" },
+    { id: "filter-chinese", key: "chinese", label: "filter_chinese" },
+    { id: "filter-contains-chinese", key: "containsChinese", label: "filter_contains_chinese" },
+    { id: "filter-emoji-only", key: "emojiOnly", label: "filter_emoji_only" },
+    { id: "filter-symbols", key: "symbols", label: "filter_symbols" },
+    { id: "filter-term", key: "termFilter", label: "filter_term" },
+    { id: "filter-single-letter", key: "singleLetter", label: "filter_single_letter" },
+    { id: "filter-repeating-chars", key: "repeatingChars", label: "filter_repeating_chars" }
   ];
   var relatedSettingsDefinitions = [
-    { id: "show-fab", key: "showFab", label: "\u663E\u793A\u60AC\u6D6E\u6309\u94AE" },
-    { id: "show-line-numbers", key: "showLineNumbers", label: "\u663E\u793A\u884C\u53F7" },
-    { id: "show-statistics", key: "showStatistics", label: "\u663E\u793A\u7EDF\u8BA1\u4FE1\u606F" },
-    { id: "enable-debug-logging", key: "enableDebugLogging", label: "\u542F\u7528\u8C03\u8BD5\u65E5\u5FD7" }
+    { id: "show-fab", key: "showFab", label: "setting_show_fab" },
+    { id: "show-line-numbers", key: "showLineNumbers", label: "setting_show_line_numbers" },
+    { id: "show-statistics", key: "showStatistics", label: "setting_show_statistics" },
+    { id: "enable-debug-logging", key: "enableDebugLogging", label: "setting_enable_debug_logging" }
   ];
   var appConfig = {
     ui: {
@@ -228,6 +502,9 @@
   var registerMenuCommand = (caption, commandFunc) => {
     return GM_registerMenuCommand(caption, commandFunc);
   };
+  var unregisterMenuCommand = (commandId) => {
+    GM_unregisterMenuCommand(commandId);
+  };
   var setClipboard = (text) => {
     GM_setClipboard(text, "text");
   };
@@ -237,17 +514,8 @@
   var setValue = (key, value) => {
     return GM_setValue(key, value);
   };
-  var LOG_PREFIX = "[\u6587\u672C\u63D0\u53D6\u811A\u672C-Debug]";
-  var isDebugEnabled = false;
-  function updateLoggerState(isEnabled) {
-    isDebugEnabled = isEnabled;
-  }
-  function log(...args) {
-    if (isDebugEnabled) {
-      console.log(LOG_PREFIX, ...args);
-    }
-  }
   var defaultSettings = {
+    language: "auto",
     theme: "system",
     showFab: true,
     showLineNumbers: true,
@@ -513,6 +781,13 @@ ${result.join(",\n")}
       });
     }
   }
+  var simpleTemplate = (template, values) => {
+    if (!template) return "";
+    return template.replace(/{(\w+)}/g, (match, key) => {
+      return values.hasOwnProperty(key) ? values[key] : match;
+    });
+  };
+  // src/shared/ui/mainModal/modalState.js
   var modalOverlay = null;
   var outputTextarea = null;
   var lineNumbersDiv = null;
@@ -547,6 +822,7 @@ ${result.join(",\n")}
   function setCurrentLineMap(map) {
     currentLineMap = map;
   }
+  // src/shared/ui/mainModal/modalLayout.js
   function createModalLayout() {
     const modalOverlay2 = document.createElement("div");
     modalOverlay2.className = "text-extractor-modal-overlay";
@@ -572,16 +848,18 @@ ${result.join(",\n")}
     container.style.display = "flex";
     container.style.alignItems = "center";
     container.style.gap = "8px";
-    const iconWrapper = document.createElement("span");
-    iconWrapper.style.display = "flex";
-    iconWrapper.style.alignItems = "center";
-    const svgElement = createSVGFromString(iconSVG);
-    if (svgElement) {
-      iconWrapper.appendChild(svgElement);
+    if (iconSVG) {
+      const iconWrapper = document.createElement("span");
+      iconWrapper.style.display = "flex";
+      iconWrapper.style.alignItems = "center";
+      const svgElement = createSVGFromString(iconSVG);
+      if (svgElement) {
+        iconWrapper.appendChild(svgElement);
+        container.appendChild(iconWrapper);
+      }
     }
     const textNode = document.createElement("span");
     textNode.textContent = text;
-    container.appendChild(iconWrapper);
     container.appendChild(textNode);
     return container;
   }
@@ -591,7 +869,7 @@ ${result.join(",\n")}
     const closeBtn = document.createElement("span");
     closeBtn.className = "tc-close-button text-extractor-modal-close";
     closeBtn.appendChild(createSVGFromString(closeIcon));
-    const titleElement = createIconTitle(summaryIcon, "\u63D0\u53D6\u7684\u6587\u672C");
+    const titleElement = createIconTitle(summaryIcon, t("textExtractionResults"));
     titleContainer.appendChild(titleElement);
     modalHeader.appendChild(titleContainer);
     modalHeader.appendChild(closeBtn);
@@ -613,31 +891,31 @@ ${result.join(",\n")}
     const infoIconSVG = createSVGFromString(infoIcon);
     if (infoIconSVG) placeholderIconDiv.appendChild(infoIconSVG);
     const p1 = document.createElement("p");
-    p1.textContent = "\u5F53\u524D\u6CA1\u6709\u603B\u7ED3\u6587\u672C";
+    p1.textContent = t("noSummaryText");
     const p2 = document.createElement("p");
     p2.className = "placeholder-actions";
-    p2.append("\u70B9\u51FB ");
+    p2.append(t("placeholder_click"));
     const span2 = document.createElement("span");
     span2.className = "placeholder-action-icon";
     const dynamicIconSVG = createSVGFromString(dynamicIcon);
     if (dynamicIconSVG) span2.appendChild(dynamicIconSVG);
     p2.appendChild(span2);
     const strong2 = document.createElement("strong");
-    strong2.textContent = "[\u52A8\u6001\u626B\u63CF]";
+    strong2.textContent = t("placeholder_dynamicScan");
     p2.appendChild(strong2);
-    p2.append(" \u6309\u94AE\u5F00\u59CB\u4E00\u4E2A\u65B0\u7684\u626B\u63CF\u4F1A\u8BDD");
+    p2.append(t("placeholder_startNewScanSession"));
     const p3 = document.createElement("p");
     p3.className = "placeholder-actions";
-    p3.append("\u70B9\u51FB ");
+    p3.append(t("placeholder_click"));
     const span3 = document.createElement("span");
     span3.className = "placeholder-action-icon";
     const translateIconSVG = createSVGFromString(translateIcon);
     if (translateIconSVG) span3.appendChild(translateIconSVG);
     p3.appendChild(span3);
     const strong3 = document.createElement("strong");
-    strong3.textContent = "[\u9759\u6001\u626B\u63CF]";
+    strong3.textContent = t("placeholder_staticScan");
     p3.appendChild(strong3);
-    p3.append(" \u6309\u94AE\u53EF\u8FDB\u884C\u4E00\u6B21\u6027\u7684\u5FEB\u6377\u63D0\u53D6");
+    p3.append(t("placeholder_performOneTimeScan"));
     placeholder2.appendChild(placeholderIconDiv);
     placeholder2.appendChild(p1);
     placeholder2.appendChild(p2);
@@ -756,9 +1034,9 @@ ${result.join(",\n")}
     const copyBtn = document.createElement("button");
     copyBtn.className = "text-extractor-copy-btn tc-button";
     copyBtn.disabled = true;
-    const copyBtnContent = createIconTitle(copyIcon, "\u590D\u5236");
+    const copyBtnContent = createIconTitle(copyIcon, t("copy"));
     copyBtn.appendChild(copyBtnContent);
-    const clearBtnContent = createIconTitle(clearIcon_default, "\u6E05\u7A7A");
+    const clearBtnContent = createIconTitle(clearIcon_default, t("clear"));
     clearBtn.appendChild(clearBtnContent);
     footerButtonContainer.appendChild(clearBtn);
     footerButtonContainer.appendChild(copyBtn);
@@ -769,22 +1047,22 @@ ${result.join(",\n")}
       if (textToCopy && !copyBtn.disabled) {
         log(`\u590D\u5236\u6309\u94AE\u88AB\u70B9\u51FB\uFF0C\u590D\u5236\u4E86 ${textToCopy.length} \u4E2A\u5B57\u7B26\u3002`);
         setClipboard(textToCopy);
-        showNotification("\u5DF2\u590D\u5236\u5230\u526A\u8D34\u677F", { type: "success" });
+        showNotification(t("copiedToClipboard"), { type: "success" });
       } else {
         log("\u590D\u5236\u6309\u94AE\u88AB\u70B9\u51FB\uFF0C\u4F46\u6CA1\u6709\u5185\u5BB9\u53EF\u590D\u5236\u6216\u6309\u94AE\u88AB\u7981\u7528\u3002");
-        showNotification("\u6CA1\u6709\u5185\u5BB9\u53EF\u590D\u5236", { type: "info" });
+        showNotification(t("nothingToCopy"), { type: "info" });
       }
     });
     clearBtn.addEventListener("click", async () => {
       if (clearBtn.disabled) return;
       const confirmed = await showConfirmationModal(
-        "\u4F60\u786E\u8BA4\u8981\u6E05\u7A7A\u5417\uFF1F\u6B64\u64CD\u4F5C\u4E0D\u53EF\u64A4\u9500\u3002",
+        t("clearConfirmation"),
         warningIcon_default
       );
       if (confirmed) {
         log("\u7528\u6237\u786E\u8BA4\u6E05\u7A7A\u6587\u672C\u3002");
         updateContentCallback(SHOW_PLACEHOLDER);
-        showNotification("\u5185\u5BB9\u5DF2\u6E05\u7A7A", { type: "success" });
+        showNotification(t("contentCleared"), { type: "success" });
       } else {
         log("\u7528\u6237\u53D6\u6D88\u4E86\u6E05\u7A7A\u64CD\u4F5C\u3002");
       }
@@ -795,7 +1073,7 @@ ${result.join(",\n")}
     const text = outputTextarea.value;
     const lineCount = text.split("\n").length;
     const charCount = text.length;
-    statsContainer.textContent = `\u884C: ${lineCount} | \u5B57\u7B26\u6570: ${charCount}`;
+    statsContainer.textContent = `${t("stats_lines")}: ${lineCount} | ${t("stats_chars")}: ${charCount}`;
   }
   function calcStringLines(sentence, width) {
     if (!width || !canvasContext) return 1;
@@ -932,7 +1210,7 @@ ${result.join(",\n")}
   }
   function openModal() {
     if (!modalOverlay) {
-      console.error("\u6A21\u6001\u6846\u5C1A\u672A\u521D\u59CB\u5316\u3002");
+      console.error(t("modalInitError"));
       return;
     }
     log("\u6B63\u5728\u6253\u5F00\u4E3B\u6A21\u6001\u6846...");
@@ -945,7 +1223,8 @@ ${result.join(",\n")}
       if (copyBtn) {
         copyBtn.disabled = !formattedText;
       }
-      showNotification(`\u5FEB\u6377\u626B\u63CF\u5B8C\u6210\uFF0C\u53D1\u73B0 ${extractedTexts.length} \u6761\u6587\u672C`, { type: "success" });
+      const notificationText = simpleTemplate(t("quickScanFinished"), { count: extractedTexts.length });
+      showNotification(notificationText, { type: "success" });
     }, 50);
   }
   function closeModal() {
@@ -1105,7 +1384,7 @@ ${result.join(",\n")}
     while (counterElement.firstChild) {
       counterElement.removeChild(counterElement.firstChild);
     }
-    const textNode = document.createTextNode(appConfig.ui.liveCounterPrefix);
+    const textNode = document.createTextNode(t("discovered"));
     const countSpan = document.createElement("span");
     countSpan.textContent = count;
     counterElement.appendChild(textNode);
@@ -1126,14 +1405,15 @@ ${result.join(",\n")}
       const results = stop();
       setFabIcon(dynamicFab, dynamicIcon);
       dynamicFab.classList.remove("is-recording");
-      dynamicFab.title = "\u5F00\u59CB\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD";
+      dynamicFab.title = t("startSessionScan");
       hideLiveCounter();
-      showNotification(`\u626B\u63CF\u7ED3\u675F\uFF0C\u5171\u53D1\u73B0 ${results.length} \u6761\u6587\u672C`, { type: "success" });
+      const notificationText = simpleTemplate(t("scanFinished"), { count: results.length });
+      showNotification(notificationText, { type: "success" });
     } else {
       setFabIcon(dynamicFab, stopIcon);
       dynamicFab.classList.add("is-recording");
-      dynamicFab.title = "\u505C\u6B62\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD";
-      showNotification("\u4F1A\u8BDD\u626B\u63CF\u5DF2\u5F00\u59CB", { type: "info" });
+      dynamicFab.title = t("stopSessionScan");
+      showNotification(t("sessionScanStarted"), { type: "info" });
       showLiveCounter();
       setTimeout(() => {
         start(updateLiveCounter);
@@ -1199,7 +1479,12 @@ ${result.join(",\n")}
       this.container.appendChild(this.trigger);
       this.container.appendChild(this.optionsContainer);
       this.parentElement.appendChild(this.container);
-      const initialOption = this.options.find((opt) => opt.value === this.currentValue);
+      let initialOption = this.options.find((opt) => opt.value === this.currentValue);
+      if (!initialOption && this.options.length > 0) {
+        console.warn(`CustomSelect: \u521D\u59CB\u503C "${this.currentValue}" \u5728\u9009\u9879\u4E2D\u672A\u627E\u5230\u3002\u5C06\u9ED8\u8BA4\u9009\u62E9\u7B2C\u4E00\u4E2A\u9009\u9879\u3002`);
+        initialOption = this.options[0];
+        this.currentValue = initialOption.value;
+      }
       this.populateOptions();
       this.updateSelectedContent(initialOption);
     }
@@ -1208,6 +1493,7 @@ ${result.join(",\n")}
         const optionEl = document.createElement("div");
         optionEl.className = "custom-select-option";
         optionEl.dataset.value = option.value;
+        optionEl.setAttribute("role", "option");
         if (option.value === this.currentValue) {
           optionEl.classList.add("selected");
         }
@@ -1307,15 +1593,18 @@ ${result.join(",\n")}
     header.appendChild(closeBtn);
     const content = document.createElement("div");
     content.className = "settings-panel-content";
-    const themeItem = document.createElement("div");
-    themeItem.className = "setting-item";
-    const themeTitleContainer = document.createElement("div");
-    themeTitleContainer.id = "theme-setting-title-container";
-    themeTitleContainer.className = "setting-title-container";
-    const selectWrapper = document.createElement("div");
-    selectWrapper.id = "custom-select-wrapper";
-    themeItem.appendChild(themeTitleContainer);
-    themeItem.appendChild(selectWrapper);
+    selectSettingsDefinitions.forEach((definition) => {
+      const selectItem = document.createElement("div");
+      selectItem.className = "setting-item";
+      const titleContainer2 = document.createElement("div");
+      titleContainer2.id = `${definition.id}-title-container`;
+      titleContainer2.className = "setting-title-container";
+      const selectWrapper = document.createElement("div");
+      selectWrapper.id = `${definition.id}-wrapper`;
+      selectItem.appendChild(titleContainer2);
+      selectItem.appendChild(selectWrapper);
+      content.appendChild(selectItem);
+    });
     const relatedItem = document.createElement("div");
     relatedItem.className = "setting-item";
     const relatedTitleContainer = document.createElement("div");
@@ -1323,7 +1612,7 @@ ${result.join(",\n")}
     relatedTitleContainer.className = "setting-title-container";
     relatedItem.appendChild(relatedTitleContainer);
     relatedSettingsDefinitions.forEach((setting) => {
-      const checkboxElement = createCheckbox(setting.id, setting.label, settings[setting.key]);
+      const checkboxElement = createCheckbox(setting.id, t(setting.label), settings[setting.key]);
       relatedItem.appendChild(checkboxElement);
     });
     const filterItem = document.createElement("div");
@@ -1333,10 +1622,9 @@ ${result.join(",\n")}
     filterTitleContainer.className = "setting-title-container";
     filterItem.appendChild(filterTitleContainer);
     filterDefinitions.forEach((filter) => {
-      const checkboxElement = createCheckbox(filter.id, filter.label, settings.filterRules[filter.key]);
+      const checkboxElement = createCheckbox(filter.id, t(filter.label), settings.filterRules[filter.key]);
       filterItem.appendChild(checkboxElement);
     });
-    content.appendChild(themeItem);
     content.appendChild(relatedItem);
     content.appendChild(filterItem);
     const footer = document.createElement("div");
@@ -1351,12 +1639,12 @@ ${result.join(",\n")}
     return modal;
   }
   var settingsIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z"/></svg>`;
-  var themeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 32.5-156t88-127Q256-817 330-848.5T488-880q80 0 151 27.5t124.5 76q53.5 48.5 85 115T880-518q0 115-70 176.5T640-280h-74q-9 0-12.5 5t-3.5 11q0 12 15 34.5t15 51.5q0 50-27.5 74T480-80Zm0-400Zm-220 40q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120-160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm200 0q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120 160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17ZM480-160q9 0 14.5-5t5.5-13q0-14-15-33t-15-57q0-42 29-67t71-25h70q66 0 113-38.5T800-518q0-121-92.5-201.5T488-800q-136 0-232 93t-96 227q0 133 93.5 226.5T480-160Z"/></svg>`;
   var filterIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M440-160q-17 0-28.5-11.5T400-200v-240L168-736q-15-20-4.5-42t36.5-22h560q26 0 36.5 22t-4.5 42L560-440v240q0 17-11.5 28.5T520-160h-80Zm40-308 198-252H282l198 252Zm0 0Z"/></svg>`;
   var saveIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z"/></svg>`;
   var relatedSettingsIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M320-280h320v-400H320v400Zm80-80v-240h160v240H400Zm40-120h80v-80h-80v80ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/></svg>`;
   var settingsPanel = null;
-  var themeSelectComponent = null;
+  var selectComponents = {};
+  var settingsMenuCommandId = null;
   var handleKeyDown2 = (event) => {
     if (event.key === "Escape") {
       hideSettingsPanel();
@@ -1376,27 +1664,32 @@ ${result.join(",\n")}
     settingsPanel.appendChild(panelModal);
     uiContainer.appendChild(settingsPanel);
     setTimeout(() => {
-      if (settingsPanel) {
-        settingsPanel.classList.add("is-visible");
-      }
+      if (settingsPanel) settingsPanel.classList.add("is-visible");
     }, 10);
     const titleContainer = settingsPanel.querySelector("#settings-panel-title-container");
-    titleContainer.appendChild(createIconTitle(settingsIcon, "\u811A\u672C\u8BBE\u7F6E"));
-    const themeTitleContainer = settingsPanel.querySelector("#theme-setting-title-container");
-    themeTitleContainer.appendChild(createIconTitle(themeIcon, "\u754C\u9762\u4E3B\u9898"));
+    titleContainer.appendChild(createIconTitle(settingsIcon, t("settings")));
+    selectComponents = {};
+    selectSettingsDefinitions.forEach((definition) => {
+      const titleContainer2 = settingsPanel.querySelector(`#${definition.id}-title-container`);
+      titleContainer2.appendChild(createIconTitle(definition.icon, t(definition.label)));
+      const selectWrapper = settingsPanel.querySelector(`#${definition.id}-wrapper`);
+      const options = definition.options.map((opt) => ({
+        ...opt,
+        label: t(opt.label),
+        ...definition.key === "theme" && {
+          "system": systemThemeIcon,
+          "light": lightThemeIcon,
+          "dark": darkThemeIcon
+        }[opt.value]
+      }));
+      selectComponents[definition.key] = new CustomSelect(selectWrapper, options, currentSettings[definition.key]);
+    });
     const relatedTitleContainer = settingsPanel.querySelector("#related-setting-title-container");
-    relatedTitleContainer.appendChild(createIconTitle(relatedSettingsIcon, "\u76F8\u5173\u8BBE\u7F6E"));
+    relatedTitleContainer.appendChild(createIconTitle(relatedSettingsIcon, t("relatedSettings")));
     const filterTitleContainer = settingsPanel.querySelector("#filter-setting-title-container");
-    filterTitleContainer.appendChild(createIconTitle(filterIcon, "\u5185\u5BB9\u8FC7\u6EE4\u89C4\u5219"));
-    const selectWrapper = settingsPanel.querySelector("#custom-select-wrapper");
-    const themeOptions = [
-      { value: "system", label: "\u8DDF\u968F\u7CFB\u7EDF", icon: systemThemeIcon },
-      { value: "light", label: "\u6D45\u8272\u6A21\u5F0F", icon: lightThemeIcon },
-      { value: "dark", label: "\u6DF1\u8272\u6A21\u5F0F", icon: darkThemeIcon }
-    ];
-    themeSelectComponent = new CustomSelect(selectWrapper, themeOptions, currentSettings.theme);
+    filterTitleContainer.appendChild(createIconTitle(filterIcon, t("filterRules")));
     const saveBtn = settingsPanel.querySelector("#save-settings-btn");
-    saveBtn.appendChild(createIconTitle(saveIcon, "\u4FDD\u5B58"));
+    saveBtn.appendChild(createIconTitle(saveIcon, t("save")));
     settingsPanel.querySelector(".settings-panel-close").addEventListener("click", hideSettingsPanel);
     saveBtn.addEventListener("click", handleSave);
     settingsPanel.addEventListener("keydown", handleKeyDown2);
@@ -1411,52 +1704,58 @@ ${result.join(",\n")}
         if (settingsPanel) {
           settingsPanel.remove();
           settingsPanel = null;
+          selectComponents = {};
         }
       }, 300);
     }
   }
   function handleSave() {
     log("\u6B63\u5728\u4FDD\u5B58\u8BBE\u7F6E...");
-    const newTheme = themeSelectComponent.getValue();
+    const newSettings = {};
+    for (const key in selectComponents) {
+      newSettings[key] = selectComponents[key].getValue();
+    }
     const newFilterRules = {};
-    const newRelatedSettings = {};
     filterDefinitions.forEach((filter) => {
       const checkbox = settingsPanel.querySelector(`#${filter.id}`);
-      if (checkbox) {
-        newFilterRules[filter.key] = checkbox.checked;
-      }
+      if (checkbox) newFilterRules[filter.key] = checkbox.checked;
     });
+    const newRelatedSettings = {};
     relatedSettingsDefinitions.forEach((setting) => {
       const checkbox = settingsPanel.querySelector(`#${setting.id}`);
-      if (checkbox) {
-        newRelatedSettings[setting.key] = checkbox.checked;
-      }
+      if (checkbox) newRelatedSettings[setting.key] = checkbox.checked;
     });
-    const newSettings = {
-      theme: newTheme,
-      ...newRelatedSettings,
-      filterRules: newFilterRules
-    };
-    log("\u5373\u5C06\u4FDD\u5B58\u8BBE\u7F6E\uFF0C\u8C03\u8BD5\u65E5\u5FD7\u72B6\u6001\u5C06\u66F4\u65B0\u4E3A:", newSettings.enableDebugLogging);
+    Object.assign(newSettings, newRelatedSettings, { filterRules: newFilterRules });
     updateLoggerState(newSettings.enableDebugLogging);
     saveSettings(newSettings);
     applyTheme(newSettings.theme);
+    setLanguage(newSettings.language);
     const fabContainer = uiContainer.querySelector(".text-extractor-fab-container");
     if (fabContainer) {
       fabContainer.classList.toggle("fab-container-visible", newSettings.showFab);
     }
     updateModalAddonsVisibility();
-    showNotification("\u8BBE\u7F6E\u5DF2\u4FDD\u5B58\uFF01", { type: "success" });
+    showNotification(t("settingsSaved"), { type: "success" });
     hideSettingsPanel();
   }
+  function registerSettingsMenu() {
+    if (settingsMenuCommandId !== null) {
+      unregisterMenuCommand(settingsMenuCommandId);
+    }
+    settingsMenuCommandId = registerMenuCommand(t("settings"), showSettingsPanel);
+  }
   function initSettingsPanel() {
-    registerMenuCommand("\u6253\u5F00\u8BBE\u7F6E", showSettingsPanel);
+    registerSettingsMenu();
+    on("languageChanged", () => {
+      registerSettingsMenu();
+    });
   }
   function initialize() {
     initSettingsPanel();
   }
   function main() {
     const settings = loadSettings();
+    initI18n(settings.language);
     updateLoggerState(settings.enableDebugLogging);
     log("\u811A\u672C\u5F00\u59CB\u521D\u59CB\u5316...");
     log("\u521D\u59CB\u8BBE\u7F6E\u5DF2\u52A0\u8F7D:", settings);

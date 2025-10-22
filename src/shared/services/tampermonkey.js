@@ -16,6 +16,14 @@ export const registerMenuCommand = (caption, commandFunc) => {
 };
 
 /**
+ * 注销一个已注册的菜单命令。
+ * @param {number} commandId - 要注销的命令的ID。
+ */
+export const unregisterMenuCommand = (commandId) => {
+    GM_unregisterMenuCommand(commandId);
+};
+
+/**
  * 将文本复制到剪贴板。
  * @param {string} text - 要复制的文本。
  */

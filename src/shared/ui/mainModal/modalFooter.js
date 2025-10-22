@@ -11,6 +11,7 @@ import { createIconTitle } from '../iconTitle.js';
 import { copyIcon } from '../../../assets/icons/copyIcon.js';
 import clearIcon from '../../../assets/icons/clearIcon.js';
 import { log } from '../../utils/logger.js';
+import { t } from '../../i18n/index.js';
 import { showConfirmationModal } from '../components/confirmationModal.js';
 import warningIcon from '../../../assets/icons/warningIcon.js';
 import * as state from './modalState.js';
@@ -37,9 +38,9 @@ export function populateModalFooter(modalFooter, updateContentCallback) {
     copyBtn.className = 'text-extractor-copy-btn tc-button';
     copyBtn.disabled = true;
 
-    const copyBtnContent = createIconTitle(copyIcon, '复制');
+    const copyBtnContent = createIconTitle(copyIcon, t('copy'));
     copyBtn.appendChild(copyBtnContent);
-    const clearBtnContent = createIconTitle(clearIcon, '清空');
+    const clearBtnContent = createIconTitle(clearIcon, t('clear'));
     clearBtn.appendChild(clearBtnContent);
 
     footerButtonContainer.appendChild(clearBtn);
@@ -54,10 +55,10 @@ export function populateModalFooter(modalFooter, updateContentCallback) {
         if (textToCopy && !copyBtn.disabled) {
             log(`复制按钮被点击，复制了 ${textToCopy.length} 个字符。`);
             setClipboard(textToCopy);
-            showNotification('已复制到剪贴板', { type: 'success' });
+            showNotification(t('copiedToClipboard'), { type: 'success' });
         } else {
             log('复制按钮被点击，但没有内容可复制或按钮被禁用。');
-            showNotification('没有内容可复制', { type: 'info' });
+            showNotification(t('nothingToCopy'), { type: 'info' });
         }
     });
 
@@ -65,14 +66,14 @@ export function populateModalFooter(modalFooter, updateContentCallback) {
         if (clearBtn.disabled) return;
 
         const confirmed = await showConfirmationModal(
-            '你确认要清空吗？此操作不可撤销。',
+            t('clearConfirmation'),
             warningIcon
         );
 
         if (confirmed) {
             log('用户确认清空文本。');
             updateContentCallback(SHOW_PLACEHOLDER);
-            showNotification('内容已清空', { type: 'success' });
+            showNotification(t('contentCleared'), { type: 'success' });
         } else {
             log('用户取消了清空操作。');
         }
@@ -87,5 +88,5 @@ export function updateStatistics() {
     const text = state.outputTextarea.value;
     const lineCount = text.split('\n').length;
     const charCount = text.length;
-    state.statsContainer.textContent = `行: ${lineCount} | 字符数: ${charCount}`;
+    state.statsContainer.textContent = `${t('stats_lines')}: ${lineCount} | ${t('stats_chars')}: ${charCount}`;
 }

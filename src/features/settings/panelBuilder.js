@@ -3,7 +3,8 @@
 import { createCheckbox } from '../../shared/ui/checkbox.js';
 import { createSVGFromString } from '../../shared/utils/dom.js';
 import { closeIcon } from '../../assets/icons/closeIcon.js';
-import { filterDefinitions, relatedSettingsDefinitions } from './config.js';
+import { filterDefinitions, relatedSettingsDefinitions, selectSettingsDefinitions } from './config.js';
+import { t } from '../../shared/i18n/index.js';
 
 /**
  * @private
@@ -30,16 +31,22 @@ export function buildPanelDOM(settings) {
     const content = document.createElement('div');
     content.className = 'settings-panel-content';
 
-    // Theme setting
-    const themeItem = document.createElement('div');
-    themeItem.className = 'setting-item';
-    const themeTitleContainer = document.createElement('div');
-    themeTitleContainer.id = 'theme-setting-title-container';
-    themeTitleContainer.className = 'setting-title-container';
-    const selectWrapper = document.createElement('div');
-    selectWrapper.id = 'custom-select-wrapper';
-    themeItem.appendChild(themeTitleContainer);
-    themeItem.appendChild(selectWrapper);
+    // Dynamically create select items (e.g., Theme, Language)
+    selectSettingsDefinitions.forEach(definition => {
+        const selectItem = document.createElement('div');
+        selectItem.className = 'setting-item';
+
+        const titleContainer = document.createElement('div');
+        titleContainer.id = `${definition.id}-title-container`;
+        titleContainer.className = 'setting-title-container';
+
+        const selectWrapper = document.createElement('div');
+        selectWrapper.id = `${definition.id}-wrapper`;
+
+        selectItem.appendChild(titleContainer);
+        selectItem.appendChild(selectWrapper);
+        content.appendChild(selectItem);
+    });
 
     // Related settings
     const relatedItem = document.createElement('div');
@@ -50,7 +57,7 @@ export function buildPanelDOM(settings) {
     relatedItem.appendChild(relatedTitleContainer);
 
     relatedSettingsDefinitions.forEach(setting => {
-        const checkboxElement = createCheckbox(setting.id, setting.label, settings[setting.key]);
+        const checkboxElement = createCheckbox(setting.id, t(setting.label), settings[setting.key]);
         relatedItem.appendChild(checkboxElement);
     });
 
@@ -64,11 +71,10 @@ export function buildPanelDOM(settings) {
 
     // Dynamically create checkboxes and append them
     filterDefinitions.forEach(filter => {
-        const checkboxElement = createCheckbox(filter.id, filter.label, settings.filterRules[filter.key]);
+        const checkboxElement = createCheckbox(filter.id, t(filter.label), settings.filterRules[filter.key]);
         filterItem.appendChild(checkboxElement);
     });
 
-    content.appendChild(themeItem);
     content.appendChild(relatedItem);
     content.appendChild(filterItem);
 

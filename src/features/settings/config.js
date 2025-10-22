@@ -1,21 +1,48 @@
 // src/features/settings/config.js
+import { themeIcon } from '../../assets/icons/themeIcon.js';
+import languageIcon from '../../assets/icons/languageIcon.js';
+import { getAvailableLanguages } from '../../shared/i18n/index.js';
+
+export const selectSettingsDefinitions = [
+    {
+        id: 'theme-select',
+        key: 'theme',
+        label: 'theme',
+        icon: themeIcon,
+        options: [
+            { value: 'light', label: 'theme_light' },
+            { value: 'dark', label: 'theme_dark' },
+            { value: 'system', label: 'theme_system' },
+        ],
+    },
+    {
+        id: 'language-select',
+        key: 'language',
+        label: 'language',
+        icon: languageIcon,
+        options: getAvailableLanguages().map(lang => ({
+            value: lang.value,
+            label: `language_${lang.value.replace('-', '_')}`,
+        })),
+    },
+];
 
 export const filterDefinitions = [
-  { id: 'filter-numbers', key: 'numbers', label: '过滤纯数字/货币' },
-  { id: 'filter-chinese', key: 'chinese', label: '过滤纯中文' },
-  { id: 'filter-contains-chinese', key: 'containsChinese', label: '过滤包含中文的文本' },
-  { id: 'filter-emoji-only', key: 'emojiOnly', label: '过滤纯表情符号' },
-  { id: 'filter-symbols', key: 'symbols', label: '过滤纯符号' },
-  { id: 'filter-term', key: 'termFilter', label: '过滤特定术语' },
-  { id: 'filter-single-letter', key: 'singleLetter', label: '过滤纯单个英文字母' },
-  { id: 'filter-repeating-chars', key: 'repeatingChars', label: '过滤单一重复字符' },
+  { id: 'filter-numbers', key: 'numbers', label: 'filter_numbers' },
+  { id: 'filter-chinese', key: 'chinese', label: 'filter_chinese' },
+  { id: 'filter-contains-chinese', key: 'containsChinese', label: 'filter_contains_chinese' },
+  { id: 'filter-emoji-only', key: 'emojiOnly', label: 'filter_emoji_only' },
+  { id: 'filter-symbols', key: 'symbols', label: 'filter_symbols' },
+  { id: 'filter-term', key: 'termFilter', label: 'filter_term' },
+  { id: 'filter-single-letter', key: 'singleLetter', label: 'filter_single_letter' },
+  { id: 'filter-repeating-chars', key: 'repeatingChars', label: 'filter_repeating_chars' },
 ];
 
 export const relatedSettingsDefinitions = [
-    { id: 'show-fab', key: 'showFab', label: '显示悬浮按钮' },
-    { id: 'show-line-numbers', key: 'showLineNumbers', label: '显示行号' },
-    { id: 'show-statistics', key: 'showStatistics', label: '显示统计信息' },
-    { id: 'enable-debug-logging', key: 'enableDebugLogging', label: '启用调试日志' },
+    { id: 'show-fab', key: 'showFab', label: 'setting_show_fab' },
+    { id: 'show-line-numbers', key: 'showLineNumbers', label: 'setting_show_line_numbers' },
+    { id: 'show-statistics', key: 'showStatistics', label: 'setting_show_statistics' },
+    { id: 'enable-debug-logging', key: 'enableDebugLogging', label: 'setting_enable_debug_logging' },
 ];
 
 /**

@@ -7,6 +7,7 @@
 
 import { createSVGFromString } from '../../utils/dom.js';
 import * as state from './modalState.js';
+import { t } from '../../i18n/index.js';
 import { infoIcon } from '../../../assets/icons/infoIcon.js';
 import { dynamicIcon } from '../../../assets/icons/dynamicIcon.js';
 import { translateIcon } from '../../../assets/icons/icon.js';
@@ -27,33 +28,33 @@ function createPlaceholder() {
     if (infoIconSVG) placeholderIconDiv.appendChild(infoIconSVG);
 
     const p1 = document.createElement('p');
-    p1.textContent = '当前没有总结文本';
+    p1.textContent = t('noSummaryText');
 
     const p2 = document.createElement('p');
     p2.className = 'placeholder-actions';
-    p2.append('点击 ');
+    p2.append(t('placeholder_click'));
     const span2 = document.createElement('span');
     span2.className = 'placeholder-action-icon';
     const dynamicIconSVG = createSVGFromString(dynamicIcon);
     if (dynamicIconSVG) span2.appendChild(dynamicIconSVG);
     p2.appendChild(span2);
     const strong2 = document.createElement('strong');
-    strong2.textContent = '[动态扫描]';
+    strong2.textContent = t('placeholder_dynamicScan');
     p2.appendChild(strong2);
-    p2.append(' 按钮开始一个新的扫描会话');
+    p2.append(t('placeholder_startNewScanSession'));
 
     const p3 = document.createElement('p');
     p3.className = 'placeholder-actions';
-    p3.append('点击 ');
+    p3.append(t('placeholder_click'));
     const span3 = document.createElement('span');
     span3.className = 'placeholder-action-icon';
     const translateIconSVG = createSVGFromString(translateIcon);
     if (translateIconSVG) span3.appendChild(translateIconSVG);
     p3.appendChild(span3);
     const strong3 = document.createElement('strong');
-    strong3.textContent = '[静态扫描]';
+    strong3.textContent = t('placeholder_staticScan');
     p3.appendChild(strong3);
-    p3.append(' 按钮可进行一次性的快捷提取');
+    p3.append(t('placeholder_performOneTimeScan'));
 
     placeholder.appendChild(placeholderIconDiv);
     placeholder.appendChild(p1);

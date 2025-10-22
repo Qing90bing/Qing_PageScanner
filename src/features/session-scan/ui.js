@@ -5,9 +5,11 @@ import { formatTextsForTranslation } from '../../shared/utils/formatting.js';
 import * as sessionExtractor from './logic.js';
 import { showNotification } from '../../shared/ui/components/notification.js';
 import { showLiveCounter, hideLiveCounter, updateLiveCounter } from './liveCounterUI.js';
+import { t } from '../../shared/i18n/index.js';
 import { setFabIcon } from '../../shared/ui/components/fab.js';
 import { dynamicIcon } from '../../assets/icons/dynamicIcon.js';
 import { stopIcon } from '../../assets/icons/stopIcon.js';
+import { simpleTemplate } from '../../shared/utils/templating.js';
 
 /**
  * 处理“查看总结”按钮的点击事件。
@@ -31,16 +33,17 @@ export function handleDynamicExtractClick(dynamicFab) {
         const results = sessionExtractor.stop();
         setFabIcon(dynamicFab, dynamicIcon);
         dynamicFab.classList.remove('is-recording');
-        dynamicFab.title = '开始动态扫描会话';
+        dynamicFab.title = t('startSessionScan');
 
         hideLiveCounter();
-        showNotification(`扫描结束，共发现 ${results.length} 条文本`, { type: 'success' });
+        const notificationText = simpleTemplate(t('scanFinished'), { count: results.length });
+        showNotification(notificationText, { type: 'success' });
     } else {
         setFabIcon(dynamicFab, stopIcon);
         dynamicFab.classList.add('is-recording');
-        dynamicFab.title = '停止动态扫描会话';
+        dynamicFab.title = t('stopSessionScan');
 
-        showNotification('会话扫描已开始', { type: 'info' });
+        showNotification(t('sessionScanStarted'), { type: 'info' });
         showLiveCounter();
 
         setTimeout(() => {

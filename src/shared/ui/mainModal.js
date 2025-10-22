@@ -11,7 +11,10 @@ import { formatTextsForTranslation } from '../utils/formatting.js';
 import { showNotification } from './components/notification.js';
 import { loadSettings } from '../../features/settings/logic.js';
 import { log } from '../utils/logger.js';
+import { t } from '../i18n/index.js';
+import { simpleTemplate } from '../utils/templating.js';
 import * as state from './mainModal/modalState.js';
+
 // 重新导出常量以保持API兼容性
 export { SHOW_PLACEHOLDER, SHOW_LOADING } from './mainModal/modalState.js';
 import { createModalLayout } from './mainModal/modalLayout.js';
@@ -72,7 +75,7 @@ export function createMainModal() {
  */
 export function openModal() {
     if (!state.modalOverlay) {
-        console.error("模态框尚未初始化。");
+        console.error(t('modalInitError'));
         return;
     }
     log('正在打开主模态框...');
@@ -90,7 +93,8 @@ export function openModal() {
             copyBtn.disabled = !formattedText;
         }
 
-        showNotification(`快捷扫描完成，发现 ${extractedTexts.length} 条文本`, { type: 'success' });
+        const notificationText = simpleTemplate(t('quickScanFinished'), { count: extractedTexts.length });
+        showNotification(notificationText, { type: 'success' });
     }, 50);
 }
 

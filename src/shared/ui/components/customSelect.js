@@ -60,7 +60,14 @@ export class CustomSelect {
         this.parentElement.appendChild(this.container);
 
         // 4. 填充内容
-        const initialOption = this.options.find(opt => opt.value === this.currentValue);
+        let initialOption = this.options.find(opt => opt.value === this.currentValue);
+        // 如果初始值在选项中不存在，则默认选择第一个选项
+        if (!initialOption && this.options.length > 0) {
+            console.warn(`CustomSelect: 初始值 "${this.currentValue}" 在选项中未找到。将默认选择第一个选项。`);
+            initialOption = this.options[0];
+            this.currentValue = initialOption.value;
+        }
+
         this.populateOptions();
         this.updateSelectedContent(initialOption);
     }
@@ -74,6 +81,7 @@ export class CustomSelect {
             const optionEl = document.createElement('div');
             optionEl.className = 'custom-select-option';
             optionEl.dataset.value = option.value;
+            optionEl.setAttribute('role', 'option');
 
             if (option.value === this.currentValue) {
                 optionEl.classList.add('selected');

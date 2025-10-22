@@ -7,6 +7,7 @@
 
 import { createIconTitle } from '../iconTitle.js';
 import { createSVGFromString } from '../../utils/dom.js';
+import { t } from '../../i18n/index.js';
 import { summaryIcon } from '../../../assets/icons/summaryIcon.js';
 import { closeIcon } from '../../../assets/icons/closeIcon.js';
 
@@ -23,7 +24,7 @@ export function populateModalHeader(modalHeader, closeCallback) {
   closeBtn.className = 'tc-close-button text-extractor-modal-close';
   closeBtn.appendChild(createSVGFromString(closeIcon));
 
-  const titleElement = createIconTitle(summaryIcon, '提取的文本');
+  const titleElement = createIconTitle(summaryIcon, t('textExtractionResults'));
   titleContainer.appendChild(titleElement);
 
   modalHeader.appendChild(titleContainer);
