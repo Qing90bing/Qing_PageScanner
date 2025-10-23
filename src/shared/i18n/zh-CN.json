@@ -57,5 +57,7 @@
     "tooltip_summary": "查看总结",
     "tooltip_dynamic_scan": "动态扫描",
     "tooltip_static_scan": "静态扫描",
-    "settingsPanel.title": "设置面板"
+    "settingsPanel": {
+        "title": "设置面板"
+    }
 }

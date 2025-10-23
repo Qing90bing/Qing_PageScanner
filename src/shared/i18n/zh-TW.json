@@ -57,5 +57,7 @@
     "tooltip_summary": "查看總結",
     "tooltip_dynamic_scan": "動態掃描",
     "tooltip_static_scan": "靜態掃描",
-    "settingsPanel.title": "設定面板"
+    "settingsPanel": {
+        "title": "設定面板"
+    }
 }

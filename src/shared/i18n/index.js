@@ -52,11 +52,20 @@ export function getLanguage() {
 
 /**
  * 翻译函数
- * @param {string} key - 翻译文件的键
+ * @param {string} key - 翻译文件的键，支持点状路径 (e.g., 'settings.title')
  * @returns {string} - 翻译后的文本或原始键
  */
 export function t(key) {
-    return currentTranslations[key] || key;
+    // 通过点状路径深入对象查找值
+    const value = key.split('.').reduce((obj, k) => {
+        // 确保在路径的每一步我们都有一个有效的对象
+        if (typeof obj === 'object' && obj !== null && k in obj) {
+            return obj[k];
+        }
+        return undefined; // 如果任何一步失败，则提前终止
+    }, currentTranslations);
+
+    return value !== undefined ? value : key;
 }
 
 /**

@@ -129,7 +129,9 @@
     tooltip_summary: "View Summary",
     tooltip_dynamic_scan: "Dynamic Scan",
     tooltip_static_scan: "Static Scan",
-    "settingsPanel.title": "Settings Panel"
+    settingsPanel: {
+      title: "Settings Panel"
+    }
   };
   var zh_CN_default = {
     settings: "\u8BBE\u7F6E",
@@ -190,7 +192,9 @@
     tooltip_summary: "\u67E5\u770B\u603B\u7ED3",
     tooltip_dynamic_scan: "\u52A8\u6001\u626B\u63CF",
     tooltip_static_scan: "\u9759\u6001\u626B\u63CF",
-    "settingsPanel.title": "\u8BBE\u7F6E\u9762\u677F"
+    settingsPanel: {
+      title: "\u8BBE\u7F6E\u9762\u677F"
+    }
   };
   var zh_TW_default = {
     settings: "\u8A2D\u5B9A",
@@ -251,7 +255,9 @@
     tooltip_summary: "\u67E5\u770B\u7E3D\u7D50",
     tooltip_dynamic_scan: "\u52D5\u614B\u6383\u63CF",
     tooltip_static_scan: "\u975C\u614B\u6383\u63CF",
-    "settingsPanel.title": "\u8A2D\u5B9A\u9762\u677F"
+    settingsPanel: {
+      title: "\u8A2D\u5B9A\u9762\u677F"
+    }
   };
   var events = {};
   function on(eventName, callback) {
@@ -315,7 +321,13 @@
     }
   }
   function t(key) {
-    return currentTranslations[key] || key;
+    const value = key.split(".").reduce((obj, k) => {
+      if (typeof obj === "object" && obj !== null && k in obj) {
+        return obj[k];
+      }
+      return void 0;
+    }, currentTranslations);
+    return value !== void 0 ? value : key;
   }
   function getAvailableLanguages() {
     return supportedLanguages.map((lang) => ({

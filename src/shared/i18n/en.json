@@ -57,5 +57,7 @@
     "tooltip_summary": "View Summary",
     "tooltip_dynamic_scan": "Dynamic Scan",
     "tooltip_static_scan": "Static Scan",
-    "settingsPanel.title": "Settings Panel"
+    "settingsPanel": {
+        "title": "Settings Panel"
+    }
 }
