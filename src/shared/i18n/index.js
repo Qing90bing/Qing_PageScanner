@@ -4,7 +4,7 @@ import zhCN from './zh-CN.json';
 import zhTW from './zh-TW.json';
 import { fire } from '../utils/eventBus.js';
 import { log } from '../utils/logger.js';
-import { supportedLanguages } from './languages.js';
+import { supportedLanguages } from './management/languages.js';
 
 // 将所有导入的翻译文件映射到一个对象中，以便通过语言代码进行动态访问。
 const translationModules = {

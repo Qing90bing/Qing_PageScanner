@@ -19,7 +19,7 @@ import { filterIcon } from '../../assets/icons/filterIcon.js';
 import { saveIcon } from '../../assets/icons/saveIcon.js';
 import { relatedSettingsIcon } from '../../assets/icons/relatedSettingsIcon.js';
 import { updateModalAddonsVisibility } from '../../shared/ui/mainModal.js';
-import { switchLanguage, updateSettingsMenu } from '../../shared/i18n/languageManager.js';
+import { switchLanguage, updateSettingsMenu } from '../../shared/i18n/management/languageManager.js';
 
 // --- 模块级变量 ---
 

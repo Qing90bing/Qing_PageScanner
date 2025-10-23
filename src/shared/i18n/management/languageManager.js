@@ -1,9 +1,9 @@
 // src/shared/i18n/languageManager.js
 
 import { supportedLanguages } from './languages.js';
-import { setLanguage as setI18nLanguage, t } from './index.js';
-import { registerMenuCommand, unregisterMenuCommand } from '../services/tampermonkey.js';
-import { loadSettings, saveSettings } from '../../features/settings/logic.js';
+import { setLanguage as setI18nLanguage, t } from '../index.js';
+import { registerMenuCommand, unregisterMenuCommand } from '../../services/tampermonkey.js';
+import { loadSettings, saveSettings } from '../../../features/settings/logic.js';
 
 /**
  * @description

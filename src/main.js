@@ -4,7 +4,7 @@ import { initialize as initializeSettings } from './features/settings/index.js';
 import { uiContainer } from './shared/ui/uiContainer.js';
 import { log, updateLoggerState } from './shared/utils/logger.js';
 import { loadSettings } from './features/settings/logic.js';
-import { initializeLanguage } from './shared/i18n/languageManager.js';
+import { initializeLanguage } from './shared/i18n/management/languageManager.js';
 import './features/quick-scan/index.js'; // 导入以备将来初始化
 import './features/session-scan/index.js'; // 导入以备将来初始化
 
