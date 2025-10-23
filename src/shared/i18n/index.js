@@ -72,32 +72,3 @@ export function getAvailableLanguages() {
     }));
 }
 
-/**
- * 初始化i18n，决定初始语言
- * @param {string | null | undefined} savedLang - 用户保存的语言设置
- */
-export function initI18n(savedLang) {
-    let langToSet = savedLang;
-
-    if (!langToSet || langToSet === 'auto') {
-        const browserLang = navigator.language;
-        // 沿用旧的逻辑以保证对中文区域的正确判断
-        if (browserLang.startsWith('zh-CN')) {
-            langToSet = 'zh-CN';
-        } else if (browserLang.startsWith('zh-TW') || browserLang.startsWith('zh-HK') || browserLang.startsWith('zh')) {
-            langToSet = 'zh-TW';
-        } else {
-            langToSet = 'en'; // 默认回退
-        }
-
-        // 确保我们选择的语言是受支持的
-        if (!supportedLanguages.some(l => l.code === langToSet)) {
-            langToSet = 'en';
-        }
-
-        log(`未找到已保存的语言设置，根据浏览器语言 (${browserLang}) 自动选择: ${langToSet}`);
-    } else {
-        log(`加载已保存的语言设置: ${savedLang}`);
-    }
-    setLanguage(langToSet);
-}

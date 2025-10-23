@@ -320,26 +320,6 @@
       label: lang.name
     }));
   }
-  function initI18n(savedLang) {
-    let langToSet = savedLang;
-    if (!langToSet || langToSet === "auto") {
-      const browserLang = navigator.language;
-      if (browserLang.startsWith("zh-CN")) {
-        langToSet = "zh-CN";
-      } else if (browserLang.startsWith("zh-TW") || browserLang.startsWith("zh-HK") || browserLang.startsWith("zh")) {
-        langToSet = "zh-TW";
-      } else {
-        langToSet = "en";
-      }
-      if (!supportedLanguages.some((l) => l.code === langToSet)) {
-        langToSet = "en";
-      }
-      log(`\u672A\u627E\u5230\u5DF2\u4FDD\u5B58\u7684\u8BED\u8A00\u8BBE\u7F6E\uFF0C\u6839\u636E\u6D4F\u89C8\u5668\u8BED\u8A00 (${browserLang}) \u81EA\u52A8\u9009\u62E9: ${langToSet}`);
-    } else {
-      log(`\u52A0\u8F7D\u5DF2\u4FDD\u5B58\u7684\u8BED\u8A00\u8BBE\u7F6E: ${savedLang}`);
-    }
-    setLanguage(langToSet);
-  }
   var selectSettingsDefinitions = [
     {
       id: "theme-select",
@@ -1727,9 +1707,42 @@ ${result.join(",\n")}
   var filterIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M440-160q-17 0-28.5-11.5T400-200v-240L168-736q-15-20-4.5-42t36.5-22h560q26 0 36.5 22t-4.5 42L560-440v240q0 17-11.5 28.5T520-160h-80Zm40-308 198-252H282l198 252Zm0 0Z"/></svg>`;
   var saveIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z"/></svg>`;
   var relatedSettingsIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M320-280h320v-400H320v400Zm80-80v-240h160v240H400Zm40-120h80v-80h-80v80ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/></svg>`;
+  var settingsMenuCommandId = null;
+  function updateSettingsMenu(onClick) {
+    if (settingsMenuCommandId) {
+      unregisterMenuCommand(settingsMenuCommandId);
+    }
+    const menuText = t("settingsPanel.title");
+    settingsMenuCommandId = registerMenuCommand(menuText, onClick);
+  }
+  function isLanguageSupported(langCode) {
+    return supportedLanguages.some((lang) => lang.code === langCode);
+  }
+  function initializeLanguage(settings) {
+    let langToSet = "en";
+    const savedLang = settings.language;
+    if (savedLang && savedLang !== "auto") {
+      if (isLanguageSupported(savedLang)) {
+        langToSet = savedLang;
+      }
+    } else {
+      const browserLang = navigator.language;
+      if (isLanguageSupported(browserLang)) {
+        langToSet = browserLang;
+      }
+    }
+    setLanguage(langToSet);
+  }
+  function switchLanguage(langCode) {
+    if (isLanguageSupported(langCode)) {
+      setLanguage(langCode);
+      const settings = loadSettings();
+      settings.language = langCode;
+      saveSettings(settings);
+    }
+  }
   var settingsPanel = null;
   var selectComponents = {};
-  var settingsMenuCommandId = null;
   var handleKeyDown2 = (event) => {
     if (event.key === "Escape") {
       hideSettingsPanel();
@@ -1811,10 +1824,14 @@ ${result.join(",\n")}
       if (checkbox) newRelatedSettings[setting.key] = checkbox.checked;
     });
     Object.assign(newSettings, newRelatedSettings, { filterRules: newFilterRules });
+    const oldSettings = loadSettings();
+    const languageChanged = oldSettings.language !== newSettings.language;
     updateLoggerState(newSettings.enableDebugLogging);
     saveSettings(newSettings);
     applyTheme(newSettings.theme);
-    setLanguage(newSettings.language);
+    if (languageChanged) {
+      switchLanguage(newSettings.language);
+    }
     const fabContainer = uiContainer.querySelector(".text-extractor-fab-container");
     if (fabContainer) {
       fabContainer.classList.toggle("fab-container-visible", newSettings.showFab);
@@ -1823,16 +1840,10 @@ ${result.join(",\n")}
     showNotification(t("settingsSaved"), { type: "success" });
     hideSettingsPanel();
   }
-  function registerSettingsMenu() {
-    if (settingsMenuCommandId !== null) {
-      unregisterMenuCommand(settingsMenuCommandId);
-    }
-    settingsMenuCommandId = registerMenuCommand(t("settings"), showSettingsPanel);
-  }
   function initSettingsPanel() {
-    registerSettingsMenu();
+    updateSettingsMenu(showSettingsPanel);
     on("languageChanged", () => {
-      registerSettingsMenu();
+      updateSettingsMenu(showSettingsPanel);
     });
   }
   function initialize() {
@@ -1840,7 +1851,7 @@ ${result.join(",\n")}
   }
   function main() {
     const settings = loadSettings();
-    initI18n(settings.language);
+    initializeLanguage(settings);
     updateLoggerState(settings.enableDebugLogging);
     log("\u811A\u672C\u5F00\u59CB\u521D\u59CB\u5316...");
     log("\u521D\u59CB\u8BBE\u7F6E\u5DF2\u52A0\u8F7D:", settings);

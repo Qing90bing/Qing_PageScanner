@@ -1,6 +1,5 @@
 // src/features/settings/ui.js
 
-import { registerMenuCommand, unregisterMenuCommand } from '../../shared/services/tampermonkey.js';
 import { loadSettings, saveSettings } from './logic.js';
 import { applyTheme } from '../../shared/ui/theme.js';
 import { log, updateLoggerState } from '../../shared/utils/logger.js';
@@ -13,19 +12,19 @@ import { darkThemeIcon } from '../../assets/icons/darkThemeIcon.js';
 import { uiContainer } from '../../shared/ui/uiContainer.js';
 import { buildPanelDOM } from './panelBuilder.js';
 import { filterDefinitions, relatedSettingsDefinitions, selectSettingsDefinitions } from './config.js';
-import { t, setLanguage } from '../../shared/i18n/index.js';
+import { t } from '../../shared/i18n/index.js';
 import { on } from '../../shared/utils/eventBus.js';
 import { settingsIcon } from '../../assets/icons/settingsIcon.js';
 import { filterIcon } from '../../assets/icons/filterIcon.js';
 import { saveIcon } from '../../assets/icons/saveIcon.js';
 import { relatedSettingsIcon } from '../../assets/icons/relatedSettingsIcon.js';
 import { updateModalAddonsVisibility } from '../../shared/ui/mainModal.js';
+import { switchLanguage, updateSettingsMenu } from '../../shared/i18n/languageManager.js';
 
 // --- 模块级变量 ---
 
 let settingsPanel = null;
 let selectComponents = {};
-let settingsMenuCommandId = null;
 
 // --- 私有函数 ---
 
@@ -150,12 +149,18 @@ function handleSave() {
 
     Object.assign(newSettings, newRelatedSettings, { filterRules: newFilterRules });
 
+    const oldSettings = loadSettings();
+    const languageChanged = oldSettings.language !== newSettings.language;
+
     updateLoggerState(newSettings.enableDebugLogging);
     saveSettings(newSettings);
 
     // 应用设置
     applyTheme(newSettings.theme);
-    setLanguage(newSettings.language);
+
+    if (languageChanged) {
+        switchLanguage(newSettings.language);
+    }
 
     const fabContainer = uiContainer.querySelector('.text-extractor-fab-container');
     if (fabContainer) {
@@ -170,25 +175,13 @@ function handleSave() {
 // --- 公开函数 ---
 
 /**
- * @private
- * @description 注册或更新油猴菜单命令
- */
-function registerSettingsMenu() {
-    if (settingsMenuCommandId !== null) {
-        unregisterMenuCommand(settingsMenuCommandId);
-    }
-    settingsMenuCommandId = registerMenuCommand(t('settings'), showSettingsPanel);
-}
-
-
-/**
  * @public
  * @description 初始化设置面板功能。
  */
 export function initSettingsPanel() {
-    registerSettingsMenu();
+    updateSettingsMenu(showSettingsPanel);
     // 监听语言变化事件，以更新菜单文本
     on('languageChanged', () => {
-        registerSettingsMenu();
+        updateSettingsMenu(showSettingsPanel);
     });
 }

@@ -4,7 +4,7 @@ import { initialize as initializeSettings } from './features/settings/index.js';
 import { uiContainer } from './shared/ui/uiContainer.js';
 import { log, updateLoggerState } from './shared/utils/logger.js';
 import { loadSettings } from './features/settings/logic.js';
-import { initI18n } from './shared/i18n/index.js';
+import { initializeLanguage } from './shared/i18n/languageManager.js';
 import './features/quick-scan/index.js'; // 导入以备将来初始化
 import './features/session-scan/index.js'; // 导入以备将来初始化
 
@@ -16,7 +16,7 @@ function main() {
   const settings = loadSettings();
 
   // 2. 初始化国际化（i18n）
-  initI18n(settings.language);
+  initializeLanguage(settings);
 
   // 3. 根据设置初始化日志记录器
   updateLoggerState(settings.enableDebugLogging);
