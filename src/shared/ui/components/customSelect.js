@@ -196,4 +196,25 @@ export class CustomSelect {
     getValue() {
         return this.currentValue;
     }
+
+    /**
+     * @public
+     * @description 更新下拉菜单的选项列表。
+     * @param {Array<Object>} newOptions - 新的选项数组。
+     */
+    updateOptions(newOptions) {
+        this.options = newOptions;
+
+        // 清空旧的选项
+        while (this.optionsContainer.firstChild) {
+            this.optionsContainer.removeChild(this.optionsContainer.firstChild);
+        }
+
+        // 填充新选项并更新显示
+        this.populateOptions();
+        const currentSelectedOption = this.options.find(opt => opt.value === this.currentValue);
+        if (currentSelectedOption) {
+            this.updateSelectedContent(currentSelectedOption);
+        }
+    }
 }

@@ -53,5 +53,8 @@
     "setting_show_fab": "Show floating button",
     "setting_show_line_numbers": "Show line numbers",
     "setting_show_statistics": "Show statistics",
-    "setting_enable_debug_logging": "Enable debug logging"
+    "setting_enable_debug_logging": "Enable debug logging",
+    "tooltip_summary": "View Summary",
+    "tooltip_dynamic_scan": "Dynamic Scan",
+    "tooltip_static_scan": "Static Scan"
 }

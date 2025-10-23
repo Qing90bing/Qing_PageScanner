@@ -125,7 +125,10 @@
     setting_show_fab: "Show floating button",
     setting_show_line_numbers: "Show line numbers",
     setting_show_statistics: "Show statistics",
-    setting_enable_debug_logging: "Enable debug logging"
+    setting_enable_debug_logging: "Enable debug logging",
+    tooltip_summary: "View Summary",
+    tooltip_dynamic_scan: "Dynamic Scan",
+    tooltip_static_scan: "Static Scan"
   };
   var zh_CN_default = {
     settings: "\u8BBE\u7F6E",
@@ -182,7 +185,10 @@
     setting_show_fab: "\u663E\u793A\u60AC\u6D6E\u6309\u94AE",
     setting_show_line_numbers: "\u663E\u793A\u884C\u53F7",
     setting_show_statistics: "\u663E\u793A\u7EDF\u8BA1\u4FE1\u606F",
-    setting_enable_debug_logging: "\u542F\u7528\u8C03\u8BD5\u65E5\u5FD7"
+    setting_enable_debug_logging: "\u542F\u7528\u8C03\u8BD5\u65E5\u5FD7",
+    tooltip_summary: "\u67E5\u770B\u603B\u7ED3",
+    tooltip_dynamic_scan: "\u52A8\u6001\u626B\u63CF",
+    tooltip_static_scan: "\u9759\u6001\u626B\u63CF"
   };
   var zh_TW_default = {
     settings: "\u8A2D\u5B9A",
@@ -239,7 +245,10 @@
     setting_show_fab: "\u986F\u793A\u61F8\u6D6E\u6309\u9215",
     setting_show_line_numbers: "\u986F\u793A\u884C\u865F",
     setting_show_statistics: "\u986F\u793A\u7D71\u8A08\u8CC7\u8A0A",
-    setting_enable_debug_logging: "\u555F\u7528\u5075\u932F\u65E5\u8A8C"
+    setting_enable_debug_logging: "\u555F\u7528\u5075\u932F\u65E5\u8A8C",
+    tooltip_summary: "\u67E5\u770B\u7E3D\u7D50",
+    tooltip_dynamic_scan: "\u52D5\u614B\u6383\u63CF",
+    tooltip_static_scan: "\u975C\u614B\u6383\u63CF"
   };
   var events = {};
   function on(eventName, callback) {
@@ -272,11 +281,22 @@
       console.log(LOG_PREFIX, ...args);
     }
   }
-  var translations = {
+  var supportedLanguages = [
+    { code: "en", name: "English" },
+    { code: "zh-CN", name: "\u7B80\u4F53\u4E2D\u6587" },
+    { code: "zh-TW", name: "\u7E41\u9AD4\u4E2D\u6587" }
+  ];
+  var translationModules = {
     en: en_default,
     "zh-CN": zh_CN_default,
     "zh-TW": zh_TW_default
   };
+  var translations = supportedLanguages.reduce((acc, lang) => {
+    if (translationModules[lang.code]) {
+      acc[lang.code] = translationModules[lang.code];
+    }
+    return acc;
+  }, {});
   var currentLanguage = "en";
   var currentTranslations = translations.en;
   function setLanguage(lang) {
@@ -295,11 +315,10 @@
     return currentTranslations[key] || key;
   }
   function getAvailableLanguages() {
-    return [
-      { value: "en", label: translations.en.language_en },
-      { value: "zh-CN", label: translations["zh-CN"].language_zh_CN },
-      { value: "zh-TW", label: translations["zh-TW"].language_zh_TW }
-    ];
+    return supportedLanguages.map((lang) => ({
+      value: lang.code,
+      label: lang.name
+    }));
   }
   function initI18n(savedLang) {
     let langToSet = savedLang;
@@ -310,6 +329,9 @@
       } else if (browserLang.startsWith("zh-TW") || browserLang.startsWith("zh-HK") || browserLang.startsWith("zh")) {
         langToSet = "zh-TW";
       } else {
+        langToSet = "en";
+      }
+      if (!supportedLanguages.some((l) => l.code === langToSet)) {
         langToSet = "en";
       }
       log(`\u672A\u627E\u5230\u5DF2\u4FDD\u5B58\u7684\u8BED\u8A00\u8BBE\u7F6E\uFF0C\u6839\u636E\u6D4F\u89C8\u5668\u8BED\u8A00 (${browserLang}) \u81EA\u52A8\u9009\u62E9: ${langToSet}`);
@@ -335,10 +357,7 @@
       key: "language",
       label: "language",
       icon: languageIcon_default,
-      options: getAvailableLanguages().map((lang) => ({
-        value: lang.value,
-        label: `language_${lang.value.replace("-", "_")}`
-      }))
+      options: getAvailableLanguages()
     }
   ];
   var filterDefinitions = [
@@ -442,42 +461,57 @@
     }
     return document.importNode(svgNode, true);
   }
-  function createSingleFab(className, iconSVGString, title, onClick) {
+  var summaryFab;
+  var dynamicFab;
+  var staticFab;
+  function createSingleFab(className, iconSVGString, titleKey, onClick) {
     const fab = document.createElement("div");
     fab.className = `text-extractor-fab ${className}`;
     const svgIcon = createSVGFromString(iconSVGString);
     if (svgIcon) {
       fab.appendChild(svgIcon);
     }
+    fab.dataset.tooltipKey = titleKey;
     fab.addEventListener("click", onClick);
     fab.addEventListener("mouseenter", () => {
-      showTooltip(fab, title);
+      showTooltip(fab, t(titleKey));
     });
     fab.addEventListener("mouseleave", () => {
       hideTooltip();
     });
     return fab;
   }
+  function updateFabTooltips() {
+    if (summaryFab) {
+      summaryFab.addEventListener("mouseenter", () => showTooltip(summaryFab, t(summaryFab.dataset.tooltipKey)));
+    }
+    if (dynamicFab) {
+      dynamicFab.addEventListener("mouseenter", () => showTooltip(dynamicFab, t(dynamicFab.dataset.tooltipKey)));
+    }
+    if (staticFab) {
+      staticFab.addEventListener("mouseenter", () => showTooltip(staticFab, t(staticFab.dataset.tooltipKey)));
+    }
+  }
   function createFab({ callbacks, isVisible }) {
     const { onStaticExtract, onDynamicExtract, onSummary } = callbacks;
     const fabContainer = document.createElement("div");
     fabContainer.className = "text-extractor-fab-container";
-    const summaryFab = createSingleFab(
+    summaryFab = createSingleFab(
       "fab-summary",
       summaryIcon,
-      appConfig.ui.tooltips.summary,
+      "tooltip_summary",
       onSummary
     );
-    const dynamicFab = createSingleFab(
+    dynamicFab = createSingleFab(
       "fab-dynamic",
       dynamicIcon,
-      appConfig.ui.tooltips.dynamicScan,
+      "tooltip_dynamic_scan",
       () => onDynamicExtract(dynamicFab)
     );
-    const staticFab = createSingleFab(
+    staticFab = createSingleFab(
       "fab-static",
       translateIcon,
-      appConfig.ui.tooltips.staticScan,
+      "tooltip_static_scan",
       onStaticExtract
     );
     fabContainer.appendChild(summaryFab);
@@ -489,6 +523,7 @@
         fabContainer.classList.add("fab-container-visible");
       }, appConfig.ui.fabAnimationDelay);
     }
+    on("languageChanged", updateFabTooltips);
   }
   function setFabIcon(fabElement, iconSVGString) {
     while (fabElement.firstChild) {
@@ -942,17 +977,24 @@ ${result.join(",\n")}
     container.appendChild(textNode);
     return container;
   }
+  var titleContainer;
+  function rerenderHeaderTexts() {
+    if (!titleContainer) return;
+    titleContainer.replaceChildren();
+    const newTitleElement = createIconTitle(summaryIcon, t("textExtractionResults"));
+    titleContainer.appendChild(newTitleElement);
+  }
   function populateModalHeader(modalHeader, closeCallback) {
-    const titleContainer = document.createElement("div");
+    titleContainer = document.createElement("div");
     titleContainer.id = "main-modal-title-container";
     const closeBtn = document.createElement("span");
     closeBtn.className = "tc-close-button text-extractor-modal-close";
     closeBtn.appendChild(createSVGFromString(closeIcon));
-    const titleElement = createIconTitle(summaryIcon, t("textExtractionResults"));
-    titleContainer.appendChild(titleElement);
+    rerenderHeaderTexts();
     modalHeader.appendChild(titleContainer);
     modalHeader.appendChild(closeBtn);
     closeBtn.addEventListener("click", closeCallback);
+    on("languageChanged", rerenderHeaderTexts);
   }
   var loadingSpinner = `
   <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
@@ -962,9 +1004,10 @@ ${result.join(",\n")}
     </path>
   </svg>
 `;
-  function createPlaceholder() {
-    const placeholder2 = document.createElement("div");
-    placeholder2.id = "modal-placeholder";
+  var placeholder2;
+  function rerenderPlaceholder() {
+    if (!placeholder2) return;
+    placeholder2.replaceChildren();
     const placeholderIconDiv = document.createElement("div");
     placeholderIconDiv.className = "placeholder-icon";
     const infoIconSVG = createSVGFromString(infoIcon);
@@ -999,7 +1042,6 @@ ${result.join(",\n")}
     placeholder2.appendChild(p1);
     placeholder2.appendChild(p2);
     placeholder2.appendChild(p3);
-    return placeholder2;
   }
   function createLoadingSpinner() {
     const loadingContainer2 = document.createElement("div");
@@ -1015,7 +1057,9 @@ ${result.join(",\n")}
     if (appConfig.ui.modalContentHeight) {
       modalContent.style.height = appConfig.ui.modalContentHeight;
     }
-    const placeholder2 = createPlaceholder();
+    placeholder2 = document.createElement("div");
+    placeholder2.id = "modal-placeholder";
+    rerenderPlaceholder();
     setPlaceholder(placeholder2);
     const textareaContainer = document.createElement("div");
     textareaContainer.className = "tc-textarea-container";
@@ -1033,6 +1077,7 @@ ${result.join(",\n")}
     modalContent.appendChild(placeholder2);
     modalContent.appendChild(textareaContainer);
     modalContent.appendChild(loadingContainer2);
+    on("languageChanged", rerenderPlaceholder);
   }
   function showLoading() {
     if (loadingContainer) loadingContainer.classList.add("is-visible");
@@ -1101,26 +1146,36 @@ ${result.join(",\n")}
   }
   var warningIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m40-120 440-760 440 760H40Zm138-80h604L480-720 178-200Zm302-40q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Zm40-100Z"/></svg>`;
   var warningIcon_default = warningIcon;
+  var clearBtn;
+  var copyBtn;
+  function rerenderFooterTexts() {
+    if (copyBtn) {
+      copyBtn.replaceChildren();
+      copyBtn.appendChild(createIconTitle(copyIcon, t("copy")));
+    }
+    if (clearBtn) {
+      clearBtn.replaceChildren();
+      clearBtn.appendChild(createIconTitle(clearIcon_default, t("clear")));
+    }
+    updateStatistics();
+  }
   function populateModalFooter(modalFooter, updateContentCallback, clearSessionCallback) {
     const statsContainer2 = document.createElement("div");
     statsContainer2.className = "tc-stats-container";
     setStatsContainer(statsContainer2);
     const footerButtonContainer = document.createElement("div");
     footerButtonContainer.className = "tc-footer-buttons";
-    const clearBtn = document.createElement("button");
+    clearBtn = document.createElement("button");
     clearBtn.className = "text-extractor-clear-btn tc-button";
     clearBtn.disabled = true;
-    const copyBtn = document.createElement("button");
+    copyBtn = document.createElement("button");
     copyBtn.className = "text-extractor-copy-btn tc-button";
     copyBtn.disabled = true;
-    const copyBtnContent = createIconTitle(copyIcon, t("copy"));
-    copyBtn.appendChild(copyBtnContent);
-    const clearBtnContent = createIconTitle(clearIcon_default, t("clear"));
-    clearBtn.appendChild(clearBtnContent);
     footerButtonContainer.appendChild(clearBtn);
     footerButtonContainer.appendChild(copyBtn);
     modalFooter.appendChild(statsContainer2);
     modalFooter.appendChild(footerButtonContainer);
+    rerenderFooterTexts();
     copyBtn.addEventListener("click", () => {
       const textToCopy = outputTextarea.value;
       if (textToCopy && !copyBtn.disabled) {
@@ -1152,6 +1207,7 @@ ${result.join(",\n")}
         log("\u7528\u6237\u53D6\u6D88\u4E86\u6E05\u7A7A\u64CD\u4F5C\u3002");
       }
     });
+    on("languageChanged", rerenderFooterTexts);
   }
   function updateStatistics() {
     if (!statsContainer || !outputTextarea) return;
@@ -1304,9 +1360,9 @@ ${result.join(",\n")}
       const extractedTexts = extractAndProcessText();
       const formattedText = formatTextsForTranslation(extractedTexts);
       updateModalContent(formattedText, false, "quick-scan");
-      const copyBtn = modalOverlay.querySelector(".text-extractor-copy-btn");
-      if (copyBtn) {
-        copyBtn.disabled = !formattedText;
+      const copyBtn2 = modalOverlay.querySelector(".text-extractor-copy-btn");
+      if (copyBtn2) {
+        copyBtn2.disabled = !formattedText;
       }
       const notificationText = simpleTemplate(t("quickScanFinished"), { count: extractedTexts.length });
       showNotification(notificationText, { type: "success" });
@@ -1325,13 +1381,13 @@ ${result.join(",\n")}
       return;
     }
     setCurrentMode(mode);
-    const copyBtn = modalOverlay.querySelector(".text-extractor-copy-btn");
-    const clearBtn = modalOverlay.querySelector(".text-extractor-clear-btn");
+    const copyBtn2 = modalOverlay.querySelector(".text-extractor-copy-btn");
+    const clearBtn2 = modalOverlay.querySelector(".text-extractor-clear-btn");
     const textareaContainer = outputTextarea.parentElement;
     const setButtonsDisabled = (disabled) => {
-      if (copyBtn) copyBtn.disabled = disabled;
-      if (clearBtn) {
-        clearBtn.disabled = isSessionRecording() || disabled;
+      if (copyBtn2) copyBtn2.disabled = disabled;
+      if (clearBtn2) {
+        clearBtn2.disabled = isSessionRecording() || disabled;
       }
     };
     if (content === SHOW_LOADING) {
@@ -1416,19 +1472,19 @@ ${result.join(",\n")}
       updateModalContent(formattedText, true, "session-scan");
     }
   }
-  function handleDynamicExtractClick(dynamicFab) {
+  function handleDynamicExtractClick(dynamicFab2) {
     if (isSessionRecording()) {
       const results = stop();
-      setFabIcon(dynamicFab, dynamicIcon);
-      dynamicFab.classList.remove("is-recording");
-      dynamicFab.title = t("startSessionScan");
+      setFabIcon(dynamicFab2, dynamicIcon);
+      dynamicFab2.classList.remove("is-recording");
+      dynamicFab2.title = t("startSessionScan");
       hideLiveCounter();
       const notificationText = simpleTemplate(t("scanFinished"), { count: results.length });
       showNotification(notificationText, { type: "success" });
     } else {
-      setFabIcon(dynamicFab, stopIcon);
-      dynamicFab.classList.add("is-recording");
-      dynamicFab.title = t("stopSessionScan");
+      setFabIcon(dynamicFab2, stopIcon);
+      dynamicFab2.classList.add("is-recording");
+      dynamicFab2.title = t("stopSessionScan");
       showNotification(t("sessionScanStarted"), { type: "info" });
       showLiveCounter();
       setTimeout(() => {
@@ -1576,6 +1632,17 @@ ${result.join(",\n")}
         getValue() {
       return this.currentValue;
     }
+        updateOptions(newOptions) {
+      this.options = newOptions;
+      while (this.optionsContainer.firstChild) {
+        this.optionsContainer.removeChild(this.optionsContainer.firstChild);
+      }
+      this.populateOptions();
+      const currentSelectedOption = this.options.find((opt) => opt.value === this.currentValue);
+      if (currentSelectedOption) {
+        this.updateSelectedContent(currentSelectedOption);
+      }
+    }
   };
   var systemThemeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M320-120v-80h80v-80H160q-33 0-56.5-23.5T80-360v-400q0-33 23.5-56.5T160-840h640q33 0 56.5 23.5T880-760v400q0 33-23.5 56.5T800-280H560v80h80v80H320ZM160-360h640v-400H160v400Zm0 0v-400 400Z"/></svg>`;
   var lightThemeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm0 80q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Zm326-268Z"/></svg>`;
@@ -1602,24 +1669,24 @@ ${result.join(",\n")}
     modal.className = "settings-panel-modal";
     const header = document.createElement("div");
     header.className = "settings-panel-header";
-    const titleContainer = document.createElement("div");
-    titleContainer.id = "settings-panel-title-container";
+    const titleContainer2 = document.createElement("div");
+    titleContainer2.id = "settings-panel-title-container";
     const closeBtn = document.createElement("span");
     closeBtn.className = "tc-close-button settings-panel-close";
     closeBtn.appendChild(createSVGFromString(closeIcon));
-    header.appendChild(titleContainer);
+    header.appendChild(titleContainer2);
     header.appendChild(closeBtn);
     const content = document.createElement("div");
     content.className = "settings-panel-content";
     selectSettingsDefinitions.forEach((definition) => {
       const selectItem = document.createElement("div");
       selectItem.className = "setting-item";
-      const titleContainer2 = document.createElement("div");
-      titleContainer2.id = `${definition.id}-title-container`;
-      titleContainer2.className = "setting-title-container";
+      const titleContainer3 = document.createElement("div");
+      titleContainer3.id = `${definition.id}-title-container`;
+      titleContainer3.className = "setting-title-container";
       const selectWrapper = document.createElement("div");
       selectWrapper.id = `${definition.id}-wrapper`;
-      selectItem.appendChild(titleContainer2);
+      selectItem.appendChild(titleContainer3);
       selectItem.appendChild(selectWrapper);
       content.appendChild(selectItem);
     });
@@ -1684,12 +1751,12 @@ ${result.join(",\n")}
     setTimeout(() => {
       if (settingsPanel) settingsPanel.classList.add("is-visible");
     }, 10);
-    const titleContainer = settingsPanel.querySelector("#settings-panel-title-container");
-    titleContainer.appendChild(createIconTitle(settingsIcon, t("settings")));
+    const titleContainer2 = settingsPanel.querySelector("#settings-panel-title-container");
+    titleContainer2.appendChild(createIconTitle(settingsIcon, t("settings")));
     selectComponents = {};
     selectSettingsDefinitions.forEach((definition) => {
-      const titleContainer2 = settingsPanel.querySelector(`#${definition.id}-title-container`);
-      titleContainer2.appendChild(createIconTitle(definition.icon, t(definition.label)));
+      const titleContainer3 = settingsPanel.querySelector(`#${definition.id}-title-container`);
+      titleContainer3.appendChild(createIconTitle(definition.icon, t(definition.label)));
       const selectWrapper = settingsPanel.querySelector(`#${definition.id}-wrapper`);
       const options = definition.options.map((opt) => ({
         ...opt,

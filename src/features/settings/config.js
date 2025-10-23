@@ -20,10 +20,8 @@ export const selectSettingsDefinitions = [
         key: 'language',
         label: 'language',
         icon: languageIcon,
-        options: getAvailableLanguages().map(lang => ({
-            value: lang.value,
-            label: `language_${lang.value.replace('-', '_')}`,
-        })),
+    // 直接从 i18n 模块获取语言列表，其标签已经是原生名称，无需再翻译。
+    options: getAvailableLanguages(),
     },
 ];
 

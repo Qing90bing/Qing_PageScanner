@@ -53,5 +53,8 @@
     "setting_show_fab": "顯示懸浮按鈕",
     "setting_show_line_numbers": "顯示行號",
     "setting_show_statistics": "顯示統計資訊",
-    "setting_enable_debug_logging": "啟用偵錯日誌"
+    "setting_enable_debug_logging": "啟用偵錯日誌",
+    "tooltip_summary": "查看總結",
+    "tooltip_dynamic_scan": "動態掃描",
+    "tooltip_static_scan": "靜態掃描"
 }

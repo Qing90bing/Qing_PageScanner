@@ -12,10 +12,32 @@ import { copyIcon } from '../../../assets/icons/copyIcon.js';
 import clearIcon from '../../../assets/icons/clearIcon.js';
 import { log } from '../../utils/logger.js';
 import { t } from '../../i18n/index.js';
+import { on } from '../../utils/eventBus.js';
 import { showConfirmationModal } from '../components/confirmationModal.js';
 import warningIcon from '../../../assets/icons/warningIcon.js';
 import * as state from './modalState.js';
 import { SHOW_PLACEHOLDER } from './modalState.js';
+
+
+let clearBtn, copyBtn;
+
+
+/**
+ * @private
+ * @description 更新页脚中所有需要翻译的文本。
+ */
+function rerenderFooterTexts() {
+    if (copyBtn) {
+        copyBtn.replaceChildren();
+        copyBtn.appendChild(createIconTitle(copyIcon, t('copy')));
+    }
+    if (clearBtn) {
+        clearBtn.replaceChildren();
+        clearBtn.appendChild(createIconTitle(clearIcon, t('clear')));
+    }
+    // 更新统计信息（如果可见）
+    updateStatistics();
+}
 
 /**
  * @description 填充模态框页脚元素。
@@ -31,24 +53,22 @@ export function populateModalFooter(modalFooter, updateContentCallback, clearSes
     const footerButtonContainer = document.createElement('div');
     footerButtonContainer.className = 'tc-footer-buttons';
 
-    const clearBtn = document.createElement('button');
+    clearBtn = document.createElement('button');
     clearBtn.className = 'text-extractor-clear-btn tc-button';
     clearBtn.disabled = true;
 
-    const copyBtn = document.createElement('button');
+    copyBtn = document.createElement('button');
     copyBtn.className = 'text-extractor-copy-btn tc-button';
     copyBtn.disabled = true;
-
-    const copyBtnContent = createIconTitle(copyIcon, t('copy'));
-    copyBtn.appendChild(copyBtnContent);
-    const clearBtnContent = createIconTitle(clearIcon, t('clear'));
-    clearBtn.appendChild(clearBtnContent);
 
     footerButtonContainer.appendChild(clearBtn);
     footerButtonContainer.appendChild(copyBtn);
 
     modalFooter.appendChild(statsContainer);
     modalFooter.appendChild(footerButtonContainer);
+
+    rerenderFooterTexts();
+
 
     // --- 事件绑定 ---
     copyBtn.addEventListener('click', () => {
@@ -85,6 +105,8 @@ export function populateModalFooter(modalFooter, updateContentCallback, clearSes
             log('用户取消了清空操作。');
         }
     });
+    // 监听语言变化事件
+    on('languageChanged', rerenderFooterTexts);
 }
 
 /**

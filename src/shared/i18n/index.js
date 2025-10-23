@@ -4,15 +4,23 @@ import zhCN from './zh-CN.json';
 import zhTW from './zh-TW.json';
 import { fire } from '../utils/eventBus.js';
 import { log } from '../utils/logger.js';
+import { supportedLanguages } from './languages.js';
 
-/**
- * @type {Object.<string, Object.<string, string>>}
- */
-const translations = {
+// 将所有导入的翻译文件映射到一个对象中，以便通过语言代码进行动态访问。
+const translationModules = {
     en,
     'zh-CN': zhCN,
     'zh-TW': zhTW,
 };
+
+// 从 supportedLanguages 动态构建 translations 对象
+const translations = supportedLanguages.reduce((acc, lang) => {
+    if (translationModules[lang.code]) {
+        acc[lang.code] = translationModules[lang.code];
+    }
+    return acc;
+}, {});
+
 
 let currentLanguage = 'en';
 let currentTranslations = translations.en;
@@ -56,13 +64,12 @@ export function t(key) {
  * @returns {{value: string, label: string}[]}
  */
 export function getAvailableLanguages() {
-    // 注意：这里的标签不会动态更新，因为它们是在语言初始化时生成的。
-    // 但这对于在设置菜单中显示语言列表已经足够了。
-    return [
-        { value: 'en', label: translations.en.language_en },
-        { value: 'zh-CN', label: translations['zh-CN'].language_zh_CN },
-        { value: 'zh-TW', label: translations['zh-TW'].language_zh_TW },
-    ];
+    // 从集中化的语言配置中动态生成列表
+    // 直接使用原生名称作为标签，这是语言选择器的最佳实践
+    return supportedLanguages.map(lang => ({
+        value: lang.code,
+        label: lang.name,
+    }));
 }
 
 /**
@@ -74,13 +81,20 @@ export function initI18n(savedLang) {
 
     if (!langToSet || langToSet === 'auto') {
         const browserLang = navigator.language;
+        // 沿用旧的逻辑以保证对中文区域的正确判断
         if (browserLang.startsWith('zh-CN')) {
             langToSet = 'zh-CN';
         } else if (browserLang.startsWith('zh-TW') || browserLang.startsWith('zh-HK') || browserLang.startsWith('zh')) {
             langToSet = 'zh-TW';
         } else {
+            langToSet = 'en'; // 默认回退
+        }
+
+        // 确保我们选择的语言是受支持的
+        if (!supportedLanguages.some(l => l.code === langToSet)) {
             langToSet = 'en';
         }
+
         log(`未找到已保存的语言设置，根据浏览器语言 (${browserLang}) 自动选择: ${langToSet}`);
     } else {
         log(`加载已保存的语言设置: ${savedLang}`);

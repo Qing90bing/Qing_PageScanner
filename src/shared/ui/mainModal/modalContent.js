@@ -8,19 +8,25 @@
 import { createSVGFromString } from '../../utils/dom.js';
 import * as state from './modalState.js';
 import { t } from '../../i18n/index.js';
+import { on } from '../../utils/eventBus.js';
 import { infoIcon } from '../../../assets/icons/infoIcon.js';
 import { dynamicIcon } from '../../../assets/icons/dynamicIcon.js';
 import { translateIcon } from '../../../assets/icons/icon.js';
 import { loadingSpinner } from '../../../assets/icons/loadingSpinner.js';
 import { appConfig } from '../../../features/settings/config.js';
 
+
+let placeholder;
+
 /**
- * @description 创建占位符元素。
- * @returns {HTMLElement} 占位符容器元素。
+ * @private
+ * @description 更新占位符中的所有文本。
  */
-function createPlaceholder() {
-    const placeholder = document.createElement('div');
-    placeholder.id = 'modal-placeholder';
+function rerenderPlaceholder() {
+    if (!placeholder) return;
+
+    // 清空现有内容
+    placeholder.replaceChildren();
 
     const placeholderIconDiv = document.createElement('div');
     placeholderIconDiv.className = 'placeholder-icon';
@@ -60,8 +66,6 @@ function createPlaceholder() {
     placeholder.appendChild(p1);
     placeholder.appendChild(p2);
     placeholder.appendChild(p3);
-
-    return placeholder;
 }
 
 /**
@@ -88,8 +92,11 @@ export function populateModalContent(modalContent) {
         modalContent.style.height = appConfig.ui.modalContentHeight;
     }
 
-    const placeholder = createPlaceholder();
+    placeholder = document.createElement('div');
+    placeholder.id = 'modal-placeholder';
+    rerenderPlaceholder();
     state.setPlaceholder(placeholder);
+
 
     const textareaContainer = document.createElement('div');
     textareaContainer.className = 'tc-textarea-container';
@@ -112,6 +119,8 @@ export function populateModalContent(modalContent) {
     modalContent.appendChild(placeholder);
     modalContent.appendChild(textareaContainer);
     modalContent.appendChild(loadingContainer);
+
+    on('languageChanged', rerenderPlaceholder);
 }
 
 /**

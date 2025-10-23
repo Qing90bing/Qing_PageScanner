@@ -10,20 +10,24 @@ import { dynamicIcon } from '../../../assets/icons/dynamicIcon.js';
 import { summaryIcon } from '../../../assets/icons/summaryIcon.js';
 import { showTooltip, hideTooltip } from './tooltip.js';
 import { appConfig } from '../../../features/settings/config.js';
-
+import { on } from '../../utils/eventBus.js';
+import { t } from '../../i18n/index.js';
 import { createSVGFromString } from '../../utils/dom.js';
 import { uiContainer } from '../uiContainer.js';
+
+
+let summaryFab, dynamicFab, staticFab;
 
 /**
  * @private
  * @description 创建一个单独的悬浮按钮。
  * @param {string} className - 按钮的 CSS 类名。
  * @param {string} iconSVGString - 按钮内部的 SVG 图标字符串。
- * @param {string} title - 鼠标悬停时显示的提示文本。
+ * @param {string} titleKey - 用于翻译的键名，对应工具提示的文本。
  * @param {function} onClick - 点击事件的回调函数。
  * @returns {HTMLElement} - 创建的按钮元素。
  */
-function createSingleFab(className, iconSVGString, title, onClick) {
+function createSingleFab(className, iconSVGString, titleKey, onClick) {
     const fab = document.createElement('div');
     fab.className = `text-extractor-fab ${className}`;
 
@@ -31,12 +35,14 @@ function createSingleFab(className, iconSVGString, title, onClick) {
     if (svgIcon) {
         fab.appendChild(svgIcon);
     }
+    // 保存翻译键以便后续更新
+    fab.dataset.tooltipKey = titleKey;
 
     fab.addEventListener('click', onClick);
 
     // 使用自定义的 Tooltip
     fab.addEventListener('mouseenter', () => {
-        showTooltip(fab, title);
+        showTooltip(fab, t(titleKey));
     });
     fab.addEventListener('mouseleave', () => {
         hideTooltip();
@@ -44,6 +50,23 @@ function createSingleFab(className, iconSVGString, title, onClick) {
 
     return fab;
 }
+
+/**
+ * @private
+ * @description 更新所有悬浮按钮的工具提示文本。
+ */
+function updateFabTooltips() {
+    if (summaryFab) {
+        summaryFab.addEventListener('mouseenter', () => showTooltip(summaryFab, t(summaryFab.dataset.tooltipKey)));
+    }
+    if (dynamicFab) {
+        dynamicFab.addEventListener('mouseenter', () => showTooltip(dynamicFab, t(dynamicFab.dataset.tooltipKey)));
+    }
+    if (staticFab) {
+        staticFab.addEventListener('mouseenter', () => showTooltip(staticFab, t(staticFab.dataset.tooltipKey)));
+    }
+}
+
 
 /**
  * @description 创建并初始化所有悬浮操作按钮。
@@ -63,26 +86,26 @@ export function createFab({ callbacks, isVisible }) {
     // --- 创建三个按钮 ---
 
     // 1. 总结按钮 (最上方)
-    const summaryFab = createSingleFab(
+    summaryFab = createSingleFab(
         'fab-summary',
         summaryIcon,
-        appConfig.ui.tooltips.summary,
+        'tooltip_summary',
         onSummary
     );
 
     // 2. 动态扫描按钮 (中间)
-    const dynamicFab = createSingleFab(
+    dynamicFab = createSingleFab(
         'fab-dynamic',
         dynamicIcon,
-        appConfig.ui.tooltips.dynamicScan,
+        'tooltip_dynamic_scan',
         () => onDynamicExtract(dynamicFab) // 将fab元素本身传回去，方便UI更新
     );
 
     // 3. 静态扫描按钮 (最下方)
-    const staticFab = createSingleFab(
+    staticFab = createSingleFab(
         'fab-static',
         translateIcon,
-        appConfig.ui.tooltips.staticScan,
+        'tooltip_static_scan',
         onStaticExtract
     );
 
@@ -99,6 +122,9 @@ export function createFab({ callbacks, isVisible }) {
             fabContainer.classList.add('fab-container-visible');
         }, appConfig.ui.fabAnimationDelay); // 延迟以确保CSS过渡生效
     }
+
+    // 监听语言变化事件以更新工具提示
+    on('languageChanged', updateFabTooltips);
 }
 
 /**
