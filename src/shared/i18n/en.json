@@ -56,5 +56,6 @@
     "setting_enable_debug_logging": "Enable debug logging",
     "tooltip_summary": "View Summary",
     "tooltip_dynamic_scan": "Dynamic Scan",
-    "tooltip_static_scan": "Static Scan"
+    "tooltip_static_scan": "Static Scan",
+    "settingsPanel.title": "Settings Panel"
 }

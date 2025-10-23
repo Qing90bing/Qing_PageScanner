@@ -128,7 +128,8 @@
     setting_enable_debug_logging: "Enable debug logging",
     tooltip_summary: "View Summary",
     tooltip_dynamic_scan: "Dynamic Scan",
-    tooltip_static_scan: "Static Scan"
+    tooltip_static_scan: "Static Scan",
+    "settingsPanel.title": "Settings Panel"
   };
   var zh_CN_default = {
     settings: "\u8BBE\u7F6E",
@@ -188,7 +189,8 @@
     setting_enable_debug_logging: "\u542F\u7528\u8C03\u8BD5\u65E5\u5FD7",
     tooltip_summary: "\u67E5\u770B\u603B\u7ED3",
     tooltip_dynamic_scan: "\u52A8\u6001\u626B\u63CF",
-    tooltip_static_scan: "\u9759\u6001\u626B\u63CF"
+    tooltip_static_scan: "\u9759\u6001\u626B\u63CF",
+    "settingsPanel.title": "\u8BBE\u7F6E\u9762\u677F"
   };
   var zh_TW_default = {
     settings: "\u8A2D\u5B9A",
@@ -248,7 +250,8 @@
     setting_enable_debug_logging: "\u555F\u7528\u5075\u932F\u65E5\u8A8C",
     tooltip_summary: "\u67E5\u770B\u7E3D\u7D50",
     tooltip_dynamic_scan: "\u52D5\u614B\u6383\u63CF",
-    tooltip_static_scan: "\u975C\u614B\u6383\u63CF"
+    tooltip_static_scan: "\u975C\u614B\u6383\u63CF",
+    "settingsPanel.title": "\u8A2D\u5B9A\u9762\u677F"
   };
   var events = {};
   function on(eventName, callback) {
