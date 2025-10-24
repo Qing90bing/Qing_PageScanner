@@ -49,7 +49,7 @@ export function updateLiveCounter(count) {
         counterElement.removeChild(counterElement.firstChild);
     }
 
-    const textNode = document.createTextNode(t('discovered'));
+    const textNode = document.createTextNode(t('common.discovered'));
     const countSpan = document.createElement('span');
     countSpan.textContent = count;
 

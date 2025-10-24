@@ -1,63 +1,93 @@
 {
-    "settings": "設定",
-    "theme": "介面主題",
-    "language": "語言設定",
-    "quickScan": "快速掃描",
-    "sessionScan": "會話掃描",
+  "common": {
     "scan": "掃描",
     "stop": "停止",
     "resume": "繼續",
     "clear": "清空",
     "copy": "複製",
-    "copiedToClipboard": "已複製到剪貼簿！",
-    "noTextSelected": "未選擇文本",
-    "textExtractionResults": "提取的文本",
-    "totalCharacters": "總字數",
-    "totalLines": "總行數",
-    "settingsSaved": "設定已儲存！",
     "save": "儲存",
-    "language_en": "English",
-    "language_zh_CN": "简体中文",
-    "language_zh_TW": "繁體中文",
-    "theme_light": "淺色",
-    "theme_dark": "深色",
-    "theme_system": "跟隨系統",
     "discovered": "已發現：",
-    "startSessionScan": "開始動態掃描會話",
-    "stopSessionScan": "停止動態掃描會話",
-    "scanFinished": "掃描結束，共發現 {count} 條文本",
-    "sessionScanStarted": "會話掃描已開始",
-    "modalInitError": "模態框尚未初始化。",
-    "quickScanFinished": "快捷掃描完成，發現 {count} 條文本",
-    "noSummaryText": "當前沒有總結文本",
-    "placeholder_click": "點擊 ",
-    "placeholder_dynamicScan": "[動態掃描]",
-    "placeholder_startNewScanSession": " 按鈕開始一個新的掃描會話",
-    "placeholder_staticScan": "[靜態掃描]",
-    "placeholder_performOneTimeScan": " 按鈕可進行一次性的快捷提取",
-    "nothingToCopy": "沒有內容可複製",
-    "clearConfirmation": "你確認要清空嗎？此操作不可撤銷。",
-    "contentCleared": "內容已清空",
-    "stats_lines": "行",
-    "stats_chars": "字符數",
+    "confirm": "確認",
+    "cancel": "取消"
+  },
+  "settings": {
+    "title": "設定",
+    "theme": "介面主題",
+    "language": "語言設定",
     "relatedSettings": "相關設定",
     "filterRules": "內容過濾規則",
-    "filter_numbers": "過濾純數字/貨幣",
-    "filter_chinese": "過濾純中文",
-    "filter_contains_chinese": "過濾包含中文的文本",
-    "filter_emoji_only": "過濾純表情符號",
-    "filter_symbols": "過濾純符號",
-    "filter_term": "過濾特定術語",
-    "filter_single_letter": "過濾純單個英文字母",
-    "filter_repeating_chars": "過濾單一重複字符",
-    "setting_show_fab": "顯示懸浮按鈕",
-    "setting_show_line_numbers": "顯示行號",
-    "setting_show_statistics": "顯示統計資訊",
-    "setting_enable_debug_logging": "啟用偵錯日誌",
-    "tooltip_summary": "查看總結",
-    "tooltip_dynamic_scan": "動態掃描",
-    "tooltip_static_scan": "靜態掃描",
-    "settingsPanel": {
-        "title": "設定面板"
+    "filters": {
+      "numbers": "過濾純數字/貨幣",
+      "chinese": "過濾純中文",
+      "contains_chinese": "過濾包含中文的文本",
+      "emoji_only": "過濾純表情符號",
+      "symbols": "過濾純符號",
+      "term": "過濾特定術語",
+      "single_letter": "過濾純單個英文字母",
+      "repeating_chars": "過濾單一重複字符"
+    },
+    "display": {
+      "show_fab": "顯示懸浮按鈕",
+      "show_line_numbers": "顯示行號",
+      "show_statistics": "顯示統計資訊"
+    },
+    "advanced": {
+      "enable_debug_logging": "啟用偵錯日誌"
+    },
+    "panel": {
+      "title": "設定面板"
+    },
+    "languages": {
+        "en": "English",
+        "zh_CN": "简体中文",
+        "zh_TW": "繁體中文"
+    },
+    "themes": {
+        "light": "淺色",
+        "dark": "深色",
+        "system": "跟隨系統"
     }
+  },
+  "scan": {
+    "quick": "快速掃描",
+    "session": "會話掃描",
+    "startSession": "開始動態掃描會話",
+    "stopSession": "停止動態掃描會話",
+    "finished": "掃描結束，共發現 {count} 條文本",
+    "quickFinished": "快捷掃描完成，發現 {count} 條文本",
+    "sessionStarted": "會話掃描已開始"
+  },
+  "results": {
+    "title": "提取的文本",
+    "totalCharacters": "總字數",
+    "totalLines": "總行數",
+    "noSummary": "當前沒有總結文本",
+    "stats": {
+      "lines": "行",
+      "chars": "字符數"
+    }
+  },
+  "notifications": {
+    "copiedToClipboard": "已複製到剪貼簿！",
+    "settingsSaved": "設定已儲存！",
+    "modalInitError": "模態框尚未初始化。",
+    "nothingToCopy": "沒有內容可複製",
+    "contentCleared": "內容已清空",
+    "noTextSelected": "未選擇文本"
+  },
+  "placeholders": {
+    "click": "點擊 ",
+    "dynamicScan": "[動態掃描]",
+    "startNewScanSession": " 按鈕開始一個新的掃描會話",
+    "staticScan": "[靜態掃描]",
+    "performOneTimeScan": " 按鈕可進行一次性的快捷提取"
+  },
+  "confirmation": {
+    "clear": "你確認要清空嗎？此操作不可撤銷。"
+  },
+  "tooltip": {
+    "summary": "查看總結",
+    "dynamic_scan": "動態掃描",
+    "static_scan": "靜態掃描"
+  }
 }

@@ -7,18 +7,18 @@ export const selectSettingsDefinitions = [
     {
         id: 'theme-select',
         key: 'theme',
-        label: 'theme',
+        label: 'settings.theme',
         icon: themeIcon,
         options: [
-            { value: 'light', label: 'theme_light' },
-            { value: 'dark', label: 'theme_dark' },
-            { value: 'system', label: 'theme_system' },
+            { value: 'light', label: 'settings.themes.light' },
+            { value: 'dark', label: 'settings.themes.dark' },
+            { value: 'system', label: 'settings.themes.system' },
         ],
     },
     {
         id: 'language-select',
         key: 'language',
-        label: 'language',
+        label: 'settings.language',
         icon: languageIcon,
     // 直接从 i18n 模块获取语言列表，其标签已经是原生名称，无需再翻译。
     options: getAvailableLanguages(),
@@ -26,21 +26,21 @@ export const selectSettingsDefinitions = [
 ];
 
 export const filterDefinitions = [
-  { id: 'filter-numbers', key: 'numbers', label: 'filter_numbers' },
-  { id: 'filter-chinese', key: 'chinese', label: 'filter_chinese' },
-  { id: 'filter-contains-chinese', key: 'containsChinese', label: 'filter_contains_chinese' },
-  { id: 'filter-emoji-only', key: 'emojiOnly', label: 'filter_emoji_only' },
-  { id: 'filter-symbols', key: 'symbols', label: 'filter_symbols' },
-  { id: 'filter-term', key: 'termFilter', label: 'filter_term' },
-  { id: 'filter-single-letter', key: 'singleLetter', label: 'filter_single_letter' },
-  { id: 'filter-repeating-chars', key: 'repeatingChars', label: 'filter_repeating_chars' },
+  { id: 'filter-numbers', key: 'numbers', label: 'settings.filters.numbers' },
+  { id: 'filter-chinese', key: 'chinese', label: 'settings.filters.chinese' },
+  { id: 'filter-contains-chinese', key: 'containsChinese', label: 'settings.filters.contains_chinese' },
+  { id: 'filter-emoji-only', key: 'emojiOnly', label: 'settings.filters.emoji_only' },
+  { id: 'filter-symbols', key: 'symbols', label: 'settings.filters.symbols' },
+  { id: 'filter-term', key: 'termFilter', label: 'settings.filters.term' },
+  { id: 'filter-single-letter', key: 'singleLetter', label: 'settings.filters.single_letter' },
+  { id: 'filter-repeating-chars', key: 'repeatingChars', label: 'settings.filters.repeating_chars' },
 ];
 
 export const relatedSettingsDefinitions = [
-    { id: 'show-fab', key: 'showFab', label: 'setting_show_fab' },
-    { id: 'show-line-numbers', key: 'showLineNumbers', label: 'setting_show_line_numbers' },
-    { id: 'show-statistics', key: 'showStatistics', label: 'setting_show_statistics' },
-    { id: 'enable-debug-logging', key: 'enableDebugLogging', label: 'setting_enable_debug_logging' },
+    { id: 'show-fab', key: 'showFab', label: 'settings.display.show_fab' },
+    { id: 'show-line-numbers', key: 'showLineNumbers', label: 'settings.display.show_line_numbers' },
+    { id: 'show-statistics', key: 'showStatistics', label: 'settings.display.show_statistics' },
+    { id: 'enable-debug-logging', key: 'enableDebugLogging', label: 'settings.advanced.enable_debug_logging' },
 ];
 
 /**

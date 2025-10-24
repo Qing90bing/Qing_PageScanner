@@ -25,7 +25,7 @@ export function updateSettingsMenu(onClick) {
         unregisterMenuCommand(settingsMenuCommandId);
     }
     // 使用当前语言注册新的菜单命令
-    const menuText = t('settingsPanel.title');
+    const menuText = t('settings.panel.title');
     settingsMenuCommandId = registerMenuCommand(menuText, onClick);
 }
 

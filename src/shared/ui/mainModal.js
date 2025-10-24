@@ -78,7 +78,7 @@ export function createMainModal({ clearSessionCallback }) {
  */
 export function openModal() {
     if (!state.modalOverlay) {
-        console.error(t('modalInitError'));
+        console.error(t('notifications.modalInitError'));
         return;
     }
     log('正在打开主模态框...');
@@ -96,7 +96,7 @@ export function openModal() {
             copyBtn.disabled = !formattedText;
         }
 
-        const notificationText = simpleTemplate(t('quickScanFinished'), { count: extractedTexts.length });
+        const notificationText = simpleTemplate(t('scan.quickFinished'), { count: extractedTexts.length });
         showNotification(notificationText, { type: 'success' });
     }, 50);
 }

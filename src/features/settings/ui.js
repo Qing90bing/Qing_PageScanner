@@ -65,7 +65,7 @@ function showSettingsPanel() {
 
     // --- 填充标题和组件 ---
     const titleContainer = settingsPanel.querySelector('#settings-panel-title-container');
-    titleContainer.appendChild(createIconTitle(settingsIcon, t('settings')));
+    titleContainer.appendChild(createIconTitle(settingsIcon, t('settings.title')));
 
     // 动态创建下拉菜单
     selectComponents = {};
@@ -88,13 +88,13 @@ function showSettingsPanel() {
     });
 
     const relatedTitleContainer = settingsPanel.querySelector('#related-setting-title-container');
-    relatedTitleContainer.appendChild(createIconTitle(relatedSettingsIcon, t('relatedSettings')));
+    relatedTitleContainer.appendChild(createIconTitle(relatedSettingsIcon, t('settings.relatedSettings')));
 
     const filterTitleContainer = settingsPanel.querySelector('#filter-setting-title-container');
-    filterTitleContainer.appendChild(createIconTitle(filterIcon, t('filterRules')));
+    filterTitleContainer.appendChild(createIconTitle(filterIcon, t('settings.filterRules')));
 
     const saveBtn = settingsPanel.querySelector('#save-settings-btn');
-    saveBtn.appendChild(createIconTitle(saveIcon, t('save')));
+    saveBtn.appendChild(createIconTitle(saveIcon, t('common.save')));
 
     // --- 绑定事件 ---
     settingsPanel.querySelector('.settings-panel-close').addEventListener('click', hideSettingsPanel);
@@ -168,7 +168,7 @@ function handleSave() {
     }
     updateModalAddonsVisibility();
 
-    showNotification(t('settingsSaved'), { type: 'success' });
+    showNotification(t('notifications.settingsSaved'), { type: 'success' });
     hideSettingsPanel();
 }
 

@@ -34,33 +34,33 @@ function rerenderPlaceholder() {
     if (infoIconSVG) placeholderIconDiv.appendChild(infoIconSVG);
 
     const p1 = document.createElement('p');
-    p1.textContent = t('noSummaryText');
+    p1.textContent = t('results.noSummary');
 
     const p2 = document.createElement('p');
     p2.className = 'placeholder-actions';
-    p2.append(t('placeholder_click'));
+    p2.append(t('placeholders.click'));
     const span2 = document.createElement('span');
     span2.className = 'placeholder-action-icon';
     const dynamicIconSVG = createSVGFromString(dynamicIcon);
     if (dynamicIconSVG) span2.appendChild(dynamicIconSVG);
     p2.appendChild(span2);
     const strong2 = document.createElement('strong');
-    strong2.textContent = t('placeholder_dynamicScan');
+    strong2.textContent = t('placeholders.dynamicScan');
     p2.appendChild(strong2);
-    p2.append(t('placeholder_startNewScanSession'));
+    p2.append(t('placeholders.startNewScanSession'));
 
     const p3 = document.createElement('p');
     p3.className = 'placeholder-actions';
-    p3.append(t('placeholder_click'));
+    p3.append(t('placeholders.click'));
     const span3 = document.createElement('span');
     span3.className = 'placeholder-action-icon';
     const translateIconSVG = createSVGFromString(translateIcon);
     if (translateIconSVG) span3.appendChild(translateIconSVG);
     p3.appendChild(span3);
     const strong3 = document.createElement('strong');
-    strong3.textContent = t('placeholder_staticScan');
+    strong3.textContent = t('placeholders.staticScan');
     p3.appendChild(strong3);
-    p3.append(t('placeholder_performOneTimeScan'));
+    p3.append(t('placeholders.performOneTimeScan'));
 
     placeholder.appendChild(placeholderIconDiv);
     placeholder.appendChild(p1);

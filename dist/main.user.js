@@ -71,192 +71,282 @@
   var themeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 32.5-156t88-127Q256-817 330-848.5T488-880q80 0 151 27.5t124.5 76q53.5 48.5 85 115T880-518q0 115-70 176.5T640-280h-74q-9 0-12.5 5t-3.5 11q0 12 15 34.5t15 51.5q0 50-27.5 74T480-80Zm0-400Zm-220 40q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120-160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm200 0q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120 160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17ZM480-160q9 0 14.5-5t5.5-13q0-14-15-33t-15-57q0-42 29-67t71-25h70q66 0 113-38.5T800-518q0-121-92.5-201.5T488-800q-136 0-232 93t-96 227q0 133 93.5 226.5T480-160Z"/></svg>`;
   var languageIcon_default = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-155.5t86-127Q252-817 325-848.5T480-880q83 0 155.5 31.5t127 86q54.5 54.5 86 127T880-480q0 82-31.5 155t-86 127.5q-54.5 54.5-127 86T480-80Zm0-82q26-36 45-75t31-83H404q12 44 31 83t45 75Zm-104-16q-18-33-31.5-68.5T322-320H204q29 50 72.5 87t99.5 55Zm208 0q56-18 99.5-55t72.5-87H638q-9 38-22.5 73.5T584-178ZM170-400h136q-3-20-4.5-39.5T300-480q0-21 1.5-40.5T306-560H170q-5 20-7.5 39.5T160-480q0 21 2.5 40.5T170-400Zm216 0h188q3-20 4.5-39.5T580-480q0-21-1.5-40.5T574-560H386q-3 20-4.5 39.5T380-480q0 21 1.5 40.5T386-400Zm268 0h136q5-20 7.5-39.5T800-480q0-21-2.5-40.5T790-560H654q3 20 4.5 39.5T660-480q0 21-1.5 40.5T654-400Zm-16-240h118q-29-50-72.5-87T584-782q18 33 31.5 68.5T638-640Zm-234 0h152q-12-44-31-83t-45-75q-26 36-45 75t-31 83Zm-200 0h118q9-38 22.5-73.5T376-782q-56 18-99.5 55T204-640Z"/></svg>`;
   var en_default = {
-    settings: "Settings",
-    theme: "Theme",
-    language: "Language",
-    quickScan: "Quick Scan",
-    sessionScan: "Session Scan",
-    scan: "Scan",
-    stop: "Stop",
-    resume: "Resume",
-    clear: "Clear",
-    copy: "Copy",
-    copiedToClipboard: "Copied to clipboard!",
-    noTextSelected: "No text selected",
-    textExtractionResults: "Extracted Text",
-    totalCharacters: "Total characters",
-    totalLines: "Total lines",
-    settingsSaved: "Settings saved!",
-    save: "Save",
-    language_en: "English",
-    language_zh_CN: "\u7B80\u4F53\u4E2D\u6587",
-    language_zh_TW: "\u7E41\u9AD4\u4E2D\u6587",
-    theme_light: "Light",
-    theme_dark: "Dark",
-    theme_system: "System",
-    discovered: "Discovered: ",
-    startSessionScan: "Start dynamic scan session",
-    stopSessionScan: "Stop dynamic scan session",
-    scanFinished: "Scan finished, {count} texts found",
-    sessionScanStarted: "Session scan started",
-    modalInitError: "Modal not initialized.",
-    quickScanFinished: "Quick scan finished, {count} texts found",
-    noSummaryText: "No summary text available",
-    placeholder_click: "Click the ",
-    placeholder_dynamicScan: "[Dynamic Scan]",
-    placeholder_startNewScanSession: " button to start a new scanning session",
-    placeholder_staticScan: "[Static Scan]",
-    placeholder_performOneTimeScan: " button for a one-time quick extraction",
-    nothingToCopy: "Nothing to copy",
-    clearConfirmation: "Are you sure you want to clear the content? This action cannot be undone.",
-    contentCleared: "Content cleared",
-    stats_lines: "Lines",
-    stats_chars: "Chars",
-    relatedSettings: "Related Settings",
-    filterRules: "Content Filtering Rules",
-    filter_numbers: "Filter numbers/currency",
-    filter_chinese: "Filter pure Chinese",
-    filter_contains_chinese: "Filter text containing Chinese",
-    filter_emoji_only: "Filter emoji-only text",
-    filter_symbols: "Filter symbol-only text",
-    filter_term: "Filter specific terms",
-    filter_single_letter: "Filter single English letters",
-    filter_repeating_chars: "Filter single repeating characters",
-    setting_show_fab: "Show floating button",
-    setting_show_line_numbers: "Show line numbers",
-    setting_show_statistics: "Show statistics",
-    setting_enable_debug_logging: "Enable debug logging",
-    tooltip_summary: "View Summary",
-    tooltip_dynamic_scan: "Dynamic Scan",
-    tooltip_static_scan: "Static Scan",
-    settingsPanel: {
-      title: "Settings Panel"
+    common: {
+      scan: "Scan",
+      stop: "Stop",
+      resume: "Resume",
+      clear: "Clear",
+      copy: "Copy",
+      save: "Save",
+      discovered: "Discovered: ",
+      confirm: "Confirm",
+      cancel: "Cancel"
+    },
+    settings: {
+      title: "Settings",
+      theme: "Theme",
+      language: "Language",
+      relatedSettings: "Related Settings",
+      filterRules: "Content Filtering Rules",
+      filters: {
+        numbers: "Filter numbers/currency",
+        chinese: "Filter pure Chinese",
+        contains_chinese: "Filter text containing Chinese",
+        emoji_only: "Filter emoji-only text",
+        symbols: "Filter symbol-only text",
+        term: "Filter specific terms",
+        single_letter: "Filter single English letters",
+        repeating_chars: "Filter single repeating characters"
+      },
+      display: {
+        show_fab: "Show floating button",
+        show_line_numbers: "Show line numbers",
+        show_statistics: "Show statistics"
+      },
+      advanced: {
+        enable_debug_logging: "Enable debug logging"
+      },
+      panel: {
+        title: "Settings Panel"
+      },
+      languages: {
+        en: "English",
+        zh_CN: "\u7B80\u4F53\u4E2D\u6587",
+        zh_TW: "\u7E41\u9AD4\u4E2D\u6587"
+      },
+      themes: {
+        light: "Light",
+        dark: "Dark",
+        system: "System"
+      }
+    },
+    scan: {
+      quick: "Quick Scan",
+      session: "Session Scan",
+      startSession: "Start dynamic scan session",
+      stopSession: "Stop dynamic scan session",
+      finished: "Scan finished, {count} texts found",
+      quickFinished: "Quick scan finished, {count} texts found",
+      sessionStarted: "Session scan started"
+    },
+    results: {
+      title: "Extracted Text",
+      totalCharacters: "Total characters",
+      totalLines: "Total lines",
+      noSummary: "No summary text available",
+      stats: {
+        lines: "Lines",
+        chars: "Chars"
+      }
+    },
+    notifications: {
+      copiedToClipboard: "Copied to clipboard!",
+      settingsSaved: "Settings saved!",
+      modalInitError: "Modal not initialized.",
+      nothingToCopy: "Nothing to copy",
+      contentCleared: "Content cleared",
+      noTextSelected: "No text selected"
+    },
+    placeholders: {
+      click: "Click the ",
+      dynamicScan: "[Dynamic Scan]",
+      startNewScanSession: " button to start a new scanning session",
+      staticScan: "[Static Scan]",
+      performOneTimeScan: " button for a one-time quick extraction"
+    },
+    confirmation: {
+      clear: "Are you sure you want to clear the content? This action cannot be undone."
+    },
+    tooltip: {
+      summary: "View Summary",
+      dynamic_scan: "Dynamic Scan",
+      static_scan: "Static Scan"
     }
   };
   var zh_CN_default = {
-    settings: "\u8BBE\u7F6E",
-    theme: "\u754C\u9762\u4E3B\u9898",
-    language: "\u8BED\u8A00\u8BBE\u7F6E",
-    quickScan: "\u5FEB\u901F\u626B\u63CF",
-    sessionScan: "\u4F1A\u8BDD\u626B\u63CF",
-    scan: "\u626B\u63CF",
-    stop: "\u505C\u6B62",
-    resume: "\u7EE7\u7EED",
-    clear: "\u6E05\u7A7A",
-    copy: "\u590D\u5236",
-    copiedToClipboard: "\u5DF2\u590D\u5236\u5230\u526A\u8D34\u677F!",
-    noTextSelected: "\u672A\u9009\u62E9\u6587\u672C",
-    textExtractionResults: "\u63D0\u53D6\u7684\u6587\u672C",
-    totalCharacters: "\u603B\u5B57\u6570",
-    totalLines: "\u603B\u884C\u6570",
-    settingsSaved: "\u8BBE\u7F6E\u5DF2\u4FDD\u5B58\uFF01",
-    save: "\u4FDD\u5B58",
-    language_en: "English",
-    language_zh_CN: "\u7B80\u4F53\u4E2D\u6587",
-    language_zh_TW: "\u7E41\u9AD4\u4E2D\u6587",
-    theme_light: "\u6D45\u8272",
-    theme_dark: "\u6DF1\u8272",
-    theme_system: "\u8DDF\u968F\u7CFB\u7EDF",
-    discovered: "\u5DF2\u53D1\u73B0\uFF1A",
-    startSessionScan: "\u5F00\u59CB\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD",
-    stopSessionScan: "\u505C\u6B62\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD",
-    scanFinished: "\u626B\u63CF\u7ED3\u675F\uFF0C\u5171\u53D1\u73B0 {count} \u6761\u6587\u672C",
-    sessionScanStarted: "\u4F1A\u8BDD\u626B\u63CF\u5DF2\u5F00\u59CB",
-    modalInitError: "\u6A21\u6001\u6846\u5C1A\u672A\u521D\u59CB\u5316\u3002",
-    quickScanFinished: "\u5FEB\u6377\u626B\u63CF\u5B8C\u6210\uFF0C\u53D1\u73B0 {count} \u6761\u6587\u672C",
-    noSummaryText: "\u5F53\u524D\u6CA1\u6709\u603B\u7ED3\u6587\u672C",
-    placeholder_click: "\u70B9\u51FB ",
-    placeholder_dynamicScan: "[\u52A8\u6001\u626B\u63CF]",
-    placeholder_startNewScanSession: " \u6309\u94AE\u5F00\u59CB\u4E00\u4E2A\u65B0\u7684\u626B\u63CF\u4F1A\u8BDD",
-    placeholder_staticScan: "[\u9759\u6001\u626B\u63CF]",
-    placeholder_performOneTimeScan: " \u6309\u94AE\u53EF\u8FDB\u884C\u4E00\u6B21\u6027\u7684\u5FEB\u6377\u63D0\u53D6",
-    nothingToCopy: "\u6CA1\u6709\u5185\u5BB9\u53EF\u590D\u5236",
-    clearConfirmation: "\u4F60\u786E\u8BA4\u8981\u6E05\u7A7A\u5417\uFF1F\u6B64\u64CD\u4F5C\u4E0D\u53EF\u64A4\u9500\u3002",
-    contentCleared: "\u5185\u5BB9\u5DF2\u6E05\u7A7A",
-    stats_lines: "\u884C",
-    stats_chars: "\u5B57\u7B26\u6570",
-    relatedSettings: "\u76F8\u5173\u8BBE\u7F6E",
-    filterRules: "\u5185\u5BB9\u8FC7\u6EE4\u89C4\u5219",
-    filter_numbers: "\u8FC7\u6EE4\u7EAF\u6570\u5B57/\u8D27\u5E01",
-    filter_chinese: "\u8FC7\u6EE4\u7EAF\u4E2D\u6587",
-    filter_contains_chinese: "\u8FC7\u6EE4\u5305\u542B\u4E2D\u6587\u7684\u6587\u672C",
-    filter_emoji_only: "\u8FC7\u6EE4\u7EAF\u8868\u60C5\u7B26\u53F7",
-    filter_symbols: "\u8FC7\u6EE4\u7EAF\u7B26\u53F7",
-    filter_term: "\u8FC7\u6EE4\u7279\u5B9A\u672F\u8BED",
-    filter_single_letter: "\u8FC7\u6EE4\u7EAF\u5355\u4E2A\u82F1\u6587\u5B57\u6BCD",
-    filter_repeating_chars: "\u8FC7\u6EE4\u5355\u4E00\u91CD\u590D\u5B57\u7B26",
-    setting_show_fab: "\u663E\u793A\u60AC\u6D6E\u6309\u94AE",
-    setting_show_line_numbers: "\u663E\u793A\u884C\u53F7",
-    setting_show_statistics: "\u663E\u793A\u7EDF\u8BA1\u4FE1\u606F",
-    setting_enable_debug_logging: "\u542F\u7528\u8C03\u8BD5\u65E5\u5FD7",
-    tooltip_summary: "\u67E5\u770B\u603B\u7ED3",
-    tooltip_dynamic_scan: "\u52A8\u6001\u626B\u63CF",
-    tooltip_static_scan: "\u9759\u6001\u626B\u63CF",
-    settingsPanel: {
-      title: "\u8BBE\u7F6E\u9762\u677F"
+    common: {
+      scan: "\u626B\u63CF",
+      stop: "\u505C\u6B62",
+      resume: "\u7EE7\u7EED",
+      clear: "\u6E05\u7A7A",
+      copy: "\u590D\u5236",
+      save: "\u4FDD\u5B58",
+      discovered: "\u5DF2\u53D1\u73B0\uFF1A",
+      confirm: "\u786E\u8BA4",
+      cancel: "\u53D6\u6D88"
+    },
+    settings: {
+      title: "\u8BBE\u7F6E",
+      theme: "\u754C\u9762\u4E3B\u9898",
+      language: "\u8BED\u8A00\u8BBE\u7F6E",
+      relatedSettings: "\u76F8\u5173\u8BBE\u7F6E",
+      filterRules: "\u5185\u5BB9\u8FC7\u6EE4\u89C4\u5219",
+      filters: {
+        numbers: "\u8FC7\u6EE4\u7EAF\u6570\u5B57/\u8D27\u5E01",
+        chinese: "\u8FC7\u6EE4\u7EAF\u4E2D\u6587",
+        contains_chinese: "\u8FC7\u6EE4\u5305\u542B\u4E2D\u6587\u7684\u6587\u672C",
+        emoji_only: "\u8FC7\u6EE4\u7EAF\u8868\u60C5\u7B26\u53F7",
+        symbols: "\u8FC7\u6EE4\u7EAF\u7B26\u53F7",
+        term: "\u8FC7\u6EE4\u7279\u5B9A\u672F\u8BED",
+        single_letter: "\u8FC7\u6EE4\u7EAF\u5355\u4E2A\u82F1\u6587\u5B57\u6BCD",
+        repeating_chars: "\u8FC7\u6EE4\u5355\u4E00\u91CD\u590D\u5B57\u7B26"
+      },
+      display: {
+        show_fab: "\u663E\u793A\u60AC\u6D6E\u6309\u94AE",
+        show_line_numbers: "\u663E\u793A\u884C\u53F7",
+        show_statistics: "\u663E\u793A\u7EDF\u8BA1\u4FE1\u606F"
+      },
+      advanced: {
+        enable_debug_logging: "\u542F\u7528\u8C03\u8BD5\u65E5\u5FD7"
+      },
+      panel: {
+        title: "\u8BBE\u7F6E\u9762\u677F"
+      },
+      languages: {
+        en: "English",
+        zh_CN: "\u7B80\u4F53\u4E2D\u6587",
+        zh_TW: "\u7E41\u9AD4\u4E2D\u6587"
+      },
+      themes: {
+        light: "\u6D45\u8272",
+        dark: "\u6DF1\u8272",
+        system: "\u8DDF\u968F\u7CFB\u7EDF"
+      }
+    },
+    scan: {
+      quick: "\u5FEB\u901F\u626B\u63CF",
+      session: "\u4F1A\u8BDD\u626B\u63CF",
+      startSession: "\u5F00\u59CB\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD",
+      stopSession: "\u505C\u6B62\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD",
+      finished: "\u626B\u63CF\u7ED3\u675F\uFF0C\u5171\u53D1\u73B0 {count} \u6761\u6587\u672C",
+      quickFinished: "\u5FEB\u6377\u626B\u63CF\u5B8C\u6210\uFF0C\u53D1\u73B0 {count} \u6761\u6587\u672C",
+      sessionStarted: "\u4F1A\u8BDD\u626B\u63CF\u5DF2\u5F00\u59CB"
+    },
+    results: {
+      title: "\u63D0\u53D6\u7684\u6587\u672C",
+      totalCharacters: "\u603B\u5B57\u6570",
+      totalLines: "\u603B\u884C\u6570",
+      noSummary: "\u5F53\u524D\u6CA1\u6709\u603B\u7ED3\u6587\u672C",
+      stats: {
+        lines: "\u884C",
+        chars: "\u5B57\u7B26\u6570"
+      }
+    },
+    notifications: {
+      copiedToClipboard: "\u5DF2\u590D\u5236\u5230\u526A\u8D34\u677F!",
+      settingsSaved: "\u8BBE\u7F6E\u5DF2\u4FDD\u5B58\uFF01",
+      modalInitError: "\u6A21\u6001\u6846\u5C1A\u672A\u521D\u59CB\u5316\u3002",
+      nothingToCopy: "\u6C92\u6709\u5167\u5BB9\u53EF\u8907\u88FD",
+      contentCleared: "\u5185\u5BB9\u5DF2\u6E05\u7A7A",
+      noTextSelected: "\u672A\u9009\u62E9\u6587\u672C"
+    },
+    placeholders: {
+      click: "\u70B9\u51FB ",
+      dynamicScan: "[\u52A8\u6001\u626B\u63CF]",
+      startNewScanSession: " \u6309\u94AE\u5F00\u59CB\u4E00\u4E2A\u65B0\u7684\u626B\u63CF\u4F1A\u8BDD",
+      staticScan: "[\u9759\u6001\u626B\u63CF]",
+      performOneTimeScan: " \u6309\u94AE\u53EF\u8FDB\u884C\u4E00\u6B21\u6027\u7684\u5FEB\u6377\u63D0\u53D6"
+    },
+    confirmation: {
+      clear: "\u4F60\u786E\u8BA4\u8981\u6E05\u7A7A\u5417\uFF1F\u6B64\u64CD\u4F5C\u4E0D\u53EF\u64A4\u9500\u3002"
+    },
+    tooltip: {
+      summary: "\u67E5\u770B\u603B\u7ED3",
+      dynamic_scan: "\u52A8\u6001\u626B\u63CF",
+      static_scan: "\u9759\u6001\u626B\u63CF"
     }
   };
   var zh_TW_default = {
-    settings: "\u8A2D\u5B9A",
-    theme: "\u4ECB\u9762\u4E3B\u984C",
-    language: "\u8A9E\u8A00\u8A2D\u5B9A",
-    quickScan: "\u5FEB\u901F\u6383\u63CF",
-    sessionScan: "\u6703\u8A71\u6383\u63CF",
-    scan: "\u6383\u63CF",
-    stop: "\u505C\u6B62",
-    resume: "\u7E7C\u7E8C",
-    clear: "\u6E05\u7A7A",
-    copy: "\u8907\u88FD",
-    copiedToClipboard: "\u5DF2\u8907\u88FD\u5230\u526A\u8CBC\u7C3F\uFF01",
-    noTextSelected: "\u672A\u9078\u64C7\u6587\u672C",
-    textExtractionResults: "\u63D0\u53D6\u7684\u6587\u672C",
-    totalCharacters: "\u7E3D\u5B57\u6578",
-    totalLines: "\u7E3D\u884C\u6578",
-    settingsSaved: "\u8A2D\u5B9A\u5DF2\u5132\u5B58\uFF01",
-    save: "\u5132\u5B58",
-    language_en: "English",
-    language_zh_CN: "\u7B80\u4F53\u4E2D\u6587",
-    language_zh_TW: "\u7E41\u9AD4\u4E2D\u6587",
-    theme_light: "\u6DFA\u8272",
-    theme_dark: "\u6DF1\u8272",
-    theme_system: "\u8DDF\u96A8\u7CFB\u7D71",
-    discovered: "\u5DF2\u767C\u73FE\uFF1A",
-    startSessionScan: "\u958B\u59CB\u52D5\u614B\u6383\u63CF\u6703\u8A71",
-    stopSessionScan: "\u505C\u6B62\u52D5\u614B\u6383\u63CF\u6703\u8A71",
-    scanFinished: "\u6383\u63CF\u7D50\u675F\uFF0C\u5171\u767C\u73FE {count} \u689D\u6587\u672C",
-    sessionScanStarted: "\u6703\u8A71\u6383\u63CF\u5DF2\u958B\u59CB",
-    modalInitError: "\u6A21\u614B\u6846\u5C1A\u672A\u521D\u59CB\u5316\u3002",
-    quickScanFinished: "\u5FEB\u6377\u6383\u63CF\u5B8C\u6210\uFF0C\u767C\u73FE {count} \u689D\u6587\u672C",
-    noSummaryText: "\u7576\u524D\u6C92\u6709\u7E3D\u7D50\u6587\u672C",
-    placeholder_click: "\u9EDE\u64CA ",
-    placeholder_dynamicScan: "[\u52D5\u614B\u6383\u63CF]",
-    placeholder_startNewScanSession: " \u6309\u9215\u958B\u59CB\u4E00\u500B\u65B0\u7684\u6383\u63CF\u6703\u8A71",
-    placeholder_staticScan: "[\u975C\u614B\u6383\u63CF]",
-    placeholder_performOneTimeScan: " \u6309\u9215\u53EF\u9032\u884C\u4E00\u6B21\u6027\u7684\u5FEB\u6377\u63D0\u53D6",
-    nothingToCopy: "\u6C92\u6709\u5167\u5BB9\u53EF\u8907\u88FD",
-    clearConfirmation: "\u4F60\u78BA\u8A8D\u8981\u6E05\u7A7A\u55CE\uFF1F\u6B64\u64CD\u4F5C\u4E0D\u53EF\u64A4\u92B7\u3002",
-    contentCleared: "\u5167\u5BB9\u5DF2\u6E05\u7A7A",
-    stats_lines: "\u884C",
-    stats_chars: "\u5B57\u7B26\u6578",
-    relatedSettings: "\u76F8\u95DC\u8A2D\u5B9A",
-    filterRules: "\u5167\u5BB9\u904E\u6FFE\u898F\u5247",
-    filter_numbers: "\u904E\u6FFE\u7D14\u6578\u5B57/\u8CA8\u5E63",
-    filter_chinese: "\u904E\u6FFE\u7D14\u4E2D\u6587",
-    filter_contains_chinese: "\u904E\u6FFE\u5305\u542B\u4E2D\u6587\u7684\u6587\u672C",
-    filter_emoji_only: "\u904E\u6FFE\u7D14\u8868\u60C5\u7B26\u865F",
-    filter_symbols: "\u904E\u6FFE\u7D14\u7B26\u865F",
-    filter_term: "\u904E\u6FFE\u7279\u5B9A\u8853\u8A9E",
-    filter_single_letter: "\u904E\u6FFE\u7D14\u55AE\u500B\u82F1\u6587\u5B57\u6BCD",
-    filter_repeating_chars: "\u904E\u6FFE\u55AE\u4E00\u91CD\u8907\u5B57\u7B26",
-    setting_show_fab: "\u986F\u793A\u61F8\u6D6E\u6309\u9215",
-    setting_show_line_numbers: "\u986F\u793A\u884C\u865F",
-    setting_show_statistics: "\u986F\u793A\u7D71\u8A08\u8CC7\u8A0A",
-    setting_enable_debug_logging: "\u555F\u7528\u5075\u932F\u65E5\u8A8C",
-    tooltip_summary: "\u67E5\u770B\u7E3D\u7D50",
-    tooltip_dynamic_scan: "\u52D5\u614B\u6383\u63CF",
-    tooltip_static_scan: "\u975C\u614B\u6383\u63CF",
-    settingsPanel: {
-      title: "\u8A2D\u5B9A\u9762\u677F"
+    common: {
+      scan: "\u6383\u63CF",
+      stop: "\u505C\u6B62",
+      resume: "\u7E7C\u7E8C",
+      clear: "\u6E05\u7A7A",
+      copy: "\u8907\u88FD",
+      save: "\u5132\u5B58",
+      discovered: "\u5DF2\u767C\u73FE\uFF1A",
+      confirm: "\u78BA\u8A8D",
+      cancel: "\u53D6\u6D88"
+    },
+    settings: {
+      title: "\u8A2D\u5B9A",
+      theme: "\u4ECB\u9762\u4E3B\u984C",
+      language: "\u8A9E\u8A00\u8A2D\u5B9A",
+      relatedSettings: "\u76F8\u95DC\u8A2D\u5B9A",
+      filterRules: "\u5167\u5BB9\u904E\u6FFE\u898F\u5247",
+      filters: {
+        numbers: "\u904E\u6FFE\u7D14\u6578\u5B57/\u8CA8\u5E63",
+        chinese: "\u904E\u6FFE\u7D14\u4E2D\u6587",
+        contains_chinese: "\u904E\u6FFE\u5305\u542B\u4E2D\u6587\u7684\u6587\u672C",
+        emoji_only: "\u904E\u6FFE\u7D14\u8868\u60C5\u7B26\u865F",
+        symbols: "\u904E\u6FFE\u7D14\u7B26\u865F",
+        term: "\u904E\u6FFE\u7279\u5B9A\u8853\u8A9E",
+        single_letter: "\u904E\u6FFE\u7D14\u55AE\u500B\u82F1\u6587\u5B57\u6BCD",
+        repeating_chars: "\u904E\u6FFE\u55AE\u4E00\u91CD\u8907\u5B57\u7B26"
+      },
+      display: {
+        show_fab: "\u986F\u793A\u61F8\u6D6E\u6309\u9215",
+        show_line_numbers: "\u986F\u793A\u884C\u865F",
+        show_statistics: "\u986F\u793A\u7D71\u8A08\u8CC7\u8A0A"
+      },
+      advanced: {
+        enable_debug_logging: "\u555F\u7528\u5075\u932F\u65E5\u8A8C"
+      },
+      panel: {
+        title: "\u8A2D\u5B9A\u9762\u677F"
+      },
+      languages: {
+        en: "English",
+        zh_CN: "\u7B80\u4F53\u4E2D\u6587",
+        zh_TW: "\u7E41\u9AD4\u4E2D\u6587"
+      },
+      themes: {
+        light: "\u6DFA\u8272",
+        dark: "\u6DF1\u8272",
+        system: "\u8DDF\u96A8\u7CFB\u7D71"
+      }
+    },
+    scan: {
+      quick: "\u5FEB\u901F\u6383\u63CF",
+      session: "\u6703\u8A71\u6383\u63CF",
+      startSession: "\u958B\u59CB\u52D5\u614B\u6383\u63CF\u6703\u8A71",
+      stopSession: "\u505C\u6B62\u52D5\u614B\u6383\u63CF\u6703\u8A71",
+      finished: "\u6383\u63CF\u7D50\u675F\uFF0C\u5171\u767C\u73FE {count} \u689D\u6587\u672C",
+      quickFinished: "\u5FEB\u6377\u6383\u63CF\u5B8C\u6210\uFF0C\u767C\u73FE {count} \u689D\u6587\u672C",
+      sessionStarted: "\u6703\u8A71\u6383\u63CF\u5DF2\u958B\u59CB"
+    },
+    results: {
+      title: "\u63D0\u53D6\u7684\u6587\u672C",
+      totalCharacters: "\u7E3D\u5B57\u6578",
+      totalLines: "\u7E3D\u884C\u6578",
+      noSummary: "\u7576\u524D\u6C92\u6709\u7E3D\u7D50\u6587\u672C",
+      stats: {
+        lines: "\u884C",
+        chars: "\u5B57\u7B26\u6578"
+      }
+    },
+    notifications: {
+      copiedToClipboard: "\u5DF2\u8907\u88FD\u5230\u526A\u8CBC\u7C3F\uFF01",
+      settingsSaved: "\u8A2D\u5B9A\u5DF2\u5132\u5B58\uFF01",
+      modalInitError: "\u6A21\u614B\u6846\u5C1A\u672A\u521D\u59CB\u5316\u3002",
+      nothingToCopy: "\u6C92\u6709\u5167\u5BB9\u53EF\u8907\u88FD",
+      contentCleared: "\u5167\u5BB9\u5DF2\u6E05\u7A7A",
+      noTextSelected: "\u672A\u9078\u64C7\u6587\u672C"
+    },
+    placeholders: {
+      click: "\u9EDE\u64CA ",
+      dynamicScan: "[\u52D5\u614B\u6383\u63CF]",
+      startNewScanSession: " \u6309\u9215\u958B\u59CB\u4E00\u500B\u65B0\u7684\u6383\u63CF\u6703\u8A71",
+      staticScan: "[\u975C\u614B\u6383\u63CF]",
+      performOneTimeScan: " \u6309\u9215\u53EF\u9032\u884C\u4E00\u6B21\u6027\u7684\u5FEB\u6377\u63D0\u53D6"
+    },
+    confirmation: {
+      clear: "\u4F60\u78BA\u8A8D\u8981\u6E05\u7A7A\u55CE\uFF1F\u6B64\u64CD\u4F5C\u4E0D\u53EF\u64A4\u92B7\u3002"
+    },
+    tooltip: {
+      summary: "\u67E5\u770B\u7E3D\u7D50",
+      dynamic_scan: "\u52D5\u614B\u6383\u63CF",
+      static_scan: "\u975C\u614B\u6383\u63CF"
     }
   };
   var events = {};
@@ -339,37 +429,37 @@
     {
       id: "theme-select",
       key: "theme",
-      label: "theme",
+      label: "settings.theme",
       icon: themeIcon,
       options: [
-        { value: "light", label: "theme_light" },
-        { value: "dark", label: "theme_dark" },
-        { value: "system", label: "theme_system" }
+        { value: "light", label: "settings.themes.light" },
+        { value: "dark", label: "settings.themes.dark" },
+        { value: "system", label: "settings.themes.system" }
       ]
     },
     {
       id: "language-select",
       key: "language",
-      label: "language",
+      label: "settings.language",
       icon: languageIcon_default,
       options: getAvailableLanguages()
     }
   ];
   var filterDefinitions = [
-    { id: "filter-numbers", key: "numbers", label: "filter_numbers" },
-    { id: "filter-chinese", key: "chinese", label: "filter_chinese" },
-    { id: "filter-contains-chinese", key: "containsChinese", label: "filter_contains_chinese" },
-    { id: "filter-emoji-only", key: "emojiOnly", label: "filter_emoji_only" },
-    { id: "filter-symbols", key: "symbols", label: "filter_symbols" },
-    { id: "filter-term", key: "termFilter", label: "filter_term" },
-    { id: "filter-single-letter", key: "singleLetter", label: "filter_single_letter" },
-    { id: "filter-repeating-chars", key: "repeatingChars", label: "filter_repeating_chars" }
+    { id: "filter-numbers", key: "numbers", label: "settings.filters.numbers" },
+    { id: "filter-chinese", key: "chinese", label: "settings.filters.chinese" },
+    { id: "filter-contains-chinese", key: "containsChinese", label: "settings.filters.contains_chinese" },
+    { id: "filter-emoji-only", key: "emojiOnly", label: "settings.filters.emoji_only" },
+    { id: "filter-symbols", key: "symbols", label: "settings.filters.symbols" },
+    { id: "filter-term", key: "termFilter", label: "settings.filters.term" },
+    { id: "filter-single-letter", key: "singleLetter", label: "settings.filters.single_letter" },
+    { id: "filter-repeating-chars", key: "repeatingChars", label: "settings.filters.repeating_chars" }
   ];
   var relatedSettingsDefinitions = [
-    { id: "show-fab", key: "showFab", label: "setting_show_fab" },
-    { id: "show-line-numbers", key: "showLineNumbers", label: "setting_show_line_numbers" },
-    { id: "show-statistics", key: "showStatistics", label: "setting_show_statistics" },
-    { id: "enable-debug-logging", key: "enableDebugLogging", label: "setting_enable_debug_logging" }
+    { id: "show-fab", key: "showFab", label: "settings.display.show_fab" },
+    { id: "show-line-numbers", key: "showLineNumbers", label: "settings.display.show_line_numbers" },
+    { id: "show-statistics", key: "showStatistics", label: "settings.display.show_statistics" },
+    { id: "enable-debug-logging", key: "enableDebugLogging", label: "settings.advanced.enable_debug_logging" }
   ];
   var appConfig = {
     ui: {
@@ -494,19 +584,19 @@
     summaryFab = createSingleFab(
       "fab-summary",
       summaryIcon,
-      "tooltip_summary",
+      "tooltip.summary",
       onSummary
     );
     dynamicFab = createSingleFab(
       "fab-dynamic",
       dynamicIcon,
-      "tooltip_dynamic_scan",
+      "tooltip.dynamic_scan",
       () => onDynamicExtract(dynamicFab)
     );
     staticFab = createSingleFab(
       "fab-static",
       translateIcon,
-      "tooltip_static_scan",
+      "tooltip.static_scan",
       onStaticExtract
     );
     fabContainer.appendChild(summaryFab);
@@ -976,7 +1066,7 @@ ${result.join(",\n")}
   function rerenderHeaderTexts() {
     if (!titleContainer) return;
     titleContainer.replaceChildren();
-    const newTitleElement = createIconTitle(summaryIcon, t("textExtractionResults"));
+    const newTitleElement = createIconTitle(summaryIcon, t("results.title"));
     titleContainer.appendChild(newTitleElement);
   }
   function populateModalHeader(modalHeader, closeCallback) {
@@ -1008,31 +1098,31 @@ ${result.join(",\n")}
     const infoIconSVG = createSVGFromString(infoIcon);
     if (infoIconSVG) placeholderIconDiv.appendChild(infoIconSVG);
     const p1 = document.createElement("p");
-    p1.textContent = t("noSummaryText");
+    p1.textContent = t("results.noSummary");
     const p2 = document.createElement("p");
     p2.className = "placeholder-actions";
-    p2.append(t("placeholder_click"));
+    p2.append(t("placeholders.click"));
     const span2 = document.createElement("span");
     span2.className = "placeholder-action-icon";
     const dynamicIconSVG = createSVGFromString(dynamicIcon);
     if (dynamicIconSVG) span2.appendChild(dynamicIconSVG);
     p2.appendChild(span2);
     const strong2 = document.createElement("strong");
-    strong2.textContent = t("placeholder_dynamicScan");
+    strong2.textContent = t("placeholders.dynamicScan");
     p2.appendChild(strong2);
-    p2.append(t("placeholder_startNewScanSession"));
+    p2.append(t("placeholders.startNewScanSession"));
     const p3 = document.createElement("p");
     p3.className = "placeholder-actions";
-    p3.append(t("placeholder_click"));
+    p3.append(t("placeholders.click"));
     const span3 = document.createElement("span");
     span3.className = "placeholder-action-icon";
     const translateIconSVG = createSVGFromString(translateIcon);
     if (translateIconSVG) span3.appendChild(translateIconSVG);
     p3.appendChild(span3);
     const strong3 = document.createElement("strong");
-    strong3.textContent = t("placeholder_staticScan");
+    strong3.textContent = t("placeholders.staticScan");
     p3.appendChild(strong3);
-    p3.append(t("placeholder_performOneTimeScan"));
+    p3.append(t("placeholders.performOneTimeScan"));
     placeholder2.appendChild(placeholderIconDiv);
     placeholder2.appendChild(p1);
     placeholder2.appendChild(p2);
@@ -1103,10 +1193,10 @@ ${result.join(",\n")}
         buttonContainer.className = "confirmation-modal-buttons";
         const confirmButton = document.createElement("button");
         confirmButton.className = "confirmation-modal-button confirm";
-        confirmButton.textContent = "\u786E\u8BA4";
+        confirmButton.textContent = t("common.confirm");
         const cancelButton = document.createElement("button");
         cancelButton.className = "confirmation-modal-button cancel";
-        cancelButton.textContent = "\u53D6\u6D88";
+        cancelButton.textContent = t("common.cancel");
         buttonContainer.append(cancelButton, confirmButton);
         modalContent.append(iconContainer, textContainer, buttonContainer);
         modalContainer.append(modalContent);
@@ -1146,11 +1236,11 @@ ${result.join(",\n")}
   function rerenderFooterTexts() {
     if (copyBtn) {
       copyBtn.replaceChildren();
-      copyBtn.appendChild(createIconTitle(copyIcon, t("copy")));
+      copyBtn.appendChild(createIconTitle(copyIcon, t("common.copy")));
     }
     if (clearBtn) {
       clearBtn.replaceChildren();
-      clearBtn.appendChild(createIconTitle(clearIcon_default, t("clear")));
+      clearBtn.appendChild(createIconTitle(clearIcon_default, t("common.clear")));
     }
     updateStatistics();
   }
@@ -1176,16 +1266,16 @@ ${result.join(",\n")}
       if (textToCopy && !copyBtn.disabled) {
         log(`\u590D\u5236\u6309\u94AE\u88AB\u70B9\u51FB\uFF0C\u590D\u5236\u4E86 ${textToCopy.length} \u4E2A\u5B57\u7B26\u3002`);
         setClipboard(textToCopy);
-        showNotification(t("copiedToClipboard"), { type: "success" });
+        showNotification(t("notifications.copiedToClipboard"), { type: "success" });
       } else {
         log("\u590D\u5236\u6309\u94AE\u88AB\u70B9\u51FB\uFF0C\u4F46\u6CA1\u6709\u5185\u5BB9\u53EF\u590D\u5236\u6216\u6309\u94AE\u88AB\u7981\u7528\u3002");
-        showNotification(t("nothingToCopy"), { type: "info" });
+        showNotification(t("notifications.nothingToCopy"), { type: "info" });
       }
     });
     clearBtn.addEventListener("click", async () => {
       if (clearBtn.disabled) return;
       const confirmed = await showConfirmationModal(
-        t("clearConfirmation"),
+        t("confirmation.clear"),
         warningIcon_default
       );
       if (confirmed) {
@@ -1197,7 +1287,7 @@ ${result.join(",\n")}
           log("\u7528\u6237\u786E\u8BA4\u6E05\u7A7A\u5FEB\u901F\u626B\u63CF\u6587\u672C\u3002");
           updateContentCallback(SHOW_PLACEHOLDER, false, "quick-scan");
         }
-        showNotification(t("contentCleared"), { type: "success" });
+        showNotification(t("notifications.contentCleared"), { type: "success" });
       } else {
         log("\u7528\u6237\u53D6\u6D88\u4E86\u6E05\u7A7A\u64CD\u4F5C\u3002");
       }
@@ -1209,7 +1299,7 @@ ${result.join(",\n")}
     const text = outputTextarea.value;
     const lineCount = text.split("\n").length;
     const charCount = text.length;
-    statsContainer.textContent = `${t("stats_lines")}: ${lineCount} | ${t("stats_chars")}: ${charCount}`;
+    statsContainer.textContent = `${t("results.stats.lines")}: ${lineCount} | ${t("results.stats.chars")}: ${charCount}`;
   }
   function calcStringLines(sentence, width) {
     if (!width || !canvasContext) return 1;
@@ -1346,7 +1436,7 @@ ${result.join(",\n")}
   }
   function openModal() {
     if (!modalOverlay) {
-      console.error(t("modalInitError"));
+      console.error(t("notifications.modalInitError"));
       return;
     }
     log("\u6B63\u5728\u6253\u5F00\u4E3B\u6A21\u6001\u6846...");
@@ -1359,7 +1449,7 @@ ${result.join(",\n")}
       if (copyBtn2) {
         copyBtn2.disabled = !formattedText;
       }
-      const notificationText = simpleTemplate(t("quickScanFinished"), { count: extractedTexts.length });
+      const notificationText = simpleTemplate(t("scan.quickFinished"), { count: extractedTexts.length });
       showNotification(notificationText, { type: "success" });
     }, 50);
   }
@@ -1451,7 +1541,7 @@ ${result.join(",\n")}
     while (counterElement.firstChild) {
       counterElement.removeChild(counterElement.firstChild);
     }
-    const textNode = document.createTextNode(t("discovered"));
+    const textNode = document.createTextNode(t("common.discovered"));
     const countSpan = document.createElement("span");
     countSpan.textContent = count;
     counterElement.appendChild(textNode);
@@ -1472,15 +1562,15 @@ ${result.join(",\n")}
       const results = stop();
       setFabIcon(dynamicFab2, dynamicIcon);
       dynamicFab2.classList.remove("is-recording");
-      dynamicFab2.title = t("startSessionScan");
+      dynamicFab2.title = t("scan.startSession");
       hideLiveCounter();
-      const notificationText = simpleTemplate(t("scanFinished"), { count: results.length });
+      const notificationText = simpleTemplate(t("scan.finished"), { count: results.length });
       showNotification(notificationText, { type: "success" });
     } else {
       setFabIcon(dynamicFab2, stopIcon);
       dynamicFab2.classList.add("is-recording");
-      dynamicFab2.title = t("stopSessionScan");
-      showNotification(t("sessionScanStarted"), { type: "info" });
+      dynamicFab2.title = t("scan.stopSession");
+      showNotification(t("scan.sessionStarted"), { type: "info" });
       showLiveCounter();
       setTimeout(() => {
         start(updateLiveCounter);
@@ -1727,7 +1817,7 @@ ${result.join(",\n")}
     if (settingsMenuCommandId) {
       unregisterMenuCommand(settingsMenuCommandId);
     }
-    const menuText = t("settingsPanel.title");
+    const menuText = t("settings.panel.title");
     settingsMenuCommandId = registerMenuCommand(menuText, onClick);
   }
   function isLanguageSupported(langCode) {
@@ -1780,7 +1870,7 @@ ${result.join(",\n")}
       if (settingsPanel) settingsPanel.classList.add("is-visible");
     }, 10);
     const titleContainer2 = settingsPanel.querySelector("#settings-panel-title-container");
-    titleContainer2.appendChild(createIconTitle(settingsIcon, t("settings")));
+    titleContainer2.appendChild(createIconTitle(settingsIcon, t("settings.title")));
     selectComponents = {};
     selectSettingsDefinitions.forEach((definition) => {
       const titleContainer3 = settingsPanel.querySelector(`#${definition.id}-title-container`);
@@ -1798,11 +1888,11 @@ ${result.join(",\n")}
       selectComponents[definition.key] = new CustomSelect(selectWrapper, options, currentSettings[definition.key]);
     });
     const relatedTitleContainer = settingsPanel.querySelector("#related-setting-title-container");
-    relatedTitleContainer.appendChild(createIconTitle(relatedSettingsIcon, t("relatedSettings")));
+    relatedTitleContainer.appendChild(createIconTitle(relatedSettingsIcon, t("settings.relatedSettings")));
     const filterTitleContainer = settingsPanel.querySelector("#filter-setting-title-container");
-    filterTitleContainer.appendChild(createIconTitle(filterIcon, t("filterRules")));
+    filterTitleContainer.appendChild(createIconTitle(filterIcon, t("settings.filterRules")));
     const saveBtn = settingsPanel.querySelector("#save-settings-btn");
-    saveBtn.appendChild(createIconTitle(saveIcon, t("save")));
+    saveBtn.appendChild(createIconTitle(saveIcon, t("common.save")));
     settingsPanel.querySelector(".settings-panel-close").addEventListener("click", hideSettingsPanel);
     saveBtn.addEventListener("click", handleSave);
     settingsPanel.addEventListener("keydown", handleKeyDown2);
@@ -1852,7 +1942,7 @@ ${result.join(",\n")}
       fabContainer.classList.toggle("fab-container-visible", newSettings.showFab);
     }
     updateModalAddonsVisibility();
-    showNotification(t("settingsSaved"), { type: "success" });
+    showNotification(t("notifications.settingsSaved"), { type: "success" });
     hideSettingsPanel();
   }
   function initSettingsPanel() {

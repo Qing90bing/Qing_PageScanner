@@ -89,7 +89,7 @@ export function createFab({ callbacks, isVisible }) {
     summaryFab = createSingleFab(
         'fab-summary',
         summaryIcon,
-        'tooltip_summary',
+        'tooltip.summary',
         onSummary
     );
 
@@ -97,7 +97,7 @@ export function createFab({ callbacks, isVisible }) {
     dynamicFab = createSingleFab(
         'fab-dynamic',
         dynamicIcon,
-        'tooltip_dynamic_scan',
+        'tooltip.dynamic_scan',
         () => onDynamicExtract(dynamicFab) // 将fab元素本身传回去，方便UI更新
     );
 
@@ -105,7 +105,7 @@ export function createFab({ callbacks, isVisible }) {
     staticFab = createSingleFab(
         'fab-static',
         translateIcon,
-        'tooltip_static_scan',
+        'tooltip.static_scan',
         onStaticExtract
     );
 

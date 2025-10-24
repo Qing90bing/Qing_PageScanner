@@ -33,17 +33,17 @@ export function handleDynamicExtractClick(dynamicFab) {
         const results = sessionExtractor.stop();
         setFabIcon(dynamicFab, dynamicIcon);
         dynamicFab.classList.remove('is-recording');
-        dynamicFab.title = t('startSessionScan');
+        dynamicFab.title = t('scan.startSession');
 
         hideLiveCounter();
-        const notificationText = simpleTemplate(t('scanFinished'), { count: results.length });
+        const notificationText = simpleTemplate(t('scan.finished'), { count: results.length });
         showNotification(notificationText, { type: 'success' });
     } else {
         setFabIcon(dynamicFab, stopIcon);
         dynamicFab.classList.add('is-recording');
-        dynamicFab.title = t('stopSessionScan');
+        dynamicFab.title = t('scan.stopSession');
 
-        showNotification(t('sessionScanStarted'), { type: 'info' });
+        showNotification(t('scan.sessionStarted'), { type: 'info' });
         showLiveCounter();
 
         setTimeout(() => {

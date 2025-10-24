@@ -25,7 +25,7 @@ function rerenderHeaderTexts() {
     // 清空旧的标题并重新创建
     titleContainer.replaceChildren();
 
-    const newTitleElement = createIconTitle(summaryIcon, t('textExtractionResults'));
+    const newTitleElement = createIconTitle(summaryIcon, t('results.title'));
     titleContainer.appendChild(newTitleElement);
 }
 

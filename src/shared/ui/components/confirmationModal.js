@@ -1,5 +1,6 @@
 // src/shared/ui/confirmationModal.js
 import { createSVGFromString } from '../../utils/dom.js';
+import { t } from '../../i18n/index.js';
 import { uiContainer } from '../uiContainer.js'; // 直接导入Shadow DOM根
 
 let modalContainer = null;
@@ -34,11 +35,11 @@ export function showConfirmationModal(text, iconSVG) {
 
       const confirmButton = document.createElement('button');
       confirmButton.className = 'confirmation-modal-button confirm';
-      confirmButton.textContent = '确认';
+      confirmButton.textContent = t('common.confirm');
 
       const cancelButton = document.createElement('button');
       cancelButton.className = 'confirmation-modal-button cancel';
-      cancelButton.textContent = '取消';
+      cancelButton.textContent = t('common.cancel');
 
       buttonContainer.append(cancelButton, confirmButton);
       modalContent.append(iconContainer, textContainer, buttonContainer);

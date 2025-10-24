@@ -29,11 +29,11 @@ let clearBtn, copyBtn;
 function rerenderFooterTexts() {
     if (copyBtn) {
         copyBtn.replaceChildren();
-        copyBtn.appendChild(createIconTitle(copyIcon, t('copy')));
+        copyBtn.appendChild(createIconTitle(copyIcon, t('common.copy')));
     }
     if (clearBtn) {
         clearBtn.replaceChildren();
-        clearBtn.appendChild(createIconTitle(clearIcon, t('clear')));
+        clearBtn.appendChild(createIconTitle(clearIcon, t('common.clear')));
     }
     // 更新统计信息（如果可见）
     updateStatistics();
@@ -76,10 +76,10 @@ export function populateModalFooter(modalFooter, updateContentCallback, clearSes
         if (textToCopy && !copyBtn.disabled) {
             log(`复制按钮被点击，复制了 ${textToCopy.length} 个字符。`);
             setClipboard(textToCopy);
-            showNotification(t('copiedToClipboard'), { type: 'success' });
+            showNotification(t('notifications.copiedToClipboard'), { type: 'success' });
         } else {
             log('复制按钮被点击，但没有内容可复制或按钮被禁用。');
-            showNotification(t('nothingToCopy'), { type: 'info' });
+            showNotification(t('notifications.nothingToCopy'), { type: 'info' });
         }
     });
 
@@ -87,7 +87,7 @@ export function populateModalFooter(modalFooter, updateContentCallback, clearSes
         if (clearBtn.disabled) return;
 
         const confirmed = await showConfirmationModal(
-            t('clearConfirmation'),
+            t('confirmation.clear'),
             warningIcon
         );
 
@@ -100,7 +100,7 @@ export function populateModalFooter(modalFooter, updateContentCallback, clearSes
                 log('用户确认清空快速扫描文本。');
                 updateContentCallback(SHOW_PLACEHOLDER, false, 'quick-scan');
             }
-            showNotification(t('contentCleared'), { type: 'success' });
+            showNotification(t('notifications.contentCleared'), { type: 'success' });
         } else {
             log('用户取消了清空操作。');
         }
@@ -117,5 +117,5 @@ export function updateStatistics() {
     const text = state.outputTextarea.value;
     const lineCount = text.split('\n').length;
     const charCount = text.length;
-    state.statsContainer.textContent = `${t('stats_lines')}: ${lineCount} | ${t('stats_chars')}: ${charCount}`;
+    state.statsContainer.textContent = `${t('results.stats.lines')}: ${lineCount} | ${t('results.stats.chars')}: ${charCount}`;
 }
