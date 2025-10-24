@@ -23,6 +23,7 @@ import { populateModalHeader } from './mainModal/modalHeader.js';
 import { populateModalContent, showLoading, hideLoading } from './mainModal/modalContent.js';
 import { populateModalFooter, updateStatistics } from './mainModal/modalFooter.js';
 import { initializeLineNumbers, updateLineNumbers, updateActiveLine } from './mainModal/lineNumberLogic.js';
+import { updateExportButtonState } from '../../features/export/ui.js';
 
 /**
  * @private
@@ -138,6 +139,7 @@ export function updateModalContent(content, shouldOpen = false, mode = 'quick-sc
             // 如果会话正在录制，则强制禁用清空按钮
             clearBtn.disabled = isSessionRecording() || disabled;
         }
+        updateExportButtonState(!disabled);
     };
 
     if (content === state.SHOW_LOADING) {

@@ -1,0 +1,86 @@
+/* src/assets/styles/dropdown.css */
+
+/* 下拉菜单容器 */
+.tc-dropdown-menu {
+    position: absolute;
+    bottom: calc(100% + 8px); /* 定位在按钮上方，留出间隙 */
+    right: 51%;
+    z-index: 1050;
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    box-shadow: 0 5px 15px var(--main-shadow);
+    display: none; /* 默认隐藏 */
+    width: max-content;
+    min-width: 100%; /* 确保菜单至少和按钮一样宽 */
+    overflow: hidden;
+    animation: slide-up-fade-in 0.3s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+}
+
+/* 菜单可见状态 */
+.tc-dropdown-menu.visible {
+    display: block;
+}
+
+/* 下拉菜单项 */
+.tc-dropdown-menu button {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* 图标和文字之间的间距 */
+    width: 100%;
+    padding: 10px 16px;
+    background-color: transparent;
+    border: none;
+    color: var(--main-text);
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+}
+
+/* 鼠标悬停效果 */
+.tc-dropdown-menu button:hover {
+    background-color: #f0f0f0;
+}
+
+:host([data-theme='dark']) .tc-dropdown-menu {
+    background-color: var(--dark-color-bg);
+    border-color: var(--dark-color-border);
+}
+
+:host([data-theme='dark']) .tc-dropdown-menu button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* 导出按钮容器的相对定位，以便菜单可以正确定位 */
+.tc-export-btn-container {
+    position: relative;
+}
+
+/* 菜单滑入动画 */
+@keyframes slide-up-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px) translateX(50%);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) translateX(50%);
+    }
+}
+
+/* 菜单滑出动画 */
+@keyframes slide-down-fade-out {
+    from {
+        opacity: 1;
+        transform: translateY(0) translateX(50%);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(10px) translateX(50%);
+    }
+}
+
+.tc-dropdown-menu.is-hiding {
+    animation: slide-down-fade-out 0.3s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+}

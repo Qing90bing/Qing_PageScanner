@@ -80,7 +80,18 @@
       save: "Save",
       discovered: "Discovered: ",
       confirm: "Confirm",
-      cancel: "Cancel"
+      cancel: "Cancel",
+      export: "Export"
+    },
+    export: {
+      exportAsTxt: "Export as TXT",
+      exportAsJson: "Export as JSON",
+      exportAsCsv: "Export as CSV",
+      csv: {
+        id: "ID",
+        original: "Original",
+        translation: "Translation"
+      }
     },
     settings: {
       title: "Settings",
@@ -173,7 +184,18 @@
       save: "\u4FDD\u5B58",
       discovered: "\u5DF2\u53D1\u73B0\uFF1A",
       confirm: "\u786E\u8BA4",
-      cancel: "\u53D6\u6D88"
+      cancel: "\u53D6\u6D88",
+      export: "\u5BFC\u51FA"
+    },
+    export: {
+      exportAsTxt: "\u5BFC\u51FA\u4E3A TXT",
+      exportAsJson: "\u5BFC\u51FA\u4E3A JSON",
+      exportAsCsv: "\u5BFC\u51FA\u4E3A CSV",
+      csv: {
+        id: "ID",
+        original: "\u539F\u6587",
+        translation: "\u8BD1\u6587"
+      }
     },
     settings: {
       title: "\u8BBE\u7F6E",
@@ -266,7 +288,18 @@
       save: "\u5132\u5B58",
       discovered: "\u5DF2\u767C\u73FE\uFF1A",
       confirm: "\u78BA\u8A8D",
-      cancel: "\u53D6\u6D88"
+      cancel: "\u53D6\u6D88",
+      export: "\u532F\u51FA"
+    },
+    export: {
+      exportAsTxt: "\u532F\u51FA\u70BA TXT",
+      exportAsJson: "\u532F\u51FA\u70BA JSON",
+      exportAsCsv: "\u532F\u51FA\u70BA CSV",
+      csv: {
+        id: "ID",
+        original: "\u539F\u6587",
+        translation: "\u8B6F\u6587"
+      }
     },
     settings: {
       title: "\u8A2D\u5B9A",
@@ -1231,6 +1264,102 @@ ${result.join(",\n")}
   }
   var warningIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m40-120 440-760 440 760H40Zm138-80h604L480-720 178-200Zm302-40q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Zm40-100Z"/></svg>`;
   var warningIcon_default = warningIcon;
+  var exportIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80 280-280l56-56 104 103v-407h80v407l104-103 56 56L480-80ZM146-260q-32-49-49-105T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 59-17 115t-49 105l-58-58q22-37 33-78t11-84q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 43 11 84t33 78l-58 58Z"/></svg>`;
+  var exportIcon_default = exportIcon;
+  var txtIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M200-200h560v-367L567-760H200v560Zm0 80q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h400l240 240v400q0 33-23.5 56.5T760-120H200Zm80-160h400v-80H280v80Zm0-160h400v-80H280v80Zm0-160h280v-80H280v80Zm-80 400v-560 560Z"/></svg>`;
+  var jsonIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M190-360h70q17 0 28.5-11.5T300-400v-200h-60v190h-40v-50h-50v60q0 17 11.5 28.5T190-360Zm177 0h60q17 0 28.5-11.5T467-400v-60q0-17-11.5-28.5T427-500h-50v-50h40v20h50v-30q0-17-11.5-28.5T427-600h-60q-17 0-28.5 11.5T327-560v60q0 17 11.5 28.5T367-460h50v50h-40v-20h-50v30q0 17 11.5 28.5T367-360Zm176-60v-120h40v120h-40Zm-10 60h60q17 0 28.5-11.5T633-400v-160q0-17-11.5-28.5T593-600h-60q-17 0-28.5 11.5T493-560v160q0 17 11.5 28.5T533-360Zm127 0h50v-105l40 105h50v-240h-50v105l-40-105h-50v240ZM120-160q-33 0-56.5-23.5T40-240v-480q0-33 23.5-56.5T120-800h720q33 0 56.5 23.5T920-720v480q0 33-23.5 56.5T840-160H120Zm0-80h720v-480H120v480Zm0 0v-480 480Z"/></svg>`;
+  var csvIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M230-360h120v-60H250v-120h100v-60H230q-17 0-28.5 11.5T190-560v160q0 17 11.5 28.5T230-360Zm156 0h120q17 0 28.5-11.5T546-400v-60q0-17-11.5-31.5T506-506h-60v-34h100v-60H426q-17 0-28.5 11.5T386-560v60q0 17 11.5 30.5T426-456h60v36H386v60Zm264 0h60l70-240h-60l-40 138-40-138h-60l70 240ZM160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm0-80h640v-480H160v480Zm0 0v-480 480Z"/></svg>`;
+  function createDropdown(triggerElement, menuContent) {
+    menuContent.classList.add("tc-dropdown-menu");
+    const toggle = () => {
+      const isVisible = menuContent.classList.contains("visible");
+      if (isVisible) {
+        menuContent.classList.add("is-hiding");
+        menuContent.addEventListener("animationend", () => {
+          menuContent.classList.remove("visible", "is-hiding");
+        }, { once: true });
+        document.removeEventListener("click", handleDocumentClick, true);
+      } else {
+        menuContent.classList.add("visible");
+        document.addEventListener("click", handleDocumentClick, true);
+      }
+    };
+    const handleDocumentClick = (event) => {
+      const path = event.composedPath();
+      const isClickInside = path.includes(triggerElement) || path.includes(menuContent);
+      const isClickOnNotification = path.some(
+        (element) => element.classList && element.classList.contains("tc-notification-container")
+      );
+      if (isClickInside || isClickOnNotification) {
+        return;
+      }
+      toggle();
+    };
+    triggerElement.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggle();
+    });
+    return {
+      menuElement: menuContent,
+      toggle
+    };
+  }
+  var exportBtn;
+  var exportMenu;
+  var exportTxtBtn;
+  var exportJsonBtn;
+  var exportCsvBtn;
+  function rerenderExportTexts() {
+    if (exportBtn) {
+      exportBtn.replaceChildren();
+      exportBtn.appendChild(createIconTitle(exportIcon_default, t("common.export")));
+    }
+    if (exportMenu) {
+      exportTxtBtn.replaceChildren(createIconTitle(txtIcon, t("export.exportAsTxt")));
+      exportJsonBtn.replaceChildren(createIconTitle(jsonIcon, t("export.exportAsJson")));
+      exportCsvBtn.replaceChildren(createIconTitle(csvIcon, t("export.exportAsCsv")));
+    }
+  }
+  function createExportButton() {
+    const container = document.createElement("div");
+    container.className = "tc-export-btn-container";
+    exportBtn = document.createElement("button");
+    exportBtn.className = "text-extractor-export-btn tc-button";
+    exportMenu = document.createElement("div");
+    exportMenu.className = "tc-export-menu";
+    exportTxtBtn = document.createElement("button");
+    exportTxtBtn.className = "tc-export-txt-btn";
+    exportTxtBtn.dataset.format = "txt";
+    exportJsonBtn = document.createElement("button");
+    exportJsonBtn.className = "tc-export-json-btn";
+    exportJsonBtn.dataset.format = "json";
+    exportCsvBtn = document.createElement("button");
+    exportCsvBtn.className = "tc-export-csv-btn";
+    exportCsvBtn.dataset.format = "csv";
+    exportMenu.appendChild(exportTxtBtn);
+    exportMenu.appendChild(exportJsonBtn);
+    exportMenu.appendChild(exportCsvBtn);
+    container.appendChild(exportBtn);
+    container.appendChild(exportMenu);
+    rerenderExportTexts();
+    const dropdown = createDropdown(exportBtn, exportMenu);
+    const handleExport = (event) => {
+      const format = event.target.dataset.format;
+      if (format) {
+        fire("exportToFile", { format });
+        dropdown.toggle();
+      }
+    };
+    exportMenu.addEventListener("click", handleExport);
+    on("languageChanged", rerenderExportTexts);
+    exportBtn.disabled = true;
+    return container;
+  }
+  function updateExportButtonState(hasContent) {
+    if (exportBtn) {
+      exportBtn.disabled = !hasContent;
+    }
+  }
   var clearBtn;
   var copyBtn;
   function rerenderFooterTexts() {
@@ -1256,6 +1385,8 @@ ${result.join(",\n")}
     copyBtn = document.createElement("button");
     copyBtn.className = "text-extractor-copy-btn tc-button";
     copyBtn.disabled = true;
+    const exportBtnContainer = createExportButton();
+    footerButtonContainer.appendChild(exportBtnContainer);
     footerButtonContainer.appendChild(clearBtn);
     footerButtonContainer.appendChild(copyBtn);
     modalFooter.appendChild(statsContainer2);
@@ -1474,6 +1605,7 @@ ${result.join(",\n")}
       if (clearBtn2) {
         clearBtn2.disabled = isSessionRecording() || disabled;
       }
+      updateExportButtonState(!disabled);
     };
     if (content === SHOW_LOADING) {
       placeholder.classList.remove("is-visible");
@@ -1960,6 +2092,82 @@ ${result.join(",\n")}
   function initialize() {
     initSettingsPanel();
   }
+  function getPageTitle() {
+    return document.title.replace(/[\\/:*?"<>|]/g, "_");
+  }
+  function generateFilename(format) {
+    const title = getPageTitle();
+    const timestamp = ( new Date()).toLocaleString("sv").replace(/ /g, "_").replace(/:/g, "-");
+    return `${title}_${timestamp}.${format}`;
+  }
+  function getRawContent(text) {
+    return text;
+  }
+  function formatAsCsv(text) {
+    const header = `"${t("export.csv.id")}","${t("export.csv.original")}","${t("export.csv.translation")}"
+`;
+    let csvContent = header;
+    const regex = /\[\s*"((?:[^"\\]|\\.)*)"\s*,\s*""\s*\]/g;
+    try {
+      const matches = text.matchAll(regex);
+      let id = 1;
+      for (const match of matches) {
+        const originalText = match[1].replace(/\\"/g, '"').replace(/\\n/g, "\n");
+        const escapedLine = `"${originalText.replace(/"/g, '""')}"`;
+        csvContent += `${id},${escapedLine},""
+`;
+        id++;
+      }
+    } catch (error) {
+      log("\u5728\u89E3\u6790\u6587\u672C\u5E76\u751F\u6210 CSV \u65F6\u53D1\u751F\u9519\u8BEF:", error);
+      return header;
+    }
+    return csvContent;
+  }
+  function downloadFile(filename, content, mimeType) {
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    log(`\u6587\u4EF6\u5DF2\u5BFC\u51FA: ${filename}`);
+  }
+  function exportToFile({ format }) {
+    const text = outputTextarea.value;
+    if (!text || text.trim() === "") {
+      log("\u6CA1\u6709\u5185\u5BB9\u53EF\u5BFC\u51FA\u3002");
+      return;
+    }
+    let filename, content, mimeType;
+    switch (format) {
+      case "txt":
+        filename = generateFilename("txt");
+        content = getRawContent(text);
+        mimeType = "text/plain;charset=utf-8;";
+        break;
+      case "json":
+        filename = generateFilename("json");
+        content = getRawContent(text);
+        mimeType = "application/json;charset=utf-8;";
+        break;
+      case "csv":
+        filename = generateFilename("csv");
+        content = formatAsCsv(text);
+        mimeType = "text/csv;charset=utf-8;";
+        break;
+      default:
+        log(`\u672A\u77E5\u7684\u5BFC\u51FA\u683C\u5F0F: ${format}`);
+        return;
+    }
+    downloadFile(filename, content, mimeType);
+  }
+  function initializeExporter() {
+    on("exportToFile", exportToFile);
+  }
   function main() {
     const settings = loadSettings();
     initializeLanguage(settings);
@@ -2205,6 +2413,83 @@ ${result.join(",\n")}
 .custom-select-option .option-icon {
     display: flex;
     align-items: center;
+}
+/* --- From dropdown.css --- */
+/* src/assets/styles/dropdown.css */
+/* \u4E0B\u62C9\u83DC\u5355\u5BB9\u5668 */
+.tc-dropdown-menu {
+    position: absolute;
+    bottom: calc(100% + 8px); /* \u5B9A\u4F4D\u5728\u6309\u94AE\u4E0A\u65B9\uFF0C\u7559\u51FA\u95F4\u9699 */
+    right: 51%;
+    z-index: 1050;
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    box-shadow: 0 5px 15px var(--main-shadow);
+    display: none; /* \u9ED8\u8BA4\u9690\u85CF */
+    width: max-content;
+    min-width: 100%; /* \u786E\u4FDD\u83DC\u5355\u81F3\u5C11\u548C\u6309\u94AE\u4E00\u6837\u5BBD */
+    overflow: hidden;
+    animation: slide-up-fade-in 0.3s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+}
+/* \u83DC\u5355\u53EF\u89C1\u72B6\u6001 */
+.tc-dropdown-menu.visible {
+    display: block;
+}
+/* \u4E0B\u62C9\u83DC\u5355\u9879 */
+.tc-dropdown-menu button {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* \u56FE\u6807\u548C\u6587\u5B57\u4E4B\u95F4\u7684\u95F4\u8DDD */
+    width: 100%;
+    padding: 10px 16px;
+    background-color: transparent;
+    border: none;
+    color: var(--main-text);
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+}
+/* \u9F20\u6807\u60AC\u505C\u6548\u679C */
+.tc-dropdown-menu button:hover {
+    background-color: #f0f0f0;
+}
+:host([data-theme='dark']) .tc-dropdown-menu {
+    background-color: var(--dark-color-bg);
+    border-color: var(--dark-color-border);
+}
+:host([data-theme='dark']) .tc-dropdown-menu button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+/* \u5BFC\u51FA\u6309\u94AE\u5BB9\u5668\u7684\u76F8\u5BF9\u5B9A\u4F4D\uFF0C\u4EE5\u4FBF\u83DC\u5355\u53EF\u4EE5\u6B63\u786E\u5B9A\u4F4D */
+.tc-export-btn-container {
+    position: relative;
+}
+/* \u83DC\u5355\u6ED1\u5165\u52A8\u753B */
+@keyframes slide-up-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px) translateX(50%);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) translateX(50%);
+    }
+}
+/* \u83DC\u5355\u6ED1\u51FA\u52A8\u753B */
+@keyframes slide-down-fade-out {
+    from {
+        opacity: 1;
+        transform: translateY(0) translateX(50%);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(10px) translateX(50%);
+    }
+}
+.tc-dropdown-menu.is-hiding {
+    animation: slide-down-fade-out 0.3s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
 }
 /* --- From forms.css --- */
 /* src/assets/styles/forms.css */
@@ -2912,6 +3197,7 @@ ${result.join(",\n")}
     initTheme();
     initialize();
     initUI();
+    initializeExporter();
   }
   if (window.top === window.self) {
     if (document.readyState === "loading") {

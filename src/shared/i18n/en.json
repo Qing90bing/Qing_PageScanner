@@ -8,7 +8,18 @@
     "save": "Save",
     "discovered": "Discovered: ",
     "confirm": "Confirm",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "export": "Export"
+    },
+    "export": {
+        "exportAsTxt": "Export as TXT",
+        "exportAsJson": "Export as JSON",
+        "exportAsCsv": "Export as CSV",
+        "csv": {
+            "id": "ID",
+            "original": "Original",
+            "translation": "Translation"
+        }
   },
   "settings": {
     "title": "Settings",

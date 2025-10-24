@@ -8,7 +8,18 @@
     "save": "儲存",
     "discovered": "已發現：",
     "confirm": "確認",
-    "cancel": "取消"
+        "cancel": "取消",
+        "export": "匯出"
+    },
+    "export": {
+        "exportAsTxt": "匯出為 TXT",
+        "exportAsJson": "匯出為 JSON",
+        "exportAsCsv": "匯出為 CSV",
+        "csv": {
+            "id": "ID",
+            "original": "原文",
+            "translation": "譯文"
+        }
   },
   "settings": {
     "title": "設定",

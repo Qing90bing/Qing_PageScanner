@@ -15,6 +15,7 @@ import { t } from '../../i18n/index.js';
 import { on } from '../../utils/eventBus.js';
 import { showConfirmationModal } from '../components/confirmationModal.js';
 import warningIcon from '../../../assets/icons/warningIcon.js';
+import { createExportButton } from '../../../features/export/ui.js';
 import * as state from './modalState.js';
 import { SHOW_PLACEHOLDER } from './modalState.js';
 
@@ -61,6 +62,8 @@ export function populateModalFooter(modalFooter, updateContentCallback, clearSes
     copyBtn.className = 'text-extractor-copy-btn tc-button';
     copyBtn.disabled = true;
 
+    const exportBtnContainer = createExportButton();
+    footerButtonContainer.appendChild(exportBtnContainer);
     footerButtonContainer.appendChild(clearBtn);
     footerButtonContainer.appendChild(copyBtn);
 
