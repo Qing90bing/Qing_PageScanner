@@ -2,7 +2,12 @@
 
 import { supportedLanguages } from './languages.js';
 import { setLanguage as setI18nLanguage, t } from '../index.js';
-import { registerMenuCommand, unregisterMenuCommand } from '../../services/tampermonkey.js';
+import {
+    registerMenuCommand,
+    unregisterMenuCommand,
+    getValue,
+    setValue,
+} from '../../services/tampermonkey.js';
 import { loadSettings, saveSettings } from '../../../features/settings/logic.js';
 
 /**
@@ -11,22 +16,29 @@ import { loadSettings, saveSettings } from '../../../features/settings/logic.js'
  * 负责加载、切换、保存语言设置，并统一管理油猴菜单命令，确保菜单不会重复。
  */
 
-// 用于存储当前菜单命令的ID，以便后续注销
-let settingsMenuCommandId = null;
+const SETTINGS_MENU_ID_KEY = 'settings_menu_command_id';
 
 /**
  * 更新油猴菜单中的“设置”命令。
  * 会先注销旧的命令，再注册新的，防止重复。
+ * 此函数是异步的，因为它需要访问油猴的持久化存储。
  * @param {Function} onClick - 点击菜单时执行的回调函数。
  */
-export function updateSettingsMenu(onClick) {
+export async function updateSettingsMenu(onClick) {
+    // 从油猴存储中异步获取旧的菜单ID
+    const oldCommandId = await getValue(SETTINGS_MENU_ID_KEY, null);
+
     // 如果已存在菜单命令，先注销
-    if (settingsMenuCommandId) {
-        unregisterMenuCommand(settingsMenuCommandId);
+    if (oldCommandId) {
+        unregisterMenuCommand(oldCommandId);
     }
+
     // 使用当前语言注册新的菜单命令
     const menuText = t('settings.panel.title');
-    settingsMenuCommandId = registerMenuCommand(menuText, onClick);
+    const newCommandId = registerMenuCommand(menuText, onClick);
+
+    // 将新的菜单ID异步保存到油猴存储中
+    await setValue(SETTINGS_MENU_ID_KEY, newCommandId);
 }
 
 /**

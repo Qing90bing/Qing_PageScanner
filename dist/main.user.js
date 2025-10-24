@@ -1812,13 +1812,15 @@ ${result.join(",\n")}
   var filterIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M440-160q-17 0-28.5-11.5T400-200v-240L168-736q-15-20-4.5-42t36.5-22h560q26 0 36.5 22t-4.5 42L560-440v240q0 17-11.5 28.5T520-160h-80Zm40-308 198-252H282l198 252Zm0 0Z"/></svg>`;
   var saveIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z"/></svg>`;
   var relatedSettingsIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M320-280h320v-400H320v400Zm80-80v-240h160v240H400Zm40-120h80v-80h-80v80ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/></svg>`;
-  var settingsMenuCommandId = null;
-  function updateSettingsMenu(onClick) {
-    if (settingsMenuCommandId) {
-      unregisterMenuCommand(settingsMenuCommandId);
+  var SETTINGS_MENU_ID_KEY = "settings_menu_command_id";
+  async function updateSettingsMenu(onClick) {
+    const oldCommandId = await getValue(SETTINGS_MENU_ID_KEY, null);
+    if (oldCommandId) {
+      unregisterMenuCommand(oldCommandId);
     }
     const menuText = t("settings.panel.title");
-    settingsMenuCommandId = registerMenuCommand(menuText, onClick);
+    const newCommandId = registerMenuCommand(menuText, onClick);
+    await setValue(SETTINGS_MENU_ID_KEY, newCommandId);
   }
   function isLanguageSupported(langCode) {
     return supportedLanguages.some((lang) => lang.code === langCode);
@@ -1946,10 +1948,14 @@ ${result.join(",\n")}
     hideSettingsPanel();
   }
   function initSettingsPanel() {
-    updateSettingsMenu(showSettingsPanel);
-    on("languageChanged", () => {
-      updateSettingsMenu(showSettingsPanel);
-    });
+    if (window.top === window.self) {
+      (async () => {
+        await updateSettingsMenu(showSettingsPanel);
+      })();
+      on("languageChanged", async () => {
+        await updateSettingsMenu(showSettingsPanel);
+      });
+    }
   }
   function initialize() {
     initSettingsPanel();

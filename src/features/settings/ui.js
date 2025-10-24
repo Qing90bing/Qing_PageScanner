@@ -179,9 +179,17 @@ function handleSave() {
  * @description 初始化设置面板功能。
  */
 export function initSettingsPanel() {
-    updateSettingsMenu(showSettingsPanel);
-    // 监听语言变化事件，以更新菜单文本
-    on('languageChanged', () => {
-        updateSettingsMenu(showSettingsPanel);
-    });
+    // 关键修复：确保只有在顶层窗口的脚本实例才能注册菜单命令。
+    // 这可以防止在有 iframe 的页面上因脚本被多次注入而导致菜单重复。
+    if (window.top === window.self) {
+        // 使用“立即执行的异步函数表达式”来处理异步操作，避免阻塞主线程
+        (async () => {
+            await updateSettingsMenu(showSettingsPanel);
+        })();
+
+        // 监听语言变化事件，以更新菜单文本
+        on('languageChanged', async () => {
+            await updateSettingsMenu(showSettingsPanel);
+        });
+    }
 }
