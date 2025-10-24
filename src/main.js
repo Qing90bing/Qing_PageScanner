@@ -42,10 +42,14 @@ function main() {
     initUI();
 }
 
-// 确保 DOM 加载完成后再执行脚本
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', main);
-} else {
-    // DOMContentLoaded 已经触发
-    main();
+// --- 初始化脚本 ---
+// 确保脚本只在顶层窗口运行，以避免在 iframe 中重复执行。
+if (window.top === window.self) {
+    // 确保 DOM 加载完成后再执行脚本
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', main);
+    } else {
+        // DOMContentLoaded 已经触发
+        main();
+    }
 }

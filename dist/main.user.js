@@ -2913,9 +2913,11 @@ ${result.join(",\n")}
     initialize();
     initUI();
   }
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", main);
-  } else {
-    main();
+  if (window.top === window.self) {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", main);
+    } else {
+      main();
+    }
   }
 })();
