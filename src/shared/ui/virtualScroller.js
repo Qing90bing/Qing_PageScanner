@@ -25,9 +25,7 @@ export class VirtualScroller {
         this.content = document.createElement('div');
         this.content.className = 'ts-virtual-scroll-content';
 
-        this.container.innerHTML = ''; // 清空容器
-        this.container.appendChild(this.sizer);
-        this.container.appendChild(this.content);
+        this.container.replaceChildren(this.sizer, this.content); // 安全地清空并添加子元素
 
         // --- 状态 ---
         this.renderedItems = {}; // 存储已渲染的 DOM 节点
@@ -93,6 +91,6 @@ export class VirtualScroller {
 
     destroy() {
         this.container.removeEventListener('scroll', this.onScroll.bind(this));
-        this.container.innerHTML = '';
+        this.container.replaceChildren(); // 安全地清空容器
     }
 }

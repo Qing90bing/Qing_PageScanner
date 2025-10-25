@@ -1573,9 +1573,7 @@ var TextExtractor = (() => {
       this.sizer.className = "ts-virtual-scroll-sizer";
       this.content = document.createElement("div");
       this.content.className = "ts-virtual-scroll-content";
-      this.container.innerHTML = "";
-      this.container.appendChild(this.sizer);
-      this.container.appendChild(this.content);
+      this.container.replaceChildren(this.sizer, this.content);
       this.renderedItems = {};
       this.viewportHeight = 0;
       this.totalHeight = 0;
@@ -1624,10 +1622,9 @@ var TextExtractor = (() => {
     }
     destroy() {
       this.container.removeEventListener("scroll", this.onScroll.bind(this));
-      this.container.innerHTML = "";
+      this.container.replaceChildren();
     }
   };
-  // src/shared/ui/mainModal.js
   var fullQuickScanContent = "";
   var scroller = null;
   var handleKeyDown = (event) => {
