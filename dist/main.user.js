@@ -947,7 +947,6 @@ ${result.join(",\n")}
   var statsContainer = null;
   var placeholder = null;
   var loadingContainer = null;
-  var canvasContext = null;
   var currentLineMap = [];
   var currentMode = "quick-scan";
   var SHOW_PLACEHOLDER = "::show_placeholder::";
@@ -969,9 +968,6 @@ ${result.join(",\n")}
   }
   function setLoadingContainer(element) {
     loadingContainer = element;
-  }
-  function setCanvasContext(context) {
-    canvasContext = context;
   }
   function setCurrentLineMap(map) {
     currentLineMap = map;
@@ -1451,36 +1447,21 @@ ${result.join(",\n")}
     const charCount = text.length;
     statsContainer.textContent = `${t("results.stats.lines")}: ${lineCount} | ${t("results.stats.chars")}: ${charCount}`;
   }
-  function calcStringLines(sentence, width) {
-    if (!width || !canvasContext) return 1;
-    const words = sentence.split("");
-    let lineCount = 0;
-    let currentLine = "";
-    for (let i = 0; i < words.length; i++) {
-      const wordWidth = canvasContext.measureText(words[i]).width;
-      const lineWidth = canvasContext.measureText(currentLine).width;
-      if (lineWidth + wordWidth > width) {
-        lineCount++;
-        currentLine = words[i];
-      } else {
-        currentLine += words[i];
-      }
-    }
-    if (currentLine.trim() !== "" || sentence === "") {
-      lineCount++;
-    }
-    return lineCount;
+  function calculateVisualLines(text) {
+    if (!mirrorDiv || !outputTextarea) return 1;
+    mirrorDiv.textContent = text || "\xA0";
+    const textareaStyles = window.getComputedStyle(outputTextarea);
+    const lineHeight = parseFloat(textareaStyles.lineHeight);
+    return Math.ceil(mirrorDiv.scrollHeight / lineHeight);
   }
   function calcLines() {
+    if (!outputTextarea) return { lineNumbers: [], lineMap: [] };
+    syncMirrorStyles();
     const lines = outputTextarea.value.split("\n");
-    const textareaStyles = window.getComputedStyle(outputTextarea);
-    const paddingLeft = parseFloat(textareaStyles.paddingLeft);
-    const paddingRight = parseFloat(textareaStyles.paddingRight);
-    const textareaContentWidth = outputTextarea.clientWidth - paddingLeft - paddingRight;
     let lineNumbers = [];
     let lineMap = [];
     lines.forEach((lineString, realLineIndex) => {
-      const numLinesOfSentence = calcStringLines(lineString, textareaContentWidth);
+      const numLinesOfSentence = calculateVisualLines(lineString);
       lineNumbers.push(realLineIndex + 1);
       lineMap.push(realLineIndex);
       if (numLinesOfSentence > 1) {
@@ -1500,30 +1481,14 @@ ${result.join(",\n")}
     const textBeforeCursor = text.substring(0, selectionEnd);
     const cursorRealLineIndex = textBeforeCursor.split("\n").length - 1;
     const realLines = text.split("\n");
+    const lineContent = realLines[cursorRealLineIndex] || "";
     let positionInRealLine = selectionEnd;
     for (let i = 0; i < cursorRealLineIndex; i++) {
       positionInRealLine -= realLines[i].length + 1;
     }
-    const textareaStyles = window.getComputedStyle(textarea);
-    const paddingLeft = parseFloat(textareaStyles.paddingLeft);
-    const paddingRight = parseFloat(textareaStyles.paddingRight);
-    const textareaContentWidth = textarea.clientWidth - paddingLeft - paddingRight;
-    const lineContent = realLines[cursorRealLineIndex];
-    let visualLineOffset = 0;
-    let currentLine = "";
-    for (let i = 0; i < lineContent.length; i++) {
-      const char = lineContent[i];
-      const nextLine = currentLine + char;
-      if (canvasContext.measureText(nextLine).width > textareaContentWidth) {
-        visualLineOffset++;
-        currentLine = char;
-      } else {
-        currentLine = nextLine;
-      }
-      if (i >= positionInRealLine - 1 && positionInRealLine > 0) {
-        break;
-      }
-    }
+    positionInRealLine = Math.max(0, positionInRealLine);
+    const textBeforeCursorInLine = lineContent.substring(0, positionInRealLine);
+    const visualLineOffset = calculateVisualLines(textBeforeCursorInLine) - 1;
     const firstVisualIndexOfRealLine = currentLineMap.indexOf(cursorRealLineIndex);
     if (firstVisualIndexOfRealLine === -1) return;
     const finalVisualLineIndex = firstVisualIndexOfRealLine + visualLineOffset;
@@ -1547,18 +1512,57 @@ ${result.join(",\n")}
     lineNumbersDiv.replaceChildren(...lineElements);
     updateActiveLine();
   }
-  function initializeLineNumbers() {
-    const canvas = document.createElement("canvas");
-    const canvasContext2 = canvas.getContext("2d");
+  var mirrorDiv = null;
+  function syncMirrorStyles() {
+    if (!mirrorDiv || !outputTextarea) return;
     const textareaStyles = window.getComputedStyle(outputTextarea);
-    canvasContext2.font = `${textareaStyles.fontSize} ${textareaStyles.fontFamily}`;
-    setCanvasContext(canvasContext2);
+    const stylesToCopy = [
+      "fontFamily",
+      "fontSize",
+      "fontWeight",
+      "letterSpacing",
+      "wordSpacing",
+      "lineHeight",
+      "textIndent",
+      "whiteSpace",
+      "wordWrap",
+      "wordBreak",
+      "paddingTop",
+      "paddingRight",
+      "paddingBottom",
+      "paddingLeft",
+      "borderTopWidth",
+      "borderRightWidth",
+      "borderBottomWidth",
+      "borderLeftWidth",
+      "boxSizing"
+    ];
+    stylesToCopy.forEach((prop) => {
+      mirrorDiv.style[prop] = textareaStyles[prop];
+    });
+    mirrorDiv.style.width = textareaStyles.width;
+  }
+  function initializeLineNumbers() {
+    if (!outputTextarea) return;
+    mirrorDiv = document.createElement("div");
+    mirrorDiv.id = "tc-line-height-mirror";
+    mirrorDiv.style.position = "absolute";
+    mirrorDiv.style.left = "-9999px";
+    mirrorDiv.style.top = "0";
+    mirrorDiv.style.visibility = "hidden";
+    outputTextarea.parentElement.appendChild(mirrorDiv);
+    syncMirrorStyles();
     const resizeObserver = new ResizeObserver(() => {
       if (!lineNumbersDiv || !outputTextarea) return;
       lineNumbersDiv.style.height = outputTextarea.clientHeight + "px";
       updateLineNumbers();
     });
     resizeObserver.observe(outputTextarea);
+    outputTextarea.addEventListener("scroll", () => {
+      if (lineNumbersDiv) {
+        lineNumbersDiv.scrollTop = outputTextarea.scrollTop;
+      }
+    });
   }
   var handleKeyDown = (event) => {
     if (event.key === "Escape") {

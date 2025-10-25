@@ -9,53 +9,35 @@ import * as state from './modalState.js';
 
 /**
  * @private
- * @description 计算单个字符串在给定宽度下会占据多少行（视觉换行）。
- * @param {string} sentence - 要计算的字符串。
- * @param {number} width - 容器的内容宽度。
- * @returns {number} 占据的行数。
- */
-function calcStringLines(sentence, width) {
-    if (!width || !state.canvasContext) return 1;
-
-    const words = sentence.split('');
-    let lineCount = 0;
-    let currentLine = '';
-
-    for (let i = 0; i < words.length; i++) {
-        const wordWidth = state.canvasContext.measureText(words[i]).width;
-        const lineWidth = state.canvasContext.measureText(currentLine).width;
-
-        if (lineWidth + wordWidth > width) {
-            lineCount++;
-            currentLine = words[i];
-        } else {
-            currentLine += words[i];
-        }
-    }
-    if (currentLine.trim() !== '' || sentence === '') {
-        lineCount++;
-    }
-    return lineCount;
-}
-
-/**
- * @private
  * @description 计算文本区域内所有内容的视觉总行数，并生成行号数组和映射。
  * @returns {{lineNumbers: Array<string|number>, lineMap: Array<number>}} 包含行号数组和视觉行到真实行映射的对象。
  */
-function calcLines() {
-    const lines = state.outputTextarea.value.split('\n');
+function calculateVisualLines(text) {
+    if (!mirrorDiv || !state.outputTextarea) return 1;
+
+    // &nbsp; 是为了确保即使是空行也能被正确测量高度
+    mirrorDiv.textContent = text || '\u00A0';
+
     const textareaStyles = window.getComputedStyle(state.outputTextarea);
+    const lineHeight = parseFloat(textareaStyles.lineHeight);
 
-    const paddingLeft = parseFloat(textareaStyles.paddingLeft);
-    const paddingRight = parseFloat(textareaStyles.paddingRight);
-    const textareaContentWidth = state.outputTextarea.clientWidth - paddingLeft - paddingRight;
+    // 向上取整，以处理半行的情况
+    return Math.ceil(mirrorDiv.scrollHeight / lineHeight);
+}
 
+function calcLines() {
+    // 确保 outputTextarea 存在
+    if (!state.outputTextarea) return { lineNumbers: [], lineMap: [] };
+
+    // 同步镜像样式，以防textarea样式发生变化
+    syncMirrorStyles();
+
+    const lines = state.outputTextarea.value.split('\n');
     let lineNumbers = [];
     let lineMap = []; // 映射：visualLineIndex -> realLineIndex
 
     lines.forEach((lineString, realLineIndex) => {
-        const numLinesOfSentence = calcStringLines(lineString, textareaContentWidth);
+        const numLinesOfSentence = calculateVisualLines(lineString);
 
         lineNumbers.push(realLineIndex + 1);
         lineMap.push(realLineIndex);
@@ -81,43 +63,32 @@ export function updateActiveLine() {
     const text = textarea.value;
     const selectionEnd = textarea.selectionEnd;
 
+    // 找到光标所在的真实行
     const textBeforeCursor = text.substring(0, selectionEnd);
     const cursorRealLineIndex = textBeforeCursor.split('\n').length - 1;
 
+    // 获取真实行内容
     const realLines = text.split('\n');
+    const lineContent = realLines[cursorRealLineIndex] || '';
+
+    // 计算光标在当前真实行的字符位置
     let positionInRealLine = selectionEnd;
     for (let i = 0; i < cursorRealLineIndex; i++) {
-        positionInRealLine -= (realLines[i].length + 1);
+        positionInRealLine -= (realLines[i].length + 1); // +1 是为了换行符
     }
+    positionInRealLine = Math.max(0, positionInRealLine);
 
-    const textareaStyles = window.getComputedStyle(textarea);
-    const paddingLeft = parseFloat(textareaStyles.paddingLeft);
-    const paddingRight = parseFloat(textareaStyles.paddingRight);
-    const textareaContentWidth = textarea.clientWidth - paddingLeft - paddingRight;
+    // 计算光标所在位置的视觉偏移
+    const textBeforeCursorInLine = lineContent.substring(0, positionInRealLine);
+    const visualLineOffset = calculateVisualLines(textBeforeCursorInLine) - 1;
 
-    const lineContent = realLines[cursorRealLineIndex];
-    let visualLineOffset = 0;
-    let currentLine = '';
-
-    for (let i = 0; i < lineContent.length; i++) {
-        const char = lineContent[i];
-        const nextLine = currentLine + char;
-        if (state.canvasContext.measureText(nextLine).width > textareaContentWidth) {
-            visualLineOffset++;
-            currentLine = char;
-        } else {
-            currentLine = nextLine;
-        }
-        if (i >= positionInRealLine - 1 && positionInRealLine > 0) {
-            break;
-        }
-    }
-
+    // 计算最终的视觉行索引
     const firstVisualIndexOfRealLine = state.currentLineMap.indexOf(cursorRealLineIndex);
     if (firstVisualIndexOfRealLine === -1) return;
 
     const finalVisualLineIndex = firstVisualIndexOfRealLine + visualLineOffset;
 
+    // 更新UI
     const lineDivs = state.lineNumbersDiv.children;
     for (let i = 0; i < lineDivs.length; i++) {
         lineDivs[i].classList.remove('is-active');
@@ -147,12 +118,44 @@ export function updateLineNumbers() {
 /**
  * @description 初始化行号功能，包括事件监听和Canvas设置。
  */
-export function initializeLineNumbers() {
-    const canvas = document.createElement('canvas');
-    const canvasContext = canvas.getContext('2d');
+let mirrorDiv = null;
+
+function syncMirrorStyles() {
+    if (!mirrorDiv || !state.outputTextarea) return;
+
     const textareaStyles = window.getComputedStyle(state.outputTextarea);
-    canvasContext.font = `${textareaStyles.fontSize} ${textareaStyles.fontFamily}`;
-    state.setCanvasContext(canvasContext);
+    const stylesToCopy = [
+        'fontFamily', 'fontSize', 'fontWeight', 'letterSpacing', 'wordSpacing',
+        'lineHeight', 'textIndent', 'whiteSpace', 'wordWrap', 'wordBreak',
+        'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft',
+        'borderTopWidth', 'borderRightWidth', 'borderBottomWidth', 'borderLeftWidth',
+        'boxSizing'
+    ];
+
+    stylesToCopy.forEach(prop => {
+        mirrorDiv.style[prop] = textareaStyles[prop];
+    });
+
+    mirrorDiv.style.width = textareaStyles.width;
+}
+
+
+export function initializeLineNumbers() {
+    if (!state.outputTextarea) return;
+
+    mirrorDiv = document.createElement('div');
+    mirrorDiv.id = 'tc-line-height-mirror';
+
+    // 将镜像元素移出屏幕外，但保持其渲染
+    mirrorDiv.style.position = 'absolute';
+    mirrorDiv.style.left = '-9999px';
+    mirrorDiv.style.top = '0';
+    mirrorDiv.style.visibility = 'hidden';
+
+    // 附加到与textarea相同的父元素下，以确保继承正确的样式
+    state.outputTextarea.parentElement.appendChild(mirrorDiv);
+
+    syncMirrorStyles();
 
     const resizeObserver = new ResizeObserver(() => {
         if (!state.lineNumbersDiv || !state.outputTextarea) return;
@@ -160,4 +163,11 @@ export function initializeLineNumbers() {
         updateLineNumbers();
     });
     resizeObserver.observe(state.outputTextarea);
+
+    // 添加滚动同步
+    state.outputTextarea.addEventListener('scroll', () => {
+        if (state.lineNumbersDiv) {
+            state.lineNumbersDiv.scrollTop = state.outputTextarea.scrollTop;
+        }
+    });
 }
