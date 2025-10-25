@@ -12,7 +12,14 @@ import './features/session-scan/index.js'; // 导入以备将来初始化
 /**
  * 应用程序的主入口点。
  */
-function main() {
+// 导出 main 函数以供测试和全局访问
+export function main() {
+  // 将顶层窗口检查移入函数内部
+  if (window.top !== window.self) {
+    log('脚本在 iframe 中，已跳过初始化。');
+    return;
+  }
+
   // 1. 加载设置
   const settings = loadSettings();
 
@@ -47,13 +54,10 @@ function main() {
 }
 
 // --- 初始化脚本 ---
-// 确保脚本只在顶层窗口运行，以避免在 iframe 中重复执行。
-if (window.top === window.self) {
-    // 确保 DOM 加载完成后再执行脚本
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', main);
-    } else {
-        // DOMContentLoaded 已经触发
-        main();
-    }
+// 确保 DOM 加载完成后再执行脚本
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', main);
+} else {
+    // DOMContentLoaded 已经触发
+    main();
 }
