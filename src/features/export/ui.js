@@ -71,8 +71,9 @@ export function createExportButton() {
     const dropdown = createDropdown(exportBtn, exportMenu);
 
     const handleExport = (event) => {
-        const format = event.target.dataset.format;
-        if (format) {
+        const target = event.target.closest('[data-format]');
+        if (target) {
+            const format = target.dataset.format;
             fire('exportToFile', { format });
             dropdown.toggle(); // 导出后关闭菜单
         }
