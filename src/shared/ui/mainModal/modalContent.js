@@ -105,13 +105,13 @@ export function populateModalContent(modalContent) {
     lineNumbersDiv.className = 'tc-line-numbers';
     state.setLineNumbersDiv(lineNumbersDiv);
 
-    const outputTextarea = document.createElement('textarea');
-    outputTextarea.id = 'text-extractor-output';
-    outputTextarea.className = 'tc-textarea';
-    state.setOutputTextarea(outputTextarea);
+    const virtualScrollContainer = document.createElement('div');
+    virtualScrollContainer.id = 'text-extractor-output';
+    virtualScrollContainer.className = 'ts-virtual-scroll-container';
+    state.setOutputTextarea(virtualScrollContainer); // Re-using the same state variable for the container
 
     textareaContainer.appendChild(lineNumbersDiv);
-    textareaContainer.appendChild(outputTextarea);
+    textareaContainer.appendChild(virtualScrollContainer);
 
     const loadingContainer = createLoadingSpinner();
     state.setLoadingContainer(loadingContainer);

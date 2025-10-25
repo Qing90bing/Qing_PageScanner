@@ -24,9 +24,13 @@ import { populateModalContent, showLoading, hideLoading } from './mainModal/moda
 import { populateModalFooter, updateStatistics } from './mainModal/modalFooter.js';
 import { initializeLineNumbers, updateLineNumbers, updateActiveLine } from './mainModal/lineNumberLogic.js';
 import { updateExportButtonState } from '../../features/export/ui.js';
+import { performQuickScan } from '../../features/quick-scan/logic.js';
+import { VirtualScroller } from './virtualScroller.js';
 
 // 用于存储快速扫描的完整、未经截断的内容
 export let fullQuickScanContent = '';
+
+let scroller = null; // 用于存储 VirtualScroller 实例
 
 /**
  * @private
@@ -59,15 +63,10 @@ export function createMainModal({ clearSessionCallback }) {
     // 3. 初始化行号功能
     initializeLineNumbers();
 
-    // 4. 绑定文本区域事件
-    const handleTextareaUpdate = () => {
-        updateLineNumbers();
-        updateStatistics();
-    };
+    // 4. 初始化虚拟滚动
+    scroller = new VirtualScroller(state.outputTextarea, []);
 
-    state.outputTextarea.addEventListener('input', handleTextareaUpdate);
-    state.outputTextarea.addEventListener('click', updateActiveLine);
-    state.outputTextarea.addEventListener('keyup', updateActiveLine);
+    // 绑定虚拟滚动容器的滚动事件，以同步行号
     state.outputTextarea.addEventListener('scroll', () => {
         state.lineNumbersDiv.scrollTop = state.outputTextarea.scrollTop;
     });
@@ -85,27 +84,25 @@ export function openModal() {
         console.error(t('notifications.modalInitError'));
         return;
     }
-    log('正在打开主模态框...');
+    log('正在打开主模态框并启动快速扫描 Worker...');
 
+    // 1. 立即显示加载状态并打开模态框
     updateModalContent(state.SHOW_LOADING, true, 'quick-scan');
 
-    setTimeout(() => {
-        const extractedTexts = extractAndProcessText();
-        const formattedText = formatTextsForTranslation(extractedTexts);
+    // 2. 调用新的异步扫描逻辑
+    performQuickScan(({ formattedText, count }) => {
+        // Worker 完成任务后，此回调将被执行
 
-        // 在更新UI（可能会截断文本）之前，存储完整的原始内容
+        // 3. 存储完整的、未经截断的结果以供导出
         fullQuickScanContent = formattedText;
 
+        // 4. 更新UI（现在可能会显示截断的文本）
         updateModalContent(formattedText, false, 'quick-scan');
 
-        const copyBtn = state.modalOverlay.querySelector('.text-extractor-copy-btn');
-        if (copyBtn) {
-            copyBtn.disabled = !formattedText;
-        }
-
-        const notificationText = simpleTemplate(t('scan.quickFinished'), { count: extractedTexts.length });
+        // 5. 显示完成通知
+        const notificationText = simpleTemplate(t('scan.quickFinished'), { count });
         showNotification(notificationText, { type: 'success' });
-    }, 50);
+    });
 }
 
 /**
@@ -149,12 +146,13 @@ export function updateModalContent(content, shouldOpen = false, mode = 'quick-sc
     };
 
     if (content === state.SHOW_LOADING) {
+        if (scroller) scroller.setData([]); // 清空虚拟滚动
         state.placeholder.classList.remove('is-visible');
         textareaContainer.classList.add('is-visible');
-        state.outputTextarea.value = '';
         showLoading();
         setButtonsDisabled(true);
     } else if (content === state.SHOW_PLACEHOLDER) {
+        if (scroller) scroller.setData([]); // 清空虚拟滚动
         hideLoading();
         textareaContainer.classList.remove('is-visible');
         state.placeholder.classList.add('is-visible');
@@ -164,24 +162,26 @@ export function updateModalContent(content, shouldOpen = false, mode = 'quick-sc
         state.placeholder.classList.remove('is-visible');
         textareaContainer.classList.add('is-visible');
 
-        const MAX_DISPLAY_LENGTH = 50000; // 安全显示的最大字符数
-        let displayText = content;
-
-        if (content.length > MAX_DISPLAY_LENGTH) {
-            displayText = content.substring(0, MAX_DISPLAY_LENGTH);
-            const warningMessage = t('scan.truncationWarning');
-            displayText += `\n\n--- ${warningMessage} ---`;
+        let lines = [];
+        try {
+            // 假设内容是 `[["line1", ""], ["line2", ""]]` 格式的 JSON 字符串
+            const parsed = JSON.parse(content);
+            if (Array.isArray(parsed)) {
+                lines = parsed.map(item => (Array.isArray(item) ? item[0] : String(item)));
+            }
+        } catch (e) {
+            // 如果解析失败，则按行分割普通文本
+            lines = content.split('\n');
         }
 
-        const isData = content && content.trim().length > 0;
-        state.outputTextarea.value = displayText; // 显示可能被截断的文本
+        scroller.setData(lines);
+
+        const isData = lines.length > 0;
         setButtonsDisabled(!isData);
-        state.outputTextarea.readOnly = !isData;
 
-        // 手动触发一次更新，以确保统计和行号正确显示
-        state.outputTextarea.dispatchEvent(new Event('input'));
-
-        setTimeout(updateActiveLine, 0);
+        // 更新统计和行号
+        updateStatistics(lines.length, content.length);
+        updateLineNumbers(lines.length);
     }
 
     updateModalAddonsVisibility();

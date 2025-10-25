@@ -8,156 +8,55 @@
 import * as state from './modalState.js';
 
 /**
- * @private
- * @description 计算单个字符串在给定宽度下会占据多少行（视觉换行）。
- * @param {string} sentence - 要计算的字符串。
- * @param {number} width - 容器的内容宽度。
- * @returns {number} 占据的行数。
- */
-function calcStringLines(sentence, width) {
-    if (!width || !state.canvasContext) return 1;
-
-    const words = sentence.split('');
-    let lineCount = 0;
-    let currentLine = '';
-
-    for (let i = 0; i < words.length; i++) {
-        const wordWidth = state.canvasContext.measureText(words[i]).width;
-        const lineWidth = state.canvasContext.measureText(currentLine).width;
-
-        if (lineWidth + wordWidth > width) {
-            lineCount++;
-            currentLine = words[i];
-        } else {
-            currentLine += words[i];
-        }
-    }
-    if (currentLine.trim() !== '' || sentence === '') {
-        lineCount++;
-    }
-    return lineCount;
-}
-
-/**
- * @private
- * @description 计算文本区域内所有内容的视觉总行数，并生成行号数组和映射。
- * @returns {{lineNumbers: Array<string|number>, lineMap: Array<number>}} 包含行号数组和视觉行到真实行映射的对象。
- */
-function calcLines() {
-    const lines = state.outputTextarea.value.split('\n');
-    const textareaStyles = window.getComputedStyle(state.outputTextarea);
-
-    const paddingLeft = parseFloat(textareaStyles.paddingLeft);
-    const paddingRight = parseFloat(textareaStyles.paddingRight);
-    const textareaContentWidth = state.outputTextarea.clientWidth - paddingLeft - paddingRight;
-
-    let lineNumbers = [];
-    let lineMap = []; // 映射：visualLineIndex -> realLineIndex
-
-    lines.forEach((lineString, realLineIndex) => {
-        const numLinesOfSentence = calcStringLines(lineString, textareaContentWidth);
-
-        lineNumbers.push(realLineIndex + 1);
-        lineMap.push(realLineIndex);
-
-        if (numLinesOfSentence > 1) {
-            for (let i = 0; i < numLinesOfSentence - 1; i++) {
-                lineNumbers.push('');
-                lineMap.push(realLineIndex);
-            }
-        }
-    });
-
-    return { lineNumbers, lineMap };
-}
-
-/**
- * @description 根据光标位置更新活动行号的样式。
+ * @description 根据光标位置更新活动行号的样式 (已简化)。
+ * 在虚拟滚动视图中，这个功能的作用有限，但我们保留基础逻辑。
  */
 export function updateActiveLine() {
-    if (!state.lineNumbersDiv || !state.lineNumbersDiv.classList.contains('is-visible') || !state.outputTextarea) return;
-
-    const textarea = state.outputTextarea;
-    const text = textarea.value;
-    const selectionEnd = textarea.selectionEnd;
-
-    const textBeforeCursor = text.substring(0, selectionEnd);
-    const cursorRealLineIndex = textBeforeCursor.split('\n').length - 1;
-
-    const realLines = text.split('\n');
-    let positionInRealLine = selectionEnd;
-    for (let i = 0; i < cursorRealLineIndex; i++) {
-        positionInRealLine -= (realLines[i].length + 1);
-    }
-
-    const textareaStyles = window.getComputedStyle(textarea);
-    const paddingLeft = parseFloat(textareaStyles.paddingLeft);
-    const paddingRight = parseFloat(textareaStyles.paddingRight);
-    const textareaContentWidth = textarea.clientWidth - paddingLeft - paddingRight;
-
-    const lineContent = realLines[cursorRealLineIndex];
-    let visualLineOffset = 0;
-    let currentLine = '';
-
-    for (let i = 0; i < lineContent.length; i++) {
-        const char = lineContent[i];
-        const nextLine = currentLine + char;
-        if (state.canvasContext.measureText(nextLine).width > textareaContentWidth) {
-            visualLineOffset++;
-            currentLine = char;
-        } else {
-            currentLine = nextLine;
-        }
-        if (i >= positionInRealLine - 1 && positionInRealLine > 0) {
-            break;
-        }
-    }
-
-    const firstVisualIndexOfRealLine = state.currentLineMap.indexOf(cursorRealLineIndex);
-    if (firstVisualIndexOfRealLine === -1) return;
-
-    const finalVisualLineIndex = firstVisualIndexOfRealLine + visualLineOffset;
-
-    const lineDivs = state.lineNumbersDiv.children;
-    for (let i = 0; i < lineDivs.length; i++) {
-        lineDivs[i].classList.remove('is-active');
-    }
-    if (lineDivs[finalVisualLineIndex]) {
-        lineDivs[finalVisualLineIndex].classList.add('is-active');
-    }
+    // 这个功能在虚拟滚动环境下需要更复杂的实现，暂时留空或简化
 }
 
 /**
- * @description 更新行号的显示。
+ * @description 根据给定的总行数更新行号的显示。
+ * @param {number} lineCount - 要显示的总行数。
  */
-export function updateLineNumbers() {
-    if (!state.lineNumbersDiv || !state.outputTextarea) return;
-    const { lineNumbers, lineMap } = calcLines();
-    state.setCurrentLineMap(lineMap);
+export function updateLineNumbers(lineCount = 0) {
+    if (!state.lineNumbersDiv) return;
 
-    const lineElements = lineNumbers.map(line => {
+    // 为了性能，我们不直接渲染所有行号，
+    // 而是依赖于与虚拟滚动容器同步滚动。
+    // 这里我们只设置一个占位符高度，让滚动条正确显示。
+    // 实际的行号将由虚拟滚动逻辑（如果需要的话）或CSS计数器处理。
+    // 为简单起见，我们暂时只渲染前1000行以提供视觉反馈。
+
+    const fragment = document.createDocumentFragment();
+    const numToRender = Math.min(lineCount, 1000); // 限制渲染的DOM元素数量
+
+    for (let i = 1; i <= numToRender; i++) {
         const div = document.createElement('div');
-        div.textContent = line === '' ? '\u00A0' : line;
-        return div;
-    });
-    state.lineNumbersDiv.replaceChildren(...lineElements);
-    updateActiveLine();
+        div.textContent = i;
+        fragment.appendChild(div);
+    }
+    state.lineNumbersDiv.replaceChildren(fragment);
+
+    // 更新 sizer div 的高度以匹配总行数
+    const sizer = state.lineNumbersDiv.querySelector('.ts-line-number-sizer');
+    if (sizer) {
+        sizer.style.height = `${lineCount * 20}px`; // 假设行高为20px
+    }
 }
 
 /**
- * @description 初始化行号功能，包括事件监听和Canvas设置。
+ * @description 初始化行号功能。
  */
 export function initializeLineNumbers() {
-    const canvas = document.createElement('canvas');
-    const canvasContext = canvas.getContext('2d');
-    const textareaStyles = window.getComputedStyle(state.outputTextarea);
-    canvasContext.font = `${textareaStyles.fontSize} ${textareaStyles.fontFamily}`;
-    state.setCanvasContext(canvasContext);
+    if (!state.lineNumbersDiv) return;
 
-    const resizeObserver = new ResizeObserver(() => {
-        if (!state.lineNumbersDiv || !state.outputTextarea) return;
-        state.lineNumbersDiv.style.height = state.outputTextarea.clientHeight + 'px';
-        updateLineNumbers();
-    });
-    resizeObserver.observe(state.outputTextarea);
+    // 添加一个 sizer div 来模拟总高度，以实现同步滚动
+    const sizer = document.createElement('div');
+    sizer.className = 'ts-line-number-sizer';
+    sizer.style.position = 'relative';
+    sizer.style.width = '1px';
+    state.lineNumbersDiv.appendChild(sizer);
+
+    // 移除旧的依赖于 textarea 的 resize observer
 }

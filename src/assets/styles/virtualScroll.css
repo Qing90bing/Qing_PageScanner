@@ -1,0 +1,43 @@
+/* src/assets/styles/virtualScroll.css */
+
+.ts-virtual-scroll-container {
+    height: 100%;
+    width: 100%;
+    overflow-y: auto;
+    position: relative;
+    background-color: var(--background-color-secondary);
+    color: var(--text-color-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 14px;
+    white-space: pre;
+    cursor: text;
+}
+
+.ts-virtual-scroll-sizer {
+    position: relative;
+    width: 100%;
+    height: 0; /* This will be set by JS */
+}
+
+.ts-virtual-scroll-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.ts-virtual-scroll-row {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    padding: 0 4px;
+    box-sizing: border-box;
+}
+
+.ts-virtual-scroll-row:hover {
+    background-color: var(--background-color-tertiary);
+}

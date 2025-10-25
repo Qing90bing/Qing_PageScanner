@@ -49,7 +49,18 @@ async function build() {
         const bundledWorkerCode = workerBuildResult.outputFiles[0].text;
         console.log('Web Worker 打包完成。');
 
-        // 4. 从 src/main.js 开始打包主应用程序代码
+        // 【新增】独立打包快速扫描的 Web Worker
+        console.log('正在打包快速扫描 Web Worker...');
+        const quickScanWorkerResult = await esbuild.build({
+            entryPoints: ['src/features/quick-scan/worker.js'],
+            bundle: true,
+            write: false,
+            format: 'iife',
+        });
+        const bundledQuickScanWorkerCode = quickScanWorkerResult.outputFiles[0].text;
+        console.log('快速扫描 Web Worker 打包完成。');
+
+        // 5. 从 src/main.js 开始打包主应用程序代码
         const result = await esbuild.build({
             entryPoints: ['src/main.js'],
             bundle: true,
@@ -60,8 +71,10 @@ async function build() {
             define: {
                 '__INJECTED_CSS__': JSON.stringify(allCssContent),
                 '__CONFIRMATION_MODAL_CSS__': JSON.stringify(confirmationModalCss),
-                // 将打包好的、无依赖的 Worker 代码注入
+                // 将动态扫描的 Worker 代码注入
                 '__WORKER_STRING__': JSON.stringify(bundledWorkerCode),
+                // 将快速扫描的 Worker 代码注入
+                '__QUICK_SCAN_WORKER_STRING__': JSON.stringify(bundledQuickScanWorkerCode),
             }
         });
 

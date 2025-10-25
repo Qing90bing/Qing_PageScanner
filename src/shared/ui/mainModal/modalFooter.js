@@ -114,11 +114,10 @@ export function populateModalFooter(modalFooter, updateContentCallback, clearSes
 
 /**
  * @description 更新统计信息。
+ * @param {number} lineCount - 总行数。
+ * @param {number} charCount - 总字符数。
  */
-export function updateStatistics() {
-    if (!state.statsContainer || !state.outputTextarea) return;
-    const text = state.outputTextarea.value;
-    const lineCount = text.split('\n').length;
-    const charCount = text.length;
+export function updateStatistics(lineCount = 0, charCount = 0) {
+    if (!state.statsContainer) return;
     state.statsContainer.textContent = `${t('results.stats.lines')}: ${lineCount} | ${t('results.stats.chars')}: ${charCount}`;
 }
