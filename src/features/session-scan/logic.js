@@ -5,6 +5,34 @@
  * @description 负责管理一个持续的文本提取“会话”。
  */
 
+// --- 工具函数 ---
+/**
+ * 创建一个节流版的函数，确保目标函数在指定的时间间隔内最多被调用一次。
+ * 它会立即执行第一次调用，然后在一个冷却周期结束后，执行最后一次被延迟的调用。
+ * @param {Function} func - 要进行节流的函数。
+ * @param {number} limit - 节流的时间间隔（毫秒）。
+ * @returns {Function} - 一个新的、经过节流处理的函数。
+ */
+function throttle(func, limit) {
+    let lastFunc;
+    let lastRan;
+    return function(...args) {
+        if (!lastRan) {
+            func.apply(this, args);
+            lastRan = Date.now();
+        } else {
+            clearTimeout(lastFunc);
+            lastFunc = setTimeout(() => {
+                if ((Date.now() - lastRan) >= limit) {
+                    func.apply(this, args);
+                    lastRan = Date.now();
+                }
+            }, limit - (Date.now() - lastRan));
+        }
+    };
+}
+
+
 import { extractAndProcessText } from '../../shared/utils/textProcessor.js';
 import { loadSettings } from '../settings/logic.js';
 import { appConfig } from '../settings/config.js';
@@ -16,7 +44,7 @@ import { updateModalContent, SHOW_PLACEHOLDER } from '../../shared/ui/mainModal.
 let isRecording = false;
 let sessionTexts = new Set();
 let observer = null;
-let onTextAddedCallback = null; // 用于更新UI的回调
+let throttledUpdateCallback = null; // 用于更新UI的节流回调
 
 // --- 辅助函数 ---
 function processAndAddText(rawText, textSet, filterRules) {
@@ -46,6 +74,7 @@ function processAndAddText(rawText, textSet, filterRules) {
 const handleMutations = (mutations) => {
     const { filterRules } = loadSettings();
     const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(', ');
+    let changed = false;
 
     mutations.forEach(mutation => {
         mutation.addedNodes.forEach(node => {
@@ -56,17 +85,16 @@ const handleMutations = (mutations) => {
             while(walker.nextNode()) {
                 const textNode = walker.currentNode;
                 if (processAndAddText(textNode.nodeValue, sessionTexts, filterRules)) {
-                    const newCount = sessionTexts.size;
-                    // 立即打印合并后的日志
-                    log(`[会话扫描] 新增: "${textNode.nodeValue.trim()}" (当前总数: ${newCount})`);
-                    // 立即更新UI
-                    if (onTextAddedCallback) {
-                        onTextAddedCallback(newCount);
-                    }
+                    changed = true;
+                    log(`[会话扫描] 新增: "${textNode.nodeValue.trim()}" (当前总数: ${sessionTexts.size})`);
                 }
             }
         });
     });
+
+    if (changed && throttledUpdateCallback) {
+        throttledUpdateCallback(sessionTexts.size);
+    }
 };
 
 
@@ -76,24 +104,23 @@ export const start = (onUpdate) => {
     log('会话扫描：初始扫描开始...');
     isRecording = true;
     sessionTexts.clear();
-    onTextAddedCallback = onUpdate || null;
+
+    // 创建节流回调
+    throttledUpdateCallback = onUpdate ? throttle(onUpdate, 200) : null;
 
     const initialTexts = extractAndProcessText();
     const { filterRules } = loadSettings();
 
     initialTexts.forEach(text => {
         if (processAndAddText(text, sessionTexts, filterRules)) {
-            const newCount = sessionTexts.size;
-            // 立即打印合并后的日志
-            log(`[会话扫描] 新增: "${text.trim()}" (当前总数: ${newCount})`);
-            // 立即更新UI
-            if (onTextAddedCallback) {
-                onTextAddedCallback(newCount);
-            }
+             log(`[会话扫描] 新增: "${text.trim()}" (当前总数: ${sessionTexts.size})`);
         }
     });
 
-    // 不再需要单独的完成日志
+    // 立即进行一次初始UI更新
+    if (throttledUpdateCallback) {
+        throttledUpdateCallback(sessionTexts.size);
+    }
 
     observer = new MutationObserver(handleMutations);
     observer.observe(document.body, { childList: true, subtree: true });
@@ -107,7 +134,7 @@ export const stop = () => {
         observer = null;
     }
     isRecording = false;
-    onTextAddedCallback = null;
+    throttledUpdateCallback = null;
     return getSessionTexts();
 };
 

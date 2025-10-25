@@ -979,10 +979,28 @@ ${result.join(",\n")}
   function setCurrentMode(mode) {
     currentMode = mode;
   }
+  function throttle(func, limit) {
+    let lastFunc;
+    let lastRan;
+    return function(...args) {
+      if (!lastRan) {
+        func.apply(this, args);
+        lastRan = Date.now();
+      } else {
+        clearTimeout(lastFunc);
+        lastFunc = setTimeout(() => {
+          if (Date.now() - lastRan >= limit) {
+            func.apply(this, args);
+            lastRan = Date.now();
+          }
+        }, limit - (Date.now() - lastRan));
+      }
+    };
+  }
   var isRecording = false;
   var sessionTexts =  new Set();
   var observer = null;
-  var onTextAddedCallback = null;
+  var throttledUpdateCallback = null;
   function processAndAddText(rawText, textSet, filterRules) {
     if (!rawText || typeof rawText !== "string") return false;
     const normalizedText = rawText.normalize("NFC");
@@ -1000,6 +1018,7 @@ ${result.join(",\n")}
   var handleMutations = (mutations) => {
     const { filterRules } = loadSettings();
     const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(", ");
+    let changed = false;
     mutations.forEach((mutation) => {
       mutation.addedNodes.forEach((node) => {
         if (node.nodeType !== Node.ELEMENT_NODE) return;
@@ -1008,33 +1027,32 @@ ${result.join(",\n")}
         while (walker.nextNode()) {
           const textNode = walker.currentNode;
           if (processAndAddText(textNode.nodeValue, sessionTexts, filterRules)) {
-            const newCount = sessionTexts.size;
-            log(`[\u4F1A\u8BDD\u626B\u63CF] \u65B0\u589E: "${textNode.nodeValue.trim()}" (\u5F53\u524D\u603B\u6570: ${newCount})`);
-            if (onTextAddedCallback) {
-              onTextAddedCallback(newCount);
-            }
+            changed = true;
+            log(`[\u4F1A\u8BDD\u626B\u63CF] \u65B0\u589E: "${textNode.nodeValue.trim()}" (\u5F53\u524D\u603B\u6570: ${sessionTexts.size})`);
           }
         }
       });
     });
+    if (changed && throttledUpdateCallback) {
+      throttledUpdateCallback(sessionTexts.size);
+    }
   };
   var start = (onUpdate) => {
     if (isRecording) return;
     log("\u4F1A\u8BDD\u626B\u63CF\uFF1A\u521D\u59CB\u626B\u63CF\u5F00\u59CB...");
     isRecording = true;
     sessionTexts.clear();
-    onTextAddedCallback = onUpdate || null;
+    throttledUpdateCallback = onUpdate ? throttle(onUpdate, 200) : null;
     const initialTexts = extractAndProcessText();
     const { filterRules } = loadSettings();
     initialTexts.forEach((text) => {
       if (processAndAddText(text, sessionTexts, filterRules)) {
-        const newCount = sessionTexts.size;
-        log(`[\u4F1A\u8BDD\u626B\u63CF] \u65B0\u589E: "${text.trim()}" (\u5F53\u524D\u603B\u6570: ${newCount})`);
-        if (onTextAddedCallback) {
-          onTextAddedCallback(newCount);
-        }
+        log(`[\u4F1A\u8BDD\u626B\u63CF] \u65B0\u589E: "${text.trim()}" (\u5F53\u524D\u603B\u6570: ${sessionTexts.size})`);
       }
     });
+    if (throttledUpdateCallback) {
+      throttledUpdateCallback(sessionTexts.size);
+    }
     observer = new MutationObserver(handleMutations);
     observer.observe(document.body, { childList: true, subtree: true });
   };
@@ -1046,7 +1064,7 @@ ${result.join(",\n")}
       observer = null;
     }
     isRecording = false;
-    onTextAddedCallback = null;
+    throttledUpdateCallback = null;
     return getSessionTexts();
   };
   var isSessionRecording = () => isRecording;
@@ -1651,34 +1669,60 @@ ${result.join(",\n")}
   function handleQuickScanClick() {
     openModal();
   }
+  function animateCount(element, start2, end, duration, easing) {
+    const startTime = performance.now();
+    function frame(currentTime) {
+      const elapsedTime = currentTime - startTime;
+      const progress = Math.min(elapsedTime / duration, 1);
+      const easedProgress = easing(progress);
+      const currentCount2 = Math.round(start2 + (end - start2) * easedProgress);
+      element.textContent = currentCount2;
+      if (progress < 1) {
+        requestAnimationFrame(frame);
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+  var easeOutQuad = (t2) => t2 * (2 - t2);
   var counterElement = null;
+  var countSpan = null;
+  var currentCount = 0;
   function createCounterElement() {
     if (counterElement) return;
     counterElement = document.createElement("div");
     counterElement.className = "tc-live-counter";
+    const textNode = document.createTextNode(t("common.discovered"));
+    countSpan = document.createElement("span");
+    countSpan.textContent = "0";
+    counterElement.appendChild(textNode);
+    counterElement.appendChild(countSpan);
     uiContainer.appendChild(counterElement);
   }
   function showLiveCounter() {
     createCounterElement();
+    currentCount = 0;
+    if (countSpan) {
+      countSpan.textContent = "0";
+    }
     requestAnimationFrame(() => {
       counterElement.classList.add("tc-live-counter-visible");
     });
-    updateLiveCounter(0);
   }
   function hideLiveCounter() {
     if (!counterElement) return;
     counterElement.classList.remove("tc-live-counter-visible");
   }
-  function updateLiveCounter(count) {
-    if (!counterElement) return;
-    while (counterElement.firstChild) {
-      counterElement.removeChild(counterElement.firstChild);
+  function updateLiveCounter(newCount) {
+    if (!counterElement || !countSpan) return;
+    const start2 = currentCount;
+    const end = newCount;
+    currentCount = newCount;
+    if (start2 === end) {
+      countSpan.textContent = end;
+      return;
     }
-    const textNode = document.createTextNode(t("common.discovered"));
-    const countSpan = document.createElement("span");
-    countSpan.textContent = count;
-    counterElement.appendChild(textNode);
-    counterElement.appendChild(countSpan);
+    const duration = 500 + Math.min(Math.abs(end - start2) * 10, 1e3);
+    animateCount(countSpan, start2, end, duration, easeOutQuad);
   }
   var stopIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M280-280v-400h400v400H280Z"/></svg>`;
   function handleSummaryClick() {
