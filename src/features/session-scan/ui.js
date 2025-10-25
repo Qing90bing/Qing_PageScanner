@@ -16,28 +16,21 @@ import { simpleTemplate } from '../../shared/utils/templating.js';
  * 处理“查看总结”按钮的点击事件。
  */
 export function handleSummaryClick() {
-    // 首先，直接从 Set 获取数据。让 Worker 处理 `Array.from`
-    const results = sessionExtractor.getSessionTexts(); // getSessionTexts 内部已经实现了返回Set
-    if (results.length === 0) {
+    const resultsSet = sessionExtractor.getSessionTexts();
+    if (resultsSet.size === 0) {
         updateModalContent(SHOW_PLACEHOLDER, true, 'session-scan');
         return;
     }
 
-    // 1. 显示加载指示器
     updateModalContent(SHOW_LOADING, true, 'session-scan');
 
     try {
-        // 2. 创建 Worker
         // eslint-disable-next-line no-undef
         const workerScript = __WORKER_STRING__;
-        // 将脚本内容编码为 data: URL
         const workerUrl = `data:application/javascript,${encodeURIComponent(workerScript)}`;
-
-        // 仍然通过 Trusted Types 策略传递，以防万一
         const trustedUrl = createTrustedWorkerUrl(workerUrl);
         const worker = new Worker(trustedUrl);
 
-        // 3. 设置回调
         worker.onmessage = (event) => {
             const formattedText = event.data;
             updateModalContent(formattedText, false, 'session-scan');
@@ -51,14 +44,13 @@ export function handleSummaryClick() {
             worker.terminate();
         };
 
-        // 4. 发送数据给 Worker
-        worker.postMessage(results);
+        worker.postMessage(resultsSet);
 
     } catch (e) {
         console.error('Failed to initialize web worker:', e);
         showNotification(t('error.workerInitFailed'), { type: 'error' });
-        // 如果 Worker 初始化失败，则回退到旧的、可能阻塞UI的方法
-        const formattedText = formatTextsForTranslation(results);
+        const resultsArray = Array.from(resultsSet);
+        const formattedText = formatTextsForTranslation(resultsArray);
         updateModalContent(formattedText, true, 'session-scan');
     }
 }
@@ -75,7 +67,7 @@ export function handleDynamicExtractClick(dynamicFab) {
         dynamicFab.title = t('scan.startSession');
 
         hideLiveCounter();
-        const notificationText = simpleTemplate(t('scan.finished'), { count: results.length });
+        const notificationText = simpleTemplate(t('scan.finished'), { count: results.size });
         showNotification(notificationText, { type: 'success' });
     } else {
         setFabIcon(dynamicFab, stopIcon);

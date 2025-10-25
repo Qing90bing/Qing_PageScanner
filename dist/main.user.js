@@ -1058,7 +1058,7 @@ ${result.join(",\n")}
     observer.observe(document.body, { childList: true, subtree: true });
   };
   var stop = () => {
-    if (!isRecording) return [];
+    if (!isRecording) return  new Set();
     log("[\u4F1A\u8BDD\u626B\u63CF] \u5DF2\u505C\u6B62\u3002");
     if (observer) {
       observer.disconnect();
@@ -1066,10 +1066,10 @@ ${result.join(",\n")}
     }
     isRecording = false;
     throttledUpdateCallback = null;
-    return getSessionTexts();
+    return sessionTexts;
   };
   var isSessionRecording = () => isRecording;
-  var getSessionTexts = () => Array.from(sessionTexts);
+  var getSessionTexts = () => sessionTexts;
   function clearSessionTexts() {
     sessionTexts.clear();
     log("[\u4F1A\u8BDD\u626B\u63CF] \u4F1A\u8BDD\u6570\u636E\u5DF2\u6E05\u7A7A\u3002");
@@ -1756,14 +1756,14 @@ ${result.join(",\n")}
   }
   var stopIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M280-280v-400h400v400H280Z"/></svg>`;
   function handleSummaryClick() {
-    const results = getSessionTexts();
-    if (results.length === 0) {
+    const resultsSet = getSessionTexts();
+    if (resultsSet.size === 0) {
       updateModalContent(SHOW_PLACEHOLDER, true, "session-scan");
       return;
     }
     updateModalContent(SHOW_LOADING, true, "session-scan");
     try {
-      const workerScript = '// src/features/session-scan/worker.js\n\n/**\n * @description \u5C06\u4E00\u4E2A\u5B57\u7B26\u4E32\u6570\u7EC4\u8F6C\u6362\u6210\u7279\u5B9A\u7684\u4E8C\u7EF4\u6570\u7EC4\u683C\u5F0F\u7684\u5B57\u7B26\u4E32\uFF0C\u4F8B\u5982 `[["text1", ""], ["text2", ""]]`\u3002\n * @param {string[]} texts - \u9700\u8981\u88AB\u683C\u5F0F\u5316\u7684\u6587\u672C\u5B57\u7B26\u4E32\u6570\u7EC4\u3002\n * @returns {string} \u4E00\u4E2A\u683C\u5F0F\u5316\u540E\u7684\u5B57\u7B26\u4E32\u3002\n */\nconst formatTextsForTranslation = (texts) => {\n    const result = texts.map(text =>\n        `    ["${text.replace(/"/g, \'\\\\"\').replace(/\\n/g, \'\\\\n\')}", ""]`\n    );\n    return `[\\n${result.join(\',\\n\')}\\n]`;\n};\n\nself.onmessage = (event) => {\n    const sessionTextsSet = event.data;\n    const sessionTextsArray = Array.from(sessionTextsSet);\n    const formattedText = formatTextsForTranslation(sessionTextsArray);\n    self.postMessage(formattedText);\n};\n';
+      const workerScript = '// src/features/session-scan/worker.js\n\n/**\n * @description \u5C06\u4E00\u4E2A\u5B57\u7B26\u4E32\u6570\u7EC4\u8F6C\u6362\u6210\u7279\u5B9A\u7684\u4E8C\u7EF4\u6570\u7EC4\u683C\u5F0F\u7684\u5B57\u7B26\u4E32\uFF0C\u4F8B\u5982 `[["text1", ""], ["text2", ""]]`\u3002\n * @param {string[]} texts - \u9700\u8981\u88AB\u683C\u5F0F\u5316\u7684\u6587\u672C\u5B57\u7B26\u4E32\u6570\u7EC4\u3002\n * @returns {string} \u4E00\u4E2A\u683C\u5F0F\u5316\u540E\u7684\u5B57\u7B26\u4E32\u3002\n */\nconst formatTextsForTranslation = (texts) => {\n    const result = texts.map(text =>\n        `    ["${text.replace(/"/g, \'\\\\"\').replace(/\\n/g, \'\\\\n\')}", ""]`\n    );\n    return `[\\n${result.join(\',\\n\')}\\n]`;\n};\n\nself.onmessage = (event) => {\n    const sessionTextsSet = event.data;\n    // \u5728 Worker \u7EBF\u7A0B\u4E2D\u5C06 Set \u8F6C\u6362\u4E3A Array\uFF0C\u4EE5\u907F\u514D\u963B\u585E\u4E3B\u7EBF\u7A0B\n    const sessionTextsArray = Array.from(sessionTextsSet);\n    const formattedText = formatTextsForTranslation(sessionTextsArray);\n    self.postMessage(formattedText);\n};\n';
       const workerUrl = `data:application/javascript,${encodeURIComponent(workerScript)}`;
       const trustedUrl = createTrustedWorkerUrl(workerUrl);
       const worker = new Worker(trustedUrl);
@@ -1778,11 +1778,12 @@ ${result.join(",\n")}
         updateModalContent(SHOW_PLACEHOLDER, false, "session-scan");
         worker.terminate();
       };
-      worker.postMessage(results);
+      worker.postMessage(resultsSet);
     } catch (e) {
       console.error("Failed to initialize web worker:", e);
       showNotification(t("error.workerInitFailed"), { type: "error" });
-      const formattedText = formatTextsForTranslation(results);
+      const resultsArray = Array.from(resultsSet);
+      const formattedText = formatTextsForTranslation(resultsArray);
       updateModalContent(formattedText, true, "session-scan");
     }
   }
@@ -1793,7 +1794,7 @@ ${result.join(",\n")}
       dynamicFab2.classList.remove("is-recording");
       dynamicFab2.title = t("scan.startSession");
       hideLiveCounter();
-      const notificationText = simpleTemplate(t("scan.finished"), { count: results.length });
+      const notificationText = simpleTemplate(t("scan.finished"), { count: results.size });
       showNotification(notificationText, { type: "success" });
     } else {
       setFabIcon(dynamicFab2, stopIcon);
