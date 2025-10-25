@@ -66,7 +66,9 @@
     "stopSession": "停止動態掃描會話",
     "finished": "掃描結束，共發現 {count} 條文本",
     "quickFinished": "快捷掃描完成，發現 {count} 條文本",
-    "sessionStarted": "會話掃描已開始"
+    "sessionStarted": "會話掃描已開始",
+    "sessionInProgress": "會話掃描正在進行中...",
+    "truncationWarning": "為了保持介面流暢，僅顯示部分文本內容。完整內容將在匯出時提供。"
   },
   "results": {
     "title": "提取的文本",
