@@ -43,6 +43,9 @@ async function build() {
         // 读取确认模态框的 CSS 内容以供独立注入
         const confirmationModalCss = await fs.readFile('src/assets/styles/confirmationModal.css', 'utf-8');
 
+        // 读取 Web Worker 脚本内容
+        const workerScript = await fs.readFile('src/features/session-scan/worker.js', 'utf-8');
+
         // 2. 从 src/main.js 开始打包应用程序代码
         const result = await esbuild.build({
             entryPoints: ['src/main.js'],
@@ -55,6 +58,8 @@ async function build() {
                 '__INJECTED_CSS__': JSON.stringify(allCssContent),
                 // 单独注入确认模态框的CSS
                 '__CONFIRMATION_MODAL_CSS__': JSON.stringify(confirmationModalCss),
+                // 注入 Web Worker 脚本
+                '__WORKER_STRING__': JSON.stringify(workerScript),
             }
         });
 
