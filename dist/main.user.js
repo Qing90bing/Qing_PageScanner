@@ -535,7 +535,8 @@
         "code",
         "pre",
         "kbd",
-        ".no-translate"
+        ".no-translate",
+        ".view-line"
       ]
     }
   };

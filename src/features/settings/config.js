@@ -79,7 +79,7 @@ export const appConfig = {
             // --- 语义化标签 ---
             'script', 'style', 'noscript', 'code', 'pre', 'kbd',
             // --- 常见的非内容区域 ---
-            '.no-translate',
+            '.no-translate','.view-line',
         ],
     },
 };
