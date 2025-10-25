@@ -1670,6 +1670,35 @@ ${result.join(",\n")}
   function handleQuickScanClick() {
     openModal();
   }
+  var workerPolicy;
+  if (window.trustedTypes && window.trustedTypes.createPolicy) {
+    try {
+      workerPolicy = window.trustedTypes.createPolicy("text-extractor-worker", {
+        createScriptURL: (url) => url
+      });
+    } catch (e) {
+      if (e.name === "TypeError" && e.message.includes("Policy already exists")) {
+        workerPolicy = null;
+      } else {
+        console.error("Failed to create Trusted Types policy:", e);
+        workerPolicy = null;
+      }
+    }
+  }
+  function createTrustedWorkerUrl(url) {
+    if (workerPolicy) {
+      return workerPolicy.createScriptURL(url);
+    }
+    if (window.trustedTypes && window.trustedTypes.defaultPolicy) {
+      try {
+        return window.trustedTypes.defaultPolicy.createScriptURL(url);
+      } catch (e) {
+        console.warn("Trusted Types default policy failed, falling back to raw URL.", e);
+        return url;
+      }
+    }
+    return url;
+  }
   function animateCount(element, start2, end, duration, easing) {
     const startTime = performance.now();
     function frame(currentTime) {
@@ -1730,7 +1759,29 @@ ${result.join(",\n")}
     const results = getSessionTexts();
     if (results.length === 0) {
       updateModalContent(SHOW_PLACEHOLDER, true, "session-scan");
-    } else {
+      return;
+    }
+    updateModalContent(SHOW_LOADING, true, "session-scan");
+    try {
+      const workerScript = '// src/features/session-scan/worker.js\n\n/**\n * @description \u5C06\u4E00\u4E2A\u5B57\u7B26\u4E32\u6570\u7EC4\u8F6C\u6362\u6210\u7279\u5B9A\u7684\u4E8C\u7EF4\u6570\u7EC4\u683C\u5F0F\u7684\u5B57\u7B26\u4E32\uFF0C\u4F8B\u5982 `[["text1", ""], ["text2", ""]]`\u3002\n * @param {string[]} texts - \u9700\u8981\u88AB\u683C\u5F0F\u5316\u7684\u6587\u672C\u5B57\u7B26\u4E32\u6570\u7EC4\u3002\n * @returns {string} \u4E00\u4E2A\u683C\u5F0F\u5316\u540E\u7684\u5B57\u7B26\u4E32\u3002\n */\nconst formatTextsForTranslation = (texts) => {\n    const result = texts.map(text =>\n        `    ["${text.replace(/"/g, \'\\\\"\').replace(/\\n/g, \'\\\\n\')}", ""]`\n    );\n    return `[\\n${result.join(\',\\n\')}\\n]`;\n};\n\nself.onmessage = (event) => {\n    const sessionTextsSet = event.data;\n    const sessionTextsArray = Array.from(sessionTextsSet);\n    const formattedText = formatTextsForTranslation(sessionTextsArray);\n    self.postMessage(formattedText);\n};\n';
+      const workerUrl = `data:application/javascript,${encodeURIComponent(workerScript)}`;
+      const trustedUrl = createTrustedWorkerUrl(workerUrl);
+      const worker = new Worker(trustedUrl);
+      worker.onmessage = (event) => {
+        const formattedText = event.data;
+        updateModalContent(formattedText, false, "session-scan");
+        worker.terminate();
+      };
+      worker.onerror = (error) => {
+        console.error("Worker error:", error);
+        showNotification(t("error.workerError"), { type: "error" });
+        updateModalContent(SHOW_PLACEHOLDER, false, "session-scan");
+        worker.terminate();
+      };
+      worker.postMessage(results);
+    } catch (e) {
+      console.error("Failed to initialize web worker:", e);
+      showNotification(t("error.workerInitFailed"), { type: "error" });
       const formattedText = formatTextsForTranslation(results);
       updateModalContent(formattedText, true, "session-scan");
     }
