@@ -14,6 +14,7 @@ const formatTextsForTranslation = (texts) => {
 
 self.onmessage = (event) => {
     const sessionTextsSet = event.data;
+    // 在 Worker 线程中将 Set 转换为 Array，以避免阻塞主线程
     const sessionTextsArray = Array.from(sessionTextsSet);
     const formattedText = formatTextsForTranslation(sessionTextsArray);
     self.postMessage(formattedText);

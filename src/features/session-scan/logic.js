@@ -127,7 +127,7 @@ export const start = (onUpdate) => {
 };
 
 export const stop = () => {
-    if (!isRecording) return [];
+    if (!isRecording) return new Set();
     log('[会话扫描] 已停止。');
     if (observer) {
         observer.disconnect();
@@ -135,12 +135,12 @@ export const stop = () => {
     }
     isRecording = false;
     throttledUpdateCallback = null;
-    return getSessionTexts();
+    return sessionTexts;
 };
 
 export const isSessionRecording = () => isRecording;
 
-export const getSessionTexts = () => Array.from(sessionTexts);
+export const getSessionTexts = () => sessionTexts;
 
 /**
  * @description 清空会话期间收集的所有文本。
