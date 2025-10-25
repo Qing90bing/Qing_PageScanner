@@ -7,8 +7,10 @@
 
 import { log } from '../../shared/utils/logger.js';
 import { on } from '../../shared/utils/eventBus.js';
-import * as modalState from '../../shared/ui/mainModal/modalState.js';
+import { getCurrentMode } from '../../shared/ui/mainModal/modalState.js';
+import { fullQuickScanContent } from '../../shared/ui/mainModal.js';
 import { t } from '../../shared/i18n/index.js';
+import { requestSummary } from '../session-scan/logic.js';
 
 /**
  * @private
@@ -99,36 +101,47 @@ function downloadFile(filename, content, mimeType) {
  * @param {string} detail.format - 目标文件格式 ('txt', 'json', 'csv')。
  */
 function exportToFile({ format }) {
-    const text = modalState.outputTextarea.value;
-    if (!text || text.trim() === '') {
-        log('没有内容可导出。');
-        return;
-    }
+    const currentMode = getCurrentMode();
 
-    let filename, content, mimeType;
-
-    switch (format) {
-        case 'txt':
-            filename = generateFilename('txt');
-            content = getRawContent(text);
-            mimeType = 'text/plain;charset=utf-8;';
-            break;
-        case 'json':
-            filename = generateFilename('json');
-            content = getRawContent(text);
-            mimeType = 'application/json;charset=utf-8;';
-            break;
-        case 'csv':
-            filename = generateFilename('csv');
-            content = formatAsCsv(text);
-            mimeType = 'text/csv;charset=utf-8;';
-            break;
-        default:
-            log(`未知的导出格式: ${format}`);
+    const processAndDownload = (text) => {
+        if (!text || text.trim() === '' || text.trim() === '[]') {
+            log('没有内容可导出。');
             return;
-    }
+        }
 
-    downloadFile(filename, content, mimeType);
+        let filename, content, mimeType;
+
+        switch (format) {
+            case 'txt':
+                filename = generateFilename('txt');
+                content = getRawContent(text);
+                mimeType = 'text/plain;charset=utf-8;';
+                break;
+            case 'json':
+                filename = generateFilename('json');
+                content = getRawContent(text);
+                mimeType = 'application/json;charset=utf-8;';
+                break;
+            case 'csv':
+                filename = generateFilename('csv');
+                content = formatAsCsv(text);
+                mimeType = 'text/csv;charset=utf-8;';
+                break;
+            default:
+                log(`未知的导出格式: ${format}`);
+                return;
+        }
+
+        downloadFile(filename, content, mimeType);
+    };
+
+    if (currentMode === 'session-scan') {
+        log('从 session-scan 模式请求完整数据...');
+        requestSummary(processAndDownload);
+    } else {
+        log('从 quick-scan 模式的内存中导出完整数据...');
+        processAndDownload(fullQuickScanContent);
+    }
 }
 
 /**

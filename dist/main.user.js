@@ -21,7 +21,28 @@
 // ==/UserScript==
 
 
-(() => {
+var TextExtractor = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+  var main_exports = {};
+  __export(main_exports, {
+    main: () => main
+  });
   var translateIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="m476-80 182-480h84L924-80h-84l-43-122H603L560-80h-84ZM160-200l-56-56 202-202q-35-35-63.5-80T190-640h84q20 39 40 68t48 58q33-33 68.5-92.5T484-720H40v-80h280v-80h80v80h280v80H564q-21 72-63 148t-83 116l96 98-30 82-122-125-202 201Zm468-72h144l-72-204-72 204Z"/></svg>`;
   var dynamicIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M200-766v572q-17-17-32-36t-28-39v-422q13-20 28-39t32-36Zm160-96v764q-21-7-41-15.5T280-133v-694q19-11 39-19.5t41-15.5Zm280 749v-734q106 47 173 145t67 222q0 124-67 222T640-113ZM480-80q-10 0-20-.5T440-82v-796q10-1 20-1.5t20-.5q20 0 40 2t40 6v784q-20 4-40 6t-40 2Z"/></svg>`;
   var summaryIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M280-280h280v-80H280v80Zm0-160h400v-80H280v80Zm0-160h400v-80H280v80Zm-80 480q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/></svg>`;
@@ -242,7 +263,9 @@
       stopSession: "\u505C\u6B62\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD",
       finished: "\u626B\u63CF\u7ED3\u675F\uFF0C\u5171\u53D1\u73B0 {count} \u6761\u6587\u672C",
       quickFinished: "\u5FEB\u6377\u626B\u63CF\u5B8C\u6210\uFF0C\u53D1\u73B0 {count} \u6761\u6587\u672C",
-      sessionStarted: "\u4F1A\u8BDD\u626B\u63CF\u5DF2\u5F00\u59CB"
+      sessionStarted: "\u4F1A\u8BDD\u626B\u63CF\u5DF2\u5F00\u59CB",
+      sessionInProgress: "\u626B\u63CF\u6B63\u5728\u8FDB\u884C\u4E2D...",
+      truncationWarning: "\u4E3A\u4FDD\u6301\u754C\u9762\u6D41\u7545\uFF0C\u6B64\u5904\u4EC5\u663E\u793A\u90E8\u5206\u6587\u672C\u3002\u5B8C\u6574\u5185\u5BB9\u5C06\u5728\u5BFC\u51FA\u65F6\u63D0\u4F9B\u3002"
     },
     results: {
       title: "\u63D0\u53D6\u7684\u6587\u672C",
@@ -810,7 +833,7 @@
     const settings = loadSettings();
     const { filterRules } = settings;
     const uniqueTexts =  new Set();
-    const processAndAddText2 = (rawText) => {
+    const processAndAddText = (rawText) => {
       if (!rawText) return;
       const normalizedText = rawText.normalize("NFC");
       let text = normalizedText.replace(/(\r\n|\n|\r)+/g, "\n");
@@ -825,7 +848,7 @@
       }
       uniqueTexts.add(text);
     };
-    processAndAddText2(document.title);
+    processAndAddText(document.title);
     const targetElements = document.querySelectorAll(appConfig.scanner.targetSelectors.join(", "));
     const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(", ");
     targetElements.forEach((element) => {
@@ -838,14 +861,14 @@
         dynamicAttributes.forEach((attr) => {
           const attrValue = element.getAttribute(attr);
           if (attrValue) {
-            processAndAddText2(attrValue);
+            processAndAddText(attrValue);
           }
         });
       } else {
         attributesToExtract.forEach((attr) => {
           const attrValue = element.getAttribute(attr);
           if (attrValue) {
-            processAndAddText2(attrValue);
+            processAndAddText(attrValue);
           }
         });
       }
@@ -859,7 +882,7 @@
         if (parent && parent.closest(".text-extractor-fab, .text-extractor-modal-overlay, .settings-panel-overlay")) {
           continue;
         }
-        processAndAddText2(node.nodeValue);
+        processAndAddText(node.nodeValue);
       }
     });
     return Array.from(uniqueTexts);
@@ -980,46 +1003,45 @@ ${result.join(",\n")}
   function setCurrentMode(mode) {
     currentMode = mode;
   }
-  function throttle(func, limit) {
-    let lastFunc;
-    let lastRan;
-    return function(...args) {
-      if (!lastRan) {
-        func.apply(this, args);
-        lastRan = Date.now();
+  function getCurrentMode() {
+    return currentMode;
+  }
+  var workerPolicy;
+  if (window.trustedTypes && window.trustedTypes.createPolicy) {
+    try {
+      workerPolicy = window.trustedTypes.createPolicy("text-extractor-worker", {
+        createScriptURL: (url) => url
+      });
+    } catch (e) {
+      if (e.name === "TypeError" && e.message.includes("Policy already exists")) {
+        workerPolicy = null;
       } else {
-        clearTimeout(lastFunc);
-        lastFunc = setTimeout(() => {
-          if (Date.now() - lastRan >= limit) {
-            func.apply(this, args);
-            lastRan = Date.now();
-          }
-        }, limit - (Date.now() - lastRan));
+        console.error("Failed to create Trusted Types policy:", e);
+        workerPolicy = null;
       }
-    };
+    }
+  }
+  function createTrustedWorkerUrl(url) {
+    if (workerPolicy) {
+      return workerPolicy.createScriptURL(url);
+    }
+    if (window.trustedTypes && window.trustedTypes.defaultPolicy) {
+      try {
+        return window.trustedTypes.defaultPolicy.createScriptURL(url);
+      } catch (e) {
+        console.warn("Trusted Types default policy failed, falling back to raw URL.", e);
+        return url;
+      }
+    }
+    return url;
   }
   var isRecording = false;
-  var sessionTexts =  new Set();
   var observer = null;
-  var throttledUpdateCallback = null;
-  function processAndAddText(rawText, textSet, filterRules) {
-    if (!rawText || typeof rawText !== "string") return false;
-    const normalizedText = rawText.normalize("NFC");
-    let textForFiltering = normalizedText.replace(/(\r\n|\n|\r)+/g, "\n").trim();
-    if (textForFiltering === "") return false;
-    const filterReason = shouldFilter(textForFiltering, filterRules);
-    if (filterReason) {
-      log(`\u6587\u672C\u5DF2\u8FC7\u6EE4: "${textForFiltering}" (\u539F\u56E0: ${filterReason})`);
-      return false;
-    }
-    const originalSize = textSet.size;
-    textSet.add(normalizedText.replace(/(\r\n|\n|\r)+/g, "\n"));
-    return textSet.size > originalSize;
-  }
+  var worker = null;
+  var onSummaryCallback = null;
   var handleMutations = (mutations) => {
-    const { filterRules } = loadSettings();
     const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(", ");
-    let changed = false;
+    const textsBatch = [];
     mutations.forEach((mutation) => {
       mutation.addedNodes.forEach((node) => {
         if (node.nodeType !== Node.ELEMENT_NODE) return;
@@ -1027,52 +1049,94 @@ ${result.join(",\n")}
         const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
         while (walker.nextNode()) {
           const textNode = walker.currentNode;
-          if (processAndAddText(textNode.nodeValue, sessionTexts, filterRules)) {
-            changed = true;
-            log(`[\u4F1A\u8BDD\u626B\u63CF] \u65B0\u589E: "${textNode.nodeValue.trim()}" (\u5F53\u524D\u603B\u6570: ${sessionTexts.size})`);
+          if (textNode.nodeValue) {
+            textsBatch.push(textNode.nodeValue);
           }
         }
       });
     });
-    if (changed && throttledUpdateCallback) {
-      throttledUpdateCallback(sessionTexts.size);
+    if (textsBatch.length > 0 && worker) {
+      worker.postMessage({ type: "data", payload: textsBatch });
     }
   };
   var start = (onUpdate) => {
     if (isRecording) return;
-    log("\u4F1A\u8BDD\u626B\u63CF\uFF1A\u521D\u59CB\u626B\u63CF\u5F00\u59CB...");
-    isRecording = true;
-    sessionTexts.clear();
-    throttledUpdateCallback = onUpdate ? throttle(onUpdate, 200) : null;
-    const initialTexts = extractAndProcessText();
-    const { filterRules } = loadSettings();
-    initialTexts.forEach((text) => {
-      if (processAndAddText(text, sessionTexts, filterRules)) {
-        log(`[\u4F1A\u8BDD\u626B\u63CF] \u65B0\u589E: "${text.trim()}" (\u5F53\u524D\u603B\u6570: ${sessionTexts.size})`);
-      }
-    });
-    if (throttledUpdateCallback) {
-      throttledUpdateCallback(sessionTexts.size);
+    if (worker) {
+      worker.terminate();
     }
-    observer = new MutationObserver(handleMutations);
-    observer.observe(document.body, { childList: true, subtree: true });
+    log("\u4F1A\u8BDD\u626B\u63CF\uFF1A\u542F\u52A8 Worker \u5E76\u5F00\u59CB\u521D\u59CB\u626B\u63CF...");
+    isRecording = true;
+    try {
+      const workerScript = '(() => {\n  // src/shared/utils/ignoredTerms.js\n  var IGNORED_TERMS = [\n    "Github",\n    "Microsoft",\n    "Tampermonkey",\n    "JavaScript",\n    "TypeScript",\n    "Hugging Face",\n    "Google",\n    "Facebook",\n    "Twitter",\n    "LinkedIn",\n    "OpenAI",\n    "ChatGPT",\n    "API",\n    "Glossary of computer science",\n    "HTML",\n    "CSS",\n    "JSON",\n    "XML",\n    "HTTP",\n    "HTTPS",\n    "URL",\n    "IP address",\n    "DNS",\n    "CPU",\n    "GPU",\n    "RAM",\n    "SSD",\n    "USB",\n    "Wi-Fi",\n    "Bluetooth",\n    "VPN",\n    "AI"\n  ];\n  var ignoredTerms_default = IGNORED_TERMS;\n\n  // src/assets/icons/themeIcon.js\n  var themeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 32.5-156t88-127Q256-817 330-848.5T488-880q80 0 151 27.5t124.5 76q53.5 48.5 85 115T880-518q0 115-70 176.5T640-280h-74q-9 0-12.5 5t-3.5 11q0 12 15 34.5t15 51.5q0 50-27.5 74T480-80Zm0-400Zm-220 40q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120-160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm200 0q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120 160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17ZM480-160q9 0 14.5-5t5.5-13q0-14-15-33t-15-57q0-42 29-67t71-25h70q66 0 113-38.5T800-518q0-121-92.5-201.5T488-800q-136 0-232 93t-96 227q0 133 93.5 226.5T480-160Z"/></svg>`;\n\n  // src/assets/icons/languageIcon.js\n  var languageIcon_default = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-155.5t86-127Q252-817 325-848.5T480-880q83 0 155.5 31.5t127 86q54.5 54.5 86 127T880-480q0 82-31.5 155t-86 127.5q-54.5 54.5-127 86T480-80Zm0-82q26-36 45-75t31-83H404q12 44 31 83t45 75Zm-104-16q-18-33-31.5-68.5T322-320H204q29 50 72.5 87t99.5 55Zm208 0q56-18 99.5-55t72.5-87H638q-9 38-22.5 73.5T584-178ZM170-400h136q-3-20-4.5-39.5T300-480q0-21 1.5-40.5T306-560H170q-5 20-7.5 39.5T160-480q0 21 2.5 40.5T170-400Zm216 0h188q3-20 4.5-39.5T580-480q0-21-1.5-40.5T574-560H386q-3 20-4.5 39.5T380-480q0 21 1.5 40.5T386-400Zm268 0h136q5-20 7.5-39.5T800-480q0-21-2.5-40.5T790-560H654q3 20 4.5 39.5T660-480q0 21-1.5 40.5T654-400Zm-16-240h118q-29-50-72.5-87T584-782q18 33 31.5 68.5T638-640Zm-234 0h152q-12-44-31-83t-45-75q-26 36-45 75t-31 83Zm-200 0h118q9-38 22.5-73.5T376-782q-56 18-99.5 55T204-640Z"/></svg>`;\n\n  // src/shared/i18n/en.json\n  var en_default = {\n    common: {\n      scan: "Scan",\n      stop: "Stop",\n      resume: "Resume",\n      clear: "Clear",\n      copy: "Copy",\n      save: "Save",\n      discovered: "Discovered: ",\n      confirm: "Confirm",\n      cancel: "Cancel",\n      export: "Export"\n    },\n    export: {\n      exportAsTxt: "Export as TXT",\n      exportAsJson: "Export as JSON",\n      exportAsCsv: "Export as CSV",\n      csv: {\n        id: "ID",\n        original: "Original",\n        translation: "Translation"\n      }\n    },\n    settings: {\n      title: "Settings",\n      theme: "Theme",\n      language: "Language",\n      relatedSettings: "Related Settings",\n      filterRules: "Content Filtering Rules",\n      filters: {\n        numbers: "Filter numbers/currency",\n        chinese: "Filter pure Chinese",\n        contains_chinese: "Filter text containing Chinese",\n        emoji_only: "Filter emoji-only text",\n        symbols: "Filter symbol-only text",\n        term: "Filter specific terms",\n        single_letter: "Filter single English letters",\n        repeating_chars: "Filter single repeating characters"\n      },\n      display: {\n        show_fab: "Show floating button",\n        show_line_numbers: "Show line numbers",\n        show_statistics: "Show statistics"\n      },\n      advanced: {\n        enable_debug_logging: "Enable debug logging"\n      },\n      panel: {\n        title: "Settings Panel"\n      },\n      languages: {\n        en: "English",\n        zh_CN: "\\u7B80\\u4F53\\u4E2D\\u6587",\n        zh_TW: "\\u7E41\\u9AD4\\u4E2D\\u6587"\n      },\n      themes: {\n        light: "Light",\n        dark: "Dark",\n        system: "System"\n      }\n    },\n    scan: {\n      quick: "Quick Scan",\n      session: "Session Scan",\n      startSession: "Start dynamic scan session",\n      stopSession: "Stop dynamic scan session",\n      finished: "Scan finished, {count} texts found",\n      quickFinished: "Quick scan finished, {count} texts found",\n      sessionStarted: "Session scan started"\n    },\n    results: {\n      title: "Extracted Text",\n      totalCharacters: "Total characters",\n      totalLines: "Total lines",\n      noSummary: "No summary text available",\n      stats: {\n        lines: "Lines",\n        chars: "Chars"\n      }\n    },\n    notifications: {\n      copiedToClipboard: "Copied to clipboard!",\n      settingsSaved: "Settings saved!",\n      modalInitError: "Modal not initialized.",\n      nothingToCopy: "Nothing to copy",\n      contentCleared: "Content cleared",\n      noTextSelected: "No text selected"\n    },\n    placeholders: {\n      click: "Click the ",\n      dynamicScan: "[Dynamic Scan]",\n      startNewScanSession: " button to start a new scanning session",\n      staticScan: "[Static Scan]",\n      performOneTimeScan: " button for a one-time quick extraction"\n    },\n    confirmation: {\n      clear: "Are you sure you want to clear the content? This action cannot be undone."\n    },\n    tooltip: {\n      summary: "View Summary",\n      dynamic_scan: "Dynamic Scan",\n      static_scan: "Static Scan"\n    }\n  };\n\n  // src/shared/i18n/zh-CN.json\n  var zh_CN_default = {\n    common: {\n      scan: "\\u626B\\u63CF",\n      stop: "\\u505C\\u6B62",\n      resume: "\\u7EE7\\u7EED",\n      clear: "\\u6E05\\u7A7A",\n      copy: "\\u590D\\u5236",\n      save: "\\u4FDD\\u5B58",\n      discovered: "\\u5DF2\\u53D1\\u73B0\\uFF1A",\n      confirm: "\\u786E\\u8BA4",\n      cancel: "\\u53D6\\u6D88",\n      export: "\\u5BFC\\u51FA"\n    },\n    export: {\n      exportAsTxt: "\\u5BFC\\u51FA\\u4E3A TXT",\n      exportAsJson: "\\u5BFC\\u51FA\\u4E3A JSON",\n      exportAsCsv: "\\u5BFC\\u51FA\\u4E3A CSV",\n      csv: {\n        id: "ID",\n        original: "\\u539F\\u6587",\n        translation: "\\u8BD1\\u6587"\n      }\n    },\n    settings: {\n      title: "\\u8BBE\\u7F6E",\n      theme: "\\u754C\\u9762\\u4E3B\\u9898",\n      language: "\\u8BED\\u8A00\\u8BBE\\u7F6E",\n      relatedSettings: "\\u76F8\\u5173\\u8BBE\\u7F6E",\n      filterRules: "\\u5185\\u5BB9\\u8FC7\\u6EE4\\u89C4\\u5219",\n      filters: {\n        numbers: "\\u8FC7\\u6EE4\\u7EAF\\u6570\\u5B57/\\u8D27\\u5E01",\n        chinese: "\\u8FC7\\u6EE4\\u7EAF\\u4E2D\\u6587",\n        contains_chinese: "\\u8FC7\\u6EE4\\u5305\\u542B\\u4E2D\\u6587\\u7684\\u6587\\u672C",\n        emoji_only: "\\u8FC7\\u6EE4\\u7EAF\\u8868\\u60C5\\u7B26\\u53F7",\n        symbols: "\\u8FC7\\u6EE4\\u7EAF\\u7B26\\u53F7",\n        term: "\\u8FC7\\u6EE4\\u7279\\u5B9A\\u672F\\u8BED",\n        single_letter: "\\u8FC7\\u6EE4\\u7EAF\\u5355\\u4E2A\\u82F1\\u6587\\u5B57\\u6BCD",\n        repeating_chars: "\\u8FC7\\u6EE4\\u5355\\u4E00\\u91CD\\u590D\\u5B57\\u7B26"\n      },\n      display: {\n        show_fab: "\\u663E\\u793A\\u60AC\\u6D6E\\u6309\\u94AE",\n        show_line_numbers: "\\u663E\\u793A\\u884C\\u53F7",\n        show_statistics: "\\u663E\\u793A\\u7EDF\\u8BA1\\u4FE1\\u606F"\n      },\n      advanced: {\n        enable_debug_logging: "\\u542F\\u7528\\u8C03\\u8BD5\\u65E5\\u5FD7"\n      },\n      panel: {\n        title: "\\u8BBE\\u7F6E\\u9762\\u677F"\n      },\n      languages: {\n        en: "English",\n        zh_CN: "\\u7B80\\u4F53\\u4E2D\\u6587",\n        zh_TW: "\\u7E41\\u9AD4\\u4E2D\\u6587"\n      },\n      themes: {\n        light: "\\u6D45\\u8272",\n        dark: "\\u6DF1\\u8272",\n        system: "\\u8DDF\\u968F\\u7CFB\\u7EDF"\n      }\n    },\n    scan: {\n      quick: "\\u5FEB\\u901F\\u626B\\u63CF",\n      session: "\\u4F1A\\u8BDD\\u626B\\u63CF",\n      startSession: "\\u5F00\\u59CB\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD",\n      stopSession: "\\u505C\\u6B62\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD",\n      finished: "\\u626B\\u63CF\\u7ED3\\u675F\\uFF0C\\u5171\\u53D1\\u73B0 {count} \\u6761\\u6587\\u672C",\n      quickFinished: "\\u5FEB\\u6377\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {count} \\u6761\\u6587\\u672C",\n      sessionStarted: "\\u4F1A\\u8BDD\\u626B\\u63CF\\u5DF2\\u5F00\\u59CB",\n      sessionInProgress: "\\u626B\\u63CF\\u6B63\\u5728\\u8FDB\\u884C\\u4E2D...",\n      truncationWarning: "\\u4E3A\\u4FDD\\u6301\\u754C\\u9762\\u6D41\\u7545\\uFF0C\\u6B64\\u5904\\u4EC5\\u663E\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u5B8C\\u6574\\u5185\\u5BB9\\u5C06\\u5728\\u5BFC\\u51FA\\u65F6\\u63D0\\u4F9B\\u3002"\n    },\n    results: {\n      title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",\n      totalCharacters: "\\u603B\\u5B57\\u6570",\n      totalLines: "\\u603B\\u884C\\u6570",\n      noSummary: "\\u5F53\\u524D\\u6CA1\\u6709\\u603B\\u7ED3\\u6587\\u672C",\n      stats: {\n        lines: "\\u884C",\n        chars: "\\u5B57\\u7B26\\u6570"\n      }\n    },\n    notifications: {\n      copiedToClipboard: "\\u5DF2\\u590D\\u5236\\u5230\\u526A\\u8D34\\u677F!",\n      settingsSaved: "\\u8BBE\\u7F6E\\u5DF2\\u4FDD\\u5B58\\uFF01",\n      modalInitError: "\\u6A21\\u6001\\u6846\\u5C1A\\u672A\\u521D\\u59CB\\u5316\\u3002",\n      nothingToCopy: "\\u6C92\\u6709\\u5167\\u5BB9\\u53EF\\u8907\\u88FD",\n      contentCleared: "\\u5185\\u5BB9\\u5DF2\\u6E05\\u7A7A",\n      noTextSelected: "\\u672A\\u9009\\u62E9\\u6587\\u672C"\n    },\n    placeholders: {\n      click: "\\u70B9\\u51FB ",\n      dynamicScan: "[\\u52A8\\u6001\\u626B\\u63CF]",\n      startNewScanSession: " \\u6309\\u94AE\\u5F00\\u59CB\\u4E00\\u4E2A\\u65B0\\u7684\\u626B\\u63CF\\u4F1A\\u8BDD",\n      staticScan: "[\\u9759\\u6001\\u626B\\u63CF]",\n      performOneTimeScan: " \\u6309\\u94AE\\u53EF\\u8FDB\\u884C\\u4E00\\u6B21\\u6027\\u7684\\u5FEB\\u6377\\u63D0\\u53D6"\n    },\n    confirmation: {\n      clear: "\\u4F60\\u786E\\u8BA4\\u8981\\u6E05\\u7A7A\\u5417\\uFF1F\\u6B64\\u64CD\\u4F5C\\u4E0D\\u53EF\\u64A4\\u9500\\u3002"\n    },\n    tooltip: {\n      summary: "\\u67E5\\u770B\\u603B\\u7ED3",\n      dynamic_scan: "\\u52A8\\u6001\\u626B\\u63CF",\n      static_scan: "\\u9759\\u6001\\u626B\\u63CF"\n    }\n  };\n\n  // src/shared/i18n/zh-TW.json\n  var zh_TW_default = {\n    common: {\n      scan: "\\u6383\\u63CF",\n      stop: "\\u505C\\u6B62",\n      resume: "\\u7E7C\\u7E8C",\n      clear: "\\u6E05\\u7A7A",\n      copy: "\\u8907\\u88FD",\n      save: "\\u5132\\u5B58",\n      discovered: "\\u5DF2\\u767C\\u73FE\\uFF1A",\n      confirm: "\\u78BA\\u8A8D",\n      cancel: "\\u53D6\\u6D88",\n      export: "\\u532F\\u51FA"\n    },\n    export: {\n      exportAsTxt: "\\u532F\\u51FA\\u70BA TXT",\n      exportAsJson: "\\u532F\\u51FA\\u70BA JSON",\n      exportAsCsv: "\\u532F\\u51FA\\u70BA CSV",\n      csv: {\n        id: "ID",\n        original: "\\u539F\\u6587",\n        translation: "\\u8B6F\\u6587"\n      }\n    },\n    settings: {\n      title: "\\u8A2D\\u5B9A",\n      theme: "\\u4ECB\\u9762\\u4E3B\\u984C",\n      language: "\\u8A9E\\u8A00\\u8A2D\\u5B9A",\n      relatedSettings: "\\u76F8\\u95DC\\u8A2D\\u5B9A",\n      filterRules: "\\u5167\\u5BB9\\u904E\\u6FFE\\u898F\\u5247",\n      filters: {\n        numbers: "\\u904E\\u6FFE\\u7D14\\u6578\\u5B57/\\u8CA8\\u5E63",\n        chinese: "\\u904E\\u6FFE\\u7D14\\u4E2D\\u6587",\n        contains_chinese: "\\u904E\\u6FFE\\u5305\\u542B\\u4E2D\\u6587\\u7684\\u6587\\u672C",\n        emoji_only: "\\u904E\\u6FFE\\u7D14\\u8868\\u60C5\\u7B26\\u865F",\n        symbols: "\\u904E\\u6FFE\\u7D14\\u7B26\\u865F",\n        term: "\\u904E\\u6FFE\\u7279\\u5B9A\\u8853\\u8A9E",\n        single_letter: "\\u904E\\u6FFE\\u7D14\\u55AE\\u500B\\u82F1\\u6587\\u5B57\\u6BCD",\n        repeating_chars: "\\u904E\\u6FFE\\u55AE\\u4E00\\u91CD\\u8907\\u5B57\\u7B26"\n      },\n      display: {\n        show_fab: "\\u986F\\u793A\\u61F8\\u6D6E\\u6309\\u9215",\n        show_line_numbers: "\\u986F\\u793A\\u884C\\u865F",\n        show_statistics: "\\u986F\\u793A\\u7D71\\u8A08\\u8CC7\\u8A0A"\n      },\n      advanced: {\n        enable_debug_logging: "\\u555F\\u7528\\u5075\\u932F\\u65E5\\u8A8C"\n      },\n      panel: {\n        title: "\\u8A2D\\u5B9A\\u9762\\u677F"\n      },\n      languages: {\n        en: "English",\n        zh_CN: "\\u7B80\\u4F53\\u4E2D\\u6587",\n        zh_TW: "\\u7E41\\u9AD4\\u4E2D\\u6587"\n      },\n      themes: {\n        light: "\\u6DFA\\u8272",\n        dark: "\\u6DF1\\u8272",\n        system: "\\u8DDF\\u96A8\\u7CFB\\u7D71"\n      }\n    },\n    scan: {\n      quick: "\\u5FEB\\u901F\\u6383\\u63CF",\n      session: "\\u6703\\u8A71\\u6383\\u63CF",\n      startSession: "\\u958B\\u59CB\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71",\n      stopSession: "\\u505C\\u6B62\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71",\n      finished: "\\u6383\\u63CF\\u7D50\\u675F\\uFF0C\\u5171\\u767C\\u73FE {count} \\u689D\\u6587\\u672C",\n      quickFinished: "\\u5FEB\\u6377\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {count} \\u689D\\u6587\\u672C",\n      sessionStarted: "\\u6703\\u8A71\\u6383\\u63CF\\u5DF2\\u958B\\u59CB"\n    },\n    results: {\n      title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",\n      totalCharacters: "\\u7E3D\\u5B57\\u6578",\n      totalLines: "\\u7E3D\\u884C\\u6578",\n      noSummary: "\\u7576\\u524D\\u6C92\\u6709\\u7E3D\\u7D50\\u6587\\u672C",\n      stats: {\n        lines: "\\u884C",\n        chars: "\\u5B57\\u7B26\\u6578"\n      }\n    },\n    notifications: {\n      copiedToClipboard: "\\u5DF2\\u8907\\u88FD\\u5230\\u526A\\u8CBC\\u7C3F\\uFF01",\n      settingsSaved: "\\u8A2D\\u5B9A\\u5DF2\\u5132\\u5B58\\uFF01",\n      modalInitError: "\\u6A21\\u614B\\u6846\\u5C1A\\u672A\\u521D\\u59CB\\u5316\\u3002",\n      nothingToCopy: "\\u6C92\\u6709\\u5167\\u5BB9\\u53EF\\u8907\\u88FD",\n      contentCleared: "\\u5167\\u5BB9\\u5DF2\\u6E05\\u7A7A",\n      noTextSelected: "\\u672A\\u9078\\u64C7\\u6587\\u672C"\n    },\n    placeholders: {\n      click: "\\u9EDE\\u64CA ",\n      dynamicScan: "[\\u52D5\\u614B\\u6383\\u63CF]",\n      startNewScanSession: " \\u6309\\u9215\\u958B\\u59CB\\u4E00\\u500B\\u65B0\\u7684\\u6383\\u63CF\\u6703\\u8A71",\n      staticScan: "[\\u975C\\u614B\\u6383\\u63CF]",\n      performOneTimeScan: " \\u6309\\u9215\\u53EF\\u9032\\u884C\\u4E00\\u6B21\\u6027\\u7684\\u5FEB\\u6377\\u63D0\\u53D6"\n    },\n    confirmation: {\n      clear: "\\u4F60\\u78BA\\u8A8D\\u8981\\u6E05\\u7A7A\\u55CE\\uFF1F\\u6B64\\u64CD\\u4F5C\\u4E0D\\u53EF\\u64A4\\u92B7\\u3002"\n    },\n    tooltip: {\n      summary: "\\u67E5\\u770B\\u7E3D\\u7D50",\n      dynamic_scan: "\\u52D5\\u614B\\u6383\\u63CF",\n      static_scan: "\\u975C\\u614B\\u6383\\u63CF"\n    }\n  };\n\n  // src/shared/i18n/management/languages.js\n  var supportedLanguages = [\n    { code: "en", name: "English" },\n    { code: "zh-CN", name: "\\u7B80\\u4F53\\u4E2D\\u6587" },\n    { code: "zh-TW", name: "\\u7E41\\u9AD4\\u4E2D\\u6587" }\n  ];\n\n  // src/shared/i18n/index.js\n  var translationModules = {\n    en: en_default,\n    "zh-CN": zh_CN_default,\n    "zh-TW": zh_TW_default\n  };\n  var translations = supportedLanguages.reduce((acc, lang) => {\n    if (translationModules[lang.code]) {\n      acc[lang.code] = translationModules[lang.code];\n    }\n    return acc;\n  }, {});\n  var currentTranslations = translations.en;\n  function getAvailableLanguages() {\n    return supportedLanguages.map((lang) => ({\n      value: lang.code,\n      label: lang.name\n    }));\n  }\n\n  // src/features/settings/config.js\n  var selectSettingsDefinitions = [\n    {\n      id: "theme-select",\n      key: "theme",\n      label: "settings.theme",\n      icon: themeIcon,\n      options: [\n        { value: "light", label: "settings.themes.light" },\n        { value: "dark", label: "settings.themes.dark" },\n        { value: "system", label: "settings.themes.system" }\n      ]\n    },\n    {\n      id: "language-select",\n      key: "language",\n      label: "settings.language",\n      icon: languageIcon_default,\n      // \u76F4\u63A5\u4ECE i18n \u6A21\u5757\u83B7\u53D6\u8BED\u8A00\u5217\u8868\uFF0C\u5176\u6807\u7B7E\u5DF2\u7ECF\u662F\u539F\u751F\u540D\u79F0\uFF0C\u65E0\u9700\u518D\u7FFB\u8BD1\u3002\n      options: getAvailableLanguages()\n    }\n  ];\n  var filterDefinitions = [\n    { id: "filter-numbers", key: "numbers", label: "settings.filters.numbers" },\n    { id: "filter-chinese", key: "chinese", label: "settings.filters.chinese" },\n    { id: "filter-contains-chinese", key: "containsChinese", label: "settings.filters.contains_chinese" },\n    { id: "filter-emoji-only", key: "emojiOnly", label: "settings.filters.emoji_only" },\n    { id: "filter-symbols", key: "symbols", label: "settings.filters.symbols" },\n    { id: "filter-term", key: "termFilter", label: "settings.filters.term" },\n    { id: "filter-single-letter", key: "singleLetter", label: "settings.filters.single_letter" },\n    { id: "filter-repeating-chars", key: "repeatingChars", label: "settings.filters.repeating_chars" }\n  ];\n\n  // src/shared/utils/filterLogic.js\n  var filterConfigMap = new Map(filterDefinitions.map((def) => [def.key, def.label]));\n  var ruleChecks = /* @__PURE__ */ new Map([\n    ["numbers", {\n      regex: /^[$\\\u20AC\\\xA3\\\xA5\\d,.\\s]+$/,\n      label: filterConfigMap.get("numbers")\n    }],\n    ["chinese", {\n      regex: /^[\\u4e00-\\u9fa5\\s]+$/u,\n      label: filterConfigMap.get("chinese")\n    }],\n    ["containsChinese", {\n      regex: /[\\u4e00-\\u9fa5]/u,\n      label: filterConfigMap.get("containsChinese")\n    }],\n    ["emojiOnly", {\n      regex: /^[\\p{Emoji}\\s]+$/u,\n      label: filterConfigMap.get("emojiOnly")\n    }],\n    ["symbols", {\n      // \u8FD9\u4E2A\u903B\u8F91\u6BD4\u8F83\u7279\u6B8A\uFF0C\u662F\u201C\u4E0D\u5305\u542B\u5B57\u6BCD\u6216\u6570\u5B57\u201D\uFF0C\u6240\u4EE5\u6211\u4EEC\u7528\u4E00\u4E2A\u51FD\u6570\u6765\u5904\u7406\n      test: (text) => !/[\\p{L}\\p{N}]/u.test(text),\n      label: filterConfigMap.get("symbols")\n    }],\n    ["termFilter", {\n      test: (text) => ignoredTerms_default.includes(text),\n      label: filterConfigMap.get("termFilter")\n    }],\n    ["singleLetter", {\n      regex: /^[a-zA-Z]$/,\n      label: filterConfigMap.get("singleLetter")\n    }],\n    ["repeatingChars", {\n      regex: /^\\s*(.)\\1+\\s*$/,\n      label: filterConfigMap.get("repeatingChars")\n    }]\n  ]);\n  function shouldFilter(text, filterRules2) {\n    for (const [key, rule] of ruleChecks.entries()) {\n      if (filterRules2[key]) {\n        const isFiltered = rule.regex ? rule.regex.test(text) : rule.test(text);\n        if (isFiltered) {\n          return rule.label;\n        }\n      }\n    }\n    return null;\n  }\n\n  // src/features/session-scan/worker.js\n  var sessionTexts = /* @__PURE__ */ new Set();\n  var filterRules = {};\n  function processAndAddText(rawText) {\n    if (!rawText || typeof rawText !== "string") return false;\n    const normalizedText = rawText.normalize("NFC");\n    let textForFiltering = normalizedText.replace(/(\\r\\n|\\n|\\r)+/g, "\\n").trim();\n    if (textForFiltering === "") return false;\n    if (shouldFilter(textForFiltering, filterRules)) {\n      return false;\n    }\n    const originalSize = sessionTexts.size;\n    sessionTexts.add(normalizedText.replace(/(\\r\\n|\\n|\\r)+/g, "\\n"));\n    return sessionTexts.size > originalSize;\n  }\n  var formatTextsForTranslation = (texts) => {\n    if (!texts || texts.length === 0) {\n      return "[]";\n    }\n    const result = texts.map(\n      (text) => `    ["${text.replace(/"/g, \'\\\\"\').replace(/\\n/g, "\\\\n")}", ""]`\n    );\n    return `[\n${result.join(",\\n")}\n]`;\n  };\n  self.onmessage = (event) => {\n    const { type, payload } = event.data;\n    switch (type) {\n      // \u521D\u59CB\u5316\uFF1A\u63A5\u6536\u8FC7\u6EE4\u89C4\u5219\n      case "init":\n        filterRules = payload.filterRules || {};\n        break;\n      // \u6570\u636E\u5904\u7406\uFF1A\u63A5\u6536\u4E00\u6279\u539F\u59CB\u6587\u672C\u8FDB\u884C\u5904\u7406\n      case "data": {\n        let changed = false;\n        if (Array.isArray(payload)) {\n          payload.forEach((text) => {\n            if (processAndAddText(text)) {\n              changed = true;\n            }\n          });\n        }\n        if (changed) {\n          self.postMessage({ type: "countUpdated", payload: sessionTexts.size });\n        }\n        break;\n      }\n      // \u603B\u7ED3\u8BF7\u6C42\uFF1A\u683C\u5F0F\u5316\u5E76\u8FD4\u56DE\u6240\u6709\u6587\u672C\n      case "getSummary": {\n        const sessionTextsArray = Array.from(sessionTexts);\n        const formattedText = formatTextsForTranslation(sessionTextsArray);\n        self.postMessage({ type: "summaryReady", payload: formattedText });\n        break;\n      }\n      // \u83B7\u53D6\u5F53\u524D\u8BA1\u6570\u503C\n      case "getCount":\n        self.postMessage({ type: "countUpdated", payload: sessionTexts.size });\n        break;\n      // \u53EF\u9009\uFF1A\u6DFB\u52A0\u4E00\u4E2A\u6E05\u7A7A\u6307\u4EE4\n      case "clear":\n        sessionTexts.clear();\n        self.postMessage({ type: "countUpdated", payload: 0 });\n        break;\n    }\n  };\n})();\n';
+      const workerUrl = `data:application/javascript,${encodeURIComponent(workerScript)}`;
+      const trustedUrl = createTrustedWorkerUrl(workerUrl);
+      worker = new Worker(trustedUrl);
+      worker.onmessage = (event) => {
+        const { type, payload } = event.data;
+        if (type === "countUpdated" && onUpdate) {
+          onUpdate(payload);
+        } else if (type === "summaryReady" && onSummaryCallback) {
+          onSummaryCallback(payload);
+          onSummaryCallback = null;
+        }
+      };
+      worker.onerror = (error) => {
+        console.error("Worker error:", error);
+        log(`[\u4F1A\u8BDD\u626B\u63CF] Worker \u53D1\u751F\u9519\u8BEF: ${error.message}`);
+        stop();
+      };
+      const { filterRules } = loadSettings();
+      worker.postMessage({ type: "init", payload: { filterRules } });
+      const initialTexts = extractAndProcessText();
+      worker.postMessage({ type: "data", payload: initialTexts });
+      log(`[\u4F1A\u8BDD\u626B\u63CF] \u5DF2\u53D1\u9001 ${initialTexts.length} \u6761\u521D\u59CB\u6587\u672C\u5230 Worker\u3002`);
+      observer = new MutationObserver(handleMutations);
+      observer.observe(document.body, { childList: true, subtree: true });
+    } catch (e) {
+      console.error("Failed to initialize web worker:", e);
+      log(`[\u4F1A\u8BDD\u626B\u63CF] Worker \u521D\u59CB\u5316\u5931\u8D25: ${e.message}`);
+      isRecording = false;
+      worker = null;
+    }
   };
-  var stop = () => {
-    if (!isRecording) return  new Set();
-    log("[\u4F1A\u8BDD\u626B\u63CF] \u5DF2\u505C\u6B62\u3002");
+  var stop = (onStopped) => {
+    if (!isRecording) {
+      if (onStopped) onStopped(0);
+      return;
+    }
+    log("[\u4F1A\u8BDD\u626B\u63CF] \u5DF2\u505C\u6B62\u76D1\u542C DOM \u53D8\u5316\u3002");
     if (observer) {
       observer.disconnect();
       observer = null;
     }
     isRecording = false;
-    throttledUpdateCallback = null;
-    return sessionTexts;
+    if (onStopped && worker) {
+      const finalCountListener = (event) => {
+        if (event.data.type === "countUpdated") {
+          onStopped(event.data.payload);
+          worker.removeEventListener("message", finalCountListener);
+        }
+      };
+      worker.addEventListener("message", finalCountListener);
+      worker.postMessage({ type: "getCount" });
+    } else if (onStopped) {
+      onStopped(0);
+    }
+  };
+  var requestSummary = (onReady) => {
+    if (worker && onReady) {
+      onSummaryCallback = onReady;
+      worker.postMessage({ type: "getSummary" });
+    } else if (onReady) {
+      onReady("[]");
+    }
   };
   var isSessionRecording = () => isRecording;
-  var getSessionTexts = () => sessionTexts;
   function clearSessionTexts() {
-    sessionTexts.clear();
-    log("[\u4F1A\u8BDD\u626B\u63CF] \u4F1A\u8BDD\u6570\u636E\u5DF2\u6E05\u7A7A\u3002");
+    if (worker) {
+      worker.postMessage({ type: "clear" });
+      log("[\u4F1A\u8BDD\u626B\u63CF] \u5DF2\u5411 Worker \u53D1\u9001\u6E05\u7A7A\u6307\u4EE4\u3002");
+    }
   }
   function createModalLayout() {
     const modalOverlay2 = document.createElement("div");
@@ -1561,6 +1625,7 @@ ${result.join(",\n")}
     });
     resizeObserver.observe(outputTextarea);
   }
+  var fullQuickScanContent = "";
   var handleKeyDown = (event) => {
     if (event.key === "Escape") {
       closeModal();
@@ -1595,6 +1660,7 @@ ${result.join(",\n")}
     setTimeout(() => {
       const extractedTexts = extractAndProcessText();
       const formattedText = formatTextsForTranslation(extractedTexts);
+      fullQuickScanContent = formattedText;
       updateModalContent(formattedText, false, "quick-scan");
       const copyBtn2 = modalOverlay.querySelector(".text-extractor-copy-btn");
       if (copyBtn2) {
@@ -1642,8 +1708,16 @@ ${result.join(",\n")}
       hideLoading();
       placeholder.classList.remove("is-visible");
       textareaContainer.classList.add("is-visible");
+      const MAX_DISPLAY_LENGTH = 5e4;
+      let displayText = content;
+      if (content.length > MAX_DISPLAY_LENGTH) {
+        displayText = content.substring(0, MAX_DISPLAY_LENGTH);
+        const warningMessage = t("scan.truncationWarning");
+        displayText += `
+--- ${warningMessage} ---`;
+      }
       const isData = content && content.trim().length > 0;
-      outputTextarea.value = content;
+      outputTextarea.value = displayText;
       setButtonsDisabled(!isData);
       outputTextarea.readOnly = !isData;
       outputTextarea.dispatchEvent(new Event("input"));
@@ -1669,35 +1743,6 @@ ${result.join(",\n")}
   }
   function handleQuickScanClick() {
     openModal();
-  }
-  var workerPolicy;
-  if (window.trustedTypes && window.trustedTypes.createPolicy) {
-    try {
-      workerPolicy = window.trustedTypes.createPolicy("text-extractor-worker", {
-        createScriptURL: (url) => url
-      });
-    } catch (e) {
-      if (e.name === "TypeError" && e.message.includes("Policy already exists")) {
-        workerPolicy = null;
-      } else {
-        console.error("Failed to create Trusted Types policy:", e);
-        workerPolicy = null;
-      }
-    }
-  }
-  function createTrustedWorkerUrl(url) {
-    if (workerPolicy) {
-      return workerPolicy.createScriptURL(url);
-    }
-    if (window.trustedTypes && window.trustedTypes.defaultPolicy) {
-      try {
-        return window.trustedTypes.defaultPolicy.createScriptURL(url);
-      } catch (e) {
-        console.warn("Trusted Types default policy failed, falling back to raw URL.", e);
-        return url;
-      }
-    }
-    return url;
   }
   function animateCount(element, start2, end, duration, easing) {
     const startTime = performance.now();
@@ -1756,46 +1801,30 @@ ${result.join(",\n")}
   }
   var stopIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M280-280v-400h400v400H280Z"/></svg>`;
   function handleSummaryClick() {
-    const resultsSet = getSessionTexts();
-    if (resultsSet.size === 0) {
-      updateModalContent(SHOW_PLACEHOLDER, true, "session-scan");
-      return;
+    if (isSessionRecording()) {
+      showNotification(t("scan.sessionInProgress"), { type: "info" });
     }
     updateModalContent(SHOW_LOADING, true, "session-scan");
-    try {
-      const workerScript = '// src/features/session-scan/worker.js\n\n/**\n * @description \u5C06\u4E00\u4E2A\u5B57\u7B26\u4E32\u6570\u7EC4\u8F6C\u6362\u6210\u7279\u5B9A\u7684\u4E8C\u7EF4\u6570\u7EC4\u683C\u5F0F\u7684\u5B57\u7B26\u4E32\uFF0C\u4F8B\u5982 `[["text1", ""], ["text2", ""]]`\u3002\n * @param {string[]} texts - \u9700\u8981\u88AB\u683C\u5F0F\u5316\u7684\u6587\u672C\u5B57\u7B26\u4E32\u6570\u7EC4\u3002\n * @returns {string} \u4E00\u4E2A\u683C\u5F0F\u5316\u540E\u7684\u5B57\u7B26\u4E32\u3002\n */\nconst formatTextsForTranslation = (texts) => {\n    const result = texts.map(text =>\n        `    ["${text.replace(/"/g, \'\\\\"\').replace(/\\n/g, \'\\\\n\')}", ""]`\n    );\n    return `[\\n${result.join(\',\\n\')}\\n]`;\n};\n\nself.onmessage = (event) => {\n    const sessionTextsSet = event.data;\n    // \u5728 Worker \u7EBF\u7A0B\u4E2D\u5C06 Set \u8F6C\u6362\u4E3A Array\uFF0C\u4EE5\u907F\u514D\u963B\u585E\u4E3B\u7EBF\u7A0B\n    const sessionTextsArray = Array.from(sessionTextsSet);\n    const formattedText = formatTextsForTranslation(sessionTextsArray);\n    self.postMessage(formattedText);\n};\n';
-      const workerUrl = `data:application/javascript,${encodeURIComponent(workerScript)}`;
-      const trustedUrl = createTrustedWorkerUrl(workerUrl);
-      const worker = new Worker(trustedUrl);
-      worker.onmessage = (event) => {
-        const formattedText = event.data;
-        updateModalContent(formattedText, false, "session-scan");
-        worker.terminate();
-      };
-      worker.onerror = (error) => {
-        console.error("Worker error:", error);
-        showNotification(t("error.workerError"), { type: "error" });
-        updateModalContent(SHOW_PLACEHOLDER, false, "session-scan");
-        worker.terminate();
-      };
-      worker.postMessage(resultsSet);
-    } catch (e) {
-      console.error("Failed to initialize web worker:", e);
-      showNotification(t("error.workerInitFailed"), { type: "error" });
-      const resultsArray = Array.from(resultsSet);
-      const formattedText = formatTextsForTranslation(resultsArray);
-      updateModalContent(formattedText, true, "session-scan");
-    }
+    setTimeout(() => {
+      requestSummary((formattedText) => {
+        if (!formattedText || formattedText.trim() === "[]") {
+          updateModalContent(SHOW_PLACEHOLDER, true, "session-scan");
+        } else {
+          updateModalContent(formattedText, false, "session-scan");
+        }
+      });
+    }, 50);
   }
   function handleDynamicExtractClick(dynamicFab2) {
     if (isSessionRecording()) {
-      const results = stop();
+      stop((finalCount) => {
+        const notificationText = simpleTemplate(t("scan.finished"), { count: finalCount });
+        showNotification(notificationText, { type: "success" });
+      });
       setFabIcon(dynamicFab2, dynamicIcon);
       dynamicFab2.classList.remove("is-recording");
       dynamicFab2.title = t("scan.startSession");
       hideLiveCounter();
-      const notificationText = simpleTemplate(t("scan.finished"), { count: results.size });
-      showNotification(notificationText, { type: "success" });
     } else {
       setFabIcon(dynamicFab2, stopIcon);
       dynamicFab2.classList.add("is-recording");
@@ -2235,38 +2264,51 @@ ${result.join(",\n")}
     log(`\u6587\u4EF6\u5DF2\u5BFC\u51FA: ${filename}`);
   }
   function exportToFile({ format }) {
-    const text = outputTextarea.value;
-    if (!text || text.trim() === "") {
-      log("\u6CA1\u6709\u5185\u5BB9\u53EF\u5BFC\u51FA\u3002");
-      return;
-    }
-    let filename, content, mimeType;
-    switch (format) {
-      case "txt":
-        filename = generateFilename("txt");
-        content = getRawContent(text);
-        mimeType = "text/plain;charset=utf-8;";
-        break;
-      case "json":
-        filename = generateFilename("json");
-        content = getRawContent(text);
-        mimeType = "application/json;charset=utf-8;";
-        break;
-      case "csv":
-        filename = generateFilename("csv");
-        content = formatAsCsv(text);
-        mimeType = "text/csv;charset=utf-8;";
-        break;
-      default:
-        log(`\u672A\u77E5\u7684\u5BFC\u51FA\u683C\u5F0F: ${format}`);
+    const currentMode2 = getCurrentMode();
+    const processAndDownload = (text) => {
+      if (!text || text.trim() === "" || text.trim() === "[]") {
+        log("\u6CA1\u6709\u5185\u5BB9\u53EF\u5BFC\u51FA\u3002");
         return;
+      }
+      let filename, content, mimeType;
+      switch (format) {
+        case "txt":
+          filename = generateFilename("txt");
+          content = getRawContent(text);
+          mimeType = "text/plain;charset=utf-8;";
+          break;
+        case "json":
+          filename = generateFilename("json");
+          content = getRawContent(text);
+          mimeType = "application/json;charset=utf-8;";
+          break;
+        case "csv":
+          filename = generateFilename("csv");
+          content = formatAsCsv(text);
+          mimeType = "text/csv;charset=utf-8;";
+          break;
+        default:
+          log(`\u672A\u77E5\u7684\u5BFC\u51FA\u683C\u5F0F: ${format}`);
+          return;
+      }
+      downloadFile(filename, content, mimeType);
+    };
+    if (currentMode2 === "session-scan") {
+      log("\u4ECE session-scan \u6A21\u5F0F\u8BF7\u6C42\u5B8C\u6574\u6570\u636E...");
+      requestSummary(processAndDownload);
+    } else {
+      log("\u4ECE quick-scan \u6A21\u5F0F\u7684\u5185\u5B58\u4E2D\u5BFC\u51FA\u5B8C\u6574\u6570\u636E...");
+      processAndDownload(fullQuickScanContent);
     }
-    downloadFile(filename, content, mimeType);
   }
   function initializeExporter() {
     on("exportToFile", exportToFile);
   }
   function main() {
+    if (window.top !== window.self) {
+      log("\u811A\u672C\u5728 iframe \u4E2D\uFF0C\u5DF2\u8DF3\u8FC7\u521D\u59CB\u5316\u3002");
+      return;
+    }
     const settings = loadSettings();
     initializeLanguage(settings);
     updateLoggerState(settings.enableDebugLogging);
@@ -3297,11 +3339,10 @@ ${result.join(",\n")}
     initUI();
     initializeExporter();
   }
-  if (window.top === window.self) {
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", main);
-    } else {
-      main();
-    }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", main);
+  } else {
+    main();
   }
+  return __toCommonJS(main_exports);
 })();

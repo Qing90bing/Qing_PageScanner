@@ -2,150 +2,171 @@
 
 /**
  * @module core/sessionExtractor
- * @description 负责管理一个持续的文本提取“会话”。
+ * @description 负责管理一个持续的文本提取“会话”，将繁重任务委托给 Web Worker。
  */
-
-// --- 工具函数 ---
-/**
- * 创建一个节流版的函数，确保目标函数在指定的时间间隔内最多被调用一次。
- * 它会立即执行第一次调用，然后在一个冷却周期结束后，执行最后一次被延迟的调用。
- * @param {Function} func - 要进行节流的函数。
- * @param {number} limit - 节流的时间间隔（毫秒）。
- * @returns {Function} - 一个新的、经过节流处理的函数。
- */
-function throttle(func, limit) {
-    let lastFunc;
-    let lastRan;
-    return function(...args) {
-        if (!lastRan) {
-            func.apply(this, args);
-            lastRan = Date.now();
-        } else {
-            clearTimeout(lastFunc);
-            lastFunc = setTimeout(() => {
-                if ((Date.now() - lastRan) >= limit) {
-                    func.apply(this, args);
-                    lastRan = Date.now();
-                }
-            }, limit - (Date.now() - lastRan));
-        }
-    };
-}
-
 
 import { extractAndProcessText } from '../../shared/utils/textProcessor.js';
 import { loadSettings } from '../settings/logic.js';
 import { appConfig } from '../settings/config.js';
-import { shouldFilter } from '../../shared/utils/filterLogic.js'; // 导入新的通用过滤函数
 import { log } from '../../shared/utils/logger.js';
-import { updateModalContent, SHOW_PLACEHOLDER } from '../../shared/ui/mainModal.js';
+import { createTrustedWorkerUrl } from '../../shared/utils/trustedTypes.js';
 
 // --- 模块级变量 ---
 let isRecording = false;
-let sessionTexts = new Set();
 let observer = null;
-let throttledUpdateCallback = null; // 用于更新UI的节流回调
-
-// --- 辅助函数 ---
-function processAndAddText(rawText, textSet, filterRules) {
-    if (!rawText || typeof rawText !== 'string') return false;
-
-    // 规范化并 trim 文本以供过滤检查
-    const normalizedText = rawText.normalize('NFC');
-    let textForFiltering = normalizedText.replace(/(\r\n|\n|\r)+/g, '\n').trim();
-    if (textForFiltering === '') return false;
-
-    // 使用重构后的通用函数来应用所有过滤规则
-    const filterReason = shouldFilter(textForFiltering, filterRules);
-    if (filterReason) {
-        log(`文本已过滤: "${textForFiltering}" (原因: ${filterReason})`);
-        return false;
-    }
-
-    const originalSize = textSet.size;
-    // 添加原始的、未 trimmed 的版本，但规范化换行符
-    textSet.add(normalizedText.replace(/(\r\n|\n|\r)+/g, '\n'));
-
-    // 返回一个布尔值，指示是否添加了新文本
-    return textSet.size > originalSize;
-}
+let worker = null;
+let onSummaryCallback = null; // 存储用于总结的回调
 
 // --- MutationObserver 回调 ---
+// 主线程的回调现在只负责收集原始文本并发送给 Worker
 const handleMutations = (mutations) => {
-    const { filterRules } = loadSettings();
     const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(', ');
-    let changed = false;
+    const textsBatch = [];
 
     mutations.forEach(mutation => {
         mutation.addedNodes.forEach(node => {
+            // 只处理元素节点
             if (node.nodeType !== Node.ELEMENT_NODE) return;
+            // 跳过被忽略的元素
             if (node.closest(ignoredSelectorString)) return;
 
+            // 使用 TreeWalker 高效遍历所有文本节点
             const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
             while(walker.nextNode()) {
                 const textNode = walker.currentNode;
-                if (processAndAddText(textNode.nodeValue, sessionTexts, filterRules)) {
-                    changed = true;
-                    log(`[会话扫描] 新增: "${textNode.nodeValue.trim()}" (当前总数: ${sessionTexts.size})`);
+                if (textNode.nodeValue) {
+                    textsBatch.push(textNode.nodeValue);
                 }
             }
         });
     });
 
-    if (changed && throttledUpdateCallback) {
-        throttledUpdateCallback(sessionTexts.size);
+    if (textsBatch.length > 0 && worker) {
+        // 将收集到的文本批量发送给 Worker
+        worker.postMessage({ type: 'data', payload: textsBatch });
     }
 };
-
 
 // --- 公开函数 ---
+
+/**
+ * 启动会话扫描。
+ * @param {Function} onUpdate - 当文本计数更新时调用的UI回调函数。
+ */
 export const start = (onUpdate) => {
     if (isRecording) return;
-    log('会话扫描：初始扫描开始...');
-    isRecording = true;
-    sessionTexts.clear();
 
-    // 创建节流回调
-    throttledUpdateCallback = onUpdate ? throttle(onUpdate, 200) : null;
-
-    const initialTexts = extractAndProcessText();
-    const { filterRules } = loadSettings();
-
-    initialTexts.forEach(text => {
-        if (processAndAddText(text, sessionTexts, filterRules)) {
-             log(`[会话扫描] 新增: "${text.trim()}" (当前总数: ${sessionTexts.size})`);
-        }
-    });
-
-    // 立即进行一次初始UI更新
-    if (throttledUpdateCallback) {
-        throttledUpdateCallback(sessionTexts.size);
+    // 如果已存在一个 worker 实例（来自上一次未被清除的会话），先终止它
+    if (worker) {
+        worker.terminate();
     }
 
-    observer = new MutationObserver(handleMutations);
-    observer.observe(document.body, { childList: true, subtree: true });
+    log('会话扫描：启动 Worker 并开始初始扫描...');
+    isRecording = true;
+
+    // 创建并初始化 Worker
+    try {
+        // eslint-disable-next-line no-undef
+        const workerScript = __WORKER_STRING__;
+        const workerUrl = `data:application/javascript,${encodeURIComponent(workerScript)}`;
+        const trustedUrl = createTrustedWorkerUrl(workerUrl);
+        worker = new Worker(trustedUrl);
+
+        // 设置 Worker 的消息监听器
+        worker.onmessage = (event) => {
+            const { type, payload } = event.data;
+            if (type === 'countUpdated' && onUpdate) {
+                onUpdate(payload); // 更新UI计数器
+            } else if (type === 'summaryReady' && onSummaryCallback) {
+                onSummaryCallback(payload); // 提供总结数据
+                onSummaryCallback = null; // 一次性回调
+            }
+        };
+
+        worker.onerror = (error) => {
+            console.error('Worker error:', error);
+            log(`[会话扫描] Worker 发生错误: ${error.message}`);
+            // 可以在这里通知UI
+            stop(); // 出现错误时停止会话
+        };
+
+        // 向 Worker 发送初始化配置
+        const { filterRules } = loadSettings();
+        worker.postMessage({ type: 'init', payload: { filterRules } });
+
+        // 执行初始页面扫描
+        const initialTexts = extractAndProcessText();
+        worker.postMessage({ type: 'data', payload: initialTexts });
+        log(`[会话扫描] 已发送 ${initialTexts.length} 条初始文本到 Worker。`);
+
+        // 启动 MutationObserver
+        observer = new MutationObserver(handleMutations);
+        observer.observe(document.body, { childList: true, subtree: true });
+
+    } catch (e) {
+        console.error('Failed to initialize web worker:', e);
+        log(`[会话扫描] Worker 初始化失败: ${e.message}`);
+        isRecording = false;
+        worker = null;
+    }
 };
 
-export const stop = () => {
-    if (!isRecording) return new Set();
-    log('[会话扫描] 已停止。');
+/**
+ * 停止会话扫描的监听，但保留 Worker 和数据以供总结。
+ * @param {Function} onStopped - 停止后执行的回调，用于获取最终计数值。
+ */
+export const stop = (onStopped) => {
+    if (!isRecording) {
+        if (onStopped) onStopped(0); // 如果未在录制，返回0
+        return;
+    }
+
+    log('[会话扫描] 已停止监听 DOM 变化。');
     if (observer) {
         observer.disconnect();
         observer = null;
     }
     isRecording = false;
-    throttledUpdateCallback = null;
-    return sessionTexts;
+
+    // 请求最终的计数值
+    if (onStopped && worker) {
+        // 使用一次性的消息监听器来获取最终计数
+        const finalCountListener = (event) => {
+            if (event.data.type === 'countUpdated') {
+                onStopped(event.data.payload);
+                worker.removeEventListener('message', finalCountListener);
+            }
+        };
+        worker.addEventListener('message', finalCountListener);
+        // 触发一次计数更新请求
+        worker.postMessage({ type: 'getCount' });
+    } else if (onStopped) {
+        onStopped(0);
+    }
+};
+
+/**
+ * 请求文本总结。
+ * @param {Function} onReady - 当总结文本准备好时调用的回调函数。
+ */
+export const requestSummary = (onReady) => {
+    if (worker && onReady) {
+        onSummaryCallback = onReady;
+        worker.postMessage({ type: 'getSummary' });
+    } else if (onReady) {
+        // 如果 worker 不存在，立即用空结果调用回调
+        onReady("[]");
+    }
 };
 
 export const isSessionRecording = () => isRecording;
 
-export const getSessionTexts = () => sessionTexts;
-
 /**
- * @description 清空会话期间收集的所有文本。
+ * @description 请求 Worker 清空会话期间收集的所有文本。
  */
 export function clearSessionTexts() {
-    sessionTexts.clear();
-    log('[会话扫描] 会话数据已清空。');
+    if (worker) {
+        worker.postMessage({ type: 'clear' });
+        log('[会话扫描] 已向 Worker 发送清空指令。');
+    }
 }

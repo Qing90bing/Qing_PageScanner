@@ -1,8 +1,6 @@
 // src/features/session-scan/ui.js
 
 import { updateModalContent, SHOW_PLACEHOLDER, SHOW_LOADING } from '../../shared/ui/mainModal.js';
-import { formatTextsForTranslation } from '../../shared/utils/formatting.js';
-import { createTrustedWorkerUrl } from '../../shared/utils/trustedTypes.js';
 import * as sessionExtractor from './logic.js';
 import { showNotification } from '../../shared/ui/components/notification.js';
 import { showLiveCounter, hideLiveCounter, updateLiveCounter } from './liveCounterUI.js';
@@ -11,48 +9,32 @@ import { setFabIcon } from '../../shared/ui/components/fab.js';
 import { dynamicIcon } from '../../assets/icons/dynamicIcon.js';
 import { stopIcon } from '../../assets/icons/stopIcon.js';
 import { simpleTemplate } from '../../shared/utils/templating.js';
-
 /**
  * 处理“查看总结”按钮的点击事件。
+ * 现在通过异步请求从 Worker 获取数据。
  */
 export function handleSummaryClick() {
-    const resultsSet = sessionExtractor.getSessionTexts();
-    if (resultsSet.size === 0) {
-        updateModalContent(SHOW_PLACEHOLDER, true, 'session-scan');
-        return;
+    // 检查是否正在录制，如果是，则可能需要提示用户先停止
+    if (sessionExtractor.isSessionRecording()) {
+         // 可选：提示用户会话仍在进行中
+        showNotification(t('scan.sessionInProgress'), { type: 'info' });
     }
 
+    // 显示加载状态
     updateModalContent(SHOW_LOADING, true, 'session-scan');
 
-    try {
-        // eslint-disable-next-line no-undef
-        const workerScript = __WORKER_STRING__;
-        const workerUrl = `data:application/javascript,${encodeURIComponent(workerScript)}`;
-        const trustedUrl = createTrustedWorkerUrl(workerUrl);
-        const worker = new Worker(trustedUrl);
-
-        worker.onmessage = (event) => {
-            const formattedText = event.data;
-            updateModalContent(formattedText, false, 'session-scan');
-            worker.terminate();
-        };
-
-        worker.onerror = (error) => {
-            console.error('Worker error:', error);
-            showNotification(t('error.workerError'), { type: 'error' });
-            updateModalContent(SHOW_PLACEHOLDER, false, 'session-scan');
-            worker.terminate();
-        };
-
-        worker.postMessage(resultsSet);
-
-    } catch (e) {
-        console.error('Failed to initialize web worker:', e);
-        showNotification(t('error.workerInitFailed'), { type: 'error' });
-        const resultsArray = Array.from(resultsSet);
-        const formattedText = formatTextsForTranslation(resultsArray);
-        updateModalContent(formattedText, true, 'session-scan');
-    }
+    // 使用 setTimeout 将繁重任务推迟到下一个事件循环，
+    // 以确保加载动画有时间渲染。
+    setTimeout(() => {
+        sessionExtractor.requestSummary((formattedText) => {
+            // 检查返回的是否为空数组字符串或无内容
+            if (!formattedText || formattedText.trim() === '[]') {
+                updateModalContent(SHOW_PLACEHOLDER, true, 'session-scan');
+            } else {
+                updateModalContent(formattedText, false, 'session-scan');
+            }
+        });
+    }, 50); // 50ms 延迟足以让UI更新
 }
 
 /**
@@ -61,14 +43,16 @@ export function handleSummaryClick() {
  */
 export function handleDynamicExtractClick(dynamicFab) {
     if (sessionExtractor.isSessionRecording()) {
-        const results = sessionExtractor.stop();
+        // 异步停止，并在回调中获取最终计数
+        sessionExtractor.stop((finalCount) => {
+            const notificationText = simpleTemplate(t('scan.finished'), { count: finalCount });
+            showNotification(notificationText, { type: 'success' });
+        });
+
         setFabIcon(dynamicFab, dynamicIcon);
         dynamicFab.classList.remove('is-recording');
         dynamicFab.title = t('scan.startSession');
-
         hideLiveCounter();
-        const notificationText = simpleTemplate(t('scan.finished'), { count: results.size });
-        showNotification(notificationText, { type: 'success' });
     } else {
         setFabIcon(dynamicFab, stopIcon);
         dynamicFab.classList.add('is-recording');
@@ -77,6 +61,7 @@ export function handleDynamicExtractClick(dynamicFab) {
         showNotification(t('scan.sessionStarted'), { type: 'info' });
         showLiveCounter();
 
+        // 稍微延迟以确保UI更新完成
         setTimeout(() => {
             sessionExtractor.start(updateLiveCounter);
         }, 50);
