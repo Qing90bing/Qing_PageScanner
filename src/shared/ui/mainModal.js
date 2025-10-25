@@ -25,6 +25,9 @@ import { populateModalFooter, updateStatistics } from './mainModal/modalFooter.j
 import { initializeLineNumbers, updateLineNumbers, updateActiveLine } from './mainModal/lineNumberLogic.js';
 import { updateExportButtonState } from '../../features/export/ui.js';
 
+// 用于存储快速扫描的完整、未经截断的内容
+export let fullQuickScanContent = '';
+
 /**
  * @private
  * @description 处理全局键盘事件，按下 Esc 键时关闭模态框。
@@ -89,6 +92,9 @@ export function openModal() {
     setTimeout(() => {
         const extractedTexts = extractAndProcessText();
         const formattedText = formatTextsForTranslation(extractedTexts);
+
+        // 在更新UI（可能会截断文本）之前，存储完整的原始内容
+        fullQuickScanContent = formattedText;
 
         updateModalContent(formattedText, false, 'quick-scan');
 
@@ -158,8 +164,17 @@ export function updateModalContent(content, shouldOpen = false, mode = 'quick-sc
         state.placeholder.classList.remove('is-visible');
         textareaContainer.classList.add('is-visible');
 
+        const MAX_DISPLAY_LENGTH = 50000; // 安全显示的最大字符数
+        let displayText = content;
+
+        if (content.length > MAX_DISPLAY_LENGTH) {
+            displayText = content.substring(0, MAX_DISPLAY_LENGTH);
+            const warningMessage = t('scan.truncationWarning');
+            displayText += `\n\n--- ${warningMessage} ---`;
+        }
+
         const isData = content && content.trim().length > 0;
-        state.outputTextarea.value = content;
+        state.outputTextarea.value = displayText; // 显示可能被截断的文本
         setButtonsDisabled(!isData);
         state.outputTextarea.readOnly = !isData;
 

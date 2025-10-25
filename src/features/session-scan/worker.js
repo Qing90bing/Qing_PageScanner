@@ -47,6 +47,9 @@ function processAndAddText(rawText) {
  * @returns {string} - 格式化后的字符串。
  */
 const formatTextsForTranslation = (texts) => {
+    if (!texts || texts.length === 0) {
+        return '[]';
+    }
     const result = texts.map(text =>
         `    ["${text.replace(/"/g, '\\"').replace(/\n/g, '\\n')}", ""]`
     );

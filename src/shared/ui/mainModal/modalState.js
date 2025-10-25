@@ -33,3 +33,4 @@ export function setLoadingContainer(element) { loadingContainer = element; }
 export function setCanvasContext(context) { canvasContext = context; }
 export function setCurrentLineMap(map) { currentLineMap = map; }
 export function setCurrentMode(mode) { currentMode = mode; }
+export function getCurrentMode() { return currentMode; }

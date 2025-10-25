@@ -23,15 +23,18 @@ export function handleSummaryClick() {
     // 显示加载状态
     updateModalContent(SHOW_LOADING, true, 'session-scan');
 
-    // 异步请求总结
-    sessionExtractor.requestSummary((formattedText) => {
-        // 检查返回的是否为空数组字符串或无内容
-        if (!formattedText || formattedText.trim() === '[]') {
-            updateModalContent(SHOW_PLACEHOLDER, true, 'session-scan');
-        } else {
-            updateModalContent(formattedText, false, 'session-scan');
-        }
-    });
+    // 使用 setTimeout 将繁重任务推迟到下一个事件循环，
+    // 以确保加载动画有时间渲染。
+    setTimeout(() => {
+        sessionExtractor.requestSummary((formattedText) => {
+            // 检查返回的是否为空数组字符串或无内容
+            if (!formattedText || formattedText.trim() === '[]') {
+                updateModalContent(SHOW_PLACEHOLDER, true, 'session-scan');
+            } else {
+                updateModalContent(formattedText, false, 'session-scan');
+            }
+        });
+    }, 50); // 50ms 延迟足以让UI更新
 }
 
 /**
