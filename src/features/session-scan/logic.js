@@ -55,6 +55,12 @@ const handleMutations = (mutations) => {
  */
 export const start = (onUpdate) => {
     if (isRecording) return;
+
+    // 如果已存在一个 worker 实例（来自上一次未被清除的会话），先终止它
+    if (worker) {
+        worker.terminate();
+    }
+
     log('会话扫描：启动 Worker 并开始初始扫描...');
     isRecording = true;
 
@@ -106,21 +112,37 @@ export const start = (onUpdate) => {
 };
 
 /**
- * 停止会话扫描。
+ * 停止会话扫描的监听，但保留 Worker 和数据以供总结。
+ * @param {Function} onStopped - 停止后执行的回调，用于获取最终计数值。
  */
-export const stop = () => {
-    if (!isRecording) return;
-    log('[会话扫描] 已停止。');
+export const stop = (onStopped) => {
+    if (!isRecording) {
+        if (onStopped) onStopped(0); // 如果未在录制，返回0
+        return;
+    }
+
+    log('[会话扫描] 已停止监听 DOM 变化。');
     if (observer) {
         observer.disconnect();
         observer = null;
     }
-    if (worker) {
-        worker.terminate();
-        worker = null;
-    }
     isRecording = false;
-    onSummaryCallback = null;
+
+    // 请求最终的计数值
+    if (onStopped && worker) {
+        // 使用一次性的消息监听器来获取最终计数
+        const finalCountListener = (event) => {
+            if (event.data.type === 'countUpdated') {
+                onStopped(event.data.payload);
+                worker.removeEventListener('message', finalCountListener);
+            }
+        };
+        worker.addEventListener('message', finalCountListener);
+        // 触发一次计数更新请求
+        worker.postMessage({ type: 'getCount' });
+    } else if (onStopped) {
+        onStopped(0);
+    }
 };
 
 /**

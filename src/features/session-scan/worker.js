@@ -90,6 +90,11 @@ self.onmessage = (event) => {
             break;
         }
 
+        // 获取当前计数值
+        case 'getCount':
+            self.postMessage({ type: 'countUpdated', payload: sessionTexts.size });
+            break;
+
         // 可选：添加一个清空指令
         case 'clear':
             sessionTexts.clear();

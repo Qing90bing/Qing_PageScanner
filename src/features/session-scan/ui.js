@@ -8,7 +8,7 @@ import { t } from '../../shared/i18n/index.js';
 import { setFabIcon } from '../../shared/ui/components/fab.js';
 import { dynamicIcon } from '../../assets/icons/dynamicIcon.js';
 import { stopIcon } from '../../assets/icons/stopIcon.js';
-
+import { simpleTemplate } from '../../shared/utils/templating.js';
 /**
  * 处理“查看总结”按钮的点击事件。
  * 现在通过异步请求从 Worker 获取数据。
@@ -40,14 +40,16 @@ export function handleSummaryClick() {
  */
 export function handleDynamicExtractClick(dynamicFab) {
     if (sessionExtractor.isSessionRecording()) {
-        sessionExtractor.stop();
+        // 异步停止，并在回调中获取最终计数
+        sessionExtractor.stop((finalCount) => {
+            const notificationText = simpleTemplate(t('scan.finished'), { count: finalCount });
+            showNotification(notificationText, { type: 'success' });
+        });
+
         setFabIcon(dynamicFab, dynamicIcon);
         dynamicFab.classList.remove('is-recording');
         dynamicFab.title = t('scan.startSession');
-
         hideLiveCounter();
-        // 因为计数是实时的，所以不再需要显示最终计数
-        showNotification(t('scan.finished'), { type: 'success' });
     } else {
         setFabIcon(dynamicFab, stopIcon);
         dynamicFab.classList.add('is-recording');
