@@ -130,24 +130,41 @@ function handleSave() {
     log('正在保存设置...');
     const newSettings = {};
 
-    // 从所有下拉菜单收集值
+    // 1. 从所有下拉菜单收集值
     for (const key in selectComponents) {
         newSettings[key] = selectComponents[key].getValue();
     }
 
+    // 2. 收集过滤规则
     const newFilterRules = {};
     filterDefinitions.forEach(filter => {
         const checkbox = settingsPanel.querySelector(`#${filter.id}`);
         if (checkbox) newFilterRules[filter.key] = checkbox.checked;
     });
+    newSettings.filterRules = newFilterRules;
 
-    const newRelatedSettings = {};
+    // 3. 收集相关设置（包括新的复合设置项）
     relatedSettingsDefinitions.forEach(setting => {
         const checkbox = settingsPanel.querySelector(`#${setting.id}`);
-        if (checkbox) newRelatedSettings[setting.key] = checkbox.checked;
-    });
+        if (!checkbox) return; // 如果找不到复选框，跳过
 
-    Object.assign(newSettings, newRelatedSettings, { filterRules: newFilterRules });
+        // 保存复选框的状态
+        newSettings[setting.key] = checkbox.checked;
+
+        // 如果有关联的数字输入框，则保存其值
+        if (setting.linkedNumeric) {
+            const numericInput = settingsPanel.querySelector(`#${setting.linkedNumeric.id}`);
+            if (numericInput) {
+                // 将值转换为数字，并确保不小于5
+                let value = parseInt(numericInput.value, 10);
+                if (isNaN(value) || value < 5) {
+                    value = 5; // 如果无效，则重置为最小值
+                    numericInput.value = value; // 更新UI上的值
+                }
+                newSettings[setting.linkedNumeric.key] = value;
+            }
+        }
+    });
 
     const oldSettings = loadSettings();
     const languageChanged = oldSettings.language !== newSettings.language;

@@ -40,7 +40,9 @@
     "display": {
       "show_fab": "Show floating button",
       "show_line_numbers": "Show line numbers",
-      "show_statistics": "Show statistics"
+      "show_statistics": "Show Statistics",
+      "text_truncation_limit": "Enable Textbox Character Limit",
+      "character_limit": "Character Limit"
     },
     "advanced": {
       "enable_debug_logging": "Enable debug logging"

@@ -40,6 +40,12 @@ export const relatedSettingsDefinitions = [
     { id: 'show-fab', key: 'showFab', label: 'settings.display.show_fab' },
     { id: 'show-line-numbers', key: 'showLineNumbers', label: 'settings.display.show_line_numbers' },
     { id: 'show-statistics', key: 'showStatistics', label: 'settings.display.show_statistics' },
+    { id: 'enable-text-truncation', key: 'enableTextTruncation', label: 'settings.display.text_truncation_limit',
+        linkedNumeric: {
+            id: 'text-truncation-length',
+            key: 'textTruncationLength',
+        },
+    },
     { id: 'enable-debug-logging', key: 'enableDebugLogging', label: 'settings.advanced.enable_debug_logging' },
 ];
 

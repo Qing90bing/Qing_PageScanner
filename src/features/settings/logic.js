@@ -28,6 +28,10 @@ const defaultSettings = {
   showLineNumbers: true,
   // 是否显示统计信息
   showStatistics: true,
+  // 是否启用文本截断
+  enableTextTruncation: true,
+  // 文本截断长度
+  textTruncationLength: 50000,
   // 是否启用调试日志
   enableDebugLogging: false,
   // 过滤规则设置

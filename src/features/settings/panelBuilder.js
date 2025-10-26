@@ -1,6 +1,7 @@
 // src/features/settings/panelBuilder.js
 
 import { createCheckbox } from '../../shared/ui/checkbox.js';
+import { createNumericInput } from '../../shared/ui/numericInput.js';
 import { createSVGFromString } from '../../shared/utils/dom.js';
 import { closeIcon } from '../../assets/icons/closeIcon.js';
 import { filterDefinitions, relatedSettingsDefinitions, selectSettingsDefinitions } from './config.js';
@@ -57,8 +58,46 @@ export function buildPanelDOM(settings) {
     relatedItem.appendChild(relatedTitleContainer);
 
     relatedSettingsDefinitions.forEach(setting => {
-        const checkboxElement = createCheckbox(setting.id, t(setting.label), settings[setting.key]);
-        relatedItem.appendChild(checkboxElement);
+        // 对待复合设置项和标准设置项进行区分处理
+        if (setting.linkedNumeric) {
+            // --- 创建复合设置项的特殊布局 ---
+            const compositeContainer = document.createElement('div');
+            compositeContainer.className = 'composite-setting-container';
+
+            // 1. 添加复选框
+            const checkboxElement = createCheckbox(setting.id, t(setting.label), settings[setting.key]);
+            compositeContainer.appendChild(checkboxElement);
+
+            // 2. 添加带标签的数字输入框
+            const numericConfig = setting.linkedNumeric;
+            const numericValue = settings[numericConfig.key];
+            const numericLabel = t('settings.display.character_limit');
+
+            const numericInputElement = createNumericInput(
+                numericConfig.id,
+                numericLabel, // 传入新的 i18n 标签
+                numericValue,
+                {
+                    min: 5,
+                    disabled: !settings[setting.key],
+                }
+            );
+            numericInputElement.classList.add('linked-numeric-input');
+            compositeContainer.appendChild(numericInputElement);
+
+            // 3. 添加联动事件
+            const checkbox = checkboxElement.querySelector('input[type="checkbox"]');
+            const numericInput = numericInputElement.querySelector('input[type="number"]');
+            checkbox.addEventListener('change', (event) => {
+                numericInput.disabled = !event.target.checked;
+            });
+
+            relatedItem.appendChild(compositeContainer);
+        } else {
+            // --- 对标准复选框使用原始布局 ---
+            const checkboxElement = createCheckbox(setting.id, t(setting.label), settings[setting.key]);
+            relatedItem.appendChild(checkboxElement);
+        }
     });
 
     // Filter setting

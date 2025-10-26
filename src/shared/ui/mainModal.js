@@ -175,11 +175,12 @@ export function updateModalContent(content, shouldOpen = false, mode = 'quick-sc
         state.placeholder.classList.remove('is-visible');
         textareaContainer.classList.add('is-visible');
 
-        const MAX_DISPLAY_LENGTH = 50000; // 安全显示的最大字符数
+        const settings = loadSettings();
         let displayText = content;
 
-        if (content.length > MAX_DISPLAY_LENGTH) {
-            displayText = content.substring(0, MAX_DISPLAY_LENGTH);
+        // 根据用户设置决定是否截断文本
+        if (settings.enableTextTruncation && content.length > settings.textTruncationLength) {
+            displayText = content.substring(0, settings.textTruncationLength);
             const warningMessage = t('scan.truncationWarning');
             displayText += `\n\n--- ${warningMessage} ---`;
         }
