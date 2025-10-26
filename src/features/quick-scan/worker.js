@@ -22,8 +22,21 @@ import { formatTextsForTranslation } from '../../shared/utils/formatting.js';
 self.onmessage = (event) => {
     const { type, payload } = event.data;
 
+    // 从主线程接收调试日志的开关状态
+    const enableDebugLogging = payload.enableDebugLogging || false;
+
+    /**
+     * @description Worker 内部的条件日志记录器。
+     * @param {...*} args - 要打印的参数。
+     */
+    const log = (...args) => {
+        if (enableDebugLogging) {
+            console.log('[静态扫描 Worker]', ...args);
+        }
+    };
+
     if (type === 'scan') {
-        console.log(`[静态扫描 Worker] 收到 ${payload.texts.length} 条文本，开始处理...`);
+        log(`[静态扫描 Worker] 收到 ${payload.texts.length} 条文本，开始处理...`);
         const { texts, filterRules } = payload;
         const uniqueTexts = new Set();
 
@@ -50,7 +63,7 @@ self.onmessage = (event) => {
         const textsArray = Array.from(uniqueTexts);
         const formattedText = formatTextsForTranslation(textsArray);
 
-        console.log(`[静态扫描 Worker] 处理完成，共 ${textsArray.length} 条有效文本。正在发回主线程...`);
+        log(`[静态扫描 Worker] 处理完成，共 ${textsArray.length} 条有效文本。正在发回主线程...`);
         // 5. 将处理完成的结果发送回主线程
         self.postMessage({
             type: 'scanCompleted',

@@ -46,11 +46,11 @@ export const performQuickScan = (texts) => {
             };
 
             // 发送数据到 Worker 开始处理
-            const { filterRules } = loadSettings();
+            const { filterRules, enableDebugLogging } = loadSettings();
             log(`[静态扫描] 向 Worker 发送 ${texts.length} 条文本进行处理...`);
             worker.postMessage({
                 type: 'scan',
-                payload: { texts, filterRules }
+                payload: { texts, filterRules, enableDebugLogging }
             });
 
         } catch (e) {
