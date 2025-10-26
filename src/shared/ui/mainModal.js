@@ -97,6 +97,9 @@ export async function openModal() {
         // 3. 将繁重任务交给 Web Worker 处理
         const { formattedText, count } = await performQuickScan(extractedTexts);
 
+        // 在更新内容前隐藏加载动画，确保流畅性
+        hideLoading();
+
         // 4. Worker 完成后，更新UI
         fullQuickScanContent = formattedText; // 存储完整内容
         updateModalContent(formattedText, false, 'quick-scan');
@@ -106,6 +109,7 @@ export async function openModal() {
         showNotification(notificationText, { type: 'success' });
 
     } catch (error) {
+        hideLoading(); // 确保在出错时也隐藏加载动画
         // 错误处理
         log(`静态扫描失败: ${error.message}`);
         showNotification(t('scan.quickFailed'), { type: 'error' });

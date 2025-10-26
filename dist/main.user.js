@@ -1700,11 +1700,13 @@ var TextExtractor = (() => {
     try {
       const extractedTexts = extractAndProcessText();
       const { formattedText, count } = await performQuickScan(extractedTexts);
+      hideLoading();
       fullQuickScanContent = formattedText;
       updateModalContent(formattedText, false, "quick-scan");
       const notificationText = simpleTemplate(t("scan.quickFinished"), { count });
       showNotification(notificationText, { type: "success" });
     } catch (error) {
+      hideLoading();
       log(`\u9759\u6001\u626B\u63CF\u5931\u8D25: ${error.message}`);
       showNotification(t("scan.quickFailed"), { type: "error" });
       updateModalContent("[]", false, "quick-scan");
