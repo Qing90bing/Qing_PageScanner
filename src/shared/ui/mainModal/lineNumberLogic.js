@@ -127,21 +127,29 @@ export function updateActiveLine() {
     }
 }
 
+let isThrottled = false;
+
 /**
- * @description 更新行号的显示。
+ * @description 更新行号的显示（异步节流版）。
  */
 export function updateLineNumbers() {
-    if (!state.lineNumbersDiv || !state.outputTextarea) return;
-    const { lineNumbers, lineMap } = calcLines();
-    state.setCurrentLineMap(lineMap);
+    if (!state.lineNumbersDiv || !state.outputTextarea || isThrottled) return;
 
-    const lineElements = lineNumbers.map(line => {
-        const div = document.createElement('div');
-        div.textContent = line === '' ? '\u00A0' : line;
-        return div;
-    });
-    state.lineNumbersDiv.replaceChildren(...lineElements);
-    updateActiveLine();
+    isThrottled = true;
+    setTimeout(() => {
+        const { lineNumbers, lineMap } = calcLines();
+        state.setCurrentLineMap(lineMap);
+
+        const lineElements = lineNumbers.map(line => {
+            const div = document.createElement('div');
+            div.textContent = line === '' ? '\u00A0' : line;
+            return div;
+        });
+        state.lineNumbersDiv.replaceChildren(...lineElements);
+        updateActiveLine();
+
+        isThrottled = false;
+    }, 100); // 100ms 的节流延迟
 }
 
 /**

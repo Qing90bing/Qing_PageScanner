@@ -113,12 +113,16 @@ export function populateModalFooter(modalFooter, updateContentCallback, clearSes
 }
 
 /**
- * @description 更新统计信息。
+ * @description 异步更新统计信息。
  */
 export function updateStatistics() {
     if (!state.statsContainer || !state.outputTextarea) return;
-    const text = state.outputTextarea.value;
-    const lineCount = text.split('\n').length;
-    const charCount = text.length;
-    state.statsContainer.textContent = `${t('results.stats.lines')}: ${lineCount} | ${t('results.stats.chars')}: ${charCount}`;
+
+    // 将字符串计算延迟到下一个事件循环
+    setTimeout(() => {
+        const text = state.outputTextarea.value;
+        const lineCount = text.split('\n').length;
+        const charCount = text.length;
+        state.statsContainer.textContent = `${t('results.stats.lines')}: ${lineCount} | ${t('results.stats.chars')}: ${charCount}`;
+    }, 0);
 }

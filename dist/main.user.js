@@ -1544,10 +1544,12 @@ var TextExtractor = (() => {
   }
   function updateStatistics() {
     if (!statsContainer || !outputTextarea) return;
-    const text = outputTextarea.value;
-    const lineCount = text.split("\n").length;
-    const charCount = text.length;
-    statsContainer.textContent = `${t("results.stats.lines")}: ${lineCount} | ${t("results.stats.chars")}: ${charCount}`;
+    setTimeout(() => {
+      const text = outputTextarea.value;
+      const lineCount = text.split("\n").length;
+      const charCount = text.length;
+      statsContainer.textContent = `${t("results.stats.lines")}: ${lineCount} | ${t("results.stats.chars")}: ${charCount}`;
+    }, 0);
   }
   function calcStringLines(sentence, width) {
     if (!width || !canvasContext) return 1;
@@ -1633,17 +1635,22 @@ var TextExtractor = (() => {
       lineDivs[finalVisualLineIndex].classList.add("is-active");
     }
   }
+  var isThrottled = false;
   function updateLineNumbers() {
-    if (!lineNumbersDiv || !outputTextarea) return;
-    const { lineNumbers, lineMap } = calcLines();
-    setCurrentLineMap(lineMap);
-    const lineElements = lineNumbers.map((line) => {
-      const div = document.createElement("div");
-      div.textContent = line === "" ? "\xA0" : line;
-      return div;
-    });
-    lineNumbersDiv.replaceChildren(...lineElements);
-    updateActiveLine();
+    if (!lineNumbersDiv || !outputTextarea || isThrottled) return;
+    isThrottled = true;
+    setTimeout(() => {
+      const { lineNumbers, lineMap } = calcLines();
+      setCurrentLineMap(lineMap);
+      const lineElements = lineNumbers.map((line) => {
+        const div = document.createElement("div");
+        div.textContent = line === "" ? "\xA0" : line;
+        return div;
+      });
+      lineNumbersDiv.replaceChildren(...lineElements);
+      updateActiveLine();
+      isThrottled = false;
+    }, 100);
   }
   function initializeLineNumbers() {
     const canvas = document.createElement("canvas");
@@ -1750,11 +1757,13 @@ var TextExtractor = (() => {
 --- ${warningMessage} ---`;
       }
       const isData = content && content.trim().length > 0;
-      outputTextarea.value = displayText;
-      setButtonsDisabled(!isData);
-      outputTextarea.readOnly = !isData;
-      outputTextarea.dispatchEvent(new Event("input"));
-      setTimeout(updateActiveLine, 0);
+      setTimeout(() => {
+        outputTextarea.value = displayText;
+        setButtonsDisabled(!isData);
+        outputTextarea.readOnly = !isData;
+        outputTextarea.dispatchEvent(new Event("input"));
+        setTimeout(updateActiveLine, 0);
+      }, 0);
     }
     updateModalAddonsVisibility();
     if (shouldOpen) {
