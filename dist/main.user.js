@@ -891,13 +891,71 @@ var TextExtractor = (() => {
     });
     return Array.from(uniqueTexts);
   };
-  var formatTextsForTranslation = (texts) => {
-    const result = texts.map(
-      (text) => `    ["${text.replace(/"/g, '\\"').replace(/\n/g, "\\n")}", ""]`
-    );
-    return `[
-${result.join(",\n")}
-]`;
+  var workerPolicy;
+  if (window.trustedTypes && window.trustedTypes.createPolicy) {
+    try {
+      workerPolicy = window.trustedTypes.createPolicy("text-extractor-worker", {
+        createScriptURL: (url) => url
+      });
+    } catch (e) {
+      if (e.name === "TypeError" && e.message.includes("Policy already exists")) {
+        workerPolicy = null;
+      } else {
+        console.error("Failed to create Trusted Types policy:", e);
+        workerPolicy = null;
+      }
+    }
+  }
+  function createTrustedWorkerUrl(url) {
+    if (workerPolicy) {
+      return workerPolicy.createScriptURL(url);
+    }
+    if (window.trustedTypes && window.trustedTypes.defaultPolicy) {
+      try {
+        return window.trustedTypes.defaultPolicy.createScriptURL(url);
+      } catch (e) {
+        console.warn("Trusted Types default policy failed, falling back to raw URL.", e);
+        return url;
+      }
+    }
+    return url;
+  }
+  var performQuickScan = (texts) => {
+    return new Promise((resolve, reject) => {
+      let worker2 = null;
+      log("[\u9759\u6001\u626B\u63CF] \u5F00\u59CB\u6267\u884C...");
+      try {
+        const workerScript = '(() => {\n  // src/shared/utils/ignoredTerms.js\n  var IGNORED_TERMS = [\n    "Github",\n    "Microsoft",\n    "Tampermonkey",\n    "JavaScript",\n    "TypeScript",\n    "Hugging Face",\n    "Google",\n    "Facebook",\n    "Twitter",\n    "LinkedIn",\n    "OpenAI",\n    "ChatGPT",\n    "API",\n    "Glossary of computer science",\n    "HTML",\n    "CSS",\n    "JSON",\n    "XML",\n    "HTTP",\n    "HTTPS",\n    "URL",\n    "IP address",\n    "DNS",\n    "CPU",\n    "GPU",\n    "RAM",\n    "SSD",\n    "USB",\n    "Wi-Fi",\n    "Bluetooth",\n    "VPN",\n    "AI"\n  ];\n  var ignoredTerms_default = IGNORED_TERMS;\n\n  // src/assets/icons/themeIcon.js\n  var themeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 32.5-156t88-127Q256-817 330-848.5T488-880q80 0 151 27.5t124.5 76q53.5 48.5 85 115T880-518q0 115-70 176.5T640-280h-74q-9 0-12.5 5t-3.5 11q0 12 15 34.5t15 51.5q0 50-27.5 74T480-80Zm0-400Zm-220 40q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120-160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm200 0q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120 160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17ZM480-160q9 0 14.5-5t5.5-13q0-14-15-33t-15-57q0-42 29-67t71-25h70q66 0 113-38.5T800-518q0-121-92.5-201.5T488-800q-136 0-232 93t-96 227q0 133 93.5 226.5T480-160Z"/></svg>`;\n\n  // src/assets/icons/languageIcon.js\n  var languageIcon_default = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-155.5t86-127Q252-817 325-848.5T480-880q83 0 155.5 31.5t127 86q54.5 54.5 86 127T880-480q0 82-31.5 155t-86 127.5q-54.5 54.5-127 86T480-80Zm0-82q26-36 45-75t31-83H404q12 44 31 83t45 75Zm-104-16q-18-33-31.5-68.5T322-320H204q29 50 72.5 87t99.5 55Zm208 0q56-18 99.5-55t72.5-87H638q-9 38-22.5 73.5T584-178ZM170-400h136q-3-20-4.5-39.5T300-480q0-21 1.5-40.5T306-560H170q-5 20-7.5 39.5T160-480q0 21 2.5 40.5T170-400Zm216 0h188q3-20 4.5-39.5T580-480q0-21-1.5-40.5T574-560H386q-3 20-4.5 39.5T380-480q0 21 1.5 40.5T386-400Zm268 0h136q5-20 7.5-39.5T800-480q0-21-2.5-40.5T790-560H654q3 20 4.5 39.5T660-480q0 21-1.5 40.5T654-400Zm-16-240h118q-29-50-72.5-87T584-782q18 33 31.5 68.5T638-640Zm-234 0h152q-12-44-31-83t-45-75q-26 36-45 75t-31 83Zm-200 0h118q9-38 22.5-73.5T376-782q-56 18-99.5 55T204-640Z"/></svg>`;\n\n  // src/shared/i18n/en.json\n  var en_default = {\n    common: {\n      scan: "Scan",\n      stop: "Stop",\n      resume: "Resume",\n      clear: "Clear",\n      copy: "Copy",\n      save: "Save",\n      discovered: "Discovered: ",\n      confirm: "Confirm",\n      cancel: "Cancel",\n      export: "Export"\n    },\n    export: {\n      exportAsTxt: "Export as TXT",\n      exportAsJson: "Export as JSON",\n      exportAsCsv: "Export as CSV",\n      csv: {\n        id: "ID",\n        original: "Original",\n        translation: "Translation"\n      }\n    },\n    settings: {\n      title: "Settings",\n      theme: "Theme",\n      language: "Language",\n      relatedSettings: "Related Settings",\n      filterRules: "Content Filtering Rules",\n      filters: {\n        numbers: "Filter numbers/currency",\n        chinese: "Filter pure Chinese",\n        contains_chinese: "Filter text containing Chinese",\n        emoji_only: "Filter emoji-only text",\n        symbols: "Filter symbol-only text",\n        term: "Filter specific terms",\n        single_letter: "Filter single English letters",\n        repeating_chars: "Filter single repeating characters"\n      },\n      display: {\n        show_fab: "Show floating button",\n        show_line_numbers: "Show line numbers",\n        show_statistics: "Show statistics"\n      },\n      advanced: {\n        enable_debug_logging: "Enable debug logging"\n      },\n      panel: {\n        title: "Settings Panel"\n      },\n      languages: {\n        en: "English",\n        zh_CN: "\\u7B80\\u4F53\\u4E2D\\u6587",\n        zh_TW: "\\u7E41\\u9AD4\\u4E2D\\u6587"\n      },\n      themes: {\n        light: "Light",\n        dark: "Dark",\n        system: "System"\n      }\n    },\n    scan: {\n      quick: "Quick Scan",\n      session: "Session Scan",\n      startSession: "Start dynamic scan session",\n      stopSession: "Stop dynamic scan session",\n      finished: "Scan finished, {count} texts found",\n      quickFinished: "Quick scan finished, {count} texts found",\n      sessionStarted: "Session scan started",\n      sessionInProgress: "Session scan is in progress...",\n      truncationWarning: "To maintain interface fluency, only part of the text is displayed here. The complete content will be provided when exporting."\n    },\n    results: {\n      title: "Extracted Text",\n      totalCharacters: "Total characters",\n      totalLines: "Total lines",\n      noSummary: "No summary text available",\n      stats: {\n        lines: "Lines",\n        chars: "Chars"\n      }\n    },\n    notifications: {\n      copiedToClipboard: "Copied to clipboard!",\n      settingsSaved: "Settings saved!",\n      modalInitError: "Modal not initialized.",\n      nothingToCopy: "Nothing to copy",\n      contentCleared: "Content cleared",\n      noTextSelected: "No text selected"\n    },\n    placeholders: {\n      click: "Click the ",\n      dynamicScan: "[Dynamic Scan]",\n      startNewScanSession: " button to start a new scanning session",\n      staticScan: "[Static Scan]",\n      performOneTimeScan: " button for a one-time quick extraction"\n    },\n    confirmation: {\n      clear: "Are you sure you want to clear the content? This action cannot be undone."\n    },\n    tooltip: {\n      summary: "View Summary",\n      dynamic_scan: "Dynamic Scan",\n      static_scan: "Static Scan"\n    }\n  };\n\n  // src/shared/i18n/zh-CN.json\n  var zh_CN_default = {\n    common: {\n      scan: "\\u626B\\u63CF",\n      stop: "\\u505C\\u6B62",\n      resume: "\\u7EE7\\u7EED",\n      clear: "\\u6E05\\u7A7A",\n      copy: "\\u590D\\u5236",\n      save: "\\u4FDD\\u5B58",\n      discovered: "\\u5DF2\\u53D1\\u73B0\\uFF1A",\n      confirm: "\\u786E\\u8BA4",\n      cancel: "\\u53D6\\u6D88",\n      export: "\\u5BFC\\u51FA"\n    },\n    export: {\n      exportAsTxt: "\\u5BFC\\u51FA\\u4E3A TXT",\n      exportAsJson: "\\u5BFC\\u51FA\\u4E3A JSON",\n      exportAsCsv: "\\u5BFC\\u51FA\\u4E3A CSV",\n      csv: {\n        id: "ID",\n        original: "\\u539F\\u6587",\n        translation: "\\u8BD1\\u6587"\n      }\n    },\n    settings: {\n      title: "\\u8BBE\\u7F6E",\n      theme: "\\u754C\\u9762\\u4E3B\\u9898",\n      language: "\\u8BED\\u8A00\\u8BBE\\u7F6E",\n      relatedSettings: "\\u76F8\\u5173\\u8BBE\\u7F6E",\n      filterRules: "\\u5185\\u5BB9\\u8FC7\\u6EE4\\u89C4\\u5219",\n      filters: {\n        numbers: "\\u8FC7\\u6EE4\\u7EAF\\u6570\\u5B57/\\u8D27\\u5E01",\n        chinese: "\\u8FC7\\u6EE4\\u7EAF\\u4E2D\\u6587",\n        contains_chinese: "\\u8FC7\\u6EE4\\u5305\\u542B\\u4E2D\\u6587\\u7684\\u6587\\u672C",\n        emoji_only: "\\u8FC7\\u6EE4\\u7EAF\\u8868\\u60C5\\u7B26\\u53F7",\n        symbols: "\\u8FC7\\u6EE4\\u7EAF\\u7B26\\u53F7",\n        term: "\\u8FC7\\u6EE4\\u7279\\u5B9A\\u672F\\u8BED",\n        single_letter: "\\u8FC7\\u6EE4\\u7EAF\\u5355\\u4E2A\\u82F1\\u6587\\u5B57\\u6BCD",\n        repeating_chars: "\\u8FC7\\u6EE4\\u5355\\u4E00\\u91CD\\u590D\\u5B57\\u7B26"\n      },\n      display: {\n        show_fab: "\\u663E\\u793A\\u60AC\\u6D6E\\u6309\\u94AE",\n        show_line_numbers: "\\u663E\\u793A\\u884C\\u53F7",\n        show_statistics: "\\u663E\\u793A\\u7EDF\\u8BA1\\u4FE1\\u606F"\n      },\n      advanced: {\n        enable_debug_logging: "\\u542F\\u7528\\u8C03\\u8BD5\\u65E5\\u5FD7"\n      },\n      panel: {\n        title: "\\u8BBE\\u7F6E\\u9762\\u677F"\n      },\n      languages: {\n        en: "English",\n        zh_CN: "\\u7B80\\u4F53\\u4E2D\\u6587",\n        zh_TW: "\\u7E41\\u9AD4\\u4E2D\\u6587"\n      },\n      themes: {\n        light: "\\u6D45\\u8272",\n        dark: "\\u6DF1\\u8272",\n        system: "\\u8DDF\\u968F\\u7CFB\\u7EDF"\n      }\n    },\n    scan: {\n      quick: "\\u5FEB\\u901F\\u626B\\u63CF",\n      session: "\\u4F1A\\u8BDD\\u626B\\u63CF",\n      startSession: "\\u5F00\\u59CB\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD",\n      stopSession: "\\u505C\\u6B62\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD",\n      finished: "\\u626B\\u63CF\\u7ED3\\u675F\\uFF0C\\u5171\\u53D1\\u73B0 {count} \\u6761\\u6587\\u672C",\n      quickFinished: "\\u5FEB\\u6377\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {count} \\u6761\\u6587\\u672C",\n      sessionStarted: "\\u4F1A\\u8BDD\\u626B\\u63CF\\u5DF2\\u5F00\\u59CB",\n      sessionInProgress: "\\u626B\\u63CF\\u6B63\\u5728\\u8FDB\\u884C\\u4E2D...",\n      truncationWarning: "\\u4E3A\\u4FDD\\u6301\\u754C\\u9762\\u6D41\\u7545\\uFF0C\\u6B64\\u5904\\u4EC5\\u663E\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u5B8C\\u6574\\u5185\\u5BB9\\u5C06\\u5728\\u5BFC\\u51FA\\u65F6\\u63D0\\u4F9B\\u3002"\n    },\n    results: {\n      title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",\n      totalCharacters: "\\u603B\\u5B57\\u6570",\n      totalLines: "\\u603B\\u884C\\u6570",\n      noSummary: "\\u5F53\\u524D\\u6CA1\\u6709\\u603B\\u7ED3\\u6587\\u672C",\n      stats: {\n        lines: "\\u884C",\n        chars: "\\u5B57\\u7B26\\u6570"\n      }\n    },\n    notifications: {\n      copiedToClipboard: "\\u5DF2\\u590D\\u5236\\u5230\\u526A\\u8D34\\u677F!",\n      settingsSaved: "\\u8BBE\\u7F6E\\u5DF2\\u4FDD\\u5B58\\uFF01",\n      modalInitError: "\\u6A21\\u6001\\u6846\\u5C1A\\u672A\\u521D\\u59CB\\u5316\\u3002",\n      nothingToCopy: "\\u6C92\\u6709\\u5167\\u5BB9\\u53EF\\u8907\\u88FD",\n      contentCleared: "\\u5185\\u5BB9\\u5DF2\\u6E05\\u7A7A",\n      noTextSelected: "\\u672A\\u9009\\u62E9\\u6587\\u672C"\n    },\n    placeholders: {\n      click: "\\u70B9\\u51FB ",\n      dynamicScan: "[\\u52A8\\u6001\\u626B\\u63CF]",\n      startNewScanSession: " \\u6309\\u94AE\\u5F00\\u59CB\\u4E00\\u4E2A\\u65B0\\u7684\\u626B\\u63CF\\u4F1A\\u8BDD",\n      staticScan: "[\\u9759\\u6001\\u626B\\u63CF]",\n      performOneTimeScan: " \\u6309\\u94AE\\u53EF\\u8FDB\\u884C\\u4E00\\u6B21\\u6027\\u7684\\u5FEB\\u6377\\u63D0\\u53D6"\n    },\n    confirmation: {\n      clear: "\\u4F60\\u786E\\u8BA4\\u8981\\u6E05\\u7A7A\\u5417\\uFF1F\\u6B64\\u64CD\\u4F5C\\u4E0D\\u53EF\\u64A4\\u9500\\u3002"\n    },\n    tooltip: {\n      summary: "\\u67E5\\u770B\\u603B\\u7ED3",\n      dynamic_scan: "\\u52A8\\u6001\\u626B\\u63CF",\n      static_scan: "\\u9759\\u6001\\u626B\\u63CF"\n    }\n  };\n\n  // src/shared/i18n/zh-TW.json\n  var zh_TW_default = {\n    common: {\n      scan: "\\u6383\\u63CF",\n      stop: "\\u505C\\u6B62",\n      resume: "\\u7E7C\\u7E8C",\n      clear: "\\u6E05\\u7A7A",\n      copy: "\\u8907\\u88FD",\n      save: "\\u5132\\u5B58",\n      discovered: "\\u5DF2\\u767C\\u73FE\\uFF1A",\n      confirm: "\\u78BA\\u8A8D",\n      cancel: "\\u53D6\\u6D88",\n      export: "\\u532F\\u51FA"\n    },\n    export: {\n      exportAsTxt: "\\u532F\\u51FA\\u70BA TXT",\n      exportAsJson: "\\u532F\\u51FA\\u70BA JSON",\n      exportAsCsv: "\\u532F\\u51FA\\u70BA CSV",\n      csv: {\n        id: "ID",\n        original: "\\u539F\\u6587",\n        translation: "\\u8B6F\\u6587"\n      }\n    },\n    settings: {\n      title: "\\u8A2D\\u5B9A",\n      theme: "\\u4ECB\\u9762\\u4E3B\\u984C",\n      language: "\\u8A9E\\u8A00\\u8A2D\\u5B9A",\n      relatedSettings: "\\u76F8\\u95DC\\u8A2D\\u5B9A",\n      filterRules: "\\u5167\\u5BB9\\u904E\\u6FFE\\u898F\\u5247",\n      filters: {\n        numbers: "\\u904E\\u6FFE\\u7D14\\u6578\\u5B57/\\u8CA8\\u5E63",\n        chinese: "\\u904E\\u6FFE\\u7D14\\u4E2D\\u6587",\n        contains_chinese: "\\u904E\\u6FFE\\u5305\\u542B\\u4E2D\\u6587\\u7684\\u6587\\u672C",\n        emoji_only: "\\u904E\\u6FFE\\u7D14\\u8868\\u60C5\\u7B26\\u865F",\n        symbols: "\\u904E\\u6FFE\\u7D14\\u7B26\\u865F",\n        term: "\\u904E\\u6FFE\\u7279\\u5B9A\\u8853\\u8A9E",\n        single_letter: "\\u904E\\u6FFE\\u7D14\\u55AE\\u500B\\u82F1\\u6587\\u5B57\\u6BCD",\n        repeating_chars: "\\u904E\\u6FFE\\u55AE\\u4E00\\u91CD\\u8907\\u5B57\\u7B26"\n      },\n      display: {\n        show_fab: "\\u986F\\u793A\\u61F8\\u6D6E\\u6309\\u9215",\n        show_line_numbers: "\\u986F\\u793A\\u884C\\u865F",\n        show_statistics: "\\u986F\\u793A\\u7D71\\u8A08\\u8CC7\\u8A0A"\n      },\n      advanced: {\n        enable_debug_logging: "\\u555F\\u7528\\u5075\\u932F\\u65E5\\u8A8C"\n      },\n      panel: {\n        title: "\\u8A2D\\u5B9A\\u9762\\u677F"\n      },\n      languages: {\n        en: "English",\n        zh_CN: "\\u7B80\\u4F53\\u4E2D\\u6587",\n        zh_TW: "\\u7E41\\u9AD4\\u4E2D\\u6587"\n      },\n      themes: {\n        light: "\\u6DFA\\u8272",\n        dark: "\\u6DF1\\u8272",\n        system: "\\u8DDF\\u96A8\\u7CFB\\u7D71"\n      }\n    },\n    scan: {\n      quick: "\\u5FEB\\u901F\\u6383\\u63CF",\n      session: "\\u6703\\u8A71\\u6383\\u63CF",\n      startSession: "\\u958B\\u59CB\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71",\n      stopSession: "\\u505C\\u6B62\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71",\n      finished: "\\u6383\\u63CF\\u7D50\\u675F\\uFF0C\\u5171\\u767C\\u73FE {count} \\u689D\\u6587\\u672C",\n      quickFinished: "\\u5FEB\\u6377\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {count} \\u689D\\u6587\\u672C",\n      sessionStarted: "\\u6703\\u8A71\\u6383\\u63CF\\u5DF2\\u958B\\u59CB",\n      sessionInProgress: "\\u6703\\u8A71\\u6383\\u63CF\\u6B63\\u5728\\u9032\\u884C\\u4E2D...",\n      truncationWarning: "\\u70BA\\u4E86\\u4FDD\\u6301\\u4ECB\\u9762\\u6D41\\u66A2\\uFF0C\\u50C5\\u986F\\u793A\\u90E8\\u5206\\u6587\\u672C\\u5167\\u5BB9\\u3002\\u5B8C\\u6574\\u5167\\u5BB9\\u5C07\\u5728\\u532F\\u51FA\\u6642\\u63D0\\u4F9B\\u3002"\n    },\n    results: {\n      title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",\n      totalCharacters: "\\u7E3D\\u5B57\\u6578",\n      totalLines: "\\u7E3D\\u884C\\u6578",\n      noSummary: "\\u7576\\u524D\\u6C92\\u6709\\u7E3D\\u7D50\\u6587\\u672C",\n      stats: {\n        lines: "\\u884C",\n        chars: "\\u5B57\\u7B26\\u6578"\n      }\n    },\n    notifications: {\n      copiedToClipboard: "\\u5DF2\\u8907\\u88FD\\u5230\\u526A\\u8CBC\\u7C3F\\uFF01",\n      settingsSaved: "\\u8A2D\\u5B9A\\u5DF2\\u5132\\u5B58\\uFF01",\n      modalInitError: "\\u6A21\\u614B\\u6846\\u5C1A\\u672A\\u521D\\u59CB\\u5316\\u3002",\n      nothingToCopy: "\\u6C92\\u6709\\u5167\\u5BB9\\u53EF\\u8907\\u88FD",\n      contentCleared: "\\u5167\\u5BB9\\u5DF2\\u6E05\\u7A7A",\n      noTextSelected: "\\u672A\\u9078\\u64C7\\u6587\\u672C"\n    },\n    placeholders: {\n      click: "\\u9EDE\\u64CA ",\n      dynamicScan: "[\\u52D5\\u614B\\u6383\\u63CF]",\n      startNewScanSession: " \\u6309\\u9215\\u958B\\u59CB\\u4E00\\u500B\\u65B0\\u7684\\u6383\\u63CF\\u6703\\u8A71",\n      staticScan: "[\\u975C\\u614B\\u6383\\u63CF]",\n      performOneTimeScan: " \\u6309\\u9215\\u53EF\\u9032\\u884C\\u4E00\\u6B21\\u6027\\u7684\\u5FEB\\u6377\\u63D0\\u53D6"\n    },\n    confirmation: {\n      clear: "\\u4F60\\u78BA\\u8A8D\\u8981\\u6E05\\u7A7A\\u55CE\\uFF1F\\u6B64\\u64CD\\u4F5C\\u4E0D\\u53EF\\u64A4\\u92B7\\u3002"\n    },\n    tooltip: {\n      summary: "\\u67E5\\u770B\\u7E3D\\u7D50",\n      dynamic_scan: "\\u52D5\\u614B\\u6383\\u63CF",\n      static_scan: "\\u975C\\u614B\\u6383\\u63CF"\n    }\n  };\n\n  // src/shared/i18n/management/languages.js\n  var supportedLanguages = [\n    { code: "en", name: "English" },\n    { code: "zh-CN", name: "\\u7B80\\u4F53\\u4E2D\\u6587" },\n    { code: "zh-TW", name: "\\u7E41\\u9AD4\\u4E2D\\u6587" }\n  ];\n\n  // src/shared/i18n/index.js\n  var translationModules = {\n    en: en_default,\n    "zh-CN": zh_CN_default,\n    "zh-TW": zh_TW_default\n  };\n  var translations = supportedLanguages.reduce((acc, lang) => {\n    if (translationModules[lang.code]) {\n      acc[lang.code] = translationModules[lang.code];\n    }\n    return acc;\n  }, {});\n  var currentTranslations = translations.en;\n  function getAvailableLanguages() {\n    return supportedLanguages.map((lang) => ({\n      value: lang.code,\n      label: lang.name\n    }));\n  }\n\n  // src/features/settings/config.js\n  var selectSettingsDefinitions = [\n    {\n      id: "theme-select",\n      key: "theme",\n      label: "settings.theme",\n      icon: themeIcon,\n      options: [\n        { value: "light", label: "settings.themes.light" },\n        { value: "dark", label: "settings.themes.dark" },\n        { value: "system", label: "settings.themes.system" }\n      ]\n    },\n    {\n      id: "language-select",\n      key: "language",\n      label: "settings.language",\n      icon: languageIcon_default,\n      // \u76F4\u63A5\u4ECE i18n \u6A21\u5757\u83B7\u53D6\u8BED\u8A00\u5217\u8868\uFF0C\u5176\u6807\u7B7E\u5DF2\u7ECF\u662F\u539F\u751F\u540D\u79F0\uFF0C\u65E0\u9700\u518D\u7FFB\u8BD1\u3002\n      options: getAvailableLanguages()\n    }\n  ];\n  var filterDefinitions = [\n    { id: "filter-numbers", key: "numbers", label: "settings.filters.numbers" },\n    { id: "filter-chinese", key: "chinese", label: "settings.filters.chinese" },\n    { id: "filter-contains-chinese", key: "containsChinese", label: "settings.filters.contains_chinese" },\n    { id: "filter-emoji-only", key: "emojiOnly", label: "settings.filters.emoji_only" },\n    { id: "filter-symbols", key: "symbols", label: "settings.filters.symbols" },\n    { id: "filter-term", key: "termFilter", label: "settings.filters.term" },\n    { id: "filter-single-letter", key: "singleLetter", label: "settings.filters.single_letter" },\n    { id: "filter-repeating-chars", key: "repeatingChars", label: "settings.filters.repeating_chars" }\n  ];\n\n  // src/shared/utils/filterLogic.js\n  var filterConfigMap = new Map(filterDefinitions.map((def) => [def.key, def.label]));\n  var ruleChecks = /* @__PURE__ */ new Map([\n    ["numbers", {\n      regex: /^[$\\\u20AC\\\xA3\\\xA5\\d,.\\s]+$/,\n      label: filterConfigMap.get("numbers")\n    }],\n    ["chinese", {\n      regex: /^[\\u4e00-\\u9fa5\\s]+$/u,\n      label: filterConfigMap.get("chinese")\n    }],\n    ["containsChinese", {\n      regex: /[\\u4e00-\\u9fa5]/u,\n      label: filterConfigMap.get("containsChinese")\n    }],\n    ["emojiOnly", {\n      regex: /^[\\p{Emoji}\\s]+$/u,\n      label: filterConfigMap.get("emojiOnly")\n    }],\n    ["symbols", {\n      // \u8FD9\u4E2A\u903B\u8F91\u6BD4\u8F83\u7279\u6B8A\uFF0C\u662F\u201C\u4E0D\u5305\u542B\u5B57\u6BCD\u6216\u6570\u5B57\u201D\uFF0C\u6240\u4EE5\u6211\u4EEC\u7528\u4E00\u4E2A\u51FD\u6570\u6765\u5904\u7406\n      test: (text) => !/[\\p{L}\\p{N}]/u.test(text),\n      label: filterConfigMap.get("symbols")\n    }],\n    ["termFilter", {\n      test: (text) => ignoredTerms_default.includes(text),\n      label: filterConfigMap.get("termFilter")\n    }],\n    ["singleLetter", {\n      regex: /^[a-zA-Z]$/,\n      label: filterConfigMap.get("singleLetter")\n    }],\n    ["repeatingChars", {\n      regex: /^\\s*(.)\\1+\\s*$/,\n      label: filterConfigMap.get("repeatingChars")\n    }]\n  ]);\n  function shouldFilter(text, filterRules) {\n    for (const [key, rule] of ruleChecks.entries()) {\n      if (filterRules[key]) {\n        const isFiltered = rule.regex ? rule.regex.test(text) : rule.test(text);\n        if (isFiltered) {\n          return rule.label;\n        }\n      }\n    }\n    return null;\n  }\n\n  // src/shared/utils/formatting.js\n  var formatTextsForTranslation = (texts) => {\n    const result = texts.map(\n      (text) => `    ["${text.replace(/"/g, \'\\\\"\').replace(/\\n/g, "\\\\n")}", ""]`\n    );\n    return `[\n${result.join(",\\n")}\n]`;\n  };\n\n  // src/features/quick-scan/worker.js\n  self.onmessage = (event) => {\n    const { type, payload } = event.data;\n    if (type === "scan") {\n      console.log(`[\\u9759\\u6001\\u626B\\u63CF Worker] \\u6536\\u5230 ${payload.texts.length} \\u6761\\u6587\\u672C\\uFF0C\\u5F00\\u59CB\\u5904\\u7406...`);\n      const { texts, filterRules } = payload;\n      const uniqueTexts = /* @__PURE__ */ new Set();\n      if (Array.isArray(texts)) {\n        texts.forEach((rawText) => {\n          if (!rawText || typeof rawText !== "string") return;\n          const normalizedText = rawText.normalize("NFC");\n          const textForFiltering = normalizedText.replace(/(\\r\\n|\\n|\\r)+/g, "\\n").trim();\n          if (textForFiltering === "") return;\n          if (shouldFilter(textForFiltering, filterRules)) {\n            return;\n          }\n          uniqueTexts.add(normalizedText.replace(/(\\r\\n|\\n|\\r)+/g, "\\n"));\n        });\n      }\n      const textsArray = Array.from(uniqueTexts);\n      const formattedText = formatTextsForTranslation(textsArray);\n      console.log(`[\\u9759\\u6001\\u626B\\u63CF Worker] \\u5904\\u7406\\u5B8C\\u6210\\uFF0C\\u5171 ${textsArray.length} \\u6761\\u6709\\u6548\\u6587\\u672C\\u3002\\u6B63\\u5728\\u53D1\\u56DE\\u4E3B\\u7EBF\\u7A0B...`);\n      self.postMessage({\n        type: "scanCompleted",\n        payload: {\n          formattedText,\n          count: textsArray.length\n        }\n      });\n    }\n  };\n})();\n';
+        const workerUrl = `data:application/javascript,${encodeURIComponent(workerScript)}`;
+        const trustedUrl = createTrustedWorkerUrl(workerUrl);
+        worker2 = new Worker(trustedUrl);
+        log("[\u9759\u6001\u626B\u63CF] Web Worker \u5B9E\u4F8B\u5DF2\u521B\u5EFA\u3002");
+        worker2.onmessage = (event) => {
+          const { type, payload } = event.data;
+          if (type === "scanCompleted") {
+            log(`[\u9759\u6001\u626B\u63CF] \u4ECE Worker \u6536\u5230\u5904\u7406\u7ED3\u679C\uFF0C\u5171 ${payload.count} \u6761\u6587\u672C\u3002`);
+            resolve(payload);
+            worker2.terminate();
+            log("[\u9759\u6001\u626B\u63CF] Worker \u5DF2\u7EC8\u6B62\u3002");
+          }
+        };
+        worker2.onerror = (error) => {
+          log(`[\u9759\u6001\u626B\u63CF] Worker \u53D1\u751F\u9519\u8BEF: ${error.message}`);
+          reject(error);
+          worker2.terminate();
+        };
+        const { filterRules } = loadSettings();
+        log(`[\u9759\u6001\u626B\u63CF] \u5411 Worker \u53D1\u9001 ${texts.length} \u6761\u6587\u672C\u8FDB\u884C\u5904\u7406...`);
+        worker2.postMessage({
+          type: "scan",
+          payload: { texts, filterRules }
+        });
+      } catch (e) {
+        log(`[\u9759\u6001\u626B\u63CF] Worker \u521D\u59CB\u5316\u6216\u6267\u884C\u5931\u8D25: ${e.message}`);
+        if (worker2) worker2.terminate();
+        reject(e);
+      }
+    });
   };
   var infoIcon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>';
   var successIcon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q65 0 123 19t107 53l-58 59q-38-24-81-37.5T480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160q133 0 226.5-93.5T800-480q0-18-2-36t-6-35l65-65q11 32 17 66t6 70q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-56-216L254-466l56-56 114 114 400-401 56 56-456 457Z"/></svg>';
@@ -1009,35 +1067,6 @@ ${result.join(",\n")}
   }
   function getCurrentMode() {
     return currentMode;
-  }
-  var workerPolicy;
-  if (window.trustedTypes && window.trustedTypes.createPolicy) {
-    try {
-      workerPolicy = window.trustedTypes.createPolicy("text-extractor-worker", {
-        createScriptURL: (url) => url
-      });
-    } catch (e) {
-      if (e.name === "TypeError" && e.message.includes("Policy already exists")) {
-        workerPolicy = null;
-      } else {
-        console.error("Failed to create Trusted Types policy:", e);
-        workerPolicy = null;
-      }
-    }
-  }
-  function createTrustedWorkerUrl(url) {
-    if (workerPolicy) {
-      return workerPolicy.createScriptURL(url);
-    }
-    if (window.trustedTypes && window.trustedTypes.defaultPolicy) {
-      try {
-        return window.trustedTypes.defaultPolicy.createScriptURL(url);
-      } catch (e) {
-        console.warn("Trusted Types default policy failed, falling back to raw URL.", e);
-        return url;
-      }
-    }
-    return url;
   }
   var isRecording = false;
   var observer = null;
@@ -1654,25 +1683,25 @@ ${result.join(",\n")}
     });
     updateModalAddonsVisibility();
   }
-  function openModal() {
+  async function openModal() {
     if (!modalOverlay) {
       console.error(t("notifications.modalInitError"));
       return;
     }
-    log("\u6B63\u5728\u6253\u5F00\u4E3B\u6A21\u6001\u6846...");
+    log("\u6B63\u5728\u6253\u5F00\u4E3B\u6A21\u6001\u6846\u5E76\u542F\u52A8\u9759\u6001\u626B\u63CF...");
     updateModalContent(SHOW_LOADING, true, "quick-scan");
-    setTimeout(() => {
+    try {
       const extractedTexts = extractAndProcessText();
-      const formattedText = formatTextsForTranslation(extractedTexts);
+      const { formattedText, count } = await performQuickScan(extractedTexts);
       fullQuickScanContent = formattedText;
       updateModalContent(formattedText, false, "quick-scan");
-      const copyBtn2 = modalOverlay.querySelector(".text-extractor-copy-btn");
-      if (copyBtn2) {
-        copyBtn2.disabled = !formattedText;
-      }
-      const notificationText = simpleTemplate(t("scan.quickFinished"), { count: extractedTexts.length });
+      const notificationText = simpleTemplate(t("scan.quickFinished"), { count });
       showNotification(notificationText, { type: "success" });
-    }, 50);
+    } catch (error) {
+      log(`\u9759\u6001\u626B\u63CF\u5931\u8D25: ${error.message}`);
+      showNotification(t("scan.quickFailed"), { type: "error" });
+      updateModalContent("[]", false, "quick-scan");
+    }
   }
   function closeModal() {
     if (modalOverlay && modalOverlay.classList.contains("is-visible")) {

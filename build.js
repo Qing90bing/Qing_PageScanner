@@ -38,16 +38,22 @@ async function build() {
         const confirmationModalCss = await fs.readFile('src/assets/styles/confirmationModal.css', 'utf-8');
 
         // 3. 【新增】独立打包 Web Worker 脚本
-        console.log('正在打包 Web Worker...');
+        console.log('正在打包 Web Workers...');
         const workerBuildResult = await esbuild.build({
-            entryPoints: ['src/features/session-scan/worker.js'],
+            entryPoints: [
+                'src/features/session-scan/worker.js',
+                'src/features/quick-scan/worker.js'
+            ],
             bundle: true,
             write: false,
-            outfile: 'dist/worker.js', // 虚拟输出路径
+            outdir: 'dist/workers', // 虚拟输出目录
             format: 'iife',
         });
-        const bundledWorkerCode = workerBuildResult.outputFiles[0].text;
-        console.log('Web Worker 打包完成。');
+
+        // 分别获取两个 worker 的代码
+        const sessionScanWorkerCode = workerBuildResult.outputFiles.find(f => f.path.includes('session-scan')).text;
+        const quickScanWorkerCode = workerBuildResult.outputFiles.find(f => f.path.includes('quick-scan')).text;
+        console.log('Web Workers 打包完成。');
 
         // 4. 从 src/main.js 开始打包主应用程序代码
         const result = await esbuild.build({
@@ -61,7 +67,8 @@ async function build() {
                 '__INJECTED_CSS__': JSON.stringify(allCssContent),
                 '__CONFIRMATION_MODAL_CSS__': JSON.stringify(confirmationModalCss),
                 // 将打包好的、无依赖的 Worker 代码注入
-                '__WORKER_STRING__': JSON.stringify(bundledWorkerCode),
+                '__WORKER_STRING__': JSON.stringify(sessionScanWorkerCode),
+                '__QUICK_SCAN_WORKER_STRING__': JSON.stringify(quickScanWorkerCode),
             }
         });
 

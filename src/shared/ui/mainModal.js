@@ -7,7 +7,7 @@
  */
 
 import { extractAndProcessText } from '../utils/textProcessor.js';
-import { formatTextsForTranslation } from '../utils/formatting.js';
+import { performQuickScan } from '../../features/quick-scan/logic.js';
 import { showNotification } from './components/notification.js';
 import { loadSettings } from '../../features/settings/logic.js';
 import { log } from '../utils/logger.js';
@@ -78,34 +78,41 @@ export function createMainModal({ clearSessionCallback }) {
 
 /**
  * @public
- * @description 显示主模态框并开始提取文本。
+ * @description 异步显示主模态框并启动后台文本提取。
  */
-export function openModal() {
+export async function openModal() {
     if (!state.modalOverlay) {
         console.error(t('notifications.modalInitError'));
         return;
     }
-    log('正在打开主模态框...');
+    log('正在打开主模态框并启动静态扫描...');
 
+    // 1. 立即显示加载状态并打开模态框
     updateModalContent(state.SHOW_LOADING, true, 'quick-scan');
 
-    setTimeout(() => {
+    try {
+        // 2. 从 DOM 提取文本（这必须在主线程完成）
         const extractedTexts = extractAndProcessText();
-        const formattedText = formatTextsForTranslation(extractedTexts);
 
-        // 在更新UI（可能会截断文本）之前，存储完整的原始内容
-        fullQuickScanContent = formattedText;
+        // 3. 将繁重任务交给 Web Worker 处理
+        const { formattedText, count } = await performQuickScan(extractedTexts);
 
+        // 4. Worker 完成后，更新UI
+        fullQuickScanContent = formattedText; // 存储完整内容
         updateModalContent(formattedText, false, 'quick-scan');
 
-        const copyBtn = state.modalOverlay.querySelector('.text-extractor-copy-btn');
-        if (copyBtn) {
-            copyBtn.disabled = !formattedText;
-        }
-
-        const notificationText = simpleTemplate(t('scan.quickFinished'), { count: extractedTexts.length });
+        // 5. 显示成功通知
+        const notificationText = simpleTemplate(t('scan.quickFinished'), { count });
         showNotification(notificationText, { type: 'success' });
-    }, 50);
+
+    } catch (error) {
+        // 错误处理
+        log(`静态扫描失败: ${error.message}`);
+        showNotification(t('scan.quickFailed'), { type: 'error' });
+
+        // 显示一个空状态或错误信息
+        updateModalContent('[]', false, 'quick-scan');
+    }
 }
 
 /**
