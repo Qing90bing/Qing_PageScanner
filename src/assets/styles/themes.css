@@ -37,6 +37,14 @@
   --dark-color-tooltip-text: #111111; /* 提示文本 */
   --dark-color-line-number-text: #777777; /* 行号文本 */
   --dark-color-line-number-active-text: #ffffff; /* 激活行号文本 */
+
+  /* 滚动条颜色变量 */
+  --color-scrollbar-thumb: #c1c1c1;
+  --color-scrollbar-thumb-hover: #a8a8a8;
+  --color-scrollbar-border: #ffffff;
+  --dark-color-scrollbar-thumb: #555555;
+  --dark-color-scrollbar-thumb-hover: #777777;
+  --dark-color-scrollbar-border: #2d2d2d;
 }
 
 /* 根据 data-theme 属性应用浅色主题 */
@@ -59,6 +67,9 @@
   --main-disabled-text: #666666;
   --main-line-number-text: var(--color-line-number-text);
   --main-line-number-active-text: var(--color-line-number-active-text);
+  --tc-scrollbar-thumb-color: var(--color-scrollbar-thumb);
+  --tc-scrollbar-thumb-hover-color: var(--color-scrollbar-thumb-hover);
+  --tc-scrollbar-border-color: var(--color-scrollbar-border);
 }
 
 /* 根据 data-theme 属性应用深色主题 */
@@ -81,4 +92,7 @@
   --main-disabled-text: #888888;
   --main-line-number-text: var(--dark-color-line-number-text);
   --main-line-number-active-text: var(--dark-color-line-number-active-text);
+  --tc-scrollbar-thumb-color: var(--dark-color-scrollbar-thumb);
+  --tc-scrollbar-thumb-hover-color: var(--dark-color-scrollbar-thumb-hover);
+  --tc-scrollbar-border-color: var(--dark-color-scrollbar-border);
 }

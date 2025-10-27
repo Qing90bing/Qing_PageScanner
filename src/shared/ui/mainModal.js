@@ -228,4 +228,8 @@ export function updateModalAddonsVisibility() {
         const hasContent = state.outputTextarea && state.outputTextarea.parentElement.classList.contains('is-visible');
         state.statsContainer.classList.toggle('is-visible', settings.showStatistics && hasContent);
     }
+
+    if (state.outputTextarea) {
+        state.outputTextarea.classList.toggle('word-wrap-disabled', !settings.enableWordWrap);
+    }
 }

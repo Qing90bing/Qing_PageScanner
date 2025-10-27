@@ -28,6 +28,8 @@ const defaultSettings = {
   showLineNumbers: true,
   // 是否显示统计信息
   showStatistics: true,
+  // 是否启用文本自动换行
+  enableWordWrap: false,
   // 是否启用文本截断
   enableTextTruncation: true,
   // 文本截断长度

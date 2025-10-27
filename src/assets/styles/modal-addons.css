@@ -28,12 +28,14 @@
     line-height: 1.5; /* 与文本框行高一致 */
     border-right: 1px solid var(--tc-border-color);
     box-sizing: border-box;
+    padding-bottom: 8px; /* 为水平滚动条预留空间 */
 }
 
 .tc-line-numbers > div {
     white-space: nowrap;
     padding: 0 4px;
     box-sizing: border-box;
+    transition: color 0.2s ease-in-out; /* 为 active 状态的颜色变化添加过渡 */
 }
 
 .tc-line-numbers > div.is-active {
@@ -51,11 +53,18 @@
     font-size: 14px;
     padding: 10px;
     box-sizing: border-box;
+    padding-bottom: 8px; /* 为水平滚动条预留空间 */
+    scrollbar-gutter: stable; /* 始终为滚动条保留空间，防止布局跳动 */
 }
 
 .tc-textarea-container .tc-textarea:focus {
     outline: none; /* 移除默认的聚焦轮廓 */
     box-shadow: none;
+}
+
+.tc-textarea.word-wrap-disabled {
+    white-space: pre;
+    overflow-x: auto;
 }
 
 .tc-line-numbers.is-visible {
@@ -81,4 +90,40 @@
 .tc-stats-container.is-visible {
     opacity: 1;
     visibility: visible;
+}
+
+/* --- 自定义文本区域的滚动条样式 --- */
+.tc-textarea::-webkit-scrollbar {
+    width: 6px; /* 设置滚动条宽度 */
+    height: 6px; /* 设置滚动条高度 */
+}
+
+.tc-textarea::-webkit-scrollbar-track {
+    background: transparent; /* 轨道背景透明 */
+}
+
+.tc-textarea::-webkit-scrollbar-thumb {
+    background: var(--tc-scrollbar-thumb-color); /* 滑块颜色 */
+    border-radius: 3px; /* 滑块圆角 */
+    border: 1px solid var(--tc-scrollbar-border-color);
+}
+
+.tc-textarea::-webkit-scrollbar-thumb:hover {
+    background: var(--tc-scrollbar-thumb-hover-color); /* 鼠标悬停时滑块颜色 */
+}
+
+/* --- 行号动画 --- */
+@keyframes line-number-enter {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.line-number-enter-active {
+    animation: line-number-enter 0.2s ease-out;
 }

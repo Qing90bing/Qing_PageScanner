@@ -41,6 +41,7 @@
       "show_fab": "顯示懸浮按鈕",
       "show_line_numbers": "顯示行號",
       "show_statistics": "顯示統計資訊",
+      "enable_word_wrap": "啟用文字自動換行",
       "text_truncation_limit": "啟用文本框字符限制",
       "character_limit": "字符數"
     },
