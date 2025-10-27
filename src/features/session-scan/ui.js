@@ -1,6 +1,7 @@
 // src/features/session-scan/ui.js
 
 import { updateModalContent, SHOW_PLACEHOLDER, SHOW_LOADING } from '../../shared/ui/mainModal.js';
+import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
 import * as sessionExtractor from './logic.js';
 import { showNotification } from '../../shared/ui/components/notification.js';
 import { showLiveCounter, hideLiveCounter, updateLiveCounter } from './liveCounterUI.js';
@@ -9,6 +10,15 @@ import { setFabIcon } from '../../shared/ui/components/fab.js';
 import { dynamicIcon } from '../../assets/icons/dynamicIcon.js';
 import { stopIcon } from '../../assets/icons/stopIcon.js';
 import { simpleTemplate } from '../../shared/utils/templating.js';
+import { on } from '../../shared/utils/eventBus.js';
+
+let currentSessionCount = 0;
+
+// 监听会话清空事件，以重置本地计数器
+on('sessionCleared', () => {
+    currentSessionCount = 0;
+});
+
 /**
  * 处理“查看总结”按钮的点击事件。
  * 现在通过异步请求从 Worker 获取数据。
@@ -19,6 +29,9 @@ export function handleSummaryClick() {
          // 可选：提示用户会话仍在进行中
         showNotification(t('scan.sessionInProgress'), { type: 'info' });
     }
+
+    // 强制更新标题栏以显示正确的会话计数
+    updateScanCount(currentSessionCount, 'session');
 
     // 显示加载状态
     updateModalContent(SHOW_LOADING, true, 'session-scan');
@@ -47,6 +60,7 @@ export function handleDynamicExtractClick(dynamicFab) {
         sessionExtractor.stop((finalCount) => {
             const notificationText = simpleTemplate(t('scan.finished'), { count: finalCount });
             showNotification(notificationText, { type: 'success' });
+            currentSessionCount = finalCount; // 保存最终计数
         });
 
         setFabIcon(dynamicFab, dynamicIcon);
@@ -63,7 +77,10 @@ export function handleDynamicExtractClick(dynamicFab) {
 
         // 稍微延迟以确保UI更新完成
         setTimeout(() => {
-            sessionExtractor.start(updateLiveCounter);
+            sessionExtractor.start((count) => {
+                updateLiveCounter(count);
+                currentSessionCount = count;
+            });
         }, 50);
     }
 }

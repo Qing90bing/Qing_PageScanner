@@ -99,7 +99,7 @@
   padding: 18px;
   border-bottom: 1px solid var(--main-border);
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* 这会将标题和右侧控件推到两端 */
   align-items: center;
   font-size: 18px;
   font-weight: bold;
@@ -188,4 +188,25 @@
     100% {
         box-shadow: 0 4px 8px var(--main-shadow), 0 0 0 0 rgba(243, 156, 18, 0);
     }
+}
+
+/* --- 扫描计数显示 --- */
+#scan-count-display {
+    font-size: 14px;
+    font-family: Menlo, Monaco,'Cascadia Code','PingFang SC';
+    color: var(--tc-secondary-text-color);
+    margin-left: 6px; /* 重新添加，因为它现在在标题旁边 */
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    display: flex;
+    align-items: center;
+}
+
+.header-right-controls {
+    display: flex;
+    align-items: center;
+}
+
+#scan-count-display.is-visible {
+    opacity: 1;
 }

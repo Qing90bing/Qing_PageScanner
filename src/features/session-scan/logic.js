@@ -12,7 +12,9 @@ import { log } from '../../shared/utils/logger.js';
 import { createTrustedWorkerUrl } from '../../shared/utils/trustedTypes.js';
 import { showNotification } from '../../shared/ui/components/notification.js';
 import { t } from '../../shared/i18n/index.js';
+import { fire } from '../../shared/utils/eventBus.js';
 import * as fallback from './fallback.js';
+import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
 
 // --- 模块级变量 ---
 let isRecording = false;
@@ -45,9 +47,9 @@ const handleMutations = (mutations) => {
         const logPrefix = '动态新发现';
         if (useFallback) {
             if (fallback.processTextsInFallback(textsBatch, logPrefix)) {
-                if (onUpdateCallback) {
-                    onUpdateCallback(fallback.getCountInFallback());
-                }
+                const count = fallback.getCountInFallback();
+                if (onUpdateCallback) onUpdateCallback(count);
+                updateScanCount(count, 'session');
             }
         } else if (worker) {
             worker.postMessage({
@@ -82,8 +84,10 @@ export const start = (onUpdate) => {
         showNotification(t('notifications.cspWorkerWarning'), { type: 'info', duration: 5000 });
 
         fallback.initFallback(filterRules);
-        if (fallback.processTextsInFallback(initialTexts) && onUpdateCallback) {
-            onUpdateCallback(fallback.getCountInFallback());
+        if (fallback.processTextsInFallback(initialTexts)) {
+            const count = fallback.getCountInFallback();
+            if (onUpdateCallback) onUpdateCallback(count);
+            updateScanCount(count, 'session');
         }
 
         // 在备选模式初始化后启动观察者
@@ -102,8 +106,9 @@ export const start = (onUpdate) => {
 
         worker.onmessage = (event) => {
             const { type, payload } = event.data;
-            if (type === 'countUpdated' && onUpdateCallback) {
-                onUpdateCallback(payload);
+            if (type === 'countUpdated') {
+                if (onUpdateCallback) onUpdateCallback(payload);
+                updateScanCount(payload, 'session');
             } else if (type === 'summaryReady' && onSummaryCallback) {
                 onSummaryCallback(payload);
                 onSummaryCallback = null;
@@ -196,12 +201,13 @@ export const isSessionRecording = () => isRecording;
 export function clearSessionTexts() {
     if (useFallback) {
         fallback.clearInFallback();
-        // 如果有更新回调，则用0更新UI
-        if (onUpdateCallback) {
-            onUpdateCallback(0);
-        }
+        if (onUpdateCallback) onUpdateCallback(0);
+        updateScanCount(0, 'session');
+        fire('sessionCleared'); // 触发事件
     } else if (worker) {
         worker.postMessage({ type: 'clear' });
+        // Worker 在清空后会发送一个 countUpdated 消息，其中 payload 为 0
+        // 这会触发 onUpdateCallback 和 updateScanCount，所以我们不需要在这里重复
         log('[会話掃描] 已向 Worker 發送清空指令。');
     }
 }

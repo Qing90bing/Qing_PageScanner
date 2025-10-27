@@ -24,6 +24,8 @@ const defaultSettings = {
   theme: 'system',
   // 是否显示悬浮按钮
   showFab: true,
+  // 是否在标题栏显示扫描计数
+  showScanCount: true,
   // 是否显示行号
   showLineNumbers: true,
   // 是否显示统计信息

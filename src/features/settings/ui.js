@@ -13,7 +13,7 @@ import { uiContainer } from '../../shared/ui/uiContainer.js';
 import { buildPanelDOM } from './panelBuilder.js';
 import { filterDefinitions, relatedSettingsDefinitions, selectSettingsDefinitions } from './config.js';
 import { t } from '../../shared/i18n/index.js';
-import { on } from '../../shared/utils/eventBus.js';
+import { on, fire } from '../../shared/utils/eventBus.js';
 import { settingsIcon } from '../../assets/icons/settingsIcon.js';
 import { filterIcon } from '../../assets/icons/filterIcon.js';
 import { saveIcon } from '../../assets/icons/saveIcon.js';
@@ -184,7 +184,7 @@ function handleSave() {
         fabContainer.classList.toggle('fab-container-visible', newSettings.showFab);
     }
     updateModalAddonsVisibility();
-
+    fire('settingsSaved');
     showNotification(t('notifications.settingsSaved'), { type: 'success' });
     hideSettingsPanel();
 }

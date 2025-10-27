@@ -43,7 +43,8 @@
       "show_statistics": "顯示統計資訊",
       "enable_word_wrap": "啟用文字自動換行",
       "text_truncation_limit": "啟用文本框字符限制",
-      "character_limit": "字符數"
+      "character_limit": "字符數",
+      "show_scan_count": "啟用標題列顯示掃描次數"
     },
     "advanced": {
       "enable_debug_logging": "啟用偵錯日誌"
@@ -75,6 +76,8 @@
   },
   "results": {
     "title": "提取的文本",
+    "scanCountSession": "已掃描 {count} 條文本",
+    "scanCountStatic": "共掃描 {count} 條文本",
     "totalCharacters": "總字數",
     "totalLines": "總行數",
     "noSummary": "當前沒有總結文本",

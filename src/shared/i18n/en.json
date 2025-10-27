@@ -43,7 +43,8 @@
       "show_statistics": "Show Statistics",
       "enable_word_wrap": "Enable text wrapping",
       "text_truncation_limit": "Enable Textbox Character Limit",
-      "character_limit": "Character Limit"
+      "character_limit": "Character Limit",
+      "show_scan_count": "Enable scan count display in title bar"
     },
     "advanced": {
       "enable_debug_logging": "Enable debug logging"
@@ -75,6 +76,8 @@
   },
   "results": {
     "title": "Extracted Text",
+    "scanCountSession": "Scanned {count} texts",
+    "scanCountStatic": "Total {count} texts scanned",
     "totalCharacters": "Total characters",
     "totalLines": "Total lines",
     "noSummary": "No summary text available",

@@ -19,7 +19,7 @@ import { isSessionRecording } from '../../features/session-scan/logic.js';
 // 重新导出常量以保持API兼容性
 export { SHOW_PLACEHOLDER, SHOW_LOADING } from './mainModal/modalState.js';
 import { createModalLayout } from './mainModal/modalLayout.js';
-import { populateModalHeader } from './mainModal/modalHeader.js';
+import { populateModalHeader, updateScanCount } from './mainModal/modalHeader.js';
 import { populateModalContent, showLoading, hideLoading } from './mainModal/modalContent.js';
 import { populateModalFooter, updateStatistics } from './mainModal/modalFooter.js';
 import { initializeLineNumbers, updateLineNumbers, updateActiveLine } from './mainModal/lineNumberLogic.js';
@@ -186,6 +186,11 @@ export function updateModalContent(content, shouldOpen = false, mode = 'quick-sc
         }
 
         const isData = content && content.trim().length > 0;
+
+        // 如果内容为空，或者内容是“无总结”的提示，我们也需要更新（隐藏）扫描计数器
+        if (!isData || content === t('results.noSummary')) {
+            updateScanCount(0, mode);
+        }
 
         // 使用 setTimeout 将重量级的 DOM 更新推迟到下一个事件循环
         // 这给了浏览器足够的时间来隐藏加载动画，避免UI冻结

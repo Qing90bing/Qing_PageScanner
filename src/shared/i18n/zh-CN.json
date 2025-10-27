@@ -43,7 +43,8 @@
       "show_statistics": "显示统计信息",
       "enable_word_wrap": "启用文本自动换行",
       "text_truncation_limit": "启用文本框字符限制",
-      "character_limit": "字符数"
+      "character_limit": "字符数",
+      "show_scan_count": "启用标题栏显示扫描计数"
     },
     "advanced": {
       "enable_debug_logging": "启用调试日志"
@@ -75,6 +76,8 @@
   },
   "results": {
     "title": "提取的文本",
+    "scanCountSession": "已扫描 {count} 条文本",
+    "scanCountStatic": "共扫描 {count} 条文本",
     "totalCharacters": "总字数",
     "totalLines": "总行数",
     "noSummary": "当前没有总结文本",

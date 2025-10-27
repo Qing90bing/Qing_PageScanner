@@ -5,6 +5,7 @@
   /* 浅色模式颜色变量 */
   --color-bg: #ffffff;
   --color-text: #333333;
+  --color-text-secondary: #666666; /* 新增：次要文本颜色 */
   --color-border: #e0e0e0;
   --color-overlay-bg: rgba(0,0,0,0.5);
   --color-shadow: rgba(0,0,0,0.2);
@@ -23,6 +24,7 @@
   /* 深色模式颜色变量 */
   --dark-color-bg: #2d2d2d;
   --dark-color-text: #f0f0f0;
+  --dark-color-text-secondary: #aaaaaa; /* 新增：次要文本颜色 */
   --dark-color-border: #555555;
   --dark-color-overlay-bg: rgba(0,0,0,0.7);
   --dark-color-shadow: rgba(0,0,0,0.4);
@@ -51,6 +53,8 @@
 :host([data-theme='light']) {
   --main-bg: var(--color-bg);
   --main-text: var(--color-text);
+  --main-text-secondary: var(--color-text-secondary);
+  --tc-secondary-text-color: var(--color-text-secondary);
   --main-border: var(--color-border);
   --main-overlay-bg: var(--color-overlay-bg);
   --main-shadow: var(--color-shadow);
@@ -76,6 +80,8 @@
 :host([data-theme='dark']) {
   --main-bg: var(--dark-color-bg);
   --main-text: var(--dark-color-text);
+  --main-text-secondary: var(--dark-color-text-secondary);
+  --tc-secondary-text-color: var(--dark-color-text-secondary);
   --main-border: var(--dark-color-border);
   --main-overlay-bg: var(--dark-color-overlay-bg);
   --main-shadow: var(--dark-color-shadow);

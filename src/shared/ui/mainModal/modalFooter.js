@@ -18,6 +18,7 @@ import warningIcon from '../../../assets/icons/warningIcon.js';
 import { createExportButton } from '../../../features/export/ui.js';
 import * as state from './modalState.js';
 import { SHOW_PLACEHOLDER } from './modalState.js';
+import { updateScanCount } from './modalHeader.js';
 
 
 let clearBtn, copyBtn;
@@ -102,6 +103,8 @@ export function populateModalFooter(modalFooter, updateContentCallback, clearSes
             } else {
                 log('用户确认清空快速扫描文本。');
                 updateContentCallback(SHOW_PLACEHOLDER, false, 'quick-scan');
+                // 强制更新静态扫描的计数器
+                updateScanCount(0, 'quick-scan');
             }
             showNotification(t('notifications.contentCleared'), { type: 'success' });
         } else {
