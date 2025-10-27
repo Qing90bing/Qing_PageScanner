@@ -10,40 +10,51 @@ import { loadSettings } from '../settings/logic.js';
 import { appConfig } from '../settings/config.js';
 import { log } from '../../shared/utils/logger.js';
 import { createTrustedWorkerUrl } from '../../shared/utils/trustedTypes.js';
+import { showNotification } from '../../shared/ui/components/notification.js';
+import { t } from '../../shared/i18n/index.js';
+import * as fallback from './fallback.js';
 
 // --- 模块级变量 ---
 let isRecording = false;
 let observer = null;
 let worker = null;
+let useFallback = false; // 新增：用于标记是否使用备选方案
 let onSummaryCallback = null; // 存储用于总结的回调
+let onUpdateCallback = null; // 新增：存储UI更新回调
 
 // --- MutationObserver 回调 ---
-// 主线程的回调现在只负责收集原始文本并发送给 Worker
+// 根据模式（Worker 或备选方案）处理 DOM 变动的回调
 const handleMutations = (mutations) => {
     const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(', ');
     const textsBatch = [];
 
     mutations.forEach(mutation => {
         mutation.addedNodes.forEach(node => {
-            // 只处理元素节点
-            if (node.nodeType !== Node.ELEMENT_NODE) return;
-            // 跳过被忽略的元素
-            if (node.closest(ignoredSelectorString)) return;
+            if (node.nodeType !== Node.ELEMENT_NODE || node.closest(ignoredSelectorString)) return;
 
-            // 使用 TreeWalker 高效遍历所有文本节点
             const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
             while(walker.nextNode()) {
-                const textNode = walker.currentNode;
-                if (textNode.nodeValue) {
-                    textsBatch.push(textNode.nodeValue);
+                if (walker.currentNode.nodeValue) {
+                    textsBatch.push(walker.currentNode.nodeValue);
                 }
             }
         });
     });
 
-    if (textsBatch.length > 0 && worker) {
-        // 将收集到的文本批量发送给 Worker
-        worker.postMessage({ type: 'data', payload: textsBatch });
+    if (textsBatch.length > 0) {
+        const logPrefix = '动态新发现';
+        if (useFallback) {
+            if (fallback.processTextsInFallback(textsBatch, logPrefix)) {
+                if (onUpdateCallback) {
+                    onUpdateCallback(fallback.getCountInFallback());
+                }
+            }
+        } else if (worker) {
+            worker.postMessage({
+                type: 'data',
+                payload: { texts: textsBatch, logPrefix }
+            });
+        }
     }
 };
 
@@ -56,58 +67,71 @@ const handleMutations = (mutations) => {
 export const start = (onUpdate) => {
     if (isRecording) return;
 
-    // 如果已存在一个 worker 实例（来自上一次未被清除的会话），先终止它
-    if (worker) {
-        worker.terminate();
-    }
-
-    log('会话扫描：启动 Worker 并开始初始扫描...');
+    if (worker) worker.terminate();
+    onUpdateCallback = onUpdate;
+    useFallback = false;
     isRecording = true;
 
-    // 创建并初始化 Worker
+    const { filterRules } = loadSettings();
+
+    // 备选模式激活逻辑
+    const activateFallbackMode = (initialTexts) => {
+        log('[会话扫描] 切换到主线程备选方案。', 'warn');
+        worker = null;
+        useFallback = true;
+        showNotification(t('notifications.cspWorkerWarning'), { type: 'info', duration: 5000 });
+
+        fallback.initFallback(filterRules);
+        if (fallback.processTextsInFallback(initialTexts) && onUpdateCallback) {
+            onUpdateCallback(fallback.getCountInFallback());
+        }
+
+        // 在备选模式初始化后启动观察者
+        observer = new MutationObserver(handleMutations);
+        observer.observe(document.body, { childList: true, subtree: true });
+    };
+
+    const initialTexts = extractAndProcessText();
+
     try {
-        // eslint-disable-next-line no-undef
+        log('会话扫描：尝试启动 Web Worker...');
         const workerScript = __WORKER_STRING__;
         const workerUrl = `data:application/javascript,${encodeURIComponent(workerScript)}`;
         const trustedUrl = createTrustedWorkerUrl(workerUrl);
         worker = new Worker(trustedUrl);
 
-        // 设置 Worker 的消息监听器
         worker.onmessage = (event) => {
             const { type, payload } = event.data;
-            if (type === 'countUpdated' && onUpdate) {
-                onUpdate(payload); // 更新UI计数器
+            if (type === 'countUpdated' && onUpdateCallback) {
+                onUpdateCallback(payload);
             } else if (type === 'summaryReady' && onSummaryCallback) {
-                onSummaryCallback(payload); // 提供总结数据
-                onSummaryCallback = null; // 一次性回调
+                onSummaryCallback(payload);
+                onSummaryCallback = null;
             }
         };
 
         worker.onerror = (error) => {
-            console.error('Worker error:', error);
-            log(`[会话扫描] Worker 发生错误: ${error.message}`);
-            // 可以在这里通知UI
-            stop(); // 出现错误时停止会话
+            log('[会话扫描] Worker 初始化失败。这很可能是由于网站的内容安全策略（CSP）阻止了脚本。', 'warn');
+            log(`[会话扫描] 原始错误: ${error.message}`, 'debug');
+            if (worker) worker.terminate();
+            activateFallbackMode(initialTexts);
         };
 
-        // 向 Worker 发送初始化配置
-        const { filterRules } = loadSettings();
         worker.postMessage({ type: 'init', payload: { filterRules } });
-
-        // 执行初始页面扫描
-        const initialTexts = extractAndProcessText();
-        worker.postMessage({ type: 'data', payload: initialTexts });
-        log(`[会话扫描] 已发送 ${initialTexts.length} 条初始文本到 Worker。`);
-
-        // 启动 MutationObserver
-        observer = new MutationObserver(handleMutations);
-        observer.observe(document.body, { childList: true, subtree: true });
+        // 初始扫描不带 logPrefix
+        worker.postMessage({ type: 'data', payload: { texts: initialTexts } });
+        log(`[会话扫描] Worker 初始化成功，已发送 ${initialTexts.length} 条初始文本以开始会话。`);
 
     } catch (e) {
-        console.error('Failed to initialize web worker:', e);
-        log(`[会话扫描] Worker 初始化失败: ${e.message}`);
-        isRecording = false;
-        worker = null;
+        // 同步错误（如浏览器不支持 Worker）
+        log(`[会话扫描] Worker 初始化时发生同步错误: ${e.message}`, 'error');
+        activateFallbackMode(initialTexts);
+    }
+
+    // 只有在 Worker 模式成功初始化时，才在这里启动观察者
+    if (!useFallback) {
+        observer = new MutationObserver(handleMutations);
+        observer.observe(document.body, { childList: true, subtree: true });
     }
 };
 
@@ -117,7 +141,7 @@ export const start = (onUpdate) => {
  */
 export const stop = (onStopped) => {
     if (!isRecording) {
-        if (onStopped) onStopped(0); // 如果未在录制，返回0
+        if (onStopped) onStopped(0);
         return;
     }
 
@@ -127,21 +151,23 @@ export const stop = (onStopped) => {
         observer = null;
     }
     isRecording = false;
+    onUpdateCallback = null; // 清除回调
 
-    // 请求最终的计数值
-    if (onStopped && worker) {
-        // 使用一次性的消息监听器来获取最终计数
-        const finalCountListener = (event) => {
-            if (event.data.type === 'countUpdated') {
-                onStopped(event.data.payload);
-                worker.removeEventListener('message', finalCountListener);
-            }
-        };
-        worker.addEventListener('message', finalCountListener);
-        // 触发一次计数更新请求
-        worker.postMessage({ type: 'getCount' });
-    } else if (onStopped) {
-        onStopped(0);
+    if (onStopped) {
+        if (useFallback) {
+            onStopped(fallback.getCountInFallback());
+        } else if (worker) {
+            const finalCountListener = (event) => {
+                if (event.data.type === 'countUpdated') {
+                    onStopped(event.data.payload);
+                    worker.removeEventListener('message', finalCountListener);
+                }
+            };
+            worker.addEventListener('message', finalCountListener);
+            worker.postMessage({ type: 'getCount' });
+        } else {
+            onStopped(0);
+        }
     }
 };
 
@@ -150,11 +176,14 @@ export const stop = (onStopped) => {
  * @param {Function} onReady - 当总结文本准备好时调用的回调函数。
  */
 export const requestSummary = (onReady) => {
-    if (worker && onReady) {
+    if (!onReady) return;
+
+    if (useFallback) {
+        onReady(fallback.getSummaryInFallback());
+    } else if (worker) {
         onSummaryCallback = onReady;
         worker.postMessage({ type: 'getSummary' });
-    } else if (onReady) {
-        // 如果 worker 不存在，立即用空结果调用回调
+    } else {
         onReady("[]");
     }
 };
@@ -162,11 +191,17 @@ export const requestSummary = (onReady) => {
 export const isSessionRecording = () => isRecording;
 
 /**
- * @description 请求 Worker 清空会话期间收集的所有文本。
+ * @description 清空会话期间收集的所有文本。
  */
 export function clearSessionTexts() {
-    if (worker) {
+    if (useFallback) {
+        fallback.clearInFallback();
+        // 如果有更新回调，则用0更新UI
+        if (onUpdateCallback) {
+            onUpdateCallback(0);
+        }
+    } else if (worker) {
         worker.postMessage({ type: 'clear' });
-        log('[会话扫描] 已向 Worker 发送清空指令。');
+        log('[会話掃描] 已向 Worker 發送清空指令。');
     }
 }

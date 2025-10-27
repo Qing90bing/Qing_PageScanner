@@ -53,20 +53,20 @@ const ruleChecks = new Map([
 /**
  * @public
  * @description 根据提供的一组规则，判断一个文本字符串是否应该被过滤。
+ * @description 根据提供的一组规则，判断一个文本字符串是否应该被过滤。
  * @param {string} text - 需要检查的文本（注意：此函数期望传入的是已经 trim() 过的文本）。
  * @param {object} filterRules - 从设置中加载的过滤规则配置对象。
- * @returns {string|null} - 如果文本应该被过滤，则返回过滤原因的字符串；否则返回 null。
+ * @returns {{ reason: string }|null} - 如果文本应该被过滤，则返回一个包含过滤原因的对象；否则返回 null。
  */
 export function shouldFilter(text, filterRules) {
   for (const [key, rule] of ruleChecks.entries()) {
-    // 检查该规则是否在用户设置中被启用
     if (filterRules[key]) {
       const isFiltered = rule.regex ? rule.regex.test(text) : rule.test(text);
       if (isFiltered) {
-        return rule.label; // 如果匹配，返回规则的标签作为原因
+        return { reason: rule.label };
       }
     }
   }
 
-  return null; // 如果所有启用的规则都没有匹配，则不过滤
+  return null;
 }

@@ -19,18 +19,21 @@ import { shouldFilter } from '../../shared/utils/filterLogic.js';
 /**
  * 处理并可能添加单个文本片段到会话集合中。
  * @param {string} rawText - 待处理的原始文本。
+ * @param {string} [logPrefix=''] - 用于日志输出的前缀。
  * @returns {boolean} - 如果成功添加了新文本，则返回 true。
  */
-function processAndAddText(rawText) {
+function processAndAddText(rawText, logPrefix = '') {
     if (!rawText || typeof rawText !== 'string') return false;
 
-    // 规范化并 trim 文本以供过滤检查
     const normalizedText = rawText.normalize('NFC');
-    let textForFiltering = normalizedText.replace(/(\r\n|\n|\r)+/g, '\n').trim();
+    const textForFiltering = normalizedText.replace(/(\r\n|\n|\r)+/g, '\n').trim();
     if (textForFiltering === '') return false;
 
-    // 应用过滤规则
-    if (shouldFilter(textForFiltering, filterRules)) {
+    const filterResult = shouldFilter(textForFiltering, filterRules);
+    if (filterResult) {
+        // Worker 中没有 log 工具，直接使用 console.log
+        const prefix = logPrefix ? `${logPrefix} ` : '';
+        console.log(`[会话扫描 Worker] ${prefix}文本已过滤: "${textForFiltering}" (原因: ${filterResult.reason})`);
         return false;
     }
 
@@ -70,10 +73,11 @@ self.onmessage = (event) => {
 
         // 数据处理：接收一批原始文本进行处理
         case 'data': {
+            const { texts, logPrefix } = payload;
             let changed = false;
-            if (Array.isArray(payload)) {
-                payload.forEach(text => {
-                    if (processAndAddText(text)) {
+            if (Array.isArray(texts)) {
+                texts.forEach(text => {
+                    if (processAndAddText(text, logPrefix)) {
                         changed = true;
                     }
                 });

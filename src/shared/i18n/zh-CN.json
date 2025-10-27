@@ -88,7 +88,8 @@
     "modalInitError": "模态框尚未初始化。",
     "nothingToCopy": "沒有內容可複製",
     "contentCleared": "内容已清空",
-    "noTextSelected": "未选择文本"
+    "noTextSelected": "未选择文本",
+    "cspWorkerWarning": "由于网站安全限制，已切换到兼容扫描模式。"
   },
   "placeholders": {
     "click": "点击 ",

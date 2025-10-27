@@ -14,28 +14,31 @@ async function build() {
         const header = await fs.readFile('src/header.txt', 'utf-8');
 
         // 2. 读取所有 CSS 文件并合并
+        console.log('正在读取和合并 CSS 文件...');
         const stylesDir = 'src/assets/styles';
         const cssFiles = await fs.readdir(stylesDir);
 
         let allCssContent = '';
-        const themeFile = 'themes.css';
+        const themeFile = 'themes.css'; // 主题文件应最先加载
 
-        const filteredCssFiles = cssFiles.filter(file => path.extname(file) === '.css');
-        const sortedCssFiles = filteredCssFiles.sort((a, b) => {
-            if (a === themeFile) return -1;
-            if (b === themeFile) return 1;
-            return 0;
-        });
+        // 筛选并排序 CSS 文件，确保 themes.css 在最前面
+        const sortedCssFiles = cssFiles
+            .filter(file => path.extname(file) === '.css')
+            .sort((a, b) => {
+                if (a === themeFile) return -1;
+                if (b === themeFile) return 1;
+                return 0;
+            });
 
         for (const file of sortedCssFiles) {
             const content = await fs.readFile(path.join(stylesDir, file), 'utf-8');
             if (allCssContent) {
-                 allCssContent += `\n\n/* --- From ${file} --- */\n`;
+                // 添加分隔注释，便于调试
+                allCssContent += `\n\n/* --- From ${file} --- */\n`;
             }
             allCssContent += content;
         }
-
-        const confirmationModalCss = await fs.readFile('src/assets/styles/confirmationModal.css', 'utf-8');
+        console.log('CSS 文件合并完成。');
 
         // 3. 【新增】独立打包 Web Worker 脚本
         console.log('正在打包 Web Workers...');
@@ -56,6 +59,7 @@ async function build() {
         console.log('Web Workers 打包完成。');
 
         // 4. 从 src/main.js 开始打包主应用程序代码
+        console.log('正在打包主应用程序...');
         const result = await esbuild.build({
             entryPoints: ['src/main.js'],
             bundle: true,
@@ -64,13 +68,14 @@ async function build() {
             format: 'iife',
             globalName: 'TextExtractor', // 暴露 IIFE 的全局变量名
             define: {
+                // 将所有合并后的 CSS 作为单个字符串注入
                 '__INJECTED_CSS__': JSON.stringify(allCssContent),
-                '__CONFIRMATION_MODAL_CSS__': JSON.stringify(confirmationModalCss),
                 // 将打包好的、无依赖的 Worker 代码注入
                 '__WORKER_STRING__': JSON.stringify(sessionScanWorkerCode),
                 '__QUICK_SCAN_WORKER_STRING__': JSON.stringify(quickScanWorkerCode),
             }
         });
+        console.log('主应用程序打包完成。');
 
         const bundledCode = result.outputFiles[0].text;
 

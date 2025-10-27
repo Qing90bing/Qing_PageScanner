@@ -38,19 +38,18 @@ export function main() {
   // eslint-disable-next-line no-undef
   styleElement.textContent = __INJECTED_CSS__;
   uiContainer.appendChild(styleElement);
-    'use strict';
-    
-    // 初始化主题
-    initTheme();
 
-    // 初始化设置功能
-    initializeSettings();
+  // 初始化主题
+  initTheme();
 
-    // 初始化所有核心UI组件和交互
-    initUI();
+  // 初始化设置功能
+  initializeSettings();
 
-    // 初始化导出器
-    initializeExporter();
+  // 初始化所有核心UI组件和交互
+  initUI();
+
+  // 初始化导出器
+  initializeExporter();
 }
 
 // --- 初始化脚本 ---
