@@ -1,11 +1,23 @@
-// src/ui/components/liveCounter.js
+// src/features/session-scan/liveCounterUI.js
 import { uiContainer } from '../../shared/ui/uiContainer.js';
 import { t } from '../../shared/i18n/index.js';
 import { animateCount, easeOutQuad } from '../../shared/ui/animations.js';
+import { on } from '../../shared/utils/eventBus.js';
 
 let counterElement = null;
 let countSpan = null; // 用于存放数字的 span 元素
+let textNode = null; // 用于存放文本节点
 let currentCount = 0; // 用于跟踪当前显示的计数值
+
+/**
+ * 更新计数器的文本标签以匹配当前语言
+ */
+function updateCounterText() {
+    if (textNode) {
+        textNode.textContent = t('common.discovered');
+    }
+}
+
 
 /**
  * 创建计数器的DOM元素（如果尚不存在）
@@ -16,13 +28,16 @@ function createCounterElement() {
     counterElement = document.createElement('div');
     counterElement.className = 'tc-live-counter';
 
-    const textNode = document.createTextNode(t('common.discovered'));
+    textNode = document.createTextNode(t('common.discovered'));
     countSpan = document.createElement('span');
     countSpan.textContent = '0';
 
     counterElement.appendChild(textNode);
     counterElement.appendChild(countSpan);
     uiContainer.appendChild(counterElement);
+
+    // 监听语言变化事件以更新文本
+    on('languageChanged', updateCounterText);
 }
 
 /**

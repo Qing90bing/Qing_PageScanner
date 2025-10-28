@@ -1069,9 +1069,9 @@ ${result.join(",\n")}
         container.appendChild(iconWrapper);
       }
     }
-    const textNode = document.createElement("span");
-    textNode.textContent = text;
-    container.appendChild(textNode);
+    const textNode2 = document.createElement("span");
+    textNode2.textContent = text;
+    container.appendChild(textNode2);
     return container;
   }
   var simpleTemplate = (template, values) => {
@@ -2048,17 +2048,24 @@ ${result.join(",\n")}
   var easeOutQuad = (t2) => t2 * (2 - t2);
   var counterElement = null;
   var countSpan = null;
+  var textNode = null;
   var currentCount = 0;
+  function updateCounterText() {
+    if (textNode) {
+      textNode.textContent = t("common.discovered");
+    }
+  }
   function createCounterElement() {
     if (counterElement) return;
     counterElement = document.createElement("div");
     counterElement.className = "tc-live-counter";
-    const textNode = document.createTextNode(t("common.discovered"));
+    textNode = document.createTextNode(t("common.discovered"));
     countSpan = document.createElement("span");
     countSpan.textContent = "0";
     counterElement.appendChild(textNode);
     counterElement.appendChild(countSpan);
     uiContainer.appendChild(counterElement);
+    on("languageChanged", updateCounterText);
   }
   function showLiveCounter() {
     createCounterElement();
