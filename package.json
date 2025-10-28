@@ -20,7 +20,9 @@
   },
   "homepage": "https://github.com/Qing90bing/Qing_PageScanner#readme",
   "devDependencies": {
-    "esbuild": "^0.25.10"
+    "esbuild": "^0.25.10",
+    "postcss": "^8.5.6",
+    "postcss-discard-comments": "^7.0.4"
   },
   "dependencies": {
     "strip-comments": "^2.0.1"

@@ -4,6 +4,8 @@ import esbuild from 'esbuild';
 import fs from 'fs/promises';
 import path from 'path';
 import strip from 'strip-comments';
+import postcss from 'postcss';
+import discardComments from 'postcss-discard-comments';
 
 // --- 主构建函数 ---
 async function build() {
@@ -32,13 +34,15 @@ async function build() {
 
         for (const file of sortedCssFiles) {
             const content = await fs.readFile(path.join(stylesDir, file), 'utf-8');
-            if (allCssContent) {
-                // 添加分隔注释，便于调试
-                allCssContent += `\n\n/* --- From ${file} --- */\n`;
-            }
-            allCssContent += content;
+            allCssContent += content + '\n';
         }
         console.log('CSS 文件合并完成。');
+
+        // 使用 PostCSS 清理 CSS 注释
+        console.log('正在清理 CSS 注释...');
+        const postcssResult = await postcss([discardComments({ removeAll: true })]).process(allCssContent, { from: undefined });
+        const cleanedCss = postcssResult.css;
+        console.log('CSS 注释清理完成。');
 
         // 3. 【新增】独立打包 Web Worker 脚本
         console.log('正在打包 Web Workers...');
@@ -69,7 +73,7 @@ async function build() {
             globalName: 'TextExtractor', // 暴露 IIFE 的全局变量名
             define: {
                 // 将所有合并后的 CSS 作为单个字符串注入
-                '__INJECTED_CSS__': JSON.stringify(allCssContent),
+                '__INJECTED_CSS__': JSON.stringify(cleanedCss),
                 // 将打包好的、无依赖的 Worker 代码注入
                 '__WORKER_STRING__': JSON.stringify(sessionScanWorkerCode),
                 '__QUICK_SCAN_WORKER_STRING__': JSON.stringify(quickScanWorkerCode),
