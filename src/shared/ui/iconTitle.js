@@ -26,6 +26,7 @@ export function createIconTitle(iconSVG, text) {
     }
 
     const textNode = document.createElement('span');
+    textNode.className = 'icon-title-text';
     textNode.textContent = text;
     container.appendChild(textNode);
 

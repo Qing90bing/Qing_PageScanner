@@ -1070,6 +1070,7 @@ ${result.join(",\n")}
       }
     }
     const textNode2 = document.createElement("span");
+    textNode2.className = "icon-title-text";
     textNode2.textContent = text;
     container.appendChild(textNode2);
     return container;
