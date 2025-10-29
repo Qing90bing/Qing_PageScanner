@@ -40,7 +40,7 @@
       "hex_color_codes": "過濾十六進位顏色",
       "email_addresses": "過濾郵件地址",
       "uuids": "過濾 UUID",
-      "git_commit_hashes": "過濾Git提交雜湊值",
+      "git_commit_hashes": "過濾 Git 提交雜湊值",
       "website_urls": "過濾網址",
       "website_urls_title": "過濾網址 (URL)",
       "shorthand_numbers": "過濾簡寫數字",

@@ -40,7 +40,7 @@
       "hex_color_codes": "过滤十六进制颜色",
       "email_addresses": "过滤邮件地址",
       "uuids": "过滤 UUID",
-      "git_commit_hashes": "过滤Git提交哈希值",
+      "git_commit_hashes": "过滤 Git 提交哈希值",
       "website_urls": "过滤网址",
       "website_urls_title": "过滤网址 (URL)",
       "shorthand_numbers": "过滤简写数字",
