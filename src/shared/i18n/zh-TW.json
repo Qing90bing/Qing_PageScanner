@@ -124,7 +124,7 @@
       "term": "此規則會過濾掉常見的、通常無需翻譯的 UI 術語。<br><br><strong>更多範例：</strong><br>• \"OK\", \"Cancel\", \"Submit\"<br>• \"Login\", \"Settings\", \"Help\"",
       "single_letter": "此規則會過濾掉由<strong>單個</strong>英文字母組成的文本，忽略大小寫。<br><br><strong>範例：</strong><br>• \"A\" (將被過濾)<br>• \"b\" (將被過濾)<br>• \"AB\" (不會被過濾)",
       "repeating_chars": "此規則會過濾掉由<strong>同一個字元</strong>連續重複 3 次或以上組成的文本。<br><br><strong>範例：</strong><br>• \"======\"<br>• \"bbbbb\"<br>• \"....\"",
-      "file_paths": "此規則會嘗試識別並過濾掉類似作業系統檔案路徑或 URL 的文本。<br><br><strong>更多範例：</strong><br>• \"/path/to/file.js\"<br>• \"C:\\Users\\Test\"<br>• \"https://example.com/data\"",
+      "file_paths": "此規則會嘗試識別並過濾掉類似作業系統檔案路徑或 URL 的文本。<br><br><strong>更多範例：</strong><br>• \"/path/to/file.js\"<br>• \"C:\\Users\\Test\"",
       "hex_color_codes": "此規則會過濾掉標準的 CSS 十六進位顏色代碼（3位或6位）。<br><br><strong>範例：</strong><br>• \"#FFFFFF\"<br>• \"#ff0000\"<br>• \"#f0c\"",
       "email_addresses": "此規則會過濾掉符合標準格式的電子郵件地址。<br><br><strong>範例：</strong><br>• \"example@domain.com\"<br>• \"user.name@sub.domain.org\"",
       "uuids": "此規則會過濾掉通用唯一識別碼 (UUID)。<br><br><strong>範例：</strong><br>• \"123e4567-e89b-12d3-a456-426614174000\"",

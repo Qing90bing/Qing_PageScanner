@@ -218,7 +218,7 @@ var TextExtractor = (() => {
         term: 'This rule filters out common UI terms that typically do not require translation.<br><br><strong>More Examples:</strong><br>\u2022 "OK", "Cancel", "Submit"<br>\u2022 "Login", "Settings", "Help"',
         single_letter: 'This rule filters out text consisting of a <strong>single</strong> English letter, case-insensitive.<br><br><strong>Examples:</strong><br>\u2022 "A" (will be filtered)<br>\u2022 "b" (will be filtered)<br>\u2022 "AB" (will not be filtered)',
         repeating_chars: 'This rule filters out text composed of the <strong>same character</strong> repeating 3 or more times consecutively.<br><br><strong>Examples:</strong><br>\u2022 "======"<br>\u2022 "bbbbb"<br>\u2022 "...."',
-        file_paths: 'This rule attempts to identify and filter out text that resembles operating system file paths or URLs.<br><br><strong>More Examples:</strong><br>\u2022 "/path/to/file.js"<br>\u2022 "C:\\Users\\Test"<br>\u2022 "https://example.com/data"',
+        file_paths: 'This rule attempts to identify and filter out text that resembles operating system file paths or URLs.<br><br><strong>More Examples:</strong><br>\u2022 "/path/to/file.js"<br>\u2022 "C:\\Users\\Test"',
         hex_color_codes: 'This rule filters out standard CSS hexadecimal color codes (3 or 6 digits).<br><br><strong>Examples:</strong><br>\u2022 "#FFFFFF"<br>\u2022 "#ff0000"<br>\u2022 "#f0c"',
         email_addresses: 'This rule filters out text that matches the standard format of an email address.<br><br><strong>Examples:</strong><br>\u2022 "example@domain.com"<br>\u2022 "user.name@sub.domain.org"',
         uuids: 'This rule filters out Universally Unique Identifiers (UUIDs).<br><br><strong>Example:</strong><br>\u2022 "123e4567-e89b-12d3-a456-426614174000"',
@@ -365,7 +365,7 @@ var TextExtractor = (() => {
         term: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389\u5E38\u89C1\u7684\u3001\u901A\u5E38\u65E0\u9700\u7FFB\u8BD1\u7684 UI \u672F\u8BED\u3002<br><br><strong>\u66F4\u591A\u793A\u4F8B\uFF1A</strong><br>\u2022 "OK", "Cancel", "Submit"<br>\u2022 "Login", "Settings", "Help"',
         single_letter: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389\u7531<strong>\u5355\u4E2A</strong>\u82F1\u6587\u5B57\u6BCD\u7EC4\u6210\u7684\u6587\u672C\uFF0C\u5FFD\u7565\u5927\u5C0F\u5199\u3002<br><br><strong>\u793A\u4F8B\uFF1A</strong><br>\u2022 "A" (\u5C06\u88AB\u8FC7\u6EE4)<br>\u2022 "b" (\u5C06\u88AB\u8FC7\u6EE4)<br>\u2022 "AB" (\u4E0D\u4F1A\u88AB\u8FC7\u6EE4)',
         repeating_chars: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389\u7531<strong>\u540C\u4E00\u4E2A\u5B57\u7B26</strong>\u8FDE\u7EED\u91CD\u590D 3 \u6B21\u6216\u4EE5\u4E0A\u7EC4\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u793A\u4F8B\uFF1A</strong><br>\u2022 "======"<br>\u2022 "bbbbb"<br>\u2022 "...."',
-        file_paths: '\u6B64\u89C4\u5219\u4F1A\u5C1D\u8BD5\u8BC6\u522B\u5E76\u8FC7\u6EE4\u6389\u7C7B\u4F3C\u64CD\u4F5C\u7CFB\u7EDF\u6587\u4EF6\u8DEF\u5F84\u6216 URL \u7684\u6587\u672C\u3002<br><br><strong>\u66F4\u591A\u793A\u4F8B\uFF1A</strong><br>\u2022 "/path/to/file.js"<br>\u2022 "C:\\Users\\Test"<br>\u2022 "https://example.com/data"',
+        file_paths: '\u6B64\u89C4\u5219\u4F1A\u5C1D\u8BD5\u8BC6\u522B\u5E76\u8FC7\u6EE4\u6389\u7C7B\u4F3C\u64CD\u4F5C\u7CFB\u7EDF\u6587\u4EF6\u8DEF\u5F84\u6216 URL \u7684\u6587\u672C\u3002<br><br><strong>\u66F4\u591A\u793A\u4F8B\uFF1A</strong><br>\u2022 "/path/to/file.js"<br>\u2022 "C:\\Users\\Test"',
         hex_color_codes: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389\u6807\u51C6\u7684 CSS \u5341\u516D\u8FDB\u5236\u989C\u8272\u4EE3\u7801\uFF083\u4F4D\u62166\u4F4D\uFF09\u3002<br><br><strong>\u793A\u4F8B\uFF1A</strong><br>\u2022 "#FFFFFF"<br>\u2022 "#ff0000"<br>\u2022 "#f0c"',
         email_addresses: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389\u7B26\u5408\u6807\u51C6\u683C\u5F0F\u7684\u7535\u5B50\u90AE\u4EF6\u5730\u5740\u3002<br><br><strong>\u793A\u4F8B\uFF1A</strong><br>\u2022 "example@domain.com"<br>\u2022 "user.name@sub.domain.org"',
         uuids: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389\u901A\u7528\u552F\u4E00\u6807\u8BC6\u7B26 (UUID)\u3002<br><br><strong>\u793A\u4F8B\uFF1A</strong><br>\u2022 "123e4567-e89b-12d3-a456-426614174000"',
@@ -512,7 +512,7 @@ var TextExtractor = (() => {
         term: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389\u5E38\u898B\u7684\u3001\u901A\u5E38\u7121\u9700\u7FFB\u8B6F\u7684 UI \u8853\u8A9E\u3002<br><br><strong>\u66F4\u591A\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "OK", "Cancel", "Submit"<br>\u2022 "Login", "Settings", "Help"',
         single_letter: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389\u7531<strong>\u55AE\u500B</strong>\u82F1\u6587\u5B57\u6BCD\u7D44\u6210\u7684\u6587\u672C\uFF0C\u5FFD\u7565\u5927\u5C0F\u5BEB\u3002<br><br><strong>\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "A" (\u5C07\u88AB\u904E\u6FFE)<br>\u2022 "b" (\u5C07\u88AB\u904E\u6FFE)<br>\u2022 "AB" (\u4E0D\u6703\u88AB\u904E\u6FFE)',
         repeating_chars: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389\u7531<strong>\u540C\u4E00\u500B\u5B57\u5143</strong>\u9023\u7E8C\u91CD\u8907 3 \u6B21\u6216\u4EE5\u4E0A\u7D44\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "======"<br>\u2022 "bbbbb"<br>\u2022 "...."',
-        file_paths: '\u6B64\u898F\u5247\u6703\u5617\u8A66\u8B58\u5225\u4E26\u904E\u6FFE\u6389\u985E\u4F3C\u4F5C\u696D\u7CFB\u7D71\u6A94\u6848\u8DEF\u5F91\u6216 URL \u7684\u6587\u672C\u3002<br><br><strong>\u66F4\u591A\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "/path/to/file.js"<br>\u2022 "C:\\Users\\Test"<br>\u2022 "https://example.com/data"',
+        file_paths: '\u6B64\u898F\u5247\u6703\u5617\u8A66\u8B58\u5225\u4E26\u904E\u6FFE\u6389\u985E\u4F3C\u4F5C\u696D\u7CFB\u7D71\u6A94\u6848\u8DEF\u5F91\u6216 URL \u7684\u6587\u672C\u3002<br><br><strong>\u66F4\u591A\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "/path/to/file.js"<br>\u2022 "C:\\Users\\Test"',
         hex_color_codes: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389\u6A19\u6E96\u7684 CSS \u5341\u516D\u9032\u4F4D\u984F\u8272\u4EE3\u78BC\uFF083\u4F4D\u62166\u4F4D\uFF09\u3002<br><br><strong>\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "#FFFFFF"<br>\u2022 "#ff0000"<br>\u2022 "#f0c"',
         email_addresses: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389\u7B26\u5408\u6A19\u6E96\u683C\u5F0F\u7684\u96FB\u5B50\u90F5\u4EF6\u5730\u5740\u3002<br><br><strong>\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "example@domain.com"<br>\u2022 "user.name@sub.domain.org"',
         uuids: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389\u901A\u7528\u552F\u4E00\u8B58\u5225\u78BC (UUID)\u3002<br><br><strong>\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "123e4567-e89b-12d3-a456-426614174000"',
@@ -1080,17 +1080,24 @@ var TextExtractor = (() => {
     return Array.from(uniqueTexts);
   };
   var workerPolicy;
+  var htmlPolicy;
   if (window.trustedTypes && window.trustedTypes.createPolicy) {
     try {
       workerPolicy = window.trustedTypes.createPolicy("text-extractor-worker", {
         createScriptURL: (url) => url
       });
     } catch (e) {
-      if (e.name === "TypeError" && e.message.includes("Policy already exists")) {
-        workerPolicy = null;
-      } else {
-        console.error("Failed to create Trusted Types policy:", e);
-        workerPolicy = null;
+      if (!(e.name === "TypeError" && e.message.includes("Policy already exists"))) {
+        console.error("Failed to create Trusted Types worker policy:", e);
+      }
+    }
+    try {
+      htmlPolicy = window.trustedTypes.createPolicy("text-extractor-html", {
+        createHTML: (htmlString) => htmlString
+      });
+    } catch (e) {
+      if (!(e.name === "TypeError" && e.message.includes("Policy already exists"))) {
+        console.error("Failed to create Trusted Types HTML policy:", e);
       }
     }
   }
@@ -1102,11 +1109,23 @@ var TextExtractor = (() => {
       try {
         return window.trustedTypes.defaultPolicy.createScriptURL(url);
       } catch (e) {
-        console.warn("Trusted Types default policy failed, falling back to raw URL.", e);
-        return url;
+        console.warn("Trusted Types default policy failed for worker URL, falling back to raw URL.", e);
       }
     }
     return url;
+  }
+  function createTrustedHTML(htmlString) {
+    if (htmlPolicy) {
+      return htmlPolicy.createHTML(htmlString);
+    }
+    if (window.trustedTypes && window.trustedTypes.defaultPolicy) {
+      try {
+        return window.trustedTypes.defaultPolicy.createHTML(htmlString);
+      } catch (e) {
+        console.warn("Trusted Types default policy failed for HTML, falling back to raw string.", e);
+      }
+    }
+    return htmlString;
   }
   var formatTextsForTranslation = (texts) => {
     const result = texts.map(
@@ -1473,7 +1492,7 @@ ${result.join(",\n")}
         term: 'This rule filters out common UI terms that typically do not require translation.<br><br><strong>More Examples:</strong><br>\\u2022 "OK", "Cancel", "Submit"<br>\\u2022 "Login", "Settings", "Help"',
         single_letter: 'This rule filters out text consisting of a <strong>single</strong> English letter, case-insensitive.<br><br><strong>Examples:</strong><br>\\u2022 "A" (will be filtered)<br>\\u2022 "b" (will be filtered)<br>\\u2022 "AB" (will not be filtered)',
         repeating_chars: 'This rule filters out text composed of the <strong>same character</strong> repeating 3 or more times consecutively.<br><br><strong>Examples:</strong><br>\\u2022 "======"<br>\\u2022 "bbbbb"<br>\\u2022 "...."',
-        file_paths: 'This rule attempts to identify and filter out text that resembles operating system file paths or URLs.<br><br><strong>More Examples:</strong><br>\\u2022 "/path/to/file.js"<br>\\u2022 "C:\\\\Users\\\\Test"<br>\\u2022 "https://example.com/data"',
+        file_paths: 'This rule attempts to identify and filter out text that resembles operating system file paths or URLs.<br><br><strong>More Examples:</strong><br>\\u2022 "/path/to/file.js"<br>\\u2022 "C:\\\\Users\\\\Test"',
         hex_color_codes: 'This rule filters out standard CSS hexadecimal color codes (3 or 6 digits).<br><br><strong>Examples:</strong><br>\\u2022 "#FFFFFF"<br>\\u2022 "#ff0000"<br>\\u2022 "#f0c"',
         email_addresses: 'This rule filters out text that matches the standard format of an email address.<br><br><strong>Examples:</strong><br>\\u2022 "example@domain.com"<br>\\u2022 "user.name@sub.domain.org"',
         uuids: 'This rule filters out Universally Unique Identifiers (UUIDs).<br><br><strong>Example:</strong><br>\\u2022 "123e4567-e89b-12d3-a456-426614174000"',
@@ -1621,7 +1640,7 @@ ${result.join(",\n")}
         term: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u5E38\\u89C1\\u7684\\u3001\\u901A\\u5E38\\u65E0\\u9700\\u7FFB\\u8BD1\\u7684 UI \\u672F\\u8BED\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "OK", "Cancel", "Submit"<br>\\u2022 "Login", "Settings", "Help"',
         single_letter: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u7531<strong>\\u5355\\u4E2A</strong>\\u82F1\\u6587\\u5B57\\u6BCD\\u7EC4\\u6210\\u7684\\u6587\\u672C\\uFF0C\\u5FFD\\u7565\\u5927\\u5C0F\\u5199\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "A" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "b" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "AB" (\\u4E0D\\u4F1A\\u88AB\\u8FC7\\u6EE4)',
         repeating_chars: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u7531<strong>\\u540C\\u4E00\\u4E2A\\u5B57\\u7B26</strong>\\u8FDE\\u7EED\\u91CD\\u590D 3 \\u6B21\\u6216\\u4EE5\\u4E0A\\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "======"<br>\\u2022 "bbbbb"<br>\\u2022 "...."',
-        file_paths: '\\u6B64\\u89C4\\u5219\\u4F1A\\u5C1D\\u8BD5\\u8BC6\\u522B\\u5E76\\u8FC7\\u6EE4\\u6389\\u7C7B\\u4F3C\\u64CD\\u4F5C\\u7CFB\\u7EDF\\u6587\\u4EF6\\u8DEF\\u5F84\\u6216 URL \\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "/path/to/file.js"<br>\\u2022 "C:\\\\Users\\\\Test"<br>\\u2022 "https://example.com/data"',
+        file_paths: '\\u6B64\\u89C4\\u5219\\u4F1A\\u5C1D\\u8BD5\\u8BC6\\u522B\\u5E76\\u8FC7\\u6EE4\\u6389\\u7C7B\\u4F3C\\u64CD\\u4F5C\\u7CFB\\u7EDF\\u6587\\u4EF6\\u8DEF\\u5F84\\u6216 URL \\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "/path/to/file.js"<br>\\u2022 "C:\\\\Users\\\\Test"',
         hex_color_codes: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u6807\\u51C6\\u7684 CSS \\u5341\\u516D\\u8FDB\\u5236\\u989C\\u8272\\u4EE3\\u7801\\uFF083\\u4F4D\\u62166\\u4F4D\\uFF09\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "#FFFFFF"<br>\\u2022 "#ff0000"<br>\\u2022 "#f0c"',
         email_addresses: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u7B26\\u5408\\u6807\\u51C6\\u683C\\u5F0F\\u7684\\u7535\\u5B50\\u90AE\\u4EF6\\u5730\\u5740\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "example@domain.com"<br>\\u2022 "user.name@sub.domain.org"',
         uuids: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u901A\\u7528\\u552F\\u4E00\\u6807\\u8BC6\\u7B26 (UUID)\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "123e4567-e89b-12d3-a456-426614174000"',
@@ -1769,7 +1788,7 @@ ${result.join(",\n")}
         term: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u5E38\\u898B\\u7684\\u3001\\u901A\\u5E38\\u7121\\u9700\\u7FFB\\u8B6F\\u7684 UI \\u8853\\u8A9E\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "OK", "Cancel", "Submit"<br>\\u2022 "Login", "Settings", "Help"',
         single_letter: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u7531<strong>\\u55AE\\u500B</strong>\\u82F1\\u6587\\u5B57\\u6BCD\\u7D44\\u6210\\u7684\\u6587\\u672C\\uFF0C\\u5FFD\\u7565\\u5927\\u5C0F\\u5BEB\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "A" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "b" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "AB" (\\u4E0D\\u6703\\u88AB\\u904E\\u6FFE)',
         repeating_chars: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u7531<strong>\\u540C\\u4E00\\u500B\\u5B57\\u5143</strong>\\u9023\\u7E8C\\u91CD\\u8907 3 \\u6B21\\u6216\\u4EE5\\u4E0A\\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "======"<br>\\u2022 "bbbbb"<br>\\u2022 "...."',
-        file_paths: '\\u6B64\\u898F\\u5247\\u6703\\u5617\\u8A66\\u8B58\\u5225\\u4E26\\u904E\\u6FFE\\u6389\\u985E\\u4F3C\\u4F5C\\u696D\\u7CFB\\u7D71\\u6A94\\u6848\\u8DEF\\u5F91\\u6216 URL \\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "/path/to/file.js"<br>\\u2022 "C:\\\\Users\\\\Test"<br>\\u2022 "https://example.com/data"',
+        file_paths: '\\u6B64\\u898F\\u5247\\u6703\\u5617\\u8A66\\u8B58\\u5225\\u4E26\\u904E\\u6FFE\\u6389\\u985E\\u4F3C\\u4F5C\\u696D\\u7CFB\\u7D71\\u6A94\\u6848\\u8DEF\\u5F91\\u6216 URL \\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "/path/to/file.js"<br>\\u2022 "C:\\\\Users\\\\Test"',
         hex_color_codes: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u6A19\\u6E96\\u7684 CSS \\u5341\\u516D\\u9032\\u4F4D\\u984F\\u8272\\u4EE3\\u78BC\\uFF083\\u4F4D\\u62166\\u4F4D\\uFF09\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "#FFFFFF"<br>\\u2022 "#ff0000"<br>\\u2022 "#f0c"',
         email_addresses: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u7B26\\u5408\\u6A19\\u6E96\\u683C\\u5F0F\\u7684\\u96FB\\u5B50\\u90F5\\u4EF6\\u5730\\u5740\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "example@domain.com"<br>\\u2022 "user.name@sub.domain.org"',
         uuids: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u901A\\u7528\\u552F\\u4E00\\u8B58\\u5225\\u78BC (UUID)\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "123e4567-e89b-12d3-a456-426614174000"',
@@ -2327,7 +2346,7 @@ ${result.join(",\n")}
         term: 'This rule filters out common UI terms that typically do not require translation.<br><br><strong>More Examples:</strong><br>\\u2022 "OK", "Cancel", "Submit"<br>\\u2022 "Login", "Settings", "Help"',
         single_letter: 'This rule filters out text consisting of a <strong>single</strong> English letter, case-insensitive.<br><br><strong>Examples:</strong><br>\\u2022 "A" (will be filtered)<br>\\u2022 "b" (will be filtered)<br>\\u2022 "AB" (will not be filtered)',
         repeating_chars: 'This rule filters out text composed of the <strong>same character</strong> repeating 3 or more times consecutively.<br><br><strong>Examples:</strong><br>\\u2022 "======"<br>\\u2022 "bbbbb"<br>\\u2022 "...."',
-        file_paths: 'This rule attempts to identify and filter out text that resembles operating system file paths or URLs.<br><br><strong>More Examples:</strong><br>\\u2022 "/path/to/file.js"<br>\\u2022 "C:\\\\Users\\\\Test"<br>\\u2022 "https://example.com/data"',
+        file_paths: 'This rule attempts to identify and filter out text that resembles operating system file paths or URLs.<br><br><strong>More Examples:</strong><br>\\u2022 "/path/to/file.js"<br>\\u2022 "C:\\\\Users\\\\Test"',
         hex_color_codes: 'This rule filters out standard CSS hexadecimal color codes (3 or 6 digits).<br><br><strong>Examples:</strong><br>\\u2022 "#FFFFFF"<br>\\u2022 "#ff0000"<br>\\u2022 "#f0c"',
         email_addresses: 'This rule filters out text that matches the standard format of an email address.<br><br><strong>Examples:</strong><br>\\u2022 "example@domain.com"<br>\\u2022 "user.name@sub.domain.org"',
         uuids: 'This rule filters out Universally Unique Identifiers (UUIDs).<br><br><strong>Example:</strong><br>\\u2022 "123e4567-e89b-12d3-a456-426614174000"',
@@ -2475,7 +2494,7 @@ ${result.join(",\n")}
         term: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u5E38\\u89C1\\u7684\\u3001\\u901A\\u5E38\\u65E0\\u9700\\u7FFB\\u8BD1\\u7684 UI \\u672F\\u8BED\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "OK", "Cancel", "Submit"<br>\\u2022 "Login", "Settings", "Help"',
         single_letter: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u7531<strong>\\u5355\\u4E2A</strong>\\u82F1\\u6587\\u5B57\\u6BCD\\u7EC4\\u6210\\u7684\\u6587\\u672C\\uFF0C\\u5FFD\\u7565\\u5927\\u5C0F\\u5199\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "A" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "b" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "AB" (\\u4E0D\\u4F1A\\u88AB\\u8FC7\\u6EE4)',
         repeating_chars: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u7531<strong>\\u540C\\u4E00\\u4E2A\\u5B57\\u7B26</strong>\\u8FDE\\u7EED\\u91CD\\u590D 3 \\u6B21\\u6216\\u4EE5\\u4E0A\\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "======"<br>\\u2022 "bbbbb"<br>\\u2022 "...."',
-        file_paths: '\\u6B64\\u89C4\\u5219\\u4F1A\\u5C1D\\u8BD5\\u8BC6\\u522B\\u5E76\\u8FC7\\u6EE4\\u6389\\u7C7B\\u4F3C\\u64CD\\u4F5C\\u7CFB\\u7EDF\\u6587\\u4EF6\\u8DEF\\u5F84\\u6216 URL \\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "/path/to/file.js"<br>\\u2022 "C:\\\\Users\\\\Test"<br>\\u2022 "https://example.com/data"',
+        file_paths: '\\u6B64\\u89C4\\u5219\\u4F1A\\u5C1D\\u8BD5\\u8BC6\\u522B\\u5E76\\u8FC7\\u6EE4\\u6389\\u7C7B\\u4F3C\\u64CD\\u4F5C\\u7CFB\\u7EDF\\u6587\\u4EF6\\u8DEF\\u5F84\\u6216 URL \\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "/path/to/file.js"<br>\\u2022 "C:\\\\Users\\\\Test"',
         hex_color_codes: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u6807\\u51C6\\u7684 CSS \\u5341\\u516D\\u8FDB\\u5236\\u989C\\u8272\\u4EE3\\u7801\\uFF083\\u4F4D\\u62166\\u4F4D\\uFF09\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "#FFFFFF"<br>\\u2022 "#ff0000"<br>\\u2022 "#f0c"',
         email_addresses: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u7B26\\u5408\\u6807\\u51C6\\u683C\\u5F0F\\u7684\\u7535\\u5B50\\u90AE\\u4EF6\\u5730\\u5740\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "example@domain.com"<br>\\u2022 "user.name@sub.domain.org"',
         uuids: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u901A\\u7528\\u552F\\u4E00\\u6807\\u8BC6\\u7B26 (UUID)\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "123e4567-e89b-12d3-a456-426614174000"',
@@ -2623,7 +2642,7 @@ ${result.join(",\n")}
         term: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u5E38\\u898B\\u7684\\u3001\\u901A\\u5E38\\u7121\\u9700\\u7FFB\\u8B6F\\u7684 UI \\u8853\\u8A9E\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "OK", "Cancel", "Submit"<br>\\u2022 "Login", "Settings", "Help"',
         single_letter: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u7531<strong>\\u55AE\\u500B</strong>\\u82F1\\u6587\\u5B57\\u6BCD\\u7D44\\u6210\\u7684\\u6587\\u672C\\uFF0C\\u5FFD\\u7565\\u5927\\u5C0F\\u5BEB\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "A" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "b" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "AB" (\\u4E0D\\u6703\\u88AB\\u904E\\u6FFE)',
         repeating_chars: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u7531<strong>\\u540C\\u4E00\\u500B\\u5B57\\u5143</strong>\\u9023\\u7E8C\\u91CD\\u8907 3 \\u6B21\\u6216\\u4EE5\\u4E0A\\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "======"<br>\\u2022 "bbbbb"<br>\\u2022 "...."',
-        file_paths: '\\u6B64\\u898F\\u5247\\u6703\\u5617\\u8A66\\u8B58\\u5225\\u4E26\\u904E\\u6FFE\\u6389\\u985E\\u4F3C\\u4F5C\\u696D\\u7CFB\\u7D71\\u6A94\\u6848\\u8DEF\\u5F91\\u6216 URL \\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "/path/to/file.js"<br>\\u2022 "C:\\\\Users\\\\Test"<br>\\u2022 "https://example.com/data"',
+        file_paths: '\\u6B64\\u898F\\u5247\\u6703\\u5617\\u8A66\\u8B58\\u5225\\u4E26\\u904E\\u6FFE\\u6389\\u985E\\u4F3C\\u4F5C\\u696D\\u7CFB\\u7D71\\u6A94\\u6848\\u8DEF\\u5F91\\u6216 URL \\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "/path/to/file.js"<br>\\u2022 "C:\\\\Users\\\\Test"',
         hex_color_codes: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u6A19\\u6E96\\u7684 CSS \\u5341\\u516D\\u9032\\u4F4D\\u984F\\u8272\\u4EE3\\u78BC\\uFF083\\u4F4D\\u62166\\u4F4D\\uFF09\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "#FFFFFF"<br>\\u2022 "#ff0000"<br>\\u2022 "#f0c"',
         email_addresses: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u7B26\\u5408\\u6A19\\u6E96\\u683C\\u5F0F\\u7684\\u96FB\\u5B50\\u90F5\\u4EF6\\u5730\\u5740\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "example@domain.com"<br>\\u2022 "user.name@sub.domain.org"',
         uuids: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u901A\\u7528\\u552F\\u4E00\\u8B58\\u5225\\u78BC (UUID)\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "123e4567-e89b-12d3-a456-426614174000"',
@@ -3853,7 +3872,7 @@ ${result.join(",\n")}
       const content = document.createElement("div");
       content.className = "info-tooltip-content";
       const textElement = document.createElement("p");
-      textElement.innerHTML = config.text || "";
+      textElement.innerHTML = createTrustedHTML(config.text || "");
       content.appendChild(textElement);
       tooltip.appendChild(header);
       tooltip.appendChild(content);
@@ -5362,7 +5381,6 @@ ${result.join(",\n")}
   font-weight:bold;
   font-size:18px;
 }
-.settings-panel-close{}
 .setting-item{ margin-bottom:16px; }
 .setting-item > label{ display:block; margin-bottom:8px; font-weight:500; }
 .setting-title-container{

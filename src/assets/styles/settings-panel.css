@@ -55,8 +55,6 @@
   font-weight: bold;
   font-size: 18px;
 }
-/* 关闭按钮的旧样式已被 .tc-close-button 替代，此处可删除或留空 */
-.settings-panel-close {}
 
 .setting-item { margin-bottom: 16px; }
 .setting-item > label { display: block; margin-bottom: 8px; font-weight: 500; }

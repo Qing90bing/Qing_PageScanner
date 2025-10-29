@@ -3,6 +3,7 @@ import { createSVGFromString } from '../../utils/dom.js';
 import { closeIcon } from '../../../assets/icons/closeIcon.js';
 import { uiContainer } from '../uiContainer.js';
 import { fire } from '../../utils/eventBus.js';
+import { createTrustedHTML } from '../../utils/trustedTypes.js';
 
 /**
  * @class Tooltip
@@ -61,7 +62,7 @@ class Tooltip {
         content.className = 'info-tooltip-content';
 
         const textElement = document.createElement('p');
-        textElement.innerHTML = config.text || ''; // Use innerHTML to support rich text
+        textElement.innerHTML = createTrustedHTML(config.text || ''); // 使用 TrustedHTML 安全地设置内容
         content.appendChild(textElement);
 
         tooltip.appendChild(header);

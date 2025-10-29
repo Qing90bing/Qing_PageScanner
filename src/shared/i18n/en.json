@@ -124,7 +124,7 @@
       "term": "This rule filters out common UI terms that typically do not require translation.<br><br><strong>More Examples:</strong><br>• \"OK\", \"Cancel\", \"Submit\"<br>• \"Login\", \"Settings\", \"Help\"",
       "single_letter": "This rule filters out text consisting of a <strong>single</strong> English letter, case-insensitive.<br><br><strong>Examples:</strong><br>• \"A\" (will be filtered)<br>• \"b\" (will be filtered)<br>• \"AB\" (will not be filtered)",
       "repeating_chars": "This rule filters out text composed of the <strong>same character</strong> repeating 3 or more times consecutively.<br><br><strong>Examples:</strong><br>• \"======\"<br>• \"bbbbb\"<br>• \"....\"",
-      "file_paths": "This rule attempts to identify and filter out text that resembles operating system file paths or URLs.<br><br><strong>More Examples:</strong><br>• \"/path/to/file.js\"<br>• \"C:\\Users\\Test\"<br>• \"https://example.com/data\"",
+      "file_paths": "This rule attempts to identify and filter out text that resembles operating system file paths or URLs.<br><br><strong>More Examples:</strong><br>• \"/path/to/file.js\"<br>• \"C:\\Users\\Test\"",
       "hex_color_codes": "This rule filters out standard CSS hexadecimal color codes (3 or 6 digits).<br><br><strong>Examples:</strong><br>• \"#FFFFFF\"<br>• \"#ff0000\"<br>• \"#f0c\"",
       "email_addresses": "This rule filters out text that matches the standard format of an email address.<br><br><strong>Examples:</strong><br>• \"example@domain.com\"<br>• \"user.name@sub.domain.org\"",
       "uuids": "This rule filters out Universally Unique Identifiers (UUIDs).<br><br><strong>Example:</strong><br>• \"123e4567-e89b-12d3-a456-426614174000\"",
