@@ -40,7 +40,11 @@
       "hex_color_codes": "Filter Hex Color Codes",
       "email_addresses": "Filter Email Addresses",
       "uuids": "Filter UUIDs",
-      "git_commit_hashes": "Filter Git Commit Hashes"
+      "git_commit_hashes": "Filter Git Commit Hashes",
+      "website_urls": "Filter Website URLs",
+      "website_urls_title": "Filter Website URLs",
+      "shorthand_numbers": "Filter Shorthand Numbers",
+      "shorthand_numbers_title": "Filter Shorthand Numbers"
     },
     "display": {
       "show_fab": "Show Floating Button",
@@ -128,7 +132,9 @@
       "hex_color_codes": "This rule filters out standard CSS hexadecimal color codes (3, 4, 6, or 8 digits, the latter including an alpha channel).<br><br><strong>Examples:</strong><br>• \"#FFFFFF\"<br>• \"#ff0000\"<br>• \"#f0c\"<br>• \"#f0c8\" (4-digit)<br>• \"#ff000080\" (8-digit)",
       "email_addresses": "This rule filters out text that matches the standard format of an email address.<br><br><strong>Examples:</strong><br>• \"example@domain.com\"<br>• \"user.name@sub.domain.org\"",
       "uuids": "This rule filters out Universally Unique Identifiers (UUIDs).<br><br><strong>Example:</strong><br>• \"123e4567-e89b-12d3-a456-426614174000\"",
-      "git_commit_hashes": "This rule filters out standard Git commit hashes (long or short).<br><br><strong>Examples:</strong><br>• \"a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2\"<br>• \"a1b2c3d\""
+      "git_commit_hashes": "This rule filters out standard Git commit hashes (long or short).<br><br><strong>Examples:</strong><br>• \"a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2\"<br>• \"a1b2c3d\"",
+      "website_urls": "This rule filters out text that is a <strong>standalone URL</strong>. It is designed to be strict to avoid accidentally removing text that is not a link.<br><br><strong>More Examples:</strong><br>• \"https://www.example.com\"<br>• \"http://test.co.uk\"<br>• \"www.google.com\"<br>• \"example.org\"",
+      "shorthand_numbers": "This rule filters out numbers that use <strong>common shorthand suffixes</strong> for thousands (k), millions (m), or billions (b), case-insensitive.<br><br><strong>More Examples:</strong><br>• \"1.2k\"<br>• \"15M\"<br>• \"2.5b\"<br>• \"100K\""
     },
     "display": {
       "title": "Display Settings Explanation",

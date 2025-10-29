@@ -67,6 +67,16 @@ const ruleChecks = new Map([
   ['gitCommitHash', {
     regex: /^[0-9a-f]{7,40}$/i,
     label: filterConfigMap.get('gitCommitHash')
+  }],
+  ['websiteUrl', {
+    // 匹配常见的网址格式，包括协议、www前缀和裸域名，要求严格匹配整个字符串以避免误伤。
+    regex: /^(?:(?:https?|ftp):\/\/)?(?:www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(?:\/.*)?$/,
+    label: filterConfigMap.get('websiteUrl')
+  }],
+  ['shorthandNumber', {
+    // 匹配带k/m/b后缀的数字，支持整数、浮点数、大小写以及可选的空格。
+    regex: /^\d+(\.\d+)?\s?[kmb]$/i,
+    label: filterConfigMap.get('shorthandNumber')
   }]
 ]);
 

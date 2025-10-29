@@ -46,6 +46,8 @@ export const filterDefinitions = [
   { id: 'filter-emails', key: 'email', label: 'settings.filters.email_addresses', tooltip: { titleIcon: infoIcon, title: 'settings.filters.email_addresses', text: 'tooltip.filters.email_addresses' } },
   { id: 'filter-uuids', key: 'uuid', label: 'settings.filters.uuids', tooltip: { titleIcon: infoIcon, title: 'settings.filters.uuids', text: 'tooltip.filters.uuids' } },
   { id: 'filter-git-hashes', key: 'gitCommitHash', label: 'settings.filters.git_commit_hashes', tooltip: { titleIcon: infoIcon, title: 'settings.filters.git_commit_hashes', text: 'tooltip.filters.git_commit_hashes' } },
+  { id: 'filter-website-urls', key: 'websiteUrl', label: 'settings.filters.website_urls', tooltip: { titleIcon: infoIcon, title: 'settings.filters.website_urls_title', text: 'tooltip.filters.website_urls' } },
+  { id: 'filter-shorthand-numbers', key: 'shorthandNumber', label: 'settings.filters.shorthand_numbers', tooltip: { titleIcon: infoIcon, title: 'settings.filters.shorthand_numbers_title', text: 'tooltip.filters.shorthand_numbers' } },
 ];
 
 export const relatedSettingsDefinitions = [

@@ -134,7 +134,11 @@ var TextExtractor = (() => {
         hex_color_codes: "Filter Hex Color Codes",
         email_addresses: "Filter Email Addresses",
         uuids: "Filter UUIDs",
-        git_commit_hashes: "Filter Git Commit Hashes"
+        git_commit_hashes: "Filter Git Commit Hashes",
+        website_urls: "Filter Website URLs",
+        website_urls_title: "Filter Website URLs",
+        shorthand_numbers: "Filter Shorthand Numbers",
+        shorthand_numbers_title: "Filter Shorthand Numbers"
       },
       display: {
         show_fab: "Show Floating Button",
@@ -222,7 +226,9 @@ var TextExtractor = (() => {
         hex_color_codes: 'This rule filters out standard CSS hexadecimal color codes (3, 4, 6, or 8 digits, the latter including an alpha channel).<br><br><strong>Examples:</strong><br>\u2022 "#FFFFFF"<br>\u2022 "#ff0000"<br>\u2022 "#f0c"<br>\u2022 "#f0c8" (4-digit)<br>\u2022 "#ff000080" (8-digit)',
         email_addresses: 'This rule filters out text that matches the standard format of an email address.<br><br><strong>Examples:</strong><br>\u2022 "example@domain.com"<br>\u2022 "user.name@sub.domain.org"',
         uuids: 'This rule filters out Universally Unique Identifiers (UUIDs).<br><br><strong>Example:</strong><br>\u2022 "123e4567-e89b-12d3-a456-426614174000"',
-        git_commit_hashes: 'This rule filters out standard Git commit hashes (long or short).<br><br><strong>Examples:</strong><br>\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\u2022 "a1b2c3d"'
+        git_commit_hashes: 'This rule filters out standard Git commit hashes (long or short).<br><br><strong>Examples:</strong><br>\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\u2022 "a1b2c3d"',
+        website_urls: 'This rule filters out text that is a <strong>standalone URL</strong>. It is designed to be strict to avoid accidentally removing text that is not a link.<br><br><strong>More Examples:</strong><br>\u2022 "https://www.example.com"<br>\u2022 "http://test.co.uk"<br>\u2022 "www.google.com"<br>\u2022 "example.org"',
+        shorthand_numbers: 'This rule filters out numbers that use <strong>common shorthand suffixes</strong> for thousands (k), millions (m), or billions (b), case-insensitive.<br><br><strong>More Examples:</strong><br>\u2022 "1.2k"<br>\u2022 "15M"<br>\u2022 "2.5b"<br>\u2022 "100K"'
       },
       display: {
         title: "Display Settings Explanation",
@@ -281,7 +287,11 @@ var TextExtractor = (() => {
         hex_color_codes: "\u8FC7\u6EE4\u5341\u516D\u8FDB\u5236\u989C\u8272",
         email_addresses: "\u8FC7\u6EE4\u90AE\u4EF6\u5730\u5740",
         uuids: "\u8FC7\u6EE4 UUID",
-        git_commit_hashes: "\u8FC7\u6EE4 Git \u54C8\u5E0C"
+        git_commit_hashes: "\u8FC7\u6EE4Git\u63D0\u4EA4\u54C8\u5E0C\u503C",
+        website_urls: "\u8FC7\u6EE4\u7F51\u5740",
+        website_urls_title: "\u8FC7\u6EE4\u7F51\u5740 (URL)",
+        shorthand_numbers: "\u8FC7\u6EE4\u7B80\u5199\u6570\u5B57",
+        shorthand_numbers_title: "\u8FC7\u6EE4\u5E26\u5355\u4F4D\u7684\u7B80\u5199\u6570\u5B57"
       },
       display: {
         show_fab: "\u663E\u793A\u60AC\u6D6E\u6309\u94AE",
@@ -369,7 +379,9 @@ var TextExtractor = (() => {
         hex_color_codes: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389\u6807\u51C6\u7684 CSS \u5341\u516D\u8FDB\u5236\u989C\u8272\u4EE3\u7801\uFF083\u30014\u30016 \u6216 8 \u4F4D\uFF0C\u540E\u8005\u53EF\u5305\u542B Alpha \u901A\u9053\uFF09\u3002<br><br><strong>\u793A\u4F8B\uFF1A</strong><br>\u2022 "#FFFFFF"<br>\u2022 "#ff0000"<br>\u2022 "#f0c"<br>\u2022 "#f0c8" (4\u4F4D)<br>\u2022 "#ff000080" (8\u4F4D)',
         email_addresses: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389\u7B26\u5408\u6807\u51C6\u683C\u5F0F\u7684\u7535\u5B50\u90AE\u4EF6\u5730\u5740\u3002<br><br><strong>\u793A\u4F8B\uFF1A</strong><br>\u2022 "example@domain.com"<br>\u2022 "user.name@sub.domain.org"',
         uuids: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389\u901A\u7528\u552F\u4E00\u6807\u8BC6\u7B26 (UUID)\u3002<br><br><strong>\u793A\u4F8B\uFF1A</strong><br>\u2022 "123e4567-e89b-12d3-a456-426614174000"',
-        git_commit_hashes: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389\u6807\u51C6\u7684 Git \u63D0\u4EA4\u54C8\u5E0C\u503C\uFF08\u957F\u54C8\u5E0C\u6216\u77ED\u54C8\u5E0C\uFF09\u3002<br><br><strong>\u793A\u4F8B\uFF1A</strong><br>\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\u2022 "a1b2c3d"'
+        git_commit_hashes: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389\u6807\u51C6\u7684 Git \u63D0\u4EA4\u54C8\u5E0C\u503C\uFF08\u957F\u54C8\u5E0C\u6216\u77ED\u54C8\u5E0C\uFF09\u3002<br><br><strong>\u793A\u4F8B\uFF1A</strong><br>\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\u2022 "a1b2c3d"',
+        website_urls: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389<strong>\u72EC\u7ACB\u7684 URL</strong> \u6587\u672C\u3002\u5B83\u7684\u5339\u914D\u89C4\u5219\u88AB\u8BBE\u8BA1\u5F97\u975E\u5E38\u4E25\u683C\uFF0C\u4EE5\u907F\u514D\u610F\u5916\u79FB\u9664\u4E0D\u662F\u94FE\u63A5\u7684\u6587\u672C\u3002<br><br><strong>\u66F4\u591A\u793A\u4F8B\uFF1A</strong><br>\u2022 "https://www.example.com"<br>\u2022 "http://test.co.uk"<br>\u2022 "www.google.com"<br>\u2022 "example.org"',
+        shorthand_numbers: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389\u4F7F\u7528<strong>\u5E38\u89C1\u7B80\u5199\u540E\u7F00</strong>\u7684\u6570\u5B57\uFF0C\u4F8B\u5982 k (\u5343)\u3001m (\u767E\u4E07) \u6216 b (\u5341\u4EBF)\uFF0C\u4E0D\u533A\u5206\u5927\u5C0F\u5199\u3002<br><br><strong>\u66F4\u591A\u793A\u4F8B\uFF1A</strong><br>\u2022 "1.2k"<br>\u2022 "15M"<br>\u2022 "2.5b"<br>\u2022 "100K"'
       },
       display: {
         title: "\u663E\u793A\u8BBE\u7F6E\u8BF4\u660E",
@@ -428,7 +440,11 @@ var TextExtractor = (() => {
         hex_color_codes: "\u904E\u6FFE\u5341\u516D\u9032\u4F4D\u984F\u8272",
         email_addresses: "\u904E\u6FFE\u90F5\u4EF6\u5730\u5740",
         uuids: "\u904E\u6FFE UUID",
-        git_commit_hashes: "\u904E\u6FFE Git \u96DC\u6E4A"
+        git_commit_hashes: "\u904E\u6FFEGit\u63D0\u4EA4\u96DC\u6E4A\u503C",
+        website_urls: "\u904E\u6FFE\u7DB2\u5740",
+        website_urls_title: "\u904E\u6FFE\u7DB2\u5740 (URL)",
+        shorthand_numbers: "\u904E\u6FFE\u7C21\u5BEB\u6578\u5B57",
+        shorthand_numbers_title: "\u904E\u6FFE\u5E36\u6709\u55AE\u4F4D\u7684\u7C21\u5BEB\u6578\u5B57"
       },
       display: {
         show_fab: "\u986F\u793A\u61F8\u6D6E\u6309\u9215",
@@ -516,7 +532,9 @@ var TextExtractor = (() => {
         hex_color_codes: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389\u6A19\u6E96\u7684 CSS \u5341\u516D\u9032\u4F4D\u984F\u8272\u4EE3\u78BC\uFF083\u30014\u30016 \u6216 8 \u4F4D\uFF0C\u5F8C\u8005\u53EF\u5305\u542B Alpha \u901A\u9053\uFF09\u3002<br><br><strong>\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "#FFFFFF"<br>\u2022 "#ff0000"<br>\u2022 "#f0c"<br>\u2022 "#f0c8" (4\u4F4D)<br>\u2022 "#ff000080" (8\u4F4D)',
         email_addresses: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389\u7B26\u5408\u6A19\u6E96\u683C\u5F0F\u7684\u96FB\u5B50\u90F5\u4EF6\u5730\u5740\u3002<br><br><strong>\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "example@domain.com"<br>\u2022 "user.name@sub.domain.org"',
         uuids: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389\u901A\u7528\u552F\u4E00\u8B58\u5225\u78BC (UUID)\u3002<br><br><strong>\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "123e4567-e89b-12d3-a456-426614174000"',
-        git_commit_hashes: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389\u6A19\u6E96\u7684 Git \u63D0\u4EA4\u96DC\u6E4A\u503C\uFF08\u9577\u96DC\u6E4A\u6216\u77ED\u96DC\u6E4A\uFF09\u3002<br><br><strong>\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\u2022 "a1b2c3d"'
+        git_commit_hashes: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389\u6A19\u6E96\u7684 Git \u63D0\u4EA4\u96DC\u6E4A\u503C\uFF08\u9577\u96DC\u6E4A\u6216\u77ED\u96DC\u6E4A\uFF09\u3002<br><br><strong>\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\u2022 "a1b2c3d"',
+        website_urls: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389<strong>\u7368\u7ACB\u7684 URL</strong> \u6587\u5B57\u3002\u5B83\u7684\u6BD4\u5C0D\u898F\u5247\u88AB\u8A2D\u8A08\u5F97\u975E\u5E38\u56B4\u683C\uFF0C\u4EE5\u907F\u514D\u610F\u5916\u79FB\u9664\u4E0D\u662F\u9023\u7D50\u7684\u6587\u5B57\u3002<br><br><strong>\u66F4\u591A\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "https://www.example.com"<br>\u2022 "http://test.co.uk"<br>\u2022 "www.google.com"<br>\u2022 "example.org"',
+        shorthand_numbers: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389\u4F7F\u7528<strong>\u5E38\u898B\u7C21\u5BEB\u5F8C\u7DB4</strong>\u7684\u6578\u5B57\uFF0C\u4F8B\u5982 k (\u5343)\u3001m (\u767E\u842C) \u6216 b (\u5341\u5104)\uFF0C\u4E0D\u5340\u5206\u5927\u5C0F\u5BEB\u3002<br><br><strong>\u66F4\u591A\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "1.2k"<br>\u2022 "15M"<br>\u2022 "2.5b"<br>\u2022 "100K"'
       },
       display: {
         title: "\u986F\u793A\u8A2D\u5B9A\u8AAA\u660E",
@@ -651,7 +669,9 @@ var TextExtractor = (() => {
     { id: "filter-hex-colors", key: "hexColor", label: "settings.filters.hex_color_codes", tooltip: { titleIcon: infoIcon, title: "settings.filters.hex_color_codes", text: "tooltip.filters.hex_color_codes" } },
     { id: "filter-emails", key: "email", label: "settings.filters.email_addresses", tooltip: { titleIcon: infoIcon, title: "settings.filters.email_addresses", text: "tooltip.filters.email_addresses" } },
     { id: "filter-uuids", key: "uuid", label: "settings.filters.uuids", tooltip: { titleIcon: infoIcon, title: "settings.filters.uuids", text: "tooltip.filters.uuids" } },
-    { id: "filter-git-hashes", key: "gitCommitHash", label: "settings.filters.git_commit_hashes", tooltip: { titleIcon: infoIcon, title: "settings.filters.git_commit_hashes", text: "tooltip.filters.git_commit_hashes" } }
+    { id: "filter-git-hashes", key: "gitCommitHash", label: "settings.filters.git_commit_hashes", tooltip: { titleIcon: infoIcon, title: "settings.filters.git_commit_hashes", text: "tooltip.filters.git_commit_hashes" } },
+    { id: "filter-website-urls", key: "websiteUrl", label: "settings.filters.website_urls", tooltip: { titleIcon: infoIcon, title: "settings.filters.website_urls_title", text: "tooltip.filters.website_urls" } },
+    { id: "filter-shorthand-numbers", key: "shorthandNumber", label: "settings.filters.shorthand_numbers", tooltip: { titleIcon: infoIcon, title: "settings.filters.shorthand_numbers_title", text: "tooltip.filters.shorthand_numbers" } }
   ];
   var relatedSettingsDefinitions = [
     { id: "show-fab", key: "showFab", label: "settings.display.show_fab", tooltip: { titleIcon: infoIcon, title: "settings.display.show_fab", text: "tooltip.display.show_fab" } },
@@ -873,7 +893,9 @@ var TextExtractor = (() => {
       hexColor: true,
       email: true,
       uuid: true,
-      gitCommitHash: true
+      gitCommitHash: true,
+      websiteUrl: true,
+      shorthandNumber: true
     }
   };
   function loadSettings() {
@@ -1008,6 +1030,14 @@ var TextExtractor = (() => {
     ["gitCommitHash", {
       regex: /^[0-9a-f]{7,40}$/i,
       label: filterConfigMap.get("gitCommitHash")
+    }],
+    ["websiteUrl", {
+      regex: /^(?:(?:https?|ftp):\/\/)?(?:www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(?:\/.*)?$/,
+      label: filterConfigMap.get("websiteUrl")
+    }],
+    ["shorthandNumber", {
+      regex: /^\d+(\.\d+)?\s?[kmb]$/i,
+      label: filterConfigMap.get("shorthandNumber")
     }]
   ]);
   function shouldFilter(text, filterRules2) {
@@ -1408,7 +1438,11 @@ ${result.join(",\n")}
         hex_color_codes: "Filter Hex Color Codes",
         email_addresses: "Filter Email Addresses",
         uuids: "Filter UUIDs",
-        git_commit_hashes: "Filter Git Commit Hashes"
+        git_commit_hashes: "Filter Git Commit Hashes",
+        website_urls: "Filter Website URLs",
+        website_urls_title: "Filter Website URLs",
+        shorthand_numbers: "Filter Shorthand Numbers",
+        shorthand_numbers_title: "Filter Shorthand Numbers"
       },
       display: {
         show_fab: "Show Floating Button",
@@ -1496,7 +1530,9 @@ ${result.join(",\n")}
         hex_color_codes: 'This rule filters out standard CSS hexadecimal color codes (3, 4, 6, or 8 digits, the latter including an alpha channel).<br><br><strong>Examples:</strong><br>\\u2022 "#FFFFFF"<br>\\u2022 "#ff0000"<br>\\u2022 "#f0c"<br>\\u2022 "#f0c8" (4-digit)<br>\\u2022 "#ff000080" (8-digit)',
         email_addresses: 'This rule filters out text that matches the standard format of an email address.<br><br><strong>Examples:</strong><br>\\u2022 "example@domain.com"<br>\\u2022 "user.name@sub.domain.org"',
         uuids: 'This rule filters out Universally Unique Identifiers (UUIDs).<br><br><strong>Example:</strong><br>\\u2022 "123e4567-e89b-12d3-a456-426614174000"',
-        git_commit_hashes: 'This rule filters out standard Git commit hashes (long or short).<br><br><strong>Examples:</strong><br>\\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\\u2022 "a1b2c3d"'
+        git_commit_hashes: 'This rule filters out standard Git commit hashes (long or short).<br><br><strong>Examples:</strong><br>\\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\\u2022 "a1b2c3d"',
+        website_urls: 'This rule filters out text that is a <strong>standalone URL</strong>. It is designed to be strict to avoid accidentally removing text that is not a link.<br><br><strong>More Examples:</strong><br>\\u2022 "https://www.example.com"<br>\\u2022 "http://test.co.uk"<br>\\u2022 "www.google.com"<br>\\u2022 "example.org"',
+        shorthand_numbers: 'This rule filters out numbers that use <strong>common shorthand suffixes</strong> for thousands (k), millions (m), or billions (b), case-insensitive.<br><br><strong>More Examples:</strong><br>\\u2022 "1.2k"<br>\\u2022 "15M"<br>\\u2022 "2.5b"<br>\\u2022 "100K"'
       },
       display: {
         title: "Display Settings Explanation",
@@ -1556,7 +1592,11 @@ ${result.join(",\n")}
         hex_color_codes: "\\u8FC7\\u6EE4\\u5341\\u516D\\u8FDB\\u5236\\u989C\\u8272",
         email_addresses: "\\u8FC7\\u6EE4\\u90AE\\u4EF6\\u5730\\u5740",
         uuids: "\\u8FC7\\u6EE4 UUID",
-        git_commit_hashes: "\\u8FC7\\u6EE4 Git \\u54C8\\u5E0C"
+        git_commit_hashes: "\\u8FC7\\u6EE4Git\\u63D0\\u4EA4\\u54C8\\u5E0C\\u503C",
+        website_urls: "\\u8FC7\\u6EE4\\u7F51\\u5740",
+        website_urls_title: "\\u8FC7\\u6EE4\\u7F51\\u5740 (URL)",
+        shorthand_numbers: "\\u8FC7\\u6EE4\\u7B80\\u5199\\u6570\\u5B57",
+        shorthand_numbers_title: "\\u8FC7\\u6EE4\\u5E26\\u5355\\u4F4D\\u7684\\u7B80\\u5199\\u6570\\u5B57"
       },
       display: {
         show_fab: "\\u663E\\u793A\\u60AC\\u6D6E\\u6309\\u94AE",
@@ -1644,7 +1684,9 @@ ${result.join(",\n")}
         hex_color_codes: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u6807\\u51C6\\u7684 CSS \\u5341\\u516D\\u8FDB\\u5236\\u989C\\u8272\\u4EE3\\u7801\\uFF083\\u30014\\u30016 \\u6216 8 \\u4F4D\\uFF0C\\u540E\\u8005\\u53EF\\u5305\\u542B Alpha \\u901A\\u9053\\uFF09\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "#FFFFFF"<br>\\u2022 "#ff0000"<br>\\u2022 "#f0c"<br>\\u2022 "#f0c8" (4\\u4F4D)<br>\\u2022 "#ff000080" (8\\u4F4D)',
         email_addresses: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u7B26\\u5408\\u6807\\u51C6\\u683C\\u5F0F\\u7684\\u7535\\u5B50\\u90AE\\u4EF6\\u5730\\u5740\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "example@domain.com"<br>\\u2022 "user.name@sub.domain.org"',
         uuids: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u901A\\u7528\\u552F\\u4E00\\u6807\\u8BC6\\u7B26 (UUID)\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "123e4567-e89b-12d3-a456-426614174000"',
-        git_commit_hashes: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u6807\\u51C6\\u7684 Git \\u63D0\\u4EA4\\u54C8\\u5E0C\\u503C\\uFF08\\u957F\\u54C8\\u5E0C\\u6216\\u77ED\\u54C8\\u5E0C\\uFF09\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\\u2022 "a1b2c3d"'
+        git_commit_hashes: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u6807\\u51C6\\u7684 Git \\u63D0\\u4EA4\\u54C8\\u5E0C\\u503C\\uFF08\\u957F\\u54C8\\u5E0C\\u6216\\u77ED\\u54C8\\u5E0C\\uFF09\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\\u2022 "a1b2c3d"',
+        website_urls: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389<strong>\\u72EC\\u7ACB\\u7684 URL</strong> \\u6587\\u672C\\u3002\\u5B83\\u7684\\u5339\\u914D\\u89C4\\u5219\\u88AB\\u8BBE\\u8BA1\\u5F97\\u975E\\u5E38\\u4E25\\u683C\\uFF0C\\u4EE5\\u907F\\u514D\\u610F\\u5916\\u79FB\\u9664\\u4E0D\\u662F\\u94FE\\u63A5\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "https://www.example.com"<br>\\u2022 "http://test.co.uk"<br>\\u2022 "www.google.com"<br>\\u2022 "example.org"',
+        shorthand_numbers: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u4F7F\\u7528<strong>\\u5E38\\u89C1\\u7B80\\u5199\\u540E\\u7F00</strong>\\u7684\\u6570\\u5B57\\uFF0C\\u4F8B\\u5982 k (\\u5343)\\u3001m (\\u767E\\u4E07) \\u6216 b (\\u5341\\u4EBF)\\uFF0C\\u4E0D\\u533A\\u5206\\u5927\\u5C0F\\u5199\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "1.2k"<br>\\u2022 "15M"<br>\\u2022 "2.5b"<br>\\u2022 "100K"'
       },
       display: {
         title: "\\u663E\\u793A\\u8BBE\\u7F6E\\u8BF4\\u660E",
@@ -1704,7 +1746,11 @@ ${result.join(",\n")}
         hex_color_codes: "\\u904E\\u6FFE\\u5341\\u516D\\u9032\\u4F4D\\u984F\\u8272",
         email_addresses: "\\u904E\\u6FFE\\u90F5\\u4EF6\\u5730\\u5740",
         uuids: "\\u904E\\u6FFE UUID",
-        git_commit_hashes: "\\u904E\\u6FFE Git \\u96DC\\u6E4A"
+        git_commit_hashes: "\\u904E\\u6FFEGit\\u63D0\\u4EA4\\u96DC\\u6E4A\\u503C",
+        website_urls: "\\u904E\\u6FFE\\u7DB2\\u5740",
+        website_urls_title: "\\u904E\\u6FFE\\u7DB2\\u5740 (URL)",
+        shorthand_numbers: "\\u904E\\u6FFE\\u7C21\\u5BEB\\u6578\\u5B57",
+        shorthand_numbers_title: "\\u904E\\u6FFE\\u5E36\\u6709\\u55AE\\u4F4D\\u7684\\u7C21\\u5BEB\\u6578\\u5B57"
       },
       display: {
         show_fab: "\\u986F\\u793A\\u61F8\\u6D6E\\u6309\\u9215",
@@ -1792,7 +1838,9 @@ ${result.join(",\n")}
         hex_color_codes: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u6A19\\u6E96\\u7684 CSS \\u5341\\u516D\\u9032\\u4F4D\\u984F\\u8272\\u4EE3\\u78BC\\uFF083\\u30014\\u30016 \\u6216 8 \\u4F4D\\uFF0C\\u5F8C\\u8005\\u53EF\\u5305\\u542B Alpha \\u901A\\u9053\\uFF09\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "#FFFFFF"<br>\\u2022 "#ff0000"<br>\\u2022 "#f0c"<br>\\u2022 "#f0c8" (4\\u4F4D)<br>\\u2022 "#ff000080" (8\\u4F4D)',
         email_addresses: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u7B26\\u5408\\u6A19\\u6E96\\u683C\\u5F0F\\u7684\\u96FB\\u5B50\\u90F5\\u4EF6\\u5730\\u5740\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "example@domain.com"<br>\\u2022 "user.name@sub.domain.org"',
         uuids: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u901A\\u7528\\u552F\\u4E00\\u8B58\\u5225\\u78BC (UUID)\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "123e4567-e89b-12d3-a456-426614174000"',
-        git_commit_hashes: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u6A19\\u6E96\\u7684 Git \\u63D0\\u4EA4\\u96DC\\u6E4A\\u503C\\uFF08\\u9577\\u96DC\\u6E4A\\u6216\\u77ED\\u96DC\\u6E4A\\uFF09\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\\u2022 "a1b2c3d"'
+        git_commit_hashes: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u6A19\\u6E96\\u7684 Git \\u63D0\\u4EA4\\u96DC\\u6E4A\\u503C\\uFF08\\u9577\\u96DC\\u6E4A\\u6216\\u77ED\\u96DC\\u6E4A\\uFF09\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\\u2022 "a1b2c3d"',
+        website_urls: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389<strong>\\u7368\\u7ACB\\u7684 URL</strong> \\u6587\\u5B57\\u3002\\u5B83\\u7684\\u6BD4\\u5C0D\\u898F\\u5247\\u88AB\\u8A2D\\u8A08\\u5F97\\u975E\\u5E38\\u56B4\\u683C\\uFF0C\\u4EE5\\u907F\\u514D\\u610F\\u5916\\u79FB\\u9664\\u4E0D\\u662F\\u9023\\u7D50\\u7684\\u6587\\u5B57\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "https://www.example.com"<br>\\u2022 "http://test.co.uk"<br>\\u2022 "www.google.com"<br>\\u2022 "example.org"',
+        shorthand_numbers: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u4F7F\\u7528<strong>\\u5E38\\u898B\\u7C21\\u5BEB\\u5F8C\\u7DB4</strong>\\u7684\\u6578\\u5B57\\uFF0C\\u4F8B\\u5982 k (\\u5343)\\u3001m (\\u767E\\u842C) \\u6216 b (\\u5341\\u5104)\\uFF0C\\u4E0D\\u5340\\u5206\\u5927\\u5C0F\\u5BEB\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "1.2k"<br>\\u2022 "15M"<br>\\u2022 "2.5b"<br>\\u2022 "100K"'
       },
       display: {
         title: "\\u986F\\u793A\\u8A2D\\u5B9A\\u8AAA\\u660E",
@@ -1878,7 +1926,9 @@ ${result.join(",\n")}
     { id: "filter-hex-colors", key: "hexColor", label: "settings.filters.hex_color_codes", tooltip: { titleIcon: infoIcon, title: "settings.filters.hex_color_codes", text: "tooltip.filters.hex_color_codes" } },
     { id: "filter-emails", key: "email", label: "settings.filters.email_addresses", tooltip: { titleIcon: infoIcon, title: "settings.filters.email_addresses", text: "tooltip.filters.email_addresses" } },
     { id: "filter-uuids", key: "uuid", label: "settings.filters.uuids", tooltip: { titleIcon: infoIcon, title: "settings.filters.uuids", text: "tooltip.filters.uuids" } },
-    { id: "filter-git-hashes", key: "gitCommitHash", label: "settings.filters.git_commit_hashes", tooltip: { titleIcon: infoIcon, title: "settings.filters.git_commit_hashes", text: "tooltip.filters.git_commit_hashes" } }
+    { id: "filter-git-hashes", key: "gitCommitHash", label: "settings.filters.git_commit_hashes", tooltip: { titleIcon: infoIcon, title: "settings.filters.git_commit_hashes", text: "tooltip.filters.git_commit_hashes" } },
+    { id: "filter-website-urls", key: "websiteUrl", label: "settings.filters.website_urls", tooltip: { titleIcon: infoIcon, title: "settings.filters.website_urls_title", text: "tooltip.filters.website_urls" } },
+    { id: "filter-shorthand-numbers", key: "shorthandNumber", label: "settings.filters.shorthand_numbers", tooltip: { titleIcon: infoIcon, title: "settings.filters.shorthand_numbers_title", text: "tooltip.filters.shorthand_numbers" } }
   ];
   // src/shared/utils/filterLogic.js
   var filterConfigMap = new Map(filterDefinitions.map((def) => [def.key, def.label]));
@@ -1935,6 +1985,16 @@ ${result.join(",\n")}
     ["gitCommitHash", {
       regex: /^[0-9a-f]{7,40}$/i,
       label: filterConfigMap.get("gitCommitHash")
+    }],
+    ["websiteUrl", {
+      // \u5339\u914D\u5E38\u89C1\u7684\u7F51\u5740\u683C\u5F0F\uFF0C\u5305\u62EC\u534F\u8BAE\u3001www\u524D\u7F00\u548C\u88F8\u57DF\u540D\uFF0C\u8981\u6C42\u4E25\u683C\u5339\u914D\u6574\u4E2A\u5B57\u7B26\u4E32\u4EE5\u907F\u514D\u8BEF\u4F24\u3002
+      regex: /^(?:(?:https?|ftp):\\/\\/)?(?:www\\.)?([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}(?:\\/.*)?$/,
+      label: filterConfigMap.get("websiteUrl")
+    }],
+    ["shorthandNumber", {
+      // \u5339\u914D\u5E26k/m/b\u540E\u7F00\u7684\u6570\u5B57\uFF0C\u652F\u6301\u6574\u6570\u3001\u6D6E\u70B9\u6570\u3001\u5927\u5C0F\u5199\u4EE5\u53CA\u53EF\u9009\u7684\u7A7A\u683C\u3002
+      regex: /^\\d+(\\.\\d+)?\\s?[kmb]$/i,
+      label: filterConfigMap.get("shorthandNumber")
     }]
   ]);
   function shouldFilter(text, filterRules) {
@@ -2262,7 +2322,11 @@ ${result.join(",\n")}
         hex_color_codes: "Filter Hex Color Codes",
         email_addresses: "Filter Email Addresses",
         uuids: "Filter UUIDs",
-        git_commit_hashes: "Filter Git Commit Hashes"
+        git_commit_hashes: "Filter Git Commit Hashes",
+        website_urls: "Filter Website URLs",
+        website_urls_title: "Filter Website URLs",
+        shorthand_numbers: "Filter Shorthand Numbers",
+        shorthand_numbers_title: "Filter Shorthand Numbers"
       },
       display: {
         show_fab: "Show Floating Button",
@@ -2350,7 +2414,9 @@ ${result.join(",\n")}
         hex_color_codes: 'This rule filters out standard CSS hexadecimal color codes (3, 4, 6, or 8 digits, the latter including an alpha channel).<br><br><strong>Examples:</strong><br>\\u2022 "#FFFFFF"<br>\\u2022 "#ff0000"<br>\\u2022 "#f0c"<br>\\u2022 "#f0c8" (4-digit)<br>\\u2022 "#ff000080" (8-digit)',
         email_addresses: 'This rule filters out text that matches the standard format of an email address.<br><br><strong>Examples:</strong><br>\\u2022 "example@domain.com"<br>\\u2022 "user.name@sub.domain.org"',
         uuids: 'This rule filters out Universally Unique Identifiers (UUIDs).<br><br><strong>Example:</strong><br>\\u2022 "123e4567-e89b-12d3-a456-426614174000"',
-        git_commit_hashes: 'This rule filters out standard Git commit hashes (long or short).<br><br><strong>Examples:</strong><br>\\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\\u2022 "a1b2c3d"'
+        git_commit_hashes: 'This rule filters out standard Git commit hashes (long or short).<br><br><strong>Examples:</strong><br>\\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\\u2022 "a1b2c3d"',
+        website_urls: 'This rule filters out text that is a <strong>standalone URL</strong>. It is designed to be strict to avoid accidentally removing text that is not a link.<br><br><strong>More Examples:</strong><br>\\u2022 "https://www.example.com"<br>\\u2022 "http://test.co.uk"<br>\\u2022 "www.google.com"<br>\\u2022 "example.org"',
+        shorthand_numbers: 'This rule filters out numbers that use <strong>common shorthand suffixes</strong> for thousands (k), millions (m), or billions (b), case-insensitive.<br><br><strong>More Examples:</strong><br>\\u2022 "1.2k"<br>\\u2022 "15M"<br>\\u2022 "2.5b"<br>\\u2022 "100K"'
       },
       display: {
         title: "Display Settings Explanation",
@@ -2410,7 +2476,11 @@ ${result.join(",\n")}
         hex_color_codes: "\\u8FC7\\u6EE4\\u5341\\u516D\\u8FDB\\u5236\\u989C\\u8272",
         email_addresses: "\\u8FC7\\u6EE4\\u90AE\\u4EF6\\u5730\\u5740",
         uuids: "\\u8FC7\\u6EE4 UUID",
-        git_commit_hashes: "\\u8FC7\\u6EE4 Git \\u54C8\\u5E0C"
+        git_commit_hashes: "\\u8FC7\\u6EE4Git\\u63D0\\u4EA4\\u54C8\\u5E0C\\u503C",
+        website_urls: "\\u8FC7\\u6EE4\\u7F51\\u5740",
+        website_urls_title: "\\u8FC7\\u6EE4\\u7F51\\u5740 (URL)",
+        shorthand_numbers: "\\u8FC7\\u6EE4\\u7B80\\u5199\\u6570\\u5B57",
+        shorthand_numbers_title: "\\u8FC7\\u6EE4\\u5E26\\u5355\\u4F4D\\u7684\\u7B80\\u5199\\u6570\\u5B57"
       },
       display: {
         show_fab: "\\u663E\\u793A\\u60AC\\u6D6E\\u6309\\u94AE",
@@ -2498,7 +2568,9 @@ ${result.join(",\n")}
         hex_color_codes: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u6807\\u51C6\\u7684 CSS \\u5341\\u516D\\u8FDB\\u5236\\u989C\\u8272\\u4EE3\\u7801\\uFF083\\u30014\\u30016 \\u6216 8 \\u4F4D\\uFF0C\\u540E\\u8005\\u53EF\\u5305\\u542B Alpha \\u901A\\u9053\\uFF09\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "#FFFFFF"<br>\\u2022 "#ff0000"<br>\\u2022 "#f0c"<br>\\u2022 "#f0c8" (4\\u4F4D)<br>\\u2022 "#ff000080" (8\\u4F4D)',
         email_addresses: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u7B26\\u5408\\u6807\\u51C6\\u683C\\u5F0F\\u7684\\u7535\\u5B50\\u90AE\\u4EF6\\u5730\\u5740\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "example@domain.com"<br>\\u2022 "user.name@sub.domain.org"',
         uuids: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u901A\\u7528\\u552F\\u4E00\\u6807\\u8BC6\\u7B26 (UUID)\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "123e4567-e89b-12d3-a456-426614174000"',
-        git_commit_hashes: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u6807\\u51C6\\u7684 Git \\u63D0\\u4EA4\\u54C8\\u5E0C\\u503C\\uFF08\\u957F\\u54C8\\u5E0C\\u6216\\u77ED\\u54C8\\u5E0C\\uFF09\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\\u2022 "a1b2c3d"'
+        git_commit_hashes: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u6807\\u51C6\\u7684 Git \\u63D0\\u4EA4\\u54C8\\u5E0C\\u503C\\uFF08\\u957F\\u54C8\\u5E0C\\u6216\\u77ED\\u54C8\\u5E0C\\uFF09\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\\u2022 "a1b2c3d"',
+        website_urls: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389<strong>\\u72EC\\u7ACB\\u7684 URL</strong> \\u6587\\u672C\\u3002\\u5B83\\u7684\\u5339\\u914D\\u89C4\\u5219\\u88AB\\u8BBE\\u8BA1\\u5F97\\u975E\\u5E38\\u4E25\\u683C\\uFF0C\\u4EE5\\u907F\\u514D\\u610F\\u5916\\u79FB\\u9664\\u4E0D\\u662F\\u94FE\\u63A5\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "https://www.example.com"<br>\\u2022 "http://test.co.uk"<br>\\u2022 "www.google.com"<br>\\u2022 "example.org"',
+        shorthand_numbers: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u4F7F\\u7528<strong>\\u5E38\\u89C1\\u7B80\\u5199\\u540E\\u7F00</strong>\\u7684\\u6570\\u5B57\\uFF0C\\u4F8B\\u5982 k (\\u5343)\\u3001m (\\u767E\\u4E07) \\u6216 b (\\u5341\\u4EBF)\\uFF0C\\u4E0D\\u533A\\u5206\\u5927\\u5C0F\\u5199\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "1.2k"<br>\\u2022 "15M"<br>\\u2022 "2.5b"<br>\\u2022 "100K"'
       },
       display: {
         title: "\\u663E\\u793A\\u8BBE\\u7F6E\\u8BF4\\u660E",
@@ -2558,7 +2630,11 @@ ${result.join(",\n")}
         hex_color_codes: "\\u904E\\u6FFE\\u5341\\u516D\\u9032\\u4F4D\\u984F\\u8272",
         email_addresses: "\\u904E\\u6FFE\\u90F5\\u4EF6\\u5730\\u5740",
         uuids: "\\u904E\\u6FFE UUID",
-        git_commit_hashes: "\\u904E\\u6FFE Git \\u96DC\\u6E4A"
+        git_commit_hashes: "\\u904E\\u6FFEGit\\u63D0\\u4EA4\\u96DC\\u6E4A\\u503C",
+        website_urls: "\\u904E\\u6FFE\\u7DB2\\u5740",
+        website_urls_title: "\\u904E\\u6FFE\\u7DB2\\u5740 (URL)",
+        shorthand_numbers: "\\u904E\\u6FFE\\u7C21\\u5BEB\\u6578\\u5B57",
+        shorthand_numbers_title: "\\u904E\\u6FFE\\u5E36\\u6709\\u55AE\\u4F4D\\u7684\\u7C21\\u5BEB\\u6578\\u5B57"
       },
       display: {
         show_fab: "\\u986F\\u793A\\u61F8\\u6D6E\\u6309\\u9215",
@@ -2646,7 +2722,9 @@ ${result.join(",\n")}
         hex_color_codes: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u6A19\\u6E96\\u7684 CSS \\u5341\\u516D\\u9032\\u4F4D\\u984F\\u8272\\u4EE3\\u78BC\\uFF083\\u30014\\u30016 \\u6216 8 \\u4F4D\\uFF0C\\u5F8C\\u8005\\u53EF\\u5305\\u542B Alpha \\u901A\\u9053\\uFF09\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "#FFFFFF"<br>\\u2022 "#ff0000"<br>\\u2022 "#f0c"<br>\\u2022 "#f0c8" (4\\u4F4D)<br>\\u2022 "#ff000080" (8\\u4F4D)',
         email_addresses: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u7B26\\u5408\\u6A19\\u6E96\\u683C\\u5F0F\\u7684\\u96FB\\u5B50\\u90F5\\u4EF6\\u5730\\u5740\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "example@domain.com"<br>\\u2022 "user.name@sub.domain.org"',
         uuids: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u901A\\u7528\\u552F\\u4E00\\u8B58\\u5225\\u78BC (UUID)\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "123e4567-e89b-12d3-a456-426614174000"',
-        git_commit_hashes: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u6A19\\u6E96\\u7684 Git \\u63D0\\u4EA4\\u96DC\\u6E4A\\u503C\\uFF08\\u9577\\u96DC\\u6E4A\\u6216\\u77ED\\u96DC\\u6E4A\\uFF09\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\\u2022 "a1b2c3d"'
+        git_commit_hashes: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u6A19\\u6E96\\u7684 Git \\u63D0\\u4EA4\\u96DC\\u6E4A\\u503C\\uFF08\\u9577\\u96DC\\u6E4A\\u6216\\u77ED\\u96DC\\u6E4A\\uFF09\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\\u2022 "a1b2c3d"',
+        website_urls: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389<strong>\\u7368\\u7ACB\\u7684 URL</strong> \\u6587\\u5B57\\u3002\\u5B83\\u7684\\u6BD4\\u5C0D\\u898F\\u5247\\u88AB\\u8A2D\\u8A08\\u5F97\\u975E\\u5E38\\u56B4\\u683C\\uFF0C\\u4EE5\\u907F\\u514D\\u610F\\u5916\\u79FB\\u9664\\u4E0D\\u662F\\u9023\\u7D50\\u7684\\u6587\\u5B57\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "https://www.example.com"<br>\\u2022 "http://test.co.uk"<br>\\u2022 "www.google.com"<br>\\u2022 "example.org"',
+        shorthand_numbers: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u4F7F\\u7528<strong>\\u5E38\\u898B\\u7C21\\u5BEB\\u5F8C\\u7DB4</strong>\\u7684\\u6578\\u5B57\\uFF0C\\u4F8B\\u5982 k (\\u5343)\\u3001m (\\u767E\\u842C) \\u6216 b (\\u5341\\u5104)\\uFF0C\\u4E0D\\u5340\\u5206\\u5927\\u5C0F\\u5BEB\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "1.2k"<br>\\u2022 "15M"<br>\\u2022 "2.5b"<br>\\u2022 "100K"'
       },
       display: {
         title: "\\u986F\\u793A\\u8A2D\\u5B9A\\u8AAA\\u660E",
@@ -2732,7 +2810,9 @@ ${result.join(",\n")}
     { id: "filter-hex-colors", key: "hexColor", label: "settings.filters.hex_color_codes", tooltip: { titleIcon: infoIcon, title: "settings.filters.hex_color_codes", text: "tooltip.filters.hex_color_codes" } },
     { id: "filter-emails", key: "email", label: "settings.filters.email_addresses", tooltip: { titleIcon: infoIcon, title: "settings.filters.email_addresses", text: "tooltip.filters.email_addresses" } },
     { id: "filter-uuids", key: "uuid", label: "settings.filters.uuids", tooltip: { titleIcon: infoIcon, title: "settings.filters.uuids", text: "tooltip.filters.uuids" } },
-    { id: "filter-git-hashes", key: "gitCommitHash", label: "settings.filters.git_commit_hashes", tooltip: { titleIcon: infoIcon, title: "settings.filters.git_commit_hashes", text: "tooltip.filters.git_commit_hashes" } }
+    { id: "filter-git-hashes", key: "gitCommitHash", label: "settings.filters.git_commit_hashes", tooltip: { titleIcon: infoIcon, title: "settings.filters.git_commit_hashes", text: "tooltip.filters.git_commit_hashes" } },
+    { id: "filter-website-urls", key: "websiteUrl", label: "settings.filters.website_urls", tooltip: { titleIcon: infoIcon, title: "settings.filters.website_urls_title", text: "tooltip.filters.website_urls" } },
+    { id: "filter-shorthand-numbers", key: "shorthandNumber", label: "settings.filters.shorthand_numbers", tooltip: { titleIcon: infoIcon, title: "settings.filters.shorthand_numbers_title", text: "tooltip.filters.shorthand_numbers" } }
   ];
   // src/shared/utils/filterLogic.js
   var filterConfigMap = new Map(filterDefinitions.map((def) => [def.key, def.label]));
@@ -2789,6 +2869,16 @@ ${result.join(",\n")}
     ["gitCommitHash", {
       regex: /^[0-9a-f]{7,40}$/i,
       label: filterConfigMap.get("gitCommitHash")
+    }],
+    ["websiteUrl", {
+      // \u5339\u914D\u5E38\u89C1\u7684\u7F51\u5740\u683C\u5F0F\uFF0C\u5305\u62EC\u534F\u8BAE\u3001www\u524D\u7F00\u548C\u88F8\u57DF\u540D\uFF0C\u8981\u6C42\u4E25\u683C\u5339\u914D\u6574\u4E2A\u5B57\u7B26\u4E32\u4EE5\u907F\u514D\u8BEF\u4F24\u3002
+      regex: /^(?:(?:https?|ftp):\\/\\/)?(?:www\\.)?([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}(?:\\/.*)?$/,
+      label: filterConfigMap.get("websiteUrl")
+    }],
+    ["shorthandNumber", {
+      // \u5339\u914D\u5E26k/m/b\u540E\u7F00\u7684\u6570\u5B57\uFF0C\u652F\u6301\u6574\u6570\u3001\u6D6E\u70B9\u6570\u3001\u5927\u5C0F\u5199\u4EE5\u53CA\u53EF\u9009\u7684\u7A7A\u683C\u3002
+      regex: /^\\d+(\\.\\d+)?\\s?[kmb]$/i,
+      label: filterConfigMap.get("shorthandNumber")
     }]
   ]);
   function shouldFilter(text, filterRules2) {

@@ -66,6 +66,10 @@ const defaultSettings = {
     uuid: true,
     // 是否过滤 Git Commit Hash
     gitCommitHash: true,
+    // 是否过滤网址
+    websiteUrl: true,
+    // 是否过滤带单位的简写数字
+    shorthandNumber: true,
   },
 };
 

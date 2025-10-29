@@ -40,7 +40,11 @@
       "hex_color_codes": "過濾十六進位顏色",
       "email_addresses": "過濾郵件地址",
       "uuids": "過濾 UUID",
-      "git_commit_hashes": "過濾 Git 雜湊"
+      "git_commit_hashes": "過濾Git提交雜湊值",
+      "website_urls": "過濾網址",
+      "website_urls_title": "過濾網址 (URL)",
+      "shorthand_numbers": "過濾簡寫數字",
+      "shorthand_numbers_title": "過濾帶有單位的簡寫數字"
     },
     "display": {
       "show_fab": "顯示懸浮按鈕",
@@ -128,7 +132,9 @@
       "hex_color_codes": "此規則會過濾掉標準的 CSS 十六進位顏色代碼（3、4、6 或 8 位，後者可包含 Alpha 通道）。<br><br><strong>範例：</strong><br>• \"#FFFFFF\"<br>• \"#ff0000\"<br>• \"#f0c\"<br>• \"#f0c8\" (4位)<br>• \"#ff000080\" (8位)",
       "email_addresses": "此規則會過濾掉符合標準格式的電子郵件地址。<br><br><strong>範例：</strong><br>• \"example@domain.com\"<br>• \"user.name@sub.domain.org\"",
       "uuids": "此規則會過濾掉通用唯一識別碼 (UUID)。<br><br><strong>範例：</strong><br>• \"123e4567-e89b-12d3-a456-426614174000\"",
-      "git_commit_hashes": "此規則會過濾掉標準的 Git 提交雜湊值（長雜湊或短雜湊）。<br><br><strong>範例：</strong><br>• \"a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2\"<br>• \"a1b2c3d\""
+      "git_commit_hashes": "此規則會過濾掉標準的 Git 提交雜湊值（長雜湊或短雜湊）。<br><br><strong>範例：</strong><br>• \"a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2\"<br>• \"a1b2c3d\"",
+      "website_urls": "此規則會過濾掉<strong>獨立的 URL</strong> 文字。它的比對規則被設計得非常嚴格，以避免意外移除不是連結的文字。<br><br><strong>更多範例：</strong><br>• \"https://www.example.com\"<br>• \"http://test.co.uk\"<br>• \"www.google.com\"<br>• \"example.org\"",
+      "shorthand_numbers": "此規則會過濾掉使用<strong>常見簡寫後綴</strong>的數字，例如 k (千)、m (百萬) 或 b (十億)，不區分大小寫。<br><br><strong>更多範例：</strong><br>• \"1.2k\"<br>• \"15M\"<br>• \"2.5b\"<br>• \"100K\""
     },
     "display": {
       "title": "顯示設定說明",
