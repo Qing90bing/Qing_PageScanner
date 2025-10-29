@@ -35,7 +35,12 @@
       "symbols": "過濾純符號",
       "term": "過濾特定術語",
       "single_letter": "過濾純單個英文字母",
-      "repeating_chars": "過濾單一重複字符"
+      "repeating_chars": "過濾單一重複字符",
+      "file_paths": "過濾文件路徑",
+      "hex_color_codes": "過濾十六進位顏色",
+      "email_addresses": "過濾郵件地址",
+      "uuids": "過濾 UUID",
+      "git_commit_hashes": "過濾 Git 哈希"
     },
     "display": {
       "show_fab": "顯示懸浮按鈕",

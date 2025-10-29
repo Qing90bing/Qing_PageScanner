@@ -34,6 +34,11 @@ export const filterDefinitions = [
   { id: 'filter-term', key: 'termFilter', label: 'settings.filters.term' },
   { id: 'filter-single-letter', key: 'singleLetter', label: 'settings.filters.single_letter' },
   { id: 'filter-repeating-chars', key: 'repeatingChars', label: 'settings.filters.repeating_chars' },
+  { id: 'filter-file-paths', key: 'filePath', label: 'settings.filters.file_paths' },
+  { id: 'filter-hex-colors', key: 'hexColor', label: 'settings.filters.hex_color_codes' },
+  { id: 'filter-emails', key: 'email', label: 'settings.filters.email_addresses' },
+  { id: 'filter-uuids', key: 'uuid', label: 'settings.filters.uuids' },
+  { id: 'filter-git-hashes', key: 'gitCommitHash', label: 'settings.filters.git_commit_hashes' },
 ];
 
 export const relatedSettingsDefinitions = [

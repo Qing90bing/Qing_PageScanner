@@ -35,7 +35,12 @@
       "symbols": "过滤纯符号",
       "term": "过滤特定术语",
       "single_letter": "过滤纯单个英文字母",
-      "repeating_chars": "过滤单一重复字符"
+      "repeating_chars": "过滤单一重复字符",
+      "file_paths": "过滤文件路径",
+      "hex_color_codes": "过滤十六进制颜色",
+      "email_addresses": "过滤邮件地址",
+      "uuids": "过滤 UUID",
+      "git_commit_hashes": "过滤 Git 哈希"
     },
     "display": {
       "show_fab": "显示悬浮按钮",

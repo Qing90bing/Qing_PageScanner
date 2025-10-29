@@ -56,6 +56,16 @@ const defaultSettings = {
     singleLetter: false,
     // 是否过滤单一重复字符
     repeatingChars: true,
+    // 是否过滤文件路径
+    filePath: true,
+    // 是否过滤十六进制颜色代码
+    hexColor: true,
+    // 是否过滤邮件地址
+    email: true,
+    // 是否过滤 UUID
+    uuid: true,
+    // 是否过滤 Git Commit Hash
+    gitCommitHash: true,
   },
 };
 
@@ -74,13 +84,17 @@ export function loadSettings() {
 
   if (savedSettings) {
     try {
-      // 使用默认设置作为基础，然后用保存的设置覆盖它
-      // 这样即使用户的存储中缺少新的设置项，也能获得默认值
-      const loadedSettings = {
-        ...defaultSettings,
-        ...JSON.parse(savedSettings),
+      const parsedSettings = JSON.parse(savedSettings);
+      // 创建一个新的合并后设置对象
+      const mergedSettings = {
+        ...defaultSettings, // 级别1：应用默认设置
+        ...parsedSettings,   // 级别2：用已保存的设置覆盖
+        filterRules: {
+          ...defaultSettings.filterRules, // 级别3：应用默认的过滤规则
+          ...(parsedSettings.filterRules || {}), // 级别4：用已保存的过滤规则覆盖
+        },
       };
-      return loadedSettings;
+      return mergedSettings;
     } catch (error) {
       console.error("解析已保存的设置时出错:", error);
       // 如果解析失败，返回默认设置以保证脚本能继续运行

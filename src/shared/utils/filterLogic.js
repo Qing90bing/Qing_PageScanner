@@ -47,6 +47,26 @@ const ruleChecks = new Map([
   ['repeatingChars', {
     regex: /^\s*(.)\1+\s*$/,
     label: filterConfigMap.get('repeatingChars')
+  }],
+  ['filePath', {
+    regex: /^(?:[a-zA-Z]:\\|\\\\|~|\.\.?\/)[\w\-\.\/ \\]*[\w\-\.]+\.[\w]{2,4}$/,
+    label: filterConfigMap.get('filePath')
+  }],
+  ['hexColor', {
+    regex: /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3,4}|[A-Fa-f0-9]{8})$/,
+    label: filterConfigMap.get('hexColor')
+  }],
+  ['email', {
+    regex: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/,
+    label: filterConfigMap.get('email')
+  }],
+  ['uuid', {
+    regex: /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/,
+    label: filterConfigMap.get('uuid')
+  }],
+  ['gitCommitHash', {
+    regex: /^[0-9a-f]{7,40}$/i,
+    label: filterConfigMap.get('gitCommitHash')
   }]
 ]);
 

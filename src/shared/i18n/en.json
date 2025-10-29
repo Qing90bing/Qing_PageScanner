@@ -35,7 +35,12 @@
       "symbols": "Filter symbol-only text",
       "term": "Filter specific terms",
       "single_letter": "Filter single English letters",
-      "repeating_chars": "Filter single repeating characters"
+      "repeating_chars": "Filter single repeating characters",
+      "file_paths": "Filter File Paths",
+      "hex_color_codes": "Filter Hex Color Codes",
+      "email_addresses": "Filter Email Addresses",
+      "uuids": "Filter UUIDs",
+      "git_commit_hashes": "Filter Git Commit Hashes"
     },
     "display": {
       "show_fab": "Show floating button",
