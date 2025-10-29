@@ -16,7 +16,7 @@
   border-radius: 8px;
   background-color: var(--main-textarea-bg);
   color: var(--main-text);
-  font-size: 14px;
+  font-size: 15px;
   cursor: pointer;
   transition: border-color 0.2s, box-shadow 0.2s;
 }

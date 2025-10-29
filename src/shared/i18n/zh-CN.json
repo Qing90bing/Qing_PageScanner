@@ -113,6 +113,35 @@
   "tooltip": {
     "summary": "查看总结",
     "dynamic_scan": "动态扫描",
-    "static_scan": "静态扫描"
+    "static_scan": "静态扫描",
+    "filters": {
+      "title": "内容过滤器说明",
+      "numbers": "此规则会过滤掉<strong>完全由</strong>数字、货币符号、千位分隔符和百分号组成的文本。<br><br><strong>更多示例：</strong><br>• \"-1,234.56\"<br>• \"¥999\"<br>• \"(€200)\"<br>• \"+100%\"",
+      "chinese": "此规则会过滤掉<strong>完全由</strong>中文字符组成的文本，不包括任何标点或空格。<br><br><strong>示例：</strong><br>• \"你好世界\" (将被过滤)<br>• \"你好，世界\" (不会被过滤)",
+      "contains_chinese": "此规则会过滤掉<strong>任何包含</strong>至少一个中文字符的文本，无论是否包含其他字符。<br><br><strong>示例：</strong><br>• \"你好 World\" (将被过滤)<br>• \"第 1 章\" (将被过滤)",
+      "emoji_only": "此规则会过滤掉<strong>完全由</strong>一个或多个表情符号组成的文本。<br><br><strong>示例：</strong><br>• \"👍\"<br>• \"😊🎉🚀\"",
+      "symbols": "此规则会过滤掉<strong>完全由</strong>各类标点和符号组成的文本。<br><br><strong>更多示例：</strong><br>• \"@#*&^%\"<br>• \"()[]{}\"<br>• \"---...---\"",
+      "term": "此规则会过滤掉常见的、通常无需翻译的 UI 术语。<br><br><strong>更多示例：</strong><br>• \"OK\", \"Cancel\", \"Submit\"<br>• \"Login\", \"Settings\", \"Help\"",
+      "single_letter": "此规则会过滤掉由<strong>单个</strong>英文字母组成的文本，忽略大小写。<br><br><strong>示例：</strong><br>• \"A\" (将被过滤)<br>• \"b\" (将被过滤)<br>• \"AB\" (不会被过滤)",
+      "repeating_chars": "此规则会过滤掉由<strong>同一个字符</strong>连续重复 3 次或以上组成的文本。<br><br><strong>示例：</strong><br>• \"======\"<br>• \"bbbbb\"<br>• \"....\"",
+      "file_paths": "此规则会尝试识别并过滤掉类似操作系统文件路径或 URL 的文本。<br><br><strong>更多示例：</strong><br>• \"/path/to/file.js\"<br>• \"C:\\Users\\Test\"<br>• \"https://example.com/data\"",
+      "hex_color_codes": "此规则会过滤掉标准的 CSS 十六进制颜色代码（3位或6位）。<br><br><strong>示例：</strong><br>• \"#FFFFFF\"<br>• \"#ff0000\"<br>• \"#f0c\"",
+      "email_addresses": "此规则会过滤掉符合标准格式的电子邮件地址。<br><br><strong>示例：</strong><br>• \"example@domain.com\"<br>• \"user.name@sub.domain.org\"",
+      "uuids": "此规则会过滤掉通用唯一标识符 (UUID)。<br><br><strong>示例：</strong><br>• \"123e4567-e89b-12d3-a456-426614174000\"",
+      "git_commit_hashes": "此规则会过滤掉标准的 Git 提交哈希值（长哈希或短哈希）。<br><br><strong>示例：</strong><br>• \"a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2\"<br>• \"a1b2c3d\""
+    },
+    "display": {
+      "title": "显示设置说明",
+      "show_fab": "控制是否在网页右下角显示<strong>悬浮动作按钮 (FAB)</strong>。这是静态文本提取、动态文本提取的核心入口。<br><br>如果您禁用了此按钮，可以通过油猴扩展菜单的设置面板重新打开。",
+      "show_scan_count": "启用后，在结果窗口的标题栏会<strong>实时更新</strong>本次扫描发现的文本条目总数。在进行长时间的<strong>动态扫描</strong>时，这个计数器可以很直观地反映扫描进度。",
+      "show_line_numbers": "在结果窗口的文本区域左侧显示行号。当您需要与他人讨论或记录特定某行文本时，行号可以提供一个<strong>精确的定位标记</strong>。",
+      "show_statistics": "在结果窗口底部的状态栏显示当前已提取内容的<strong>实时统计</strong>，包括<strong>总行数</strong>和<strong>总字符数</strong>。这可以帮助您快速评估提取内容的规模。",
+      "enable_word_wrap": "控制结果窗口中的长文本行如何显示。<br><br>• <strong>启用：</strong>长文本将自动换行以适应窗口宽度。<br>• <strong>禁用：</strong>长文本将保持在单行，并出现水平滚动条。",
+      "text_truncation_limit": "这是一个<strong>性能保护</strong>机制。当脚本提取到<strong>单行超长文本</strong>（例如，一个完整的 base64 编码图片）时，若不截断，可能会导致浏览器<strong>卡顿或无响应</strong>。<br><br>此设置会截断超出指定长度的单行文本，以保证界面流畅。<strong>注意：此截断仅影响界面显示，导出的文件仍将包含完整内容。</strong>"
+    },
+    "advanced": {
+        "title": "高级设置说明",
+        "enable_debug_logging": "启用后，脚本会将详细的内部运行状态、执行步骤、错误信息等输出到浏览器的<strong>开发者工具控制台</strong>（通常按 F12 打开）。此功能主要面向开发者或需要提交详细错误报告的用户。"
+    }
   }
 }

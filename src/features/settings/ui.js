@@ -25,6 +25,7 @@ import { switchLanguage, updateSettingsMenu } from '../../shared/i18n/management
 
 let settingsPanel = null;
 let selectComponents = {};
+let isTooltipVisible = false;
 
 // --- 私有函数 ---
 
@@ -33,6 +34,8 @@ let selectComponents = {};
  * @description 监听全局键盘事件，当按下 "Escape" 键时关闭设置面板。
  */
 const handleKeyDown = (event) => {
+  if (isTooltipVisible) return; // 如果提示窗口已打开，则不执行任何操作
+
   if (event.key === 'Escape') {
     hideSettingsPanel();
   }
@@ -101,6 +104,10 @@ function showSettingsPanel() {
     saveBtn.addEventListener('click', handleSave);
     settingsPanel.addEventListener('keydown', handleKeyDown);
     settingsPanel.focus();
+
+    // 监听 tooltip 事件以暂停/恢复 ESC 键的处理
+    on('infoTooltipWillShow', () => { isTooltipVisible = true; });
+    on('infoTooltipDidHide', () => { isTooltipVisible = false; });
 }
 
 /**

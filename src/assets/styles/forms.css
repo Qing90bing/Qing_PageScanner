@@ -2,6 +2,7 @@
 
 /* --- 可复用的按钮样式 --- */
 .tc-button {
+  font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
   padding: 10px 20px;
   background-color: var(--main-primary);
   color: var(--main-primary-text);

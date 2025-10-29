@@ -1,6 +1,7 @@
 // src/features/settings/config.js
 import { themeIcon } from '../../assets/icons/themeIcon.js';
 import languageIcon from '../../assets/icons/languageIcon.js';
+import { infoIcon } from '../../assets/icons/infoIcon.js';
 import { getAvailableLanguages } from '../../shared/i18n/index.js';
 
 export const selectSettingsDefinitions = [
@@ -26,34 +27,45 @@ export const selectSettingsDefinitions = [
 ];
 
 export const filterDefinitions = [
-  { id: 'filter-numbers', key: 'numbers', label: 'settings.filters.numbers' },
-  { id: 'filter-chinese', key: 'chinese', label: 'settings.filters.chinese' },
-  { id: 'filter-contains-chinese', key: 'containsChinese', label: 'settings.filters.contains_chinese' },
-  { id: 'filter-emoji-only', key: 'emojiOnly', label: 'settings.filters.emoji_only' },
-  { id: 'filter-symbols', key: 'symbols', label: 'settings.filters.symbols' },
-  { id: 'filter-term', key: 'termFilter', label: 'settings.filters.term' },
-  { id: 'filter-single-letter', key: 'singleLetter', label: 'settings.filters.single_letter' },
-  { id: 'filter-repeating-chars', key: 'repeatingChars', label: 'settings.filters.repeating_chars' },
-  { id: 'filter-file-paths', key: 'filePath', label: 'settings.filters.file_paths' },
-  { id: 'filter-hex-colors', key: 'hexColor', label: 'settings.filters.hex_color_codes' },
-  { id: 'filter-emails', key: 'email', label: 'settings.filters.email_addresses' },
-  { id: 'filter-uuids', key: 'uuid', label: 'settings.filters.uuids' },
-  { id: 'filter-git-hashes', key: 'gitCommitHash', label: 'settings.filters.git_commit_hashes' },
+  { id: 'filter-numbers', key: 'numbers', label: 'settings.filters.numbers', tooltip: { titleIcon: infoIcon, title: 'settings.filters.numbers', text: 'tooltip.filters.numbers' } },
+  { id: 'filter-chinese', key: 'chinese', label: 'settings.filters.chinese', tooltip: { titleIcon: infoIcon, title: 'settings.filters.chinese', text: 'tooltip.filters.chinese' } },
+  { id: 'filter-contains-chinese', key: 'containsChinese', label: 'settings.filters.contains_chinese', tooltip: { titleIcon: infoIcon, title: 'settings.filters.contains_chinese', text: 'tooltip.filters.contains_chinese' } },
+  { id: 'filter-emoji-only', key: 'emojiOnly', label: 'settings.filters.emoji_only', tooltip: { titleIcon: infoIcon, title: 'settings.filters.emoji_only', text: 'tooltip.filters.emoji_only' } },
+  { id: 'filter-symbols', key: 'symbols', label: 'settings.filters.symbols', tooltip: { titleIcon: infoIcon, title: 'settings.filters.symbols', text: 'tooltip.filters.symbols' } },
+  { id: 'filter-term', key: 'termFilter', label: 'settings.filters.term', tooltip: { titleIcon: infoIcon, title: 'settings.filters.term', text: 'tooltip.filters.term' } },
+  { id: 'filter-single-letter', key: 'singleLetter', label: 'settings.filters.single_letter', tooltip: { titleIcon: infoIcon, title: 'settings.filters.single_letter', text: 'tooltip.filters.single_letter' } },
+  { id: 'filter-repeating-chars', key: 'repeatingChars', label: 'settings.filters.repeating_chars',
+    tooltip: {
+        titleIcon: infoIcon,
+        title: 'settings.filters.repeating_chars',
+        text: 'tooltip.filters.repeating_chars'
+    }
+  },
+  { id: 'filter-file-paths', key: 'filePath', label: 'settings.filters.file_paths', tooltip: { titleIcon: infoIcon, title: 'settings.filters.file_paths', text: 'tooltip.filters.file_paths' } },
+  { id: 'filter-hex-colors', key: 'hexColor', label: 'settings.filters.hex_color_codes', tooltip: { titleIcon: infoIcon, title: 'settings.filters.hex_color_codes', text: 'tooltip.filters.hex_color_codes' } },
+  { id: 'filter-emails', key: 'email', label: 'settings.filters.email_addresses', tooltip: { titleIcon: infoIcon, title: 'settings.filters.email_addresses', text: 'tooltip.filters.email_addresses' } },
+  { id: 'filter-uuids', key: 'uuid', label: 'settings.filters.uuids', tooltip: { titleIcon: infoIcon, title: 'settings.filters.uuids', text: 'tooltip.filters.uuids' } },
+  { id: 'filter-git-hashes', key: 'gitCommitHash', label: 'settings.filters.git_commit_hashes', tooltip: { titleIcon: infoIcon, title: 'settings.filters.git_commit_hashes', text: 'tooltip.filters.git_commit_hashes' } },
 ];
 
 export const relatedSettingsDefinitions = [
-    { id: 'show-fab', key: 'showFab', label: 'settings.display.show_fab' },
-    { id: 'show-scan-count', key: 'showScanCount', label: 'settings.display.show_scan_count' },
-    { id: 'show-line-numbers', key: 'showLineNumbers', label: 'settings.display.show_line_numbers' },
-    { id: 'show-statistics', key: 'showStatistics', label: 'settings.display.show_statistics' },
-    { id: 'enable-word-wrap', key: 'enableWordWrap', label: 'settings.display.enable_word_wrap' },
+    { id: 'show-fab', key: 'showFab', label: 'settings.display.show_fab', tooltip: { titleIcon: infoIcon, title: 'settings.display.show_fab', text: 'tooltip.display.show_fab' } },
+    { id: 'show-scan-count', key: 'showScanCount', label: 'settings.display.show_scan_count', tooltip: { titleIcon: infoIcon, title: 'settings.display.show_scan_count', text: 'tooltip.display.show_scan_count' } },
+    { id: 'show-line-numbers', key: 'showLineNumbers', label: 'settings.display.show_line_numbers', tooltip: { titleIcon: infoIcon, title: 'settings.display.show_line_numbers', text: 'tooltip.display.show_line_numbers' } },
+    { id: 'show-statistics', key: 'showStatistics', label: 'settings.display.show_statistics', tooltip: { titleIcon: infoIcon, title: 'settings.display.show_statistics', text: 'tooltip.display.show_statistics' } },
+    { id: 'enable-word-wrap', key: 'enableWordWrap', label: 'settings.display.enable_word_wrap', tooltip: { titleIcon: infoIcon, title: 'settings.display.enable_word_wrap', text: 'tooltip.display.enable_word_wrap' } },
     { id: 'enable-text-truncation', key: 'enableTextTruncation', label: 'settings.display.text_truncation_limit',
         linkedNumeric: {
             id: 'text-truncation-length',
             key: 'textTruncationLength',
         },
+        tooltip: {
+            titleIcon: infoIcon,
+            title: 'settings.display.text_truncation_limit',
+            text: 'tooltip.display.text_truncation_limit'
+        }
     },
-    { id: 'enable-debug-logging', key: 'enableDebugLogging', label: 'settings.advanced.enable_debug_logging' },
+    { id: 'enable-debug-logging', key: 'enableDebugLogging', label: 'settings.advanced.enable_debug_logging', tooltip: { titleIcon: infoIcon, title: 'settings.advanced.enable_debug_logging', text: 'tooltip.advanced.enable_debug_logging' } },
 ];
 
 /**

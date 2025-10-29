@@ -6,20 +6,20 @@
     "clear": "Clear",
     "copy": "Copy",
     "save": "Save",
-    "discovered": "Discovered: ",
+    "discovered": "Discovered:",
     "confirm": "Confirm",
     "cancel": "Cancel",
     "export": "Export"
-    },
-    "export": {
-        "exportAsTxt": "Export as TXT",
-        "exportAsJson": "Export as JSON",
-        "exportAsCsv": "Export as CSV",
-        "csv": {
-            "id": "ID",
-            "original": "Original",
-            "translation": "Translation"
-        }
+  },
+  "export": {
+    "exportAsTxt": "Export as TXT",
+    "exportAsJson": "Export as JSON",
+    "exportAsCsv": "Export as CSV",
+    "csv": {
+      "id": "ID",
+      "original": "Original",
+      "translation": "Translation"
+    }
   },
   "settings": {
     "title": "Settings",
@@ -28,14 +28,14 @@
     "relatedSettings": "Related Settings",
     "filterRules": "Content Filtering Rules",
     "filters": {
-      "numbers": "Filter numbers/currency",
-      "chinese": "Filter pure Chinese",
-      "contains_chinese": "Filter text containing Chinese",
-      "emoji_only": "Filter emoji-only text",
-      "symbols": "Filter symbol-only text",
-      "term": "Filter specific terms",
-      "single_letter": "Filter single English letters",
-      "repeating_chars": "Filter single repeating characters",
+      "numbers": "Filter Numbers/Currency",
+      "chinese": "Filter Chinese-Only Text",
+      "contains_chinese": "Filter Text Containing Chinese",
+      "emoji_only": "Filter Emoji-Only Text",
+      "symbols": "Filter Symbol-Only Text",
+      "term": "Filter Specific Terms",
+      "single_letter": "Filter Single English Letters",
+      "repeating_chars": "Filter Repeating Characters",
       "file_paths": "Filter File Paths",
       "hex_color_codes": "Filter Hex Color Codes",
       "email_addresses": "Filter Email Addresses",
@@ -43,49 +43,49 @@
       "git_commit_hashes": "Filter Git Commit Hashes"
     },
     "display": {
-      "show_fab": "Show floating button",
-      "show_line_numbers": "Show line numbers",
+      "show_fab": "Show Floating Button",
+      "show_line_numbers": "Show Line Numbers",
       "show_statistics": "Show Statistics",
-      "enable_word_wrap": "Enable text wrapping",
-      "text_truncation_limit": "Enable Textbox Character Limit",
+      "enable_word_wrap": "Enable Word Wrap",
+      "text_truncation_limit": "Enable Text Truncation Limit",
       "character_limit": "Character Limit",
-      "show_scan_count": "Enable scan count display in title bar"
+      "show_scan_count": "Enable Scan Count in Title"
     },
     "advanced": {
-      "enable_debug_logging": "Enable debug logging"
+      "enable_debug_logging": "Enable Debug Logging"
     },
     "panel": {
       "title": "Settings Panel"
     },
     "languages": {
-        "en": "English",
-        "zh_CN": "简体中文",
-        "zh_TW": "繁體中文"
+      "en": "English",
+      "zh_CN": "简体中文",
+      "zh_TW": "繁體中文"
     },
     "themes": {
-        "light": "Light",
-        "dark": "Dark",
-        "system": "System"
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
     }
   },
   "scan": {
     "quick": "Quick Scan",
     "session": "Session Scan",
-    "startSession": "Start dynamic scan session",
-    "stopSession": "Stop dynamic scan session",
-    "finished": "Scan finished, {count} texts found",
-    "quickFinished": "Quick scan finished, {count} texts found",
-    "sessionStarted": "Session scan started",
-    "sessionInProgress": "Session scan is in progress...",
-    "truncationWarning": "To maintain interface fluency, only part of the text is displayed here. The complete content will be provided when exporting."
+    "startSession": "Start Dynamic Scan Session",
+    "stopSession": "Stop Dynamic Scan Session",
+    "finished": "Scan finished, found {count} items.",
+    "quickFinished": "Quick scan finished, found {count} items.",
+    "sessionStarted": "Session scan started.",
+    "sessionInProgress": "Scan in progress...",
+    "truncationWarning": "To maintain UI fluency, only a portion of the text is displayed here. The full content will be available upon export."
   },
   "results": {
     "title": "Extracted Text",
-    "scanCountSession": "Scanned {count} texts",
-    "scanCountStatic": "Total {count} texts scanned",
-    "totalCharacters": "Total characters",
-    "totalLines": "Total lines",
-    "noSummary": "No summary text available",
+    "scanCountSession": "Scanned {count} items",
+    "scanCountStatic": "Total {count} items scanned",
+    "totalCharacters": "Total Characters",
+    "totalLines": "Total Lines",
+    "noSummary": "No summary available",
     "stats": {
       "lines": "Lines",
       "chars": "Chars"
@@ -95,17 +95,17 @@
     "copiedToClipboard": "Copied to clipboard!",
     "settingsSaved": "Settings saved!",
     "modalInitError": "Modal not initialized.",
-    "nothingToCopy": "Nothing to copy",
-    "contentCleared": "Content cleared",
-    "noTextSelected": "No text selected",
+    "nothingToCopy": "Nothing to copy.",
+    "contentCleared": "Content cleared.",
+    "noTextSelected": "No text selected.",
     "cspWorkerWarning": "Switched to compatibility scan mode due to website security restrictions."
   },
   "placeholders": {
-    "click": "Click the ",
+    "click": "Click ",
     "dynamicScan": "[Dynamic Scan]",
-    "startNewScanSession": " button to start a new scanning session",
+    "startNewScanSession": " to start a new scan session",
     "staticScan": "[Static Scan]",
-    "performOneTimeScan": " button for a one-time quick extraction"
+    "performOneTimeScan": " to perform a one-time quick extraction"
   },
   "confirmation": {
     "clear": "Are you sure you want to clear the content? This action cannot be undone."
@@ -113,6 +113,35 @@
   "tooltip": {
     "summary": "View Summary",
     "dynamic_scan": "Dynamic Scan",
-    "static_scan": "Static Scan"
+    "static_scan": "Static Scan",
+    "filters": {
+      "title": "Content Filter Explanation",
+      "numbers": "This rule filters out text that consists <strong>entirely</strong> of numbers, currency symbols, thousands separators, and percentage signs.<br><br><strong>More Examples:</strong><br>• \"-1,234.56\"<br>• \"¥999\"<br>• \"(€200)\"<br>• \"+100%\"",
+      "chinese": "This rule filters out text that consists <strong>entirely</strong> of Chinese characters, excluding any punctuation or spaces.<br><br><strong>Examples:</strong><br>• \"你好世界\" (will be filtered)<br>• \"你好，世界\" (will not be filtered)",
+      "contains_chinese": "This rule filters out <strong>any</strong> text that contains at least one Chinese character, regardless of other characters.<br><br><strong>Examples:</strong><br>• \"你好 World\" (will be filtered)<br>• \"Chapter 1\" (will be filtered, as '第 1 章' contains '第' and '章')",
+      "emoji_only": "This rule filters out text that consists <strong>entirely</strong> of one or more emoji characters.<br><br><strong>Examples:</strong><br>• \"👍\"<br>• \"😊🎉🚀\"",
+      "symbols": "This rule filters out text that consists <strong>entirely</strong> of various punctuation and symbols.<br><br><strong>More Examples:</strong><br>• \"@#*&^%\"<br>• \"()[]{}\"<br>• \"---...---\"",
+      "term": "This rule filters out common UI terms that typically do not require translation.<br><br><strong>More Examples:</strong><br>• \"OK\", \"Cancel\", \"Submit\"<br>• \"Login\", \"Settings\", \"Help\"",
+      "single_letter": "This rule filters out text consisting of a <strong>single</strong> English letter, case-insensitive.<br><br><strong>Examples:</strong><br>• \"A\" (will be filtered)<br>• \"b\" (will be filtered)<br>• \"AB\" (will not be filtered)",
+      "repeating_chars": "This rule filters out text composed of the <strong>same character</strong> repeating 3 or more times consecutively.<br><br><strong>Examples:</strong><br>• \"======\"<br>• \"bbbbb\"<br>• \"....\"",
+      "file_paths": "This rule attempts to identify and filter out text that resembles operating system file paths or URLs.<br><br><strong>More Examples:</strong><br>• \"/path/to/file.js\"<br>• \"C:\\Users\\Test\"<br>• \"https://example.com/data\"",
+      "hex_color_codes": "This rule filters out standard CSS hexadecimal color codes (3 or 6 digits).<br><br><strong>Examples:</strong><br>• \"#FFFFFF\"<br>• \"#ff0000\"<br>• \"#f0c\"",
+      "email_addresses": "This rule filters out text that matches the standard format of an email address.<br><br><strong>Examples:</strong><br>• \"example@domain.com\"<br>• \"user.name@sub.domain.org\"",
+      "uuids": "This rule filters out Universally Unique Identifiers (UUIDs).<br><br><strong>Example:</strong><br>• \"123e4567-e89b-12d3-a456-426614174000\"",
+      "git_commit_hashes": "This rule filters out standard Git commit hashes (long or short).<br><br><strong>Examples:</strong><br>• \"a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2\"<br>• \"a1b2c3d\""
+    },
+    "display": {
+      "title": "Display Settings Explanation",
+      "show_fab": "Control whether to display the <strong>Floating Action Button (FAB)</strong> in the bottom-right corner of webpages. This serves as the primary entry point for both static and dynamic text extraction. <br><br>If you disable this button, you can re-enable it via the settings panel in the Tampermonkey extension menu.",
+      "show_scan_count": "When enabled, the title bar of the results window will show a <strong>real-time count</strong> of the total text items found in the current scan. This is especially useful for monitoring the progress of a long-running <strong>Dynamic Scan</strong>.",
+      "show_line_numbers": "Displays line numbers to the left of the text area in the results window. This provides a <strong>precise reference point</strong> when you need to discuss or note a specific line of text.",
+      "show_statistics": "Displays <strong>real-time statistics</strong> about the extracted content in the status bar at the bottom of the results window, including <strong>total lines</strong> and <strong>total characters</strong>. This helps you quickly assess the volume of the content.",
+      "enable_word_wrap": "Controls how long lines of text are displayed in the results window.<br><br>• <strong>Enabled:</strong> Long lines will wrap to fit the window's width.<br>• <strong>Disabled:</strong> Long lines will remain on a single line, causing a horizontal scrollbar to appear.",
+      "text_truncation_limit": "This is a <strong>performance-saving</strong> feature. If the script extracts an <strong>extremely long single line of text</strong> (e.g., a base64 encoded image), it could cause the browser to <strong>lag or become unresponsive</strong>.<br><br>This setting truncates any single line exceeding the specified length to ensure the UI remains smooth. <strong>Note: This only affects the display; the exported file will still contain the full, untruncated content.</strong>"
+    },
+    "advanced": {
+        "title": "Advanced Settings Explanation",
+        "enable_debug_logging": "When enabled, the script will output detailed internal status, execution steps, and error messages to the browser's <strong>Developer Tools Console</strong> (usually opened with F12). This is primarily for developers or users who need to submit detailed bug reports."
+    }
   }
 }

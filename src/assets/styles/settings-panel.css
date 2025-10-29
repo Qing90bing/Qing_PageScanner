@@ -20,6 +20,7 @@
 }
 
 .settings-panel-modal {
+  font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
   background-color: var(--main-bg);
   color: var(--main-text);
   border: 1px solid var(--main-border);
@@ -164,6 +165,8 @@
 /* --- 复合设置项容器的特殊样式 --- */
 .composite-setting-container {
     /* 保持与其他设置项的垂直间距一致 */
+    font-weight: 500;
+    font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
     margin-top: 14px;
     margin-left: 0px;
 }
@@ -189,6 +192,7 @@
     width: 100px;
     padding: 6px 8px;
     border-radius: 8px;
+    font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
     border: 1px solid var(--main-textarea-border);
     background-color: var(--main-textarea-bg);
     color: var(--main-text);

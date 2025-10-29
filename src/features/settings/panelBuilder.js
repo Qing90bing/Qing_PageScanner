@@ -65,7 +65,7 @@ export function buildPanelDOM(settings) {
             compositeContainer.className = 'composite-setting-container';
 
             // 1. 添加复选框
-            const checkboxElement = createCheckbox(setting.id, t(setting.label), settings[setting.key]);
+            const checkboxElement = createCheckbox(setting.id, t(setting.label), settings[setting.key], setting.tooltip);
             compositeContainer.appendChild(checkboxElement);
 
             // 2. 添加带标签的数字输入框
@@ -95,7 +95,7 @@ export function buildPanelDOM(settings) {
             relatedItem.appendChild(compositeContainer);
         } else {
             // --- 对标准复选框使用原始布局 ---
-            const checkboxElement = createCheckbox(setting.id, t(setting.label), settings[setting.key]);
+            const checkboxElement = createCheckbox(setting.id, t(setting.label), settings[setting.key], setting.tooltip);
             relatedItem.appendChild(checkboxElement);
         }
     });
@@ -110,7 +110,7 @@ export function buildPanelDOM(settings) {
 
     // Dynamically create checkboxes and append them
     filterDefinitions.forEach(filter => {
-        const checkboxElement = createCheckbox(filter.id, t(filter.label), settings.filterRules[filter.key]);
+        const checkboxElement = createCheckbox(filter.id, t(filter.label), settings.filterRules[filter.key], filter.tooltip);
         filterItem.appendChild(checkboxElement);
     });
 

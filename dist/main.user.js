@@ -91,6 +91,7 @@ var TextExtractor = (() => {
   }
   var themeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 32.5-156t88-127Q256-817 330-848.5T488-880q80 0 151 27.5t124.5 76q53.5 48.5 85 115T880-518q0 115-70 176.5T640-280h-74q-9 0-12.5 5t-3.5 11q0 12 15 34.5t15 51.5q0 50-27.5 74T480-80Zm0-400Zm-220 40q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120-160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm200 0q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120 160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17ZM480-160q9 0 14.5-5t5.5-13q0-14-15-33t-15-57q0-42 29-67t71-25h70q66 0 113-38.5T800-518q0-121-92.5-201.5T488-800q-136 0-232 93t-96 227q0 133 93.5 226.5T480-160Z"/></svg>`;
   var languageIcon_default = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-155.5t86-127Q252-817 325-848.5T480-880q83 0 155.5 31.5t127 86q54.5 54.5 86 127T880-480q0 82-31.5 155t-86 127.5q-54.5 54.5-127 86T480-80Zm0-82q26-36 45-75t31-83H404q12 44 31 83t45 75Zm-104-16q-18-33-31.5-68.5T322-320H204q29 50 72.5 87t99.5 55Zm208 0q56-18 99.5-55t72.5-87H638q-9 38-22.5 73.5T584-178ZM170-400h136q-3-20-4.5-39.5T300-480q0-21 1.5-40.5T306-560H170q-5 20-7.5 39.5T160-480q0 21 2.5 40.5T170-400Zm216 0h188q3-20 4.5-39.5T580-480q0-21-1.5-40.5T574-560H386q-3 20-4.5 39.5T380-480q0 21 1.5 40.5T386-400Zm268 0h136q5-20 7.5-39.5T800-480q0-21-2.5-40.5T790-560H654q3 20 4.5 39.5T660-480q0 21-1.5 40.5T654-400Zm-16-240h118q-29-50-72.5-87T584-782q18 33 31.5 68.5T638-640Zm-234 0h152q-12-44-31-83t-45-75q-26 36-45 75t-31 83Zm-200 0h118q9-38 22.5-73.5T376-782q-56 18-99.5 55T204-640Z"/></svg>`;
+  var infoIcon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>';
   var en_default = {
     common: {
       scan: "Scan",
@@ -99,7 +100,7 @@ var TextExtractor = (() => {
       clear: "Clear",
       copy: "Copy",
       save: "Save",
-      discovered: "Discovered: ",
+      discovered: "Discovered:",
       confirm: "Confirm",
       cancel: "Cancel",
       export: "Export"
@@ -121,14 +122,14 @@ var TextExtractor = (() => {
       relatedSettings: "Related Settings",
       filterRules: "Content Filtering Rules",
       filters: {
-        numbers: "Filter numbers/currency",
-        chinese: "Filter pure Chinese",
-        contains_chinese: "Filter text containing Chinese",
-        emoji_only: "Filter emoji-only text",
-        symbols: "Filter symbol-only text",
-        term: "Filter specific terms",
-        single_letter: "Filter single English letters",
-        repeating_chars: "Filter single repeating characters",
+        numbers: "Filter Numbers/Currency",
+        chinese: "Filter Chinese-Only Text",
+        contains_chinese: "Filter Text Containing Chinese",
+        emoji_only: "Filter Emoji-Only Text",
+        symbols: "Filter Symbol-Only Text",
+        term: "Filter Specific Terms",
+        single_letter: "Filter Single English Letters",
+        repeating_chars: "Filter Repeating Characters",
         file_paths: "Filter File Paths",
         hex_color_codes: "Filter Hex Color Codes",
         email_addresses: "Filter Email Addresses",
@@ -136,16 +137,16 @@ var TextExtractor = (() => {
         git_commit_hashes: "Filter Git Commit Hashes"
       },
       display: {
-        show_fab: "Show floating button",
-        show_line_numbers: "Show line numbers",
+        show_fab: "Show Floating Button",
+        show_line_numbers: "Show Line Numbers",
         show_statistics: "Show Statistics",
-        enable_word_wrap: "Enable text wrapping",
-        text_truncation_limit: "Enable Textbox Character Limit",
+        enable_word_wrap: "Enable Word Wrap",
+        text_truncation_limit: "Enable Text Truncation Limit",
         character_limit: "Character Limit",
-        show_scan_count: "Enable scan count display in title bar"
+        show_scan_count: "Enable Scan Count in Title"
       },
       advanced: {
-        enable_debug_logging: "Enable debug logging"
+        enable_debug_logging: "Enable Debug Logging"
       },
       panel: {
         title: "Settings Panel"
@@ -164,21 +165,21 @@ var TextExtractor = (() => {
     scan: {
       quick: "Quick Scan",
       session: "Session Scan",
-      startSession: "Start dynamic scan session",
-      stopSession: "Stop dynamic scan session",
-      finished: "Scan finished, {count} texts found",
-      quickFinished: "Quick scan finished, {count} texts found",
-      sessionStarted: "Session scan started",
-      sessionInProgress: "Session scan is in progress...",
-      truncationWarning: "To maintain interface fluency, only part of the text is displayed here. The complete content will be provided when exporting."
+      startSession: "Start Dynamic Scan Session",
+      stopSession: "Stop Dynamic Scan Session",
+      finished: "Scan finished, found {count} items.",
+      quickFinished: "Quick scan finished, found {count} items.",
+      sessionStarted: "Session scan started.",
+      sessionInProgress: "Scan in progress...",
+      truncationWarning: "To maintain UI fluency, only a portion of the text is displayed here. The full content will be available upon export."
     },
     results: {
       title: "Extracted Text",
-      scanCountSession: "Scanned {count} texts",
-      scanCountStatic: "Total {count} texts scanned",
-      totalCharacters: "Total characters",
-      totalLines: "Total lines",
-      noSummary: "No summary text available",
+      scanCountSession: "Scanned {count} items",
+      scanCountStatic: "Total {count} items scanned",
+      totalCharacters: "Total Characters",
+      totalLines: "Total Lines",
+      noSummary: "No summary available",
       stats: {
         lines: "Lines",
         chars: "Chars"
@@ -188,17 +189,17 @@ var TextExtractor = (() => {
       copiedToClipboard: "Copied to clipboard!",
       settingsSaved: "Settings saved!",
       modalInitError: "Modal not initialized.",
-      nothingToCopy: "Nothing to copy",
-      contentCleared: "Content cleared",
-      noTextSelected: "No text selected",
+      nothingToCopy: "Nothing to copy.",
+      contentCleared: "Content cleared.",
+      noTextSelected: "No text selected.",
       cspWorkerWarning: "Switched to compatibility scan mode due to website security restrictions."
     },
     placeholders: {
-      click: "Click the ",
+      click: "Click ",
       dynamicScan: "[Dynamic Scan]",
-      startNewScanSession: " button to start a new scanning session",
+      startNewScanSession: " to start a new scan session",
       staticScan: "[Static Scan]",
-      performOneTimeScan: " button for a one-time quick extraction"
+      performOneTimeScan: " to perform a one-time quick extraction"
     },
     confirmation: {
       clear: "Are you sure you want to clear the content? This action cannot be undone."
@@ -206,7 +207,36 @@ var TextExtractor = (() => {
     tooltip: {
       summary: "View Summary",
       dynamic_scan: "Dynamic Scan",
-      static_scan: "Static Scan"
+      static_scan: "Static Scan",
+      filters: {
+        title: "Content Filter Explanation",
+        numbers: 'This rule filters out text that consists <strong>entirely</strong> of numbers, currency symbols, thousands separators, and percentage signs.<br><br><strong>More Examples:</strong><br>\u2022 "-1,234.56"<br>\u2022 "\xA5999"<br>\u2022 "(\u20AC200)"<br>\u2022 "+100%"',
+        chinese: 'This rule filters out text that consists <strong>entirely</strong> of Chinese characters, excluding any punctuation or spaces.<br><br><strong>Examples:</strong><br>\u2022 "\u4F60\u597D\u4E16\u754C" (will be filtered)<br>\u2022 "\u4F60\u597D\uFF0C\u4E16\u754C" (will not be filtered)',
+        contains_chinese: `This rule filters out <strong>any</strong> text that contains at least one Chinese character, regardless of other characters.<br><br><strong>Examples:</strong><br>\u2022 "\u4F60\u597D World" (will be filtered)<br>\u2022 "Chapter 1" (will be filtered, as '\u7B2C 1 \u7AE0' contains '\u7B2C' and '\u7AE0')`,
+        emoji_only: 'This rule filters out text that consists <strong>entirely</strong> of one or more emoji characters.<br><br><strong>Examples:</strong><br>\u2022 "\u{1F44D}"<br>\u2022 "\u{1F60A}\u{1F389}\u{1F680}"',
+        symbols: 'This rule filters out text that consists <strong>entirely</strong> of various punctuation and symbols.<br><br><strong>More Examples:</strong><br>\u2022 "@#*&^%"<br>\u2022 "()[]{}"<br>\u2022 "---...---"',
+        term: 'This rule filters out common UI terms that typically do not require translation.<br><br><strong>More Examples:</strong><br>\u2022 "OK", "Cancel", "Submit"<br>\u2022 "Login", "Settings", "Help"',
+        single_letter: 'This rule filters out text consisting of a <strong>single</strong> English letter, case-insensitive.<br><br><strong>Examples:</strong><br>\u2022 "A" (will be filtered)<br>\u2022 "b" (will be filtered)<br>\u2022 "AB" (will not be filtered)',
+        repeating_chars: 'This rule filters out text composed of the <strong>same character</strong> repeating 3 or more times consecutively.<br><br><strong>Examples:</strong><br>\u2022 "======"<br>\u2022 "bbbbb"<br>\u2022 "...."',
+        file_paths: 'This rule attempts to identify and filter out text that resembles operating system file paths or URLs.<br><br><strong>More Examples:</strong><br>\u2022 "/path/to/file.js"<br>\u2022 "C:\\Users\\Test"<br>\u2022 "https://example.com/data"',
+        hex_color_codes: 'This rule filters out standard CSS hexadecimal color codes (3 or 6 digits).<br><br><strong>Examples:</strong><br>\u2022 "#FFFFFF"<br>\u2022 "#ff0000"<br>\u2022 "#f0c"',
+        email_addresses: 'This rule filters out text that matches the standard format of an email address.<br><br><strong>Examples:</strong><br>\u2022 "example@domain.com"<br>\u2022 "user.name@sub.domain.org"',
+        uuids: 'This rule filters out Universally Unique Identifiers (UUIDs).<br><br><strong>Example:</strong><br>\u2022 "123e4567-e89b-12d3-a456-426614174000"',
+        git_commit_hashes: 'This rule filters out standard Git commit hashes (long or short).<br><br><strong>Examples:</strong><br>\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\u2022 "a1b2c3d"'
+      },
+      display: {
+        title: "Display Settings Explanation",
+        show_fab: "Control whether to display the <strong>Floating Action Button (FAB)</strong> in the bottom-right corner of webpages. This serves as the primary entry point for both static and dynamic text extraction. <br><br>If you disable this button, you can re-enable it via the settings panel in the Tampermonkey extension menu.",
+        show_scan_count: "When enabled, the title bar of the results window will show a <strong>real-time count</strong> of the total text items found in the current scan. This is especially useful for monitoring the progress of a long-running <strong>Dynamic Scan</strong>.",
+        show_line_numbers: "Displays line numbers to the left of the text area in the results window. This provides a <strong>precise reference point</strong> when you need to discuss or note a specific line of text.",
+        show_statistics: "Displays <strong>real-time statistics</strong> about the extracted content in the status bar at the bottom of the results window, including <strong>total lines</strong> and <strong>total characters</strong>. This helps you quickly assess the volume of the content.",
+        enable_word_wrap: "Controls how long lines of text are displayed in the results window.<br><br>\u2022 <strong>Enabled:</strong> Long lines will wrap to fit the window's width.<br>\u2022 <strong>Disabled:</strong> Long lines will remain on a single line, causing a horizontal scrollbar to appear.",
+        text_truncation_limit: "This is a <strong>performance-saving</strong> feature. If the script extracts an <strong>extremely long single line of text</strong> (e.g., a base64 encoded image), it could cause the browser to <strong>lag or become unresponsive</strong>.<br><br>This setting truncates any single line exceeding the specified length to ensure the UI remains smooth. <strong>Note: This only affects the display; the exported file will still contain the full, untruncated content.</strong>"
+      },
+      advanced: {
+        title: "Advanced Settings Explanation",
+        enable_debug_logging: "When enabled, the script will output detailed internal status, execution steps, and error messages to the browser's <strong>Developer Tools Console</strong> (usually opened with F12). This is primarily for developers or users who need to submit detailed bug reports."
+      }
     }
   };
   var zh_CN_default = {
@@ -324,7 +354,36 @@ var TextExtractor = (() => {
     tooltip: {
       summary: "\u67E5\u770B\u603B\u7ED3",
       dynamic_scan: "\u52A8\u6001\u626B\u63CF",
-      static_scan: "\u9759\u6001\u626B\u63CF"
+      static_scan: "\u9759\u6001\u626B\u63CF",
+      filters: {
+        title: "\u5185\u5BB9\u8FC7\u6EE4\u5668\u8BF4\u660E",
+        numbers: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389<strong>\u5B8C\u5168\u7531</strong>\u6570\u5B57\u3001\u8D27\u5E01\u7B26\u53F7\u3001\u5343\u4F4D\u5206\u9694\u7B26\u548C\u767E\u5206\u53F7\u7EC4\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u66F4\u591A\u793A\u4F8B\uFF1A</strong><br>\u2022 "-1,234.56"<br>\u2022 "\xA5999"<br>\u2022 "(\u20AC200)"<br>\u2022 "+100%"',
+        chinese: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389<strong>\u5B8C\u5168\u7531</strong>\u4E2D\u6587\u5B57\u7B26\u7EC4\u6210\u7684\u6587\u672C\uFF0C\u4E0D\u5305\u62EC\u4EFB\u4F55\u6807\u70B9\u6216\u7A7A\u683C\u3002<br><br><strong>\u793A\u4F8B\uFF1A</strong><br>\u2022 "\u4F60\u597D\u4E16\u754C" (\u5C06\u88AB\u8FC7\u6EE4)<br>\u2022 "\u4F60\u597D\uFF0C\u4E16\u754C" (\u4E0D\u4F1A\u88AB\u8FC7\u6EE4)',
+        contains_chinese: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389<strong>\u4EFB\u4F55\u5305\u542B</strong>\u81F3\u5C11\u4E00\u4E2A\u4E2D\u6587\u5B57\u7B26\u7684\u6587\u672C\uFF0C\u65E0\u8BBA\u662F\u5426\u5305\u542B\u5176\u4ED6\u5B57\u7B26\u3002<br><br><strong>\u793A\u4F8B\uFF1A</strong><br>\u2022 "\u4F60\u597D World" (\u5C06\u88AB\u8FC7\u6EE4)<br>\u2022 "\u7B2C 1 \u7AE0" (\u5C06\u88AB\u8FC7\u6EE4)',
+        emoji_only: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389<strong>\u5B8C\u5168\u7531</strong>\u4E00\u4E2A\u6216\u591A\u4E2A\u8868\u60C5\u7B26\u53F7\u7EC4\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u793A\u4F8B\uFF1A</strong><br>\u2022 "\u{1F44D}"<br>\u2022 "\u{1F60A}\u{1F389}\u{1F680}"',
+        symbols: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389<strong>\u5B8C\u5168\u7531</strong>\u5404\u7C7B\u6807\u70B9\u548C\u7B26\u53F7\u7EC4\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u66F4\u591A\u793A\u4F8B\uFF1A</strong><br>\u2022 "@#*&^%"<br>\u2022 "()[]{}"<br>\u2022 "---...---"',
+        term: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389\u5E38\u89C1\u7684\u3001\u901A\u5E38\u65E0\u9700\u7FFB\u8BD1\u7684 UI \u672F\u8BED\u3002<br><br><strong>\u66F4\u591A\u793A\u4F8B\uFF1A</strong><br>\u2022 "OK", "Cancel", "Submit"<br>\u2022 "Login", "Settings", "Help"',
+        single_letter: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389\u7531<strong>\u5355\u4E2A</strong>\u82F1\u6587\u5B57\u6BCD\u7EC4\u6210\u7684\u6587\u672C\uFF0C\u5FFD\u7565\u5927\u5C0F\u5199\u3002<br><br><strong>\u793A\u4F8B\uFF1A</strong><br>\u2022 "A" (\u5C06\u88AB\u8FC7\u6EE4)<br>\u2022 "b" (\u5C06\u88AB\u8FC7\u6EE4)<br>\u2022 "AB" (\u4E0D\u4F1A\u88AB\u8FC7\u6EE4)',
+        repeating_chars: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389\u7531<strong>\u540C\u4E00\u4E2A\u5B57\u7B26</strong>\u8FDE\u7EED\u91CD\u590D 3 \u6B21\u6216\u4EE5\u4E0A\u7EC4\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u793A\u4F8B\uFF1A</strong><br>\u2022 "======"<br>\u2022 "bbbbb"<br>\u2022 "...."',
+        file_paths: '\u6B64\u89C4\u5219\u4F1A\u5C1D\u8BD5\u8BC6\u522B\u5E76\u8FC7\u6EE4\u6389\u7C7B\u4F3C\u64CD\u4F5C\u7CFB\u7EDF\u6587\u4EF6\u8DEF\u5F84\u6216 URL \u7684\u6587\u672C\u3002<br><br><strong>\u66F4\u591A\u793A\u4F8B\uFF1A</strong><br>\u2022 "/path/to/file.js"<br>\u2022 "C:\\Users\\Test"<br>\u2022 "https://example.com/data"',
+        hex_color_codes: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389\u6807\u51C6\u7684 CSS \u5341\u516D\u8FDB\u5236\u989C\u8272\u4EE3\u7801\uFF083\u4F4D\u62166\u4F4D\uFF09\u3002<br><br><strong>\u793A\u4F8B\uFF1A</strong><br>\u2022 "#FFFFFF"<br>\u2022 "#ff0000"<br>\u2022 "#f0c"',
+        email_addresses: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389\u7B26\u5408\u6807\u51C6\u683C\u5F0F\u7684\u7535\u5B50\u90AE\u4EF6\u5730\u5740\u3002<br><br><strong>\u793A\u4F8B\uFF1A</strong><br>\u2022 "example@domain.com"<br>\u2022 "user.name@sub.domain.org"',
+        uuids: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389\u901A\u7528\u552F\u4E00\u6807\u8BC6\u7B26 (UUID)\u3002<br><br><strong>\u793A\u4F8B\uFF1A</strong><br>\u2022 "123e4567-e89b-12d3-a456-426614174000"',
+        git_commit_hashes: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389\u6807\u51C6\u7684 Git \u63D0\u4EA4\u54C8\u5E0C\u503C\uFF08\u957F\u54C8\u5E0C\u6216\u77ED\u54C8\u5E0C\uFF09\u3002<br><br><strong>\u793A\u4F8B\uFF1A</strong><br>\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\u2022 "a1b2c3d"'
+      },
+      display: {
+        title: "\u663E\u793A\u8BBE\u7F6E\u8BF4\u660E",
+        show_fab: "\u63A7\u5236\u662F\u5426\u5728\u7F51\u9875\u53F3\u4E0B\u89D2\u663E\u793A<strong>\u60AC\u6D6E\u52A8\u4F5C\u6309\u94AE (FAB)</strong>\u3002\u8FD9\u662F\u9759\u6001\u6587\u672C\u63D0\u53D6\u3001\u52A8\u6001\u6587\u672C\u63D0\u53D6\u7684\u6838\u5FC3\u5165\u53E3\u3002<br><br>\u5982\u679C\u60A8\u7981\u7528\u4E86\u6B64\u6309\u94AE\uFF0C\u53EF\u4EE5\u901A\u8FC7\u6CB9\u7334\u6269\u5C55\u83DC\u5355\u7684\u8BBE\u7F6E\u9762\u677F\u91CD\u65B0\u6253\u5F00\u3002",
+        show_scan_count: "\u542F\u7528\u540E\uFF0C\u5728\u7ED3\u679C\u7A97\u53E3\u7684\u6807\u9898\u680F\u4F1A<strong>\u5B9E\u65F6\u66F4\u65B0</strong>\u672C\u6B21\u626B\u63CF\u53D1\u73B0\u7684\u6587\u672C\u6761\u76EE\u603B\u6570\u3002\u5728\u8FDB\u884C\u957F\u65F6\u95F4\u7684<strong>\u52A8\u6001\u626B\u63CF</strong>\u65F6\uFF0C\u8FD9\u4E2A\u8BA1\u6570\u5668\u53EF\u4EE5\u5F88\u76F4\u89C2\u5730\u53CD\u6620\u626B\u63CF\u8FDB\u5EA6\u3002",
+        show_line_numbers: "\u5728\u7ED3\u679C\u7A97\u53E3\u7684\u6587\u672C\u533A\u57DF\u5DE6\u4FA7\u663E\u793A\u884C\u53F7\u3002\u5F53\u60A8\u9700\u8981\u4E0E\u4ED6\u4EBA\u8BA8\u8BBA\u6216\u8BB0\u5F55\u7279\u5B9A\u67D0\u884C\u6587\u672C\u65F6\uFF0C\u884C\u53F7\u53EF\u4EE5\u63D0\u4F9B\u4E00\u4E2A<strong>\u7CBE\u786E\u7684\u5B9A\u4F4D\u6807\u8BB0</strong>\u3002",
+        show_statistics: "\u5728\u7ED3\u679C\u7A97\u53E3\u5E95\u90E8\u7684\u72B6\u6001\u680F\u663E\u793A\u5F53\u524D\u5DF2\u63D0\u53D6\u5185\u5BB9\u7684<strong>\u5B9E\u65F6\u7EDF\u8BA1</strong>\uFF0C\u5305\u62EC<strong>\u603B\u884C\u6570</strong>\u548C<strong>\u603B\u5B57\u7B26\u6570</strong>\u3002\u8FD9\u53EF\u4EE5\u5E2E\u52A9\u60A8\u5FEB\u901F\u8BC4\u4F30\u63D0\u53D6\u5185\u5BB9\u7684\u89C4\u6A21\u3002",
+        enable_word_wrap: "\u63A7\u5236\u7ED3\u679C\u7A97\u53E3\u4E2D\u7684\u957F\u6587\u672C\u884C\u5982\u4F55\u663E\u793A\u3002<br><br>\u2022 <strong>\u542F\u7528\uFF1A</strong>\u957F\u6587\u672C\u5C06\u81EA\u52A8\u6362\u884C\u4EE5\u9002\u5E94\u7A97\u53E3\u5BBD\u5EA6\u3002<br>\u2022 <strong>\u7981\u7528\uFF1A</strong>\u957F\u6587\u672C\u5C06\u4FDD\u6301\u5728\u5355\u884C\uFF0C\u5E76\u51FA\u73B0\u6C34\u5E73\u6EDA\u52A8\u6761\u3002",
+        text_truncation_limit: "\u8FD9\u662F\u4E00\u4E2A<strong>\u6027\u80FD\u4FDD\u62A4</strong>\u673A\u5236\u3002\u5F53\u811A\u672C\u63D0\u53D6\u5230<strong>\u5355\u884C\u8D85\u957F\u6587\u672C</strong>\uFF08\u4F8B\u5982\uFF0C\u4E00\u4E2A\u5B8C\u6574\u7684 base64 \u7F16\u7801\u56FE\u7247\uFF09\u65F6\uFF0C\u82E5\u4E0D\u622A\u65AD\uFF0C\u53EF\u80FD\u4F1A\u5BFC\u81F4\u6D4F\u89C8\u5668<strong>\u5361\u987F\u6216\u65E0\u54CD\u5E94</strong>\u3002<br><br>\u6B64\u8BBE\u7F6E\u4F1A\u622A\u65AD\u8D85\u51FA\u6307\u5B9A\u957F\u5EA6\u7684\u5355\u884C\u6587\u672C\uFF0C\u4EE5\u4FDD\u8BC1\u754C\u9762\u6D41\u7545\u3002<strong>\u6CE8\u610F\uFF1A\u6B64\u622A\u65AD\u4EC5\u5F71\u54CD\u754C\u9762\u663E\u793A\uFF0C\u5BFC\u51FA\u7684\u6587\u4EF6\u4ECD\u5C06\u5305\u542B\u5B8C\u6574\u5185\u5BB9\u3002</strong>"
+      },
+      advanced: {
+        title: "\u9AD8\u7EA7\u8BBE\u7F6E\u8BF4\u660E",
+        enable_debug_logging: "\u542F\u7528\u540E\uFF0C\u811A\u672C\u4F1A\u5C06\u8BE6\u7EC6\u7684\u5185\u90E8\u8FD0\u884C\u72B6\u6001\u3001\u6267\u884C\u6B65\u9AA4\u3001\u9519\u8BEF\u4FE1\u606F\u7B49\u8F93\u51FA\u5230\u6D4F\u89C8\u5668\u7684<strong>\u5F00\u53D1\u8005\u5DE5\u5177\u63A7\u5236\u53F0</strong>\uFF08\u901A\u5E38\u6309 F12 \u6253\u5F00\uFF09\u3002\u6B64\u529F\u80FD\u4E3B\u8981\u9762\u5411\u5F00\u53D1\u8005\u6216\u9700\u8981\u63D0\u4EA4\u8BE6\u7EC6\u9519\u8BEF\u62A5\u544A\u7684\u7528\u6237\u3002"
+      }
     }
   };
   var zh_TW_default = {
@@ -364,21 +423,21 @@ var TextExtractor = (() => {
         symbols: "\u904E\u6FFE\u7D14\u7B26\u865F",
         term: "\u904E\u6FFE\u7279\u5B9A\u8853\u8A9E",
         single_letter: "\u904E\u6FFE\u7D14\u55AE\u500B\u82F1\u6587\u5B57\u6BCD",
-        repeating_chars: "\u904E\u6FFE\u55AE\u4E00\u91CD\u8907\u5B57\u7B26",
-        file_paths: "\u904E\u6FFE\u6587\u4EF6\u8DEF\u5F91",
+        repeating_chars: "\u904E\u6FFE\u55AE\u4E00\u91CD\u8907\u5B57\u5143",
+        file_paths: "\u904E\u6FFE\u6A94\u6848\u8DEF\u5F91",
         hex_color_codes: "\u904E\u6FFE\u5341\u516D\u9032\u4F4D\u984F\u8272",
         email_addresses: "\u904E\u6FFE\u90F5\u4EF6\u5730\u5740",
         uuids: "\u904E\u6FFE UUID",
-        git_commit_hashes: "\u904E\u6FFE Git \u54C8\u5E0C"
+        git_commit_hashes: "\u904E\u6FFE Git \u96DC\u6E4A"
       },
       display: {
         show_fab: "\u986F\u793A\u61F8\u6D6E\u6309\u9215",
         show_line_numbers: "\u986F\u793A\u884C\u865F",
         show_statistics: "\u986F\u793A\u7D71\u8A08\u8CC7\u8A0A",
         enable_word_wrap: "\u555F\u7528\u6587\u5B57\u81EA\u52D5\u63DB\u884C",
-        text_truncation_limit: "\u555F\u7528\u6587\u672C\u6846\u5B57\u7B26\u9650\u5236",
-        character_limit: "\u5B57\u7B26\u6578",
-        show_scan_count: "\u555F\u7528\u6A19\u984C\u5217\u986F\u793A\u6383\u63CF\u6B21\u6578"
+        text_truncation_limit: "\u555F\u7528\u6587\u5B57\u6846\u5B57\u5143\u9650\u5236",
+        character_limit: "\u5B57\u5143\u6578",
+        show_scan_count: "\u555F\u7528\u6A19\u984C\u5217\u986F\u793A\u6383\u63CF\u8A08\u6578"
       },
       advanced: {
         enable_debug_logging: "\u555F\u7528\u5075\u932F\u65E5\u8A8C"
@@ -405,8 +464,8 @@ var TextExtractor = (() => {
       finished: "\u6383\u63CF\u7D50\u675F\uFF0C\u5171\u767C\u73FE {count} \u689D\u6587\u672C",
       quickFinished: "\u5FEB\u6377\u6383\u63CF\u5B8C\u6210\uFF0C\u767C\u73FE {count} \u689D\u6587\u672C",
       sessionStarted: "\u6703\u8A71\u6383\u63CF\u5DF2\u958B\u59CB",
-      sessionInProgress: "\u6703\u8A71\u6383\u63CF\u6B63\u5728\u9032\u884C\u4E2D...",
-      truncationWarning: "\u70BA\u4E86\u4FDD\u6301\u4ECB\u9762\u6D41\u66A2\uFF0C\u50C5\u986F\u793A\u90E8\u5206\u6587\u672C\u5167\u5BB9\u3002\u5B8C\u6574\u5167\u5BB9\u5C07\u5728\u532F\u51FA\u6642\u63D0\u4F9B\u3002"
+      sessionInProgress: "\u6383\u63CF\u6B63\u5728\u9032\u884C\u4E2D...",
+      truncationWarning: "\u70BA\u4FDD\u6301\u4ECB\u9762\u6D41\u66A2\uFF0C\u6B64\u8655\u50C5\u986F\u793A\u90E8\u5206\u6587\u672C\u3002\u5B8C\u6574\u5167\u5BB9\u5C07\u5728\u532F\u51FA\u6642\u63D0\u4F9B\u3002"
     },
     results: {
       title: "\u63D0\u53D6\u7684\u6587\u672C",
@@ -414,10 +473,10 @@ var TextExtractor = (() => {
       scanCountStatic: "\u5171\u6383\u63CF {count} \u689D\u6587\u672C",
       totalCharacters: "\u7E3D\u5B57\u6578",
       totalLines: "\u7E3D\u884C\u6578",
-      noSummary: "\u7576\u524D\u6C92\u6709\u7E3D\u7D50\u6587\u672C",
+      noSummary: "\u7576\u524D\u6C92\u6709\u6458\u8981\u6587\u672C",
       stats: {
         lines: "\u884C",
-        chars: "\u5B57\u7B26\u6578"
+        chars: "\u5B57\u5143\u6578"
       }
     },
     notifications: {
@@ -440,9 +499,38 @@ var TextExtractor = (() => {
       clear: "\u4F60\u78BA\u8A8D\u8981\u6E05\u7A7A\u55CE\uFF1F\u6B64\u64CD\u4F5C\u4E0D\u53EF\u64A4\u92B7\u3002"
     },
     tooltip: {
-      summary: "\u67E5\u770B\u7E3D\u7D50",
+      summary: "\u67E5\u770B\u6458\u8981",
       dynamic_scan: "\u52D5\u614B\u6383\u63CF",
-      static_scan: "\u975C\u614B\u6383\u63CF"
+      static_scan: "\u975C\u614B\u6383\u63CF",
+      filters: {
+        title: "\u5167\u5BB9\u904E\u6FFE\u5668\u8AAA\u660E",
+        numbers: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389<strong>\u5B8C\u5168\u7531</strong>\u6578\u5B57\u3001\u8CA8\u5E63\u7B26\u865F\u3001\u5343\u4F4D\u5206\u9694\u7B26\u548C\u767E\u5206\u6BD4\u7B26\u865F\u7D44\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u66F4\u591A\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "-1,234.56"<br>\u2022 "\xA5999"<br>\u2022 "(\u20AC200)"<br>\u2022 "+100%"',
+        chinese: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389<strong>\u5B8C\u5168\u7531</strong>\u4E2D\u6587\u5B57\u5143\u7D44\u6210\u7684\u6587\u672C\uFF0C\u4E0D\u5305\u62EC\u4EFB\u4F55\u6A19\u9EDE\u6216\u7A7A\u683C\u3002<br><br><strong>\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "\u4F60\u597D\u4E16\u754C" (\u5C07\u88AB\u904E\u6FFE)<br>\u2022 "\u4F60\u597D\uFF0C\u4E16\u754C" (\u4E0D\u6703\u88AB\u904E\u6FFE)',
+        contains_chinese: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389<strong>\u4EFB\u4F55\u5305\u542B</strong>\u81F3\u5C11\u4E00\u500B\u4E2D\u6587\u5B57\u5143\u7684\u6587\u672C\uFF0C\u7121\u8AD6\u662F\u5426\u5305\u542B\u5176\u4ED6\u5B57\u5143\u3002<br><br><strong>\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "\u4F60\u597D World" (\u5C07\u88AB\u904E\u6FFE)<br>\u2022 "\u7B2C 1 \u7AE0" (\u5C07\u88AB\u904E\u6FFE)',
+        emoji_only: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389<strong>\u5B8C\u5168\u7531</strong>\u4E00\u500B\u6216\u591A\u500B\u8868\u60C5\u7B26\u865F\u7D44\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "\u{1F44D}"<br>\u2022 "\u{1F60A}\u{1F389}\u{1F680}"',
+        symbols: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389<strong>\u5B8C\u5168\u7531</strong>\u5404\u985E\u6A19\u9EDE\u548C\u7B26\u865F\u7D44\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u66F4\u591A\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "@#*&^%"<br>\u2022 "()[]{}"<br>\u2022 "---...---"',
+        term: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389\u5E38\u898B\u7684\u3001\u901A\u5E38\u7121\u9700\u7FFB\u8B6F\u7684 UI \u8853\u8A9E\u3002<br><br><strong>\u66F4\u591A\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "OK", "Cancel", "Submit"<br>\u2022 "Login", "Settings", "Help"',
+        single_letter: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389\u7531<strong>\u55AE\u500B</strong>\u82F1\u6587\u5B57\u6BCD\u7D44\u6210\u7684\u6587\u672C\uFF0C\u5FFD\u7565\u5927\u5C0F\u5BEB\u3002<br><br><strong>\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "A" (\u5C07\u88AB\u904E\u6FFE)<br>\u2022 "b" (\u5C07\u88AB\u904E\u6FFE)<br>\u2022 "AB" (\u4E0D\u6703\u88AB\u904E\u6FFE)',
+        repeating_chars: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389\u7531<strong>\u540C\u4E00\u500B\u5B57\u5143</strong>\u9023\u7E8C\u91CD\u8907 3 \u6B21\u6216\u4EE5\u4E0A\u7D44\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "======"<br>\u2022 "bbbbb"<br>\u2022 "...."',
+        file_paths: '\u6B64\u898F\u5247\u6703\u5617\u8A66\u8B58\u5225\u4E26\u904E\u6FFE\u6389\u985E\u4F3C\u4F5C\u696D\u7CFB\u7D71\u6A94\u6848\u8DEF\u5F91\u6216 URL \u7684\u6587\u672C\u3002<br><br><strong>\u66F4\u591A\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "/path/to/file.js"<br>\u2022 "C:\\Users\\Test"<br>\u2022 "https://example.com/data"',
+        hex_color_codes: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389\u6A19\u6E96\u7684 CSS \u5341\u516D\u9032\u4F4D\u984F\u8272\u4EE3\u78BC\uFF083\u4F4D\u62166\u4F4D\uFF09\u3002<br><br><strong>\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "#FFFFFF"<br>\u2022 "#ff0000"<br>\u2022 "#f0c"',
+        email_addresses: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389\u7B26\u5408\u6A19\u6E96\u683C\u5F0F\u7684\u96FB\u5B50\u90F5\u4EF6\u5730\u5740\u3002<br><br><strong>\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "example@domain.com"<br>\u2022 "user.name@sub.domain.org"',
+        uuids: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389\u901A\u7528\u552F\u4E00\u8B58\u5225\u78BC (UUID)\u3002<br><br><strong>\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "123e4567-e89b-12d3-a456-426614174000"',
+        git_commit_hashes: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389\u6A19\u6E96\u7684 Git \u63D0\u4EA4\u96DC\u6E4A\u503C\uFF08\u9577\u96DC\u6E4A\u6216\u77ED\u96DC\u6E4A\uFF09\u3002<br><br><strong>\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\u2022 "a1b2c3d"'
+      },
+      display: {
+        title: "\u986F\u793A\u8A2D\u5B9A\u8AAA\u660E",
+        show_fab: "\u63A7\u5236\u662F\u5426\u5728\u7DB2\u9801\u53F3\u4E0B\u89D2\u986F\u793A <strong>\u6D6E\u52D5\u52D5\u4F5C\u6309\u9215 (FAB)</strong>\u3002\u9019\u662F\u975C\u614B\u6587\u5B57\u8403\u53D6\u3001\u52D5\u614B\u6587\u5B57\u8403\u53D6\u7684\u6838\u5FC3\u5165\u53E3\u3002<br><br>\u5982\u679C\u60A8\u7981\u7528\u4E86\u6B64\u6309\u9215\uFF0C\u53EF\u4EE5\u900F\u904E\u6CB9\u7334\u64F4\u5145\u529F\u80FD\u9078\u55AE\u7684\u8A2D\u5B9A\u9762\u677F\u91CD\u65B0\u958B\u555F\u3002",
+        show_scan_count: "\u555F\u7528\u5F8C\uFF0C\u5728\u7D50\u679C\u8996\u7A97\u7684\u6A19\u984C\u5217\u6703<strong>\u5373\u6642\u66F4\u65B0</strong>\u672C\u6B21\u6383\u63CF\u767C\u73FE\u7684\u6587\u672C\u689D\u76EE\u7E3D\u6578\u3002\u5728\u9032\u884C\u9577\u6642\u9593\u7684<strong>\u52D5\u614B\u6383\u63CF</strong>\u6642\uFF0C\u9019\u500B\u8A08\u6578\u5668\u53EF\u4EE5\u5F88\u76F4\u89C0\u5730\u53CD\u6620\u6383\u63CF\u9032\u5EA6\u3002",
+        show_line_numbers: "\u5728\u7D50\u679C\u8996\u7A97\u7684\u6587\u672C\u5340\u57DF\u5DE6\u5074\u986F\u793A\u884C\u865F\u3002\u7576\u60A8\u9700\u8981\u8207\u4ED6\u4EBA\u8A0E\u8AD6\u6216\u8A18\u9304\u7279\u5B9A\u67D0\u884C\u6587\u672C\u6642\uFF0C\u884C\u865F\u53EF\u4EE5\u63D0\u4F9B\u4E00\u500B<strong>\u7CBE\u78BA\u7684\u5B9A\u4F4D\u6A19\u8A18</strong>\u3002",
+        show_statistics: "\u5728\u7D50\u679C\u8996\u7A97\u5E95\u90E8\u7684\u72C0\u614B\u5217\u986F\u793A\u7576\u524D\u5DF2\u63D0\u53D6\u5167\u5BB9\u7684<strong>\u5373\u6642\u7D71\u8A08</strong>\uFF0C\u5305\u62EC<strong>\u7E3D\u884C\u6578</strong>\u548C<strong>\u7E3D\u5B57\u5143\u6578</strong>\u3002\u9019\u53EF\u4EE5\u5E6B\u52A9\u60A8\u5FEB\u901F\u8A55\u4F30\u63D0\u53D6\u5167\u5BB9\u7684\u898F\u6A21\u3002",
+        enable_word_wrap: "\u63A7\u5236\u7D50\u679C\u8996\u7A97\u4E2D\u7684\u9577\u6587\u672C\u884C\u5982\u4F55\u986F\u793A\u3002<br><br>\u2022 <strong>\u555F\u7528\uFF1A</strong>\u9577\u6587\u672C\u5C07\u81EA\u52D5\u63DB\u884C\u4EE5\u9069\u61C9\u8996\u7A97\u5BEC\u5EA6\u3002<br>\u2022 <strong>\u7981\u7528\uFF1A</strong>\u9577\u6587\u672C\u5C07\u4FDD\u6301\u5728\u55AE\u884C\uFF0C\u4E26\u51FA\u73FE\u6C34\u5E73\u6372\u52D5\u689D\u3002",
+        text_truncation_limit: "\u9019\u662F\u4E00\u500B<strong>\u6548\u80FD\u4FDD\u8B77</strong>\u6A5F\u5236\u3002\u7576\u8173\u672C\u63D0\u53D6\u5230<strong>\u55AE\u884C\u8D85\u9577\u6587\u672C</strong>\uFF08\u4F8B\u5982\uFF0C\u4E00\u500B\u5B8C\u6574\u7684 base64 \u7DE8\u78BC\u5716\u7247\uFF09\u6642\uFF0C\u82E5\u4E0D\u622A\u65B7\uFF0C\u53EF\u80FD\u6703\u5C0E\u81F4\u700F\u89BD\u5668<strong>\u5361\u9813\u6216\u7121\u97FF\u61C9</strong>\u3002<br><br>\u6B64\u8A2D\u5B9A\u6703\u622A\u65B7\u8D85\u51FA\u6307\u5B9A\u9577\u5EA6\u7684\u55AE\u884C\u6587\u672C\uFF0C\u4EE5\u4FDD\u8B49\u4ECB\u9762\u6D41\u66A2\u3002<strong>\u6CE8\u610F\uFF1A\u6B64\u622A\u65B7\u50C5\u5F71\u97FF\u4ECB\u9762\u986F\u793A\uFF0C\u532F\u51FA\u7684\u6A94\u6848\u4ECD\u5C07\u5305\u542B\u5B8C\u6574\u5167\u5BB9\u3002</strong>"
+      },
+      advanced: {
+        title: "\u9032\u968E\u8A2D\u5B9A\u8AAA\u660E",
+        enable_debug_logging: "\u555F\u7528\u5F8C\uFF0C\u8173\u672C\u6703\u5C07\u8A73\u7D30\u7684\u5167\u90E8\u904B\u884C\u72C0\u614B\u3001\u57F7\u884C\u6B65\u9A5F\u3001\u932F\u8AA4\u8CC7\u8A0A\u7B49\u8F38\u51FA\u5230\u700F\u89BD\u5668\u7684<strong>\u958B\u767C\u8005\u5DE5\u5177\u63A7\u5236\u53F0</strong>\uFF08\u901A\u5E38\u6309 F12 \u958B\u555F\uFF09\u3002\u6B64\u529F\u80FD\u4E3B\u8981\u9762\u5411\u958B\u767C\u8005\u6216\u9700\u8981\u63D0\u4EA4\u8A73\u7D30\u932F\u8AA4\u5831\u544A\u7684\u4F7F\u7528\u8005\u3002"
+      }
     }
   };
   var events = {};
@@ -542,26 +630,35 @@ var TextExtractor = (() => {
     }
   ];
   var filterDefinitions = [
-    { id: "filter-numbers", key: "numbers", label: "settings.filters.numbers" },
-    { id: "filter-chinese", key: "chinese", label: "settings.filters.chinese" },
-    { id: "filter-contains-chinese", key: "containsChinese", label: "settings.filters.contains_chinese" },
-    { id: "filter-emoji-only", key: "emojiOnly", label: "settings.filters.emoji_only" },
-    { id: "filter-symbols", key: "symbols", label: "settings.filters.symbols" },
-    { id: "filter-term", key: "termFilter", label: "settings.filters.term" },
-    { id: "filter-single-letter", key: "singleLetter", label: "settings.filters.single_letter" },
-    { id: "filter-repeating-chars", key: "repeatingChars", label: "settings.filters.repeating_chars" },
-    { id: "filter-file-paths", key: "filePath", label: "settings.filters.file_paths" },
-    { id: "filter-hex-colors", key: "hexColor", label: "settings.filters.hex_color_codes" },
-    { id: "filter-emails", key: "email", label: "settings.filters.email_addresses" },
-    { id: "filter-uuids", key: "uuid", label: "settings.filters.uuids" },
-    { id: "filter-git-hashes", key: "gitCommitHash", label: "settings.filters.git_commit_hashes" }
+    { id: "filter-numbers", key: "numbers", label: "settings.filters.numbers", tooltip: { titleIcon: infoIcon, title: "settings.filters.numbers", text: "tooltip.filters.numbers" } },
+    { id: "filter-chinese", key: "chinese", label: "settings.filters.chinese", tooltip: { titleIcon: infoIcon, title: "settings.filters.chinese", text: "tooltip.filters.chinese" } },
+    { id: "filter-contains-chinese", key: "containsChinese", label: "settings.filters.contains_chinese", tooltip: { titleIcon: infoIcon, title: "settings.filters.contains_chinese", text: "tooltip.filters.contains_chinese" } },
+    { id: "filter-emoji-only", key: "emojiOnly", label: "settings.filters.emoji_only", tooltip: { titleIcon: infoIcon, title: "settings.filters.emoji_only", text: "tooltip.filters.emoji_only" } },
+    { id: "filter-symbols", key: "symbols", label: "settings.filters.symbols", tooltip: { titleIcon: infoIcon, title: "settings.filters.symbols", text: "tooltip.filters.symbols" } },
+    { id: "filter-term", key: "termFilter", label: "settings.filters.term", tooltip: { titleIcon: infoIcon, title: "settings.filters.term", text: "tooltip.filters.term" } },
+    { id: "filter-single-letter", key: "singleLetter", label: "settings.filters.single_letter", tooltip: { titleIcon: infoIcon, title: "settings.filters.single_letter", text: "tooltip.filters.single_letter" } },
+    {
+      id: "filter-repeating-chars",
+      key: "repeatingChars",
+      label: "settings.filters.repeating_chars",
+      tooltip: {
+        titleIcon: infoIcon,
+        title: "settings.filters.repeating_chars",
+        text: "tooltip.filters.repeating_chars"
+      }
+    },
+    { id: "filter-file-paths", key: "filePath", label: "settings.filters.file_paths", tooltip: { titleIcon: infoIcon, title: "settings.filters.file_paths", text: "tooltip.filters.file_paths" } },
+    { id: "filter-hex-colors", key: "hexColor", label: "settings.filters.hex_color_codes", tooltip: { titleIcon: infoIcon, title: "settings.filters.hex_color_codes", text: "tooltip.filters.hex_color_codes" } },
+    { id: "filter-emails", key: "email", label: "settings.filters.email_addresses", tooltip: { titleIcon: infoIcon, title: "settings.filters.email_addresses", text: "tooltip.filters.email_addresses" } },
+    { id: "filter-uuids", key: "uuid", label: "settings.filters.uuids", tooltip: { titleIcon: infoIcon, title: "settings.filters.uuids", text: "tooltip.filters.uuids" } },
+    { id: "filter-git-hashes", key: "gitCommitHash", label: "settings.filters.git_commit_hashes", tooltip: { titleIcon: infoIcon, title: "settings.filters.git_commit_hashes", text: "tooltip.filters.git_commit_hashes" } }
   ];
   var relatedSettingsDefinitions = [
-    { id: "show-fab", key: "showFab", label: "settings.display.show_fab" },
-    { id: "show-scan-count", key: "showScanCount", label: "settings.display.show_scan_count" },
-    { id: "show-line-numbers", key: "showLineNumbers", label: "settings.display.show_line_numbers" },
-    { id: "show-statistics", key: "showStatistics", label: "settings.display.show_statistics" },
-    { id: "enable-word-wrap", key: "enableWordWrap", label: "settings.display.enable_word_wrap" },
+    { id: "show-fab", key: "showFab", label: "settings.display.show_fab", tooltip: { titleIcon: infoIcon, title: "settings.display.show_fab", text: "tooltip.display.show_fab" } },
+    { id: "show-scan-count", key: "showScanCount", label: "settings.display.show_scan_count", tooltip: { titleIcon: infoIcon, title: "settings.display.show_scan_count", text: "tooltip.display.show_scan_count" } },
+    { id: "show-line-numbers", key: "showLineNumbers", label: "settings.display.show_line_numbers", tooltip: { titleIcon: infoIcon, title: "settings.display.show_line_numbers", text: "tooltip.display.show_line_numbers" } },
+    { id: "show-statistics", key: "showStatistics", label: "settings.display.show_statistics", tooltip: { titleIcon: infoIcon, title: "settings.display.show_statistics", text: "tooltip.display.show_statistics" } },
+    { id: "enable-word-wrap", key: "enableWordWrap", label: "settings.display.enable_word_wrap", tooltip: { titleIcon: infoIcon, title: "settings.display.enable_word_wrap", text: "tooltip.display.enable_word_wrap" } },
     {
       id: "enable-text-truncation",
       key: "enableTextTruncation",
@@ -569,9 +666,14 @@ var TextExtractor = (() => {
       linkedNumeric: {
         id: "text-truncation-length",
         key: "textTruncationLength"
+      },
+      tooltip: {
+        titleIcon: infoIcon,
+        title: "settings.display.text_truncation_limit",
+        text: "tooltip.display.text_truncation_limit"
       }
     },
-    { id: "enable-debug-logging", key: "enableDebugLogging", label: "settings.advanced.enable_debug_logging" }
+    { id: "enable-debug-logging", key: "enableDebugLogging", label: "settings.advanced.enable_debug_logging", tooltip: { titleIcon: infoIcon, title: "settings.advanced.enable_debug_logging", text: "tooltip.advanced.enable_debug_logging" } }
   ];
   var appConfig = {
     ui: {
@@ -1041,7 +1143,6 @@ ${result.join(",\n")}
       count: textsArray.length
     };
   };
-  var infoIcon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>';
   var successIcon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q65 0 123 19t107 53l-58 59q-38-24-81-37.5T480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160q133 0 226.5-93.5T800-480q0-18-2-36t-6-35l65-65q11 32 17 66t6 70q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-56-216L254-466l56-56 114 114 400-401 56 56-456 457Z"/></svg>';
   var closeIcon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>';
   var notificationContainer = null;
@@ -1202,7 +1303,682 @@ ${result.join(",\n")}
       };
       try {
         log("[\u9759\u6001\u626B\u63CF] \u5F00\u59CB\u6267\u884C\uFF0C\u5C1D\u8BD5\u4F7F\u7528 Web Worker...");
-        const workerScript = '(() => {\n  // src/shared/utils/ignoredTerms.js\n  var IGNORED_TERMS = [\n    "Github",\n    "Microsoft",\n    "Tampermonkey",\n    "JavaScript",\n    "TypeScript",\n    "Hugging Face",\n    "Google",\n    "Facebook",\n    "Twitter",\n    "LinkedIn",\n    "OpenAI",\n    "ChatGPT",\n    "API",\n    "Glossary of computer science",\n    "HTML",\n    "CSS",\n    "JSON",\n    "XML",\n    "HTTP",\n    "HTTPS",\n    "URL",\n    "IP address",\n    "DNS",\n    "CPU",\n    "GPU",\n    "RAM",\n    "SSD",\n    "USB",\n    "Wi-Fi",\n    "Bluetooth",\n    "VPN",\n    "AI"\n  ];\n  var ignoredTerms_default = IGNORED_TERMS;\n\n  // src/assets/icons/themeIcon.js\n  var themeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 32.5-156t88-127Q256-817 330-848.5T488-880q80 0 151 27.5t124.5 76q53.5 48.5 85 115T880-518q0 115-70 176.5T640-280h-74q-9 0-12.5 5t-3.5 11q0 12 15 34.5t15 51.5q0 50-27.5 74T480-80Zm0-400Zm-220 40q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120-160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm200 0q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120 160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17ZM480-160q9 0 14.5-5t5.5-13q0-14-15-33t-15-57q0-42 29-67t71-25h70q66 0 113-38.5T800-518q0-121-92.5-201.5T488-800q-136 0-232 93t-96 227q0 133 93.5 226.5T480-160Z"/></svg>`;\n\n  // src/assets/icons/languageIcon.js\n  var languageIcon_default = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-155.5t86-127Q252-817 325-848.5T480-880q83 0 155.5 31.5t127 86q54.5 54.5 86 127T880-480q0 82-31.5 155t-86 127.5q-54.5 54.5-127 86T480-80Zm0-82q26-36 45-75t31-83H404q12 44 31 83t45 75Zm-104-16q-18-33-31.5-68.5T322-320H204q29 50 72.5 87t99.5 55Zm208 0q56-18 99.5-55t72.5-87H638q-9 38-22.5 73.5T584-178ZM170-400h136q-3-20-4.5-39.5T300-480q0-21 1.5-40.5T306-560H170q-5 20-7.5 39.5T160-480q0 21 2.5 40.5T170-400Zm216 0h188q3-20 4.5-39.5T580-480q0-21-1.5-40.5T574-560H386q-3 20-4.5 39.5T380-480q0 21 1.5 40.5T386-400Zm268 0h136q5-20 7.5-39.5T800-480q0-21-2.5-40.5T790-560H654q3 20 4.5 39.5T660-480q0 21-1.5 40.5T654-400Zm-16-240h118q-29-50-72.5-87T584-782q18 33 31.5 68.5T638-640Zm-234 0h152q-12-44-31-83t-45-75q-26 36-45 75t-31 83Zm-200 0h118q9-38 22.5-73.5T376-782q-56 18-99.5 55T204-640Z"/></svg>`;\n\n  // src/shared/i18n/en.json\n  var en_default = {\n    common: {\n      scan: "Scan",\n      stop: "Stop",\n      resume: "Resume",\n      clear: "Clear",\n      copy: "Copy",\n      save: "Save",\n      discovered: "Discovered: ",\n      confirm: "Confirm",\n      cancel: "Cancel",\n      export: "Export"\n    },\n    export: {\n      exportAsTxt: "Export as TXT",\n      exportAsJson: "Export as JSON",\n      exportAsCsv: "Export as CSV",\n      csv: {\n        id: "ID",\n        original: "Original",\n        translation: "Translation"\n      }\n    },\n    settings: {\n      title: "Settings",\n      theme: "Theme",\n      language: "Language",\n      relatedSettings: "Related Settings",\n      filterRules: "Content Filtering Rules",\n      filters: {\n        numbers: "Filter numbers/currency",\n        chinese: "Filter pure Chinese",\n        contains_chinese: "Filter text containing Chinese",\n        emoji_only: "Filter emoji-only text",\n        symbols: "Filter symbol-only text",\n        term: "Filter specific terms",\n        single_letter: "Filter single English letters",\n        repeating_chars: "Filter single repeating characters",\n        file_paths: "Filter File Paths",\n        hex_color_codes: "Filter Hex Color Codes",\n        email_addresses: "Filter Email Addresses",\n        uuids: "Filter UUIDs",\n        git_commit_hashes: "Filter Git Commit Hashes"\n      },\n      display: {\n        show_fab: "Show floating button",\n        show_line_numbers: "Show line numbers",\n        show_statistics: "Show Statistics",\n        enable_word_wrap: "Enable text wrapping",\n        text_truncation_limit: "Enable Textbox Character Limit",\n        character_limit: "Character Limit",\n        show_scan_count: "Enable scan count display in title bar"\n      },\n      advanced: {\n        enable_debug_logging: "Enable debug logging"\n      },\n      panel: {\n        title: "Settings Panel"\n      },\n      languages: {\n        en: "English",\n        zh_CN: "\\u7B80\\u4F53\\u4E2D\\u6587",\n        zh_TW: "\\u7E41\\u9AD4\\u4E2D\\u6587"\n      },\n      themes: {\n        light: "Light",\n        dark: "Dark",\n        system: "System"\n      }\n    },\n    scan: {\n      quick: "Quick Scan",\n      session: "Session Scan",\n      startSession: "Start dynamic scan session",\n      stopSession: "Stop dynamic scan session",\n      finished: "Scan finished, {count} texts found",\n      quickFinished: "Quick scan finished, {count} texts found",\n      sessionStarted: "Session scan started",\n      sessionInProgress: "Session scan is in progress...",\n      truncationWarning: "To maintain interface fluency, only part of the text is displayed here. The complete content will be provided when exporting."\n    },\n    results: {\n      title: "Extracted Text",\n      scanCountSession: "Scanned {count} texts",\n      scanCountStatic: "Total {count} texts scanned",\n      totalCharacters: "Total characters",\n      totalLines: "Total lines",\n      noSummary: "No summary text available",\n      stats: {\n        lines: "Lines",\n        chars: "Chars"\n      }\n    },\n    notifications: {\n      copiedToClipboard: "Copied to clipboard!",\n      settingsSaved: "Settings saved!",\n      modalInitError: "Modal not initialized.",\n      nothingToCopy: "Nothing to copy",\n      contentCleared: "Content cleared",\n      noTextSelected: "No text selected",\n      cspWorkerWarning: "Switched to compatibility scan mode due to website security restrictions."\n    },\n    placeholders: {\n      click: "Click the ",\n      dynamicScan: "[Dynamic Scan]",\n      startNewScanSession: " button to start a new scanning session",\n      staticScan: "[Static Scan]",\n      performOneTimeScan: " button for a one-time quick extraction"\n    },\n    confirmation: {\n      clear: "Are you sure you want to clear the content? This action cannot be undone."\n    },\n    tooltip: {\n      summary: "View Summary",\n      dynamic_scan: "Dynamic Scan",\n      static_scan: "Static Scan"\n    }\n  };\n\n  // src/shared/i18n/zh-CN.json\n  var zh_CN_default = {\n    common: {\n      scan: "\\u626B\\u63CF",\n      stop: "\\u505C\\u6B62",\n      resume: "\\u7EE7\\u7EED",\n      clear: "\\u6E05\\u7A7A",\n      copy: "\\u590D\\u5236",\n      save: "\\u4FDD\\u5B58",\n      discovered: "\\u5DF2\\u53D1\\u73B0\\uFF1A",\n      confirm: "\\u786E\\u8BA4",\n      cancel: "\\u53D6\\u6D88",\n      export: "\\u5BFC\\u51FA"\n    },\n    export: {\n      exportAsTxt: "\\u5BFC\\u51FA\\u4E3A TXT",\n      exportAsJson: "\\u5BFC\\u51FA\\u4E3A JSON",\n      exportAsCsv: "\\u5BFC\\u51FA\\u4E3A CSV",\n      csv: {\n        id: "ID",\n        original: "\\u539F\\u6587",\n        translation: "\\u8BD1\\u6587"\n      }\n    },\n    settings: {\n      title: "\\u8BBE\\u7F6E",\n      theme: "\\u754C\\u9762\\u4E3B\\u9898",\n      language: "\\u8BED\\u8A00\\u8BBE\\u7F6E",\n      relatedSettings: "\\u76F8\\u5173\\u8BBE\\u7F6E",\n      filterRules: "\\u5185\\u5BB9\\u8FC7\\u6EE4\\u89C4\\u5219",\n      filters: {\n        numbers: "\\u8FC7\\u6EE4\\u7EAF\\u6570\\u5B57/\\u8D27\\u5E01",\n        chinese: "\\u8FC7\\u6EE4\\u7EAF\\u4E2D\\u6587",\n        contains_chinese: "\\u8FC7\\u6EE4\\u5305\\u542B\\u4E2D\\u6587\\u7684\\u6587\\u672C",\n        emoji_only: "\\u8FC7\\u6EE4\\u7EAF\\u8868\\u60C5\\u7B26\\u53F7",\n        symbols: "\\u8FC7\\u6EE4\\u7EAF\\u7B26\\u53F7",\n        term: "\\u8FC7\\u6EE4\\u7279\\u5B9A\\u672F\\u8BED",\n        single_letter: "\\u8FC7\\u6EE4\\u7EAF\\u5355\\u4E2A\\u82F1\\u6587\\u5B57\\u6BCD",\n        repeating_chars: "\\u8FC7\\u6EE4\\u5355\\u4E00\\u91CD\\u590D\\u5B57\\u7B26",\n        file_paths: "\\u8FC7\\u6EE4\\u6587\\u4EF6\\u8DEF\\u5F84",\n        hex_color_codes: "\\u8FC7\\u6EE4\\u5341\\u516D\\u8FDB\\u5236\\u989C\\u8272",\n        email_addresses: "\\u8FC7\\u6EE4\\u90AE\\u4EF6\\u5730\\u5740",\n        uuids: "\\u8FC7\\u6EE4 UUID",\n        git_commit_hashes: "\\u8FC7\\u6EE4 Git \\u54C8\\u5E0C"\n      },\n      display: {\n        show_fab: "\\u663E\\u793A\\u60AC\\u6D6E\\u6309\\u94AE",\n        show_line_numbers: "\\u663E\\u793A\\u884C\\u53F7",\n        show_statistics: "\\u663E\\u793A\\u7EDF\\u8BA1\\u4FE1\\u606F",\n        enable_word_wrap: "\\u542F\\u7528\\u6587\\u672C\\u81EA\\u52A8\\u6362\\u884C",\n        text_truncation_limit: "\\u542F\\u7528\\u6587\\u672C\\u6846\\u5B57\\u7B26\\u9650\\u5236",\n        character_limit: "\\u5B57\\u7B26\\u6570",\n        show_scan_count: "\\u542F\\u7528\\u6807\\u9898\\u680F\\u663E\\u793A\\u626B\\u63CF\\u8BA1\\u6570"\n      },\n      advanced: {\n        enable_debug_logging: "\\u542F\\u7528\\u8C03\\u8BD5\\u65E5\\u5FD7"\n      },\n      panel: {\n        title: "\\u8BBE\\u7F6E\\u9762\\u677F"\n      },\n      languages: {\n        en: "English",\n        zh_CN: "\\u7B80\\u4F53\\u4E2D\\u6587",\n        zh_TW: "\\u7E41\\u9AD4\\u4E2D\\u6587"\n      },\n      themes: {\n        light: "\\u6D45\\u8272",\n        dark: "\\u6DF1\\u8272",\n        system: "\\u8DDF\\u968F\\u7CFB\\u7EDF"\n      }\n    },\n    scan: {\n      quick: "\\u5FEB\\u901F\\u626B\\u63CF",\n      session: "\\u4F1A\\u8BDD\\u626B\\u63CF",\n      startSession: "\\u5F00\\u59CB\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD",\n      stopSession: "\\u505C\\u6B62\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD",\n      finished: "\\u626B\\u63CF\\u7ED3\\u675F\\uFF0C\\u5171\\u53D1\\u73B0 {count} \\u6761\\u6587\\u672C",\n      quickFinished: "\\u5FEB\\u6377\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {count} \\u6761\\u6587\\u672C",\n      sessionStarted: "\\u4F1A\\u8BDD\\u626B\\u63CF\\u5DF2\\u5F00\\u59CB",\n      sessionInProgress: "\\u626B\\u63CF\\u6B63\\u5728\\u8FDB\\u884C\\u4E2D...",\n      truncationWarning: "\\u4E3A\\u4FDD\\u6301\\u754C\\u9762\\u6D41\\u7545\\uFF0C\\u6B64\\u5904\\u4EC5\\u663E\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u5B8C\\u6574\\u5185\\u5BB9\\u5C06\\u5728\\u5BFC\\u51FA\\u65F6\\u63D0\\u4F9B\\u3002"\n    },\n    results: {\n      title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",\n      scanCountSession: "\\u5DF2\\u626B\\u63CF {count} \\u6761\\u6587\\u672C",\n      scanCountStatic: "\\u5171\\u626B\\u63CF {count} \\u6761\\u6587\\u672C",\n      totalCharacters: "\\u603B\\u5B57\\u6570",\n      totalLines: "\\u603B\\u884C\\u6570",\n      noSummary: "\\u5F53\\u524D\\u6CA1\\u6709\\u603B\\u7ED3\\u6587\\u672C",\n      stats: {\n        lines: "\\u884C",\n        chars: "\\u5B57\\u7B26\\u6570"\n      }\n    },\n    notifications: {\n      copiedToClipboard: "\\u5DF2\\u590D\\u5236\\u5230\\u526A\\u8D34\\u677F!",\n      settingsSaved: "\\u8BBE\\u7F6E\\u5DF2\\u4FDD\\u5B58\\uFF01",\n      modalInitError: "\\u6A21\\u6001\\u6846\\u5C1A\\u672A\\u521D\\u59CB\\u5316\\u3002",\n      nothingToCopy: "\\u6C92\\u6709\\u5167\\u5BB9\\u53EF\\u8907\\u88FD",\n      contentCleared: "\\u5185\\u5BB9\\u5DF2\\u6E05\\u7A7A",\n      noTextSelected: "\\u672A\\u9009\\u62E9\\u6587\\u672C",\n      cspWorkerWarning: "\\u7531\\u4E8E\\u7F51\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u6362\\u5230\\u517C\\u5BB9\\u626B\\u63CF\\u6A21\\u5F0F\\u3002"\n    },\n    placeholders: {\n      click: "\\u70B9\\u51FB ",\n      dynamicScan: "[\\u52A8\\u6001\\u626B\\u63CF]",\n      startNewScanSession: " \\u6309\\u94AE\\u5F00\\u59CB\\u4E00\\u4E2A\\u65B0\\u7684\\u626B\\u63CF\\u4F1A\\u8BDD",\n      staticScan: "[\\u9759\\u6001\\u626B\\u63CF]",\n      performOneTimeScan: " \\u6309\\u94AE\\u53EF\\u8FDB\\u884C\\u4E00\\u6B21\\u6027\\u7684\\u5FEB\\u6377\\u63D0\\u53D6"\n    },\n    confirmation: {\n      clear: "\\u4F60\\u786E\\u8BA4\\u8981\\u6E05\\u7A7A\\u5417\\uFF1F\\u6B64\\u64CD\\u4F5C\\u4E0D\\u53EF\\u64A4\\u9500\\u3002"\n    },\n    tooltip: {\n      summary: "\\u67E5\\u770B\\u603B\\u7ED3",\n      dynamic_scan: "\\u52A8\\u6001\\u626B\\u63CF",\n      static_scan: "\\u9759\\u6001\\u626B\\u63CF"\n    }\n  };\n\n  // src/shared/i18n/zh-TW.json\n  var zh_TW_default = {\n    common: {\n      scan: "\\u6383\\u63CF",\n      stop: "\\u505C\\u6B62",\n      resume: "\\u7E7C\\u7E8C",\n      clear: "\\u6E05\\u7A7A",\n      copy: "\\u8907\\u88FD",\n      save: "\\u5132\\u5B58",\n      discovered: "\\u5DF2\\u767C\\u73FE\\uFF1A",\n      confirm: "\\u78BA\\u8A8D",\n      cancel: "\\u53D6\\u6D88",\n      export: "\\u532F\\u51FA"\n    },\n    export: {\n      exportAsTxt: "\\u532F\\u51FA\\u70BA TXT",\n      exportAsJson: "\\u532F\\u51FA\\u70BA JSON",\n      exportAsCsv: "\\u532F\\u51FA\\u70BA CSV",\n      csv: {\n        id: "ID",\n        original: "\\u539F\\u6587",\n        translation: "\\u8B6F\\u6587"\n      }\n    },\n    settings: {\n      title: "\\u8A2D\\u5B9A",\n      theme: "\\u4ECB\\u9762\\u4E3B\\u984C",\n      language: "\\u8A9E\\u8A00\\u8A2D\\u5B9A",\n      relatedSettings: "\\u76F8\\u95DC\\u8A2D\\u5B9A",\n      filterRules: "\\u5167\\u5BB9\\u904E\\u6FFE\\u898F\\u5247",\n      filters: {\n        numbers: "\\u904E\\u6FFE\\u7D14\\u6578\\u5B57/\\u8CA8\\u5E63",\n        chinese: "\\u904E\\u6FFE\\u7D14\\u4E2D\\u6587",\n        contains_chinese: "\\u904E\\u6FFE\\u5305\\u542B\\u4E2D\\u6587\\u7684\\u6587\\u672C",\n        emoji_only: "\\u904E\\u6FFE\\u7D14\\u8868\\u60C5\\u7B26\\u865F",\n        symbols: "\\u904E\\u6FFE\\u7D14\\u7B26\\u865F",\n        term: "\\u904E\\u6FFE\\u7279\\u5B9A\\u8853\\u8A9E",\n        single_letter: "\\u904E\\u6FFE\\u7D14\\u55AE\\u500B\\u82F1\\u6587\\u5B57\\u6BCD",\n        repeating_chars: "\\u904E\\u6FFE\\u55AE\\u4E00\\u91CD\\u8907\\u5B57\\u7B26",\n        file_paths: "\\u904E\\u6FFE\\u6587\\u4EF6\\u8DEF\\u5F91",\n        hex_color_codes: "\\u904E\\u6FFE\\u5341\\u516D\\u9032\\u4F4D\\u984F\\u8272",\n        email_addresses: "\\u904E\\u6FFE\\u90F5\\u4EF6\\u5730\\u5740",\n        uuids: "\\u904E\\u6FFE UUID",\n        git_commit_hashes: "\\u904E\\u6FFE Git \\u54C8\\u5E0C"\n      },\n      display: {\n        show_fab: "\\u986F\\u793A\\u61F8\\u6D6E\\u6309\\u9215",\n        show_line_numbers: "\\u986F\\u793A\\u884C\\u865F",\n        show_statistics: "\\u986F\\u793A\\u7D71\\u8A08\\u8CC7\\u8A0A",\n        enable_word_wrap: "\\u555F\\u7528\\u6587\\u5B57\\u81EA\\u52D5\\u63DB\\u884C",\n        text_truncation_limit: "\\u555F\\u7528\\u6587\\u672C\\u6846\\u5B57\\u7B26\\u9650\\u5236",\n        character_limit: "\\u5B57\\u7B26\\u6578",\n        show_scan_count: "\\u555F\\u7528\\u6A19\\u984C\\u5217\\u986F\\u793A\\u6383\\u63CF\\u6B21\\u6578"\n      },\n      advanced: {\n        enable_debug_logging: "\\u555F\\u7528\\u5075\\u932F\\u65E5\\u8A8C"\n      },\n      panel: {\n        title: "\\u8A2D\\u5B9A\\u9762\\u677F"\n      },\n      languages: {\n        en: "English",\n        zh_CN: "\\u7B80\\u4F53\\u4E2D\\u6587",\n        zh_TW: "\\u7E41\\u9AD4\\u4E2D\\u6587"\n      },\n      themes: {\n        light: "\\u6DFA\\u8272",\n        dark: "\\u6DF1\\u8272",\n        system: "\\u8DDF\\u96A8\\u7CFB\\u7D71"\n      }\n    },\n    scan: {\n      quick: "\\u5FEB\\u901F\\u6383\\u63CF",\n      session: "\\u6703\\u8A71\\u6383\\u63CF",\n      startSession: "\\u958B\\u59CB\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71",\n      stopSession: "\\u505C\\u6B62\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71",\n      finished: "\\u6383\\u63CF\\u7D50\\u675F\\uFF0C\\u5171\\u767C\\u73FE {count} \\u689D\\u6587\\u672C",\n      quickFinished: "\\u5FEB\\u6377\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {count} \\u689D\\u6587\\u672C",\n      sessionStarted: "\\u6703\\u8A71\\u6383\\u63CF\\u5DF2\\u958B\\u59CB",\n      sessionInProgress: "\\u6703\\u8A71\\u6383\\u63CF\\u6B63\\u5728\\u9032\\u884C\\u4E2D...",\n      truncationWarning: "\\u70BA\\u4E86\\u4FDD\\u6301\\u4ECB\\u9762\\u6D41\\u66A2\\uFF0C\\u50C5\\u986F\\u793A\\u90E8\\u5206\\u6587\\u672C\\u5167\\u5BB9\\u3002\\u5B8C\\u6574\\u5167\\u5BB9\\u5C07\\u5728\\u532F\\u51FA\\u6642\\u63D0\\u4F9B\\u3002"\n    },\n    results: {\n      title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",\n      scanCountSession: "\\u5DF2\\u6383\\u63CF {count} \\u689D\\u6587\\u672C",\n      scanCountStatic: "\\u5171\\u6383\\u63CF {count} \\u689D\\u6587\\u672C",\n      totalCharacters: "\\u7E3D\\u5B57\\u6578",\n      totalLines: "\\u7E3D\\u884C\\u6578",\n      noSummary: "\\u7576\\u524D\\u6C92\\u6709\\u7E3D\\u7D50\\u6587\\u672C",\n      stats: {\n        lines: "\\u884C",\n        chars: "\\u5B57\\u7B26\\u6578"\n      }\n    },\n    notifications: {\n      copiedToClipboard: "\\u5DF2\\u8907\\u88FD\\u5230\\u526A\\u8CBC\\u7C3F\\uFF01",\n      settingsSaved: "\\u8A2D\\u5B9A\\u5DF2\\u5132\\u5B58\\uFF01",\n      modalInitError: "\\u6A21\\u614B\\u6846\\u5C1A\\u672A\\u521D\\u59CB\\u5316\\u3002",\n      nothingToCopy: "\\u6C92\\u6709\\u5167\\u5BB9\\u53EF\\u8907\\u88FD",\n      contentCleared: "\\u5167\\u5BB9\\u5DF2\\u6E05\\u7A7A",\n      noTextSelected: "\\u672A\\u9078\\u64C7\\u6587\\u672C",\n      cspWorkerWarning: "\\u7531\\u65BC\\u7DB2\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u63DB\\u5230\\u76F8\\u5BB9\\u6383\\u63CF\\u6A21\\u5F0F\\u3002"\n    },\n    placeholders: {\n      click: "\\u9EDE\\u64CA ",\n      dynamicScan: "[\\u52D5\\u614B\\u6383\\u63CF]",\n      startNewScanSession: " \\u6309\\u9215\\u958B\\u59CB\\u4E00\\u500B\\u65B0\\u7684\\u6383\\u63CF\\u6703\\u8A71",\n      staticScan: "[\\u975C\\u614B\\u6383\\u63CF]",\n      performOneTimeScan: " \\u6309\\u9215\\u53EF\\u9032\\u884C\\u4E00\\u6B21\\u6027\\u7684\\u5FEB\\u6377\\u63D0\\u53D6"\n    },\n    confirmation: {\n      clear: "\\u4F60\\u78BA\\u8A8D\\u8981\\u6E05\\u7A7A\\u55CE\\uFF1F\\u6B64\\u64CD\\u4F5C\\u4E0D\\u53EF\\u64A4\\u92B7\\u3002"\n    },\n    tooltip: {\n      summary: "\\u67E5\\u770B\\u7E3D\\u7D50",\n      dynamic_scan: "\\u52D5\\u614B\\u6383\\u63CF",\n      static_scan: "\\u975C\\u614B\\u6383\\u63CF"\n    }\n  };\n\n  // src/shared/i18n/management/languages.js\n  var supportedLanguages = [\n    { code: "en", name: "English" },\n    { code: "zh-CN", name: "\\u7B80\\u4F53\\u4E2D\\u6587" },\n    { code: "zh-TW", name: "\\u7E41\\u9AD4\\u4E2D\\u6587" }\n  ];\n\n  // src/shared/i18n/index.js\n  var translationModules = {\n    en: en_default,\n    "zh-CN": zh_CN_default,\n    "zh-TW": zh_TW_default\n  };\n  var translations = supportedLanguages.reduce((acc, lang) => {\n    if (translationModules[lang.code]) {\n      acc[lang.code] = translationModules[lang.code];\n    }\n    return acc;\n  }, {});\n  var currentTranslations = translations.en;\n  function getAvailableLanguages() {\n    return supportedLanguages.map((lang) => ({\n      value: lang.code,\n      label: lang.name\n    }));\n  }\n\n  // src/features/settings/config.js\n  var selectSettingsDefinitions = [\n    {\n      id: "theme-select",\n      key: "theme",\n      label: "settings.theme",\n      icon: themeIcon,\n      options: [\n        { value: "light", label: "settings.themes.light" },\n        { value: "dark", label: "settings.themes.dark" },\n        { value: "system", label: "settings.themes.system" }\n      ]\n    },\n    {\n      id: "language-select",\n      key: "language",\n      label: "settings.language",\n      icon: languageIcon_default,\n      // \u76F4\u63A5\u4ECE i18n \u6A21\u5757\u83B7\u53D6\u8BED\u8A00\u5217\u8868\uFF0C\u5176\u6807\u7B7E\u5DF2\u7ECF\u662F\u539F\u751F\u540D\u79F0\uFF0C\u65E0\u9700\u518D\u7FFB\u8BD1\u3002\n      options: getAvailableLanguages()\n    }\n  ];\n  var filterDefinitions = [\n    { id: "filter-numbers", key: "numbers", label: "settings.filters.numbers" },\n    { id: "filter-chinese", key: "chinese", label: "settings.filters.chinese" },\n    { id: "filter-contains-chinese", key: "containsChinese", label: "settings.filters.contains_chinese" },\n    { id: "filter-emoji-only", key: "emojiOnly", label: "settings.filters.emoji_only" },\n    { id: "filter-symbols", key: "symbols", label: "settings.filters.symbols" },\n    { id: "filter-term", key: "termFilter", label: "settings.filters.term" },\n    { id: "filter-single-letter", key: "singleLetter", label: "settings.filters.single_letter" },\n    { id: "filter-repeating-chars", key: "repeatingChars", label: "settings.filters.repeating_chars" },\n    { id: "filter-file-paths", key: "filePath", label: "settings.filters.file_paths" },\n    { id: "filter-hex-colors", key: "hexColor", label: "settings.filters.hex_color_codes" },\n    { id: "filter-emails", key: "email", label: "settings.filters.email_addresses" },\n    { id: "filter-uuids", key: "uuid", label: "settings.filters.uuids" },\n    { id: "filter-git-hashes", key: "gitCommitHash", label: "settings.filters.git_commit_hashes" }\n  ];\n\n  // src/shared/utils/filterLogic.js\n  var filterConfigMap = new Map(filterDefinitions.map((def) => [def.key, def.label]));\n  var ruleChecks = /* @__PURE__ */ new Map([\n    ["numbers", {\n      regex: /^[$\\\u20AC\\\xA3\\\xA5\\d,.\\s]+$/,\n      label: filterConfigMap.get("numbers")\n    }],\n    ["chinese", {\n      regex: /^[\\u4e00-\\u9fa5\\s]+$/u,\n      label: filterConfigMap.get("chinese")\n    }],\n    ["containsChinese", {\n      regex: /[\\u4e00-\\u9fa5]/u,\n      label: filterConfigMap.get("containsChinese")\n    }],\n    ["emojiOnly", {\n      regex: /^[\\p{Emoji}\\s]+$/u,\n      label: filterConfigMap.get("emojiOnly")\n    }],\n    ["symbols", {\n      // \u8FD9\u4E2A\u903B\u8F91\u6BD4\u8F83\u7279\u6B8A\uFF0C\u662F\u201C\u4E0D\u5305\u542B\u5B57\u6BCD\u6216\u6570\u5B57\u201D\uFF0C\u6240\u4EE5\u6211\u4EEC\u7528\u4E00\u4E2A\u51FD\u6570\u6765\u5904\u7406\n      test: (text) => !/[\\p{L}\\p{N}]/u.test(text),\n      label: filterConfigMap.get("symbols")\n    }],\n    ["termFilter", {\n      test: (text) => ignoredTerms_default.includes(text),\n      label: filterConfigMap.get("termFilter")\n    }],\n    ["singleLetter", {\n      regex: /^[a-zA-Z]$/,\n      label: filterConfigMap.get("singleLetter")\n    }],\n    ["repeatingChars", {\n      regex: /^\\s*(.)\\1+\\s*$/,\n      label: filterConfigMap.get("repeatingChars")\n    }],\n    ["filePath", {\n      regex: /^(?:[a-zA-Z]:\\\\|\\\\\\\\|~|\\.\\.?\\/)[\\w\\-\\.\\/ \\\\]*[\\w\\-\\.]+\\.[\\w]{2,4}$/,\n      label: filterConfigMap.get("filePath")\n    }],\n    ["hexColor", {\n      regex: /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3,4}|[A-Fa-f0-9]{8})$/,\n      label: filterConfigMap.get("hexColor")\n    }],\n    ["email", {\n      regex: /^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$/,\n      label: filterConfigMap.get("email")\n    }],\n    ["uuid", {\n      regex: /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/,\n      label: filterConfigMap.get("uuid")\n    }],\n    ["gitCommitHash", {\n      regex: /^[0-9a-f]{7,40}$/i,\n      label: filterConfigMap.get("gitCommitHash")\n    }]\n  ]);\n  function shouldFilter(text, filterRules) {\n    for (const [key, rule] of ruleChecks.entries()) {\n      if (filterRules[key]) {\n        const isFiltered = rule.regex ? rule.regex.test(text) : rule.test(text);\n        if (isFiltered) {\n          return { reason: rule.label };\n        }\n      }\n    }\n    return null;\n  }\n\n  // src/shared/utils/formatting.js\n  var formatTextsForTranslation = (texts) => {\n    const result = texts.map(\n      (text) => `    ["${text.replace(/"/g, \'\\\\"\').replace(/\\n/g, "\\\\n")}", ""]`\n    );\n    return `[\n${result.join(",\\n")}\n]`;\n  };\n\n  // src/features/quick-scan/worker.js\n  self.onmessage = (event) => {\n    const { type, payload } = event.data;\n    const enableDebugLogging = payload.enableDebugLogging || false;\n    const log2 = (...args) => {\n      if (enableDebugLogging) {\n        console.log("[\\u9759\\u6001\\u626B\\u63CF Worker]", ...args);\n      }\n    };\n    if (type === "scan") {\n      log2(`[\\u9759\\u6001\\u626B\\u63CF Worker] \\u6536\\u5230 ${payload.texts.length} \\u6761\\u6587\\u672C\\uFF0C\\u5F00\\u59CB\\u5904\\u7406...`);\n      const { texts, filterRules } = payload;\n      const uniqueTexts = /* @__PURE__ */ new Set();\n      if (Array.isArray(texts)) {\n        texts.forEach((rawText) => {\n          if (!rawText || typeof rawText !== "string") return;\n          const normalizedText = rawText.normalize("NFC");\n          const textForFiltering = normalizedText.replace(/(\\r\\n|\\n|\\r)+/g, "\\n").trim();\n          if (textForFiltering === "") return;\n          const filterResult = shouldFilter(textForFiltering, filterRules);\n          if (filterResult) {\n            log2(`\\u6587\\u672C\\u5DF2\\u8FC7\\u6EE4: "${textForFiltering}" (\\u539F\\u56E0: ${filterResult.reason})`);\n            return;\n          }\n          uniqueTexts.add(normalizedText.replace(/(\\r\\n|\\n|\\r)+/g, "\\n"));\n        });\n      }\n      const textsArray = Array.from(uniqueTexts);\n      const formattedText = formatTextsForTranslation(textsArray);\n      log2(`[\\u9759\\u6001\\u626B\\u63CF Worker] \\u5904\\u7406\\u5B8C\\u6210\\uFF0C\\u5171 ${textsArray.length} \\u6761\\u6709\\u6548\\u6587\\u672C\\u3002\\u6B63\\u5728\\u53D1\\u56DE\\u4E3B\\u7EBF\\u7A0B...`);\n      self.postMessage({\n        type: "scanCompleted",\n        payload: {\n          formattedText,\n          count: textsArray.length\n        }\n      });\n    }\n  };\n})();\n';
+        const workerScript = `(() => {
+  // src/shared/utils/ignoredTerms.js
+  var IGNORED_TERMS = [
+    "Github",
+    "Microsoft",
+    "Tampermonkey",
+    "JavaScript",
+    "TypeScript",
+    "Hugging Face",
+    "Google",
+    "Facebook",
+    "Twitter",
+    "LinkedIn",
+    "OpenAI",
+    "ChatGPT",
+    "API",
+    "Glossary of computer science",
+    "HTML",
+    "CSS",
+    "JSON",
+    "XML",
+    "HTTP",
+    "HTTPS",
+    "URL",
+    "IP address",
+    "DNS",
+    "CPU",
+    "GPU",
+    "RAM",
+    "SSD",
+    "USB",
+    "Wi-Fi",
+    "Bluetooth",
+    "VPN",
+    "AI"
+  ];
+  var ignoredTerms_default = IGNORED_TERMS;
+  // src/assets/icons/themeIcon.js
+  var themeIcon = \`<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 32.5-156t88-127Q256-817 330-848.5T488-880q80 0 151 27.5t124.5 76q53.5 48.5 85 115T880-518q0 115-70 176.5T640-280h-74q-9 0-12.5 5t-3.5 11q0 12 15 34.5t15 51.5q0 50-27.5 74T480-80Zm0-400Zm-220 40q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120-160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm200 0q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120 160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17ZM480-160q9 0 14.5-5t5.5-13q0-14-15-33t-15-57q0-42 29-67t71-25h70q66 0 113-38.5T800-518q0-121-92.5-201.5T488-800q-136 0-232 93t-96 227q0 133 93.5 226.5T480-160Z"/></svg>\`;
+  // src/assets/icons/languageIcon.js
+  var languageIcon_default = \`<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-155.5t86-127Q252-817 325-848.5T480-880q83 0 155.5 31.5t127 86q54.5 54.5 86 127T880-480q0 82-31.5 155t-86 127.5q-54.5 54.5-127 86T480-80Zm0-82q26-36 45-75t31-83H404q12 44 31 83t45 75Zm-104-16q-18-33-31.5-68.5T322-320H204q29 50 72.5 87t99.5 55Zm208 0q56-18 99.5-55t72.5-87H638q-9 38-22.5 73.5T584-178ZM170-400h136q-3-20-4.5-39.5T300-480q0-21 1.5-40.5T306-560H170q-5 20-7.5 39.5T160-480q0 21 2.5 40.5T170-400Zm216 0h188q3-20 4.5-39.5T580-480q0-21-1.5-40.5T574-560H386q-3 20-4.5 39.5T380-480q0 21 1.5 40.5T386-400Zm268 0h136q5-20 7.5-39.5T800-480q0-21-2.5-40.5T790-560H654q3 20 4.5 39.5T660-480q0 21-1.5 40.5T654-400Zm-16-240h118q-29-50-72.5-87T584-782q18 33 31.5 68.5T638-640Zm-234 0h152q-12-44-31-83t-45-75q-26 36-45 75t-31 83Zm-200 0h118q9-38 22.5-73.5T376-782q-56 18-99.5 55T204-640Z"/></svg>\`;
+  // src/assets/icons/infoIcon.js
+  var infoIcon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>';
+  // src/shared/i18n/en.json
+  var en_default = {
+    common: {
+      scan: "Scan",
+      stop: "Stop",
+      resume: "Resume",
+      clear: "Clear",
+      copy: "Copy",
+      save: "Save",
+      discovered: "Discovered:",
+      confirm: "Confirm",
+      cancel: "Cancel",
+      export: "Export"
+    },
+    export: {
+      exportAsTxt: "Export as TXT",
+      exportAsJson: "Export as JSON",
+      exportAsCsv: "Export as CSV",
+      csv: {
+        id: "ID",
+        original: "Original",
+        translation: "Translation"
+      }
+    },
+    settings: {
+      title: "Settings",
+      theme: "Theme",
+      language: "Language",
+      relatedSettings: "Related Settings",
+      filterRules: "Content Filtering Rules",
+      filters: {
+        numbers: "Filter Numbers/Currency",
+        chinese: "Filter Chinese-Only Text",
+        contains_chinese: "Filter Text Containing Chinese",
+        emoji_only: "Filter Emoji-Only Text",
+        symbols: "Filter Symbol-Only Text",
+        term: "Filter Specific Terms",
+        single_letter: "Filter Single English Letters",
+        repeating_chars: "Filter Repeating Characters",
+        file_paths: "Filter File Paths",
+        hex_color_codes: "Filter Hex Color Codes",
+        email_addresses: "Filter Email Addresses",
+        uuids: "Filter UUIDs",
+        git_commit_hashes: "Filter Git Commit Hashes"
+      },
+      display: {
+        show_fab: "Show Floating Button",
+        show_line_numbers: "Show Line Numbers",
+        show_statistics: "Show Statistics",
+        enable_word_wrap: "Enable Word Wrap",
+        text_truncation_limit: "Enable Text Truncation Limit",
+        character_limit: "Character Limit",
+        show_scan_count: "Enable Scan Count in Title"
+      },
+      advanced: {
+        enable_debug_logging: "Enable Debug Logging"
+      },
+      panel: {
+        title: "Settings Panel"
+      },
+      languages: {
+        en: "English",
+        zh_CN: "\\u7B80\\u4F53\\u4E2D\\u6587",
+        zh_TW: "\\u7E41\\u9AD4\\u4E2D\\u6587"
+      },
+      themes: {
+        light: "Light",
+        dark: "Dark",
+        system: "System"
+      }
+    },
+    scan: {
+      quick: "Quick Scan",
+      session: "Session Scan",
+      startSession: "Start Dynamic Scan Session",
+      stopSession: "Stop Dynamic Scan Session",
+      finished: "Scan finished, found {count} items.",
+      quickFinished: "Quick scan finished, found {count} items.",
+      sessionStarted: "Session scan started.",
+      sessionInProgress: "Scan in progress...",
+      truncationWarning: "To maintain UI fluency, only a portion of the text is displayed here. The full content will be available upon export."
+    },
+    results: {
+      title: "Extracted Text",
+      scanCountSession: "Scanned {count} items",
+      scanCountStatic: "Total {count} items scanned",
+      totalCharacters: "Total Characters",
+      totalLines: "Total Lines",
+      noSummary: "No summary available",
+      stats: {
+        lines: "Lines",
+        chars: "Chars"
+      }
+    },
+    notifications: {
+      copiedToClipboard: "Copied to clipboard!",
+      settingsSaved: "Settings saved!",
+      modalInitError: "Modal not initialized.",
+      nothingToCopy: "Nothing to copy.",
+      contentCleared: "Content cleared.",
+      noTextSelected: "No text selected.",
+      cspWorkerWarning: "Switched to compatibility scan mode due to website security restrictions."
+    },
+    placeholders: {
+      click: "Click ",
+      dynamicScan: "[Dynamic Scan]",
+      startNewScanSession: " to start a new scan session",
+      staticScan: "[Static Scan]",
+      performOneTimeScan: " to perform a one-time quick extraction"
+    },
+    confirmation: {
+      clear: "Are you sure you want to clear the content? This action cannot be undone."
+    },
+    tooltip: {
+      summary: "View Summary",
+      dynamic_scan: "Dynamic Scan",
+      static_scan: "Static Scan",
+      filters: {
+        title: "Content Filter Explanation",
+        numbers: 'This rule filters out text that consists <strong>entirely</strong> of numbers, currency symbols, thousands separators, and percentage signs.<br><br><strong>More Examples:</strong><br>\\u2022 "-1,234.56"<br>\\u2022 "\\xA5999"<br>\\u2022 "(\\u20AC200)"<br>\\u2022 "+100%"',
+        chinese: 'This rule filters out text that consists <strong>entirely</strong> of Chinese characters, excluding any punctuation or spaces.<br><br><strong>Examples:</strong><br>\\u2022 "\\u4F60\\u597D\\u4E16\\u754C" (will be filtered)<br>\\u2022 "\\u4F60\\u597D\\uFF0C\\u4E16\\u754C" (will not be filtered)',
+        contains_chinese: \`This rule filters out <strong>any</strong> text that contains at least one Chinese character, regardless of other characters.<br><br><strong>Examples:</strong><br>\\u2022 "\\u4F60\\u597D World" (will be filtered)<br>\\u2022 "Chapter 1" (will be filtered, as '\\u7B2C 1 \\u7AE0' contains '\\u7B2C' and '\\u7AE0')\`,
+        emoji_only: 'This rule filters out text that consists <strong>entirely</strong> of one or more emoji characters.<br><br><strong>Examples:</strong><br>\\u2022 "\\u{1F44D}"<br>\\u2022 "\\u{1F60A}\\u{1F389}\\u{1F680}"',
+        symbols: 'This rule filters out text that consists <strong>entirely</strong> of various punctuation and symbols.<br><br><strong>More Examples:</strong><br>\\u2022 "@#*&^%"<br>\\u2022 "()[]{}"<br>\\u2022 "---...---"',
+        term: 'This rule filters out common UI terms that typically do not require translation.<br><br><strong>More Examples:</strong><br>\\u2022 "OK", "Cancel", "Submit"<br>\\u2022 "Login", "Settings", "Help"',
+        single_letter: 'This rule filters out text consisting of a <strong>single</strong> English letter, case-insensitive.<br><br><strong>Examples:</strong><br>\\u2022 "A" (will be filtered)<br>\\u2022 "b" (will be filtered)<br>\\u2022 "AB" (will not be filtered)',
+        repeating_chars: 'This rule filters out text composed of the <strong>same character</strong> repeating 3 or more times consecutively.<br><br><strong>Examples:</strong><br>\\u2022 "======"<br>\\u2022 "bbbbb"<br>\\u2022 "...."',
+        file_paths: 'This rule attempts to identify and filter out text that resembles operating system file paths or URLs.<br><br><strong>More Examples:</strong><br>\\u2022 "/path/to/file.js"<br>\\u2022 "C:\\\\Users\\\\Test"<br>\\u2022 "https://example.com/data"',
+        hex_color_codes: 'This rule filters out standard CSS hexadecimal color codes (3 or 6 digits).<br><br><strong>Examples:</strong><br>\\u2022 "#FFFFFF"<br>\\u2022 "#ff0000"<br>\\u2022 "#f0c"',
+        email_addresses: 'This rule filters out text that matches the standard format of an email address.<br><br><strong>Examples:</strong><br>\\u2022 "example@domain.com"<br>\\u2022 "user.name@sub.domain.org"',
+        uuids: 'This rule filters out Universally Unique Identifiers (UUIDs).<br><br><strong>Example:</strong><br>\\u2022 "123e4567-e89b-12d3-a456-426614174000"',
+        git_commit_hashes: 'This rule filters out standard Git commit hashes (long or short).<br><br><strong>Examples:</strong><br>\\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\\u2022 "a1b2c3d"'
+      },
+      display: {
+        title: "Display Settings Explanation",
+        show_fab: "Control whether to display the <strong>Floating Action Button (FAB)</strong> in the bottom-right corner of webpages. This serves as the primary entry point for both static and dynamic text extraction. <br><br>If you disable this button, you can re-enable it via the settings panel in the Tampermonkey extension menu.",
+        show_scan_count: "When enabled, the title bar of the results window will show a <strong>real-time count</strong> of the total text items found in the current scan. This is especially useful for monitoring the progress of a long-running <strong>Dynamic Scan</strong>.",
+        show_line_numbers: "Displays line numbers to the left of the text area in the results window. This provides a <strong>precise reference point</strong> when you need to discuss or note a specific line of text.",
+        show_statistics: "Displays <strong>real-time statistics</strong> about the extracted content in the status bar at the bottom of the results window, including <strong>total lines</strong> and <strong>total characters</strong>. This helps you quickly assess the volume of the content.",
+        enable_word_wrap: "Controls how long lines of text are displayed in the results window.<br><br>\\u2022 <strong>Enabled:</strong> Long lines will wrap to fit the window's width.<br>\\u2022 <strong>Disabled:</strong> Long lines will remain on a single line, causing a horizontal scrollbar to appear.",
+        text_truncation_limit: "This is a <strong>performance-saving</strong> feature. If the script extracts an <strong>extremely long single line of text</strong> (e.g., a base64 encoded image), it could cause the browser to <strong>lag or become unresponsive</strong>.<br><br>This setting truncates any single line exceeding the specified length to ensure the UI remains smooth. <strong>Note: This only affects the display; the exported file will still contain the full, untruncated content.</strong>"
+      },
+      advanced: {
+        title: "Advanced Settings Explanation",
+        enable_debug_logging: "When enabled, the script will output detailed internal status, execution steps, and error messages to the browser's <strong>Developer Tools Console</strong> (usually opened with F12). This is primarily for developers or users who need to submit detailed bug reports."
+      }
+    }
+  };
+  // src/shared/i18n/zh-CN.json
+  var zh_CN_default = {
+    common: {
+      scan: "\\u626B\\u63CF",
+      stop: "\\u505C\\u6B62",
+      resume: "\\u7EE7\\u7EED",
+      clear: "\\u6E05\\u7A7A",
+      copy: "\\u590D\\u5236",
+      save: "\\u4FDD\\u5B58",
+      discovered: "\\u5DF2\\u53D1\\u73B0\\uFF1A",
+      confirm: "\\u786E\\u8BA4",
+      cancel: "\\u53D6\\u6D88",
+      export: "\\u5BFC\\u51FA"
+    },
+    export: {
+      exportAsTxt: "\\u5BFC\\u51FA\\u4E3A TXT",
+      exportAsJson: "\\u5BFC\\u51FA\\u4E3A JSON",
+      exportAsCsv: "\\u5BFC\\u51FA\\u4E3A CSV",
+      csv: {
+        id: "ID",
+        original: "\\u539F\\u6587",
+        translation: "\\u8BD1\\u6587"
+      }
+    },
+    settings: {
+      title: "\\u8BBE\\u7F6E",
+      theme: "\\u754C\\u9762\\u4E3B\\u9898",
+      language: "\\u8BED\\u8A00\\u8BBE\\u7F6E",
+      relatedSettings: "\\u76F8\\u5173\\u8BBE\\u7F6E",
+      filterRules: "\\u5185\\u5BB9\\u8FC7\\u6EE4\\u89C4\\u5219",
+      filters: {
+        numbers: "\\u8FC7\\u6EE4\\u7EAF\\u6570\\u5B57/\\u8D27\\u5E01",
+        chinese: "\\u8FC7\\u6EE4\\u7EAF\\u4E2D\\u6587",
+        contains_chinese: "\\u8FC7\\u6EE4\\u5305\\u542B\\u4E2D\\u6587\\u7684\\u6587\\u672C",
+        emoji_only: "\\u8FC7\\u6EE4\\u7EAF\\u8868\\u60C5\\u7B26\\u53F7",
+        symbols: "\\u8FC7\\u6EE4\\u7EAF\\u7B26\\u53F7",
+        term: "\\u8FC7\\u6EE4\\u7279\\u5B9A\\u672F\\u8BED",
+        single_letter: "\\u8FC7\\u6EE4\\u7EAF\\u5355\\u4E2A\\u82F1\\u6587\\u5B57\\u6BCD",
+        repeating_chars: "\\u8FC7\\u6EE4\\u5355\\u4E00\\u91CD\\u590D\\u5B57\\u7B26",
+        file_paths: "\\u8FC7\\u6EE4\\u6587\\u4EF6\\u8DEF\\u5F84",
+        hex_color_codes: "\\u8FC7\\u6EE4\\u5341\\u516D\\u8FDB\\u5236\\u989C\\u8272",
+        email_addresses: "\\u8FC7\\u6EE4\\u90AE\\u4EF6\\u5730\\u5740",
+        uuids: "\\u8FC7\\u6EE4 UUID",
+        git_commit_hashes: "\\u8FC7\\u6EE4 Git \\u54C8\\u5E0C"
+      },
+      display: {
+        show_fab: "\\u663E\\u793A\\u60AC\\u6D6E\\u6309\\u94AE",
+        show_line_numbers: "\\u663E\\u793A\\u884C\\u53F7",
+        show_statistics: "\\u663E\\u793A\\u7EDF\\u8BA1\\u4FE1\\u606F",
+        enable_word_wrap: "\\u542F\\u7528\\u6587\\u672C\\u81EA\\u52A8\\u6362\\u884C",
+        text_truncation_limit: "\\u542F\\u7528\\u6587\\u672C\\u6846\\u5B57\\u7B26\\u9650\\u5236",
+        character_limit: "\\u5B57\\u7B26\\u6570",
+        show_scan_count: "\\u542F\\u7528\\u6807\\u9898\\u680F\\u663E\\u793A\\u626B\\u63CF\\u8BA1\\u6570"
+      },
+      advanced: {
+        enable_debug_logging: "\\u542F\\u7528\\u8C03\\u8BD5\\u65E5\\u5FD7"
+      },
+      panel: {
+        title: "\\u8BBE\\u7F6E\\u9762\\u677F"
+      },
+      languages: {
+        en: "English",
+        zh_CN: "\\u7B80\\u4F53\\u4E2D\\u6587",
+        zh_TW: "\\u7E41\\u9AD4\\u4E2D\\u6587"
+      },
+      themes: {
+        light: "\\u6D45\\u8272",
+        dark: "\\u6DF1\\u8272",
+        system: "\\u8DDF\\u968F\\u7CFB\\u7EDF"
+      }
+    },
+    scan: {
+      quick: "\\u5FEB\\u901F\\u626B\\u63CF",
+      session: "\\u4F1A\\u8BDD\\u626B\\u63CF",
+      startSession: "\\u5F00\\u59CB\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD",
+      stopSession: "\\u505C\\u6B62\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD",
+      finished: "\\u626B\\u63CF\\u7ED3\\u675F\\uFF0C\\u5171\\u53D1\\u73B0 {count} \\u6761\\u6587\\u672C",
+      quickFinished: "\\u5FEB\\u6377\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {count} \\u6761\\u6587\\u672C",
+      sessionStarted: "\\u4F1A\\u8BDD\\u626B\\u63CF\\u5DF2\\u5F00\\u59CB",
+      sessionInProgress: "\\u626B\\u63CF\\u6B63\\u5728\\u8FDB\\u884C\\u4E2D...",
+      truncationWarning: "\\u4E3A\\u4FDD\\u6301\\u754C\\u9762\\u6D41\\u7545\\uFF0C\\u6B64\\u5904\\u4EC5\\u663E\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u5B8C\\u6574\\u5185\\u5BB9\\u5C06\\u5728\\u5BFC\\u51FA\\u65F6\\u63D0\\u4F9B\\u3002"
+    },
+    results: {
+      title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",
+      scanCountSession: "\\u5DF2\\u626B\\u63CF {count} \\u6761\\u6587\\u672C",
+      scanCountStatic: "\\u5171\\u626B\\u63CF {count} \\u6761\\u6587\\u672C",
+      totalCharacters: "\\u603B\\u5B57\\u6570",
+      totalLines: "\\u603B\\u884C\\u6570",
+      noSummary: "\\u5F53\\u524D\\u6CA1\\u6709\\u603B\\u7ED3\\u6587\\u672C",
+      stats: {
+        lines: "\\u884C",
+        chars: "\\u5B57\\u7B26\\u6570"
+      }
+    },
+    notifications: {
+      copiedToClipboard: "\\u5DF2\\u590D\\u5236\\u5230\\u526A\\u8D34\\u677F!",
+      settingsSaved: "\\u8BBE\\u7F6E\\u5DF2\\u4FDD\\u5B58\\uFF01",
+      modalInitError: "\\u6A21\\u6001\\u6846\\u5C1A\\u672A\\u521D\\u59CB\\u5316\\u3002",
+      nothingToCopy: "\\u6C92\\u6709\\u5167\\u5BB9\\u53EF\\u8907\\u88FD",
+      contentCleared: "\\u5185\\u5BB9\\u5DF2\\u6E05\\u7A7A",
+      noTextSelected: "\\u672A\\u9009\\u62E9\\u6587\\u672C",
+      cspWorkerWarning: "\\u7531\\u4E8E\\u7F51\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u6362\\u5230\\u517C\\u5BB9\\u626B\\u63CF\\u6A21\\u5F0F\\u3002"
+    },
+    placeholders: {
+      click: "\\u70B9\\u51FB ",
+      dynamicScan: "[\\u52A8\\u6001\\u626B\\u63CF]",
+      startNewScanSession: " \\u6309\\u94AE\\u5F00\\u59CB\\u4E00\\u4E2A\\u65B0\\u7684\\u626B\\u63CF\\u4F1A\\u8BDD",
+      staticScan: "[\\u9759\\u6001\\u626B\\u63CF]",
+      performOneTimeScan: " \\u6309\\u94AE\\u53EF\\u8FDB\\u884C\\u4E00\\u6B21\\u6027\\u7684\\u5FEB\\u6377\\u63D0\\u53D6"
+    },
+    confirmation: {
+      clear: "\\u4F60\\u786E\\u8BA4\\u8981\\u6E05\\u7A7A\\u5417\\uFF1F\\u6B64\\u64CD\\u4F5C\\u4E0D\\u53EF\\u64A4\\u9500\\u3002"
+    },
+    tooltip: {
+      summary: "\\u67E5\\u770B\\u603B\\u7ED3",
+      dynamic_scan: "\\u52A8\\u6001\\u626B\\u63CF",
+      static_scan: "\\u9759\\u6001\\u626B\\u63CF",
+      filters: {
+        title: "\\u5185\\u5BB9\\u8FC7\\u6EE4\\u5668\\u8BF4\\u660E",
+        numbers: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u6570\\u5B57\\u3001\\u8D27\\u5E01\\u7B26\\u53F7\\u3001\\u5343\\u4F4D\\u5206\\u9694\\u7B26\\u548C\\u767E\\u5206\\u53F7\\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "-1,234.56"<br>\\u2022 "\\xA5999"<br>\\u2022 "(\\u20AC200)"<br>\\u2022 "+100%"',
+        chinese: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u4E2D\\u6587\\u5B57\\u7B26\\u7EC4\\u6210\\u7684\\u6587\\u672C\\uFF0C\\u4E0D\\u5305\\u62EC\\u4EFB\\u4F55\\u6807\\u70B9\\u6216\\u7A7A\\u683C\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "\\u4F60\\u597D\\u4E16\\u754C" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "\\u4F60\\u597D\\uFF0C\\u4E16\\u754C" (\\u4E0D\\u4F1A\\u88AB\\u8FC7\\u6EE4)',
+        contains_chinese: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389<strong>\\u4EFB\\u4F55\\u5305\\u542B</strong>\\u81F3\\u5C11\\u4E00\\u4E2A\\u4E2D\\u6587\\u5B57\\u7B26\\u7684\\u6587\\u672C\\uFF0C\\u65E0\\u8BBA\\u662F\\u5426\\u5305\\u542B\\u5176\\u4ED6\\u5B57\\u7B26\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "\\u4F60\\u597D World" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "\\u7B2C 1 \\u7AE0" (\\u5C06\\u88AB\\u8FC7\\u6EE4)',
+        emoji_only: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u4E00\\u4E2A\\u6216\\u591A\\u4E2A\\u8868\\u60C5\\u7B26\\u53F7\\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "\\u{1F44D}"<br>\\u2022 "\\u{1F60A}\\u{1F389}\\u{1F680}"',
+        symbols: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u5404\\u7C7B\\u6807\\u70B9\\u548C\\u7B26\\u53F7\\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "@#*&^%"<br>\\u2022 "()[]{}"<br>\\u2022 "---...---"',
+        term: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u5E38\\u89C1\\u7684\\u3001\\u901A\\u5E38\\u65E0\\u9700\\u7FFB\\u8BD1\\u7684 UI \\u672F\\u8BED\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "OK", "Cancel", "Submit"<br>\\u2022 "Login", "Settings", "Help"',
+        single_letter: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u7531<strong>\\u5355\\u4E2A</strong>\\u82F1\\u6587\\u5B57\\u6BCD\\u7EC4\\u6210\\u7684\\u6587\\u672C\\uFF0C\\u5FFD\\u7565\\u5927\\u5C0F\\u5199\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "A" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "b" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "AB" (\\u4E0D\\u4F1A\\u88AB\\u8FC7\\u6EE4)',
+        repeating_chars: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u7531<strong>\\u540C\\u4E00\\u4E2A\\u5B57\\u7B26</strong>\\u8FDE\\u7EED\\u91CD\\u590D 3 \\u6B21\\u6216\\u4EE5\\u4E0A\\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "======"<br>\\u2022 "bbbbb"<br>\\u2022 "...."',
+        file_paths: '\\u6B64\\u89C4\\u5219\\u4F1A\\u5C1D\\u8BD5\\u8BC6\\u522B\\u5E76\\u8FC7\\u6EE4\\u6389\\u7C7B\\u4F3C\\u64CD\\u4F5C\\u7CFB\\u7EDF\\u6587\\u4EF6\\u8DEF\\u5F84\\u6216 URL \\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "/path/to/file.js"<br>\\u2022 "C:\\\\Users\\\\Test"<br>\\u2022 "https://example.com/data"',
+        hex_color_codes: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u6807\\u51C6\\u7684 CSS \\u5341\\u516D\\u8FDB\\u5236\\u989C\\u8272\\u4EE3\\u7801\\uFF083\\u4F4D\\u62166\\u4F4D\\uFF09\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "#FFFFFF"<br>\\u2022 "#ff0000"<br>\\u2022 "#f0c"',
+        email_addresses: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u7B26\\u5408\\u6807\\u51C6\\u683C\\u5F0F\\u7684\\u7535\\u5B50\\u90AE\\u4EF6\\u5730\\u5740\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "example@domain.com"<br>\\u2022 "user.name@sub.domain.org"',
+        uuids: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u901A\\u7528\\u552F\\u4E00\\u6807\\u8BC6\\u7B26 (UUID)\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "123e4567-e89b-12d3-a456-426614174000"',
+        git_commit_hashes: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u6807\\u51C6\\u7684 Git \\u63D0\\u4EA4\\u54C8\\u5E0C\\u503C\\uFF08\\u957F\\u54C8\\u5E0C\\u6216\\u77ED\\u54C8\\u5E0C\\uFF09\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\\u2022 "a1b2c3d"'
+      },
+      display: {
+        title: "\\u663E\\u793A\\u8BBE\\u7F6E\\u8BF4\\u660E",
+        show_fab: "\\u63A7\\u5236\\u662F\\u5426\\u5728\\u7F51\\u9875\\u53F3\\u4E0B\\u89D2\\u663E\\u793A<strong>\\u60AC\\u6D6E\\u52A8\\u4F5C\\u6309\\u94AE (FAB)</strong>\\u3002\\u8FD9\\u662F\\u9759\\u6001\\u6587\\u672C\\u63D0\\u53D6\\u3001\\u52A8\\u6001\\u6587\\u672C\\u63D0\\u53D6\\u7684\\u6838\\u5FC3\\u5165\\u53E3\\u3002<br><br>\\u5982\\u679C\\u60A8\\u7981\\u7528\\u4E86\\u6B64\\u6309\\u94AE\\uFF0C\\u53EF\\u4EE5\\u901A\\u8FC7\\u6CB9\\u7334\\u6269\\u5C55\\u83DC\\u5355\\u7684\\u8BBE\\u7F6E\\u9762\\u677F\\u91CD\\u65B0\\u6253\\u5F00\\u3002",
+        show_scan_count: "\\u542F\\u7528\\u540E\\uFF0C\\u5728\\u7ED3\\u679C\\u7A97\\u53E3\\u7684\\u6807\\u9898\\u680F\\u4F1A<strong>\\u5B9E\\u65F6\\u66F4\\u65B0</strong>\\u672C\\u6B21\\u626B\\u63CF\\u53D1\\u73B0\\u7684\\u6587\\u672C\\u6761\\u76EE\\u603B\\u6570\\u3002\\u5728\\u8FDB\\u884C\\u957F\\u65F6\\u95F4\\u7684<strong>\\u52A8\\u6001\\u626B\\u63CF</strong>\\u65F6\\uFF0C\\u8FD9\\u4E2A\\u8BA1\\u6570\\u5668\\u53EF\\u4EE5\\u5F88\\u76F4\\u89C2\\u5730\\u53CD\\u6620\\u626B\\u63CF\\u8FDB\\u5EA6\\u3002",
+        show_line_numbers: "\\u5728\\u7ED3\\u679C\\u7A97\\u53E3\\u7684\\u6587\\u672C\\u533A\\u57DF\\u5DE6\\u4FA7\\u663E\\u793A\\u884C\\u53F7\\u3002\\u5F53\\u60A8\\u9700\\u8981\\u4E0E\\u4ED6\\u4EBA\\u8BA8\\u8BBA\\u6216\\u8BB0\\u5F55\\u7279\\u5B9A\\u67D0\\u884C\\u6587\\u672C\\u65F6\\uFF0C\\u884C\\u53F7\\u53EF\\u4EE5\\u63D0\\u4F9B\\u4E00\\u4E2A<strong>\\u7CBE\\u786E\\u7684\\u5B9A\\u4F4D\\u6807\\u8BB0</strong>\\u3002",
+        show_statistics: "\\u5728\\u7ED3\\u679C\\u7A97\\u53E3\\u5E95\\u90E8\\u7684\\u72B6\\u6001\\u680F\\u663E\\u793A\\u5F53\\u524D\\u5DF2\\u63D0\\u53D6\\u5185\\u5BB9\\u7684<strong>\\u5B9E\\u65F6\\u7EDF\\u8BA1</strong>\\uFF0C\\u5305\\u62EC<strong>\\u603B\\u884C\\u6570</strong>\\u548C<strong>\\u603B\\u5B57\\u7B26\\u6570</strong>\\u3002\\u8FD9\\u53EF\\u4EE5\\u5E2E\\u52A9\\u60A8\\u5FEB\\u901F\\u8BC4\\u4F30\\u63D0\\u53D6\\u5185\\u5BB9\\u7684\\u89C4\\u6A21\\u3002",
+        enable_word_wrap: "\\u63A7\\u5236\\u7ED3\\u679C\\u7A97\\u53E3\\u4E2D\\u7684\\u957F\\u6587\\u672C\\u884C\\u5982\\u4F55\\u663E\\u793A\\u3002<br><br>\\u2022 <strong>\\u542F\\u7528\\uFF1A</strong>\\u957F\\u6587\\u672C\\u5C06\\u81EA\\u52A8\\u6362\\u884C\\u4EE5\\u9002\\u5E94\\u7A97\\u53E3\\u5BBD\\u5EA6\\u3002<br>\\u2022 <strong>\\u7981\\u7528\\uFF1A</strong>\\u957F\\u6587\\u672C\\u5C06\\u4FDD\\u6301\\u5728\\u5355\\u884C\\uFF0C\\u5E76\\u51FA\\u73B0\\u6C34\\u5E73\\u6EDA\\u52A8\\u6761\\u3002",
+        text_truncation_limit: "\\u8FD9\\u662F\\u4E00\\u4E2A<strong>\\u6027\\u80FD\\u4FDD\\u62A4</strong>\\u673A\\u5236\\u3002\\u5F53\\u811A\\u672C\\u63D0\\u53D6\\u5230<strong>\\u5355\\u884C\\u8D85\\u957F\\u6587\\u672C</strong>\\uFF08\\u4F8B\\u5982\\uFF0C\\u4E00\\u4E2A\\u5B8C\\u6574\\u7684 base64 \\u7F16\\u7801\\u56FE\\u7247\\uFF09\\u65F6\\uFF0C\\u82E5\\u4E0D\\u622A\\u65AD\\uFF0C\\u53EF\\u80FD\\u4F1A\\u5BFC\\u81F4\\u6D4F\\u89C8\\u5668<strong>\\u5361\\u987F\\u6216\\u65E0\\u54CD\\u5E94</strong>\\u3002<br><br>\\u6B64\\u8BBE\\u7F6E\\u4F1A\\u622A\\u65AD\\u8D85\\u51FA\\u6307\\u5B9A\\u957F\\u5EA6\\u7684\\u5355\\u884C\\u6587\\u672C\\uFF0C\\u4EE5\\u4FDD\\u8BC1\\u754C\\u9762\\u6D41\\u7545\\u3002<strong>\\u6CE8\\u610F\\uFF1A\\u6B64\\u622A\\u65AD\\u4EC5\\u5F71\\u54CD\\u754C\\u9762\\u663E\\u793A\\uFF0C\\u5BFC\\u51FA\\u7684\\u6587\\u4EF6\\u4ECD\\u5C06\\u5305\\u542B\\u5B8C\\u6574\\u5185\\u5BB9\\u3002</strong>"
+      },
+      advanced: {
+        title: "\\u9AD8\\u7EA7\\u8BBE\\u7F6E\\u8BF4\\u660E",
+        enable_debug_logging: "\\u542F\\u7528\\u540E\\uFF0C\\u811A\\u672C\\u4F1A\\u5C06\\u8BE6\\u7EC6\\u7684\\u5185\\u90E8\\u8FD0\\u884C\\u72B6\\u6001\\u3001\\u6267\\u884C\\u6B65\\u9AA4\\u3001\\u9519\\u8BEF\\u4FE1\\u606F\\u7B49\\u8F93\\u51FA\\u5230\\u6D4F\\u89C8\\u5668\\u7684<strong>\\u5F00\\u53D1\\u8005\\u5DE5\\u5177\\u63A7\\u5236\\u53F0</strong>\\uFF08\\u901A\\u5E38\\u6309 F12 \\u6253\\u5F00\\uFF09\\u3002\\u6B64\\u529F\\u80FD\\u4E3B\\u8981\\u9762\\u5411\\u5F00\\u53D1\\u8005\\u6216\\u9700\\u8981\\u63D0\\u4EA4\\u8BE6\\u7EC6\\u9519\\u8BEF\\u62A5\\u544A\\u7684\\u7528\\u6237\\u3002"
+      }
+    }
+  };
+  // src/shared/i18n/zh-TW.json
+  var zh_TW_default = {
+    common: {
+      scan: "\\u6383\\u63CF",
+      stop: "\\u505C\\u6B62",
+      resume: "\\u7E7C\\u7E8C",
+      clear: "\\u6E05\\u7A7A",
+      copy: "\\u8907\\u88FD",
+      save: "\\u5132\\u5B58",
+      discovered: "\\u5DF2\\u767C\\u73FE\\uFF1A",
+      confirm: "\\u78BA\\u8A8D",
+      cancel: "\\u53D6\\u6D88",
+      export: "\\u532F\\u51FA"
+    },
+    export: {
+      exportAsTxt: "\\u532F\\u51FA\\u70BA TXT",
+      exportAsJson: "\\u532F\\u51FA\\u70BA JSON",
+      exportAsCsv: "\\u532F\\u51FA\\u70BA CSV",
+      csv: {
+        id: "ID",
+        original: "\\u539F\\u6587",
+        translation: "\\u8B6F\\u6587"
+      }
+    },
+    settings: {
+      title: "\\u8A2D\\u5B9A",
+      theme: "\\u4ECB\\u9762\\u4E3B\\u984C",
+      language: "\\u8A9E\\u8A00\\u8A2D\\u5B9A",
+      relatedSettings: "\\u76F8\\u95DC\\u8A2D\\u5B9A",
+      filterRules: "\\u5167\\u5BB9\\u904E\\u6FFE\\u898F\\u5247",
+      filters: {
+        numbers: "\\u904E\\u6FFE\\u7D14\\u6578\\u5B57/\\u8CA8\\u5E63",
+        chinese: "\\u904E\\u6FFE\\u7D14\\u4E2D\\u6587",
+        contains_chinese: "\\u904E\\u6FFE\\u5305\\u542B\\u4E2D\\u6587\\u7684\\u6587\\u672C",
+        emoji_only: "\\u904E\\u6FFE\\u7D14\\u8868\\u60C5\\u7B26\\u865F",
+        symbols: "\\u904E\\u6FFE\\u7D14\\u7B26\\u865F",
+        term: "\\u904E\\u6FFE\\u7279\\u5B9A\\u8853\\u8A9E",
+        single_letter: "\\u904E\\u6FFE\\u7D14\\u55AE\\u500B\\u82F1\\u6587\\u5B57\\u6BCD",
+        repeating_chars: "\\u904E\\u6FFE\\u55AE\\u4E00\\u91CD\\u8907\\u5B57\\u5143",
+        file_paths: "\\u904E\\u6FFE\\u6A94\\u6848\\u8DEF\\u5F91",
+        hex_color_codes: "\\u904E\\u6FFE\\u5341\\u516D\\u9032\\u4F4D\\u984F\\u8272",
+        email_addresses: "\\u904E\\u6FFE\\u90F5\\u4EF6\\u5730\\u5740",
+        uuids: "\\u904E\\u6FFE UUID",
+        git_commit_hashes: "\\u904E\\u6FFE Git \\u96DC\\u6E4A"
+      },
+      display: {
+        show_fab: "\\u986F\\u793A\\u61F8\\u6D6E\\u6309\\u9215",
+        show_line_numbers: "\\u986F\\u793A\\u884C\\u865F",
+        show_statistics: "\\u986F\\u793A\\u7D71\\u8A08\\u8CC7\\u8A0A",
+        enable_word_wrap: "\\u555F\\u7528\\u6587\\u5B57\\u81EA\\u52D5\\u63DB\\u884C",
+        text_truncation_limit: "\\u555F\\u7528\\u6587\\u5B57\\u6846\\u5B57\\u5143\\u9650\\u5236",
+        character_limit: "\\u5B57\\u5143\\u6578",
+        show_scan_count: "\\u555F\\u7528\\u6A19\\u984C\\u5217\\u986F\\u793A\\u6383\\u63CF\\u8A08\\u6578"
+      },
+      advanced: {
+        enable_debug_logging: "\\u555F\\u7528\\u5075\\u932F\\u65E5\\u8A8C"
+      },
+      panel: {
+        title: "\\u8A2D\\u5B9A\\u9762\\u677F"
+      },
+      languages: {
+        en: "English",
+        zh_CN: "\\u7B80\\u4F53\\u4E2D\\u6587",
+        zh_TW: "\\u7E41\\u9AD4\\u4E2D\\u6587"
+      },
+      themes: {
+        light: "\\u6DFA\\u8272",
+        dark: "\\u6DF1\\u8272",
+        system: "\\u8DDF\\u96A8\\u7CFB\\u7D71"
+      }
+    },
+    scan: {
+      quick: "\\u5FEB\\u901F\\u6383\\u63CF",
+      session: "\\u6703\\u8A71\\u6383\\u63CF",
+      startSession: "\\u958B\\u59CB\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71",
+      stopSession: "\\u505C\\u6B62\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71",
+      finished: "\\u6383\\u63CF\\u7D50\\u675F\\uFF0C\\u5171\\u767C\\u73FE {count} \\u689D\\u6587\\u672C",
+      quickFinished: "\\u5FEB\\u6377\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {count} \\u689D\\u6587\\u672C",
+      sessionStarted: "\\u6703\\u8A71\\u6383\\u63CF\\u5DF2\\u958B\\u59CB",
+      sessionInProgress: "\\u6383\\u63CF\\u6B63\\u5728\\u9032\\u884C\\u4E2D...",
+      truncationWarning: "\\u70BA\\u4FDD\\u6301\\u4ECB\\u9762\\u6D41\\u66A2\\uFF0C\\u6B64\\u8655\\u50C5\\u986F\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u5B8C\\u6574\\u5167\\u5BB9\\u5C07\\u5728\\u532F\\u51FA\\u6642\\u63D0\\u4F9B\\u3002"
+    },
+    results: {
+      title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",
+      scanCountSession: "\\u5DF2\\u6383\\u63CF {count} \\u689D\\u6587\\u672C",
+      scanCountStatic: "\\u5171\\u6383\\u63CF {count} \\u689D\\u6587\\u672C",
+      totalCharacters: "\\u7E3D\\u5B57\\u6578",
+      totalLines: "\\u7E3D\\u884C\\u6578",
+      noSummary: "\\u7576\\u524D\\u6C92\\u6709\\u6458\\u8981\\u6587\\u672C",
+      stats: {
+        lines: "\\u884C",
+        chars: "\\u5B57\\u5143\\u6578"
+      }
+    },
+    notifications: {
+      copiedToClipboard: "\\u5DF2\\u8907\\u88FD\\u5230\\u526A\\u8CBC\\u7C3F\\uFF01",
+      settingsSaved: "\\u8A2D\\u5B9A\\u5DF2\\u5132\\u5B58\\uFF01",
+      modalInitError: "\\u6A21\\u614B\\u6846\\u5C1A\\u672A\\u521D\\u59CB\\u5316\\u3002",
+      nothingToCopy: "\\u6C92\\u6709\\u5167\\u5BB9\\u53EF\\u8907\\u88FD",
+      contentCleared: "\\u5167\\u5BB9\\u5DF2\\u6E05\\u7A7A",
+      noTextSelected: "\\u672A\\u9078\\u64C7\\u6587\\u672C",
+      cspWorkerWarning: "\\u7531\\u65BC\\u7DB2\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u63DB\\u5230\\u76F8\\u5BB9\\u6383\\u63CF\\u6A21\\u5F0F\\u3002"
+    },
+    placeholders: {
+      click: "\\u9EDE\\u64CA ",
+      dynamicScan: "[\\u52D5\\u614B\\u6383\\u63CF]",
+      startNewScanSession: " \\u6309\\u9215\\u958B\\u59CB\\u4E00\\u500B\\u65B0\\u7684\\u6383\\u63CF\\u6703\\u8A71",
+      staticScan: "[\\u975C\\u614B\\u6383\\u63CF]",
+      performOneTimeScan: " \\u6309\\u9215\\u53EF\\u9032\\u884C\\u4E00\\u6B21\\u6027\\u7684\\u5FEB\\u6377\\u63D0\\u53D6"
+    },
+    confirmation: {
+      clear: "\\u4F60\\u78BA\\u8A8D\\u8981\\u6E05\\u7A7A\\u55CE\\uFF1F\\u6B64\\u64CD\\u4F5C\\u4E0D\\u53EF\\u64A4\\u92B7\\u3002"
+    },
+    tooltip: {
+      summary: "\\u67E5\\u770B\\u6458\\u8981",
+      dynamic_scan: "\\u52D5\\u614B\\u6383\\u63CF",
+      static_scan: "\\u975C\\u614B\\u6383\\u63CF",
+      filters: {
+        title: "\\u5167\\u5BB9\\u904E\\u6FFE\\u5668\\u8AAA\\u660E",
+        numbers: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u6578\\u5B57\\u3001\\u8CA8\\u5E63\\u7B26\\u865F\\u3001\\u5343\\u4F4D\\u5206\\u9694\\u7B26\\u548C\\u767E\\u5206\\u6BD4\\u7B26\\u865F\\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "-1,234.56"<br>\\u2022 "\\xA5999"<br>\\u2022 "(\\u20AC200)"<br>\\u2022 "+100%"',
+        chinese: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u4E2D\\u6587\\u5B57\\u5143\\u7D44\\u6210\\u7684\\u6587\\u672C\\uFF0C\\u4E0D\\u5305\\u62EC\\u4EFB\\u4F55\\u6A19\\u9EDE\\u6216\\u7A7A\\u683C\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "\\u4F60\\u597D\\u4E16\\u754C" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "\\u4F60\\u597D\\uFF0C\\u4E16\\u754C" (\\u4E0D\\u6703\\u88AB\\u904E\\u6FFE)',
+        contains_chinese: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389<strong>\\u4EFB\\u4F55\\u5305\\u542B</strong>\\u81F3\\u5C11\\u4E00\\u500B\\u4E2D\\u6587\\u5B57\\u5143\\u7684\\u6587\\u672C\\uFF0C\\u7121\\u8AD6\\u662F\\u5426\\u5305\\u542B\\u5176\\u4ED6\\u5B57\\u5143\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "\\u4F60\\u597D World" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "\\u7B2C 1 \\u7AE0" (\\u5C07\\u88AB\\u904E\\u6FFE)',
+        emoji_only: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u4E00\\u500B\\u6216\\u591A\\u500B\\u8868\\u60C5\\u7B26\\u865F\\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "\\u{1F44D}"<br>\\u2022 "\\u{1F60A}\\u{1F389}\\u{1F680}"',
+        symbols: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u5404\\u985E\\u6A19\\u9EDE\\u548C\\u7B26\\u865F\\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "@#*&^%"<br>\\u2022 "()[]{}"<br>\\u2022 "---...---"',
+        term: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u5E38\\u898B\\u7684\\u3001\\u901A\\u5E38\\u7121\\u9700\\u7FFB\\u8B6F\\u7684 UI \\u8853\\u8A9E\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "OK", "Cancel", "Submit"<br>\\u2022 "Login", "Settings", "Help"',
+        single_letter: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u7531<strong>\\u55AE\\u500B</strong>\\u82F1\\u6587\\u5B57\\u6BCD\\u7D44\\u6210\\u7684\\u6587\\u672C\\uFF0C\\u5FFD\\u7565\\u5927\\u5C0F\\u5BEB\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "A" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "b" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "AB" (\\u4E0D\\u6703\\u88AB\\u904E\\u6FFE)',
+        repeating_chars: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u7531<strong>\\u540C\\u4E00\\u500B\\u5B57\\u5143</strong>\\u9023\\u7E8C\\u91CD\\u8907 3 \\u6B21\\u6216\\u4EE5\\u4E0A\\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "======"<br>\\u2022 "bbbbb"<br>\\u2022 "...."',
+        file_paths: '\\u6B64\\u898F\\u5247\\u6703\\u5617\\u8A66\\u8B58\\u5225\\u4E26\\u904E\\u6FFE\\u6389\\u985E\\u4F3C\\u4F5C\\u696D\\u7CFB\\u7D71\\u6A94\\u6848\\u8DEF\\u5F91\\u6216 URL \\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "/path/to/file.js"<br>\\u2022 "C:\\\\Users\\\\Test"<br>\\u2022 "https://example.com/data"',
+        hex_color_codes: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u6A19\\u6E96\\u7684 CSS \\u5341\\u516D\\u9032\\u4F4D\\u984F\\u8272\\u4EE3\\u78BC\\uFF083\\u4F4D\\u62166\\u4F4D\\uFF09\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "#FFFFFF"<br>\\u2022 "#ff0000"<br>\\u2022 "#f0c"',
+        email_addresses: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u7B26\\u5408\\u6A19\\u6E96\\u683C\\u5F0F\\u7684\\u96FB\\u5B50\\u90F5\\u4EF6\\u5730\\u5740\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "example@domain.com"<br>\\u2022 "user.name@sub.domain.org"',
+        uuids: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u901A\\u7528\\u552F\\u4E00\\u8B58\\u5225\\u78BC (UUID)\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "123e4567-e89b-12d3-a456-426614174000"',
+        git_commit_hashes: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u6A19\\u6E96\\u7684 Git \\u63D0\\u4EA4\\u96DC\\u6E4A\\u503C\\uFF08\\u9577\\u96DC\\u6E4A\\u6216\\u77ED\\u96DC\\u6E4A\\uFF09\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\\u2022 "a1b2c3d"'
+      },
+      display: {
+        title: "\\u986F\\u793A\\u8A2D\\u5B9A\\u8AAA\\u660E",
+        show_fab: "\\u63A7\\u5236\\u662F\\u5426\\u5728\\u7DB2\\u9801\\u53F3\\u4E0B\\u89D2\\u986F\\u793A <strong>\\u6D6E\\u52D5\\u52D5\\u4F5C\\u6309\\u9215 (FAB)</strong>\\u3002\\u9019\\u662F\\u975C\\u614B\\u6587\\u5B57\\u8403\\u53D6\\u3001\\u52D5\\u614B\\u6587\\u5B57\\u8403\\u53D6\\u7684\\u6838\\u5FC3\\u5165\\u53E3\\u3002<br><br>\\u5982\\u679C\\u60A8\\u7981\\u7528\\u4E86\\u6B64\\u6309\\u9215\\uFF0C\\u53EF\\u4EE5\\u900F\\u904E\\u6CB9\\u7334\\u64F4\\u5145\\u529F\\u80FD\\u9078\\u55AE\\u7684\\u8A2D\\u5B9A\\u9762\\u677F\\u91CD\\u65B0\\u958B\\u555F\\u3002",
+        show_scan_count: "\\u555F\\u7528\\u5F8C\\uFF0C\\u5728\\u7D50\\u679C\\u8996\\u7A97\\u7684\\u6A19\\u984C\\u5217\\u6703<strong>\\u5373\\u6642\\u66F4\\u65B0</strong>\\u672C\\u6B21\\u6383\\u63CF\\u767C\\u73FE\\u7684\\u6587\\u672C\\u689D\\u76EE\\u7E3D\\u6578\\u3002\\u5728\\u9032\\u884C\\u9577\\u6642\\u9593\\u7684<strong>\\u52D5\\u614B\\u6383\\u63CF</strong>\\u6642\\uFF0C\\u9019\\u500B\\u8A08\\u6578\\u5668\\u53EF\\u4EE5\\u5F88\\u76F4\\u89C0\\u5730\\u53CD\\u6620\\u6383\\u63CF\\u9032\\u5EA6\\u3002",
+        show_line_numbers: "\\u5728\\u7D50\\u679C\\u8996\\u7A97\\u7684\\u6587\\u672C\\u5340\\u57DF\\u5DE6\\u5074\\u986F\\u793A\\u884C\\u865F\\u3002\\u7576\\u60A8\\u9700\\u8981\\u8207\\u4ED6\\u4EBA\\u8A0E\\u8AD6\\u6216\\u8A18\\u9304\\u7279\\u5B9A\\u67D0\\u884C\\u6587\\u672C\\u6642\\uFF0C\\u884C\\u865F\\u53EF\\u4EE5\\u63D0\\u4F9B\\u4E00\\u500B<strong>\\u7CBE\\u78BA\\u7684\\u5B9A\\u4F4D\\u6A19\\u8A18</strong>\\u3002",
+        show_statistics: "\\u5728\\u7D50\\u679C\\u8996\\u7A97\\u5E95\\u90E8\\u7684\\u72C0\\u614B\\u5217\\u986F\\u793A\\u7576\\u524D\\u5DF2\\u63D0\\u53D6\\u5167\\u5BB9\\u7684<strong>\\u5373\\u6642\\u7D71\\u8A08</strong>\\uFF0C\\u5305\\u62EC<strong>\\u7E3D\\u884C\\u6578</strong>\\u548C<strong>\\u7E3D\\u5B57\\u5143\\u6578</strong>\\u3002\\u9019\\u53EF\\u4EE5\\u5E6B\\u52A9\\u60A8\\u5FEB\\u901F\\u8A55\\u4F30\\u63D0\\u53D6\\u5167\\u5BB9\\u7684\\u898F\\u6A21\\u3002",
+        enable_word_wrap: "\\u63A7\\u5236\\u7D50\\u679C\\u8996\\u7A97\\u4E2D\\u7684\\u9577\\u6587\\u672C\\u884C\\u5982\\u4F55\\u986F\\u793A\\u3002<br><br>\\u2022 <strong>\\u555F\\u7528\\uFF1A</strong>\\u9577\\u6587\\u672C\\u5C07\\u81EA\\u52D5\\u63DB\\u884C\\u4EE5\\u9069\\u61C9\\u8996\\u7A97\\u5BEC\\u5EA6\\u3002<br>\\u2022 <strong>\\u7981\\u7528\\uFF1A</strong>\\u9577\\u6587\\u672C\\u5C07\\u4FDD\\u6301\\u5728\\u55AE\\u884C\\uFF0C\\u4E26\\u51FA\\u73FE\\u6C34\\u5E73\\u6372\\u52D5\\u689D\\u3002",
+        text_truncation_limit: "\\u9019\\u662F\\u4E00\\u500B<strong>\\u6548\\u80FD\\u4FDD\\u8B77</strong>\\u6A5F\\u5236\\u3002\\u7576\\u8173\\u672C\\u63D0\\u53D6\\u5230<strong>\\u55AE\\u884C\\u8D85\\u9577\\u6587\\u672C</strong>\\uFF08\\u4F8B\\u5982\\uFF0C\\u4E00\\u500B\\u5B8C\\u6574\\u7684 base64 \\u7DE8\\u78BC\\u5716\\u7247\\uFF09\\u6642\\uFF0C\\u82E5\\u4E0D\\u622A\\u65B7\\uFF0C\\u53EF\\u80FD\\u6703\\u5C0E\\u81F4\\u700F\\u89BD\\u5668<strong>\\u5361\\u9813\\u6216\\u7121\\u97FF\\u61C9</strong>\\u3002<br><br>\\u6B64\\u8A2D\\u5B9A\\u6703\\u622A\\u65B7\\u8D85\\u51FA\\u6307\\u5B9A\\u9577\\u5EA6\\u7684\\u55AE\\u884C\\u6587\\u672C\\uFF0C\\u4EE5\\u4FDD\\u8B49\\u4ECB\\u9762\\u6D41\\u66A2\\u3002<strong>\\u6CE8\\u610F\\uFF1A\\u6B64\\u622A\\u65B7\\u50C5\\u5F71\\u97FF\\u4ECB\\u9762\\u986F\\u793A\\uFF0C\\u532F\\u51FA\\u7684\\u6A94\\u6848\\u4ECD\\u5C07\\u5305\\u542B\\u5B8C\\u6574\\u5167\\u5BB9\\u3002</strong>"
+      },
+      advanced: {
+        title: "\\u9032\\u968E\\u8A2D\\u5B9A\\u8AAA\\u660E",
+        enable_debug_logging: "\\u555F\\u7528\\u5F8C\\uFF0C\\u8173\\u672C\\u6703\\u5C07\\u8A73\\u7D30\\u7684\\u5167\\u90E8\\u904B\\u884C\\u72C0\\u614B\\u3001\\u57F7\\u884C\\u6B65\\u9A5F\\u3001\\u932F\\u8AA4\\u8CC7\\u8A0A\\u7B49\\u8F38\\u51FA\\u5230\\u700F\\u89BD\\u5668\\u7684<strong>\\u958B\\u767C\\u8005\\u5DE5\\u5177\\u63A7\\u5236\\u53F0</strong>\\uFF08\\u901A\\u5E38\\u6309 F12 \\u958B\\u555F\\uFF09\\u3002\\u6B64\\u529F\\u80FD\\u4E3B\\u8981\\u9762\\u5411\\u958B\\u767C\\u8005\\u6216\\u9700\\u8981\\u63D0\\u4EA4\\u8A73\\u7D30\\u932F\\u8AA4\\u5831\\u544A\\u7684\\u4F7F\\u7528\\u8005\\u3002"
+      }
+    }
+  };
+  // src/shared/i18n/management/languages.js
+  var supportedLanguages = [
+    { code: "en", name: "English" },
+    { code: "zh-CN", name: "\\u7B80\\u4F53\\u4E2D\\u6587" },
+    { code: "zh-TW", name: "\\u7E41\\u9AD4\\u4E2D\\u6587" }
+  ];
+  // src/shared/i18n/index.js
+  var translationModules = {
+    en: en_default,
+    "zh-CN": zh_CN_default,
+    "zh-TW": zh_TW_default
+  };
+  var translations = supportedLanguages.reduce((acc, lang) => {
+    if (translationModules[lang.code]) {
+      acc[lang.code] = translationModules[lang.code];
+    }
+    return acc;
+  }, {});
+  var currentTranslations = translations.en;
+  function getAvailableLanguages() {
+    return supportedLanguages.map((lang) => ({
+      value: lang.code,
+      label: lang.name
+    }));
+  }
+  // src/features/settings/config.js
+  var selectSettingsDefinitions = [
+    {
+      id: "theme-select",
+      key: "theme",
+      label: "settings.theme",
+      icon: themeIcon,
+      options: [
+        { value: "light", label: "settings.themes.light" },
+        { value: "dark", label: "settings.themes.dark" },
+        { value: "system", label: "settings.themes.system" }
+      ]
+    },
+    {
+      id: "language-select",
+      key: "language",
+      label: "settings.language",
+      icon: languageIcon_default,
+      // \u76F4\u63A5\u4ECE i18n \u6A21\u5757\u83B7\u53D6\u8BED\u8A00\u5217\u8868\uFF0C\u5176\u6807\u7B7E\u5DF2\u7ECF\u662F\u539F\u751F\u540D\u79F0\uFF0C\u65E0\u9700\u518D\u7FFB\u8BD1\u3002
+      options: getAvailableLanguages()
+    }
+  ];
+  var filterDefinitions = [
+    { id: "filter-numbers", key: "numbers", label: "settings.filters.numbers", tooltip: { titleIcon: infoIcon, title: "settings.filters.numbers", text: "tooltip.filters.numbers" } },
+    { id: "filter-chinese", key: "chinese", label: "settings.filters.chinese", tooltip: { titleIcon: infoIcon, title: "settings.filters.chinese", text: "tooltip.filters.chinese" } },
+    { id: "filter-contains-chinese", key: "containsChinese", label: "settings.filters.contains_chinese", tooltip: { titleIcon: infoIcon, title: "settings.filters.contains_chinese", text: "tooltip.filters.contains_chinese" } },
+    { id: "filter-emoji-only", key: "emojiOnly", label: "settings.filters.emoji_only", tooltip: { titleIcon: infoIcon, title: "settings.filters.emoji_only", text: "tooltip.filters.emoji_only" } },
+    { id: "filter-symbols", key: "symbols", label: "settings.filters.symbols", tooltip: { titleIcon: infoIcon, title: "settings.filters.symbols", text: "tooltip.filters.symbols" } },
+    { id: "filter-term", key: "termFilter", label: "settings.filters.term", tooltip: { titleIcon: infoIcon, title: "settings.filters.term", text: "tooltip.filters.term" } },
+    { id: "filter-single-letter", key: "singleLetter", label: "settings.filters.single_letter", tooltip: { titleIcon: infoIcon, title: "settings.filters.single_letter", text: "tooltip.filters.single_letter" } },
+    {
+      id: "filter-repeating-chars",
+      key: "repeatingChars",
+      label: "settings.filters.repeating_chars",
+      tooltip: {
+        titleIcon: infoIcon,
+        title: "settings.filters.repeating_chars",
+        text: "tooltip.filters.repeating_chars"
+      }
+    },
+    { id: "filter-file-paths", key: "filePath", label: "settings.filters.file_paths", tooltip: { titleIcon: infoIcon, title: "settings.filters.file_paths", text: "tooltip.filters.file_paths" } },
+    { id: "filter-hex-colors", key: "hexColor", label: "settings.filters.hex_color_codes", tooltip: { titleIcon: infoIcon, title: "settings.filters.hex_color_codes", text: "tooltip.filters.hex_color_codes" } },
+    { id: "filter-emails", key: "email", label: "settings.filters.email_addresses", tooltip: { titleIcon: infoIcon, title: "settings.filters.email_addresses", text: "tooltip.filters.email_addresses" } },
+    { id: "filter-uuids", key: "uuid", label: "settings.filters.uuids", tooltip: { titleIcon: infoIcon, title: "settings.filters.uuids", text: "tooltip.filters.uuids" } },
+    { id: "filter-git-hashes", key: "gitCommitHash", label: "settings.filters.git_commit_hashes", tooltip: { titleIcon: infoIcon, title: "settings.filters.git_commit_hashes", text: "tooltip.filters.git_commit_hashes" } }
+  ];
+  // src/shared/utils/filterLogic.js
+  var filterConfigMap = new Map(filterDefinitions.map((def) => [def.key, def.label]));
+  var ruleChecks = /* @__PURE__ */ new Map([
+    ["numbers", {
+      regex: /^[$\\\u20AC\\\xA3\\\xA5\\d,.\\s]+$/,
+      label: filterConfigMap.get("numbers")
+    }],
+    ["chinese", {
+      regex: /^[\\u4e00-\\u9fa5\\s]+$/u,
+      label: filterConfigMap.get("chinese")
+    }],
+    ["containsChinese", {
+      regex: /[\\u4e00-\\u9fa5]/u,
+      label: filterConfigMap.get("containsChinese")
+    }],
+    ["emojiOnly", {
+      regex: /^[\\p{Emoji}\\s]+$/u,
+      label: filterConfigMap.get("emojiOnly")
+    }],
+    ["symbols", {
+      // \u8FD9\u4E2A\u903B\u8F91\u6BD4\u8F83\u7279\u6B8A\uFF0C\u662F\u201C\u4E0D\u5305\u542B\u5B57\u6BCD\u6216\u6570\u5B57\u201D\uFF0C\u6240\u4EE5\u6211\u4EEC\u7528\u4E00\u4E2A\u51FD\u6570\u6765\u5904\u7406
+      test: (text) => !/[\\p{L}\\p{N}]/u.test(text),
+      label: filterConfigMap.get("symbols")
+    }],
+    ["termFilter", {
+      test: (text) => ignoredTerms_default.includes(text),
+      label: filterConfigMap.get("termFilter")
+    }],
+    ["singleLetter", {
+      regex: /^[a-zA-Z]$/,
+      label: filterConfigMap.get("singleLetter")
+    }],
+    ["repeatingChars", {
+      regex: /^\\s*(.)\\1+\\s*$/,
+      label: filterConfigMap.get("repeatingChars")
+    }],
+    ["filePath", {
+      regex: /^(?:[a-zA-Z]:\\\\|\\\\\\\\|~|\\.\\.?\\/)[\\w\\-\\.\\/ \\\\]*[\\w\\-\\.]+\\.[\\w]{2,4}$/,
+      label: filterConfigMap.get("filePath")
+    }],
+    ["hexColor", {
+      regex: /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3,4}|[A-Fa-f0-9]{8})$/,
+      label: filterConfigMap.get("hexColor")
+    }],
+    ["email", {
+      regex: /^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$/,
+      label: filterConfigMap.get("email")
+    }],
+    ["uuid", {
+      regex: /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/,
+      label: filterConfigMap.get("uuid")
+    }],
+    ["gitCommitHash", {
+      regex: /^[0-9a-f]{7,40}$/i,
+      label: filterConfigMap.get("gitCommitHash")
+    }]
+  ]);
+  function shouldFilter(text, filterRules) {
+    for (const [key, rule] of ruleChecks.entries()) {
+      if (filterRules[key]) {
+        const isFiltered = rule.regex ? rule.regex.test(text) : rule.test(text);
+        if (isFiltered) {
+          return { reason: rule.label };
+        }
+      }
+    }
+    return null;
+  }
+  // src/shared/utils/formatting.js
+  var formatTextsForTranslation = (texts) => {
+    const result = texts.map(
+      (text) => \`    ["\${text.replace(/"/g, '\\\\"').replace(/\\n/g, "\\\\n")}", ""]\`
+    );
+    return \`[
+\${result.join(",\\n")}
+]\`;
+  };
+  // src/features/quick-scan/worker.js
+  self.onmessage = (event) => {
+    const { type, payload } = event.data;
+    const enableDebugLogging = payload.enableDebugLogging || false;
+    const log2 = (...args) => {
+      if (enableDebugLogging) {
+        console.log("[\\u9759\\u6001\\u626B\\u63CF Worker]", ...args);
+      }
+    };
+    if (type === "scan") {
+      log2(\`[\\u9759\\u6001\\u626B\\u63CF Worker] \\u6536\\u5230 \${payload.texts.length} \\u6761\\u6587\\u672C\\uFF0C\\u5F00\\u59CB\\u5904\\u7406...\`);
+      const { texts, filterRules } = payload;
+      const uniqueTexts = /* @__PURE__ */ new Set();
+      if (Array.isArray(texts)) {
+        texts.forEach((rawText) => {
+          if (!rawText || typeof rawText !== "string") return;
+          const normalizedText = rawText.normalize("NFC");
+          const textForFiltering = normalizedText.replace(/(\\r\\n|\\n|\\r)+/g, "\\n").trim();
+          if (textForFiltering === "") return;
+          const filterResult = shouldFilter(textForFiltering, filterRules);
+          if (filterResult) {
+            log2(\`\\u6587\\u672C\\u5DF2\\u8FC7\\u6EE4: "\${textForFiltering}" (\\u539F\\u56E0: \${filterResult.reason})\`);
+            return;
+          }
+          uniqueTexts.add(normalizedText.replace(/(\\r\\n|\\n|\\r)+/g, "\\n"));
+        });
+      }
+      const textsArray = Array.from(uniqueTexts);
+      const formattedText = formatTextsForTranslation(textsArray);
+      log2(\`[\\u9759\\u6001\\u626B\\u63CF Worker] \\u5904\\u7406\\u5B8C\\u6210\\uFF0C\\u5171 \${textsArray.length} \\u6761\\u6709\\u6548\\u6587\\u672C\\u3002\\u6B63\\u5728\\u53D1\\u56DE\\u4E3B\\u7EBF\\u7A0B...\`);
+      self.postMessage({
+        type: "scanCompleted",
+        payload: {
+          formattedText,
+          count: textsArray.length
+        }
+      });
+    }
+  };
+})();
+`;
         const workerUrl = `data:application/javascript,${encodeURIComponent(workerScript)}`;
         const trustedUrl = createTrustedWorkerUrl(workerUrl);
         const worker2 = new Worker(trustedUrl);
@@ -1381,7 +2157,704 @@ ${result.join(",\n")}
     const initialTexts = extractAndProcessText();
     try {
       log("\u4F1A\u8BDD\u626B\u63CF\uFF1A\u5C1D\u8BD5\u542F\u52A8 Web Worker...");
-      const workerScript = '(() => {\n  // src/shared/utils/ignoredTerms.js\n  var IGNORED_TERMS = [\n    "Github",\n    "Microsoft",\n    "Tampermonkey",\n    "JavaScript",\n    "TypeScript",\n    "Hugging Face",\n    "Google",\n    "Facebook",\n    "Twitter",\n    "LinkedIn",\n    "OpenAI",\n    "ChatGPT",\n    "API",\n    "Glossary of computer science",\n    "HTML",\n    "CSS",\n    "JSON",\n    "XML",\n    "HTTP",\n    "HTTPS",\n    "URL",\n    "IP address",\n    "DNS",\n    "CPU",\n    "GPU",\n    "RAM",\n    "SSD",\n    "USB",\n    "Wi-Fi",\n    "Bluetooth",\n    "VPN",\n    "AI"\n  ];\n  var ignoredTerms_default = IGNORED_TERMS;\n\n  // src/assets/icons/themeIcon.js\n  var themeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 32.5-156t88-127Q256-817 330-848.5T488-880q80 0 151 27.5t124.5 76q53.5 48.5 85 115T880-518q0 115-70 176.5T640-280h-74q-9 0-12.5 5t-3.5 11q0 12 15 34.5t15 51.5q0 50-27.5 74T480-80Zm0-400Zm-220 40q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120-160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm200 0q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120 160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17ZM480-160q9 0 14.5-5t5.5-13q0-14-15-33t-15-57q0-42 29-67t71-25h70q66 0 113-38.5T800-518q0-121-92.5-201.5T488-800q-136 0-232 93t-96 227q0 133 93.5 226.5T480-160Z"/></svg>`;\n\n  // src/assets/icons/languageIcon.js\n  var languageIcon_default = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-155.5t86-127Q252-817 325-848.5T480-880q83 0 155.5 31.5t127 86q54.5 54.5 86 127T880-480q0 82-31.5 155t-86 127.5q-54.5 54.5-127 86T480-80Zm0-82q26-36 45-75t31-83H404q12 44 31 83t45 75Zm-104-16q-18-33-31.5-68.5T322-320H204q29 50 72.5 87t99.5 55Zm208 0q56-18 99.5-55t72.5-87H638q-9 38-22.5 73.5T584-178ZM170-400h136q-3-20-4.5-39.5T300-480q0-21 1.5-40.5T306-560H170q-5 20-7.5 39.5T160-480q0 21 2.5 40.5T170-400Zm216 0h188q3-20 4.5-39.5T580-480q0-21-1.5-40.5T574-560H386q-3 20-4.5 39.5T380-480q0 21 1.5 40.5T386-400Zm268 0h136q5-20 7.5-39.5T800-480q0-21-2.5-40.5T790-560H654q3 20 4.5 39.5T660-480q0 21-1.5 40.5T654-400Zm-16-240h118q-29-50-72.5-87T584-782q18 33 31.5 68.5T638-640Zm-234 0h152q-12-44-31-83t-45-75q-26 36-45 75t-31 83Zm-200 0h118q9-38 22.5-73.5T376-782q-56 18-99.5 55T204-640Z"/></svg>`;\n\n  // src/shared/i18n/en.json\n  var en_default = {\n    common: {\n      scan: "Scan",\n      stop: "Stop",\n      resume: "Resume",\n      clear: "Clear",\n      copy: "Copy",\n      save: "Save",\n      discovered: "Discovered: ",\n      confirm: "Confirm",\n      cancel: "Cancel",\n      export: "Export"\n    },\n    export: {\n      exportAsTxt: "Export as TXT",\n      exportAsJson: "Export as JSON",\n      exportAsCsv: "Export as CSV",\n      csv: {\n        id: "ID",\n        original: "Original",\n        translation: "Translation"\n      }\n    },\n    settings: {\n      title: "Settings",\n      theme: "Theme",\n      language: "Language",\n      relatedSettings: "Related Settings",\n      filterRules: "Content Filtering Rules",\n      filters: {\n        numbers: "Filter numbers/currency",\n        chinese: "Filter pure Chinese",\n        contains_chinese: "Filter text containing Chinese",\n        emoji_only: "Filter emoji-only text",\n        symbols: "Filter symbol-only text",\n        term: "Filter specific terms",\n        single_letter: "Filter single English letters",\n        repeating_chars: "Filter single repeating characters",\n        file_paths: "Filter File Paths",\n        hex_color_codes: "Filter Hex Color Codes",\n        email_addresses: "Filter Email Addresses",\n        uuids: "Filter UUIDs",\n        git_commit_hashes: "Filter Git Commit Hashes"\n      },\n      display: {\n        show_fab: "Show floating button",\n        show_line_numbers: "Show line numbers",\n        show_statistics: "Show Statistics",\n        enable_word_wrap: "Enable text wrapping",\n        text_truncation_limit: "Enable Textbox Character Limit",\n        character_limit: "Character Limit",\n        show_scan_count: "Enable scan count display in title bar"\n      },\n      advanced: {\n        enable_debug_logging: "Enable debug logging"\n      },\n      panel: {\n        title: "Settings Panel"\n      },\n      languages: {\n        en: "English",\n        zh_CN: "\\u7B80\\u4F53\\u4E2D\\u6587",\n        zh_TW: "\\u7E41\\u9AD4\\u4E2D\\u6587"\n      },\n      themes: {\n        light: "Light",\n        dark: "Dark",\n        system: "System"\n      }\n    },\n    scan: {\n      quick: "Quick Scan",\n      session: "Session Scan",\n      startSession: "Start dynamic scan session",\n      stopSession: "Stop dynamic scan session",\n      finished: "Scan finished, {count} texts found",\n      quickFinished: "Quick scan finished, {count} texts found",\n      sessionStarted: "Session scan started",\n      sessionInProgress: "Session scan is in progress...",\n      truncationWarning: "To maintain interface fluency, only part of the text is displayed here. The complete content will be provided when exporting."\n    },\n    results: {\n      title: "Extracted Text",\n      scanCountSession: "Scanned {count} texts",\n      scanCountStatic: "Total {count} texts scanned",\n      totalCharacters: "Total characters",\n      totalLines: "Total lines",\n      noSummary: "No summary text available",\n      stats: {\n        lines: "Lines",\n        chars: "Chars"\n      }\n    },\n    notifications: {\n      copiedToClipboard: "Copied to clipboard!",\n      settingsSaved: "Settings saved!",\n      modalInitError: "Modal not initialized.",\n      nothingToCopy: "Nothing to copy",\n      contentCleared: "Content cleared",\n      noTextSelected: "No text selected",\n      cspWorkerWarning: "Switched to compatibility scan mode due to website security restrictions."\n    },\n    placeholders: {\n      click: "Click the ",\n      dynamicScan: "[Dynamic Scan]",\n      startNewScanSession: " button to start a new scanning session",\n      staticScan: "[Static Scan]",\n      performOneTimeScan: " button for a one-time quick extraction"\n    },\n    confirmation: {\n      clear: "Are you sure you want to clear the content? This action cannot be undone."\n    },\n    tooltip: {\n      summary: "View Summary",\n      dynamic_scan: "Dynamic Scan",\n      static_scan: "Static Scan"\n    }\n  };\n\n  // src/shared/i18n/zh-CN.json\n  var zh_CN_default = {\n    common: {\n      scan: "\\u626B\\u63CF",\n      stop: "\\u505C\\u6B62",\n      resume: "\\u7EE7\\u7EED",\n      clear: "\\u6E05\\u7A7A",\n      copy: "\\u590D\\u5236",\n      save: "\\u4FDD\\u5B58",\n      discovered: "\\u5DF2\\u53D1\\u73B0\\uFF1A",\n      confirm: "\\u786E\\u8BA4",\n      cancel: "\\u53D6\\u6D88",\n      export: "\\u5BFC\\u51FA"\n    },\n    export: {\n      exportAsTxt: "\\u5BFC\\u51FA\\u4E3A TXT",\n      exportAsJson: "\\u5BFC\\u51FA\\u4E3A JSON",\n      exportAsCsv: "\\u5BFC\\u51FA\\u4E3A CSV",\n      csv: {\n        id: "ID",\n        original: "\\u539F\\u6587",\n        translation: "\\u8BD1\\u6587"\n      }\n    },\n    settings: {\n      title: "\\u8BBE\\u7F6E",\n      theme: "\\u754C\\u9762\\u4E3B\\u9898",\n      language: "\\u8BED\\u8A00\\u8BBE\\u7F6E",\n      relatedSettings: "\\u76F8\\u5173\\u8BBE\\u7F6E",\n      filterRules: "\\u5185\\u5BB9\\u8FC7\\u6EE4\\u89C4\\u5219",\n      filters: {\n        numbers: "\\u8FC7\\u6EE4\\u7EAF\\u6570\\u5B57/\\u8D27\\u5E01",\n        chinese: "\\u8FC7\\u6EE4\\u7EAF\\u4E2D\\u6587",\n        contains_chinese: "\\u8FC7\\u6EE4\\u5305\\u542B\\u4E2D\\u6587\\u7684\\u6587\\u672C",\n        emoji_only: "\\u8FC7\\u6EE4\\u7EAF\\u8868\\u60C5\\u7B26\\u53F7",\n        symbols: "\\u8FC7\\u6EE4\\u7EAF\\u7B26\\u53F7",\n        term: "\\u8FC7\\u6EE4\\u7279\\u5B9A\\u672F\\u8BED",\n        single_letter: "\\u8FC7\\u6EE4\\u7EAF\\u5355\\u4E2A\\u82F1\\u6587\\u5B57\\u6BCD",\n        repeating_chars: "\\u8FC7\\u6EE4\\u5355\\u4E00\\u91CD\\u590D\\u5B57\\u7B26",\n        file_paths: "\\u8FC7\\u6EE4\\u6587\\u4EF6\\u8DEF\\u5F84",\n        hex_color_codes: "\\u8FC7\\u6EE4\\u5341\\u516D\\u8FDB\\u5236\\u989C\\u8272",\n        email_addresses: "\\u8FC7\\u6EE4\\u90AE\\u4EF6\\u5730\\u5740",\n        uuids: "\\u8FC7\\u6EE4 UUID",\n        git_commit_hashes: "\\u8FC7\\u6EE4 Git \\u54C8\\u5E0C"\n      },\n      display: {\n        show_fab: "\\u663E\\u793A\\u60AC\\u6D6E\\u6309\\u94AE",\n        show_line_numbers: "\\u663E\\u793A\\u884C\\u53F7",\n        show_statistics: "\\u663E\\u793A\\u7EDF\\u8BA1\\u4FE1\\u606F",\n        enable_word_wrap: "\\u542F\\u7528\\u6587\\u672C\\u81EA\\u52A8\\u6362\\u884C",\n        text_truncation_limit: "\\u542F\\u7528\\u6587\\u672C\\u6846\\u5B57\\u7B26\\u9650\\u5236",\n        character_limit: "\\u5B57\\u7B26\\u6570",\n        show_scan_count: "\\u542F\\u7528\\u6807\\u9898\\u680F\\u663E\\u793A\\u626B\\u63CF\\u8BA1\\u6570"\n      },\n      advanced: {\n        enable_debug_logging: "\\u542F\\u7528\\u8C03\\u8BD5\\u65E5\\u5FD7"\n      },\n      panel: {\n        title: "\\u8BBE\\u7F6E\\u9762\\u677F"\n      },\n      languages: {\n        en: "English",\n        zh_CN: "\\u7B80\\u4F53\\u4E2D\\u6587",\n        zh_TW: "\\u7E41\\u9AD4\\u4E2D\\u6587"\n      },\n      themes: {\n        light: "\\u6D45\\u8272",\n        dark: "\\u6DF1\\u8272",\n        system: "\\u8DDF\\u968F\\u7CFB\\u7EDF"\n      }\n    },\n    scan: {\n      quick: "\\u5FEB\\u901F\\u626B\\u63CF",\n      session: "\\u4F1A\\u8BDD\\u626B\\u63CF",\n      startSession: "\\u5F00\\u59CB\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD",\n      stopSession: "\\u505C\\u6B62\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD",\n      finished: "\\u626B\\u63CF\\u7ED3\\u675F\\uFF0C\\u5171\\u53D1\\u73B0 {count} \\u6761\\u6587\\u672C",\n      quickFinished: "\\u5FEB\\u6377\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {count} \\u6761\\u6587\\u672C",\n      sessionStarted: "\\u4F1A\\u8BDD\\u626B\\u63CF\\u5DF2\\u5F00\\u59CB",\n      sessionInProgress: "\\u626B\\u63CF\\u6B63\\u5728\\u8FDB\\u884C\\u4E2D...",\n      truncationWarning: "\\u4E3A\\u4FDD\\u6301\\u754C\\u9762\\u6D41\\u7545\\uFF0C\\u6B64\\u5904\\u4EC5\\u663E\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u5B8C\\u6574\\u5185\\u5BB9\\u5C06\\u5728\\u5BFC\\u51FA\\u65F6\\u63D0\\u4F9B\\u3002"\n    },\n    results: {\n      title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",\n      scanCountSession: "\\u5DF2\\u626B\\u63CF {count} \\u6761\\u6587\\u672C",\n      scanCountStatic: "\\u5171\\u626B\\u63CF {count} \\u6761\\u6587\\u672C",\n      totalCharacters: "\\u603B\\u5B57\\u6570",\n      totalLines: "\\u603B\\u884C\\u6570",\n      noSummary: "\\u5F53\\u524D\\u6CA1\\u6709\\u603B\\u7ED3\\u6587\\u672C",\n      stats: {\n        lines: "\\u884C",\n        chars: "\\u5B57\\u7B26\\u6570"\n      }\n    },\n    notifications: {\n      copiedToClipboard: "\\u5DF2\\u590D\\u5236\\u5230\\u526A\\u8D34\\u677F!",\n      settingsSaved: "\\u8BBE\\u7F6E\\u5DF2\\u4FDD\\u5B58\\uFF01",\n      modalInitError: "\\u6A21\\u6001\\u6846\\u5C1A\\u672A\\u521D\\u59CB\\u5316\\u3002",\n      nothingToCopy: "\\u6C92\\u6709\\u5167\\u5BB9\\u53EF\\u8907\\u88FD",\n      contentCleared: "\\u5185\\u5BB9\\u5DF2\\u6E05\\u7A7A",\n      noTextSelected: "\\u672A\\u9009\\u62E9\\u6587\\u672C",\n      cspWorkerWarning: "\\u7531\\u4E8E\\u7F51\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u6362\\u5230\\u517C\\u5BB9\\u626B\\u63CF\\u6A21\\u5F0F\\u3002"\n    },\n    placeholders: {\n      click: "\\u70B9\\u51FB ",\n      dynamicScan: "[\\u52A8\\u6001\\u626B\\u63CF]",\n      startNewScanSession: " \\u6309\\u94AE\\u5F00\\u59CB\\u4E00\\u4E2A\\u65B0\\u7684\\u626B\\u63CF\\u4F1A\\u8BDD",\n      staticScan: "[\\u9759\\u6001\\u626B\\u63CF]",\n      performOneTimeScan: " \\u6309\\u94AE\\u53EF\\u8FDB\\u884C\\u4E00\\u6B21\\u6027\\u7684\\u5FEB\\u6377\\u63D0\\u53D6"\n    },\n    confirmation: {\n      clear: "\\u4F60\\u786E\\u8BA4\\u8981\\u6E05\\u7A7A\\u5417\\uFF1F\\u6B64\\u64CD\\u4F5C\\u4E0D\\u53EF\\u64A4\\u9500\\u3002"\n    },\n    tooltip: {\n      summary: "\\u67E5\\u770B\\u603B\\u7ED3",\n      dynamic_scan: "\\u52A8\\u6001\\u626B\\u63CF",\n      static_scan: "\\u9759\\u6001\\u626B\\u63CF"\n    }\n  };\n\n  // src/shared/i18n/zh-TW.json\n  var zh_TW_default = {\n    common: {\n      scan: "\\u6383\\u63CF",\n      stop: "\\u505C\\u6B62",\n      resume: "\\u7E7C\\u7E8C",\n      clear: "\\u6E05\\u7A7A",\n      copy: "\\u8907\\u88FD",\n      save: "\\u5132\\u5B58",\n      discovered: "\\u5DF2\\u767C\\u73FE\\uFF1A",\n      confirm: "\\u78BA\\u8A8D",\n      cancel: "\\u53D6\\u6D88",\n      export: "\\u532F\\u51FA"\n    },\n    export: {\n      exportAsTxt: "\\u532F\\u51FA\\u70BA TXT",\n      exportAsJson: "\\u532F\\u51FA\\u70BA JSON",\n      exportAsCsv: "\\u532F\\u51FA\\u70BA CSV",\n      csv: {\n        id: "ID",\n        original: "\\u539F\\u6587",\n        translation: "\\u8B6F\\u6587"\n      }\n    },\n    settings: {\n      title: "\\u8A2D\\u5B9A",\n      theme: "\\u4ECB\\u9762\\u4E3B\\u984C",\n      language: "\\u8A9E\\u8A00\\u8A2D\\u5B9A",\n      relatedSettings: "\\u76F8\\u95DC\\u8A2D\\u5B9A",\n      filterRules: "\\u5167\\u5BB9\\u904E\\u6FFE\\u898F\\u5247",\n      filters: {\n        numbers: "\\u904E\\u6FFE\\u7D14\\u6578\\u5B57/\\u8CA8\\u5E63",\n        chinese: "\\u904E\\u6FFE\\u7D14\\u4E2D\\u6587",\n        contains_chinese: "\\u904E\\u6FFE\\u5305\\u542B\\u4E2D\\u6587\\u7684\\u6587\\u672C",\n        emoji_only: "\\u904E\\u6FFE\\u7D14\\u8868\\u60C5\\u7B26\\u865F",\n        symbols: "\\u904E\\u6FFE\\u7D14\\u7B26\\u865F",\n        term: "\\u904E\\u6FFE\\u7279\\u5B9A\\u8853\\u8A9E",\n        single_letter: "\\u904E\\u6FFE\\u7D14\\u55AE\\u500B\\u82F1\\u6587\\u5B57\\u6BCD",\n        repeating_chars: "\\u904E\\u6FFE\\u55AE\\u4E00\\u91CD\\u8907\\u5B57\\u7B26",\n        file_paths: "\\u904E\\u6FFE\\u6587\\u4EF6\\u8DEF\\u5F91",\n        hex_color_codes: "\\u904E\\u6FFE\\u5341\\u516D\\u9032\\u4F4D\\u984F\\u8272",\n        email_addresses: "\\u904E\\u6FFE\\u90F5\\u4EF6\\u5730\\u5740",\n        uuids: "\\u904E\\u6FFE UUID",\n        git_commit_hashes: "\\u904E\\u6FFE Git \\u54C8\\u5E0C"\n      },\n      display: {\n        show_fab: "\\u986F\\u793A\\u61F8\\u6D6E\\u6309\\u9215",\n        show_line_numbers: "\\u986F\\u793A\\u884C\\u865F",\n        show_statistics: "\\u986F\\u793A\\u7D71\\u8A08\\u8CC7\\u8A0A",\n        enable_word_wrap: "\\u555F\\u7528\\u6587\\u5B57\\u81EA\\u52D5\\u63DB\\u884C",\n        text_truncation_limit: "\\u555F\\u7528\\u6587\\u672C\\u6846\\u5B57\\u7B26\\u9650\\u5236",\n        character_limit: "\\u5B57\\u7B26\\u6578",\n        show_scan_count: "\\u555F\\u7528\\u6A19\\u984C\\u5217\\u986F\\u793A\\u6383\\u63CF\\u6B21\\u6578"\n      },\n      advanced: {\n        enable_debug_logging: "\\u555F\\u7528\\u5075\\u932F\\u65E5\\u8A8C"\n      },\n      panel: {\n        title: "\\u8A2D\\u5B9A\\u9762\\u677F"\n      },\n      languages: {\n        en: "English",\n        zh_CN: "\\u7B80\\u4F53\\u4E2D\\u6587",\n        zh_TW: "\\u7E41\\u9AD4\\u4E2D\\u6587"\n      },\n      themes: {\n        light: "\\u6DFA\\u8272",\n        dark: "\\u6DF1\\u8272",\n        system: "\\u8DDF\\u96A8\\u7CFB\\u7D71"\n      }\n    },\n    scan: {\n      quick: "\\u5FEB\\u901F\\u6383\\u63CF",\n      session: "\\u6703\\u8A71\\u6383\\u63CF",\n      startSession: "\\u958B\\u59CB\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71",\n      stopSession: "\\u505C\\u6B62\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71",\n      finished: "\\u6383\\u63CF\\u7D50\\u675F\\uFF0C\\u5171\\u767C\\u73FE {count} \\u689D\\u6587\\u672C",\n      quickFinished: "\\u5FEB\\u6377\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {count} \\u689D\\u6587\\u672C",\n      sessionStarted: "\\u6703\\u8A71\\u6383\\u63CF\\u5DF2\\u958B\\u59CB",\n      sessionInProgress: "\\u6703\\u8A71\\u6383\\u63CF\\u6B63\\u5728\\u9032\\u884C\\u4E2D...",\n      truncationWarning: "\\u70BA\\u4E86\\u4FDD\\u6301\\u4ECB\\u9762\\u6D41\\u66A2\\uFF0C\\u50C5\\u986F\\u793A\\u90E8\\u5206\\u6587\\u672C\\u5167\\u5BB9\\u3002\\u5B8C\\u6574\\u5167\\u5BB9\\u5C07\\u5728\\u532F\\u51FA\\u6642\\u63D0\\u4F9B\\u3002"\n    },\n    results: {\n      title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",\n      scanCountSession: "\\u5DF2\\u6383\\u63CF {count} \\u689D\\u6587\\u672C",\n      scanCountStatic: "\\u5171\\u6383\\u63CF {count} \\u689D\\u6587\\u672C",\n      totalCharacters: "\\u7E3D\\u5B57\\u6578",\n      totalLines: "\\u7E3D\\u884C\\u6578",\n      noSummary: "\\u7576\\u524D\\u6C92\\u6709\\u7E3D\\u7D50\\u6587\\u672C",\n      stats: {\n        lines: "\\u884C",\n        chars: "\\u5B57\\u7B26\\u6578"\n      }\n    },\n    notifications: {\n      copiedToClipboard: "\\u5DF2\\u8907\\u88FD\\u5230\\u526A\\u8CBC\\u7C3F\\uFF01",\n      settingsSaved: "\\u8A2D\\u5B9A\\u5DF2\\u5132\\u5B58\\uFF01",\n      modalInitError: "\\u6A21\\u614B\\u6846\\u5C1A\\u672A\\u521D\\u59CB\\u5316\\u3002",\n      nothingToCopy: "\\u6C92\\u6709\\u5167\\u5BB9\\u53EF\\u8907\\u88FD",\n      contentCleared: "\\u5167\\u5BB9\\u5DF2\\u6E05\\u7A7A",\n      noTextSelected: "\\u672A\\u9078\\u64C7\\u6587\\u672C",\n      cspWorkerWarning: "\\u7531\\u65BC\\u7DB2\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u63DB\\u5230\\u76F8\\u5BB9\\u6383\\u63CF\\u6A21\\u5F0F\\u3002"\n    },\n    placeholders: {\n      click: "\\u9EDE\\u64CA ",\n      dynamicScan: "[\\u52D5\\u614B\\u6383\\u63CF]",\n      startNewScanSession: " \\u6309\\u9215\\u958B\\u59CB\\u4E00\\u500B\\u65B0\\u7684\\u6383\\u63CF\\u6703\\u8A71",\n      staticScan: "[\\u975C\\u614B\\u6383\\u63CF]",\n      performOneTimeScan: " \\u6309\\u9215\\u53EF\\u9032\\u884C\\u4E00\\u6B21\\u6027\\u7684\\u5FEB\\u6377\\u63D0\\u53D6"\n    },\n    confirmation: {\n      clear: "\\u4F60\\u78BA\\u8A8D\\u8981\\u6E05\\u7A7A\\u55CE\\uFF1F\\u6B64\\u64CD\\u4F5C\\u4E0D\\u53EF\\u64A4\\u92B7\\u3002"\n    },\n    tooltip: {\n      summary: "\\u67E5\\u770B\\u7E3D\\u7D50",\n      dynamic_scan: "\\u52D5\\u614B\\u6383\\u63CF",\n      static_scan: "\\u975C\\u614B\\u6383\\u63CF"\n    }\n  };\n\n  // src/shared/i18n/management/languages.js\n  var supportedLanguages = [\n    { code: "en", name: "English" },\n    { code: "zh-CN", name: "\\u7B80\\u4F53\\u4E2D\\u6587" },\n    { code: "zh-TW", name: "\\u7E41\\u9AD4\\u4E2D\\u6587" }\n  ];\n\n  // src/shared/i18n/index.js\n  var translationModules = {\n    en: en_default,\n    "zh-CN": zh_CN_default,\n    "zh-TW": zh_TW_default\n  };\n  var translations = supportedLanguages.reduce((acc, lang) => {\n    if (translationModules[lang.code]) {\n      acc[lang.code] = translationModules[lang.code];\n    }\n    return acc;\n  }, {});\n  var currentTranslations = translations.en;\n  function getAvailableLanguages() {\n    return supportedLanguages.map((lang) => ({\n      value: lang.code,\n      label: lang.name\n    }));\n  }\n\n  // src/features/settings/config.js\n  var selectSettingsDefinitions = [\n    {\n      id: "theme-select",\n      key: "theme",\n      label: "settings.theme",\n      icon: themeIcon,\n      options: [\n        { value: "light", label: "settings.themes.light" },\n        { value: "dark", label: "settings.themes.dark" },\n        { value: "system", label: "settings.themes.system" }\n      ]\n    },\n    {\n      id: "language-select",\n      key: "language",\n      label: "settings.language",\n      icon: languageIcon_default,\n      // \u76F4\u63A5\u4ECE i18n \u6A21\u5757\u83B7\u53D6\u8BED\u8A00\u5217\u8868\uFF0C\u5176\u6807\u7B7E\u5DF2\u7ECF\u662F\u539F\u751F\u540D\u79F0\uFF0C\u65E0\u9700\u518D\u7FFB\u8BD1\u3002\n      options: getAvailableLanguages()\n    }\n  ];\n  var filterDefinitions = [\n    { id: "filter-numbers", key: "numbers", label: "settings.filters.numbers" },\n    { id: "filter-chinese", key: "chinese", label: "settings.filters.chinese" },\n    { id: "filter-contains-chinese", key: "containsChinese", label: "settings.filters.contains_chinese" },\n    { id: "filter-emoji-only", key: "emojiOnly", label: "settings.filters.emoji_only" },\n    { id: "filter-symbols", key: "symbols", label: "settings.filters.symbols" },\n    { id: "filter-term", key: "termFilter", label: "settings.filters.term" },\n    { id: "filter-single-letter", key: "singleLetter", label: "settings.filters.single_letter" },\n    { id: "filter-repeating-chars", key: "repeatingChars", label: "settings.filters.repeating_chars" },\n    { id: "filter-file-paths", key: "filePath", label: "settings.filters.file_paths" },\n    { id: "filter-hex-colors", key: "hexColor", label: "settings.filters.hex_color_codes" },\n    { id: "filter-emails", key: "email", label: "settings.filters.email_addresses" },\n    { id: "filter-uuids", key: "uuid", label: "settings.filters.uuids" },\n    { id: "filter-git-hashes", key: "gitCommitHash", label: "settings.filters.git_commit_hashes" }\n  ];\n\n  // src/shared/utils/filterLogic.js\n  var filterConfigMap = new Map(filterDefinitions.map((def) => [def.key, def.label]));\n  var ruleChecks = /* @__PURE__ */ new Map([\n    ["numbers", {\n      regex: /^[$\\\u20AC\\\xA3\\\xA5\\d,.\\s]+$/,\n      label: filterConfigMap.get("numbers")\n    }],\n    ["chinese", {\n      regex: /^[\\u4e00-\\u9fa5\\s]+$/u,\n      label: filterConfigMap.get("chinese")\n    }],\n    ["containsChinese", {\n      regex: /[\\u4e00-\\u9fa5]/u,\n      label: filterConfigMap.get("containsChinese")\n    }],\n    ["emojiOnly", {\n      regex: /^[\\p{Emoji}\\s]+$/u,\n      label: filterConfigMap.get("emojiOnly")\n    }],\n    ["symbols", {\n      // \u8FD9\u4E2A\u903B\u8F91\u6BD4\u8F83\u7279\u6B8A\uFF0C\u662F\u201C\u4E0D\u5305\u542B\u5B57\u6BCD\u6216\u6570\u5B57\u201D\uFF0C\u6240\u4EE5\u6211\u4EEC\u7528\u4E00\u4E2A\u51FD\u6570\u6765\u5904\u7406\n      test: (text) => !/[\\p{L}\\p{N}]/u.test(text),\n      label: filterConfigMap.get("symbols")\n    }],\n    ["termFilter", {\n      test: (text) => ignoredTerms_default.includes(text),\n      label: filterConfigMap.get("termFilter")\n    }],\n    ["singleLetter", {\n      regex: /^[a-zA-Z]$/,\n      label: filterConfigMap.get("singleLetter")\n    }],\n    ["repeatingChars", {\n      regex: /^\\s*(.)\\1+\\s*$/,\n      label: filterConfigMap.get("repeatingChars")\n    }],\n    ["filePath", {\n      regex: /^(?:[a-zA-Z]:\\\\|\\\\\\\\|~|\\.\\.?\\/)[\\w\\-\\.\\/ \\\\]*[\\w\\-\\.]+\\.[\\w]{2,4}$/,\n      label: filterConfigMap.get("filePath")\n    }],\n    ["hexColor", {\n      regex: /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3,4}|[A-Fa-f0-9]{8})$/,\n      label: filterConfigMap.get("hexColor")\n    }],\n    ["email", {\n      regex: /^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$/,\n      label: filterConfigMap.get("email")\n    }],\n    ["uuid", {\n      regex: /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/,\n      label: filterConfigMap.get("uuid")\n    }],\n    ["gitCommitHash", {\n      regex: /^[0-9a-f]{7,40}$/i,\n      label: filterConfigMap.get("gitCommitHash")\n    }]\n  ]);\n  function shouldFilter(text, filterRules2) {\n    for (const [key, rule] of ruleChecks.entries()) {\n      if (filterRules2[key]) {\n        const isFiltered = rule.regex ? rule.regex.test(text) : rule.test(text);\n        if (isFiltered) {\n          return { reason: rule.label };\n        }\n      }\n    }\n    return null;\n  }\n\n  // src/features/session-scan/worker.js\n  var sessionTexts = /* @__PURE__ */ new Set();\n  var filterRules = {};\n  function processAndAddText(rawText, logPrefix = "") {\n    if (!rawText || typeof rawText !== "string") return false;\n    const normalizedText = rawText.normalize("NFC");\n    const textForFiltering = normalizedText.replace(/(\\r\\n|\\n|\\r)+/g, "\\n").trim();\n    if (textForFiltering === "") return false;\n    const filterResult = shouldFilter(textForFiltering, filterRules);\n    if (filterResult) {\n      const prefix = logPrefix ? `${logPrefix} ` : "";\n      console.log(`[\\u4F1A\\u8BDD\\u626B\\u63CF Worker] ${prefix}\\u6587\\u672C\\u5DF2\\u8FC7\\u6EE4: "${textForFiltering}" (\\u539F\\u56E0: ${filterResult.reason})`);\n      return false;\n    }\n    const originalSize = sessionTexts.size;\n    sessionTexts.add(normalizedText.replace(/(\\r\\n|\\n|\\r)+/g, "\\n"));\n    return sessionTexts.size > originalSize;\n  }\n  var formatTextsForTranslation = (texts) => {\n    if (!texts || texts.length === 0) {\n      return "[]";\n    }\n    const result = texts.map(\n      (text) => `    ["${text.replace(/"/g, \'\\\\"\').replace(/\\n/g, "\\\\n")}", ""]`\n    );\n    return `[\n${result.join(",\\n")}\n]`;\n  };\n  self.onmessage = (event) => {\n    const { type, payload } = event.data;\n    switch (type) {\n      // \u521D\u59CB\u5316\uFF1A\u63A5\u6536\u8FC7\u6EE4\u89C4\u5219\n      case "init":\n        filterRules = payload.filterRules || {};\n        break;\n      // \u6570\u636E\u5904\u7406\uFF1A\u63A5\u6536\u4E00\u6279\u539F\u59CB\u6587\u672C\u8FDB\u884C\u5904\u7406\n      case "data": {\n        const { texts, logPrefix } = payload;\n        let changed = false;\n        if (Array.isArray(texts)) {\n          texts.forEach((text) => {\n            if (processAndAddText(text, logPrefix)) {\n              changed = true;\n            }\n          });\n        }\n        if (changed) {\n          self.postMessage({ type: "countUpdated", payload: sessionTexts.size });\n        }\n        break;\n      }\n      // \u603B\u7ED3\u8BF7\u6C42\uFF1A\u683C\u5F0F\u5316\u5E76\u8FD4\u56DE\u6240\u6709\u6587\u672C\n      case "getSummary": {\n        const sessionTextsArray = Array.from(sessionTexts);\n        const formattedText = formatTextsForTranslation(sessionTextsArray);\n        self.postMessage({ type: "summaryReady", payload: formattedText });\n        break;\n      }\n      // \u83B7\u53D6\u5F53\u524D\u8BA1\u6570\u503C\n      case "getCount":\n        self.postMessage({ type: "countUpdated", payload: sessionTexts.size });\n        break;\n      // \u53EF\u9009\uFF1A\u6DFB\u52A0\u4E00\u4E2A\u6E05\u7A7A\u6307\u4EE4\n      case "clear":\n        sessionTexts.clear();\n        self.postMessage({ type: "countUpdated", payload: 0 });\n        break;\n    }\n  };\n})();\n';
+      const workerScript = `(() => {
+  // src/shared/utils/ignoredTerms.js
+  var IGNORED_TERMS = [
+    "Github",
+    "Microsoft",
+    "Tampermonkey",
+    "JavaScript",
+    "TypeScript",
+    "Hugging Face",
+    "Google",
+    "Facebook",
+    "Twitter",
+    "LinkedIn",
+    "OpenAI",
+    "ChatGPT",
+    "API",
+    "Glossary of computer science",
+    "HTML",
+    "CSS",
+    "JSON",
+    "XML",
+    "HTTP",
+    "HTTPS",
+    "URL",
+    "IP address",
+    "DNS",
+    "CPU",
+    "GPU",
+    "RAM",
+    "SSD",
+    "USB",
+    "Wi-Fi",
+    "Bluetooth",
+    "VPN",
+    "AI"
+  ];
+  var ignoredTerms_default = IGNORED_TERMS;
+  // src/assets/icons/themeIcon.js
+  var themeIcon = \`<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 32.5-156t88-127Q256-817 330-848.5T488-880q80 0 151 27.5t124.5 76q53.5 48.5 85 115T880-518q0 115-70 176.5T640-280h-74q-9 0-12.5 5t-3.5 11q0 12 15 34.5t15 51.5q0 50-27.5 74T480-80Zm0-400Zm-220 40q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120-160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm200 0q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120 160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17ZM480-160q9 0 14.5-5t5.5-13q0-14-15-33t-15-57q0-42 29-67t71-25h70q66 0 113-38.5T800-518q0-121-92.5-201.5T488-800q-136 0-232 93t-96 227q0 133 93.5 226.5T480-160Z"/></svg>\`;
+  // src/assets/icons/languageIcon.js
+  var languageIcon_default = \`<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-155.5t86-127Q252-817 325-848.5T480-880q83 0 155.5 31.5t127 86q54.5 54.5 86 127T880-480q0 82-31.5 155t-86 127.5q-54.5 54.5-127 86T480-80Zm0-82q26-36 45-75t31-83H404q12 44 31 83t45 75Zm-104-16q-18-33-31.5-68.5T322-320H204q29 50 72.5 87t99.5 55Zm208 0q56-18 99.5-55t72.5-87H638q-9 38-22.5 73.5T584-178ZM170-400h136q-3-20-4.5-39.5T300-480q0-21 1.5-40.5T306-560H170q-5 20-7.5 39.5T160-480q0 21 2.5 40.5T170-400Zm216 0h188q3-20 4.5-39.5T580-480q0-21-1.5-40.5T574-560H386q-3 20-4.5 39.5T380-480q0 21 1.5 40.5T386-400Zm268 0h136q5-20 7.5-39.5T800-480q0-21-2.5-40.5T790-560H654q3 20 4.5 39.5T660-480q0 21-1.5 40.5T654-400Zm-16-240h118q-29-50-72.5-87T584-782q18 33 31.5 68.5T638-640Zm-234 0h152q-12-44-31-83t-45-75q-26 36-45 75t-31 83Zm-200 0h118q9-38 22.5-73.5T376-782q-56 18-99.5 55T204-640Z"/></svg>\`;
+  // src/assets/icons/infoIcon.js
+  var infoIcon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>';
+  // src/shared/i18n/en.json
+  var en_default = {
+    common: {
+      scan: "Scan",
+      stop: "Stop",
+      resume: "Resume",
+      clear: "Clear",
+      copy: "Copy",
+      save: "Save",
+      discovered: "Discovered:",
+      confirm: "Confirm",
+      cancel: "Cancel",
+      export: "Export"
+    },
+    export: {
+      exportAsTxt: "Export as TXT",
+      exportAsJson: "Export as JSON",
+      exportAsCsv: "Export as CSV",
+      csv: {
+        id: "ID",
+        original: "Original",
+        translation: "Translation"
+      }
+    },
+    settings: {
+      title: "Settings",
+      theme: "Theme",
+      language: "Language",
+      relatedSettings: "Related Settings",
+      filterRules: "Content Filtering Rules",
+      filters: {
+        numbers: "Filter Numbers/Currency",
+        chinese: "Filter Chinese-Only Text",
+        contains_chinese: "Filter Text Containing Chinese",
+        emoji_only: "Filter Emoji-Only Text",
+        symbols: "Filter Symbol-Only Text",
+        term: "Filter Specific Terms",
+        single_letter: "Filter Single English Letters",
+        repeating_chars: "Filter Repeating Characters",
+        file_paths: "Filter File Paths",
+        hex_color_codes: "Filter Hex Color Codes",
+        email_addresses: "Filter Email Addresses",
+        uuids: "Filter UUIDs",
+        git_commit_hashes: "Filter Git Commit Hashes"
+      },
+      display: {
+        show_fab: "Show Floating Button",
+        show_line_numbers: "Show Line Numbers",
+        show_statistics: "Show Statistics",
+        enable_word_wrap: "Enable Word Wrap",
+        text_truncation_limit: "Enable Text Truncation Limit",
+        character_limit: "Character Limit",
+        show_scan_count: "Enable Scan Count in Title"
+      },
+      advanced: {
+        enable_debug_logging: "Enable Debug Logging"
+      },
+      panel: {
+        title: "Settings Panel"
+      },
+      languages: {
+        en: "English",
+        zh_CN: "\\u7B80\\u4F53\\u4E2D\\u6587",
+        zh_TW: "\\u7E41\\u9AD4\\u4E2D\\u6587"
+      },
+      themes: {
+        light: "Light",
+        dark: "Dark",
+        system: "System"
+      }
+    },
+    scan: {
+      quick: "Quick Scan",
+      session: "Session Scan",
+      startSession: "Start Dynamic Scan Session",
+      stopSession: "Stop Dynamic Scan Session",
+      finished: "Scan finished, found {count} items.",
+      quickFinished: "Quick scan finished, found {count} items.",
+      sessionStarted: "Session scan started.",
+      sessionInProgress: "Scan in progress...",
+      truncationWarning: "To maintain UI fluency, only a portion of the text is displayed here. The full content will be available upon export."
+    },
+    results: {
+      title: "Extracted Text",
+      scanCountSession: "Scanned {count} items",
+      scanCountStatic: "Total {count} items scanned",
+      totalCharacters: "Total Characters",
+      totalLines: "Total Lines",
+      noSummary: "No summary available",
+      stats: {
+        lines: "Lines",
+        chars: "Chars"
+      }
+    },
+    notifications: {
+      copiedToClipboard: "Copied to clipboard!",
+      settingsSaved: "Settings saved!",
+      modalInitError: "Modal not initialized.",
+      nothingToCopy: "Nothing to copy.",
+      contentCleared: "Content cleared.",
+      noTextSelected: "No text selected.",
+      cspWorkerWarning: "Switched to compatibility scan mode due to website security restrictions."
+    },
+    placeholders: {
+      click: "Click ",
+      dynamicScan: "[Dynamic Scan]",
+      startNewScanSession: " to start a new scan session",
+      staticScan: "[Static Scan]",
+      performOneTimeScan: " to perform a one-time quick extraction"
+    },
+    confirmation: {
+      clear: "Are you sure you want to clear the content? This action cannot be undone."
+    },
+    tooltip: {
+      summary: "View Summary",
+      dynamic_scan: "Dynamic Scan",
+      static_scan: "Static Scan",
+      filters: {
+        title: "Content Filter Explanation",
+        numbers: 'This rule filters out text that consists <strong>entirely</strong> of numbers, currency symbols, thousands separators, and percentage signs.<br><br><strong>More Examples:</strong><br>\\u2022 "-1,234.56"<br>\\u2022 "\\xA5999"<br>\\u2022 "(\\u20AC200)"<br>\\u2022 "+100%"',
+        chinese: 'This rule filters out text that consists <strong>entirely</strong> of Chinese characters, excluding any punctuation or spaces.<br><br><strong>Examples:</strong><br>\\u2022 "\\u4F60\\u597D\\u4E16\\u754C" (will be filtered)<br>\\u2022 "\\u4F60\\u597D\\uFF0C\\u4E16\\u754C" (will not be filtered)',
+        contains_chinese: \`This rule filters out <strong>any</strong> text that contains at least one Chinese character, regardless of other characters.<br><br><strong>Examples:</strong><br>\\u2022 "\\u4F60\\u597D World" (will be filtered)<br>\\u2022 "Chapter 1" (will be filtered, as '\\u7B2C 1 \\u7AE0' contains '\\u7B2C' and '\\u7AE0')\`,
+        emoji_only: 'This rule filters out text that consists <strong>entirely</strong> of one or more emoji characters.<br><br><strong>Examples:</strong><br>\\u2022 "\\u{1F44D}"<br>\\u2022 "\\u{1F60A}\\u{1F389}\\u{1F680}"',
+        symbols: 'This rule filters out text that consists <strong>entirely</strong> of various punctuation and symbols.<br><br><strong>More Examples:</strong><br>\\u2022 "@#*&^%"<br>\\u2022 "()[]{}"<br>\\u2022 "---...---"',
+        term: 'This rule filters out common UI terms that typically do not require translation.<br><br><strong>More Examples:</strong><br>\\u2022 "OK", "Cancel", "Submit"<br>\\u2022 "Login", "Settings", "Help"',
+        single_letter: 'This rule filters out text consisting of a <strong>single</strong> English letter, case-insensitive.<br><br><strong>Examples:</strong><br>\\u2022 "A" (will be filtered)<br>\\u2022 "b" (will be filtered)<br>\\u2022 "AB" (will not be filtered)',
+        repeating_chars: 'This rule filters out text composed of the <strong>same character</strong> repeating 3 or more times consecutively.<br><br><strong>Examples:</strong><br>\\u2022 "======"<br>\\u2022 "bbbbb"<br>\\u2022 "...."',
+        file_paths: 'This rule attempts to identify and filter out text that resembles operating system file paths or URLs.<br><br><strong>More Examples:</strong><br>\\u2022 "/path/to/file.js"<br>\\u2022 "C:\\\\Users\\\\Test"<br>\\u2022 "https://example.com/data"',
+        hex_color_codes: 'This rule filters out standard CSS hexadecimal color codes (3 or 6 digits).<br><br><strong>Examples:</strong><br>\\u2022 "#FFFFFF"<br>\\u2022 "#ff0000"<br>\\u2022 "#f0c"',
+        email_addresses: 'This rule filters out text that matches the standard format of an email address.<br><br><strong>Examples:</strong><br>\\u2022 "example@domain.com"<br>\\u2022 "user.name@sub.domain.org"',
+        uuids: 'This rule filters out Universally Unique Identifiers (UUIDs).<br><br><strong>Example:</strong><br>\\u2022 "123e4567-e89b-12d3-a456-426614174000"',
+        git_commit_hashes: 'This rule filters out standard Git commit hashes (long or short).<br><br><strong>Examples:</strong><br>\\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\\u2022 "a1b2c3d"'
+      },
+      display: {
+        title: "Display Settings Explanation",
+        show_fab: "Control whether to display the <strong>Floating Action Button (FAB)</strong> in the bottom-right corner of webpages. This serves as the primary entry point for both static and dynamic text extraction. <br><br>If you disable this button, you can re-enable it via the settings panel in the Tampermonkey extension menu.",
+        show_scan_count: "When enabled, the title bar of the results window will show a <strong>real-time count</strong> of the total text items found in the current scan. This is especially useful for monitoring the progress of a long-running <strong>Dynamic Scan</strong>.",
+        show_line_numbers: "Displays line numbers to the left of the text area in the results window. This provides a <strong>precise reference point</strong> when you need to discuss or note a specific line of text.",
+        show_statistics: "Displays <strong>real-time statistics</strong> about the extracted content in the status bar at the bottom of the results window, including <strong>total lines</strong> and <strong>total characters</strong>. This helps you quickly assess the volume of the content.",
+        enable_word_wrap: "Controls how long lines of text are displayed in the results window.<br><br>\\u2022 <strong>Enabled:</strong> Long lines will wrap to fit the window's width.<br>\\u2022 <strong>Disabled:</strong> Long lines will remain on a single line, causing a horizontal scrollbar to appear.",
+        text_truncation_limit: "This is a <strong>performance-saving</strong> feature. If the script extracts an <strong>extremely long single line of text</strong> (e.g., a base64 encoded image), it could cause the browser to <strong>lag or become unresponsive</strong>.<br><br>This setting truncates any single line exceeding the specified length to ensure the UI remains smooth. <strong>Note: This only affects the display; the exported file will still contain the full, untruncated content.</strong>"
+      },
+      advanced: {
+        title: "Advanced Settings Explanation",
+        enable_debug_logging: "When enabled, the script will output detailed internal status, execution steps, and error messages to the browser's <strong>Developer Tools Console</strong> (usually opened with F12). This is primarily for developers or users who need to submit detailed bug reports."
+      }
+    }
+  };
+  // src/shared/i18n/zh-CN.json
+  var zh_CN_default = {
+    common: {
+      scan: "\\u626B\\u63CF",
+      stop: "\\u505C\\u6B62",
+      resume: "\\u7EE7\\u7EED",
+      clear: "\\u6E05\\u7A7A",
+      copy: "\\u590D\\u5236",
+      save: "\\u4FDD\\u5B58",
+      discovered: "\\u5DF2\\u53D1\\u73B0\\uFF1A",
+      confirm: "\\u786E\\u8BA4",
+      cancel: "\\u53D6\\u6D88",
+      export: "\\u5BFC\\u51FA"
+    },
+    export: {
+      exportAsTxt: "\\u5BFC\\u51FA\\u4E3A TXT",
+      exportAsJson: "\\u5BFC\\u51FA\\u4E3A JSON",
+      exportAsCsv: "\\u5BFC\\u51FA\\u4E3A CSV",
+      csv: {
+        id: "ID",
+        original: "\\u539F\\u6587",
+        translation: "\\u8BD1\\u6587"
+      }
+    },
+    settings: {
+      title: "\\u8BBE\\u7F6E",
+      theme: "\\u754C\\u9762\\u4E3B\\u9898",
+      language: "\\u8BED\\u8A00\\u8BBE\\u7F6E",
+      relatedSettings: "\\u76F8\\u5173\\u8BBE\\u7F6E",
+      filterRules: "\\u5185\\u5BB9\\u8FC7\\u6EE4\\u89C4\\u5219",
+      filters: {
+        numbers: "\\u8FC7\\u6EE4\\u7EAF\\u6570\\u5B57/\\u8D27\\u5E01",
+        chinese: "\\u8FC7\\u6EE4\\u7EAF\\u4E2D\\u6587",
+        contains_chinese: "\\u8FC7\\u6EE4\\u5305\\u542B\\u4E2D\\u6587\\u7684\\u6587\\u672C",
+        emoji_only: "\\u8FC7\\u6EE4\\u7EAF\\u8868\\u60C5\\u7B26\\u53F7",
+        symbols: "\\u8FC7\\u6EE4\\u7EAF\\u7B26\\u53F7",
+        term: "\\u8FC7\\u6EE4\\u7279\\u5B9A\\u672F\\u8BED",
+        single_letter: "\\u8FC7\\u6EE4\\u7EAF\\u5355\\u4E2A\\u82F1\\u6587\\u5B57\\u6BCD",
+        repeating_chars: "\\u8FC7\\u6EE4\\u5355\\u4E00\\u91CD\\u590D\\u5B57\\u7B26",
+        file_paths: "\\u8FC7\\u6EE4\\u6587\\u4EF6\\u8DEF\\u5F84",
+        hex_color_codes: "\\u8FC7\\u6EE4\\u5341\\u516D\\u8FDB\\u5236\\u989C\\u8272",
+        email_addresses: "\\u8FC7\\u6EE4\\u90AE\\u4EF6\\u5730\\u5740",
+        uuids: "\\u8FC7\\u6EE4 UUID",
+        git_commit_hashes: "\\u8FC7\\u6EE4 Git \\u54C8\\u5E0C"
+      },
+      display: {
+        show_fab: "\\u663E\\u793A\\u60AC\\u6D6E\\u6309\\u94AE",
+        show_line_numbers: "\\u663E\\u793A\\u884C\\u53F7",
+        show_statistics: "\\u663E\\u793A\\u7EDF\\u8BA1\\u4FE1\\u606F",
+        enable_word_wrap: "\\u542F\\u7528\\u6587\\u672C\\u81EA\\u52A8\\u6362\\u884C",
+        text_truncation_limit: "\\u542F\\u7528\\u6587\\u672C\\u6846\\u5B57\\u7B26\\u9650\\u5236",
+        character_limit: "\\u5B57\\u7B26\\u6570",
+        show_scan_count: "\\u542F\\u7528\\u6807\\u9898\\u680F\\u663E\\u793A\\u626B\\u63CF\\u8BA1\\u6570"
+      },
+      advanced: {
+        enable_debug_logging: "\\u542F\\u7528\\u8C03\\u8BD5\\u65E5\\u5FD7"
+      },
+      panel: {
+        title: "\\u8BBE\\u7F6E\\u9762\\u677F"
+      },
+      languages: {
+        en: "English",
+        zh_CN: "\\u7B80\\u4F53\\u4E2D\\u6587",
+        zh_TW: "\\u7E41\\u9AD4\\u4E2D\\u6587"
+      },
+      themes: {
+        light: "\\u6D45\\u8272",
+        dark: "\\u6DF1\\u8272",
+        system: "\\u8DDF\\u968F\\u7CFB\\u7EDF"
+      }
+    },
+    scan: {
+      quick: "\\u5FEB\\u901F\\u626B\\u63CF",
+      session: "\\u4F1A\\u8BDD\\u626B\\u63CF",
+      startSession: "\\u5F00\\u59CB\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD",
+      stopSession: "\\u505C\\u6B62\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD",
+      finished: "\\u626B\\u63CF\\u7ED3\\u675F\\uFF0C\\u5171\\u53D1\\u73B0 {count} \\u6761\\u6587\\u672C",
+      quickFinished: "\\u5FEB\\u6377\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {count} \\u6761\\u6587\\u672C",
+      sessionStarted: "\\u4F1A\\u8BDD\\u626B\\u63CF\\u5DF2\\u5F00\\u59CB",
+      sessionInProgress: "\\u626B\\u63CF\\u6B63\\u5728\\u8FDB\\u884C\\u4E2D...",
+      truncationWarning: "\\u4E3A\\u4FDD\\u6301\\u754C\\u9762\\u6D41\\u7545\\uFF0C\\u6B64\\u5904\\u4EC5\\u663E\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u5B8C\\u6574\\u5185\\u5BB9\\u5C06\\u5728\\u5BFC\\u51FA\\u65F6\\u63D0\\u4F9B\\u3002"
+    },
+    results: {
+      title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",
+      scanCountSession: "\\u5DF2\\u626B\\u63CF {count} \\u6761\\u6587\\u672C",
+      scanCountStatic: "\\u5171\\u626B\\u63CF {count} \\u6761\\u6587\\u672C",
+      totalCharacters: "\\u603B\\u5B57\\u6570",
+      totalLines: "\\u603B\\u884C\\u6570",
+      noSummary: "\\u5F53\\u524D\\u6CA1\\u6709\\u603B\\u7ED3\\u6587\\u672C",
+      stats: {
+        lines: "\\u884C",
+        chars: "\\u5B57\\u7B26\\u6570"
+      }
+    },
+    notifications: {
+      copiedToClipboard: "\\u5DF2\\u590D\\u5236\\u5230\\u526A\\u8D34\\u677F!",
+      settingsSaved: "\\u8BBE\\u7F6E\\u5DF2\\u4FDD\\u5B58\\uFF01",
+      modalInitError: "\\u6A21\\u6001\\u6846\\u5C1A\\u672A\\u521D\\u59CB\\u5316\\u3002",
+      nothingToCopy: "\\u6C92\\u6709\\u5167\\u5BB9\\u53EF\\u8907\\u88FD",
+      contentCleared: "\\u5185\\u5BB9\\u5DF2\\u6E05\\u7A7A",
+      noTextSelected: "\\u672A\\u9009\\u62E9\\u6587\\u672C",
+      cspWorkerWarning: "\\u7531\\u4E8E\\u7F51\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u6362\\u5230\\u517C\\u5BB9\\u626B\\u63CF\\u6A21\\u5F0F\\u3002"
+    },
+    placeholders: {
+      click: "\\u70B9\\u51FB ",
+      dynamicScan: "[\\u52A8\\u6001\\u626B\\u63CF]",
+      startNewScanSession: " \\u6309\\u94AE\\u5F00\\u59CB\\u4E00\\u4E2A\\u65B0\\u7684\\u626B\\u63CF\\u4F1A\\u8BDD",
+      staticScan: "[\\u9759\\u6001\\u626B\\u63CF]",
+      performOneTimeScan: " \\u6309\\u94AE\\u53EF\\u8FDB\\u884C\\u4E00\\u6B21\\u6027\\u7684\\u5FEB\\u6377\\u63D0\\u53D6"
+    },
+    confirmation: {
+      clear: "\\u4F60\\u786E\\u8BA4\\u8981\\u6E05\\u7A7A\\u5417\\uFF1F\\u6B64\\u64CD\\u4F5C\\u4E0D\\u53EF\\u64A4\\u9500\\u3002"
+    },
+    tooltip: {
+      summary: "\\u67E5\\u770B\\u603B\\u7ED3",
+      dynamic_scan: "\\u52A8\\u6001\\u626B\\u63CF",
+      static_scan: "\\u9759\\u6001\\u626B\\u63CF",
+      filters: {
+        title: "\\u5185\\u5BB9\\u8FC7\\u6EE4\\u5668\\u8BF4\\u660E",
+        numbers: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u6570\\u5B57\\u3001\\u8D27\\u5E01\\u7B26\\u53F7\\u3001\\u5343\\u4F4D\\u5206\\u9694\\u7B26\\u548C\\u767E\\u5206\\u53F7\\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "-1,234.56"<br>\\u2022 "\\xA5999"<br>\\u2022 "(\\u20AC200)"<br>\\u2022 "+100%"',
+        chinese: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u4E2D\\u6587\\u5B57\\u7B26\\u7EC4\\u6210\\u7684\\u6587\\u672C\\uFF0C\\u4E0D\\u5305\\u62EC\\u4EFB\\u4F55\\u6807\\u70B9\\u6216\\u7A7A\\u683C\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "\\u4F60\\u597D\\u4E16\\u754C" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "\\u4F60\\u597D\\uFF0C\\u4E16\\u754C" (\\u4E0D\\u4F1A\\u88AB\\u8FC7\\u6EE4)',
+        contains_chinese: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389<strong>\\u4EFB\\u4F55\\u5305\\u542B</strong>\\u81F3\\u5C11\\u4E00\\u4E2A\\u4E2D\\u6587\\u5B57\\u7B26\\u7684\\u6587\\u672C\\uFF0C\\u65E0\\u8BBA\\u662F\\u5426\\u5305\\u542B\\u5176\\u4ED6\\u5B57\\u7B26\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "\\u4F60\\u597D World" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "\\u7B2C 1 \\u7AE0" (\\u5C06\\u88AB\\u8FC7\\u6EE4)',
+        emoji_only: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u4E00\\u4E2A\\u6216\\u591A\\u4E2A\\u8868\\u60C5\\u7B26\\u53F7\\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "\\u{1F44D}"<br>\\u2022 "\\u{1F60A}\\u{1F389}\\u{1F680}"',
+        symbols: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u5404\\u7C7B\\u6807\\u70B9\\u548C\\u7B26\\u53F7\\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "@#*&^%"<br>\\u2022 "()[]{}"<br>\\u2022 "---...---"',
+        term: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u5E38\\u89C1\\u7684\\u3001\\u901A\\u5E38\\u65E0\\u9700\\u7FFB\\u8BD1\\u7684 UI \\u672F\\u8BED\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "OK", "Cancel", "Submit"<br>\\u2022 "Login", "Settings", "Help"',
+        single_letter: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u7531<strong>\\u5355\\u4E2A</strong>\\u82F1\\u6587\\u5B57\\u6BCD\\u7EC4\\u6210\\u7684\\u6587\\u672C\\uFF0C\\u5FFD\\u7565\\u5927\\u5C0F\\u5199\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "A" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "b" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "AB" (\\u4E0D\\u4F1A\\u88AB\\u8FC7\\u6EE4)',
+        repeating_chars: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u7531<strong>\\u540C\\u4E00\\u4E2A\\u5B57\\u7B26</strong>\\u8FDE\\u7EED\\u91CD\\u590D 3 \\u6B21\\u6216\\u4EE5\\u4E0A\\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "======"<br>\\u2022 "bbbbb"<br>\\u2022 "...."',
+        file_paths: '\\u6B64\\u89C4\\u5219\\u4F1A\\u5C1D\\u8BD5\\u8BC6\\u522B\\u5E76\\u8FC7\\u6EE4\\u6389\\u7C7B\\u4F3C\\u64CD\\u4F5C\\u7CFB\\u7EDF\\u6587\\u4EF6\\u8DEF\\u5F84\\u6216 URL \\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "/path/to/file.js"<br>\\u2022 "C:\\\\Users\\\\Test"<br>\\u2022 "https://example.com/data"',
+        hex_color_codes: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u6807\\u51C6\\u7684 CSS \\u5341\\u516D\\u8FDB\\u5236\\u989C\\u8272\\u4EE3\\u7801\\uFF083\\u4F4D\\u62166\\u4F4D\\uFF09\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "#FFFFFF"<br>\\u2022 "#ff0000"<br>\\u2022 "#f0c"',
+        email_addresses: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u7B26\\u5408\\u6807\\u51C6\\u683C\\u5F0F\\u7684\\u7535\\u5B50\\u90AE\\u4EF6\\u5730\\u5740\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "example@domain.com"<br>\\u2022 "user.name@sub.domain.org"',
+        uuids: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u901A\\u7528\\u552F\\u4E00\\u6807\\u8BC6\\u7B26 (UUID)\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "123e4567-e89b-12d3-a456-426614174000"',
+        git_commit_hashes: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u6807\\u51C6\\u7684 Git \\u63D0\\u4EA4\\u54C8\\u5E0C\\u503C\\uFF08\\u957F\\u54C8\\u5E0C\\u6216\\u77ED\\u54C8\\u5E0C\\uFF09\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\\u2022 "a1b2c3d"'
+      },
+      display: {
+        title: "\\u663E\\u793A\\u8BBE\\u7F6E\\u8BF4\\u660E",
+        show_fab: "\\u63A7\\u5236\\u662F\\u5426\\u5728\\u7F51\\u9875\\u53F3\\u4E0B\\u89D2\\u663E\\u793A<strong>\\u60AC\\u6D6E\\u52A8\\u4F5C\\u6309\\u94AE (FAB)</strong>\\u3002\\u8FD9\\u662F\\u9759\\u6001\\u6587\\u672C\\u63D0\\u53D6\\u3001\\u52A8\\u6001\\u6587\\u672C\\u63D0\\u53D6\\u7684\\u6838\\u5FC3\\u5165\\u53E3\\u3002<br><br>\\u5982\\u679C\\u60A8\\u7981\\u7528\\u4E86\\u6B64\\u6309\\u94AE\\uFF0C\\u53EF\\u4EE5\\u901A\\u8FC7\\u6CB9\\u7334\\u6269\\u5C55\\u83DC\\u5355\\u7684\\u8BBE\\u7F6E\\u9762\\u677F\\u91CD\\u65B0\\u6253\\u5F00\\u3002",
+        show_scan_count: "\\u542F\\u7528\\u540E\\uFF0C\\u5728\\u7ED3\\u679C\\u7A97\\u53E3\\u7684\\u6807\\u9898\\u680F\\u4F1A<strong>\\u5B9E\\u65F6\\u66F4\\u65B0</strong>\\u672C\\u6B21\\u626B\\u63CF\\u53D1\\u73B0\\u7684\\u6587\\u672C\\u6761\\u76EE\\u603B\\u6570\\u3002\\u5728\\u8FDB\\u884C\\u957F\\u65F6\\u95F4\\u7684<strong>\\u52A8\\u6001\\u626B\\u63CF</strong>\\u65F6\\uFF0C\\u8FD9\\u4E2A\\u8BA1\\u6570\\u5668\\u53EF\\u4EE5\\u5F88\\u76F4\\u89C2\\u5730\\u53CD\\u6620\\u626B\\u63CF\\u8FDB\\u5EA6\\u3002",
+        show_line_numbers: "\\u5728\\u7ED3\\u679C\\u7A97\\u53E3\\u7684\\u6587\\u672C\\u533A\\u57DF\\u5DE6\\u4FA7\\u663E\\u793A\\u884C\\u53F7\\u3002\\u5F53\\u60A8\\u9700\\u8981\\u4E0E\\u4ED6\\u4EBA\\u8BA8\\u8BBA\\u6216\\u8BB0\\u5F55\\u7279\\u5B9A\\u67D0\\u884C\\u6587\\u672C\\u65F6\\uFF0C\\u884C\\u53F7\\u53EF\\u4EE5\\u63D0\\u4F9B\\u4E00\\u4E2A<strong>\\u7CBE\\u786E\\u7684\\u5B9A\\u4F4D\\u6807\\u8BB0</strong>\\u3002",
+        show_statistics: "\\u5728\\u7ED3\\u679C\\u7A97\\u53E3\\u5E95\\u90E8\\u7684\\u72B6\\u6001\\u680F\\u663E\\u793A\\u5F53\\u524D\\u5DF2\\u63D0\\u53D6\\u5185\\u5BB9\\u7684<strong>\\u5B9E\\u65F6\\u7EDF\\u8BA1</strong>\\uFF0C\\u5305\\u62EC<strong>\\u603B\\u884C\\u6570</strong>\\u548C<strong>\\u603B\\u5B57\\u7B26\\u6570</strong>\\u3002\\u8FD9\\u53EF\\u4EE5\\u5E2E\\u52A9\\u60A8\\u5FEB\\u901F\\u8BC4\\u4F30\\u63D0\\u53D6\\u5185\\u5BB9\\u7684\\u89C4\\u6A21\\u3002",
+        enable_word_wrap: "\\u63A7\\u5236\\u7ED3\\u679C\\u7A97\\u53E3\\u4E2D\\u7684\\u957F\\u6587\\u672C\\u884C\\u5982\\u4F55\\u663E\\u793A\\u3002<br><br>\\u2022 <strong>\\u542F\\u7528\\uFF1A</strong>\\u957F\\u6587\\u672C\\u5C06\\u81EA\\u52A8\\u6362\\u884C\\u4EE5\\u9002\\u5E94\\u7A97\\u53E3\\u5BBD\\u5EA6\\u3002<br>\\u2022 <strong>\\u7981\\u7528\\uFF1A</strong>\\u957F\\u6587\\u672C\\u5C06\\u4FDD\\u6301\\u5728\\u5355\\u884C\\uFF0C\\u5E76\\u51FA\\u73B0\\u6C34\\u5E73\\u6EDA\\u52A8\\u6761\\u3002",
+        text_truncation_limit: "\\u8FD9\\u662F\\u4E00\\u4E2A<strong>\\u6027\\u80FD\\u4FDD\\u62A4</strong>\\u673A\\u5236\\u3002\\u5F53\\u811A\\u672C\\u63D0\\u53D6\\u5230<strong>\\u5355\\u884C\\u8D85\\u957F\\u6587\\u672C</strong>\\uFF08\\u4F8B\\u5982\\uFF0C\\u4E00\\u4E2A\\u5B8C\\u6574\\u7684 base64 \\u7F16\\u7801\\u56FE\\u7247\\uFF09\\u65F6\\uFF0C\\u82E5\\u4E0D\\u622A\\u65AD\\uFF0C\\u53EF\\u80FD\\u4F1A\\u5BFC\\u81F4\\u6D4F\\u89C8\\u5668<strong>\\u5361\\u987F\\u6216\\u65E0\\u54CD\\u5E94</strong>\\u3002<br><br>\\u6B64\\u8BBE\\u7F6E\\u4F1A\\u622A\\u65AD\\u8D85\\u51FA\\u6307\\u5B9A\\u957F\\u5EA6\\u7684\\u5355\\u884C\\u6587\\u672C\\uFF0C\\u4EE5\\u4FDD\\u8BC1\\u754C\\u9762\\u6D41\\u7545\\u3002<strong>\\u6CE8\\u610F\\uFF1A\\u6B64\\u622A\\u65AD\\u4EC5\\u5F71\\u54CD\\u754C\\u9762\\u663E\\u793A\\uFF0C\\u5BFC\\u51FA\\u7684\\u6587\\u4EF6\\u4ECD\\u5C06\\u5305\\u542B\\u5B8C\\u6574\\u5185\\u5BB9\\u3002</strong>"
+      },
+      advanced: {
+        title: "\\u9AD8\\u7EA7\\u8BBE\\u7F6E\\u8BF4\\u660E",
+        enable_debug_logging: "\\u542F\\u7528\\u540E\\uFF0C\\u811A\\u672C\\u4F1A\\u5C06\\u8BE6\\u7EC6\\u7684\\u5185\\u90E8\\u8FD0\\u884C\\u72B6\\u6001\\u3001\\u6267\\u884C\\u6B65\\u9AA4\\u3001\\u9519\\u8BEF\\u4FE1\\u606F\\u7B49\\u8F93\\u51FA\\u5230\\u6D4F\\u89C8\\u5668\\u7684<strong>\\u5F00\\u53D1\\u8005\\u5DE5\\u5177\\u63A7\\u5236\\u53F0</strong>\\uFF08\\u901A\\u5E38\\u6309 F12 \\u6253\\u5F00\\uFF09\\u3002\\u6B64\\u529F\\u80FD\\u4E3B\\u8981\\u9762\\u5411\\u5F00\\u53D1\\u8005\\u6216\\u9700\\u8981\\u63D0\\u4EA4\\u8BE6\\u7EC6\\u9519\\u8BEF\\u62A5\\u544A\\u7684\\u7528\\u6237\\u3002"
+      }
+    }
+  };
+  // src/shared/i18n/zh-TW.json
+  var zh_TW_default = {
+    common: {
+      scan: "\\u6383\\u63CF",
+      stop: "\\u505C\\u6B62",
+      resume: "\\u7E7C\\u7E8C",
+      clear: "\\u6E05\\u7A7A",
+      copy: "\\u8907\\u88FD",
+      save: "\\u5132\\u5B58",
+      discovered: "\\u5DF2\\u767C\\u73FE\\uFF1A",
+      confirm: "\\u78BA\\u8A8D",
+      cancel: "\\u53D6\\u6D88",
+      export: "\\u532F\\u51FA"
+    },
+    export: {
+      exportAsTxt: "\\u532F\\u51FA\\u70BA TXT",
+      exportAsJson: "\\u532F\\u51FA\\u70BA JSON",
+      exportAsCsv: "\\u532F\\u51FA\\u70BA CSV",
+      csv: {
+        id: "ID",
+        original: "\\u539F\\u6587",
+        translation: "\\u8B6F\\u6587"
+      }
+    },
+    settings: {
+      title: "\\u8A2D\\u5B9A",
+      theme: "\\u4ECB\\u9762\\u4E3B\\u984C",
+      language: "\\u8A9E\\u8A00\\u8A2D\\u5B9A",
+      relatedSettings: "\\u76F8\\u95DC\\u8A2D\\u5B9A",
+      filterRules: "\\u5167\\u5BB9\\u904E\\u6FFE\\u898F\\u5247",
+      filters: {
+        numbers: "\\u904E\\u6FFE\\u7D14\\u6578\\u5B57/\\u8CA8\\u5E63",
+        chinese: "\\u904E\\u6FFE\\u7D14\\u4E2D\\u6587",
+        contains_chinese: "\\u904E\\u6FFE\\u5305\\u542B\\u4E2D\\u6587\\u7684\\u6587\\u672C",
+        emoji_only: "\\u904E\\u6FFE\\u7D14\\u8868\\u60C5\\u7B26\\u865F",
+        symbols: "\\u904E\\u6FFE\\u7D14\\u7B26\\u865F",
+        term: "\\u904E\\u6FFE\\u7279\\u5B9A\\u8853\\u8A9E",
+        single_letter: "\\u904E\\u6FFE\\u7D14\\u55AE\\u500B\\u82F1\\u6587\\u5B57\\u6BCD",
+        repeating_chars: "\\u904E\\u6FFE\\u55AE\\u4E00\\u91CD\\u8907\\u5B57\\u5143",
+        file_paths: "\\u904E\\u6FFE\\u6A94\\u6848\\u8DEF\\u5F91",
+        hex_color_codes: "\\u904E\\u6FFE\\u5341\\u516D\\u9032\\u4F4D\\u984F\\u8272",
+        email_addresses: "\\u904E\\u6FFE\\u90F5\\u4EF6\\u5730\\u5740",
+        uuids: "\\u904E\\u6FFE UUID",
+        git_commit_hashes: "\\u904E\\u6FFE Git \\u96DC\\u6E4A"
+      },
+      display: {
+        show_fab: "\\u986F\\u793A\\u61F8\\u6D6E\\u6309\\u9215",
+        show_line_numbers: "\\u986F\\u793A\\u884C\\u865F",
+        show_statistics: "\\u986F\\u793A\\u7D71\\u8A08\\u8CC7\\u8A0A",
+        enable_word_wrap: "\\u555F\\u7528\\u6587\\u5B57\\u81EA\\u52D5\\u63DB\\u884C",
+        text_truncation_limit: "\\u555F\\u7528\\u6587\\u5B57\\u6846\\u5B57\\u5143\\u9650\\u5236",
+        character_limit: "\\u5B57\\u5143\\u6578",
+        show_scan_count: "\\u555F\\u7528\\u6A19\\u984C\\u5217\\u986F\\u793A\\u6383\\u63CF\\u8A08\\u6578"
+      },
+      advanced: {
+        enable_debug_logging: "\\u555F\\u7528\\u5075\\u932F\\u65E5\\u8A8C"
+      },
+      panel: {
+        title: "\\u8A2D\\u5B9A\\u9762\\u677F"
+      },
+      languages: {
+        en: "English",
+        zh_CN: "\\u7B80\\u4F53\\u4E2D\\u6587",
+        zh_TW: "\\u7E41\\u9AD4\\u4E2D\\u6587"
+      },
+      themes: {
+        light: "\\u6DFA\\u8272",
+        dark: "\\u6DF1\\u8272",
+        system: "\\u8DDF\\u96A8\\u7CFB\\u7D71"
+      }
+    },
+    scan: {
+      quick: "\\u5FEB\\u901F\\u6383\\u63CF",
+      session: "\\u6703\\u8A71\\u6383\\u63CF",
+      startSession: "\\u958B\\u59CB\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71",
+      stopSession: "\\u505C\\u6B62\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71",
+      finished: "\\u6383\\u63CF\\u7D50\\u675F\\uFF0C\\u5171\\u767C\\u73FE {count} \\u689D\\u6587\\u672C",
+      quickFinished: "\\u5FEB\\u6377\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {count} \\u689D\\u6587\\u672C",
+      sessionStarted: "\\u6703\\u8A71\\u6383\\u63CF\\u5DF2\\u958B\\u59CB",
+      sessionInProgress: "\\u6383\\u63CF\\u6B63\\u5728\\u9032\\u884C\\u4E2D...",
+      truncationWarning: "\\u70BA\\u4FDD\\u6301\\u4ECB\\u9762\\u6D41\\u66A2\\uFF0C\\u6B64\\u8655\\u50C5\\u986F\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u5B8C\\u6574\\u5167\\u5BB9\\u5C07\\u5728\\u532F\\u51FA\\u6642\\u63D0\\u4F9B\\u3002"
+    },
+    results: {
+      title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",
+      scanCountSession: "\\u5DF2\\u6383\\u63CF {count} \\u689D\\u6587\\u672C",
+      scanCountStatic: "\\u5171\\u6383\\u63CF {count} \\u689D\\u6587\\u672C",
+      totalCharacters: "\\u7E3D\\u5B57\\u6578",
+      totalLines: "\\u7E3D\\u884C\\u6578",
+      noSummary: "\\u7576\\u524D\\u6C92\\u6709\\u6458\\u8981\\u6587\\u672C",
+      stats: {
+        lines: "\\u884C",
+        chars: "\\u5B57\\u5143\\u6578"
+      }
+    },
+    notifications: {
+      copiedToClipboard: "\\u5DF2\\u8907\\u88FD\\u5230\\u526A\\u8CBC\\u7C3F\\uFF01",
+      settingsSaved: "\\u8A2D\\u5B9A\\u5DF2\\u5132\\u5B58\\uFF01",
+      modalInitError: "\\u6A21\\u614B\\u6846\\u5C1A\\u672A\\u521D\\u59CB\\u5316\\u3002",
+      nothingToCopy: "\\u6C92\\u6709\\u5167\\u5BB9\\u53EF\\u8907\\u88FD",
+      contentCleared: "\\u5167\\u5BB9\\u5DF2\\u6E05\\u7A7A",
+      noTextSelected: "\\u672A\\u9078\\u64C7\\u6587\\u672C",
+      cspWorkerWarning: "\\u7531\\u65BC\\u7DB2\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u63DB\\u5230\\u76F8\\u5BB9\\u6383\\u63CF\\u6A21\\u5F0F\\u3002"
+    },
+    placeholders: {
+      click: "\\u9EDE\\u64CA ",
+      dynamicScan: "[\\u52D5\\u614B\\u6383\\u63CF]",
+      startNewScanSession: " \\u6309\\u9215\\u958B\\u59CB\\u4E00\\u500B\\u65B0\\u7684\\u6383\\u63CF\\u6703\\u8A71",
+      staticScan: "[\\u975C\\u614B\\u6383\\u63CF]",
+      performOneTimeScan: " \\u6309\\u9215\\u53EF\\u9032\\u884C\\u4E00\\u6B21\\u6027\\u7684\\u5FEB\\u6377\\u63D0\\u53D6"
+    },
+    confirmation: {
+      clear: "\\u4F60\\u78BA\\u8A8D\\u8981\\u6E05\\u7A7A\\u55CE\\uFF1F\\u6B64\\u64CD\\u4F5C\\u4E0D\\u53EF\\u64A4\\u92B7\\u3002"
+    },
+    tooltip: {
+      summary: "\\u67E5\\u770B\\u6458\\u8981",
+      dynamic_scan: "\\u52D5\\u614B\\u6383\\u63CF",
+      static_scan: "\\u975C\\u614B\\u6383\\u63CF",
+      filters: {
+        title: "\\u5167\\u5BB9\\u904E\\u6FFE\\u5668\\u8AAA\\u660E",
+        numbers: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u6578\\u5B57\\u3001\\u8CA8\\u5E63\\u7B26\\u865F\\u3001\\u5343\\u4F4D\\u5206\\u9694\\u7B26\\u548C\\u767E\\u5206\\u6BD4\\u7B26\\u865F\\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "-1,234.56"<br>\\u2022 "\\xA5999"<br>\\u2022 "(\\u20AC200)"<br>\\u2022 "+100%"',
+        chinese: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u4E2D\\u6587\\u5B57\\u5143\\u7D44\\u6210\\u7684\\u6587\\u672C\\uFF0C\\u4E0D\\u5305\\u62EC\\u4EFB\\u4F55\\u6A19\\u9EDE\\u6216\\u7A7A\\u683C\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "\\u4F60\\u597D\\u4E16\\u754C" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "\\u4F60\\u597D\\uFF0C\\u4E16\\u754C" (\\u4E0D\\u6703\\u88AB\\u904E\\u6FFE)',
+        contains_chinese: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389<strong>\\u4EFB\\u4F55\\u5305\\u542B</strong>\\u81F3\\u5C11\\u4E00\\u500B\\u4E2D\\u6587\\u5B57\\u5143\\u7684\\u6587\\u672C\\uFF0C\\u7121\\u8AD6\\u662F\\u5426\\u5305\\u542B\\u5176\\u4ED6\\u5B57\\u5143\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "\\u4F60\\u597D World" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "\\u7B2C 1 \\u7AE0" (\\u5C07\\u88AB\\u904E\\u6FFE)',
+        emoji_only: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u4E00\\u500B\\u6216\\u591A\\u500B\\u8868\\u60C5\\u7B26\\u865F\\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "\\u{1F44D}"<br>\\u2022 "\\u{1F60A}\\u{1F389}\\u{1F680}"',
+        symbols: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u5404\\u985E\\u6A19\\u9EDE\\u548C\\u7B26\\u865F\\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "@#*&^%"<br>\\u2022 "()[]{}"<br>\\u2022 "---...---"',
+        term: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u5E38\\u898B\\u7684\\u3001\\u901A\\u5E38\\u7121\\u9700\\u7FFB\\u8B6F\\u7684 UI \\u8853\\u8A9E\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "OK", "Cancel", "Submit"<br>\\u2022 "Login", "Settings", "Help"',
+        single_letter: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u7531<strong>\\u55AE\\u500B</strong>\\u82F1\\u6587\\u5B57\\u6BCD\\u7D44\\u6210\\u7684\\u6587\\u672C\\uFF0C\\u5FFD\\u7565\\u5927\\u5C0F\\u5BEB\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "A" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "b" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "AB" (\\u4E0D\\u6703\\u88AB\\u904E\\u6FFE)',
+        repeating_chars: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u7531<strong>\\u540C\\u4E00\\u500B\\u5B57\\u5143</strong>\\u9023\\u7E8C\\u91CD\\u8907 3 \\u6B21\\u6216\\u4EE5\\u4E0A\\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "======"<br>\\u2022 "bbbbb"<br>\\u2022 "...."',
+        file_paths: '\\u6B64\\u898F\\u5247\\u6703\\u5617\\u8A66\\u8B58\\u5225\\u4E26\\u904E\\u6FFE\\u6389\\u985E\\u4F3C\\u4F5C\\u696D\\u7CFB\\u7D71\\u6A94\\u6848\\u8DEF\\u5F91\\u6216 URL \\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "/path/to/file.js"<br>\\u2022 "C:\\\\Users\\\\Test"<br>\\u2022 "https://example.com/data"',
+        hex_color_codes: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u6A19\\u6E96\\u7684 CSS \\u5341\\u516D\\u9032\\u4F4D\\u984F\\u8272\\u4EE3\\u78BC\\uFF083\\u4F4D\\u62166\\u4F4D\\uFF09\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "#FFFFFF"<br>\\u2022 "#ff0000"<br>\\u2022 "#f0c"',
+        email_addresses: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u7B26\\u5408\\u6A19\\u6E96\\u683C\\u5F0F\\u7684\\u96FB\\u5B50\\u90F5\\u4EF6\\u5730\\u5740\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "example@domain.com"<br>\\u2022 "user.name@sub.domain.org"',
+        uuids: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u901A\\u7528\\u552F\\u4E00\\u8B58\\u5225\\u78BC (UUID)\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "123e4567-e89b-12d3-a456-426614174000"',
+        git_commit_hashes: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u6A19\\u6E96\\u7684 Git \\u63D0\\u4EA4\\u96DC\\u6E4A\\u503C\\uFF08\\u9577\\u96DC\\u6E4A\\u6216\\u77ED\\u96DC\\u6E4A\\uFF09\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\\u2022 "a1b2c3d"'
+      },
+      display: {
+        title: "\\u986F\\u793A\\u8A2D\\u5B9A\\u8AAA\\u660E",
+        show_fab: "\\u63A7\\u5236\\u662F\\u5426\\u5728\\u7DB2\\u9801\\u53F3\\u4E0B\\u89D2\\u986F\\u793A <strong>\\u6D6E\\u52D5\\u52D5\\u4F5C\\u6309\\u9215 (FAB)</strong>\\u3002\\u9019\\u662F\\u975C\\u614B\\u6587\\u5B57\\u8403\\u53D6\\u3001\\u52D5\\u614B\\u6587\\u5B57\\u8403\\u53D6\\u7684\\u6838\\u5FC3\\u5165\\u53E3\\u3002<br><br>\\u5982\\u679C\\u60A8\\u7981\\u7528\\u4E86\\u6B64\\u6309\\u9215\\uFF0C\\u53EF\\u4EE5\\u900F\\u904E\\u6CB9\\u7334\\u64F4\\u5145\\u529F\\u80FD\\u9078\\u55AE\\u7684\\u8A2D\\u5B9A\\u9762\\u677F\\u91CD\\u65B0\\u958B\\u555F\\u3002",
+        show_scan_count: "\\u555F\\u7528\\u5F8C\\uFF0C\\u5728\\u7D50\\u679C\\u8996\\u7A97\\u7684\\u6A19\\u984C\\u5217\\u6703<strong>\\u5373\\u6642\\u66F4\\u65B0</strong>\\u672C\\u6B21\\u6383\\u63CF\\u767C\\u73FE\\u7684\\u6587\\u672C\\u689D\\u76EE\\u7E3D\\u6578\\u3002\\u5728\\u9032\\u884C\\u9577\\u6642\\u9593\\u7684<strong>\\u52D5\\u614B\\u6383\\u63CF</strong>\\u6642\\uFF0C\\u9019\\u500B\\u8A08\\u6578\\u5668\\u53EF\\u4EE5\\u5F88\\u76F4\\u89C0\\u5730\\u53CD\\u6620\\u6383\\u63CF\\u9032\\u5EA6\\u3002",
+        show_line_numbers: "\\u5728\\u7D50\\u679C\\u8996\\u7A97\\u7684\\u6587\\u672C\\u5340\\u57DF\\u5DE6\\u5074\\u986F\\u793A\\u884C\\u865F\\u3002\\u7576\\u60A8\\u9700\\u8981\\u8207\\u4ED6\\u4EBA\\u8A0E\\u8AD6\\u6216\\u8A18\\u9304\\u7279\\u5B9A\\u67D0\\u884C\\u6587\\u672C\\u6642\\uFF0C\\u884C\\u865F\\u53EF\\u4EE5\\u63D0\\u4F9B\\u4E00\\u500B<strong>\\u7CBE\\u78BA\\u7684\\u5B9A\\u4F4D\\u6A19\\u8A18</strong>\\u3002",
+        show_statistics: "\\u5728\\u7D50\\u679C\\u8996\\u7A97\\u5E95\\u90E8\\u7684\\u72C0\\u614B\\u5217\\u986F\\u793A\\u7576\\u524D\\u5DF2\\u63D0\\u53D6\\u5167\\u5BB9\\u7684<strong>\\u5373\\u6642\\u7D71\\u8A08</strong>\\uFF0C\\u5305\\u62EC<strong>\\u7E3D\\u884C\\u6578</strong>\\u548C<strong>\\u7E3D\\u5B57\\u5143\\u6578</strong>\\u3002\\u9019\\u53EF\\u4EE5\\u5E6B\\u52A9\\u60A8\\u5FEB\\u901F\\u8A55\\u4F30\\u63D0\\u53D6\\u5167\\u5BB9\\u7684\\u898F\\u6A21\\u3002",
+        enable_word_wrap: "\\u63A7\\u5236\\u7D50\\u679C\\u8996\\u7A97\\u4E2D\\u7684\\u9577\\u6587\\u672C\\u884C\\u5982\\u4F55\\u986F\\u793A\\u3002<br><br>\\u2022 <strong>\\u555F\\u7528\\uFF1A</strong>\\u9577\\u6587\\u672C\\u5C07\\u81EA\\u52D5\\u63DB\\u884C\\u4EE5\\u9069\\u61C9\\u8996\\u7A97\\u5BEC\\u5EA6\\u3002<br>\\u2022 <strong>\\u7981\\u7528\\uFF1A</strong>\\u9577\\u6587\\u672C\\u5C07\\u4FDD\\u6301\\u5728\\u55AE\\u884C\\uFF0C\\u4E26\\u51FA\\u73FE\\u6C34\\u5E73\\u6372\\u52D5\\u689D\\u3002",
+        text_truncation_limit: "\\u9019\\u662F\\u4E00\\u500B<strong>\\u6548\\u80FD\\u4FDD\\u8B77</strong>\\u6A5F\\u5236\\u3002\\u7576\\u8173\\u672C\\u63D0\\u53D6\\u5230<strong>\\u55AE\\u884C\\u8D85\\u9577\\u6587\\u672C</strong>\\uFF08\\u4F8B\\u5982\\uFF0C\\u4E00\\u500B\\u5B8C\\u6574\\u7684 base64 \\u7DE8\\u78BC\\u5716\\u7247\\uFF09\\u6642\\uFF0C\\u82E5\\u4E0D\\u622A\\u65B7\\uFF0C\\u53EF\\u80FD\\u6703\\u5C0E\\u81F4\\u700F\\u89BD\\u5668<strong>\\u5361\\u9813\\u6216\\u7121\\u97FF\\u61C9</strong>\\u3002<br><br>\\u6B64\\u8A2D\\u5B9A\\u6703\\u622A\\u65B7\\u8D85\\u51FA\\u6307\\u5B9A\\u9577\\u5EA6\\u7684\\u55AE\\u884C\\u6587\\u672C\\uFF0C\\u4EE5\\u4FDD\\u8B49\\u4ECB\\u9762\\u6D41\\u66A2\\u3002<strong>\\u6CE8\\u610F\\uFF1A\\u6B64\\u622A\\u65B7\\u50C5\\u5F71\\u97FF\\u4ECB\\u9762\\u986F\\u793A\\uFF0C\\u532F\\u51FA\\u7684\\u6A94\\u6848\\u4ECD\\u5C07\\u5305\\u542B\\u5B8C\\u6574\\u5167\\u5BB9\\u3002</strong>"
+      },
+      advanced: {
+        title: "\\u9032\\u968E\\u8A2D\\u5B9A\\u8AAA\\u660E",
+        enable_debug_logging: "\\u555F\\u7528\\u5F8C\\uFF0C\\u8173\\u672C\\u6703\\u5C07\\u8A73\\u7D30\\u7684\\u5167\\u90E8\\u904B\\u884C\\u72C0\\u614B\\u3001\\u57F7\\u884C\\u6B65\\u9A5F\\u3001\\u932F\\u8AA4\\u8CC7\\u8A0A\\u7B49\\u8F38\\u51FA\\u5230\\u700F\\u89BD\\u5668\\u7684<strong>\\u958B\\u767C\\u8005\\u5DE5\\u5177\\u63A7\\u5236\\u53F0</strong>\\uFF08\\u901A\\u5E38\\u6309 F12 \\u958B\\u555F\\uFF09\\u3002\\u6B64\\u529F\\u80FD\\u4E3B\\u8981\\u9762\\u5411\\u958B\\u767C\\u8005\\u6216\\u9700\\u8981\\u63D0\\u4EA4\\u8A73\\u7D30\\u932F\\u8AA4\\u5831\\u544A\\u7684\\u4F7F\\u7528\\u8005\\u3002"
+      }
+    }
+  };
+  // src/shared/i18n/management/languages.js
+  var supportedLanguages = [
+    { code: "en", name: "English" },
+    { code: "zh-CN", name: "\\u7B80\\u4F53\\u4E2D\\u6587" },
+    { code: "zh-TW", name: "\\u7E41\\u9AD4\\u4E2D\\u6587" }
+  ];
+  // src/shared/i18n/index.js
+  var translationModules = {
+    en: en_default,
+    "zh-CN": zh_CN_default,
+    "zh-TW": zh_TW_default
+  };
+  var translations = supportedLanguages.reduce((acc, lang) => {
+    if (translationModules[lang.code]) {
+      acc[lang.code] = translationModules[lang.code];
+    }
+    return acc;
+  }, {});
+  var currentTranslations = translations.en;
+  function getAvailableLanguages() {
+    return supportedLanguages.map((lang) => ({
+      value: lang.code,
+      label: lang.name
+    }));
+  }
+  // src/features/settings/config.js
+  var selectSettingsDefinitions = [
+    {
+      id: "theme-select",
+      key: "theme",
+      label: "settings.theme",
+      icon: themeIcon,
+      options: [
+        { value: "light", label: "settings.themes.light" },
+        { value: "dark", label: "settings.themes.dark" },
+        { value: "system", label: "settings.themes.system" }
+      ]
+    },
+    {
+      id: "language-select",
+      key: "language",
+      label: "settings.language",
+      icon: languageIcon_default,
+      // \u76F4\u63A5\u4ECE i18n \u6A21\u5757\u83B7\u53D6\u8BED\u8A00\u5217\u8868\uFF0C\u5176\u6807\u7B7E\u5DF2\u7ECF\u662F\u539F\u751F\u540D\u79F0\uFF0C\u65E0\u9700\u518D\u7FFB\u8BD1\u3002
+      options: getAvailableLanguages()
+    }
+  ];
+  var filterDefinitions = [
+    { id: "filter-numbers", key: "numbers", label: "settings.filters.numbers", tooltip: { titleIcon: infoIcon, title: "settings.filters.numbers", text: "tooltip.filters.numbers" } },
+    { id: "filter-chinese", key: "chinese", label: "settings.filters.chinese", tooltip: { titleIcon: infoIcon, title: "settings.filters.chinese", text: "tooltip.filters.chinese" } },
+    { id: "filter-contains-chinese", key: "containsChinese", label: "settings.filters.contains_chinese", tooltip: { titleIcon: infoIcon, title: "settings.filters.contains_chinese", text: "tooltip.filters.contains_chinese" } },
+    { id: "filter-emoji-only", key: "emojiOnly", label: "settings.filters.emoji_only", tooltip: { titleIcon: infoIcon, title: "settings.filters.emoji_only", text: "tooltip.filters.emoji_only" } },
+    { id: "filter-symbols", key: "symbols", label: "settings.filters.symbols", tooltip: { titleIcon: infoIcon, title: "settings.filters.symbols", text: "tooltip.filters.symbols" } },
+    { id: "filter-term", key: "termFilter", label: "settings.filters.term", tooltip: { titleIcon: infoIcon, title: "settings.filters.term", text: "tooltip.filters.term" } },
+    { id: "filter-single-letter", key: "singleLetter", label: "settings.filters.single_letter", tooltip: { titleIcon: infoIcon, title: "settings.filters.single_letter", text: "tooltip.filters.single_letter" } },
+    {
+      id: "filter-repeating-chars",
+      key: "repeatingChars",
+      label: "settings.filters.repeating_chars",
+      tooltip: {
+        titleIcon: infoIcon,
+        title: "settings.filters.repeating_chars",
+        text: "tooltip.filters.repeating_chars"
+      }
+    },
+    { id: "filter-file-paths", key: "filePath", label: "settings.filters.file_paths", tooltip: { titleIcon: infoIcon, title: "settings.filters.file_paths", text: "tooltip.filters.file_paths" } },
+    { id: "filter-hex-colors", key: "hexColor", label: "settings.filters.hex_color_codes", tooltip: { titleIcon: infoIcon, title: "settings.filters.hex_color_codes", text: "tooltip.filters.hex_color_codes" } },
+    { id: "filter-emails", key: "email", label: "settings.filters.email_addresses", tooltip: { titleIcon: infoIcon, title: "settings.filters.email_addresses", text: "tooltip.filters.email_addresses" } },
+    { id: "filter-uuids", key: "uuid", label: "settings.filters.uuids", tooltip: { titleIcon: infoIcon, title: "settings.filters.uuids", text: "tooltip.filters.uuids" } },
+    { id: "filter-git-hashes", key: "gitCommitHash", label: "settings.filters.git_commit_hashes", tooltip: { titleIcon: infoIcon, title: "settings.filters.git_commit_hashes", text: "tooltip.filters.git_commit_hashes" } }
+  ];
+  // src/shared/utils/filterLogic.js
+  var filterConfigMap = new Map(filterDefinitions.map((def) => [def.key, def.label]));
+  var ruleChecks = /* @__PURE__ */ new Map([
+    ["numbers", {
+      regex: /^[$\\\u20AC\\\xA3\\\xA5\\d,.\\s]+$/,
+      label: filterConfigMap.get("numbers")
+    }],
+    ["chinese", {
+      regex: /^[\\u4e00-\\u9fa5\\s]+$/u,
+      label: filterConfigMap.get("chinese")
+    }],
+    ["containsChinese", {
+      regex: /[\\u4e00-\\u9fa5]/u,
+      label: filterConfigMap.get("containsChinese")
+    }],
+    ["emojiOnly", {
+      regex: /^[\\p{Emoji}\\s]+$/u,
+      label: filterConfigMap.get("emojiOnly")
+    }],
+    ["symbols", {
+      // \u8FD9\u4E2A\u903B\u8F91\u6BD4\u8F83\u7279\u6B8A\uFF0C\u662F\u201C\u4E0D\u5305\u542B\u5B57\u6BCD\u6216\u6570\u5B57\u201D\uFF0C\u6240\u4EE5\u6211\u4EEC\u7528\u4E00\u4E2A\u51FD\u6570\u6765\u5904\u7406
+      test: (text) => !/[\\p{L}\\p{N}]/u.test(text),
+      label: filterConfigMap.get("symbols")
+    }],
+    ["termFilter", {
+      test: (text) => ignoredTerms_default.includes(text),
+      label: filterConfigMap.get("termFilter")
+    }],
+    ["singleLetter", {
+      regex: /^[a-zA-Z]$/,
+      label: filterConfigMap.get("singleLetter")
+    }],
+    ["repeatingChars", {
+      regex: /^\\s*(.)\\1+\\s*$/,
+      label: filterConfigMap.get("repeatingChars")
+    }],
+    ["filePath", {
+      regex: /^(?:[a-zA-Z]:\\\\|\\\\\\\\|~|\\.\\.?\\/)[\\w\\-\\.\\/ \\\\]*[\\w\\-\\.]+\\.[\\w]{2,4}$/,
+      label: filterConfigMap.get("filePath")
+    }],
+    ["hexColor", {
+      regex: /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3,4}|[A-Fa-f0-9]{8})$/,
+      label: filterConfigMap.get("hexColor")
+    }],
+    ["email", {
+      regex: /^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$/,
+      label: filterConfigMap.get("email")
+    }],
+    ["uuid", {
+      regex: /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/,
+      label: filterConfigMap.get("uuid")
+    }],
+    ["gitCommitHash", {
+      regex: /^[0-9a-f]{7,40}$/i,
+      label: filterConfigMap.get("gitCommitHash")
+    }]
+  ]);
+  function shouldFilter(text, filterRules2) {
+    for (const [key, rule] of ruleChecks.entries()) {
+      if (filterRules2[key]) {
+        const isFiltered = rule.regex ? rule.regex.test(text) : rule.test(text);
+        if (isFiltered) {
+          return { reason: rule.label };
+        }
+      }
+    }
+    return null;
+  }
+  // src/features/session-scan/worker.js
+  var sessionTexts = /* @__PURE__ */ new Set();
+  var filterRules = {};
+  function processAndAddText(rawText, logPrefix = "") {
+    if (!rawText || typeof rawText !== "string") return false;
+    const normalizedText = rawText.normalize("NFC");
+    const textForFiltering = normalizedText.replace(/(\\r\\n|\\n|\\r)+/g, "\\n").trim();
+    if (textForFiltering === "") return false;
+    const filterResult = shouldFilter(textForFiltering, filterRules);
+    if (filterResult) {
+      const prefix = logPrefix ? \`\${logPrefix} \` : "";
+      console.log(\`[\\u4F1A\\u8BDD\\u626B\\u63CF Worker] \${prefix}\\u6587\\u672C\\u5DF2\\u8FC7\\u6EE4: "\${textForFiltering}" (\\u539F\\u56E0: \${filterResult.reason})\`);
+      return false;
+    }
+    const originalSize = sessionTexts.size;
+    sessionTexts.add(normalizedText.replace(/(\\r\\n|\\n|\\r)+/g, "\\n"));
+    return sessionTexts.size > originalSize;
+  }
+  var formatTextsForTranslation = (texts) => {
+    if (!texts || texts.length === 0) {
+      return "[]";
+    }
+    const result = texts.map(
+      (text) => \`    ["\${text.replace(/"/g, '\\\\"').replace(/\\n/g, "\\\\n")}", ""]\`
+    );
+    return \`[
+\${result.join(",\\n")}
+]\`;
+  };
+  self.onmessage = (event) => {
+    const { type, payload } = event.data;
+    switch (type) {
+      // \u521D\u59CB\u5316\uFF1A\u63A5\u6536\u8FC7\u6EE4\u89C4\u5219
+      case "init":
+        filterRules = payload.filterRules || {};
+        break;
+      // \u6570\u636E\u5904\u7406\uFF1A\u63A5\u6536\u4E00\u6279\u539F\u59CB\u6587\u672C\u8FDB\u884C\u5904\u7406
+      case "data": {
+        const { texts, logPrefix } = payload;
+        let changed = false;
+        if (Array.isArray(texts)) {
+          texts.forEach((text) => {
+            if (processAndAddText(text, logPrefix)) {
+              changed = true;
+            }
+          });
+        }
+        if (changed) {
+          self.postMessage({ type: "countUpdated", payload: sessionTexts.size });
+        }
+        break;
+      }
+      // \u603B\u7ED3\u8BF7\u6C42\uFF1A\u683C\u5F0F\u5316\u5E76\u8FD4\u56DE\u6240\u6709\u6587\u672C
+      case "getSummary": {
+        const sessionTextsArray = Array.from(sessionTexts);
+        const formattedText = formatTextsForTranslation(sessionTextsArray);
+        self.postMessage({ type: "summaryReady", payload: formattedText });
+        break;
+      }
+      // \u83B7\u53D6\u5F53\u524D\u8BA1\u6570\u503C
+      case "getCount":
+        self.postMessage({ type: "countUpdated", payload: sessionTexts.size });
+        break;
+      // \u53EF\u9009\uFF1A\u6DFB\u52A0\u4E00\u4E2A\u6E05\u7A7A\u6307\u4EE4
+      case "clear":
+        sessionTexts.clear();
+        self.postMessage({ type: "countUpdated", payload: 0 });
+        break;
+    }
+  };
+})();
+`;
       const workerUrl = `data:application/javascript,${encodeURIComponent(workerScript)}`;
       const trustedUrl = createTrustedWorkerUrl(workerUrl);
       worker = new Worker(trustedUrl);
@@ -2345,11 +3818,111 @@ ${result.join(",\n")}
   var systemThemeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M320-120v-80h80v-80H160q-33 0-56.5-23.5T80-360v-400q0-33 23.5-56.5T160-840h640q33 0 56.5 23.5T880-760v400q0 33-23.5 56.5T800-280H560v80h80v80H320ZM160-360h640v-400H160v400Zm0 0v-400 400Z"/></svg>`;
   var lightThemeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm0 80q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Zm326-268Z"/></svg>`;
   var darkThemeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Zm0-80q88 0 158-48.5T740-375q-20 5-40 8t-40 3q-123 0-209.5-86.5T364-660q0-20 3-40t8-40q-78 32-126.5 102T200-480q0 116 82 198t198 82Zm-10-270Z"/></svg>`;
-  function createCheckbox(id, labelText, isChecked) {
+  var Tooltip = class {
+    constructor() {
+      this.tooltipElement = null;
+      this.handleEscKey = this.handleEscKey.bind(this);
+    }
+        _createDOM(config) {
+      const overlay = document.createElement("div");
+      overlay.className = "info-tooltip-overlay";
+      overlay.tabIndex = -1;
+      const tooltip = document.createElement("div");
+      tooltip.className = "info-tooltip-modal";
+      if (config.width) tooltip.style.width = config.width;
+      if (config.height) tooltip.style.height = config.height;
+      const header = document.createElement("div");
+      header.className = "info-tooltip-header";
+      const titleContainer2 = document.createElement("div");
+      titleContainer2.className = "info-tooltip-title-container";
+      if (config.titleIcon) {
+        const iconElement = createSVGFromString(config.titleIcon);
+        iconElement.classList.add("info-tooltip-title-icon");
+        titleContainer2.appendChild(iconElement);
+      }
+      const titleElement = document.createElement("h3");
+      titleElement.className = "info-tooltip-title";
+      titleElement.textContent = config.title;
+      titleContainer2.appendChild(titleElement);
+      const closeButton = document.createElement("span");
+      closeButton.className = "info-tooltip-close";
+      closeButton.appendChild(createSVGFromString(closeIcon));
+      closeButton.addEventListener("click", () => this.hide());
+      header.appendChild(titleContainer2);
+      header.appendChild(closeButton);
+      const content = document.createElement("div");
+      content.className = "info-tooltip-content";
+      const textElement = document.createElement("p");
+      textElement.innerHTML = config.text || "";
+      content.appendChild(textElement);
+      tooltip.appendChild(header);
+      tooltip.appendChild(content);
+      overlay.appendChild(tooltip);
+      this.tooltipElement = overlay;
+      uiContainer.appendChild(this.tooltipElement);
+    }
+    /**
+     * @public
+     * @description 显示并填充提示窗口。
+     * @param {object} config - 提示窗口的配置对象。
+     */
+    show(config) {
+      if (!this.tooltipElement) {
+        this._createDOM(config);
+      }
+      fire("infoTooltipWillShow");
+      setTimeout(() => {
+        if (this.tooltipElement) {
+          this.tooltipElement.classList.add("is-visible");
+          this.tooltipElement.focus();
+          this.tooltipElement.addEventListener("keydown", this.handleEscKey);
+        }
+      }, 10);
+    }
+        hide() {
+      if (this.tooltipElement && this.tooltipElement.classList.contains("is-visible")) {
+        this.tooltipElement.classList.remove("is-visible");
+        this.tooltipElement.removeEventListener("keydown", this.handleEscKey);
+        const onTransitionEnd = () => {
+          if (this.tooltipElement && this.tooltipElement.parentNode) {
+            this.tooltipElement.removeEventListener("transitionend", onTransitionEnd);
+            this.tooltipElement.parentNode.removeChild(this.tooltipElement);
+            this.tooltipElement = null;
+            fire("infoTooltipDidHide");
+          }
+        };
+        this.tooltipElement.addEventListener("transitionend", onTransitionEnd);
+      }
+    }
+        handleEscKey(event) {
+      if (event.key === "Escape") {
+        event.stopImmediatePropagation();
+        this.hide();
+      }
+    }
+  };
+  var infoTooltip = new Tooltip();
+  function createCheckbox(id, labelText, isChecked, tooltipConfig) {
     const label = document.createElement("label");
     label.className = "checkbox-group";
     label.htmlFor = id;
     label.appendChild(document.createTextNode(labelText));
+    if (tooltipConfig && tooltipConfig.text) {
+      const infoIconElement = document.createElement("span");
+      infoIconElement.className = "info-icon";
+      infoIconElement.appendChild(createSVGFromString(infoIcon));
+      infoIconElement.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const translatedConfig = {
+          ...tooltipConfig,
+          title: t(tooltipConfig.title),
+          text: t(tooltipConfig.text)
+        };
+        infoTooltip.show(translatedConfig);
+      });
+      label.appendChild(infoIconElement);
+    }
     const input = document.createElement("input");
     input.type = "checkbox";
     input.id = id;
@@ -2426,7 +3999,7 @@ ${result.join(",\n")}
       if (setting.linkedNumeric) {
         const compositeContainer = document.createElement("div");
         compositeContainer.className = "composite-setting-container";
-        const checkboxElement = createCheckbox(setting.id, t(setting.label), settings[setting.key]);
+        const checkboxElement = createCheckbox(setting.id, t(setting.label), settings[setting.key], setting.tooltip);
         compositeContainer.appendChild(checkboxElement);
         const numericConfig = setting.linkedNumeric;
         const numericValue = settings[numericConfig.key];
@@ -2449,7 +4022,7 @@ ${result.join(",\n")}
         });
         relatedItem.appendChild(compositeContainer);
       } else {
-        const checkboxElement = createCheckbox(setting.id, t(setting.label), settings[setting.key]);
+        const checkboxElement = createCheckbox(setting.id, t(setting.label), settings[setting.key], setting.tooltip);
         relatedItem.appendChild(checkboxElement);
       }
     });
@@ -2460,7 +4033,7 @@ ${result.join(",\n")}
     filterTitleContainer.className = "setting-title-container";
     filterItem.appendChild(filterTitleContainer);
     filterDefinitions.forEach((filter) => {
-      const checkboxElement = createCheckbox(filter.id, t(filter.label), settings.filterRules[filter.key]);
+      const checkboxElement = createCheckbox(filter.id, t(filter.label), settings.filterRules[filter.key], filter.tooltip);
       filterItem.appendChild(checkboxElement);
     });
     content.appendChild(relatedItem);
@@ -2518,7 +4091,9 @@ ${result.join(",\n")}
   }
   var settingsPanel = null;
   var selectComponents = {};
+  var isTooltipVisible = false;
   var handleKeyDown2 = (event) => {
+    if (isTooltipVisible) return;
     if (event.key === "Escape") {
       hideSettingsPanel();
     }
@@ -2567,6 +4142,12 @@ ${result.join(",\n")}
     saveBtn.addEventListener("click", handleSave);
     settingsPanel.addEventListener("keydown", handleKeyDown2);
     settingsPanel.focus();
+    on("infoTooltipWillShow", () => {
+      isTooltipVisible = true;
+    });
+    on("infoTooltipDidHide", () => {
+      isTooltipVisible = false;
+    });
   }
   function hideSettingsPanel() {
     if (settingsPanel && settingsPanel.classList.contains("is-visible")) {
@@ -2920,7 +4501,7 @@ ${result.join(",\n")}
   border-radius:8px;
   background-color:var(--main-textarea-bg);
   color:var(--main-text);
-  font-size:14px;
+  font-size:15px;
   cursor:pointer;
   transition:border-color 0.2s, box-shadow 0.2s;
 }
@@ -3048,6 +4629,7 @@ ${result.join(",\n")}
     animation:slide-down-fade-out 0.3s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
 }
 .tc-button{
+  font-family:'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
   padding:10px 20px;
   background-color:var(--main-primary);
   color:var(--main-primary-text);
@@ -3127,6 +4709,143 @@ ${result.join(",\n")}
 .tc-select:hover{
   border-color:var(--main-primary);
   box-shadow:0 0 0 2px var(--main-primary-hover-bg, rgba(30, 144, 255, 0.1));
+}
+.info-tooltip-overlay{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background-color:var(--main-overlay-bg);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:10002;
+    opacity:0;
+    visibility:hidden;
+    transition:opacity 0.3s ease, visibility 0.3s;
+    font-family:'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
+}
+.info-tooltip-overlay.is-visible{
+    opacity:1;
+    visibility:visible;
+}
+.info-tooltip-modal{
+    background-color:var(--main-bg);
+    color:var(--main-text);
+    border:1px solid var(--main-border);
+    border-radius:16px;
+    box-shadow:0 5px 15px var(--main-shadow);
+    padding:0;
+    position:relative;
+    width:400px;
+    max-width:90vw;
+    max-height:90vh;
+    display:flex;
+    flex-direction:column;
+    transform:scale(0.95);
+    transition:transform 0.3s ease;
+    overflow:hidden;
+}
+.info-tooltip-overlay.is-visible .info-tooltip-modal{
+    transform:scale(1);
+}
+.info-tooltip-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:20px;
+    border-bottom:1px solid var(--main-border);
+}
+.info-tooltip-title-container{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+.info-tooltip-title-icon{
+    width:20px;
+    height:20px;
+    color:var(--secondary-text);
+}
+.info-tooltip-title{
+    font-size:18px;
+    font-weight:bold;
+    margin:0;
+}
+.info-tooltip-close{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:32px;
+    height:32px;
+    border-radius:50%;
+    cursor:pointer;
+    color:var(--main-text);
+    background-color:transparent;
+    transition:background-color 0.2s, transform 0.15s;
+}
+.info-tooltip-close:hover{
+    background-color:var(--main-border);
+}
+.info-tooltip-close:active{
+    transform:scale(0.9);
+}
+.info-tooltip-close svg{
+    width:18px;
+    height:18px;
+}
+.info-tooltip-content{
+    padding:20px;
+    overflow-y:auto;
+}
+.info-tooltip-content p{
+    margin:0 0 15px 0;
+    line-height:1.7;
+    font-size:16px;
+}
+.info-tooltip-content p:last-child{
+    margin-bottom:0;
+}
+.info-tooltip-content strong{
+    color:var(--primary-accent);
+    font-weight:600;
+}
+.info-tooltip-image{
+    max-width:100%;
+    height:auto;
+    border-radius:8px;
+    margin-top:10px;
+    display:block;
+    margin-left:auto;
+    margin-right:auto;
+    opacity:0;
+    animation:fadeIn 0.3s forwards;
+}
+@keyframes fadeIn{
+    to{
+        opacity:1;
+    }
+}
+.info-icon{
+    margin-left:8px;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    vertical-align:text-bottom;
+    color:var(--secondary-text);
+    width:20px;
+    height:20px;
+    border-radius:50%;
+    transition:background-color 0.2s, color 0.2s;
+}
+.info-icon:hover{
+    color:var(--primary-accent);
+    background-color:var(--main-border);
+}
+.info-icon svg{
+    width:16px;
+    height:16px;
 }
 .tc-live-counter{
     position:fixed;
@@ -3477,6 +5196,7 @@ ${result.join(",\n")}
     gap:10px;
 }
 .tc-notification{
+    font-family:'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
     display:flex;
     align-items:center;
     padding:12px 16px;
@@ -3611,6 +5331,7 @@ ${result.join(",\n")}
     visibility:visible;
 }
 .settings-panel-modal{
+  font-family:'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
   background-color:var(--main-bg);
   color:var(--main-text);
   border:1px solid var(--main-border);
@@ -3724,6 +5445,8 @@ ${result.join(",\n")}
   display:none;
 }
 .composite-setting-container{
+    font-weight:500;
+    font-family:'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
     margin-top:14px;
     margin-left:0px;
 }
@@ -3743,6 +5466,7 @@ ${result.join(",\n")}
     width:100px;
     padding:6px 8px;
     border-radius:8px;
+    font-family:'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
     border:1px solid var(--main-textarea-border);
     background-color:var(--main-textarea-bg);
     color:var(--main-text);
