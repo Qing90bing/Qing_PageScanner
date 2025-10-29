@@ -3480,7 +3480,7 @@ ${result.join(",\n")}
     display:flex;
     align-items:center;
     padding:12px 16px;
-    border-radius:8px;
+    border-radius:16px;
     background-color:var(--main-bg, #fff);
     color:var(--main-text, #333);
     box-shadow:0 4px 12px var(--main-shadow, rgba(0, 0, 0, 0.15));
