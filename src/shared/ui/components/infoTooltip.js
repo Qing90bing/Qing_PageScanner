@@ -71,13 +71,6 @@ class Tooltip {
 
         this.tooltipElement = overlay;
 
-        // 根据用户要求，禁用点击覆盖层关闭的功能。
-        // overlay.addEventListener('click', (e) => {
-        //     if (e.target === overlay) {
-        //         this.hide();
-        //     }
-        // });
-
         uiContainer.appendChild(this.tooltipElement);
     }
 

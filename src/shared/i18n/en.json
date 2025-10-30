@@ -149,5 +149,97 @@
         "title": "Advanced Settings Explanation",
         "enable_debug_logging": "When enabled, the script will output detailed internal status, execution steps, and error messages to the browser's <strong>Developer Tools Console</strong> (usually opened with F12). This is primarily for developers or users who need to submit detailed bug reports."
     }
+  },
+  "log": {
+    "prefix": "[Text Extractor Script-Debug]",
+    "language": {
+      "switched": "Language switched to: {{lang}}",
+      "notFound": "Language '{{lang}}' not found, falling back to 'en'."
+    },
+    "settings": {
+      "changed": "Setting '{{key}}' changed from '{{oldValue}}' to '{{newValue}}'",
+      "filterRuleChanged": {
+        "enabled": "Filter rule '{{key}}' has been enabled",
+        "disabled": "Filter rule '{{key}}' has been disabled"
+      },
+      "panel": {
+        "opening": "Opening settings panel...",
+        "closing": "Closing settings panel...",
+        "saving": "Saving settings..."
+      }
+    },
+    "textProcessor": {
+      "filtered": "Text filtered: \"{{text}}\" (Reason: {{reason}})"
+    },
+    "quickScan": {
+      "switchToFallback": "[Quick Scan] Switching to main thread fallback.",
+      "fallbackFailed": "[Quick Scan] Main thread fallback failed: {{error}}",
+      "fallback": {
+        "starting": "[Quick Scan - Fallback] Starting processing in main thread...",
+        "completed": "[Quick Scan - Fallback] Processing complete, found {{count}} unique texts."
+      },
+      "worker": {
+        "logPrefix": "[Quick Scan Worker]",
+        "starting": "[Quick Scan] Starting execution, attempting to use Web Worker...",
+        "completed": "[Quick Scan] Worker processing successful, received {{count}} texts.",
+        "scanComplete": "[Quick Scan Worker] Processing complete, found {{count}} unique texts. Sending back to main thread...",
+        "initFailed": "[Quick Scan] Worker initialization failed. This is likely due to the website's Content Security Policy (CSP).",
+        "originalError": "[Quick Scan] Original error: {{error}}",
+        "sendingData": "[Quick Scan] Web Worker created, sending {{count}} texts for processing...",
+        "initSyncError": "[Quick Scan] Synchronous error during Worker initialization: {{error}}"
+      }
+    },
+    "sessionScan": {
+      "switchToFallback": "[Session Scan] Switching to main thread fallback.",
+      "domObserver": {
+        "stopped": "[Session Scan] Stopped listening for DOM changes."
+      },
+      "fallback": {
+        "initialized": "[Session Scan - Fallback] Initialized.",
+        "cleared": "[Session Scan - Fallback] Data cleared."
+      },
+      "worker": {
+        "logPrefix": "[Session Scan Worker]",
+        "starting": "Session Scan: Attempting to start Web Worker...",
+        "initFailed": "[Session Scan] Worker initialization failed. This is likely due to the website's Content Security Policy (CSP).",
+        "originalError": "[Session Scan] Original error: {{error}}",
+        "initialized": "[Session Scan] Worker initialized successfully, sent {{count}} initial texts to start the session.",
+        "initSyncError": "[Session Scan] Synchronous error during Worker initialization: {{error}}",
+        "clearCommandSent": "[Session Scan] Clear command sent to worker."
+      }
+    },
+    "ui": {
+      "copyButton": {
+        "copied": "Copy button clicked, copied {{count}} characters.",
+        "nothingToCopy": "Copy button clicked, but there was no content to copy or the button was disabled."
+      },
+      "confirmationModal": {
+        "sessionScan": {
+          "confirmed": "User confirmed clearing session scan texts, invoking callback..."
+        },
+        "quickScan": {
+          "confirmed": "User confirmed clearing quick scan texts."
+        },
+        "cancelled": "User cancelled the clear operation."
+      },
+      "modal": {
+        "openingAndScanning": "Opening main modal and starting static scan...",
+        "scanFailed": "Static scan failed: {{error}}",
+        "closing": "Closing main modal..."
+      }
+    },
+    "exporter": {
+      "csvError": "Error while parsing text and generating CSV: {{error}}",
+      "fileExported": "File exported: {{filename}}",
+      "noContent": "No content to export.",
+      "unknownFormat": "Unknown export format: {{format}}"
+    },
+    "main": {
+      "requestingSessionScanData": "Requesting full data from session-scan mode...",
+      "exportingQuickScanData": "Exporting full data from quick-scan mode's memory...",
+      "inIframe": "Script is in an iframe, skipping initialization.",
+      "initializing": "Script initialization started...",
+      "initialSettingsLoaded": "Initial settings loaded: {{settings}}"
+    }
   }
 }

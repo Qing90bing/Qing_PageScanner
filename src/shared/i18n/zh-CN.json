@@ -8,18 +8,18 @@
     "save": "保存",
     "discovered": "已发现：",
     "confirm": "确认",
-        "cancel": "取消",
-        "export": "导出"
-    },
-    "export": {
-        "exportAsTxt": "导出为 TXT",
-        "exportAsJson": "导出为 JSON",
-        "exportAsCsv": "导出为 CSV",
-        "csv": {
-            "id": "ID",
-            "original": "原文",
-            "translation": "译文"
-        }
+    "cancel": "取消",
+    "export": "导出"
+  },
+  "export": {
+    "exportAsTxt": "导出为 TXT",
+    "exportAsJson": "导出为 JSON",
+    "exportAsCsv": "导出为 CSV",
+    "csv": {
+      "id": "ID",
+      "original": "原文",
+      "translation": "译文"
+    }
   },
   "settings": {
     "title": "设置",
@@ -62,14 +62,14 @@
       "title": "设置面板"
     },
     "languages": {
-        "en": "English",
-        "zh_CN": "简体中文",
-        "zh_TW": "繁體中文"
+      "en": "English",
+      "zh_CN": "简体中文",
+      "zh_TW": "繁體中文"
     },
     "themes": {
-        "light": "浅色",
-        "dark": "深色",
-        "system": "跟随系统"
+      "light": "浅色",
+      "dark": "深色",
+      "system": "跟随系统"
     }
   },
   "scan": {
@@ -146,8 +146,100 @@
       "text_truncation_limit": "这是一个<strong>性能保护</strong>机制。当脚本提取到<strong>单行超长文本</strong>（例如，一个完整的 base64 编码图片）时，若不截断，可能会导致浏览器<strong>卡顿或无响应</strong>。<br><br>此设置会截断超出指定长度的单行文本，以保证界面流畅。<strong>注意：此截断仅影响界面显示，导出的文件仍将包含完整内容。</strong>"
     },
     "advanced": {
-        "title": "高级设置说明",
-        "enable_debug_logging": "启用后，脚本会将详细的内部运行状态、执行步骤、错误信息等输出到浏览器的<strong>开发者工具控制台</strong>（通常按 F12 打开）。此功能主要面向开发者或需要提交详细错误报告的用户。"
+      "title": "高级设置说明",
+      "enable_debug_logging": "启用后，脚本会将详细的内部运行状态、执行步骤、错误信息等输出到浏览器的<strong>开发者工具控制台</strong>（通常按 F12 打开）。此功能主要面向开发者或需要提交详细错误报告的用户。"
+    }
+  },
+  "log": {
+    "prefix": "[文本提取脚本-Debug]",
+    "language": {
+      "switched": "语言已切换至: {{lang}}",
+      "notFound": "语言 '{{lang}}' 不存在，回退到 'en'。"
+    },
+    "settings": {
+      "changed": "设置 '{{key}}' 已从 '{{oldValue}}' 更改为 '{{newValue}}'",
+      "filterRuleChanged": {
+        "enabled": "过滤规则 '{{key}}' 已被启用",
+        "disabled": "过滤规则 '{{key}}' 已被禁用"
+      },
+      "panel": {
+        "opening": "正在打开设置面板...",
+        "closing": "正在关闭设置面板...",
+        "saving": "正在保存设置..."
+      }
+    },
+    "textProcessor": {
+      "filtered": "文本已过滤: \"{{text}}\" (原因: {{reason}})"
+    },
+    "quickScan": {
+      "switchToFallback": "[静态扫描] 切换到主线程备选方案。",
+      "fallbackFailed": "[静态扫描] 主线程备选方案失败: {{error}}",
+      "fallback": {
+        "starting": "[静态扫描 - 备选方案] 开始在主线程中处理...",
+        "completed": "[静态扫描 - 备选方案] 处理完成，共 {{count}} 条有效文本。"
+      },
+      "worker": {
+        "logPrefix": "[静态扫描 Worker]",
+        "starting": "[静态扫描] 开始执行，尝试使用 Web Worker...",
+        "completed": "[静态扫描] Worker 处理成功，收到 {{count}} 条文本。",
+        "scanComplete": "[静态扫描 Worker] 处理完成，共 {{count}} 条有效文本。正在发回主线程...",
+        "initFailed": "[静态扫描] Worker 初始化失败。这很可能是由于网站的内容安全策略（CSP）阻止了脚本。",
+        "originalError": "[静态扫描] 原始错误: {{error}}",
+        "sendingData": "[静态扫描] Web Worker 已创建，正在发送 {{count}} 条文本进行处理...",
+        "initSyncError": "[静态扫描] Worker 初始化时发生同步错误: {{error}}"
+      }
+    },
+    "sessionScan": {
+      "switchToFallback": "[会话扫描] 切换到主线程备选方案。",
+      "domObserver": {
+        "stopped": "[会话扫描] 已停止监听 DOM 变化。"
+      },
+      "fallback": {
+        "initialized": "[会话扫描 - 备选方案] 初始化完成。",
+        "cleared": "[会话扫描 - 备选方案] 数据已清空。"
+      },
+      "worker": {
+        "logPrefix": "[会话扫描 Worker]",
+        "starting": "会话扫描：尝试启动 Web Worker...",
+        "initFailed": "[会话扫描] Worker 初始化失败。这很可能是由于网站的内容安全策略（CSP）阻止了脚本。",
+        "originalError": "[会话扫描] 原始错误: {{error}}",
+        "initialized": "[会话扫描] Worker 初始化成功，已发送 {{count}} 条初始文本以开始会话。",
+        "initSyncError": "[会话扫描] Worker 初始化时发生同步错误: {{error}}",
+        "clearCommandSent": "[会话扫描] 已向 Worker 发送清空指令。"
+      }
+    },
+    "ui": {
+      "copyButton": {
+        "copied": "复制按钮被点击，复制了 {{count}} 个字符。",
+        "nothingToCopy": "复制按钮被点击，但没有内容可复制或按钮被禁用。"
+      },
+      "confirmationModal": {
+        "sessionScan": {
+          "confirmed": "用户确认清空会话扫描文本，正在调用回调..."
+        },
+        "quickScan": {
+          "confirmed": "用户确认清空快速扫描文本。"
+        },
+        "cancelled": "用户取消了清空操作。"
+      },
+      "modal": {
+        "openingAndScanning": "正在打开主模态框并启动静态扫描...",
+        "scanFailed": "静态扫描失败: {{error}}",
+        "closing": "正在关闭主模态框..."
+      }
+    },
+    "exporter": {
+      "csvError": "在解析文本并生成 CSV 时发生错误: {{error}}",
+      "fileExported": "文件已导出: {{filename}}",
+      "noContent": "没有内容可导出。",
+      "unknownFormat": "未知的导出格式: {{format}}"
+    },
+    "main": {
+      "requestingSessionScanData": "从 session-scan 模式请求完整数据...",
+      "exportingQuickScanData": "从 quick-scan 模式的内存中导出完整数据...",
+      "inIframe": "脚本在 iframe 中，已跳过初始化。",
+      "initializing": "脚本开始初始化...",
+      "initialSettingsLoaded": "初始设置已加载: {{settings}}"
     }
   }
 }

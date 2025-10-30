@@ -33,10 +33,10 @@ export function setLanguage(lang) {
     if (translations[lang]) {
         currentLanguage = lang;
         currentTranslations = translations[lang];
-        log(`语言已切换至: ${lang}`);
+        log(t('log.language.switched', { lang }));
         fire('languageChanged', lang); // 通知UI重新渲染
     } else {
-        log(`语言 '${lang}' 不存在，回退到 'en'。`, 'warn');
+        log(t('log.language.notFound', { lang }), 'warn');
         currentLanguage = 'en';
         currentTranslations = translations.en;
     }
@@ -51,13 +51,14 @@ export function getLanguage() {
 }
 
 /**
- * 翻译函数
+ * 翻译函数，支持变量替换。
  * @param {string} key - 翻译文件的键，支持点状路径 (e.g., 'settings.title')
- * @returns {string} - 翻译后的文本或原始键
+ * @param {Record<string, string | number>} [replacements] - 一个包含占位符和对应值的对象 (e.g., { count: 5 })。
+ * @returns {string} - 翻译并替换占位符后的文本，或原始键。
  */
-export function t(key) {
+export function t(key, replacements) {
     // 通过点状路径深入对象查找值
-    const value = key.split('.').reduce((obj, k) => {
+    let value = key.split('.').reduce((obj, k) => {
         // 确保在路径的每一步我们都有一个有效的对象
         if (typeof obj === 'object' && obj !== null && k in obj) {
             return obj[k];
@@ -65,7 +66,20 @@ export function t(key) {
         return undefined; // 如果任何一步失败，则提前终止
     }, currentTranslations);
 
-    return value !== undefined ? value : key;
+    if (value === undefined) {
+        return key; // 如果找不到翻译，返回原始键
+    }
+
+    // 如果提供了替换对象，则进行占位符替换
+    if (replacements) {
+        Object.keys(replacements).forEach(placeholder => {
+            // 使用正则表达式进行全局替换，以处理同一占位符多次出现的情况
+            const regex = new RegExp(`{{${placeholder}}}`, 'g');
+            value = value.replace(regex, replacements[placeholder]);
+        });
+    }
+
+    return value;
 }
 
 /**

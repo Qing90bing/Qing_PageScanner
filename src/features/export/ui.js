@@ -13,7 +13,6 @@ import { t } from '../../shared/i18n/index.js';
 import { createIconTitle } from '../../shared/ui/iconTitle.js';
 import { on, fire } from '../../shared/utils/eventBus.js';
 import { createDropdown } from '../../shared/ui/components/dropdown.js';
-import { uiContainer } from '../../shared/ui/uiContainer.js';
 
 let exportBtn, exportMenu, exportTxtBtn, exportJsonBtn, exportCsvBtn;
 

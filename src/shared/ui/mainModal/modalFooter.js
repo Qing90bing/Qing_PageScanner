@@ -78,11 +78,11 @@ export function populateModalFooter(modalFooter, updateContentCallback, clearSes
     copyBtn.addEventListener('click', () => {
         const textToCopy = state.outputTextarea.value;
         if (textToCopy && !copyBtn.disabled) {
-            log(`复制按钮被点击，复制了 ${textToCopy.length} 个字符。`);
+            log(t('log.ui.copyButton.copied', { count: textToCopy.length }));
             setClipboard(textToCopy);
             showNotification(t('notifications.copiedToClipboard'), { type: 'success' });
         } else {
-            log('复制按钮被点击，但没有内容可复制或按钮被禁用。');
+            log(t('log.ui.copyButton.nothingToCopy'));
             showNotification(t('notifications.nothingToCopy'), { type: 'info' });
         }
     });
@@ -97,18 +97,18 @@ export function populateModalFooter(modalFooter, updateContentCallback, clearSes
 
         if (confirmed) {
             if (state.currentMode === 'session-scan' && clearSessionCallback) {
-                log('用户确认清空会话扫描文本，正在调用回调...');
+                log(t('log.ui.confirmationModal.sessionScan.confirmed'));
                 clearSessionCallback();
                 updateContentCallback(SHOW_PLACEHOLDER, true, 'session-scan');
             } else {
-                log('用户确认清空快速扫描文本。');
+                log(t('log.ui.confirmationModal.quickScan.confirmed'));
                 updateContentCallback(SHOW_PLACEHOLDER, false, 'quick-scan');
                 // 强制更新静态扫描的计数器
                 updateScanCount(0, 'quick-scan');
             }
             showNotification(t('notifications.contentCleared'), { type: 'success' });
         } else {
-            log('用户取消了清空操作。');
+            log(t('log.ui.confirmationModal.cancelled'));
         }
     });
     // 监听语言变化事件

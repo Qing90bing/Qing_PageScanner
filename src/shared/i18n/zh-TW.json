@@ -149,5 +149,97 @@
         "title": "進階設定說明",
         "enable_debug_logging": "啟用後，腳本會將詳細的內部運行狀態、執行步驟、錯誤資訊等輸出到瀏覽器的<strong>開發者工具控制台</strong>（通常按 F12 開啟）。此功能主要面向開發者或需要提交詳細錯誤報告的使用者。"
     }
+  },
+  "log": {
+    "prefix": "[文本提取腳本-Debug]",
+    "language": {
+      "switched": "語言已切換至：{{lang}}",
+      "notFound": "語言 '{{lang}}' 不存在，退回至 'en'。"
+    },
+    "settings": {
+      "changed": "設定 '{{key}}' 已從 '{{oldValue}}' 變更為 '{{newValue}}'",
+      "filterRuleChanged": {
+        "enabled": "過濾規則 '{{key}}' 已被啟用",
+        "disabled": "過濾規則 '{{key}}' 已被禁用"
+      },
+      "panel": {
+        "opening": "正在開啟設定面板...",
+        "closing": "正在關閉設定面板...",
+        "saving": "正在儲存設定..."
+      }
+    },
+    "textProcessor": {
+      "filtered": "文本已過濾：\"{{text}}\" (原因：{{reason}})"
+    },
+    "quickScan": {
+      "switchToFallback": "[靜態掃描] 切換到主線程備選方案。",
+      "fallbackFailed": "[靜態掃描] 主線程備選方案失敗：{{error}}",
+      "fallback": {
+        "starting": "[靜態掃描 - 備選方案] 開始在主線程中處理...",
+        "completed": "[靜態掃描 - 備選方案] 處理完成，共 {{count}} 條有效文本。"
+      },
+      "worker": {
+        "logPrefix": "[靜態掃描 Worker]",
+        "starting": "[靜態掃描] 開始執行，嘗試使用 Web Worker...",
+        "completed": "[靜態掃描] Worker 處理成功，收到 {{count}} 條文本。",
+        "scanComplete": "[靜態掃描 Worker] 處理完成，共 {{count}} 條有效文本。正在發回主線程...",
+        "initFailed": "[靜態掃描] Worker 初始化失敗。這很可能是由於網站的內容安全策略（CSP）阻止了腳本。",
+        "originalError": "[靜態掃描] 原始錯誤：{{error}}",
+        "sendingData": "[靜態掃描] Web Worker 已建立，正在發送 {{count}} 條文本進行處理...",
+        "initSyncError": "[靜態掃描] Worker 初始化時發生同步錯誤：{{error}}"
+      }
+    },
+    "sessionScan": {
+      "switchToFallback": "[會話掃描] 切換到主線程備選方案。",
+      "domObserver": {
+        "stopped": "[會話掃描] 已停止監聽 DOM 變化。"
+      },
+      "fallback": {
+        "initialized": "[會話掃描 - 備選方案] 初始化完成。",
+        "cleared": "[會話掃描 - 備選方案] 資料已清空。"
+      },
+      "worker": {
+        "logPrefix": "[會話掃描 Worker]",
+        "starting": "會話掃描：嘗試啟動 Web Worker...",
+        "initFailed": "[會話掃描] Worker 初始化失敗。這很可能是由於網站的內容安全策略（CSP）阻止了腳本。",
+        "originalError": "[會話掃描] 原始錯誤：{{error}}",
+        "initialized": "[會話掃描] Worker 初始化成功，已發送 {{count}} 條初始文本以開始會話。",
+        "initSyncError": "[會話掃描] Worker 初始化時發生同步錯誤：{{error}}",
+        "clearCommandSent": "[會話掃描] 已向 Worker 發送清空指令。"
+      }
+    },
+    "ui": {
+      "copyButton": {
+        "copied": "複製按鈕被點擊，複製了 {{count}} 個字元。",
+        "nothingToCopy": "複製按鈕被點擊，但沒有內容可複製或按鈕被禁用。"
+      },
+      "confirmationModal": {
+        "sessionScan": {
+          "confirmed": "使用者確認清空會話掃描文本，正在呼叫回調..."
+        },
+        "quickScan": {
+          "confirmed": "使用者確認清空快速掃描文本。"
+        },
+        "cancelled": "使用者取消了清空操作。"
+      },
+      "modal": {
+        "openingAndScanning": "正在開啟主模態框並啟動靜態掃描...",
+        "scanFailed": "靜態掃描失敗：{{error}}",
+        "closing": "正在關閉主模態框..."
+      }
+    },
+    "exporter": {
+      "csvError": "在解析文本並生成 CSV 時發生錯誤：{{error}}",
+      "fileExported": "檔案已匯出：{{filename}}",
+      "noContent": "沒有內容可匯出。",
+      "unknownFormat": "未知的匯出格式：{{format}}"
+    },
+    "main": {
+      "requestingSessionScanData": "從 session-scan 模式請求完整資料...",
+      "exportingQuickScanData": "從 quick-scan 模式的記憶體中匯出完整資料...",
+      "inIframe": "腳本在 iframe 中，已跳過初始化。",
+      "initializing": "腳本開始初始化...",
+      "initialSettingsLoaded": "初始設定已載入：{{settings}}"
+    }
   }
 }

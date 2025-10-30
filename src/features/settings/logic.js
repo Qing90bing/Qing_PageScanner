@@ -1,5 +1,6 @@
 import { getValue, setValue } from '../../shared/services/tampermonkey.js';
 import { log } from '../../shared/utils/logger.js';
+import { t } from '../../shared/i18n/index.js';
 // src/core/settings.js
 
 /**
@@ -127,7 +128,7 @@ export function saveSettings(newSettings) {
   Object.keys(newSettings).forEach(key => {
     if (key !== 'filterRules') {
       if (oldSettings[key] !== newSettings[key]) {
-        log(`设置 '${key}' 已从 '${oldSettings[key]}' 更改为 '${newSettings[key]}'`);
+        log(t('log.settings.changed', { key, oldValue: oldSettings[key], newValue: newSettings[key] }));
       }
     }
   });
@@ -137,8 +138,8 @@ export function saveSettings(newSettings) {
   const newRules = newSettings.filterRules || {};
   Object.keys(newRules).forEach(key => {
     if (oldRules[key] !== newRules[key]) {
-      const status = newRules[key] ? '启用' : '禁用';
-      log(`过滤规则 '${key}' 已被${status}`);
+      const statusKey = newRules[key] ? 'log.settings.filterRuleChanged.enabled' : 'log.settings.filterRuleChanged.disabled';
+      log(t(statusKey, { key }));
     }
   });
 

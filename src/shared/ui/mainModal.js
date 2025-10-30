@@ -85,7 +85,7 @@ export async function openModal() {
         console.error(t('notifications.modalInitError'));
         return;
     }
-    log('正在打开主模态框并启动静态扫描...');
+    log(t('log.ui.modal.openingAndScanning'));
 
     // 1. 立即显示加载状态并打开模态框
     updateModalContent(state.SHOW_LOADING, true, 'quick-scan');
@@ -111,7 +111,7 @@ export async function openModal() {
     } catch (error) {
         hideLoading(); // 确保在出错时也隐藏加载动画
         // 错误处理
-        log(`静态扫描失败: ${error.message}`);
+        log(t('log.ui.modal.scanFailed', { error: error.message }));
         showNotification(t('scan.quickFailed'), { type: 'error' });
 
         // 显示一个空状态或错误信息
@@ -125,7 +125,7 @@ export async function openModal() {
  */
 export function closeModal() {
     if (state.modalOverlay && state.modalOverlay.classList.contains('is-visible')) {
-        log('正在关闭主模态框...');
+        log(t('log.ui.modal.closing'));
         state.modalOverlay.classList.remove('is-visible');
         state.modalOverlay.removeEventListener('keydown', handleKeyDown);
     }

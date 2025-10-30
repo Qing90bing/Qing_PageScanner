@@ -9,12 +9,24 @@
 // --- 状态变量 ---
 let sessionTexts = new Set();
 let filterRules = {};
+let translations = {};
 
 // --- 核心逻辑 (从主线程迁移而来) ---
 
 // 动态导入过滤逻辑，esbuild 会在构建时将其内联
 // @ts-ignore
 import { shouldFilter } from '../../shared/utils/filterLogic.js';
+
+const t = (key, replacements) => {
+    let value = translations[key] || key;
+    if (replacements) {
+        Object.keys(replacements).forEach(placeholder => {
+            const regex = new RegExp(`{{${placeholder}}}`, 'g');
+            value = value.replace(regex, replacements[placeholder]);
+        });
+    }
+    return value;
+};
 
 /**
  * 处理并可能添加单个文本片段到会话集合中。
@@ -33,7 +45,7 @@ function processAndAddText(rawText, logPrefix = '') {
     if (filterResult) {
         // Worker 中没有 log 工具，直接使用 console.log
         const prefix = logPrefix ? `${logPrefix} ` : '';
-        console.log(`[会话扫描 Worker] ${prefix}文本已过滤: "${textForFiltering}" (原因: ${filterResult})`);
+        console.log(t('workerLogPrefix'), prefix + t('textFiltered', { text: textForFiltering, reason: filterResult }));
         return false;
     }
 
@@ -69,6 +81,7 @@ self.onmessage = (event) => {
         // 初始化：接收过滤规则
         case 'init':
             filterRules = payload.filterRules || {};
+            translations = payload.translations || {};
             break;
 
         // 数据处理：接收一批原始文本进行处理

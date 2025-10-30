@@ -25,20 +25,20 @@ export const performQuickScan = (texts) => {
 
         // 备选方案逻辑
         const runFallback = () => {
-            log('[静态扫描] 切换到主线程备选方案。');
+            log(t('log.quickScan.switchToFallback'));
             showNotification(t('notifications.cspWorkerWarning'), { type: 'info', duration: 5000 });
             try {
                 const result = performScanInMainThread(texts, filterRules, enableDebugLogging);
                 updateScanCount(result.count, 'static');
                 resolve(result);
             } catch (fallbackError) {
-                log(`[静态扫描] 主线程备选方案失败: ${fallbackError.message}`, 'error');
+                log(t('log.quickScan.fallbackFailed', { error: fallbackError.message }), 'error');
                 reject(fallbackError);
             }
         };
 
         try {
-            log('[静态扫描] 开始执行，尝试使用 Web Worker...');
+            log(t('log.quickScan.worker.starting'));
             const workerScript = __QUICK_SCAN_WORKER_STRING__;
             const workerUrl = `data:application/javascript,${encodeURIComponent(workerScript)}`;
             const trustedUrl = createTrustedWorkerUrl(workerUrl);
@@ -47,7 +47,7 @@ export const performQuickScan = (texts) => {
             worker.onmessage = (event) => {
                 const { type, payload } = event.data;
                 if (type === 'scanCompleted') {
-                    log(`[静态扫描] Worker 处理成功，收到 ${payload.count} 条文本。`);
+                    log(t('log.quickScan.worker.completed', { count: payload.count }));
                     updateScanCount(payload.count, 'static');
                     resolve(payload);
                     worker.terminate();
@@ -55,22 +55,31 @@ export const performQuickScan = (texts) => {
             };
 
             worker.onerror = (error) => {
-                log('[静态扫描] Worker 初始化失败。这很可能是由于网站的内容安全策略（CSP）阻止了脚本。', 'warn');
-                log(`[静态扫描] 原始错误: ${error.message}`, 'debug');
+                log(t('log.quickScan.worker.initFailed'), 'warn');
+                log(t('log.quickScan.worker.originalError', { error: error.message }), 'debug');
                 worker.terminate();
                 runFallback();
             };
 
             // 只有在 onerror 没有立即触发的情况下，这些日志才有意义
-            log(`[静态扫描] Web Worker 已创建，正在发送 ${texts.length} 条文本进行处理...`);
+            log(t('log.quickScan.worker.sendingData', { count: texts.length }));
             worker.postMessage({
                 type: 'scan',
-                payload: { texts, filterRules, enableDebugLogging }
+                payload: {
+                    texts,
+                    filterRules,
+                    enableDebugLogging,
+                    translations: {
+                        workerLogPrefix: t('log.quickScan.worker.logPrefix'),
+                        textFiltered: t('log.textProcessor.filtered'),
+                        scanComplete: t('log.quickScan.worker.completed'),
+                    },
+                },
             });
 
         } catch (e) {
             // 同步错误（例如，如果浏览器完全不支持 Worker）
-            log(`[静态扫描] Worker 初始化时发生同步错误: ${e.message}`, 'error');
+            log(t('log.quickScan.worker.initSyncError', { error: e.message }), 'error');
             runFallback();
         }
     });

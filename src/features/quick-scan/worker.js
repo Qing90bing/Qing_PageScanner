@@ -24,6 +24,18 @@ self.onmessage = (event) => {
 
     // 从主线程接收调试日志的开关状态
     const enableDebugLogging = payload.enableDebugLogging || false;
+    const translations = payload.translations || {};
+
+    const t = (key, replacements) => {
+        let value = translations[key] || key;
+        if (replacements) {
+            Object.keys(replacements).forEach(placeholder => {
+                const regex = new RegExp(`{{${placeholder}}}`, 'g');
+                value = value.replace(regex, replacements[placeholder]);
+            });
+        }
+        return value;
+    };
 
     /**
      * @description Worker 内部的条件日志记录器。
@@ -31,12 +43,11 @@ self.onmessage = (event) => {
      */
     const log = (...args) => {
         if (enableDebugLogging) {
-            console.log('[静态扫描 Worker]', ...args);
+            console.log(t('workerLogPrefix'), ...args);
         }
     };
 
     if (type === 'scan') {
-        log(`[静态扫描 Worker] 收到 ${payload.texts.length} 条文本，开始处理...`);
         const { texts, filterRules } = payload;
         const uniqueTexts = new Set();
 
@@ -53,7 +64,7 @@ self.onmessage = (event) => {
                 // 3. 应用过滤规则
                 const filterResult = shouldFilter(textForFiltering, filterRules);
                 if (filterResult) {
-                    log(`文本已过滤: "${textForFiltering}" (原因: ${filterResult})`);
+                    log(t('textFiltered', { text: textForFiltering, reason: filterResult }));
                     return;
                 }
 
@@ -65,7 +76,7 @@ self.onmessage = (event) => {
         const textsArray = Array.from(uniqueTexts);
         const formattedText = formatTextsForTranslation(textsArray);
 
-        log(`[静态扫描 Worker] 处理完成，共 ${textsArray.length} 条有效文本。正在发回主线程...`);
+        log(t('scanComplete', { count: textsArray.length }));
         // 5. 将处理完成的结果发送回主线程
         self.postMessage({
             type: 'scanCompleted',

@@ -8,6 +8,7 @@
 
 import { shouldFilter } from '../../shared/utils/filterLogic.js';
 import { log } from '../../shared/utils/logger.js';
+import { t } from '../../shared/i18n/index.js';
 
 // --- 状态变量 (模拟 Worker 的内部状态) ---
 let sessionTexts = new Set();
@@ -19,7 +20,7 @@ let filterRules = {};
  */
 export function initFallback(rules) {
     filterRules = rules || {};
-    log('[会话扫描 - 备选方案] 初始化完成。');
+    log(t('log.sessionScan.fallback.initialized'));
 }
 
 /**
@@ -41,7 +42,7 @@ export function processTextsInFallback(texts, logPrefix = '') {
             const filterResult = shouldFilter(textForFiltering, filterRules);
             if (filterResult) {
                 const prefix = logPrefix ? `${logPrefix} ` : '';
-                log(`${prefix}文本已过滤: "${textForFiltering}" (原因: ${filterResult})`);
+                log(prefix + t('log.textProcessor.filtered', { text: textForFiltering, reason: filterResult }));
                 return;
             }
 
@@ -84,5 +85,5 @@ export function getSummaryInFallback() {
  */
 export function clearInFallback() {
     sessionTexts.clear();
-    log('[会话扫描 - 备选方案] 数据已清空。');
+    log(t('log.sessionScan.fallback.cleared'));
 }

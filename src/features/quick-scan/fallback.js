@@ -9,6 +9,7 @@
 import { shouldFilter } from '../../shared/utils/filterLogic.js';
 import { formatTextsForTranslation } from '../../shared/utils/formatting.js';
 import { log } from '../../shared/utils/logger.js';
+import { t } from '../../shared/i18n/index.js';
 
 /**
  * @description 在主线程中同步执行文本扫描和处理。
@@ -18,7 +19,7 @@ import { log } from '../../shared/utils/logger.js';
  * @returns {{formattedText: string, count: number}} - 包含格式化文本和计数的对象。
  */
 export const performScanInMainThread = (texts, filterRules, enableDebugLogging) => {
-    log('[静态扫描 - 备选方案] 开始在主线程中处理...');
+    log(t('log.quickScan.fallback.starting'));
     const uniqueTexts = new Set();
 
     if (Array.isArray(texts)) {
@@ -35,7 +36,7 @@ export const performScanInMainThread = (texts, filterRules, enableDebugLogging) 
             const filterResult = shouldFilter(textForFiltering, filterRules);
             if (filterResult) {
                 if (enableDebugLogging) {
-                    log(`文本已过滤: "${textForFiltering}" (原因: ${filterResult})`);
+                    log(t('log.textProcessor.filtered', { text: textForFiltering, reason: filterResult }));
                 }
                 return;
             }
@@ -48,7 +49,7 @@ export const performScanInMainThread = (texts, filterRules, enableDebugLogging) 
     const textsArray = Array.from(uniqueTexts);
     const formattedText = formatTextsForTranslation(textsArray);
 
-    log(`[静态扫描 - 备选方案] 处理完成，共 ${textsArray.length} 条有效文本。`);
+    log(t('log.quickScan.fallback.completed', { count: textsArray.length }));
 
     return {
         formattedText,

@@ -5,7 +5,7 @@
  * @description 提供一个基于用户设置的条件化日志记录器。
  */
 
-const LOG_PREFIX = '[文本提取脚本-Debug]';
+import { t } from '../i18n/index.js';
 
 // 模块级变量，用于缓存调试模式的状态
 let isDebugEnabled = false;
@@ -26,6 +26,6 @@ export function updateLoggerState(isEnabled) {
  */
 export function log(...args) {
   if (isDebugEnabled) {
-    console.log(LOG_PREFIX, ...args);
+    console.log(t('log.prefix'), ...args);
   }
 }

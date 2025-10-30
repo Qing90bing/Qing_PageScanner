@@ -78,7 +78,7 @@ export const start = (onUpdate) => {
 
     // 备选模式激活逻辑
     const activateFallbackMode = (initialTexts) => {
-        log('[会话扫描] 切换到主线程备选方案。', 'warn');
+        log(t('log.sessionScan.switchToFallback'), 'warn');
         worker = null;
         useFallback = true;
         showNotification(t('notifications.cspWorkerWarning'), { type: 'info', duration: 5000 });
@@ -98,7 +98,7 @@ export const start = (onUpdate) => {
     const initialTexts = extractAndProcessText();
 
     try {
-        log('会话扫描：尝试启动 Web Worker...');
+        log(t('log.sessionScan.worker.starting'));
         const workerScript = __WORKER_STRING__;
         const workerUrl = `data:application/javascript,${encodeURIComponent(workerScript)}`;
         const trustedUrl = createTrustedWorkerUrl(workerUrl);
@@ -116,20 +116,29 @@ export const start = (onUpdate) => {
         };
 
         worker.onerror = (error) => {
-            log('[会话扫描] Worker 初始化失败。这很可能是由于网站的内容安全策略（CSP）阻止了脚本。', 'warn');
-            log(`[会话扫描] 原始错误: ${error.message}`, 'debug');
+            log(t('log.sessionScan.worker.initFailed'), 'warn');
+            log(t('log.sessionScan.worker.originalError', { error: error.message }), 'debug');
             if (worker) worker.terminate();
             activateFallbackMode(initialTexts);
         };
 
-        worker.postMessage({ type: 'init', payload: { filterRules } });
+        worker.postMessage({
+            type: 'init',
+            payload: {
+                filterRules,
+                translations: {
+                    workerLogPrefix: t('log.sessionScan.worker.logPrefix'),
+                    textFiltered: t('log.textProcessor.filtered'),
+                },
+            },
+        });
         // 初始扫描不带 logPrefix
         worker.postMessage({ type: 'data', payload: { texts: initialTexts } });
-        log(`[会话扫描] Worker 初始化成功，已发送 ${initialTexts.length} 条初始文本以开始会话。`);
+        log(t('log.sessionScan.worker.initialized', { count: initialTexts.length }));
 
     } catch (e) {
         // 同步错误（如浏览器不支持 Worker）
-        log(`[会话扫描] Worker 初始化时发生同步错误: ${e.message}`, 'error');
+        log(t('log.sessionScan.worker.initSyncError', { error: e.message }), 'error');
         activateFallbackMode(initialTexts);
     }
 
@@ -150,7 +159,7 @@ export const stop = (onStopped) => {
         return;
     }
 
-    log('[会话扫描] 已停止监听 DOM 变化。');
+    log(t('log.sessionScan.domObserver.stopped'));
     if (observer) {
         observer.disconnect();
         observer = null;
@@ -208,6 +217,6 @@ export function clearSessionTexts() {
         worker.postMessage({ type: 'clear' });
         // Worker 在清空后会发送一个 countUpdated 消息，其中 payload 为 0
         // 这会触发 onUpdateCallback 和 updateScanCount，所以我们不需要在这里重复
-        log('[会話掃描] 已向 Worker 發送清空指令。');
+        log(t('log.sessionScan.worker.clearCommandSent'));
     }
 }

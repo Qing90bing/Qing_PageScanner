@@ -46,7 +46,7 @@ const handleKeyDown = (event) => {
  * @description 显示设置面板。
  */
 function showSettingsPanel() {
-    log('正在打开设置面板...');
+    log(t('log.settings.panel.opening'));
     if (settingsPanel) {
         setTimeout(() => settingsPanel.classList.add('is-visible'), 10);
         return;
@@ -116,7 +116,7 @@ function showSettingsPanel() {
  */
 function hideSettingsPanel() {
     if (settingsPanel && settingsPanel.classList.contains('is-visible')) {
-        log('正在关闭设置面板...');
+        log(t('log.settings.panel.closing'));
         settingsPanel.removeEventListener('keydown', handleKeyDown);
         settingsPanel.classList.remove('is-visible');
         setTimeout(() => {
@@ -134,7 +134,7 @@ function hideSettingsPanel() {
  * @description 处理“保存”按钮的点击事件。
  */
 function handleSave() {
-    log('正在保存设置...');
+    log(t('log.settings.panel.saving'));
     const newSettings = {};
 
     // 1. 从所有下拉菜单收集值

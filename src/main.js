@@ -5,6 +5,7 @@ import { uiContainer } from './shared/ui/uiContainer.js';
 import { log, updateLoggerState } from './shared/utils/logger.js';
 import { loadSettings } from './features/settings/logic.js';
 import { initializeExporter } from './features/export/exporter.js';
+import { t } from './shared/i18n/index.js';
 import { initializeLanguage } from './shared/i18n/management/languageManager.js';
 import './features/quick-scan/index.js'; // 导入以备将来初始化
 import './features/session-scan/index.js'; // 导入以备将来初始化
@@ -16,7 +17,7 @@ import './features/session-scan/index.js'; // 导入以备将来初始化
 export function main() {
   // 将顶层窗口检查移入函数内部
   if (window.top !== window.self) {
-    log('脚本在 iframe 中，已跳过初始化。');
+    log(t('log.main.inIframe'));
     return;
   }
 
@@ -29,8 +30,8 @@ export function main() {
   // 3. 根据设置初始化日志记录器
   updateLoggerState(settings.enableDebugLogging);
 
-  log('脚本开始初始化...');
-  log('初始设置已加载:', settings);
+  log(t('log.main.initializing'));
+  log(t('log.main.initialSettingsLoaded', { settings: JSON.stringify(settings) }));
 
   // --- 将所有样式注入到Shadow DOM中 ---
   // 这是由 build.js 在构建时定义的全局变量

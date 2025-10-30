@@ -67,7 +67,7 @@ function formatAsCsv(text) {
             id++;
         }
     } catch (error) {
-        log('在解析文本并生成 CSV 时发生错误:', error);
+        log(t('log.exporter.csvError'), error);
         // 出错时依然返回只包含表头的空文件，以保持健壮性
         return header;
     }
@@ -92,7 +92,7 @@ function downloadFile(filename, content, mimeType) {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    log(`文件已导出: ${filename}`);
+    log(t('log.exporter.fileExported', { filename }));
 }
 
 /**
@@ -105,7 +105,7 @@ function exportToFile({ format }) {
 
     const processAndDownload = (text) => {
         if (!text || text.trim() === '' || text.trim() === '[]') {
-            log('没有内容可导出。');
+            log(t('log.exporter.noContent'));
             return;
         }
 
@@ -128,7 +128,7 @@ function exportToFile({ format }) {
                 mimeType = 'text/csv;charset=utf-8;';
                 break;
             default:
-                log(`未知的导出格式: ${format}`);
+                log(t('log.exporter.unknownFormat', { format }));
                 return;
         }
 
@@ -136,10 +136,10 @@ function exportToFile({ format }) {
     };
 
     if (currentMode === 'session-scan') {
-        log('从 session-scan 模式请求完整数据...');
+        log(t('log.main.requestingSessionScanData'));
         requestSummary(processAndDownload);
     } else {
-        log('从 quick-scan 模式的内存中导出完整数据...');
+        log(t('log.main.exportingQuickScanData'));
         processAndDownload(fullQuickScanContent);
     }
 }
