@@ -31,7 +31,7 @@ export function main() {
   updateLoggerState(settings.enableDebugLogging);
 
   log(t('log.main.initializing'));
-  log(t('log.main.initialSettingsLoaded', { settings: JSON.stringify(settings) }));
+  log(t('log.main.initialSettingsLoaded'), settings);
 
   // --- 将所有样式注入到Shadow DOM中 ---
   // 这是由 build.js 在构建时定义的全局变量

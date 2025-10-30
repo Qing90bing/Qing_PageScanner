@@ -166,7 +166,9 @@
         "opening": "Opening settings panel...",
         "closing": "Closing settings panel...",
         "saving": "Saving settings..."
-      }
+      },
+      "parseError": "Error parsing saved settings:",
+      "invalidObject": "Attempted to save an invalid object for settings:"
     },
     "textProcessor": {
       "filtered": "Text filtered: \"{{text}}\" (Reason: {{reason}})"
@@ -239,7 +241,20 @@
       "exportingQuickScanData": "Exporting full data from quick-scan mode's memory...",
       "inIframe": "Script is in an iframe, skipping initialization.",
       "initializing": "Script initialization started...",
-      "initialSettingsLoaded": "Initial settings loaded: {{settings}}"
+      "initialSettingsLoaded": "Initial settings loaded:"
+    },
+    "dom": {
+      "ttpCreationError": "Failed to create Trusted Type policy:",
+      "svgParseError": "Invalid or failed to parse SVG string:"
+    },
+    "eventBus": {
+      "callbackError": "Error in callback for event '{{eventName}}':"
+    },
+    "trustedTypes": {
+      "workerPolicyError": "Failed to create Trusted Types worker policy:",
+      "htmlPolicyError": "Failed to create Trusted Types HTML policy:",
+      "defaultWorkerPolicyWarning": "Trusted Types default policy failed for worker URL, falling back to raw URL.",
+      "defaultHtmlPolicyWarning": "Trusted Types default policy failed for HTML, falling back to raw string."
     }
   }
 }

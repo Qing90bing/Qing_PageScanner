@@ -101,7 +101,7 @@ export function loadSettings() {
       };
       return mergedSettings;
     } catch (error) {
-      console.error("解析已保存的设置时出错:", error);
+      log(t('log.settings.parseError'), error);
       // 如果解析失败，返回默认设置以保证脚本能继续运行
       return defaultSettings;
     }
@@ -118,7 +118,7 @@ export function loadSettings() {
  */
 export function saveSettings(newSettings) {
   if (typeof newSettings !== 'object' || newSettings === null) {
-    console.error("尝试保存的设置不是一个有效的对象:", newSettings);
+    log(t('log.settings.invalidObject'), newSettings);
     return;
   }
 

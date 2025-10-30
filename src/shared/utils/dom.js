@@ -1,4 +1,6 @@
 // src/ui/utils.js
+import { log } from './logger.js';
+import { t } from '../i18n/index.js';
 
 /**
  * @module utils
@@ -32,7 +34,7 @@ function createTrustedTypePolicy() {
             if (e.message.includes('already exists')) {
                 trustedTypePolicy = window.trustedTypes.policies.get('script-svg-policy');
             } else {
-                console.error('创建 Trusted Type 策略失败:', e);
+                log(t('log.dom.ttpCreationError'), e);
             }
         }
     }
@@ -63,7 +65,7 @@ export function createSVGFromString(svgString) {
     const svgNode = doc.documentElement;
 
     if (!svgNode || svgNode.nodeName.toLowerCase() !== 'svg' || svgNode.querySelector('parsererror')) {
-        console.error('无效或解析失败的 SVG 字符串:', svgString);
+        log(t('log.dom.svgParseError'), svgString);
         return null;
     }
 

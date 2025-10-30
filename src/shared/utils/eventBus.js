@@ -1,4 +1,6 @@
 // src/shared/utils/eventBus.js
+import { log } from './logger.js';
+import { t } from '../i18n/index.js';
 
 /**
  * @module eventBus
@@ -36,7 +38,7 @@ export function fire(eventName, data) {
             try {
                 callback(data);
             } catch (error) {
-                console.error(`在 '${eventName}' 事件的回调中发生错误:`, error);
+                log(t('log.eventBus.callbackError', { eventName }), error);
             }
         });
     }

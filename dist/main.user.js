@@ -243,6 +243,113 @@ var TextExtractor = (() => {
         title: "Advanced Settings Explanation",
         enable_debug_logging: "When enabled, the script will output detailed internal status, execution steps, and error messages to the browser's <strong>Developer Tools Console</strong> (usually opened with F12). This is primarily for developers or users who need to submit detailed bug reports."
       }
+    },
+    log: {
+      prefix: "[Text Extractor Script-Debug]",
+      language: {
+        switched: "Language switched to: {{lang}}",
+        notFound: "Language '{{lang}}' not found, falling back to 'en'."
+      },
+      settings: {
+        changed: "Setting '{{key}}' changed from '{{oldValue}}' to '{{newValue}}'",
+        filterRuleChanged: {
+          enabled: "Filter rule '{{key}}' has been enabled",
+          disabled: "Filter rule '{{key}}' has been disabled"
+        },
+        panel: {
+          opening: "Opening settings panel...",
+          closing: "Closing settings panel...",
+          saving: "Saving settings..."
+        },
+        parseError: "Error parsing saved settings:",
+        invalidObject: "Attempted to save an invalid object for settings:"
+      },
+      textProcessor: {
+        filtered: 'Text filtered: "{{text}}" (Reason: {{reason}})'
+      },
+      quickScan: {
+        switchToFallback: "[Quick Scan] Switching to main thread fallback.",
+        fallbackFailed: "[Quick Scan] Main thread fallback failed: {{error}}",
+        fallback: {
+          starting: "[Quick Scan - Fallback] Starting processing in main thread...",
+          completed: "[Quick Scan - Fallback] Processing complete, found {{count}} unique texts."
+        },
+        worker: {
+          logPrefix: "[Quick Scan Worker]",
+          starting: "[Quick Scan] Starting execution, attempting to use Web Worker...",
+          completed: "[Quick Scan] Worker processing successful, received {{count}} texts.",
+          scanComplete: "[Quick Scan Worker] Processing complete, found {{count}} unique texts. Sending back to main thread...",
+          initFailed: "[Quick Scan] Worker initialization failed. This is likely due to the website's Content Security Policy (CSP).",
+          originalError: "[Quick Scan] Original error: {{error}}",
+          sendingData: "[Quick Scan] Web Worker created, sending {{count}} texts for processing...",
+          initSyncError: "[Quick Scan] Synchronous error during Worker initialization: {{error}}"
+        }
+      },
+      sessionScan: {
+        switchToFallback: "[Session Scan] Switching to main thread fallback.",
+        domObserver: {
+          stopped: "[Session Scan] Stopped listening for DOM changes."
+        },
+        fallback: {
+          initialized: "[Session Scan - Fallback] Initialized.",
+          cleared: "[Session Scan - Fallback] Data cleared."
+        },
+        worker: {
+          logPrefix: "[Session Scan Worker]",
+          starting: "Session Scan: Attempting to start Web Worker...",
+          initFailed: "[Session Scan] Worker initialization failed. This is likely due to the website's Content Security Policy (CSP).",
+          originalError: "[Session Scan] Original error: {{error}}",
+          initialized: "[Session Scan] Worker initialized successfully, sent {{count}} initial texts to start the session.",
+          initSyncError: "[Session Scan] Synchronous error during Worker initialization: {{error}}",
+          clearCommandSent: "[Session Scan] Clear command sent to worker."
+        }
+      },
+      ui: {
+        copyButton: {
+          copied: "Copy button clicked, copied {{count}} characters.",
+          nothingToCopy: "Copy button clicked, but there was no content to copy or the button was disabled."
+        },
+        confirmationModal: {
+          sessionScan: {
+            confirmed: "User confirmed clearing session scan texts, invoking callback..."
+          },
+          quickScan: {
+            confirmed: "User confirmed clearing quick scan texts."
+          },
+          cancelled: "User cancelled the clear operation."
+        },
+        modal: {
+          openingAndScanning: "Opening main modal and starting static scan...",
+          scanFailed: "Static scan failed: {{error}}",
+          closing: "Closing main modal..."
+        }
+      },
+      exporter: {
+        csvError: "Error while parsing text and generating CSV: {{error}}",
+        fileExported: "File exported: {{filename}}",
+        noContent: "No content to export.",
+        unknownFormat: "Unknown export format: {{format}}"
+      },
+      main: {
+        requestingSessionScanData: "Requesting full data from session-scan mode...",
+        exportingQuickScanData: "Exporting full data from quick-scan mode's memory...",
+        inIframe: "Script is in an iframe, skipping initialization.",
+        initializing: "Script initialization started...",
+        initialSettingsLoaded: "Initial settings loaded:"
+      },
+      dom: {
+        ttpCreationError: "Failed to create Trusted Type policy:",
+        svgParseError: "Invalid or failed to parse SVG string:"
+      },
+      eventBus: {
+        callbackError: "Error in callback for event '{{eventName}}':"
+      },
+      trustedTypes: {
+        workerPolicyError: "Failed to create Trusted Types worker policy:",
+        htmlPolicyError: "Failed to create Trusted Types HTML policy:",
+        defaultWorkerPolicyWarning: "Trusted Types default policy failed for worker URL, falling back to raw URL.",
+        defaultHtmlPolicyWarning: "Trusted Types default policy failed for HTML, falling back to raw string."
+      }
     }
   };
   var zh_CN_default = {
@@ -395,6 +502,113 @@ var TextExtractor = (() => {
       advanced: {
         title: "\u9AD8\u7EA7\u8BBE\u7F6E\u8BF4\u660E",
         enable_debug_logging: "\u542F\u7528\u540E\uFF0C\u811A\u672C\u4F1A\u5C06\u8BE6\u7EC6\u7684\u5185\u90E8\u8FD0\u884C\u72B6\u6001\u3001\u6267\u884C\u6B65\u9AA4\u3001\u9519\u8BEF\u4FE1\u606F\u7B49\u8F93\u51FA\u5230\u6D4F\u89C8\u5668\u7684<strong>\u5F00\u53D1\u8005\u5DE5\u5177\u63A7\u5236\u53F0</strong>\uFF08\u901A\u5E38\u6309 F12 \u6253\u5F00\uFF09\u3002\u6B64\u529F\u80FD\u4E3B\u8981\u9762\u5411\u5F00\u53D1\u8005\u6216\u9700\u8981\u63D0\u4EA4\u8BE6\u7EC6\u9519\u8BEF\u62A5\u544A\u7684\u7528\u6237\u3002"
+      }
+    },
+    log: {
+      prefix: "[\u6587\u672C\u63D0\u53D6\u811A\u672C-Debug]",
+      language: {
+        switched: "\u8BED\u8A00\u5DF2\u5207\u6362\u81F3: {{lang}}",
+        notFound: "\u8BED\u8A00 '{{lang}}' \u4E0D\u5B58\u5728\uFF0C\u56DE\u9000\u5230 'en'\u3002"
+      },
+      settings: {
+        changed: "\u8BBE\u7F6E '{{key}}' \u5DF2\u4ECE '{{oldValue}}' \u66F4\u6539\u4E3A '{{newValue}}'",
+        filterRuleChanged: {
+          enabled: "\u8FC7\u6EE4\u89C4\u5219 '{{key}}' \u5DF2\u88AB\u542F\u7528",
+          disabled: "\u8FC7\u6EE4\u89C4\u5219 '{{key}}' \u5DF2\u88AB\u7981\u7528"
+        },
+        panel: {
+          opening: "\u6B63\u5728\u6253\u5F00\u8BBE\u7F6E\u9762\u677F...",
+          closing: "\u6B63\u5728\u5173\u95ED\u8BBE\u7F6E\u9762\u677F...",
+          saving: "\u6B63\u5728\u4FDD\u5B58\u8BBE\u7F6E..."
+        },
+        parseError: "\u89E3\u6790\u5DF2\u4FDD\u5B58\u7684\u8BBE\u7F6E\u65F6\u51FA\u9519\uFF1A",
+        invalidObject: "\u5C1D\u8BD5\u4FDD\u5B58\u4E00\u4E2A\u65E0\u6548\u7684\u5BF9\u8C61\u4F5C\u4E3A\u8BBE\u7F6E\uFF1A"
+      },
+      textProcessor: {
+        filtered: '\u6587\u672C\u5DF2\u8FC7\u6EE4: "{{text}}" (\u539F\u56E0: {{reason}})'
+      },
+      quickScan: {
+        switchToFallback: "[\u9759\u6001\u626B\u63CF] \u5207\u6362\u5230\u4E3B\u7EBF\u7A0B\u5907\u9009\u65B9\u6848\u3002",
+        fallbackFailed: "[\u9759\u6001\u626B\u63CF] \u4E3B\u7EBF\u7A0B\u5907\u9009\u65B9\u6848\u5931\u8D25: {{error}}",
+        fallback: {
+          starting: "[\u9759\u6001\u626B\u63CF - \u5907\u9009\u65B9\u6848] \u5F00\u59CB\u5728\u4E3B\u7EBF\u7A0B\u4E2D\u5904\u7406...",
+          completed: "[\u9759\u6001\u626B\u63CF - \u5907\u9009\u65B9\u6848] \u5904\u7406\u5B8C\u6210\uFF0C\u5171 {{count}} \u6761\u6709\u6548\u6587\u672C\u3002"
+        },
+        worker: {
+          logPrefix: "[\u9759\u6001\u626B\u63CF Worker]",
+          starting: "[\u9759\u6001\u626B\u63CF] \u5F00\u59CB\u6267\u884C\uFF0C\u5C1D\u8BD5\u4F7F\u7528 Web Worker...",
+          completed: "[\u9759\u6001\u626B\u63CF] Worker \u5904\u7406\u6210\u529F\uFF0C\u6536\u5230 {{count}} \u6761\u6587\u672C\u3002",
+          scanComplete: "[\u9759\u6001\u626B\u63CF Worker] \u5904\u7406\u5B8C\u6210\uFF0C\u5171 {{count}} \u6761\u6709\u6548\u6587\u672C\u3002\u6B63\u5728\u53D1\u56DE\u4E3B\u7EBF\u7A0B...",
+          initFailed: "[\u9759\u6001\u626B\u63CF] Worker \u521D\u59CB\u5316\u5931\u8D25\u3002\u8FD9\u5F88\u53EF\u80FD\u662F\u7531\u4E8E\u7F51\u7AD9\u7684\u5185\u5BB9\u5B89\u5168\u7B56\u7565\uFF08CSP\uFF09\u963B\u6B62\u4E86\u811A\u672C\u3002",
+          originalError: "[\u9759\u6001\u626B\u63CF] \u539F\u59CB\u9519\u8BEF: {{error}}",
+          sendingData: "[\u9759\u6001\u626B\u63CF] Web Worker \u5DF2\u521B\u5EFA\uFF0C\u6B63\u5728\u53D1\u9001 {{count}} \u6761\u6587\u672C\u8FDB\u884C\u5904\u7406...",
+          initSyncError: "[\u9759\u6001\u626B\u63CF] Worker \u521D\u59CB\u5316\u65F6\u53D1\u751F\u540C\u6B65\u9519\u8BEF: {{error}}"
+        }
+      },
+      sessionScan: {
+        switchToFallback: "[\u4F1A\u8BDD\u626B\u63CF] \u5207\u6362\u5230\u4E3B\u7EBF\u7A0B\u5907\u9009\u65B9\u6848\u3002",
+        domObserver: {
+          stopped: "[\u4F1A\u8BDD\u626B\u63CF] \u5DF2\u505C\u6B62\u76D1\u542C DOM \u53D8\u5316\u3002"
+        },
+        fallback: {
+          initialized: "[\u4F1A\u8BDD\u626B\u63CF - \u5907\u9009\u65B9\u6848] \u521D\u59CB\u5316\u5B8C\u6210\u3002",
+          cleared: "[\u4F1A\u8BDD\u626B\u63CF - \u5907\u9009\u65B9\u6848] \u6570\u636E\u5DF2\u6E05\u7A7A\u3002"
+        },
+        worker: {
+          logPrefix: "[\u4F1A\u8BDD\u626B\u63CF Worker]",
+          starting: "\u4F1A\u8BDD\u626B\u63CF\uFF1A\u5C1D\u8BD5\u542F\u52A8 Web Worker...",
+          initFailed: "[\u4F1A\u8BDD\u626B\u63CF] Worker \u521D\u59CB\u5316\u5931\u8D25\u3002\u8FD9\u5F88\u53EF\u80FD\u662F\u7531\u4E8E\u7F51\u7AD9\u7684\u5185\u5BB9\u5B89\u5168\u7B56\u7565\uFF08CSP\uFF09\u963B\u6B62\u4E86\u811A\u672C\u3002",
+          originalError: "[\u4F1A\u8BDD\u626B\u63CF] \u539F\u59CB\u9519\u8BEF: {{error}}",
+          initialized: "[\u4F1A\u8BDD\u626B\u63CF] Worker \u521D\u59CB\u5316\u6210\u529F\uFF0C\u5DF2\u53D1\u9001 {{count}} \u6761\u521D\u59CB\u6587\u672C\u4EE5\u5F00\u59CB\u4F1A\u8BDD\u3002",
+          initSyncError: "[\u4F1A\u8BDD\u626B\u63CF] Worker \u521D\u59CB\u5316\u65F6\u53D1\u751F\u540C\u6B65\u9519\u8BEF: {{error}}",
+          clearCommandSent: "[\u4F1A\u8BDD\u626B\u63CF] \u5DF2\u5411 Worker \u53D1\u9001\u6E05\u7A7A\u6307\u4EE4\u3002"
+        }
+      },
+      ui: {
+        copyButton: {
+          copied: "\u590D\u5236\u6309\u94AE\u88AB\u70B9\u51FB\uFF0C\u590D\u5236\u4E86 {{count}} \u4E2A\u5B57\u7B26\u3002",
+          nothingToCopy: "\u590D\u5236\u6309\u94AE\u88AB\u70B9\u51FB\uFF0C\u4F46\u6CA1\u6709\u5185\u5BB9\u53EF\u590D\u5236\u6216\u6309\u94AE\u88AB\u7981\u7528\u3002"
+        },
+        confirmationModal: {
+          sessionScan: {
+            confirmed: "\u7528\u6237\u786E\u8BA4\u6E05\u7A7A\u4F1A\u8BDD\u626B\u63CF\u6587\u672C\uFF0C\u6B63\u5728\u8C03\u7528\u56DE\u8C03..."
+          },
+          quickScan: {
+            confirmed: "\u7528\u6237\u786E\u8BA4\u6E05\u7A7A\u5FEB\u901F\u626B\u63CF\u6587\u672C\u3002"
+          },
+          cancelled: "\u7528\u6237\u53D6\u6D88\u4E86\u6E05\u7A7A\u64CD\u4F5C\u3002"
+        },
+        modal: {
+          openingAndScanning: "\u6B63\u5728\u6253\u5F00\u4E3B\u6A21\u6001\u6846\u5E76\u542F\u52A8\u9759\u6001\u626B\u63CF...",
+          scanFailed: "\u9759\u6001\u626B\u63CF\u5931\u8D25: {{error}}",
+          closing: "\u6B63\u5728\u5173\u95ED\u4E3B\u6A21\u6001\u6846..."
+        }
+      },
+      exporter: {
+        csvError: "\u5728\u89E3\u6790\u6587\u672C\u5E76\u751F\u6210 CSV \u65F6\u53D1\u751F\u9519\u8BEF: {{error}}",
+        fileExported: "\u6587\u4EF6\u5DF2\u5BFC\u51FA: {{filename}}",
+        noContent: "\u6CA1\u6709\u5185\u5BB9\u53EF\u5BFC\u51FA\u3002",
+        unknownFormat: "\u672A\u77E5\u7684\u5BFC\u51FA\u683C\u5F0F: {{format}}"
+      },
+      main: {
+        requestingSessionScanData: "\u4ECE session-scan \u6A21\u5F0F\u8BF7\u6C42\u5B8C\u6574\u6570\u636E...",
+        exportingQuickScanData: "\u4ECE quick-scan \u6A21\u5F0F\u7684\u5185\u5B58\u4E2D\u5BFC\u51FA\u5B8C\u6574\u6570\u636E...",
+        inIframe: "\u811A\u672C\u5728 iframe \u4E2D\uFF0C\u5DF2\u8DF3\u8FC7\u521D\u59CB\u5316\u3002",
+        initializing: "\u811A\u672C\u5F00\u59CB\u521D\u59CB\u5316...",
+        initialSettingsLoaded: "\u521D\u59CB\u8BBE\u7F6E\u5DF2\u52A0\u8F7D:"
+      },
+      dom: {
+        ttpCreationError: "\u521B\u5EFA Trusted Type \u7B56\u7565\u5931\u8D25\uFF1A",
+        svgParseError: "\u65E0\u6548\u6216\u89E3\u6790\u5931\u8D25\u7684 SVG \u5B57\u7B26\u4E32\uFF1A"
+      },
+      eventBus: {
+        callbackError: "\u5728 '{{eventName}}' \u4E8B\u4EF6\u7684\u56DE\u8C03\u4E2D\u53D1\u751F\u9519\u8BEF\uFF1A"
+      },
+      trustedTypes: {
+        workerPolicyError: "\u521B\u5EFA Trusted Types worker \u7B56\u7565\u5931\u8D25\uFF1A",
+        htmlPolicyError: "\u521B\u5EFA Trusted Types HTML \u7B56\u7565\u5931\u8D25\uFF1A",
+        defaultWorkerPolicyWarning: "Trusted Types \u9ED8\u8BA4\u7B56\u7565\u5904\u7406 worker URL \u5931\u8D25\uFF0C\u56DE\u9000\u5230\u539F\u59CB URL\u3002",
+        defaultHtmlPolicyWarning: "Trusted Types \u9ED8\u8BA4\u7B56\u7565\u5904\u7406 HTML \u5931\u8D25\uFF0C\u56DE\u9000\u5230\u539F\u59CB\u5B57\u7B26\u4E32\u3002"
       }
     }
   };
@@ -549,8 +763,124 @@ var TextExtractor = (() => {
         title: "\u9032\u968E\u8A2D\u5B9A\u8AAA\u660E",
         enable_debug_logging: "\u555F\u7528\u5F8C\uFF0C\u8173\u672C\u6703\u5C07\u8A73\u7D30\u7684\u5167\u90E8\u904B\u884C\u72C0\u614B\u3001\u57F7\u884C\u6B65\u9A5F\u3001\u932F\u8AA4\u8CC7\u8A0A\u7B49\u8F38\u51FA\u5230\u700F\u89BD\u5668\u7684<strong>\u958B\u767C\u8005\u5DE5\u5177\u63A7\u5236\u53F0</strong>\uFF08\u901A\u5E38\u6309 F12 \u958B\u555F\uFF09\u3002\u6B64\u529F\u80FD\u4E3B\u8981\u9762\u5411\u958B\u767C\u8005\u6216\u9700\u8981\u63D0\u4EA4\u8A73\u7D30\u932F\u8AA4\u5831\u544A\u7684\u4F7F\u7528\u8005\u3002"
       }
+    },
+    log: {
+      prefix: "[\u6587\u672C\u63D0\u53D6\u8173\u672C-Debug]",
+      language: {
+        switched: "\u8A9E\u8A00\u5DF2\u5207\u63DB\u81F3\uFF1A{{lang}}",
+        notFound: "\u8A9E\u8A00 '{{lang}}' \u4E0D\u5B58\u5728\uFF0C\u9000\u56DE\u81F3 'en'\u3002"
+      },
+      settings: {
+        changed: "\u8A2D\u5B9A '{{key}}' \u5DF2\u5F9E '{{oldValue}}' \u8B8A\u66F4\u70BA '{{newValue}}'",
+        filterRuleChanged: {
+          enabled: "\u904E\u6FFE\u898F\u5247 '{{key}}' \u5DF2\u88AB\u555F\u7528",
+          disabled: "\u904E\u6FFE\u898F\u5247 '{{key}}' \u5DF2\u88AB\u7981\u7528"
+        },
+        panel: {
+          opening: "\u6B63\u5728\u958B\u555F\u8A2D\u5B9A\u9762\u677F...",
+          closing: "\u6B63\u5728\u95DC\u9589\u8A2D\u5B9A\u9762\u677F...",
+          saving: "\u6B63\u5728\u5132\u5B58\u8A2D\u5B9A..."
+        },
+        parseError: "\u89E3\u6790\u5DF2\u5132\u5B58\u7684\u8A2D\u5B9A\u6642\u51FA\u932F\uFF1A",
+        invalidObject: "\u8A66\u5716\u5132\u5B58\u4E00\u500B\u7121\u6548\u7684\u7269\u4EF6\u4F5C\u70BA\u8A2D\u5B9A\uFF1A"
+      },
+      textProcessor: {
+        filtered: '\u6587\u672C\u5DF2\u904E\u6FFE\uFF1A"{{text}}" (\u539F\u56E0\uFF1A{{reason}})'
+      },
+      quickScan: {
+        switchToFallback: "[\u975C\u614B\u6383\u63CF] \u5207\u63DB\u5230\u4E3B\u7DDA\u7A0B\u5099\u9078\u65B9\u6848\u3002",
+        fallbackFailed: "[\u975C\u614B\u6383\u63CF] \u4E3B\u7DDA\u7A0B\u5099\u9078\u65B9\u6848\u5931\u6557\uFF1A{{error}}",
+        fallback: {
+          starting: "[\u975C\u614B\u6383\u63CF - \u5099\u9078\u65B9\u6848] \u958B\u59CB\u5728\u4E3B\u7DDA\u7A0B\u4E2D\u8655\u7406...",
+          completed: "[\u975C\u614B\u6383\u63CF - \u5099\u9078\u65B9\u6848] \u8655\u7406\u5B8C\u6210\uFF0C\u5171 {{count}} \u689D\u6709\u6548\u6587\u672C\u3002"
+        },
+        worker: {
+          logPrefix: "[\u975C\u614B\u6383\u63CF Worker]",
+          starting: "[\u975C\u614B\u6383\u63CF] \u958B\u59CB\u57F7\u884C\uFF0C\u5617\u8A66\u4F7F\u7528 Web Worker...",
+          completed: "[\u975C\u614B\u6383\u63CF] Worker \u8655\u7406\u6210\u529F\uFF0C\u6536\u5230 {{count}} \u689D\u6587\u672C\u3002",
+          scanComplete: "[\u975C\u614B\u6383\u63CF Worker] \u8655\u7406\u5B8C\u6210\uFF0C\u5171 {{count}} \u689D\u6709\u6548\u6587\u672C\u3002\u6B63\u5728\u767C\u56DE\u4E3B\u7DDA\u7A0B...",
+          initFailed: "[\u975C\u614B\u6383\u63CF] Worker \u521D\u59CB\u5316\u5931\u6557\u3002\u9019\u5F88\u53EF\u80FD\u662F\u7531\u65BC\u7DB2\u7AD9\u7684\u5167\u5BB9\u5B89\u5168\u7B56\u7565\uFF08CSP\uFF09\u963B\u6B62\u4E86\u8173\u672C\u3002",
+          originalError: "[\u975C\u614B\u6383\u63CF] \u539F\u59CB\u932F\u8AA4\uFF1A{{error}}",
+          sendingData: "[\u975C\u614B\u6383\u63CF] Web Worker \u5DF2\u5EFA\u7ACB\uFF0C\u6B63\u5728\u767C\u9001 {{count}} \u689D\u6587\u672C\u9032\u884C\u8655\u7406...",
+          initSyncError: "[\u975C\u614B\u6383\u63CF] Worker \u521D\u59CB\u5316\u6642\u767C\u751F\u540C\u6B65\u932F\u8AA4\uFF1A{{error}}"
+        }
+      },
+      sessionScan: {
+        switchToFallback: "[\u6703\u8A71\u6383\u63CF] \u5207\u63DB\u5230\u4E3B\u7DDA\u7A0B\u5099\u9078\u65B9\u6848\u3002",
+        domObserver: {
+          stopped: "[\u6703\u8A71\u6383\u63CF] \u5DF2\u505C\u6B62\u76E3\u807D DOM \u8B8A\u5316\u3002"
+        },
+        fallback: {
+          initialized: "[\u6703\u8A71\u6383\u63CF - \u5099\u9078\u65B9\u6848] \u521D\u59CB\u5316\u5B8C\u6210\u3002",
+          cleared: "[\u6703\u8A71\u6383\u63CF - \u5099\u9078\u65B9\u6848] \u8CC7\u6599\u5DF2\u6E05\u7A7A\u3002"
+        },
+        worker: {
+          logPrefix: "[\u6703\u8A71\u6383\u63CF Worker]",
+          starting: "\u6703\u8A71\u6383\u63CF\uFF1A\u5617\u8A66\u555F\u52D5 Web Worker...",
+          initFailed: "[\u6703\u8A71\u6383\u63CF] Worker \u521D\u59CB\u5316\u5931\u6557\u3002\u9019\u5F88\u53EF\u80FD\u662F\u7531\u65BC\u7DB2\u7AD9\u7684\u5167\u5BB9\u5B89\u5168\u7B56\u7565\uFF08CSP\uFF09\u963B\u6B62\u4E86\u8173\u672C\u3002",
+          originalError: "[\u6703\u8A71\u6383\u63CF] \u539F\u59CB\u932F\u8AA4\uFF1A{{error}}",
+          initialized: "[\u6703\u8A71\u6383\u63CF] Worker \u521D\u59CB\u5316\u6210\u529F\uFF0C\u5DF2\u767C\u9001 {{count}} \u689D\u521D\u59CB\u6587\u672C\u4EE5\u958B\u59CB\u6703\u8A71\u3002",
+          initSyncError: "[\u6703\u8A71\u6383\u63CF] Worker \u521D\u59CB\u5316\u6642\u767C\u751F\u540C\u6B65\u932F\u8AA4\uFF1A{{error}}",
+          clearCommandSent: "[\u6703\u8A71\u6383\u63CF] \u5DF2\u5411 Worker \u767C\u9001\u6E05\u7A7A\u6307\u4EE4\u3002"
+        }
+      },
+      ui: {
+        copyButton: {
+          copied: "\u8907\u88FD\u6309\u9215\u88AB\u9EDE\u64CA\uFF0C\u8907\u88FD\u4E86 {{count}} \u500B\u5B57\u5143\u3002",
+          nothingToCopy: "\u8907\u88FD\u6309\u9215\u88AB\u9EDE\u64CA\uFF0C\u4F46\u6C92\u6709\u5167\u5BB9\u53EF\u8907\u88FD\u6216\u6309\u9215\u88AB\u7981\u7528\u3002"
+        },
+        confirmationModal: {
+          sessionScan: {
+            confirmed: "\u4F7F\u7528\u8005\u78BA\u8A8D\u6E05\u7A7A\u6703\u8A71\u6383\u63CF\u6587\u672C\uFF0C\u6B63\u5728\u547C\u53EB\u56DE\u8ABF..."
+          },
+          quickScan: {
+            confirmed: "\u4F7F\u7528\u8005\u78BA\u8A8D\u6E05\u7A7A\u5FEB\u901F\u6383\u63CF\u6587\u672C\u3002"
+          },
+          cancelled: "\u4F7F\u7528\u8005\u53D6\u6D88\u4E86\u6E05\u7A7A\u64CD\u4F5C\u3002"
+        },
+        modal: {
+          openingAndScanning: "\u6B63\u5728\u958B\u555F\u4E3B\u6A21\u614B\u6846\u4E26\u555F\u52D5\u975C\u614B\u6383\u63CF...",
+          scanFailed: "\u975C\u614B\u6383\u63CF\u5931\u6557\uFF1A{{error}}",
+          closing: "\u6B63\u5728\u95DC\u9589\u4E3B\u6A21\u614B\u6846..."
+        }
+      },
+      exporter: {
+        csvError: "\u5728\u89E3\u6790\u6587\u672C\u4E26\u751F\u6210 CSV \u6642\u767C\u751F\u932F\u8AA4\uFF1A{{error}}",
+        fileExported: "\u6A94\u6848\u5DF2\u532F\u51FA\uFF1A{{filename}}",
+        noContent: "\u6C92\u6709\u5167\u5BB9\u53EF\u532F\u51FA\u3002",
+        unknownFormat: "\u672A\u77E5\u7684\u532F\u51FA\u683C\u5F0F\uFF1A{{format}}"
+      },
+      main: {
+        requestingSessionScanData: "\u5F9E session-scan \u6A21\u5F0F\u8ACB\u6C42\u5B8C\u6574\u8CC7\u6599...",
+        exportingQuickScanData: "\u5F9E quick-scan \u6A21\u5F0F\u7684\u8A18\u61B6\u9AD4\u4E2D\u532F\u51FA\u5B8C\u6574\u8CC7\u6599...",
+        inIframe: "\u8173\u672C\u5728 iframe \u4E2D\uFF0C\u5DF2\u8DF3\u904E\u521D\u59CB\u5316\u3002",
+        initializing: "\u8173\u672C\u958B\u59CB\u521D\u59CB\u5316...",
+        initialSettingsLoaded: "\u521D\u59CB\u8A2D\u5B9A\u5DF2\u8F09\u5165:"
+      },
+      dom: {
+        ttpCreationError: "\u5EFA\u7ACB Trusted Type \u7B56\u7565\u5931\u6557\uFF1A",
+        svgParseError: "\u7121\u6548\u6216\u89E3\u6790\u5931\u6557\u7684 SVG \u5B57\u4E32\uFF1A"
+      },
+      eventBus: {
+        callbackError: "\u5728 '{{eventName}}' \u4E8B\u4EF6\u7684\u56DE\u547C\u4E2D\u767C\u751F\u932F\u8AA4\uFF1A"
+      },
+      trustedTypes: {
+        workerPolicyError: "\u5EFA\u7ACB Trusted Types worker \u7B56\u7565\u5931\u6557\uFF1A",
+        htmlPolicyError: "\u5EFA\u7ACB Trusted Types HTML \u7B56\u7565\u5931\u6557\uFF1A",
+        defaultWorkerPolicyWarning: "Trusted Types \u9810\u8A2D\u7B56\u7565\u8655\u7406 worker URL \u5931\u6557\uFF0C\u9000\u56DE\u81F3\u539F\u59CB URL\u3002",
+        defaultHtmlPolicyWarning: "Trusted Types \u9810\u8A2D\u7B56\u7565\u8655\u7406 HTML \u5931\u6557\uFF0C\u9000\u56DE\u81F3\u539F\u59CB\u5B57\u4E32\u3002"
+      }
     }
   };
+  var isDebugEnabled = false;
+  function updateLoggerState(isEnabled) {
+    isDebugEnabled = isEnabled;
+  }
+  function log(...args) {
+    if (isDebugEnabled) {
+      console.log(t("log.prefix"), ...args);
+    }
+  }
   var events = {};
   function on(eventName, callback) {
     if (!events[eventName]) {
@@ -567,19 +897,9 @@ var TextExtractor = (() => {
         try {
           callback(data);
         } catch (error) {
-          console.error(`\u5728 '${eventName}' \u4E8B\u4EF6\u7684\u56DE\u8C03\u4E2D\u53D1\u751F\u9519\u8BEF:`, error);
+          log(t("log.eventBus.callbackError", { eventName }), error);
         }
       });
-    }
-  }
-  var LOG_PREFIX = "[\u6587\u672C\u63D0\u53D6\u811A\u672C-Debug]";
-  var isDebugEnabled = false;
-  function updateLoggerState(isEnabled) {
-    isDebugEnabled = isEnabled;
-  }
-  function log(...args) {
-    if (isDebugEnabled) {
-      console.log(LOG_PREFIX, ...args);
     }
   }
   var supportedLanguages = [
@@ -604,22 +924,31 @@ var TextExtractor = (() => {
     if (translations[lang]) {
       currentLanguage = lang;
       currentTranslations = translations[lang];
-      log(`\u8BED\u8A00\u5DF2\u5207\u6362\u81F3: ${lang}`);
+      log(t("log.language.switched", { lang }));
       fire("languageChanged", lang);
     } else {
-      log(`\u8BED\u8A00 '${lang}' \u4E0D\u5B58\u5728\uFF0C\u56DE\u9000\u5230 'en'\u3002`, "warn");
+      log(t("log.language.notFound", { lang }), "warn");
       currentLanguage = "en";
       currentTranslations = translations.en;
     }
   }
-  function t(key) {
-    const value = key.split(".").reduce((obj, k) => {
+  function t(key, replacements) {
+    let value = key.split(".").reduce((obj, k) => {
       if (typeof obj === "object" && obj !== null && k in obj) {
         return obj[k];
       }
       return void 0;
     }, currentTranslations);
-    return value !== void 0 ? value : key;
+    if (value === void 0) {
+      return key;
+    }
+    if (replacements) {
+      Object.keys(replacements).forEach((placeholder3) => {
+        const regex = new RegExp(`{{${placeholder3}}}`, "g");
+        value = value.replace(regex, replacements[placeholder3]);
+      });
+    }
+    return value;
   }
   function getAvailableLanguages() {
     return supportedLanguages.map((lang) => ({
@@ -758,7 +1087,7 @@ var TextExtractor = (() => {
         if (e.message.includes("already exists")) {
           trustedTypePolicy = window.trustedTypes.policies.get("script-svg-policy");
         } else {
-          console.error("\u521B\u5EFA Trusted Type \u7B56\u7565\u5931\u8D25:", e);
+          log(t("log.dom.ttpCreationError"), e);
         }
       }
     }
@@ -776,7 +1105,7 @@ var TextExtractor = (() => {
     const doc = parser.parseFromString(sanitizedSVG, "image/svg+xml");
     const svgNode = doc.documentElement;
     if (!svgNode || svgNode.nodeName.toLowerCase() !== "svg" || svgNode.querySelector("parsererror")) {
-      console.error("\u65E0\u6548\u6216\u89E3\u6790\u5931\u8D25\u7684 SVG \u5B57\u7B26\u4E32:", svgString);
+      log(t("log.dom.svgParseError"), svgString);
       return null;
     }
     return document.importNode(svgNode, true);
@@ -913,7 +1242,7 @@ var TextExtractor = (() => {
         };
         return mergedSettings;
       } catch (error) {
-        console.error("\u89E3\u6790\u5DF2\u4FDD\u5B58\u7684\u8BBE\u7F6E\u65F6\u51FA\u9519:", error);
+        log(t("log.settings.parseError"), error);
         return defaultSettings;
       }
     }
@@ -921,14 +1250,14 @@ var TextExtractor = (() => {
   }
   function saveSettings(newSettings) {
     if (typeof newSettings !== "object" || newSettings === null) {
-      console.error("\u5C1D\u8BD5\u4FDD\u5B58\u7684\u8BBE\u7F6E\u4E0D\u662F\u4E00\u4E2A\u6709\u6548\u7684\u5BF9\u8C61:", newSettings);
+      log(t("log.settings.invalidObject"), newSettings);
       return;
     }
     const oldSettings = loadSettings();
     Object.keys(newSettings).forEach((key) => {
       if (key !== "filterRules") {
         if (oldSettings[key] !== newSettings[key]) {
-          log(`\u8BBE\u7F6E '${key}' \u5DF2\u4ECE '${oldSettings[key]}' \u66F4\u6539\u4E3A '${newSettings[key]}'`);
+          log(t("log.settings.changed", { key, oldValue: oldSettings[key], newValue: newSettings[key] }));
         }
       }
     });
@@ -936,8 +1265,8 @@ var TextExtractor = (() => {
     const newRules = newSettings.filterRules || {};
     Object.keys(newRules).forEach((key) => {
       if (oldRules[key] !== newRules[key]) {
-        const status = newRules[key] ? "\u542F\u7528" : "\u7981\u7528";
-        log(`\u8FC7\u6EE4\u89C4\u5219 '${key}' \u5DF2\u88AB${status}`);
+        const statusKey = newRules[key] ? "log.settings.filterRuleChanged.enabled" : "log.settings.filterRuleChanged.disabled";
+        log(t(statusKey, { key }));
       }
     });
     setValue("script_settings", JSON.stringify(newSettings));
@@ -1065,7 +1394,7 @@ var TextExtractor = (() => {
       const trimmedText = text.trim();
       const filterReason = shouldFilter(trimmedText, filterRules2);
       if (filterReason) {
-        log(`\u6587\u672C\u5DF2\u8FC7\u6EE4: "${trimmedText}" (\u539F\u56E0: ${filterReason})`);
+        log(t("log.textProcessor.filtered", { text: trimmedText, reason: filterReason }));
         return;
       }
       uniqueTexts.add(text);
@@ -1118,7 +1447,7 @@ var TextExtractor = (() => {
       });
     } catch (e) {
       if (!(e.name === "TypeError" && e.message.includes("Policy already exists"))) {
-        console.error("Failed to create Trusted Types worker policy:", e);
+        log(t("log.trustedTypes.workerPolicyError"), e);
       }
     }
     try {
@@ -1127,7 +1456,7 @@ var TextExtractor = (() => {
       });
     } catch (e) {
       if (!(e.name === "TypeError" && e.message.includes("Policy already exists"))) {
-        console.error("Failed to create Trusted Types HTML policy:", e);
+        log(t("log.trustedTypes.htmlPolicyError"), e);
       }
     }
   }
@@ -1139,7 +1468,7 @@ var TextExtractor = (() => {
       try {
         return window.trustedTypes.defaultPolicy.createScriptURL(url);
       } catch (e) {
-        console.warn("Trusted Types default policy failed for worker URL, falling back to raw URL.", e);
+        log(t("log.trustedTypes.defaultWorkerPolicyWarning"), e, true);
       }
     }
     return url;
@@ -1152,7 +1481,7 @@ var TextExtractor = (() => {
       try {
         return window.trustedTypes.defaultPolicy.createHTML(htmlString);
       } catch (e) {
-        console.warn("Trusted Types default policy failed for HTML, falling back to raw string.", e);
+        log(t("log.trustedTypes.defaultHtmlPolicyWarning"), e, true);
       }
     }
     return htmlString;
@@ -1166,7 +1495,7 @@ ${result.join(",\n")}
 ]`;
   };
   var performScanInMainThread = (texts, filterRules2, enableDebugLogging) => {
-    log("[\u9759\u6001\u626B\u63CF - \u5907\u9009\u65B9\u6848] \u5F00\u59CB\u5728\u4E3B\u7EBF\u7A0B\u4E2D\u5904\u7406...");
+    log(t("log.quickScan.fallback.starting"));
     const uniqueTexts =  new Set();
     if (Array.isArray(texts)) {
       texts.forEach((rawText) => {
@@ -1177,7 +1506,7 @@ ${result.join(",\n")}
         const filterResult = shouldFilter(textForFiltering, filterRules2);
         if (filterResult) {
           if (enableDebugLogging) {
-            log(`\u6587\u672C\u5DF2\u8FC7\u6EE4: "${textForFiltering}" (\u539F\u56E0: ${filterResult})`);
+            log(t("log.textProcessor.filtered", { text: textForFiltering, reason: filterResult }));
           }
           return;
         }
@@ -1186,7 +1515,7 @@ ${result.join(",\n")}
     }
     const textsArray = Array.from(uniqueTexts);
     const formattedText = formatTextsForTranslation(textsArray);
-    log(`[\u9759\u6001\u626B\u63CF - \u5907\u9009\u65B9\u6848] \u5904\u7406\u5B8C\u6210\uFF0C\u5171 ${textsArray.length} \u6761\u6709\u6548\u6587\u672C\u3002`);
+    log(t("log.quickScan.fallback.completed", { count: textsArray.length }));
     return {
       formattedText,
       count: textsArray.length
@@ -1339,19 +1668,19 @@ ${result.join(",\n")}
     return new Promise((resolve, reject) => {
       const { filterRules: filterRules2, enableDebugLogging } = loadSettings();
       const runFallback = () => {
-        log("[\u9759\u6001\u626B\u63CF] \u5207\u6362\u5230\u4E3B\u7EBF\u7A0B\u5907\u9009\u65B9\u6848\u3002");
+        log(t("log.quickScan.switchToFallback"));
         showNotification(t("notifications.cspWorkerWarning"), { type: "info", duration: 5e3 });
         try {
           const result = performScanInMainThread(texts, filterRules2, enableDebugLogging);
           updateScanCount(result.count, "static");
           resolve(result);
         } catch (fallbackError) {
-          log(`[\u9759\u6001\u626B\u63CF] \u4E3B\u7EBF\u7A0B\u5907\u9009\u65B9\u6848\u5931\u8D25: ${fallbackError.message}`, "error");
+          log(t("log.quickScan.fallbackFailed", { error: fallbackError.message }), "error");
           reject(fallbackError);
         }
       };
       try {
-        log("[\u9759\u6001\u626B\u63CF] \u5F00\u59CB\u6267\u884C\uFF0C\u5C1D\u8BD5\u4F7F\u7528 Web Worker...");
+        log(t("log.quickScan.worker.starting"));
         const workerScript = `(() => {
   // src/shared/i18n/en.json
   var en_default = {
@@ -1504,6 +1833,113 @@ ${result.join(",\n")}
       advanced: {
         title: "Advanced Settings Explanation",
         enable_debug_logging: "When enabled, the script will output detailed internal status, execution steps, and error messages to the browser's <strong>Developer Tools Console</strong> (usually opened with F12). This is primarily for developers or users who need to submit detailed bug reports."
+      }
+    },
+    log: {
+      prefix: "[Text Extractor Script-Debug]",
+      language: {
+        switched: "Language switched to: {{lang}}",
+        notFound: "Language '{{lang}}' not found, falling back to 'en'."
+      },
+      settings: {
+        changed: "Setting '{{key}}' changed from '{{oldValue}}' to '{{newValue}}'",
+        filterRuleChanged: {
+          enabled: "Filter rule '{{key}}' has been enabled",
+          disabled: "Filter rule '{{key}}' has been disabled"
+        },
+        panel: {
+          opening: "Opening settings panel...",
+          closing: "Closing settings panel...",
+          saving: "Saving settings..."
+        },
+        parseError: "Error parsing saved settings:",
+        invalidObject: "Attempted to save an invalid object for settings:"
+      },
+      textProcessor: {
+        filtered: 'Text filtered: "{{text}}" (Reason: {{reason}})'
+      },
+      quickScan: {
+        switchToFallback: "[Quick Scan] Switching to main thread fallback.",
+        fallbackFailed: "[Quick Scan] Main thread fallback failed: {{error}}",
+        fallback: {
+          starting: "[Quick Scan - Fallback] Starting processing in main thread...",
+          completed: "[Quick Scan - Fallback] Processing complete, found {{count}} unique texts."
+        },
+        worker: {
+          logPrefix: "[Quick Scan Worker]",
+          starting: "[Quick Scan] Starting execution, attempting to use Web Worker...",
+          completed: "[Quick Scan] Worker processing successful, received {{count}} texts.",
+          scanComplete: "[Quick Scan Worker] Processing complete, found {{count}} unique texts. Sending back to main thread...",
+          initFailed: "[Quick Scan] Worker initialization failed. This is likely due to the website's Content Security Policy (CSP).",
+          originalError: "[Quick Scan] Original error: {{error}}",
+          sendingData: "[Quick Scan] Web Worker created, sending {{count}} texts for processing...",
+          initSyncError: "[Quick Scan] Synchronous error during Worker initialization: {{error}}"
+        }
+      },
+      sessionScan: {
+        switchToFallback: "[Session Scan] Switching to main thread fallback.",
+        domObserver: {
+          stopped: "[Session Scan] Stopped listening for DOM changes."
+        },
+        fallback: {
+          initialized: "[Session Scan - Fallback] Initialized.",
+          cleared: "[Session Scan - Fallback] Data cleared."
+        },
+        worker: {
+          logPrefix: "[Session Scan Worker]",
+          starting: "Session Scan: Attempting to start Web Worker...",
+          initFailed: "[Session Scan] Worker initialization failed. This is likely due to the website's Content Security Policy (CSP).",
+          originalError: "[Session Scan] Original error: {{error}}",
+          initialized: "[Session Scan] Worker initialized successfully, sent {{count}} initial texts to start the session.",
+          initSyncError: "[Session Scan] Synchronous error during Worker initialization: {{error}}",
+          clearCommandSent: "[Session Scan] Clear command sent to worker."
+        }
+      },
+      ui: {
+        copyButton: {
+          copied: "Copy button clicked, copied {{count}} characters.",
+          nothingToCopy: "Copy button clicked, but there was no content to copy or the button was disabled."
+        },
+        confirmationModal: {
+          sessionScan: {
+            confirmed: "User confirmed clearing session scan texts, invoking callback..."
+          },
+          quickScan: {
+            confirmed: "User confirmed clearing quick scan texts."
+          },
+          cancelled: "User cancelled the clear operation."
+        },
+        modal: {
+          openingAndScanning: "Opening main modal and starting static scan...",
+          scanFailed: "Static scan failed: {{error}}",
+          closing: "Closing main modal..."
+        }
+      },
+      exporter: {
+        csvError: "Error while parsing text and generating CSV: {{error}}",
+        fileExported: "File exported: {{filename}}",
+        noContent: "No content to export.",
+        unknownFormat: "Unknown export format: {{format}}"
+      },
+      main: {
+        requestingSessionScanData: "Requesting full data from session-scan mode...",
+        exportingQuickScanData: "Exporting full data from quick-scan mode's memory...",
+        inIframe: "Script is in an iframe, skipping initialization.",
+        initializing: "Script initialization started...",
+        initialSettingsLoaded: "Initial settings loaded:"
+      },
+      dom: {
+        ttpCreationError: "Failed to create Trusted Type policy:",
+        svgParseError: "Invalid or failed to parse SVG string:"
+      },
+      eventBus: {
+        callbackError: "Error in callback for event '{{eventName}}':"
+      },
+      trustedTypes: {
+        workerPolicyError: "Failed to create Trusted Types worker policy:",
+        htmlPolicyError: "Failed to create Trusted Types HTML policy:",
+        defaultWorkerPolicyWarning: "Trusted Types default policy failed for worker URL, falling back to raw URL.",
+        defaultHtmlPolicyWarning: "Trusted Types default policy failed for HTML, falling back to raw string."
       }
     }
   };
@@ -1659,6 +2095,113 @@ ${result.join(",\n")}
         title: "\\u9AD8\\u7EA7\\u8BBE\\u7F6E\\u8BF4\\u660E",
         enable_debug_logging: "\\u542F\\u7528\\u540E\\uFF0C\\u811A\\u672C\\u4F1A\\u5C06\\u8BE6\\u7EC6\\u7684\\u5185\\u90E8\\u8FD0\\u884C\\u72B6\\u6001\\u3001\\u6267\\u884C\\u6B65\\u9AA4\\u3001\\u9519\\u8BEF\\u4FE1\\u606F\\u7B49\\u8F93\\u51FA\\u5230\\u6D4F\\u89C8\\u5668\\u7684<strong>\\u5F00\\u53D1\\u8005\\u5DE5\\u5177\\u63A7\\u5236\\u53F0</strong>\\uFF08\\u901A\\u5E38\\u6309 F12 \\u6253\\u5F00\\uFF09\\u3002\\u6B64\\u529F\\u80FD\\u4E3B\\u8981\\u9762\\u5411\\u5F00\\u53D1\\u8005\\u6216\\u9700\\u8981\\u63D0\\u4EA4\\u8BE6\\u7EC6\\u9519\\u8BEF\\u62A5\\u544A\\u7684\\u7528\\u6237\\u3002"
       }
+    },
+    log: {
+      prefix: "[\\u6587\\u672C\\u63D0\\u53D6\\u811A\\u672C-Debug]",
+      language: {
+        switched: "\\u8BED\\u8A00\\u5DF2\\u5207\\u6362\\u81F3: {{lang}}",
+        notFound: "\\u8BED\\u8A00 '{{lang}}' \\u4E0D\\u5B58\\u5728\\uFF0C\\u56DE\\u9000\\u5230 'en'\\u3002"
+      },
+      settings: {
+        changed: "\\u8BBE\\u7F6E '{{key}}' \\u5DF2\\u4ECE '{{oldValue}}' \\u66F4\\u6539\\u4E3A '{{newValue}}'",
+        filterRuleChanged: {
+          enabled: "\\u8FC7\\u6EE4\\u89C4\\u5219 '{{key}}' \\u5DF2\\u88AB\\u542F\\u7528",
+          disabled: "\\u8FC7\\u6EE4\\u89C4\\u5219 '{{key}}' \\u5DF2\\u88AB\\u7981\\u7528"
+        },
+        panel: {
+          opening: "\\u6B63\\u5728\\u6253\\u5F00\\u8BBE\\u7F6E\\u9762\\u677F...",
+          closing: "\\u6B63\\u5728\\u5173\\u95ED\\u8BBE\\u7F6E\\u9762\\u677F...",
+          saving: "\\u6B63\\u5728\\u4FDD\\u5B58\\u8BBE\\u7F6E..."
+        },
+        parseError: "\\u89E3\\u6790\\u5DF2\\u4FDD\\u5B58\\u7684\\u8BBE\\u7F6E\\u65F6\\u51FA\\u9519\\uFF1A",
+        invalidObject: "\\u5C1D\\u8BD5\\u4FDD\\u5B58\\u4E00\\u4E2A\\u65E0\\u6548\\u7684\\u5BF9\\u8C61\\u4F5C\\u4E3A\\u8BBE\\u7F6E\\uFF1A"
+      },
+      textProcessor: {
+        filtered: '\\u6587\\u672C\\u5DF2\\u8FC7\\u6EE4: "{{text}}" (\\u539F\\u56E0: {{reason}})'
+      },
+      quickScan: {
+        switchToFallback: "[\\u9759\\u6001\\u626B\\u63CF] \\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
+        fallbackFailed: "[\\u9759\\u6001\\u626B\\u63CF] \\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u5931\\u8D25: {{error}}",
+        fallback: {
+          starting: "[\\u9759\\u6001\\u626B\\u63CF - \\u5907\\u9009\\u65B9\\u6848] \\u5F00\\u59CB\\u5728\\u4E3B\\u7EBF\\u7A0B\\u4E2D\\u5904\\u7406...",
+          completed: "[\\u9759\\u6001\\u626B\\u63CF - \\u5907\\u9009\\u65B9\\u6848] \\u5904\\u7406\\u5B8C\\u6210\\uFF0C\\u5171 {{count}} \\u6761\\u6709\\u6548\\u6587\\u672C\\u3002"
+        },
+        worker: {
+          logPrefix: "[\\u9759\\u6001\\u626B\\u63CF Worker]",
+          starting: "[\\u9759\\u6001\\u626B\\u63CF] \\u5F00\\u59CB\\u6267\\u884C\\uFF0C\\u5C1D\\u8BD5\\u4F7F\\u7528 Web Worker...",
+          completed: "[\\u9759\\u6001\\u626B\\u63CF] Worker \\u5904\\u7406\\u6210\\u529F\\uFF0C\\u6536\\u5230 {{count}} \\u6761\\u6587\\u672C\\u3002",
+          scanComplete: "[\\u9759\\u6001\\u626B\\u63CF Worker] \\u5904\\u7406\\u5B8C\\u6210\\uFF0C\\u5171 {{count}} \\u6761\\u6709\\u6548\\u6587\\u672C\\u3002\\u6B63\\u5728\\u53D1\\u56DE\\u4E3B\\u7EBF\\u7A0B...",
+          initFailed: "[\\u9759\\u6001\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u8D25\\u3002\\u8FD9\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u4E8E\\u7F51\\u7AD9\\u7684\\u5185\\u5BB9\\u5B89\\u5168\\u7B56\\u7565\\uFF08CSP\\uFF09\\u963B\\u6B62\\u4E86\\u811A\\u672C\\u3002",
+          originalError: "[\\u9759\\u6001\\u626B\\u63CF] \\u539F\\u59CB\\u9519\\u8BEF: {{error}}",
+          sendingData: "[\\u9759\\u6001\\u626B\\u63CF] Web Worker \\u5DF2\\u521B\\u5EFA\\uFF0C\\u6B63\\u5728\\u53D1\\u9001 {{count}} \\u6761\\u6587\\u672C\\u8FDB\\u884C\\u5904\\u7406...",
+          initSyncError: "[\\u9759\\u6001\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u65F6\\u53D1\\u751F\\u540C\\u6B65\\u9519\\u8BEF: {{error}}"
+        }
+      },
+      sessionScan: {
+        switchToFallback: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
+        domObserver: {
+          stopped: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u5DF2\\u505C\\u6B62\\u76D1\\u542C DOM \\u53D8\\u5316\\u3002"
+        },
+        fallback: {
+          initialized: "[\\u4F1A\\u8BDD\\u626B\\u63CF - \\u5907\\u9009\\u65B9\\u6848] \\u521D\\u59CB\\u5316\\u5B8C\\u6210\\u3002",
+          cleared: "[\\u4F1A\\u8BDD\\u626B\\u63CF - \\u5907\\u9009\\u65B9\\u6848] \\u6570\\u636E\\u5DF2\\u6E05\\u7A7A\\u3002"
+        },
+        worker: {
+          logPrefix: "[\\u4F1A\\u8BDD\\u626B\\u63CF Worker]",
+          starting: "\\u4F1A\\u8BDD\\u626B\\u63CF\\uFF1A\\u5C1D\\u8BD5\\u542F\\u52A8 Web Worker...",
+          initFailed: "[\\u4F1A\\u8BDD\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u8D25\\u3002\\u8FD9\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u4E8E\\u7F51\\u7AD9\\u7684\\u5185\\u5BB9\\u5B89\\u5168\\u7B56\\u7565\\uFF08CSP\\uFF09\\u963B\\u6B62\\u4E86\\u811A\\u672C\\u3002",
+          originalError: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u539F\\u59CB\\u9519\\u8BEF: {{error}}",
+          initialized: "[\\u4F1A\\u8BDD\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u6210\\u529F\\uFF0C\\u5DF2\\u53D1\\u9001 {{count}} \\u6761\\u521D\\u59CB\\u6587\\u672C\\u4EE5\\u5F00\\u59CB\\u4F1A\\u8BDD\\u3002",
+          initSyncError: "[\\u4F1A\\u8BDD\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u65F6\\u53D1\\u751F\\u540C\\u6B65\\u9519\\u8BEF: {{error}}",
+          clearCommandSent: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u5DF2\\u5411 Worker \\u53D1\\u9001\\u6E05\\u7A7A\\u6307\\u4EE4\\u3002"
+        }
+      },
+      ui: {
+        copyButton: {
+          copied: "\\u590D\\u5236\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\uFF0C\\u590D\\u5236\\u4E86 {{count}} \\u4E2A\\u5B57\\u7B26\\u3002",
+          nothingToCopy: "\\u590D\\u5236\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\uFF0C\\u4F46\\u6CA1\\u6709\\u5185\\u5BB9\\u53EF\\u590D\\u5236\\u6216\\u6309\\u94AE\\u88AB\\u7981\\u7528\\u3002"
+        },
+        confirmationModal: {
+          sessionScan: {
+            confirmed: "\\u7528\\u6237\\u786E\\u8BA4\\u6E05\\u7A7A\\u4F1A\\u8BDD\\u626B\\u63CF\\u6587\\u672C\\uFF0C\\u6B63\\u5728\\u8C03\\u7528\\u56DE\\u8C03..."
+          },
+          quickScan: {
+            confirmed: "\\u7528\\u6237\\u786E\\u8BA4\\u6E05\\u7A7A\\u5FEB\\u901F\\u626B\\u63CF\\u6587\\u672C\\u3002"
+          },
+          cancelled: "\\u7528\\u6237\\u53D6\\u6D88\\u4E86\\u6E05\\u7A7A\\u64CD\\u4F5C\\u3002"
+        },
+        modal: {
+          openingAndScanning: "\\u6B63\\u5728\\u6253\\u5F00\\u4E3B\\u6A21\\u6001\\u6846\\u5E76\\u542F\\u52A8\\u9759\\u6001\\u626B\\u63CF...",
+          scanFailed: "\\u9759\\u6001\\u626B\\u63CF\\u5931\\u8D25: {{error}}",
+          closing: "\\u6B63\\u5728\\u5173\\u95ED\\u4E3B\\u6A21\\u6001\\u6846..."
+        }
+      },
+      exporter: {
+        csvError: "\\u5728\\u89E3\\u6790\\u6587\\u672C\\u5E76\\u751F\\u6210 CSV \\u65F6\\u53D1\\u751F\\u9519\\u8BEF: {{error}}",
+        fileExported: "\\u6587\\u4EF6\\u5DF2\\u5BFC\\u51FA: {{filename}}",
+        noContent: "\\u6CA1\\u6709\\u5185\\u5BB9\\u53EF\\u5BFC\\u51FA\\u3002",
+        unknownFormat: "\\u672A\\u77E5\\u7684\\u5BFC\\u51FA\\u683C\\u5F0F: {{format}}"
+      },
+      main: {
+        requestingSessionScanData: "\\u4ECE session-scan \\u6A21\\u5F0F\\u8BF7\\u6C42\\u5B8C\\u6574\\u6570\\u636E...",
+        exportingQuickScanData: "\\u4ECE quick-scan \\u6A21\\u5F0F\\u7684\\u5185\\u5B58\\u4E2D\\u5BFC\\u51FA\\u5B8C\\u6574\\u6570\\u636E...",
+        inIframe: "\\u811A\\u672C\\u5728 iframe \\u4E2D\\uFF0C\\u5DF2\\u8DF3\\u8FC7\\u521D\\u59CB\\u5316\\u3002",
+        initializing: "\\u811A\\u672C\\u5F00\\u59CB\\u521D\\u59CB\\u5316...",
+        initialSettingsLoaded: "\\u521D\\u59CB\\u8BBE\\u7F6E\\u5DF2\\u52A0\\u8F7D:"
+      },
+      dom: {
+        ttpCreationError: "\\u521B\\u5EFA Trusted Type \\u7B56\\u7565\\u5931\\u8D25\\uFF1A",
+        svgParseError: "\\u65E0\\u6548\\u6216\\u89E3\\u6790\\u5931\\u8D25\\u7684 SVG \\u5B57\\u7B26\\u4E32\\uFF1A"
+      },
+      eventBus: {
+        callbackError: "\\u5728 '{{eventName}}' \\u4E8B\\u4EF6\\u7684\\u56DE\\u8C03\\u4E2D\\u53D1\\u751F\\u9519\\u8BEF\\uFF1A"
+      },
+      trustedTypes: {
+        workerPolicyError: "\\u521B\\u5EFA Trusted Types worker \\u7B56\\u7565\\u5931\\u8D25\\uFF1A",
+        htmlPolicyError: "\\u521B\\u5EFA Trusted Types HTML \\u7B56\\u7565\\u5931\\u8D25\\uFF1A",
+        defaultWorkerPolicyWarning: "Trusted Types \\u9ED8\\u8BA4\\u7B56\\u7565\\u5904\\u7406 worker URL \\u5931\\u8D25\\uFF0C\\u56DE\\u9000\\u5230\\u539F\\u59CB URL\\u3002",
+        defaultHtmlPolicyWarning: "Trusted Types \\u9ED8\\u8BA4\\u7B56\\u7565\\u5904\\u7406 HTML \\u5931\\u8D25\\uFF0C\\u56DE\\u9000\\u5230\\u539F\\u59CB\\u5B57\\u7B26\\u4E32\\u3002"
+      }
     }
   };
   // src/shared/i18n/zh-TW.json
@@ -1813,6 +2356,113 @@ ${result.join(",\n")}
         title: "\\u9032\\u968E\\u8A2D\\u5B9A\\u8AAA\\u660E",
         enable_debug_logging: "\\u555F\\u7528\\u5F8C\\uFF0C\\u8173\\u672C\\u6703\\u5C07\\u8A73\\u7D30\\u7684\\u5167\\u90E8\\u904B\\u884C\\u72C0\\u614B\\u3001\\u57F7\\u884C\\u6B65\\u9A5F\\u3001\\u932F\\u8AA4\\u8CC7\\u8A0A\\u7B49\\u8F38\\u51FA\\u5230\\u700F\\u89BD\\u5668\\u7684<strong>\\u958B\\u767C\\u8005\\u5DE5\\u5177\\u63A7\\u5236\\u53F0</strong>\\uFF08\\u901A\\u5E38\\u6309 F12 \\u958B\\u555F\\uFF09\\u3002\\u6B64\\u529F\\u80FD\\u4E3B\\u8981\\u9762\\u5411\\u958B\\u767C\\u8005\\u6216\\u9700\\u8981\\u63D0\\u4EA4\\u8A73\\u7D30\\u932F\\u8AA4\\u5831\\u544A\\u7684\\u4F7F\\u7528\\u8005\\u3002"
       }
+    },
+    log: {
+      prefix: "[\\u6587\\u672C\\u63D0\\u53D6\\u8173\\u672C-Debug]",
+      language: {
+        switched: "\\u8A9E\\u8A00\\u5DF2\\u5207\\u63DB\\u81F3\\uFF1A{{lang}}",
+        notFound: "\\u8A9E\\u8A00 '{{lang}}' \\u4E0D\\u5B58\\u5728\\uFF0C\\u9000\\u56DE\\u81F3 'en'\\u3002"
+      },
+      settings: {
+        changed: "\\u8A2D\\u5B9A '{{key}}' \\u5DF2\\u5F9E '{{oldValue}}' \\u8B8A\\u66F4\\u70BA '{{newValue}}'",
+        filterRuleChanged: {
+          enabled: "\\u904E\\u6FFE\\u898F\\u5247 '{{key}}' \\u5DF2\\u88AB\\u555F\\u7528",
+          disabled: "\\u904E\\u6FFE\\u898F\\u5247 '{{key}}' \\u5DF2\\u88AB\\u7981\\u7528"
+        },
+        panel: {
+          opening: "\\u6B63\\u5728\\u958B\\u555F\\u8A2D\\u5B9A\\u9762\\u677F...",
+          closing: "\\u6B63\\u5728\\u95DC\\u9589\\u8A2D\\u5B9A\\u9762\\u677F...",
+          saving: "\\u6B63\\u5728\\u5132\\u5B58\\u8A2D\\u5B9A..."
+        },
+        parseError: "\\u89E3\\u6790\\u5DF2\\u5132\\u5B58\\u7684\\u8A2D\\u5B9A\\u6642\\u51FA\\u932F\\uFF1A",
+        invalidObject: "\\u8A66\\u5716\\u5132\\u5B58\\u4E00\\u500B\\u7121\\u6548\\u7684\\u7269\\u4EF6\\u4F5C\\u70BA\\u8A2D\\u5B9A\\uFF1A"
+      },
+      textProcessor: {
+        filtered: '\\u6587\\u672C\\u5DF2\\u904E\\u6FFE\\uFF1A"{{text}}" (\\u539F\\u56E0\\uFF1A{{reason}})'
+      },
+      quickScan: {
+        switchToFallback: "[\\u975C\\u614B\\u6383\\u63CF] \\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
+        fallbackFailed: "[\\u975C\\u614B\\u6383\\u63CF] \\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u5931\\u6557\\uFF1A{{error}}",
+        fallback: {
+          starting: "[\\u975C\\u614B\\u6383\\u63CF - \\u5099\\u9078\\u65B9\\u6848] \\u958B\\u59CB\\u5728\\u4E3B\\u7DDA\\u7A0B\\u4E2D\\u8655\\u7406...",
+          completed: "[\\u975C\\u614B\\u6383\\u63CF - \\u5099\\u9078\\u65B9\\u6848] \\u8655\\u7406\\u5B8C\\u6210\\uFF0C\\u5171 {{count}} \\u689D\\u6709\\u6548\\u6587\\u672C\\u3002"
+        },
+        worker: {
+          logPrefix: "[\\u975C\\u614B\\u6383\\u63CF Worker]",
+          starting: "[\\u975C\\u614B\\u6383\\u63CF] \\u958B\\u59CB\\u57F7\\u884C\\uFF0C\\u5617\\u8A66\\u4F7F\\u7528 Web Worker...",
+          completed: "[\\u975C\\u614B\\u6383\\u63CF] Worker \\u8655\\u7406\\u6210\\u529F\\uFF0C\\u6536\\u5230 {{count}} \\u689D\\u6587\\u672C\\u3002",
+          scanComplete: "[\\u975C\\u614B\\u6383\\u63CF Worker] \\u8655\\u7406\\u5B8C\\u6210\\uFF0C\\u5171 {{count}} \\u689D\\u6709\\u6548\\u6587\\u672C\\u3002\\u6B63\\u5728\\u767C\\u56DE\\u4E3B\\u7DDA\\u7A0B...",
+          initFailed: "[\\u975C\\u614B\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u6557\\u3002\\u9019\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u65BC\\u7DB2\\u7AD9\\u7684\\u5167\\u5BB9\\u5B89\\u5168\\u7B56\\u7565\\uFF08CSP\\uFF09\\u963B\\u6B62\\u4E86\\u8173\\u672C\\u3002",
+          originalError: "[\\u975C\\u614B\\u6383\\u63CF] \\u539F\\u59CB\\u932F\\u8AA4\\uFF1A{{error}}",
+          sendingData: "[\\u975C\\u614B\\u6383\\u63CF] Web Worker \\u5DF2\\u5EFA\\u7ACB\\uFF0C\\u6B63\\u5728\\u767C\\u9001 {{count}} \\u689D\\u6587\\u672C\\u9032\\u884C\\u8655\\u7406...",
+          initSyncError: "[\\u975C\\u614B\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u6642\\u767C\\u751F\\u540C\\u6B65\\u932F\\u8AA4\\uFF1A{{error}}"
+        }
+      },
+      sessionScan: {
+        switchToFallback: "[\\u6703\\u8A71\\u6383\\u63CF] \\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
+        domObserver: {
+          stopped: "[\\u6703\\u8A71\\u6383\\u63CF] \\u5DF2\\u505C\\u6B62\\u76E3\\u807D DOM \\u8B8A\\u5316\\u3002"
+        },
+        fallback: {
+          initialized: "[\\u6703\\u8A71\\u6383\\u63CF - \\u5099\\u9078\\u65B9\\u6848] \\u521D\\u59CB\\u5316\\u5B8C\\u6210\\u3002",
+          cleared: "[\\u6703\\u8A71\\u6383\\u63CF - \\u5099\\u9078\\u65B9\\u6848] \\u8CC7\\u6599\\u5DF2\\u6E05\\u7A7A\\u3002"
+        },
+        worker: {
+          logPrefix: "[\\u6703\\u8A71\\u6383\\u63CF Worker]",
+          starting: "\\u6703\\u8A71\\u6383\\u63CF\\uFF1A\\u5617\\u8A66\\u555F\\u52D5 Web Worker...",
+          initFailed: "[\\u6703\\u8A71\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u6557\\u3002\\u9019\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u65BC\\u7DB2\\u7AD9\\u7684\\u5167\\u5BB9\\u5B89\\u5168\\u7B56\\u7565\\uFF08CSP\\uFF09\\u963B\\u6B62\\u4E86\\u8173\\u672C\\u3002",
+          originalError: "[\\u6703\\u8A71\\u6383\\u63CF] \\u539F\\u59CB\\u932F\\u8AA4\\uFF1A{{error}}",
+          initialized: "[\\u6703\\u8A71\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u6210\\u529F\\uFF0C\\u5DF2\\u767C\\u9001 {{count}} \\u689D\\u521D\\u59CB\\u6587\\u672C\\u4EE5\\u958B\\u59CB\\u6703\\u8A71\\u3002",
+          initSyncError: "[\\u6703\\u8A71\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u6642\\u767C\\u751F\\u540C\\u6B65\\u932F\\u8AA4\\uFF1A{{error}}",
+          clearCommandSent: "[\\u6703\\u8A71\\u6383\\u63CF] \\u5DF2\\u5411 Worker \\u767C\\u9001\\u6E05\\u7A7A\\u6307\\u4EE4\\u3002"
+        }
+      },
+      ui: {
+        copyButton: {
+          copied: "\\u8907\\u88FD\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\uFF0C\\u8907\\u88FD\\u4E86 {{count}} \\u500B\\u5B57\\u5143\\u3002",
+          nothingToCopy: "\\u8907\\u88FD\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\uFF0C\\u4F46\\u6C92\\u6709\\u5167\\u5BB9\\u53EF\\u8907\\u88FD\\u6216\\u6309\\u9215\\u88AB\\u7981\\u7528\\u3002"
+        },
+        confirmationModal: {
+          sessionScan: {
+            confirmed: "\\u4F7F\\u7528\\u8005\\u78BA\\u8A8D\\u6E05\\u7A7A\\u6703\\u8A71\\u6383\\u63CF\\u6587\\u672C\\uFF0C\\u6B63\\u5728\\u547C\\u53EB\\u56DE\\u8ABF..."
+          },
+          quickScan: {
+            confirmed: "\\u4F7F\\u7528\\u8005\\u78BA\\u8A8D\\u6E05\\u7A7A\\u5FEB\\u901F\\u6383\\u63CF\\u6587\\u672C\\u3002"
+          },
+          cancelled: "\\u4F7F\\u7528\\u8005\\u53D6\\u6D88\\u4E86\\u6E05\\u7A7A\\u64CD\\u4F5C\\u3002"
+        },
+        modal: {
+          openingAndScanning: "\\u6B63\\u5728\\u958B\\u555F\\u4E3B\\u6A21\\u614B\\u6846\\u4E26\\u555F\\u52D5\\u975C\\u614B\\u6383\\u63CF...",
+          scanFailed: "\\u975C\\u614B\\u6383\\u63CF\\u5931\\u6557\\uFF1A{{error}}",
+          closing: "\\u6B63\\u5728\\u95DC\\u9589\\u4E3B\\u6A21\\u614B\\u6846..."
+        }
+      },
+      exporter: {
+        csvError: "\\u5728\\u89E3\\u6790\\u6587\\u672C\\u4E26\\u751F\\u6210 CSV \\u6642\\u767C\\u751F\\u932F\\u8AA4\\uFF1A{{error}}",
+        fileExported: "\\u6A94\\u6848\\u5DF2\\u532F\\u51FA\\uFF1A{{filename}}",
+        noContent: "\\u6C92\\u6709\\u5167\\u5BB9\\u53EF\\u532F\\u51FA\\u3002",
+        unknownFormat: "\\u672A\\u77E5\\u7684\\u532F\\u51FA\\u683C\\u5F0F\\uFF1A{{format}}"
+      },
+      main: {
+        requestingSessionScanData: "\\u5F9E session-scan \\u6A21\\u5F0F\\u8ACB\\u6C42\\u5B8C\\u6574\\u8CC7\\u6599...",
+        exportingQuickScanData: "\\u5F9E quick-scan \\u6A21\\u5F0F\\u7684\\u8A18\\u61B6\\u9AD4\\u4E2D\\u532F\\u51FA\\u5B8C\\u6574\\u8CC7\\u6599...",
+        inIframe: "\\u8173\\u672C\\u5728 iframe \\u4E2D\\uFF0C\\u5DF2\\u8DF3\\u904E\\u521D\\u59CB\\u5316\\u3002",
+        initializing: "\\u8173\\u672C\\u958B\\u59CB\\u521D\\u59CB\\u5316...",
+        initialSettingsLoaded: "\\u521D\\u59CB\\u8A2D\\u5B9A\\u5DF2\\u8F09\\u5165:"
+      },
+      dom: {
+        ttpCreationError: "\\u5EFA\\u7ACB Trusted Type \\u7B56\\u7565\\u5931\\u6557\\uFF1A",
+        svgParseError: "\\u7121\\u6548\\u6216\\u89E3\\u6790\\u5931\\u6557\\u7684 SVG \\u5B57\\u4E32\\uFF1A"
+      },
+      eventBus: {
+        callbackError: "\\u5728 '{{eventName}}' \\u4E8B\\u4EF6\\u7684\\u56DE\\u547C\\u4E2D\\u767C\\u751F\\u932F\\u8AA4\\uFF1A"
+      },
+      trustedTypes: {
+        workerPolicyError: "\\u5EFA\\u7ACB Trusted Types worker \\u7B56\\u7565\\u5931\\u6557\\uFF1A",
+        htmlPolicyError: "\\u5EFA\\u7ACB Trusted Types HTML \\u7B56\\u7565\\u5931\\u6557\\uFF1A",
+        defaultWorkerPolicyWarning: "Trusted Types \\u9810\\u8A2D\\u7B56\\u7565\\u8655\\u7406 worker URL \\u5931\\u6557\\uFF0C\\u9000\\u56DE\\u81F3\\u539F\\u59CB URL\\u3002",
+        defaultHtmlPolicyWarning: "Trusted Types \\u9810\\u8A2D\\u7B56\\u7565\\u8655\\u7406 HTML \\u5931\\u6557\\uFF0C\\u9000\\u56DE\\u81F3\\u539F\\u59CB\\u5B57\\u4E32\\u3002"
+      }
     }
   };
   // src/shared/i18n/management/languages.js
@@ -1834,14 +2484,23 @@ ${result.join(",\n")}
     return acc;
   }, {});
   var currentTranslations = translations.en;
-  function t(key) {
-    const value = key.split(".").reduce((obj, k) => {
+  function t(key, replacements) {
+    let value = key.split(".").reduce((obj, k) => {
       if (typeof obj === "object" && obj !== null && k in obj) {
         return obj[k];
       }
       return void 0;
     }, currentTranslations);
-    return value !== void 0 ? value : key;
+    if (value === void 0) {
+      return key;
+    }
+    if (replacements) {
+      Object.keys(replacements).forEach((placeholder) => {
+        const regex = new RegExp(\`{{\${placeholder}}}\`, "g");
+        value = value.replace(regex, replacements[placeholder]);
+      });
+    }
+    return value;
   }
   function getAvailableLanguages() {
     return supportedLanguages.map((lang) => ({
@@ -2030,13 +2689,23 @@ ${result.join(",\n")}
   self.onmessage = (event) => {
     const { type, payload } = event.data;
     const enableDebugLogging = payload.enableDebugLogging || false;
+    const translations2 = payload.translations || {};
+    const t2 = (key, replacements) => {
+      let value = translations2[key] || key;
+      if (replacements) {
+        Object.keys(replacements).forEach((placeholder) => {
+          const regex = new RegExp(\`{{\${placeholder}}}\`, "g");
+          value = value.replace(regex, replacements[placeholder]);
+        });
+      }
+      return value;
+    };
     const log2 = (...args) => {
       if (enableDebugLogging) {
-        console.log("[\\u9759\\u6001\\u626B\\u63CF Worker]", ...args);
+        console.log(t2("workerLogPrefix"), ...args);
       }
     };
     if (type === "scan") {
-      log2(\`[\\u9759\\u6001\\u626B\\u63CF Worker] \\u6536\\u5230 \${payload.texts.length} \\u6761\\u6587\\u672C\\uFF0C\\u5F00\\u59CB\\u5904\\u7406...\`);
       const { texts, filterRules } = payload;
       const uniqueTexts = /* @__PURE__ */ new Set();
       if (Array.isArray(texts)) {
@@ -2047,7 +2716,7 @@ ${result.join(",\n")}
           if (textForFiltering === "") return;
           const filterResult = shouldFilter(textForFiltering, filterRules);
           if (filterResult) {
-            log2(\`\\u6587\\u672C\\u5DF2\\u8FC7\\u6EE4: "\${textForFiltering}" (\\u539F\\u56E0: \${filterResult})\`);
+            log2(t2("textFiltered", { text: textForFiltering, reason: filterResult }));
             return;
           }
           uniqueTexts.add(normalizedText.replace(/(\\r\\n|\\n|\\r)+/g, "\\n"));
@@ -2055,7 +2724,7 @@ ${result.join(",\n")}
       }
       const textsArray = Array.from(uniqueTexts);
       const formattedText = formatTextsForTranslation(textsArray);
-      log2(\`[\\u9759\\u6001\\u626B\\u63CF Worker] \\u5904\\u7406\\u5B8C\\u6210\\uFF0C\\u5171 \${textsArray.length} \\u6761\\u6709\\u6548\\u6587\\u672C\\u3002\\u6B63\\u5728\\u53D1\\u56DE\\u4E3B\\u7EBF\\u7A0B...\`);
+      log2(t2("scanComplete", { count: textsArray.length }));
       self.postMessage({
         type: "scanCompleted",
         payload: {
@@ -2073,25 +2742,34 @@ ${result.join(",\n")}
         worker2.onmessage = (event) => {
           const { type, payload } = event.data;
           if (type === "scanCompleted") {
-            log(`[\u9759\u6001\u626B\u63CF] Worker \u5904\u7406\u6210\u529F\uFF0C\u6536\u5230 ${payload.count} \u6761\u6587\u672C\u3002`);
+            log(t("log.quickScan.worker.completed", { count: payload.count }));
             updateScanCount(payload.count, "static");
             resolve(payload);
             worker2.terminate();
           }
         };
         worker2.onerror = (error) => {
-          log("[\u9759\u6001\u626B\u63CF] Worker \u521D\u59CB\u5316\u5931\u8D25\u3002\u8FD9\u5F88\u53EF\u80FD\u662F\u7531\u4E8E\u7F51\u7AD9\u7684\u5185\u5BB9\u5B89\u5168\u7B56\u7565\uFF08CSP\uFF09\u963B\u6B62\u4E86\u811A\u672C\u3002", "warn");
-          log(`[\u9759\u6001\u626B\u63CF] \u539F\u59CB\u9519\u8BEF: ${error.message}`, "debug");
+          log(t("log.quickScan.worker.initFailed"), "warn");
+          log(t("log.quickScan.worker.originalError", { error: error.message }), "debug");
           worker2.terminate();
           runFallback();
         };
-        log(`[\u9759\u6001\u626B\u63CF] Web Worker \u5DF2\u521B\u5EFA\uFF0C\u6B63\u5728\u53D1\u9001 ${texts.length} \u6761\u6587\u672C\u8FDB\u884C\u5904\u7406...`);
+        log(t("log.quickScan.worker.sendingData", { count: texts.length }));
         worker2.postMessage({
           type: "scan",
-          payload: { texts, filterRules: filterRules2, enableDebugLogging }
+          payload: {
+            texts,
+            filterRules: filterRules2,
+            enableDebugLogging,
+            translations: {
+              workerLogPrefix: t("log.quickScan.worker.logPrefix"),
+              textFiltered: t("log.textProcessor.filtered"),
+              scanComplete: t("log.quickScan.worker.completed")
+            }
+          }
         });
       } catch (e) {
-        log(`[\u9759\u6001\u626B\u63CF] Worker \u521D\u59CB\u5316\u65F6\u53D1\u751F\u540C\u6B65\u9519\u8BEF: ${e.message}`, "error");
+        log(t("log.quickScan.worker.initSyncError", { error: e.message }), "error");
         runFallback();
       }
     });
@@ -2141,7 +2819,7 @@ ${result.join(",\n")}
   var filterRules = {};
   function initFallback(rules) {
     filterRules = rules || {};
-    log("[\u4F1A\u8BDD\u626B\u63CF - \u5907\u9009\u65B9\u6848] \u521D\u59CB\u5316\u5B8C\u6210\u3002");
+    log(t("log.sessionScan.fallback.initialized"));
   }
   function processTextsInFallback(texts, logPrefix = "") {
     let changed = false;
@@ -2154,7 +2832,7 @@ ${result.join(",\n")}
         const filterResult = shouldFilter(textForFiltering, filterRules);
         if (filterResult) {
           const prefix = logPrefix ? `${logPrefix} ` : "";
-          log(`${prefix}\u6587\u672C\u5DF2\u8FC7\u6EE4: "${textForFiltering}" (\u539F\u56E0: ${filterResult})`);
+          log(prefix + t("log.textProcessor.filtered", { text: textForFiltering, reason: filterResult }));
           return;
         }
         const originalSize = sessionTexts.size;
@@ -2183,7 +2861,7 @@ ${result.join(",\n")}
   }
   function clearInFallback() {
     sessionTexts.clear();
-    log("[\u4F1A\u8BDD\u626B\u63CF - \u5907\u9009\u65B9\u6848] \u6570\u636E\u5DF2\u6E05\u7A7A\u3002");
+    log(t("log.sessionScan.fallback.cleared"));
   }
   var isRecording = false;
   var observer = null;
@@ -2229,7 +2907,7 @@ ${result.join(",\n")}
     isRecording = true;
     const { filterRules: filterRules2 } = loadSettings();
     const activateFallbackMode = (initialTexts2) => {
-      log("[\u4F1A\u8BDD\u626B\u63CF] \u5207\u6362\u5230\u4E3B\u7EBF\u7A0B\u5907\u9009\u65B9\u6848\u3002", "warn");
+      log(t("log.sessionScan.switchToFallback"), "warn");
       worker = null;
       useFallback = true;
       showNotification(t("notifications.cspWorkerWarning"), { type: "info", duration: 5e3 });
@@ -2244,7 +2922,7 @@ ${result.join(",\n")}
     };
     const initialTexts = extractAndProcessText();
     try {
-      log("\u4F1A\u8BDD\u626B\u63CF\uFF1A\u5C1D\u8BD5\u542F\u52A8 Web Worker...");
+      log(t("log.sessionScan.worker.starting"));
       const workerScript = `(() => {
   // src/shared/i18n/en.json
   var en_default = {
@@ -2397,6 +3075,113 @@ ${result.join(",\n")}
       advanced: {
         title: "Advanced Settings Explanation",
         enable_debug_logging: "When enabled, the script will output detailed internal status, execution steps, and error messages to the browser's <strong>Developer Tools Console</strong> (usually opened with F12). This is primarily for developers or users who need to submit detailed bug reports."
+      }
+    },
+    log: {
+      prefix: "[Text Extractor Script-Debug]",
+      language: {
+        switched: "Language switched to: {{lang}}",
+        notFound: "Language '{{lang}}' not found, falling back to 'en'."
+      },
+      settings: {
+        changed: "Setting '{{key}}' changed from '{{oldValue}}' to '{{newValue}}'",
+        filterRuleChanged: {
+          enabled: "Filter rule '{{key}}' has been enabled",
+          disabled: "Filter rule '{{key}}' has been disabled"
+        },
+        panel: {
+          opening: "Opening settings panel...",
+          closing: "Closing settings panel...",
+          saving: "Saving settings..."
+        },
+        parseError: "Error parsing saved settings:",
+        invalidObject: "Attempted to save an invalid object for settings:"
+      },
+      textProcessor: {
+        filtered: 'Text filtered: "{{text}}" (Reason: {{reason}})'
+      },
+      quickScan: {
+        switchToFallback: "[Quick Scan] Switching to main thread fallback.",
+        fallbackFailed: "[Quick Scan] Main thread fallback failed: {{error}}",
+        fallback: {
+          starting: "[Quick Scan - Fallback] Starting processing in main thread...",
+          completed: "[Quick Scan - Fallback] Processing complete, found {{count}} unique texts."
+        },
+        worker: {
+          logPrefix: "[Quick Scan Worker]",
+          starting: "[Quick Scan] Starting execution, attempting to use Web Worker...",
+          completed: "[Quick Scan] Worker processing successful, received {{count}} texts.",
+          scanComplete: "[Quick Scan Worker] Processing complete, found {{count}} unique texts. Sending back to main thread...",
+          initFailed: "[Quick Scan] Worker initialization failed. This is likely due to the website's Content Security Policy (CSP).",
+          originalError: "[Quick Scan] Original error: {{error}}",
+          sendingData: "[Quick Scan] Web Worker created, sending {{count}} texts for processing...",
+          initSyncError: "[Quick Scan] Synchronous error during Worker initialization: {{error}}"
+        }
+      },
+      sessionScan: {
+        switchToFallback: "[Session Scan] Switching to main thread fallback.",
+        domObserver: {
+          stopped: "[Session Scan] Stopped listening for DOM changes."
+        },
+        fallback: {
+          initialized: "[Session Scan - Fallback] Initialized.",
+          cleared: "[Session Scan - Fallback] Data cleared."
+        },
+        worker: {
+          logPrefix: "[Session Scan Worker]",
+          starting: "Session Scan: Attempting to start Web Worker...",
+          initFailed: "[Session Scan] Worker initialization failed. This is likely due to the website's Content Security Policy (CSP).",
+          originalError: "[Session Scan] Original error: {{error}}",
+          initialized: "[Session Scan] Worker initialized successfully, sent {{count}} initial texts to start the session.",
+          initSyncError: "[Session Scan] Synchronous error during Worker initialization: {{error}}",
+          clearCommandSent: "[Session Scan] Clear command sent to worker."
+        }
+      },
+      ui: {
+        copyButton: {
+          copied: "Copy button clicked, copied {{count}} characters.",
+          nothingToCopy: "Copy button clicked, but there was no content to copy or the button was disabled."
+        },
+        confirmationModal: {
+          sessionScan: {
+            confirmed: "User confirmed clearing session scan texts, invoking callback..."
+          },
+          quickScan: {
+            confirmed: "User confirmed clearing quick scan texts."
+          },
+          cancelled: "User cancelled the clear operation."
+        },
+        modal: {
+          openingAndScanning: "Opening main modal and starting static scan...",
+          scanFailed: "Static scan failed: {{error}}",
+          closing: "Closing main modal..."
+        }
+      },
+      exporter: {
+        csvError: "Error while parsing text and generating CSV: {{error}}",
+        fileExported: "File exported: {{filename}}",
+        noContent: "No content to export.",
+        unknownFormat: "Unknown export format: {{format}}"
+      },
+      main: {
+        requestingSessionScanData: "Requesting full data from session-scan mode...",
+        exportingQuickScanData: "Exporting full data from quick-scan mode's memory...",
+        inIframe: "Script is in an iframe, skipping initialization.",
+        initializing: "Script initialization started...",
+        initialSettingsLoaded: "Initial settings loaded:"
+      },
+      dom: {
+        ttpCreationError: "Failed to create Trusted Type policy:",
+        svgParseError: "Invalid or failed to parse SVG string:"
+      },
+      eventBus: {
+        callbackError: "Error in callback for event '{{eventName}}':"
+      },
+      trustedTypes: {
+        workerPolicyError: "Failed to create Trusted Types worker policy:",
+        htmlPolicyError: "Failed to create Trusted Types HTML policy:",
+        defaultWorkerPolicyWarning: "Trusted Types default policy failed for worker URL, falling back to raw URL.",
+        defaultHtmlPolicyWarning: "Trusted Types default policy failed for HTML, falling back to raw string."
       }
     }
   };
@@ -2552,6 +3337,113 @@ ${result.join(",\n")}
         title: "\\u9AD8\\u7EA7\\u8BBE\\u7F6E\\u8BF4\\u660E",
         enable_debug_logging: "\\u542F\\u7528\\u540E\\uFF0C\\u811A\\u672C\\u4F1A\\u5C06\\u8BE6\\u7EC6\\u7684\\u5185\\u90E8\\u8FD0\\u884C\\u72B6\\u6001\\u3001\\u6267\\u884C\\u6B65\\u9AA4\\u3001\\u9519\\u8BEF\\u4FE1\\u606F\\u7B49\\u8F93\\u51FA\\u5230\\u6D4F\\u89C8\\u5668\\u7684<strong>\\u5F00\\u53D1\\u8005\\u5DE5\\u5177\\u63A7\\u5236\\u53F0</strong>\\uFF08\\u901A\\u5E38\\u6309 F12 \\u6253\\u5F00\\uFF09\\u3002\\u6B64\\u529F\\u80FD\\u4E3B\\u8981\\u9762\\u5411\\u5F00\\u53D1\\u8005\\u6216\\u9700\\u8981\\u63D0\\u4EA4\\u8BE6\\u7EC6\\u9519\\u8BEF\\u62A5\\u544A\\u7684\\u7528\\u6237\\u3002"
       }
+    },
+    log: {
+      prefix: "[\\u6587\\u672C\\u63D0\\u53D6\\u811A\\u672C-Debug]",
+      language: {
+        switched: "\\u8BED\\u8A00\\u5DF2\\u5207\\u6362\\u81F3: {{lang}}",
+        notFound: "\\u8BED\\u8A00 '{{lang}}' \\u4E0D\\u5B58\\u5728\\uFF0C\\u56DE\\u9000\\u5230 'en'\\u3002"
+      },
+      settings: {
+        changed: "\\u8BBE\\u7F6E '{{key}}' \\u5DF2\\u4ECE '{{oldValue}}' \\u66F4\\u6539\\u4E3A '{{newValue}}'",
+        filterRuleChanged: {
+          enabled: "\\u8FC7\\u6EE4\\u89C4\\u5219 '{{key}}' \\u5DF2\\u88AB\\u542F\\u7528",
+          disabled: "\\u8FC7\\u6EE4\\u89C4\\u5219 '{{key}}' \\u5DF2\\u88AB\\u7981\\u7528"
+        },
+        panel: {
+          opening: "\\u6B63\\u5728\\u6253\\u5F00\\u8BBE\\u7F6E\\u9762\\u677F...",
+          closing: "\\u6B63\\u5728\\u5173\\u95ED\\u8BBE\\u7F6E\\u9762\\u677F...",
+          saving: "\\u6B63\\u5728\\u4FDD\\u5B58\\u8BBE\\u7F6E..."
+        },
+        parseError: "\\u89E3\\u6790\\u5DF2\\u4FDD\\u5B58\\u7684\\u8BBE\\u7F6E\\u65F6\\u51FA\\u9519\\uFF1A",
+        invalidObject: "\\u5C1D\\u8BD5\\u4FDD\\u5B58\\u4E00\\u4E2A\\u65E0\\u6548\\u7684\\u5BF9\\u8C61\\u4F5C\\u4E3A\\u8BBE\\u7F6E\\uFF1A"
+      },
+      textProcessor: {
+        filtered: '\\u6587\\u672C\\u5DF2\\u8FC7\\u6EE4: "{{text}}" (\\u539F\\u56E0: {{reason}})'
+      },
+      quickScan: {
+        switchToFallback: "[\\u9759\\u6001\\u626B\\u63CF] \\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
+        fallbackFailed: "[\\u9759\\u6001\\u626B\\u63CF] \\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u5931\\u8D25: {{error}}",
+        fallback: {
+          starting: "[\\u9759\\u6001\\u626B\\u63CF - \\u5907\\u9009\\u65B9\\u6848] \\u5F00\\u59CB\\u5728\\u4E3B\\u7EBF\\u7A0B\\u4E2D\\u5904\\u7406...",
+          completed: "[\\u9759\\u6001\\u626B\\u63CF - \\u5907\\u9009\\u65B9\\u6848] \\u5904\\u7406\\u5B8C\\u6210\\uFF0C\\u5171 {{count}} \\u6761\\u6709\\u6548\\u6587\\u672C\\u3002"
+        },
+        worker: {
+          logPrefix: "[\\u9759\\u6001\\u626B\\u63CF Worker]",
+          starting: "[\\u9759\\u6001\\u626B\\u63CF] \\u5F00\\u59CB\\u6267\\u884C\\uFF0C\\u5C1D\\u8BD5\\u4F7F\\u7528 Web Worker...",
+          completed: "[\\u9759\\u6001\\u626B\\u63CF] Worker \\u5904\\u7406\\u6210\\u529F\\uFF0C\\u6536\\u5230 {{count}} \\u6761\\u6587\\u672C\\u3002",
+          scanComplete: "[\\u9759\\u6001\\u626B\\u63CF Worker] \\u5904\\u7406\\u5B8C\\u6210\\uFF0C\\u5171 {{count}} \\u6761\\u6709\\u6548\\u6587\\u672C\\u3002\\u6B63\\u5728\\u53D1\\u56DE\\u4E3B\\u7EBF\\u7A0B...",
+          initFailed: "[\\u9759\\u6001\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u8D25\\u3002\\u8FD9\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u4E8E\\u7F51\\u7AD9\\u7684\\u5185\\u5BB9\\u5B89\\u5168\\u7B56\\u7565\\uFF08CSP\\uFF09\\u963B\\u6B62\\u4E86\\u811A\\u672C\\u3002",
+          originalError: "[\\u9759\\u6001\\u626B\\u63CF] \\u539F\\u59CB\\u9519\\u8BEF: {{error}}",
+          sendingData: "[\\u9759\\u6001\\u626B\\u63CF] Web Worker \\u5DF2\\u521B\\u5EFA\\uFF0C\\u6B63\\u5728\\u53D1\\u9001 {{count}} \\u6761\\u6587\\u672C\\u8FDB\\u884C\\u5904\\u7406...",
+          initSyncError: "[\\u9759\\u6001\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u65F6\\u53D1\\u751F\\u540C\\u6B65\\u9519\\u8BEF: {{error}}"
+        }
+      },
+      sessionScan: {
+        switchToFallback: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
+        domObserver: {
+          stopped: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u5DF2\\u505C\\u6B62\\u76D1\\u542C DOM \\u53D8\\u5316\\u3002"
+        },
+        fallback: {
+          initialized: "[\\u4F1A\\u8BDD\\u626B\\u63CF - \\u5907\\u9009\\u65B9\\u6848] \\u521D\\u59CB\\u5316\\u5B8C\\u6210\\u3002",
+          cleared: "[\\u4F1A\\u8BDD\\u626B\\u63CF - \\u5907\\u9009\\u65B9\\u6848] \\u6570\\u636E\\u5DF2\\u6E05\\u7A7A\\u3002"
+        },
+        worker: {
+          logPrefix: "[\\u4F1A\\u8BDD\\u626B\\u63CF Worker]",
+          starting: "\\u4F1A\\u8BDD\\u626B\\u63CF\\uFF1A\\u5C1D\\u8BD5\\u542F\\u52A8 Web Worker...",
+          initFailed: "[\\u4F1A\\u8BDD\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u8D25\\u3002\\u8FD9\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u4E8E\\u7F51\\u7AD9\\u7684\\u5185\\u5BB9\\u5B89\\u5168\\u7B56\\u7565\\uFF08CSP\\uFF09\\u963B\\u6B62\\u4E86\\u811A\\u672C\\u3002",
+          originalError: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u539F\\u59CB\\u9519\\u8BEF: {{error}}",
+          initialized: "[\\u4F1A\\u8BDD\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u6210\\u529F\\uFF0C\\u5DF2\\u53D1\\u9001 {{count}} \\u6761\\u521D\\u59CB\\u6587\\u672C\\u4EE5\\u5F00\\u59CB\\u4F1A\\u8BDD\\u3002",
+          initSyncError: "[\\u4F1A\\u8BDD\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u65F6\\u53D1\\u751F\\u540C\\u6B65\\u9519\\u8BEF: {{error}}",
+          clearCommandSent: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u5DF2\\u5411 Worker \\u53D1\\u9001\\u6E05\\u7A7A\\u6307\\u4EE4\\u3002"
+        }
+      },
+      ui: {
+        copyButton: {
+          copied: "\\u590D\\u5236\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\uFF0C\\u590D\\u5236\\u4E86 {{count}} \\u4E2A\\u5B57\\u7B26\\u3002",
+          nothingToCopy: "\\u590D\\u5236\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\uFF0C\\u4F46\\u6CA1\\u6709\\u5185\\u5BB9\\u53EF\\u590D\\u5236\\u6216\\u6309\\u94AE\\u88AB\\u7981\\u7528\\u3002"
+        },
+        confirmationModal: {
+          sessionScan: {
+            confirmed: "\\u7528\\u6237\\u786E\\u8BA4\\u6E05\\u7A7A\\u4F1A\\u8BDD\\u626B\\u63CF\\u6587\\u672C\\uFF0C\\u6B63\\u5728\\u8C03\\u7528\\u56DE\\u8C03..."
+          },
+          quickScan: {
+            confirmed: "\\u7528\\u6237\\u786E\\u8BA4\\u6E05\\u7A7A\\u5FEB\\u901F\\u626B\\u63CF\\u6587\\u672C\\u3002"
+          },
+          cancelled: "\\u7528\\u6237\\u53D6\\u6D88\\u4E86\\u6E05\\u7A7A\\u64CD\\u4F5C\\u3002"
+        },
+        modal: {
+          openingAndScanning: "\\u6B63\\u5728\\u6253\\u5F00\\u4E3B\\u6A21\\u6001\\u6846\\u5E76\\u542F\\u52A8\\u9759\\u6001\\u626B\\u63CF...",
+          scanFailed: "\\u9759\\u6001\\u626B\\u63CF\\u5931\\u8D25: {{error}}",
+          closing: "\\u6B63\\u5728\\u5173\\u95ED\\u4E3B\\u6A21\\u6001\\u6846..."
+        }
+      },
+      exporter: {
+        csvError: "\\u5728\\u89E3\\u6790\\u6587\\u672C\\u5E76\\u751F\\u6210 CSV \\u65F6\\u53D1\\u751F\\u9519\\u8BEF: {{error}}",
+        fileExported: "\\u6587\\u4EF6\\u5DF2\\u5BFC\\u51FA: {{filename}}",
+        noContent: "\\u6CA1\\u6709\\u5185\\u5BB9\\u53EF\\u5BFC\\u51FA\\u3002",
+        unknownFormat: "\\u672A\\u77E5\\u7684\\u5BFC\\u51FA\\u683C\\u5F0F: {{format}}"
+      },
+      main: {
+        requestingSessionScanData: "\\u4ECE session-scan \\u6A21\\u5F0F\\u8BF7\\u6C42\\u5B8C\\u6574\\u6570\\u636E...",
+        exportingQuickScanData: "\\u4ECE quick-scan \\u6A21\\u5F0F\\u7684\\u5185\\u5B58\\u4E2D\\u5BFC\\u51FA\\u5B8C\\u6574\\u6570\\u636E...",
+        inIframe: "\\u811A\\u672C\\u5728 iframe \\u4E2D\\uFF0C\\u5DF2\\u8DF3\\u8FC7\\u521D\\u59CB\\u5316\\u3002",
+        initializing: "\\u811A\\u672C\\u5F00\\u59CB\\u521D\\u59CB\\u5316...",
+        initialSettingsLoaded: "\\u521D\\u59CB\\u8BBE\\u7F6E\\u5DF2\\u52A0\\u8F7D:"
+      },
+      dom: {
+        ttpCreationError: "\\u521B\\u5EFA Trusted Type \\u7B56\\u7565\\u5931\\u8D25\\uFF1A",
+        svgParseError: "\\u65E0\\u6548\\u6216\\u89E3\\u6790\\u5931\\u8D25\\u7684 SVG \\u5B57\\u7B26\\u4E32\\uFF1A"
+      },
+      eventBus: {
+        callbackError: "\\u5728 '{{eventName}}' \\u4E8B\\u4EF6\\u7684\\u56DE\\u8C03\\u4E2D\\u53D1\\u751F\\u9519\\u8BEF\\uFF1A"
+      },
+      trustedTypes: {
+        workerPolicyError: "\\u521B\\u5EFA Trusted Types worker \\u7B56\\u7565\\u5931\\u8D25\\uFF1A",
+        htmlPolicyError: "\\u521B\\u5EFA Trusted Types HTML \\u7B56\\u7565\\u5931\\u8D25\\uFF1A",
+        defaultWorkerPolicyWarning: "Trusted Types \\u9ED8\\u8BA4\\u7B56\\u7565\\u5904\\u7406 worker URL \\u5931\\u8D25\\uFF0C\\u56DE\\u9000\\u5230\\u539F\\u59CB URL\\u3002",
+        defaultHtmlPolicyWarning: "Trusted Types \\u9ED8\\u8BA4\\u7B56\\u7565\\u5904\\u7406 HTML \\u5931\\u8D25\\uFF0C\\u56DE\\u9000\\u5230\\u539F\\u59CB\\u5B57\\u7B26\\u4E32\\u3002"
+      }
     }
   };
   // src/shared/i18n/zh-TW.json
@@ -2706,6 +3598,113 @@ ${result.join(",\n")}
         title: "\\u9032\\u968E\\u8A2D\\u5B9A\\u8AAA\\u660E",
         enable_debug_logging: "\\u555F\\u7528\\u5F8C\\uFF0C\\u8173\\u672C\\u6703\\u5C07\\u8A73\\u7D30\\u7684\\u5167\\u90E8\\u904B\\u884C\\u72C0\\u614B\\u3001\\u57F7\\u884C\\u6B65\\u9A5F\\u3001\\u932F\\u8AA4\\u8CC7\\u8A0A\\u7B49\\u8F38\\u51FA\\u5230\\u700F\\u89BD\\u5668\\u7684<strong>\\u958B\\u767C\\u8005\\u5DE5\\u5177\\u63A7\\u5236\\u53F0</strong>\\uFF08\\u901A\\u5E38\\u6309 F12 \\u958B\\u555F\\uFF09\\u3002\\u6B64\\u529F\\u80FD\\u4E3B\\u8981\\u9762\\u5411\\u958B\\u767C\\u8005\\u6216\\u9700\\u8981\\u63D0\\u4EA4\\u8A73\\u7D30\\u932F\\u8AA4\\u5831\\u544A\\u7684\\u4F7F\\u7528\\u8005\\u3002"
       }
+    },
+    log: {
+      prefix: "[\\u6587\\u672C\\u63D0\\u53D6\\u8173\\u672C-Debug]",
+      language: {
+        switched: "\\u8A9E\\u8A00\\u5DF2\\u5207\\u63DB\\u81F3\\uFF1A{{lang}}",
+        notFound: "\\u8A9E\\u8A00 '{{lang}}' \\u4E0D\\u5B58\\u5728\\uFF0C\\u9000\\u56DE\\u81F3 'en'\\u3002"
+      },
+      settings: {
+        changed: "\\u8A2D\\u5B9A '{{key}}' \\u5DF2\\u5F9E '{{oldValue}}' \\u8B8A\\u66F4\\u70BA '{{newValue}}'",
+        filterRuleChanged: {
+          enabled: "\\u904E\\u6FFE\\u898F\\u5247 '{{key}}' \\u5DF2\\u88AB\\u555F\\u7528",
+          disabled: "\\u904E\\u6FFE\\u898F\\u5247 '{{key}}' \\u5DF2\\u88AB\\u7981\\u7528"
+        },
+        panel: {
+          opening: "\\u6B63\\u5728\\u958B\\u555F\\u8A2D\\u5B9A\\u9762\\u677F...",
+          closing: "\\u6B63\\u5728\\u95DC\\u9589\\u8A2D\\u5B9A\\u9762\\u677F...",
+          saving: "\\u6B63\\u5728\\u5132\\u5B58\\u8A2D\\u5B9A..."
+        },
+        parseError: "\\u89E3\\u6790\\u5DF2\\u5132\\u5B58\\u7684\\u8A2D\\u5B9A\\u6642\\u51FA\\u932F\\uFF1A",
+        invalidObject: "\\u8A66\\u5716\\u5132\\u5B58\\u4E00\\u500B\\u7121\\u6548\\u7684\\u7269\\u4EF6\\u4F5C\\u70BA\\u8A2D\\u5B9A\\uFF1A"
+      },
+      textProcessor: {
+        filtered: '\\u6587\\u672C\\u5DF2\\u904E\\u6FFE\\uFF1A"{{text}}" (\\u539F\\u56E0\\uFF1A{{reason}})'
+      },
+      quickScan: {
+        switchToFallback: "[\\u975C\\u614B\\u6383\\u63CF] \\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
+        fallbackFailed: "[\\u975C\\u614B\\u6383\\u63CF] \\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u5931\\u6557\\uFF1A{{error}}",
+        fallback: {
+          starting: "[\\u975C\\u614B\\u6383\\u63CF - \\u5099\\u9078\\u65B9\\u6848] \\u958B\\u59CB\\u5728\\u4E3B\\u7DDA\\u7A0B\\u4E2D\\u8655\\u7406...",
+          completed: "[\\u975C\\u614B\\u6383\\u63CF - \\u5099\\u9078\\u65B9\\u6848] \\u8655\\u7406\\u5B8C\\u6210\\uFF0C\\u5171 {{count}} \\u689D\\u6709\\u6548\\u6587\\u672C\\u3002"
+        },
+        worker: {
+          logPrefix: "[\\u975C\\u614B\\u6383\\u63CF Worker]",
+          starting: "[\\u975C\\u614B\\u6383\\u63CF] \\u958B\\u59CB\\u57F7\\u884C\\uFF0C\\u5617\\u8A66\\u4F7F\\u7528 Web Worker...",
+          completed: "[\\u975C\\u614B\\u6383\\u63CF] Worker \\u8655\\u7406\\u6210\\u529F\\uFF0C\\u6536\\u5230 {{count}} \\u689D\\u6587\\u672C\\u3002",
+          scanComplete: "[\\u975C\\u614B\\u6383\\u63CF Worker] \\u8655\\u7406\\u5B8C\\u6210\\uFF0C\\u5171 {{count}} \\u689D\\u6709\\u6548\\u6587\\u672C\\u3002\\u6B63\\u5728\\u767C\\u56DE\\u4E3B\\u7DDA\\u7A0B...",
+          initFailed: "[\\u975C\\u614B\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u6557\\u3002\\u9019\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u65BC\\u7DB2\\u7AD9\\u7684\\u5167\\u5BB9\\u5B89\\u5168\\u7B56\\u7565\\uFF08CSP\\uFF09\\u963B\\u6B62\\u4E86\\u8173\\u672C\\u3002",
+          originalError: "[\\u975C\\u614B\\u6383\\u63CF] \\u539F\\u59CB\\u932F\\u8AA4\\uFF1A{{error}}",
+          sendingData: "[\\u975C\\u614B\\u6383\\u63CF] Web Worker \\u5DF2\\u5EFA\\u7ACB\\uFF0C\\u6B63\\u5728\\u767C\\u9001 {{count}} \\u689D\\u6587\\u672C\\u9032\\u884C\\u8655\\u7406...",
+          initSyncError: "[\\u975C\\u614B\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u6642\\u767C\\u751F\\u540C\\u6B65\\u932F\\u8AA4\\uFF1A{{error}}"
+        }
+      },
+      sessionScan: {
+        switchToFallback: "[\\u6703\\u8A71\\u6383\\u63CF] \\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
+        domObserver: {
+          stopped: "[\\u6703\\u8A71\\u6383\\u63CF] \\u5DF2\\u505C\\u6B62\\u76E3\\u807D DOM \\u8B8A\\u5316\\u3002"
+        },
+        fallback: {
+          initialized: "[\\u6703\\u8A71\\u6383\\u63CF - \\u5099\\u9078\\u65B9\\u6848] \\u521D\\u59CB\\u5316\\u5B8C\\u6210\\u3002",
+          cleared: "[\\u6703\\u8A71\\u6383\\u63CF - \\u5099\\u9078\\u65B9\\u6848] \\u8CC7\\u6599\\u5DF2\\u6E05\\u7A7A\\u3002"
+        },
+        worker: {
+          logPrefix: "[\\u6703\\u8A71\\u6383\\u63CF Worker]",
+          starting: "\\u6703\\u8A71\\u6383\\u63CF\\uFF1A\\u5617\\u8A66\\u555F\\u52D5 Web Worker...",
+          initFailed: "[\\u6703\\u8A71\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u6557\\u3002\\u9019\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u65BC\\u7DB2\\u7AD9\\u7684\\u5167\\u5BB9\\u5B89\\u5168\\u7B56\\u7565\\uFF08CSP\\uFF09\\u963B\\u6B62\\u4E86\\u8173\\u672C\\u3002",
+          originalError: "[\\u6703\\u8A71\\u6383\\u63CF] \\u539F\\u59CB\\u932F\\u8AA4\\uFF1A{{error}}",
+          initialized: "[\\u6703\\u8A71\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u6210\\u529F\\uFF0C\\u5DF2\\u767C\\u9001 {{count}} \\u689D\\u521D\\u59CB\\u6587\\u672C\\u4EE5\\u958B\\u59CB\\u6703\\u8A71\\u3002",
+          initSyncError: "[\\u6703\\u8A71\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u6642\\u767C\\u751F\\u540C\\u6B65\\u932F\\u8AA4\\uFF1A{{error}}",
+          clearCommandSent: "[\\u6703\\u8A71\\u6383\\u63CF] \\u5DF2\\u5411 Worker \\u767C\\u9001\\u6E05\\u7A7A\\u6307\\u4EE4\\u3002"
+        }
+      },
+      ui: {
+        copyButton: {
+          copied: "\\u8907\\u88FD\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\uFF0C\\u8907\\u88FD\\u4E86 {{count}} \\u500B\\u5B57\\u5143\\u3002",
+          nothingToCopy: "\\u8907\\u88FD\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\uFF0C\\u4F46\\u6C92\\u6709\\u5167\\u5BB9\\u53EF\\u8907\\u88FD\\u6216\\u6309\\u9215\\u88AB\\u7981\\u7528\\u3002"
+        },
+        confirmationModal: {
+          sessionScan: {
+            confirmed: "\\u4F7F\\u7528\\u8005\\u78BA\\u8A8D\\u6E05\\u7A7A\\u6703\\u8A71\\u6383\\u63CF\\u6587\\u672C\\uFF0C\\u6B63\\u5728\\u547C\\u53EB\\u56DE\\u8ABF..."
+          },
+          quickScan: {
+            confirmed: "\\u4F7F\\u7528\\u8005\\u78BA\\u8A8D\\u6E05\\u7A7A\\u5FEB\\u901F\\u6383\\u63CF\\u6587\\u672C\\u3002"
+          },
+          cancelled: "\\u4F7F\\u7528\\u8005\\u53D6\\u6D88\\u4E86\\u6E05\\u7A7A\\u64CD\\u4F5C\\u3002"
+        },
+        modal: {
+          openingAndScanning: "\\u6B63\\u5728\\u958B\\u555F\\u4E3B\\u6A21\\u614B\\u6846\\u4E26\\u555F\\u52D5\\u975C\\u614B\\u6383\\u63CF...",
+          scanFailed: "\\u975C\\u614B\\u6383\\u63CF\\u5931\\u6557\\uFF1A{{error}}",
+          closing: "\\u6B63\\u5728\\u95DC\\u9589\\u4E3B\\u6A21\\u614B\\u6846..."
+        }
+      },
+      exporter: {
+        csvError: "\\u5728\\u89E3\\u6790\\u6587\\u672C\\u4E26\\u751F\\u6210 CSV \\u6642\\u767C\\u751F\\u932F\\u8AA4\\uFF1A{{error}}",
+        fileExported: "\\u6A94\\u6848\\u5DF2\\u532F\\u51FA\\uFF1A{{filename}}",
+        noContent: "\\u6C92\\u6709\\u5167\\u5BB9\\u53EF\\u532F\\u51FA\\u3002",
+        unknownFormat: "\\u672A\\u77E5\\u7684\\u532F\\u51FA\\u683C\\u5F0F\\uFF1A{{format}}"
+      },
+      main: {
+        requestingSessionScanData: "\\u5F9E session-scan \\u6A21\\u5F0F\\u8ACB\\u6C42\\u5B8C\\u6574\\u8CC7\\u6599...",
+        exportingQuickScanData: "\\u5F9E quick-scan \\u6A21\\u5F0F\\u7684\\u8A18\\u61B6\\u9AD4\\u4E2D\\u532F\\u51FA\\u5B8C\\u6574\\u8CC7\\u6599...",
+        inIframe: "\\u8173\\u672C\\u5728 iframe \\u4E2D\\uFF0C\\u5DF2\\u8DF3\\u904E\\u521D\\u59CB\\u5316\\u3002",
+        initializing: "\\u8173\\u672C\\u958B\\u59CB\\u521D\\u59CB\\u5316...",
+        initialSettingsLoaded: "\\u521D\\u59CB\\u8A2D\\u5B9A\\u5DF2\\u8F09\\u5165:"
+      },
+      dom: {
+        ttpCreationError: "\\u5EFA\\u7ACB Trusted Type \\u7B56\\u7565\\u5931\\u6557\\uFF1A",
+        svgParseError: "\\u7121\\u6548\\u6216\\u89E3\\u6790\\u5931\\u6557\\u7684 SVG \\u5B57\\u4E32\\uFF1A"
+      },
+      eventBus: {
+        callbackError: "\\u5728 '{{eventName}}' \\u4E8B\\u4EF6\\u7684\\u56DE\\u547C\\u4E2D\\u767C\\u751F\\u932F\\u8AA4\\uFF1A"
+      },
+      trustedTypes: {
+        workerPolicyError: "\\u5EFA\\u7ACB Trusted Types worker \\u7B56\\u7565\\u5931\\u6557\\uFF1A",
+        htmlPolicyError: "\\u5EFA\\u7ACB Trusted Types HTML \\u7B56\\u7565\\u5931\\u6557\\uFF1A",
+        defaultWorkerPolicyWarning: "Trusted Types \\u9810\\u8A2D\\u7B56\\u7565\\u8655\\u7406 worker URL \\u5931\\u6557\\uFF0C\\u9000\\u56DE\\u81F3\\u539F\\u59CB URL\\u3002",
+        defaultHtmlPolicyWarning: "Trusted Types \\u9810\\u8A2D\\u7B56\\u7565\\u8655\\u7406 HTML \\u5931\\u6557\\uFF0C\\u9000\\u56DE\\u81F3\\u539F\\u59CB\\u5B57\\u4E32\\u3002"
+      }
     }
   };
   // src/shared/i18n/management/languages.js
@@ -2727,14 +3726,23 @@ ${result.join(",\n")}
     return acc;
   }, {});
   var currentTranslations = translations.en;
-  function t(key) {
-    const value = key.split(".").reduce((obj, k) => {
+  function t(key, replacements) {
+    let value = key.split(".").reduce((obj, k) => {
       if (typeof obj === "object" && obj !== null && k in obj) {
         return obj[k];
       }
       return void 0;
     }, currentTranslations);
-    return value !== void 0 ? value : key;
+    if (value === void 0) {
+      return key;
+    }
+    if (replacements) {
+      Object.keys(replacements).forEach((placeholder) => {
+        const regex = new RegExp(\`{{\${placeholder}}}\`, "g");
+        value = value.replace(regex, replacements[placeholder]);
+      });
+    }
+    return value;
   }
   function getAvailableLanguages() {
     return supportedLanguages.map((lang) => ({
@@ -2913,6 +3921,17 @@ ${result.join(",\n")}
   // src/features/session-scan/worker.js
   var sessionTexts = /* @__PURE__ */ new Set();
   var filterRules = {};
+  var translations2 = {};
+  var t2 = (key, replacements) => {
+    let value = translations2[key] || key;
+    if (replacements) {
+      Object.keys(replacements).forEach((placeholder) => {
+        const regex = new RegExp(\`{{\${placeholder}}}\`, "g");
+        value = value.replace(regex, replacements[placeholder]);
+      });
+    }
+    return value;
+  };
   function processAndAddText(rawText, logPrefix = "") {
     if (!rawText || typeof rawText !== "string") return false;
     const normalizedText = rawText.normalize("NFC");
@@ -2921,7 +3940,7 @@ ${result.join(",\n")}
     const filterResult = shouldFilter(textForFiltering, filterRules);
     if (filterResult) {
       const prefix = logPrefix ? \`\${logPrefix} \` : "";
-      console.log(\`[\\u4F1A\\u8BDD\\u626B\\u63CF Worker] \${prefix}\\u6587\\u672C\\u5DF2\\u8FC7\\u6EE4: "\${textForFiltering}" (\\u539F\\u56E0: \${filterResult})\`);
+      console.log(t2("workerLogPrefix"), prefix + t2("textFiltered", { text: textForFiltering, reason: filterResult }));
       return false;
     }
     const originalSize = sessionTexts.size;
@@ -2945,6 +3964,7 @@ ${result.join(",\n")}
       // \u521D\u59CB\u5316\uFF1A\u63A5\u6536\u8FC7\u6EE4\u89C4\u5219
       case "init":
         filterRules = payload.filterRules || {};
+        translations2 = payload.translations || {};
         break;
       // \u6570\u636E\u5904\u7406\uFF1A\u63A5\u6536\u4E00\u6279\u539F\u59CB\u6587\u672C\u8FDB\u884C\u5904\u7406
       case "data": {
@@ -2996,16 +4016,25 @@ ${result.join(",\n")}
         }
       };
       worker.onerror = (error) => {
-        log("[\u4F1A\u8BDD\u626B\u63CF] Worker \u521D\u59CB\u5316\u5931\u8D25\u3002\u8FD9\u5F88\u53EF\u80FD\u662F\u7531\u4E8E\u7F51\u7AD9\u7684\u5185\u5BB9\u5B89\u5168\u7B56\u7565\uFF08CSP\uFF09\u963B\u6B62\u4E86\u811A\u672C\u3002", "warn");
-        log(`[\u4F1A\u8BDD\u626B\u63CF] \u539F\u59CB\u9519\u8BEF: ${error.message}`, "debug");
+        log(t("log.sessionScan.worker.initFailed"), "warn");
+        log(t("log.sessionScan.worker.originalError", { error: error.message }), "debug");
         if (worker) worker.terminate();
         activateFallbackMode(initialTexts);
       };
-      worker.postMessage({ type: "init", payload: { filterRules: filterRules2 } });
+      worker.postMessage({
+        type: "init",
+        payload: {
+          filterRules: filterRules2,
+          translations: {
+            workerLogPrefix: t("log.sessionScan.worker.logPrefix"),
+            textFiltered: t("log.textProcessor.filtered")
+          }
+        }
+      });
       worker.postMessage({ type: "data", payload: { texts: initialTexts } });
-      log(`[\u4F1A\u8BDD\u626B\u63CF] Worker \u521D\u59CB\u5316\u6210\u529F\uFF0C\u5DF2\u53D1\u9001 ${initialTexts.length} \u6761\u521D\u59CB\u6587\u672C\u4EE5\u5F00\u59CB\u4F1A\u8BDD\u3002`);
+      log(t("log.sessionScan.worker.initialized", { count: initialTexts.length }));
     } catch (e) {
-      log(`[\u4F1A\u8BDD\u626B\u63CF] Worker \u521D\u59CB\u5316\u65F6\u53D1\u751F\u540C\u6B65\u9519\u8BEF: ${e.message}`, "error");
+      log(t("log.sessionScan.worker.initSyncError", { error: e.message }), "error");
       activateFallbackMode(initialTexts);
     }
     if (!useFallback) {
@@ -3018,7 +4047,7 @@ ${result.join(",\n")}
       if (onStopped) onStopped(0);
       return;
     }
-    log("[\u4F1A\u8BDD\u626B\u63CF] \u5DF2\u505C\u6B62\u76D1\u542C DOM \u53D8\u5316\u3002");
+    log(t("log.sessionScan.domObserver.stopped"));
     if (observer) {
       observer.disconnect();
       observer = null;
@@ -3062,7 +4091,7 @@ ${result.join(",\n")}
       fire("sessionCleared");
     } else if (worker) {
       worker.postMessage({ type: "clear" });
-      log("[\u4F1A\u8A71\u6383\u63CF] \u5DF2\u5411 Worker \u767C\u9001\u6E05\u7A7A\u6307\u4EE4\u3002");
+      log(t("log.sessionScan.worker.clearCommandSent"));
     }
   }
   function createModalLayout() {
@@ -3367,11 +4396,11 @@ ${result.join(",\n")}
     copyBtn.addEventListener("click", () => {
       const textToCopy = outputTextarea.value;
       if (textToCopy && !copyBtn.disabled) {
-        log(`\u590D\u5236\u6309\u94AE\u88AB\u70B9\u51FB\uFF0C\u590D\u5236\u4E86 ${textToCopy.length} \u4E2A\u5B57\u7B26\u3002`);
+        log(t("log.ui.copyButton.copied", { count: textToCopy.length }));
         setClipboard(textToCopy);
         showNotification(t("notifications.copiedToClipboard"), { type: "success" });
       } else {
-        log("\u590D\u5236\u6309\u94AE\u88AB\u70B9\u51FB\uFF0C\u4F46\u6CA1\u6709\u5185\u5BB9\u53EF\u590D\u5236\u6216\u6309\u94AE\u88AB\u7981\u7528\u3002");
+        log(t("log.ui.copyButton.nothingToCopy"));
         showNotification(t("notifications.nothingToCopy"), { type: "info" });
       }
     });
@@ -3383,17 +4412,17 @@ ${result.join(",\n")}
       );
       if (confirmed) {
         if (currentMode === "session-scan" && clearSessionCallback) {
-          log("\u7528\u6237\u786E\u8BA4\u6E05\u7A7A\u4F1A\u8BDD\u626B\u63CF\u6587\u672C\uFF0C\u6B63\u5728\u8C03\u7528\u56DE\u8C03...");
+          log(t("log.ui.confirmationModal.sessionScan.confirmed"));
           clearSessionCallback();
           updateContentCallback(SHOW_PLACEHOLDER, true, "session-scan");
         } else {
-          log("\u7528\u6237\u786E\u8BA4\u6E05\u7A7A\u5FEB\u901F\u626B\u63CF\u6587\u672C\u3002");
+          log(t("log.ui.confirmationModal.quickScan.confirmed"));
           updateContentCallback(SHOW_PLACEHOLDER, false, "quick-scan");
           updateScanCount(0, "quick-scan");
         }
         showNotification(t("notifications.contentCleared"), { type: "success" });
       } else {
-        log("\u7528\u6237\u53D6\u6D88\u4E86\u6E05\u7A7A\u64CD\u4F5C\u3002");
+        log(t("log.ui.confirmationModal.cancelled"));
       }
     });
     on("languageChanged", rerenderFooterTexts);
@@ -3583,7 +4612,7 @@ ${result.join(",\n")}
       console.error(t("notifications.modalInitError"));
       return;
     }
-    log("\u6B63\u5728\u6253\u5F00\u4E3B\u6A21\u6001\u6846\u5E76\u542F\u52A8\u9759\u6001\u626B\u63CF...");
+    log(t("log.ui.modal.openingAndScanning"));
     updateModalContent(SHOW_LOADING, true, "quick-scan");
     try {
       const extractedTexts = extractAndProcessText();
@@ -3595,14 +4624,14 @@ ${result.join(",\n")}
       showNotification(notificationText, { type: "success" });
     } catch (error) {
       hideLoading();
-      log(`\u9759\u6001\u626B\u63CF\u5931\u8D25: ${error.message}`);
+      log(t("log.ui.modal.scanFailed", { error: error.message }));
       showNotification(t("scan.quickFailed"), { type: "error" });
       updateModalContent("[]", false, "quick-scan");
     }
   }
   function closeModal() {
     if (modalOverlay && modalOverlay.classList.contains("is-visible")) {
-      log("\u6B63\u5728\u5173\u95ED\u4E3B\u6A21\u6001\u6846...");
+      log(t("log.ui.modal.closing"));
       modalOverlay.classList.remove("is-visible");
       modalOverlay.removeEventListener("keydown", handleKeyDown);
     }
@@ -4226,7 +5255,7 @@ ${result.join(",\n")}
     }
   };
   function showSettingsPanel() {
-    log("\u6B63\u5728\u6253\u5F00\u8BBE\u7F6E\u9762\u677F...");
+    log(t("log.settings.panel.opening"));
     if (settingsPanel) {
       setTimeout(() => settingsPanel.classList.add("is-visible"), 10);
       return;
@@ -4278,7 +5307,7 @@ ${result.join(",\n")}
   }
   function hideSettingsPanel() {
     if (settingsPanel && settingsPanel.classList.contains("is-visible")) {
-      log("\u6B63\u5728\u5173\u95ED\u8BBE\u7F6E\u9762\u677F...");
+      log(t("log.settings.panel.closing"));
       settingsPanel.removeEventListener("keydown", handleKeyDown2);
       settingsPanel.classList.remove("is-visible");
       setTimeout(() => {
@@ -4291,7 +5320,7 @@ ${result.join(",\n")}
     }
   }
   function handleSave() {
-    log("\u6B63\u5728\u4FDD\u5B58\u8BBE\u7F6E...");
+    log(t("log.settings.panel.saving"));
     const newSettings = {};
     for (const key in selectComponents) {
       newSettings[key] = selectComponents[key].getValue();
@@ -4375,7 +5404,7 @@ ${result.join(",\n")}
         id++;
       }
     } catch (error) {
-      log("\u5728\u89E3\u6790\u6587\u672C\u5E76\u751F\u6210 CSV \u65F6\u53D1\u751F\u9519\u8BEF:", error);
+      log(t("log.exporter.csvError"), error);
       return header;
     }
     return csvContent;
@@ -4390,13 +5419,13 @@ ${result.join(",\n")}
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    log(`\u6587\u4EF6\u5DF2\u5BFC\u51FA: ${filename}`);
+    log(t("log.exporter.fileExported", { filename }));
   }
   function exportToFile({ format }) {
     const currentMode2 = getCurrentMode();
     const processAndDownload = (text) => {
       if (!text || text.trim() === "" || text.trim() === "[]") {
-        log("\u6CA1\u6709\u5185\u5BB9\u53EF\u5BFC\u51FA\u3002");
+        log(t("log.exporter.noContent"));
         return;
       }
       let filename, content, mimeType;
@@ -4417,16 +5446,16 @@ ${result.join(",\n")}
           mimeType = "text/csv;charset=utf-8;";
           break;
         default:
-          log(`\u672A\u77E5\u7684\u5BFC\u51FA\u683C\u5F0F: ${format}`);
+          log(t("log.exporter.unknownFormat", { format }));
           return;
       }
       downloadFile(filename, content, mimeType);
     };
     if (currentMode2 === "session-scan") {
-      log("\u4ECE session-scan \u6A21\u5F0F\u8BF7\u6C42\u5B8C\u6574\u6570\u636E...");
+      log(t("log.main.requestingSessionScanData"));
       requestSummary(processAndDownload);
     } else {
-      log("\u4ECE quick-scan \u6A21\u5F0F\u7684\u5185\u5B58\u4E2D\u5BFC\u51FA\u5B8C\u6574\u6570\u636E...");
+      log(t("log.main.exportingQuickScanData"));
       processAndDownload(fullQuickScanContent);
     }
   }
@@ -4435,14 +5464,14 @@ ${result.join(",\n")}
   }
   function main() {
     if (window.top !== window.self) {
-      log("\u811A\u672C\u5728 iframe \u4E2D\uFF0C\u5DF2\u8DF3\u8FC7\u521D\u59CB\u5316\u3002");
+      log(t("log.main.inIframe"));
       return;
     }
     const settings = loadSettings();
     initializeLanguage(settings);
     updateLoggerState(settings.enableDebugLogging);
-    log("\u811A\u672C\u5F00\u59CB\u521D\u59CB\u5316...");
-    log("\u521D\u59CB\u8BBE\u7F6E\u5DF2\u52A0\u8F7D:", settings);
+    log(t("log.main.initializing"));
+    log(t("log.main.initialSettingsLoaded"), settings);
     const styleElement = document.createElement("style");
     styleElement.textContent = `:host{
   --color-bg:#ffffff;

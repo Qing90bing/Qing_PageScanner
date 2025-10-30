@@ -1,4 +1,6 @@
 // src/shared/utils/trustedTypes.js
+import { log } from './logger.js';
+import { t } from '../i18n/index.js';
 
 let workerPolicy;
 let htmlPolicy;
@@ -12,7 +14,7 @@ if (window.trustedTypes && window.trustedTypes.createPolicy) {
     });
   } catch (e) {
     if (!(e.name === 'TypeError' && e.message.includes('Policy already exists'))) {
-      console.error('Failed to create Trusted Types worker policy:', e);
+      log(t('log.trustedTypes.workerPolicyError'), e);
     }
     // 如果策略已存在或创建失败，workerPolicy 将保持 undefined
   }
@@ -24,7 +26,7 @@ if (window.trustedTypes && window.trustedTypes.createPolicy) {
     });
   } catch (e) {
     if (!(e.name === 'TypeError' && e.message.includes('Policy already exists'))) {
-      console.error('Failed to create Trusted Types HTML policy:', e);
+      log(t('log.trustedTypes.htmlPolicyError'), e);
     }
      // 如果策略已存在或创建失败，htmlPolicy 将保持 undefined
   }
@@ -45,7 +47,7 @@ export function createTrustedWorkerUrl(url) {
       try {
           return window.trustedTypes.defaultPolicy.createScriptURL(url);
       } catch (e) {
-          console.warn('Trusted Types default policy failed for worker URL, falling back to raw URL.', e);
+          log(t('log.trustedTypes.defaultWorkerPolicyWarning'), e, true);
       }
   }
   return url;
@@ -67,7 +69,7 @@ export function createTrustedHTML(htmlString) {
       try {
           return window.trustedTypes.defaultPolicy.createHTML(htmlString);
       } catch (e) {
-          console.warn('Trusted Types default policy failed for HTML, falling back to raw string.', e);
+          log(t('log.trustedTypes.defaultHtmlPolicyWarning'), e, true);
       }
   }
   return htmlString;

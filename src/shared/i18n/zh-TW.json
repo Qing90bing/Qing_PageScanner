@@ -166,7 +166,9 @@
         "opening": "正在開啟設定面板...",
         "closing": "正在關閉設定面板...",
         "saving": "正在儲存設定..."
-      }
+      },
+      "parseError": "解析已儲存的設定時出錯：",
+      "invalidObject": "試圖儲存一個無效的物件作為設定："
     },
     "textProcessor": {
       "filtered": "文本已過濾：\"{{text}}\" (原因：{{reason}})"
@@ -239,7 +241,20 @@
       "exportingQuickScanData": "從 quick-scan 模式的記憶體中匯出完整資料...",
       "inIframe": "腳本在 iframe 中，已跳過初始化。",
       "initializing": "腳本開始初始化...",
-      "initialSettingsLoaded": "初始設定已載入：{{settings}}"
+      "initialSettingsLoaded": "初始設定已載入:"
+    },
+    "dom": {
+      "ttpCreationError": "建立 Trusted Type 策略失敗：",
+      "svgParseError": "無效或解析失敗的 SVG 字串："
+    },
+    "eventBus": {
+      "callbackError": "在 '{{eventName}}' 事件的回呼中發生錯誤："
+    },
+    "trustedTypes": {
+      "workerPolicyError": "建立 Trusted Types worker 策略失敗：",
+      "htmlPolicyError": "建立 Trusted Types HTML 策略失敗：",
+      "defaultWorkerPolicyWarning": "Trusted Types 預設策略處理 worker URL 失敗，退回至原始 URL。",
+      "defaultHtmlPolicyWarning": "Trusted Types 預設策略處理 HTML 失敗，退回至原始字串。"
     }
   }
 }
