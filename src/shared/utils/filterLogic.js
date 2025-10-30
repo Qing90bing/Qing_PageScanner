@@ -6,6 +6,7 @@
  * 这是项目中所有文本过滤规则的唯一真实来源。
  */
 
+import { t } from '../i18n/index.js';
 import IGNORED_TERMS from './ignoredTerms.js';
 import { filterDefinitions } from '../../features/settings/config.js';
 
@@ -86,14 +87,14 @@ const ruleChecks = new Map([
  * @description 根据提供的一组规则，判断一个文本字符串是否应该被过滤。
  * @param {string} text - 需要检查的文本（注意：此函数期望传入的是已经 trim() 过的文本）。
  * @param {object} filterRules - 从设置中加载的过滤规则配置对象。
- * @returns {{ reason: string }|null} - 如果文本应该被过滤，则返回一个包含过滤原因的对象；否则返回 null。
+ * @returns {string|null} - 如果文本应该被过滤，则返回翻译后的过滤原因字符串；否则返回 null。
  */
 export function shouldFilter(text, filterRules) {
   for (const [key, rule] of ruleChecks.entries()) {
     if (filterRules[key]) {
       const isFiltered = rule.regex ? rule.regex.test(text) : rule.test(text);
       if (isFiltered) {
-        return { reason: rule.label };
+        return t(rule.label);
       }
     }
   }

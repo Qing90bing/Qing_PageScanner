@@ -41,7 +41,7 @@ export function processTextsInFallback(texts, logPrefix = '') {
             const filterResult = shouldFilter(textForFiltering, filterRules);
             if (filterResult) {
                 const prefix = logPrefix ? `${logPrefix} ` : '';
-                log(`${prefix}文本已过滤: "${textForFiltering}" (原因: ${filterResult.reason})`);
+                log(`${prefix}文本已过滤: "${textForFiltering}" (原因: ${filterResult})`);
                 return;
             }
 

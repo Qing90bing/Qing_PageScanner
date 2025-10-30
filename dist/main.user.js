@@ -1045,7 +1045,7 @@ var TextExtractor = (() => {
       if (filterRules2[key]) {
         const isFiltered = rule.regex ? rule.regex.test(text) : rule.test(text);
         if (isFiltered) {
-          return { reason: rule.label };
+          return t(rule.label);
         }
       }
     }
@@ -1177,7 +1177,7 @@ ${result.join(",\n")}
         const filterResult = shouldFilter(textForFiltering, filterRules2);
         if (filterResult) {
           if (enableDebugLogging) {
-            log(`\u6587\u672C\u5DF2\u8FC7\u6EE4: "${textForFiltering}" (\u539F\u56E0: ${filterResult.reason})`);
+            log(`\u6587\u672C\u5DF2\u8FC7\u6EE4: "${textForFiltering}" (\u539F\u56E0: ${filterResult})`);
           }
           return;
         }
@@ -1353,48 +1353,6 @@ ${result.join(",\n")}
       try {
         log("[\u9759\u6001\u626B\u63CF] \u5F00\u59CB\u6267\u884C\uFF0C\u5C1D\u8BD5\u4F7F\u7528 Web Worker...");
         const workerScript = `(() => {
-  // src/shared/utils/ignoredTerms.js
-  var IGNORED_TERMS = [
-    "Github",
-    "Microsoft",
-    "Tampermonkey",
-    "JavaScript",
-    "TypeScript",
-    "Hugging Face",
-    "Google",
-    "Facebook",
-    "Twitter",
-    "LinkedIn",
-    "OpenAI",
-    "ChatGPT",
-    "API",
-    "Glossary of computer science",
-    "HTML",
-    "CSS",
-    "JSON",
-    "XML",
-    "HTTP",
-    "HTTPS",
-    "URL",
-    "IP address",
-    "DNS",
-    "CPU",
-    "GPU",
-    "RAM",
-    "SSD",
-    "USB",
-    "Wi-Fi",
-    "Bluetooth",
-    "VPN",
-    "AI"
-  ];
-  var ignoredTerms_default = IGNORED_TERMS;
-  // src/assets/icons/themeIcon.js
-  var themeIcon = \`<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 32.5-156t88-127Q256-817 330-848.5T488-880q80 0 151 27.5t124.5 76q53.5 48.5 85 115T880-518q0 115-70 176.5T640-280h-74q-9 0-12.5 5t-3.5 11q0 12 15 34.5t15 51.5q0 50-27.5 74T480-80Zm0-400Zm-220 40q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120-160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm200 0q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120 160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17ZM480-160q9 0 14.5-5t5.5-13q0-14-15-33t-15-57q0-42 29-67t71-25h70q66 0 113-38.5T800-518q0-121-92.5-201.5T488-800q-136 0-232 93t-96 227q0 133 93.5 226.5T480-160Z"/></svg>\`;
-  // src/assets/icons/languageIcon.js
-  var languageIcon_default = \`<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-155.5t86-127Q252-817 325-848.5T480-880q83 0 155.5 31.5t127 86q54.5 54.5 86 127T880-480q0 82-31.5 155t-86 127.5q-54.5 54.5-127 86T480-80Zm0-82q26-36 45-75t31-83H404q12 44 31 83t45 75Zm-104-16q-18-33-31.5-68.5T322-320H204q29 50 72.5 87t99.5 55Zm208 0q56-18 99.5-55t72.5-87H638q-9 38-22.5 73.5T584-178ZM170-400h136q-3-20-4.5-39.5T300-480q0-21 1.5-40.5T306-560H170q-5 20-7.5 39.5T160-480q0 21 2.5 40.5T170-400Zm216 0h188q3-20 4.5-39.5T580-480q0-21-1.5-40.5T574-560H386q-3 20-4.5 39.5T380-480q0 21 1.5 40.5T386-400Zm268 0h136q5-20 7.5-39.5T800-480q0-21-2.5-40.5T790-560H654q3 20 4.5 39.5T660-480q0 21-1.5 40.5T654-400Zm-16-240h118q-29-50-72.5-87T584-782q18 33 31.5 68.5T638-640Zm-234 0h152q-12-44-31-83t-45-75q-26 36-45 75t-31 83Zm-200 0h118q9-38 22.5-73.5T376-782q-56 18-99.5 55T204-640Z"/></svg>\`;
-  // src/assets/icons/infoIcon.js
-  var infoIcon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>';
   // src/shared/i18n/en.json
   var en_default = {
     common: {
@@ -1876,12 +1834,63 @@ ${result.join(",\n")}
     return acc;
   }, {});
   var currentTranslations = translations.en;
+  function t(key) {
+    const value = key.split(".").reduce((obj, k) => {
+      if (typeof obj === "object" && obj !== null && k in obj) {
+        return obj[k];
+      }
+      return void 0;
+    }, currentTranslations);
+    return value !== void 0 ? value : key;
+  }
   function getAvailableLanguages() {
     return supportedLanguages.map((lang) => ({
       value: lang.code,
       label: lang.name
     }));
   }
+  // src/shared/utils/ignoredTerms.js
+  var IGNORED_TERMS = [
+    "Github",
+    "Microsoft",
+    "Tampermonkey",
+    "JavaScript",
+    "TypeScript",
+    "Hugging Face",
+    "Google",
+    "Facebook",
+    "Twitter",
+    "LinkedIn",
+    "OpenAI",
+    "ChatGPT",
+    "API",
+    "Glossary of computer science",
+    "HTML",
+    "CSS",
+    "JSON",
+    "XML",
+    "HTTP",
+    "HTTPS",
+    "URL",
+    "IP address",
+    "DNS",
+    "CPU",
+    "GPU",
+    "RAM",
+    "SSD",
+    "USB",
+    "Wi-Fi",
+    "Bluetooth",
+    "VPN",
+    "AI"
+  ];
+  var ignoredTerms_default = IGNORED_TERMS;
+  // src/assets/icons/themeIcon.js
+  var themeIcon = \`<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 32.5-156t88-127Q256-817 330-848.5T488-880q80 0 151 27.5t124.5 76q53.5 48.5 85 115T880-518q0 115-70 176.5T640-280h-74q-9 0-12.5 5t-3.5 11q0 12 15 34.5t15 51.5q0 50-27.5 74T480-80Zm0-400Zm-220 40q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120-160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm200 0q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120 160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17ZM480-160q9 0 14.5-5t5.5-13q0-14-15-33t-15-57q0-42 29-67t71-25h70q66 0 113-38.5T800-518q0-121-92.5-201.5T488-800q-136 0-232 93t-96 227q0 133 93.5 226.5T480-160Z"/></svg>\`;
+  // src/assets/icons/languageIcon.js
+  var languageIcon_default = \`<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-155.5t86-127Q252-817 325-848.5T480-880q83 0 155.5 31.5t127 86q54.5 54.5 86 127T880-480q0 82-31.5 155t-86 127.5q-54.5 54.5-127 86T480-80Zm0-82q26-36 45-75t31-83H404q12 44 31 83t45 75Zm-104-16q-18-33-31.5-68.5T322-320H204q29 50 72.5 87t99.5 55Zm208 0q56-18 99.5-55t72.5-87H638q-9 38-22.5 73.5T584-178ZM170-400h136q-3-20-4.5-39.5T300-480q0-21 1.5-40.5T306-560H170q-5 20-7.5 39.5T160-480q0 21 2.5 40.5T170-400Zm216 0h188q3-20 4.5-39.5T580-480q0-21-1.5-40.5T574-560H386q-3 20-4.5 39.5T380-480q0 21 1.5 40.5T386-400Zm268 0h136q5-20 7.5-39.5T800-480q0-21-2.5-40.5T790-560H654q3 20 4.5 39.5T660-480q0 21-1.5 40.5T654-400Zm-16-240h118q-29-50-72.5-87T584-782q18 33 31.5 68.5T638-640Zm-234 0h152q-12-44-31-83t-45-75q-26 36-45 75t-31 83Zm-200 0h118q9-38 22.5-73.5T376-782q-56 18-99.5 55T204-640Z"/></svg>\`;
+  // src/assets/icons/infoIcon.js
+  var infoIcon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>';
   // src/features/settings/config.js
   var selectSettingsDefinitions = [
     {
@@ -2002,7 +2011,7 @@ ${result.join(",\n")}
       if (filterRules[key]) {
         const isFiltered = rule.regex ? rule.regex.test(text) : rule.test(text);
         if (isFiltered) {
-          return { reason: rule.label };
+          return t(rule.label);
         }
       }
     }
@@ -2038,7 +2047,7 @@ ${result.join(",\n")}
           if (textForFiltering === "") return;
           const filterResult = shouldFilter(textForFiltering, filterRules);
           if (filterResult) {
-            log2(\`\\u6587\\u672C\\u5DF2\\u8FC7\\u6EE4: "\${textForFiltering}" (\\u539F\\u56E0: \${filterResult.reason})\`);
+            log2(\`\\u6587\\u672C\\u5DF2\\u8FC7\\u6EE4: "\${textForFiltering}" (\\u539F\\u56E0: \${filterResult})\`);
             return;
           }
           uniqueTexts.add(normalizedText.replace(/(\\r\\n|\\n|\\r)+/g, "\\n"));
@@ -2145,7 +2154,7 @@ ${result.join(",\n")}
         const filterResult = shouldFilter(textForFiltering, filterRules);
         if (filterResult) {
           const prefix = logPrefix ? `${logPrefix} ` : "";
-          log(`${prefix}\u6587\u672C\u5DF2\u8FC7\u6EE4: "${textForFiltering}" (\u539F\u56E0: ${filterResult.reason})`);
+          log(`${prefix}\u6587\u672C\u5DF2\u8FC7\u6EE4: "${textForFiltering}" (\u539F\u56E0: ${filterResult})`);
           return;
         }
         const originalSize = sessionTexts.size;
@@ -2237,48 +2246,6 @@ ${result.join(",\n")}
     try {
       log("\u4F1A\u8BDD\u626B\u63CF\uFF1A\u5C1D\u8BD5\u542F\u52A8 Web Worker...");
       const workerScript = `(() => {
-  // src/shared/utils/ignoredTerms.js
-  var IGNORED_TERMS = [
-    "Github",
-    "Microsoft",
-    "Tampermonkey",
-    "JavaScript",
-    "TypeScript",
-    "Hugging Face",
-    "Google",
-    "Facebook",
-    "Twitter",
-    "LinkedIn",
-    "OpenAI",
-    "ChatGPT",
-    "API",
-    "Glossary of computer science",
-    "HTML",
-    "CSS",
-    "JSON",
-    "XML",
-    "HTTP",
-    "HTTPS",
-    "URL",
-    "IP address",
-    "DNS",
-    "CPU",
-    "GPU",
-    "RAM",
-    "SSD",
-    "USB",
-    "Wi-Fi",
-    "Bluetooth",
-    "VPN",
-    "AI"
-  ];
-  var ignoredTerms_default = IGNORED_TERMS;
-  // src/assets/icons/themeIcon.js
-  var themeIcon = \`<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 32.5-156t88-127Q256-817 330-848.5T488-880q80 0 151 27.5t124.5 76q53.5 48.5 85 115T880-518q0 115-70 176.5T640-280h-74q-9 0-12.5 5t-3.5 11q0 12 15 34.5t15 51.5q0 50-27.5 74T480-80Zm0-400Zm-220 40q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120-160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm200 0q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120 160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17ZM480-160q9 0 14.5-5t5.5-13q0-14-15-33t-15-57q0-42 29-67t71-25h70q66 0 113-38.5T800-518q0-121-92.5-201.5T488-800q-136 0-232 93t-96 227q0 133 93.5 226.5T480-160Z"/></svg>\`;
-  // src/assets/icons/languageIcon.js
-  var languageIcon_default = \`<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-155.5t86-127Q252-817 325-848.5T480-880q83 0 155.5 31.5t127 86q54.5 54.5 86 127T880-480q0 82-31.5 155t-86 127.5q-54.5 54.5-127 86T480-80Zm0-82q26-36 45-75t31-83H404q12 44 31 83t45 75Zm-104-16q-18-33-31.5-68.5T322-320H204q29 50 72.5 87t99.5 55Zm208 0q56-18 99.5-55t72.5-87H638q-9 38-22.5 73.5T584-178ZM170-400h136q-3-20-4.5-39.5T300-480q0-21 1.5-40.5T306-560H170q-5 20-7.5 39.5T160-480q0 21 2.5 40.5T170-400Zm216 0h188q3-20 4.5-39.5T580-480q0-21-1.5-40.5T574-560H386q-3 20-4.5 39.5T380-480q0 21 1.5 40.5T386-400Zm268 0h136q5-20 7.5-39.5T800-480q0-21-2.5-40.5T790-560H654q3 20 4.5 39.5T660-480q0 21-1.5 40.5T654-400Zm-16-240h118q-29-50-72.5-87T584-782q18 33 31.5 68.5T638-640Zm-234 0h152q-12-44-31-83t-45-75q-26 36-45 75t-31 83Zm-200 0h118q9-38 22.5-73.5T376-782q-56 18-99.5 55T204-640Z"/></svg>\`;
-  // src/assets/icons/infoIcon.js
-  var infoIcon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>';
   // src/shared/i18n/en.json
   var en_default = {
     common: {
@@ -2760,12 +2727,63 @@ ${result.join(",\n")}
     return acc;
   }, {});
   var currentTranslations = translations.en;
+  function t(key) {
+    const value = key.split(".").reduce((obj, k) => {
+      if (typeof obj === "object" && obj !== null && k in obj) {
+        return obj[k];
+      }
+      return void 0;
+    }, currentTranslations);
+    return value !== void 0 ? value : key;
+  }
   function getAvailableLanguages() {
     return supportedLanguages.map((lang) => ({
       value: lang.code,
       label: lang.name
     }));
   }
+  // src/shared/utils/ignoredTerms.js
+  var IGNORED_TERMS = [
+    "Github",
+    "Microsoft",
+    "Tampermonkey",
+    "JavaScript",
+    "TypeScript",
+    "Hugging Face",
+    "Google",
+    "Facebook",
+    "Twitter",
+    "LinkedIn",
+    "OpenAI",
+    "ChatGPT",
+    "API",
+    "Glossary of computer science",
+    "HTML",
+    "CSS",
+    "JSON",
+    "XML",
+    "HTTP",
+    "HTTPS",
+    "URL",
+    "IP address",
+    "DNS",
+    "CPU",
+    "GPU",
+    "RAM",
+    "SSD",
+    "USB",
+    "Wi-Fi",
+    "Bluetooth",
+    "VPN",
+    "AI"
+  ];
+  var ignoredTerms_default = IGNORED_TERMS;
+  // src/assets/icons/themeIcon.js
+  var themeIcon = \`<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 32.5-156t88-127Q256-817 330-848.5T488-880q80 0 151 27.5t124.5 76q53.5 48.5 85 115T880-518q0 115-70 176.5T640-280h-74q-9 0-12.5 5t-3.5 11q0 12 15 34.5t15 51.5q0 50-27.5 74T480-80Zm0-400Zm-220 40q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120-160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm200 0q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120 160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17ZM480-160q9 0 14.5-5t5.5-13q0-14-15-33t-15-57q0-42 29-67t71-25h70q66 0 113-38.5T800-518q0-121-92.5-201.5T488-800q-136 0-232 93t-96 227q0 133 93.5 226.5T480-160Z"/></svg>\`;
+  // src/assets/icons/languageIcon.js
+  var languageIcon_default = \`<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-155.5t86-127Q252-817 325-848.5T480-880q83 0 155.5 31.5t127 86q54.5 54.5 86 127T880-480q0 82-31.5 155t-86 127.5q-54.5 54.5-127 86T480-80Zm0-82q26-36 45-75t31-83H404q12 44 31 83t45 75Zm-104-16q-18-33-31.5-68.5T322-320H204q29 50 72.5 87t99.5 55Zm208 0q56-18 99.5-55t72.5-87H638q-9 38-22.5 73.5T584-178ZM170-400h136q-3-20-4.5-39.5T300-480q0-21 1.5-40.5T306-560H170q-5 20-7.5 39.5T160-480q0 21 2.5 40.5T170-400Zm216 0h188q3-20 4.5-39.5T580-480q0-21-1.5-40.5T574-560H386q-3 20-4.5 39.5T380-480q0 21 1.5 40.5T386-400Zm268 0h136q5-20 7.5-39.5T800-480q0-21-2.5-40.5T790-560H654q3 20 4.5 39.5T660-480q0 21-1.5 40.5T654-400Zm-16-240h118q-29-50-72.5-87T584-782q18 33 31.5 68.5T638-640Zm-234 0h152q-12-44-31-83t-45-75q-26 36-45 75t-31 83Zm-200 0h118q9-38 22.5-73.5T376-782q-56 18-99.5 55T204-640Z"/></svg>\`;
+  // src/assets/icons/infoIcon.js
+  var infoIcon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>';
   // src/features/settings/config.js
   var selectSettingsDefinitions = [
     {
@@ -2886,7 +2904,7 @@ ${result.join(",\n")}
       if (filterRules2[key]) {
         const isFiltered = rule.regex ? rule.regex.test(text) : rule.test(text);
         if (isFiltered) {
-          return { reason: rule.label };
+          return t(rule.label);
         }
       }
     }
@@ -2903,7 +2921,7 @@ ${result.join(",\n")}
     const filterResult = shouldFilter(textForFiltering, filterRules);
     if (filterResult) {
       const prefix = logPrefix ? \`\${logPrefix} \` : "";
-      console.log(\`[\\u4F1A\\u8BDD\\u626B\\u63CF Worker] \${prefix}\\u6587\\u672C\\u5DF2\\u8FC7\\u6EE4: "\${textForFiltering}" (\\u539F\\u56E0: \${filterResult.reason})\`);
+      console.log(\`[\\u4F1A\\u8BDD\\u626B\\u63CF Worker] \${prefix}\\u6587\\u672C\\u5DF2\\u8FC7\\u6EE4: "\${textForFiltering}" (\\u539F\\u56E0: \${filterResult})\`);
       return false;
     }
     const originalSize = sessionTexts.size;

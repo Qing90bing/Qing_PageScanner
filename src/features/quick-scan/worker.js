@@ -53,7 +53,7 @@ self.onmessage = (event) => {
                 // 3. 应用过滤规则
                 const filterResult = shouldFilter(textForFiltering, filterRules);
                 if (filterResult) {
-                    log(`文本已过滤: "${textForFiltering}" (原因: ${filterResult.reason})`);
+                    log(`文本已过滤: "${textForFiltering}" (原因: ${filterResult})`);
                     return;
                 }
 

@@ -35,7 +35,7 @@ export const performScanInMainThread = (texts, filterRules, enableDebugLogging) 
             const filterResult = shouldFilter(textForFiltering, filterRules);
             if (filterResult) {
                 if (enableDebugLogging) {
-                    log(`文本已过滤: "${textForFiltering}" (原因: ${filterResult.reason})`);
+                    log(`文本已过滤: "${textForFiltering}" (原因: ${filterResult})`);
                 }
                 return;
             }

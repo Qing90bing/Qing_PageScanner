@@ -33,7 +33,7 @@ function processAndAddText(rawText, logPrefix = '') {
     if (filterResult) {
         // Worker 中没有 log 工具，直接使用 console.log
         const prefix = logPrefix ? `${logPrefix} ` : '';
-        console.log(`[会话扫描 Worker] ${prefix}文本已过滤: "${textForFiltering}" (原因: ${filterResult.reason})`);
+        console.log(`[会话扫描 Worker] ${prefix}文本已过滤: "${textForFiltering}" (原因: ${filterResult})`);
         return false;
     }
 
