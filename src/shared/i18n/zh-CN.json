@@ -225,12 +225,14 @@
         "cancelled": "用户取消了清空操作。"
       },
       "modal": {
-        "openingAndScanning": "正在打开主模态框并启动静态扫描...",
+        "opening": "正在打开主窗口...",
+        "closing": "正在关闭主窗口...",
         "scanFailed": "静态扫描失败: {{error}}",
-        "closing": "正在关闭主模态框..."
+        "clearContent": "“清空内容”按钮被点击。"
       }
     },
     "exporter": {
+      "buttonClicked": "导出按钮被点击, 导出格式: {{format}}。",
       "csvError": "在解析文本并生成 CSV 时发生错误: {{error}}",
       "fileExported": "文件已导出: {{filename}}",
       "noContent": "没有内容可导出。",

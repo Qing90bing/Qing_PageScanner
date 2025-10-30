@@ -319,12 +319,14 @@ var TextExtractor = (() => {
           cancelled: "User cancelled the clear operation."
         },
         modal: {
-          openingAndScanning: "Opening main modal and starting static scan...",
+          opening: "Opening main modal...",
+          closing: "Closing main modal...",
           scanFailed: "Static scan failed: {{error}}",
-          closing: "Closing main modal..."
+          clearContent: "Clear content button clicked."
         }
       },
       exporter: {
+        buttonClicked: "Export button clicked, format: {{format}}.",
         csvError: "Error while parsing text and generating CSV: {{error}}",
         fileExported: "File exported: {{filename}}",
         noContent: "No content to export.",
@@ -579,12 +581,14 @@ var TextExtractor = (() => {
           cancelled: "\u7528\u6237\u53D6\u6D88\u4E86\u6E05\u7A7A\u64CD\u4F5C\u3002"
         },
         modal: {
-          openingAndScanning: "\u6B63\u5728\u6253\u5F00\u4E3B\u6A21\u6001\u6846\u5E76\u542F\u52A8\u9759\u6001\u626B\u63CF...",
+          opening: "\u6B63\u5728\u6253\u5F00\u4E3B\u7A97\u53E3...",
+          closing: "\u6B63\u5728\u5173\u95ED\u4E3B\u7A97\u53E3...",
           scanFailed: "\u9759\u6001\u626B\u63CF\u5931\u8D25: {{error}}",
-          closing: "\u6B63\u5728\u5173\u95ED\u4E3B\u6A21\u6001\u6846..."
+          clearContent: "\u201C\u6E05\u7A7A\u5185\u5BB9\u201D\u6309\u94AE\u88AB\u70B9\u51FB\u3002"
         }
       },
       exporter: {
+        buttonClicked: "\u5BFC\u51FA\u6309\u94AE\u88AB\u70B9\u51FB, \u5BFC\u51FA\u683C\u5F0F: {{format}}\u3002",
         csvError: "\u5728\u89E3\u6790\u6587\u672C\u5E76\u751F\u6210 CSV \u65F6\u53D1\u751F\u9519\u8BEF: {{error}}",
         fileExported: "\u6587\u4EF6\u5DF2\u5BFC\u51FA: {{filename}}",
         noContent: "\u6CA1\u6709\u5185\u5BB9\u53EF\u5BFC\u51FA\u3002",
@@ -839,12 +843,14 @@ var TextExtractor = (() => {
           cancelled: "\u4F7F\u7528\u8005\u53D6\u6D88\u4E86\u6E05\u7A7A\u64CD\u4F5C\u3002"
         },
         modal: {
-          openingAndScanning: "\u6B63\u5728\u958B\u555F\u4E3B\u6A21\u614B\u6846\u4E26\u555F\u52D5\u975C\u614B\u6383\u63CF...",
+          opening: "\u6B63\u5728\u6253\u958B\u4E3B\u8996\u7A97...",
+          closing: "\u6B63\u5728\u95DC\u9589\u4E3B\u8996\u7A97...",
           scanFailed: "\u975C\u614B\u6383\u63CF\u5931\u6557\uFF1A{{error}}",
-          closing: "\u6B63\u5728\u95DC\u9589\u4E3B\u6A21\u614B\u6846..."
+          clearContent: "\u300C\u6E05\u7A7A\u5167\u5BB9\u300D\u6309\u9215\u88AB\u9EDE\u64CA\u3002"
         }
       },
       exporter: {
+        buttonClicked: "\u532F\u51FA\u6309\u9215\u88AB\u9EDE\u64CA, \u532F\u51FA\u683C\u5F0F: {{format}}\u3002",
         csvError: "\u5728\u89E3\u6790\u6587\u672C\u4E26\u751F\u6210 CSV \u6642\u767C\u751F\u932F\u8AA4\uFF1A{{error}}",
         fileExported: "\u6A94\u6848\u5DF2\u532F\u51FA\uFF1A{{filename}}",
         noContent: "\u6C92\u6709\u5167\u5BB9\u53EF\u532F\u51FA\u3002",
@@ -1255,17 +1261,22 @@ var TextExtractor = (() => {
     }
     const oldSettings = loadSettings();
     Object.keys(newSettings).forEach((key) => {
-      if (key !== "filterRules") {
-        if (oldSettings[key] !== newSettings[key]) {
-          log(t("log.settings.changed", { key, oldValue: oldSettings[key], newValue: newSettings[key] }));
-        }
+      if (key !== "filterRules" && oldSettings[key] !== newSettings[key]) {
+        log(t("log.settings.changed", {
+          key,
+          oldValue: oldSettings[key],
+          newValue: newSettings[key]
+        }));
       }
     });
     const oldRules = oldSettings.filterRules || {};
     const newRules = newSettings.filterRules || {};
-    Object.keys(newRules).forEach((key) => {
-      if (oldRules[key] !== newRules[key]) {
-        const statusKey = newRules[key] ? "log.settings.filterRuleChanged.enabled" : "log.settings.filterRuleChanged.disabled";
+    const allRuleKeys =  new Set([...Object.keys(oldRules), ...Object.keys(newRules)]);
+    allRuleKeys.forEach((key) => {
+      const oldValue = !!oldRules[key];
+      const newValue = !!newRules[key];
+      if (oldValue !== newValue) {
+        const statusKey = newValue ? "log.settings.filterRuleChanged.enabled" : "log.settings.filterRuleChanged.disabled";
         log(t(statusKey, { key }));
       }
     });
@@ -1910,12 +1921,14 @@ ${result.join(",\n")}
           cancelled: "User cancelled the clear operation."
         },
         modal: {
-          openingAndScanning: "Opening main modal and starting static scan...",
+          opening: "Opening main modal...",
+          closing: "Closing main modal...",
           scanFailed: "Static scan failed: {{error}}",
-          closing: "Closing main modal..."
+          clearContent: "Clear content button clicked."
         }
       },
       exporter: {
+        buttonClicked: "Export button clicked, format: {{format}}.",
         csvError: "Error while parsing text and generating CSV: {{error}}",
         fileExported: "File exported: {{filename}}",
         noContent: "No content to export.",
@@ -2171,12 +2184,14 @@ ${result.join(",\n")}
           cancelled: "\\u7528\\u6237\\u53D6\\u6D88\\u4E86\\u6E05\\u7A7A\\u64CD\\u4F5C\\u3002"
         },
         modal: {
-          openingAndScanning: "\\u6B63\\u5728\\u6253\\u5F00\\u4E3B\\u6A21\\u6001\\u6846\\u5E76\\u542F\\u52A8\\u9759\\u6001\\u626B\\u63CF...",
+          opening: "\\u6B63\\u5728\\u6253\\u5F00\\u4E3B\\u7A97\\u53E3...",
+          closing: "\\u6B63\\u5728\\u5173\\u95ED\\u4E3B\\u7A97\\u53E3...",
           scanFailed: "\\u9759\\u6001\\u626B\\u63CF\\u5931\\u8D25: {{error}}",
-          closing: "\\u6B63\\u5728\\u5173\\u95ED\\u4E3B\\u6A21\\u6001\\u6846..."
+          clearContent: "\\u201C\\u6E05\\u7A7A\\u5185\\u5BB9\\u201D\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\u3002"
         }
       },
       exporter: {
+        buttonClicked: "\\u5BFC\\u51FA\\u6309\\u94AE\\u88AB\\u70B9\\u51FB, \\u5BFC\\u51FA\\u683C\\u5F0F: {{format}}\\u3002",
         csvError: "\\u5728\\u89E3\\u6790\\u6587\\u672C\\u5E76\\u751F\\u6210 CSV \\u65F6\\u53D1\\u751F\\u9519\\u8BEF: {{error}}",
         fileExported: "\\u6587\\u4EF6\\u5DF2\\u5BFC\\u51FA: {{filename}}",
         noContent: "\\u6CA1\\u6709\\u5185\\u5BB9\\u53EF\\u5BFC\\u51FA\\u3002",
@@ -2432,12 +2447,14 @@ ${result.join(",\n")}
           cancelled: "\\u4F7F\\u7528\\u8005\\u53D6\\u6D88\\u4E86\\u6E05\\u7A7A\\u64CD\\u4F5C\\u3002"
         },
         modal: {
-          openingAndScanning: "\\u6B63\\u5728\\u958B\\u555F\\u4E3B\\u6A21\\u614B\\u6846\\u4E26\\u555F\\u52D5\\u975C\\u614B\\u6383\\u63CF...",
+          opening: "\\u6B63\\u5728\\u6253\\u958B\\u4E3B\\u8996\\u7A97...",
+          closing: "\\u6B63\\u5728\\u95DC\\u9589\\u4E3B\\u8996\\u7A97...",
           scanFailed: "\\u975C\\u614B\\u6383\\u63CF\\u5931\\u6557\\uFF1A{{error}}",
-          closing: "\\u6B63\\u5728\\u95DC\\u9589\\u4E3B\\u6A21\\u614B\\u6846..."
+          clearContent: "\\u300C\\u6E05\\u7A7A\\u5167\\u5BB9\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002"
         }
       },
       exporter: {
+        buttonClicked: "\\u532F\\u51FA\\u6309\\u9215\\u88AB\\u9EDE\\u64CA, \\u532F\\u51FA\\u683C\\u5F0F: {{format}}\\u3002",
         csvError: "\\u5728\\u89E3\\u6790\\u6587\\u672C\\u4E26\\u751F\\u6210 CSV \\u6642\\u767C\\u751F\\u932F\\u8AA4\\uFF1A{{error}}",
         fileExported: "\\u6A94\\u6848\\u5DF2\\u532F\\u51FA\\uFF1A{{filename}}",
         noContent: "\\u6C92\\u6709\\u5167\\u5BB9\\u53EF\\u532F\\u51FA\\u3002",
@@ -3152,12 +3169,14 @@ ${result.join(",\n")}
           cancelled: "User cancelled the clear operation."
         },
         modal: {
-          openingAndScanning: "Opening main modal and starting static scan...",
+          opening: "Opening main modal...",
+          closing: "Closing main modal...",
           scanFailed: "Static scan failed: {{error}}",
-          closing: "Closing main modal..."
+          clearContent: "Clear content button clicked."
         }
       },
       exporter: {
+        buttonClicked: "Export button clicked, format: {{format}}.",
         csvError: "Error while parsing text and generating CSV: {{error}}",
         fileExported: "File exported: {{filename}}",
         noContent: "No content to export.",
@@ -3413,12 +3432,14 @@ ${result.join(",\n")}
           cancelled: "\\u7528\\u6237\\u53D6\\u6D88\\u4E86\\u6E05\\u7A7A\\u64CD\\u4F5C\\u3002"
         },
         modal: {
-          openingAndScanning: "\\u6B63\\u5728\\u6253\\u5F00\\u4E3B\\u6A21\\u6001\\u6846\\u5E76\\u542F\\u52A8\\u9759\\u6001\\u626B\\u63CF...",
+          opening: "\\u6B63\\u5728\\u6253\\u5F00\\u4E3B\\u7A97\\u53E3...",
+          closing: "\\u6B63\\u5728\\u5173\\u95ED\\u4E3B\\u7A97\\u53E3...",
           scanFailed: "\\u9759\\u6001\\u626B\\u63CF\\u5931\\u8D25: {{error}}",
-          closing: "\\u6B63\\u5728\\u5173\\u95ED\\u4E3B\\u6A21\\u6001\\u6846..."
+          clearContent: "\\u201C\\u6E05\\u7A7A\\u5185\\u5BB9\\u201D\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\u3002"
         }
       },
       exporter: {
+        buttonClicked: "\\u5BFC\\u51FA\\u6309\\u94AE\\u88AB\\u70B9\\u51FB, \\u5BFC\\u51FA\\u683C\\u5F0F: {{format}}\\u3002",
         csvError: "\\u5728\\u89E3\\u6790\\u6587\\u672C\\u5E76\\u751F\\u6210 CSV \\u65F6\\u53D1\\u751F\\u9519\\u8BEF: {{error}}",
         fileExported: "\\u6587\\u4EF6\\u5DF2\\u5BFC\\u51FA: {{filename}}",
         noContent: "\\u6CA1\\u6709\\u5185\\u5BB9\\u53EF\\u5BFC\\u51FA\\u3002",
@@ -3674,12 +3695,14 @@ ${result.join(",\n")}
           cancelled: "\\u4F7F\\u7528\\u8005\\u53D6\\u6D88\\u4E86\\u6E05\\u7A7A\\u64CD\\u4F5C\\u3002"
         },
         modal: {
-          openingAndScanning: "\\u6B63\\u5728\\u958B\\u555F\\u4E3B\\u6A21\\u614B\\u6846\\u4E26\\u555F\\u52D5\\u975C\\u614B\\u6383\\u63CF...",
+          opening: "\\u6B63\\u5728\\u6253\\u958B\\u4E3B\\u8996\\u7A97...",
+          closing: "\\u6B63\\u5728\\u95DC\\u9589\\u4E3B\\u8996\\u7A97...",
           scanFailed: "\\u975C\\u614B\\u6383\\u63CF\\u5931\\u6557\\uFF1A{{error}}",
-          closing: "\\u6B63\\u5728\\u95DC\\u9589\\u4E3B\\u6A21\\u614B\\u6846..."
+          clearContent: "\\u300C\\u6E05\\u7A7A\\u5167\\u5BB9\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002"
         }
       },
       exporter: {
+        buttonClicked: "\\u532F\\u51FA\\u6309\\u9215\\u88AB\\u9EDE\\u64CA, \\u532F\\u51FA\\u683C\\u5F0F: {{format}}\\u3002",
         csvError: "\\u5728\\u89E3\\u6790\\u6587\\u672C\\u4E26\\u751F\\u6210 CSV \\u6642\\u767C\\u751F\\u932F\\u8AA4\\uFF1A{{error}}",
         fileExported: "\\u6A94\\u6848\\u5DF2\\u532F\\u51FA\\uFF1A{{filename}}",
         noContent: "\\u6C92\\u6709\\u5167\\u5BB9\\u53EF\\u532F\\u51FA\\u3002",
@@ -4347,6 +4370,7 @@ ${result.join(",\n")}
       const target = event.target.closest("[data-format]");
       if (target) {
         const format = target.dataset.format;
+        log(t("log.exporter.buttonClicked", { format }));
         fire("exportToFile", { format });
         dropdown.toggle();
       }
@@ -4406,6 +4430,7 @@ ${result.join(",\n")}
     });
     clearBtn.addEventListener("click", async () => {
       if (clearBtn.disabled) return;
+      log(t("log.ui.modal.clearContent"));
       const confirmed = await showConfirmationModal(
         t("confirmation.clear"),
         warningIcon_default
@@ -4612,7 +4637,7 @@ ${result.join(",\n")}
       console.error(t("notifications.modalInitError"));
       return;
     }
-    log(t("log.ui.modal.openingAndScanning"));
+    log(t("log.ui.modal.opening"));
     updateModalContent(SHOW_LOADING, true, "quick-scan");
     try {
       const extractedTexts = extractAndProcessText();
@@ -4709,6 +4734,7 @@ ${result.join(",\n")}
     }
   }
   function handleQuickScanClick() {
+    log(t("scan.quick"));
     openModal();
   }
   function animateCount(element, start2, end, duration, easing) {
@@ -4779,6 +4805,7 @@ ${result.join(",\n")}
     currentSessionCount = 0;
   });
   function handleSummaryClick() {
+    log(t("tooltip.summary"));
     if (isSessionRecording()) {
       showNotification(t("scan.sessionInProgress"), { type: "info" });
     }
@@ -4796,6 +4823,7 @@ ${result.join(",\n")}
   }
   function handleDynamicExtractClick(dynamicFab2) {
     if (isSessionRecording()) {
+      log(t("scan.stopSession"));
       stop((finalCount) => {
         const notificationText = simpleTemplate(t("scan.finished"), { count: finalCount });
         showNotification(notificationText, { type: "success" });
@@ -4806,6 +4834,7 @@ ${result.join(",\n")}
       dynamicFab2.title = t("scan.startSession");
       hideLiveCounter();
     } else {
+      log(t("scan.startSession"));
       setFabIcon(dynamicFab2, stopIcon);
       dynamicFab2.classList.add("is-recording");
       dynamicFab2.title = t("scan.stopSession");

@@ -11,6 +11,7 @@ import { dynamicIcon } from '../../assets/icons/dynamicIcon.js';
 import { stopIcon } from '../../assets/icons/stopIcon.js';
 import { simpleTemplate } from '../../shared/utils/templating.js';
 import { on } from '../../shared/utils/eventBus.js';
+import { log } from '../../shared/utils/logger.js';
 
 let currentSessionCount = 0;
 
@@ -24,6 +25,7 @@ on('sessionCleared', () => {
  * 现在通过异步请求从 Worker 获取数据。
  */
 export function handleSummaryClick() {
+    log(t('tooltip.summary'));
     // 检查是否正在录制，如果是，则可能需要提示用户先停止
     if (sessionExtractor.isSessionRecording()) {
          // 可选：提示用户会话仍在进行中
@@ -56,6 +58,7 @@ export function handleSummaryClick() {
  */
 export function handleDynamicExtractClick(dynamicFab) {
     if (sessionExtractor.isSessionRecording()) {
+        log(t('scan.stopSession'));
         // 异步停止，并在回调中获取最终计数
         sessionExtractor.stop((finalCount) => {
             const notificationText = simpleTemplate(t('scan.finished'), { count: finalCount });
@@ -68,6 +71,7 @@ export function handleDynamicExtractClick(dynamicFab) {
         dynamicFab.title = t('scan.startSession');
         hideLiveCounter();
     } else {
+        log(t('scan.startSession'));
         setFabIcon(dynamicFab, stopIcon);
         dynamicFab.classList.add('is-recording');
         dynamicFab.title = t('scan.stopSession');

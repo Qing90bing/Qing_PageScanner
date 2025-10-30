@@ -85,7 +85,7 @@ export async function openModal() {
         console.error(t('notifications.modalInitError'));
         return;
     }
-    log(t('log.ui.modal.openingAndScanning'));
+    log(t('log.ui.modal.opening'));
 
     // 1. 立即显示加载状态并打开模态框
     updateModalContent(state.SHOW_LOADING, true, 'quick-scan');

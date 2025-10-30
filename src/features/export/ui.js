@@ -13,6 +13,7 @@ import { t } from '../../shared/i18n/index.js';
 import { createIconTitle } from '../../shared/ui/iconTitle.js';
 import { on, fire } from '../../shared/utils/eventBus.js';
 import { createDropdown } from '../../shared/ui/components/dropdown.js';
+import { log } from '../../shared/utils/logger.js';
 
 let exportBtn, exportMenu, exportTxtBtn, exportJsonBtn, exportCsvBtn;
 
@@ -73,6 +74,7 @@ export function createExportButton() {
         const target = event.target.closest('[data-format]');
         if (target) {
             const format = target.dataset.format;
+            log(t('log.exporter.buttonClicked', { format }));
             fire('exportToFile', { format });
             dropdown.toggle(); // 导出后关闭菜单
         }

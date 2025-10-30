@@ -126,23 +126,30 @@ export function saveSettings(newSettings) {
 
   // 比较顶层设置
   Object.keys(newSettings).forEach(key => {
-    if (key !== 'filterRules') {
-      if (oldSettings[key] !== newSettings[key]) {
-        log(t('log.settings.changed', { key, oldValue: oldSettings[key], newValue: newSettings[key] }));
-      }
+    if (key !== 'filterRules' && oldSettings[key] !== newSettings[key]) {
+      log(t('log.settings.changed', {
+        key,
+        oldValue: oldSettings[key],
+        newValue: newSettings[key],
+      }));
     }
   });
 
   // 比较 filterRules
   const oldRules = oldSettings.filterRules || {};
   const newRules = newSettings.filterRules || {};
-  Object.keys(newRules).forEach(key => {
-    if (oldRules[key] !== newRules[key]) {
-      const statusKey = newRules[key] ? 'log.settings.filterRuleChanged.enabled' : 'log.settings.filterRuleChanged.disabled';
+  const allRuleKeys = new Set([...Object.keys(oldRules), ...Object.keys(newRules)]);
+
+  allRuleKeys.forEach(key => {
+    const oldValue = !!oldRules[key];
+    const newValue = !!newRules[key];
+    if (oldValue !== newValue) {
+      const statusKey = newValue
+        ? 'log.settings.filterRuleChanged.enabled'
+        : 'log.settings.filterRuleChanged.disabled';
       log(t(statusKey, { key }));
     }
   });
-
 
   // 将设置对象序列化为 JSON 字符串并保存
   setValue('script_settings', JSON.stringify(newSettings));

@@ -89,6 +89,7 @@ export function populateModalFooter(modalFooter, updateContentCallback, clearSes
 
     clearBtn.addEventListener('click', async () => {
         if (clearBtn.disabled) return;
+        log(t('log.ui.modal.clearContent'));
 
         const confirmed = await showConfirmationModal(
             t('confirmation.clear'),

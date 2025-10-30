@@ -225,12 +225,14 @@
         "cancelled": "User cancelled the clear operation."
       },
       "modal": {
-        "openingAndScanning": "Opening main modal and starting static scan...",
+      "opening": "Opening main modal...",
+      "closing": "Closing main modal...",
         "scanFailed": "Static scan failed: {{error}}",
-        "closing": "Closing main modal..."
+      "clearContent": "Clear content button clicked."
       }
     },
     "exporter": {
+    "buttonClicked": "Export button clicked, format: {{format}}.",
       "csvError": "Error while parsing text and generating CSV: {{error}}",
       "fileExported": "File exported: {{filename}}",
       "noContent": "No content to export.",
