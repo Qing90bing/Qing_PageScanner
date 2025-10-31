@@ -1,9 +1,6 @@
 // src/features/settings/ui.js
 
-import { loadSettings, saveSettings } from './logic.js';
-import { applyTheme } from '../../shared/ui/theme.js';
-import { log, updateLoggerState } from '../../shared/utils/logger.js';
-import { showNotification } from '../../shared/ui/components/notification.js';
+import { log } from '../../shared/utils/logger.js';
 import { createIconTitle } from '../../shared/ui/iconTitle.js';
 import { CustomSelect } from '../../shared/ui/components/customSelect.js';
 import { systemThemeIcon } from '../../assets/icons/systemThemeIcon.js';
@@ -13,13 +10,12 @@ import { uiContainer } from '../../shared/ui/uiContainer.js';
 import { buildPanelDOM } from './panelBuilder.js';
 import { filterDefinitions, relatedSettingsDefinitions, selectSettingsDefinitions } from './config.js';
 import { t } from '../../shared/i18n/index.js';
-import { on, fire } from '../../shared/utils/eventBus.js';
+import { on } from '../../shared/utils/eventBus.js';
 import { settingsIcon } from '../../assets/icons/settingsIcon.js';
 import { filterIcon } from '../../assets/icons/filterIcon.js';
 import { saveIcon } from '../../assets/icons/saveIcon.js';
 import { relatedSettingsIcon } from '../../assets/icons/relatedSettingsIcon.js';
-import { updateModalAddonsVisibility } from '../../shared/ui/mainModal.js';
-import { switchLanguage, updateSettingsMenu } from '../../shared/i18n/management/languageManager.js';
+import { updateSettingsMenu } from '../../shared/i18n/management/languageManager.js';
 
 // --- 模块级变量 ---
 
@@ -44,15 +40,16 @@ const handleKeyDown = (event) => {
 /**
  * @private
  * @description 显示设置面板。
+ * @param {object} currentSettings - 当前的设置对象，用于填充UI。
+ * @param {function} onSave - 当用户点击保存时调用的回调函数。
  */
-function showSettingsPanel() {
+function showSettingsPanel(currentSettings, onSave) {
     log(t('log.settings.panel.opening'));
     if (settingsPanel) {
         setTimeout(() => settingsPanel.classList.add('is-visible'), 10);
         return;
     }
 
-    const currentSettings = loadSettings();
     settingsPanel = document.createElement('div');
     settingsPanel.className = 'settings-panel-overlay';
     settingsPanel.tabIndex = -1;
@@ -101,7 +98,7 @@ function showSettingsPanel() {
 
     // --- 绑定事件 ---
     settingsPanel.querySelector('.settings-panel-close').addEventListener('click', hideSettingsPanel);
-    saveBtn.addEventListener('click', handleSave);
+    saveBtn.addEventListener('click', () => handleSave(onSave));
     settingsPanel.addEventListener('keydown', handleKeyDown);
     settingsPanel.focus();
 
@@ -132,8 +129,9 @@ function hideSettingsPanel() {
 /**
  * @private
  * @description 处理“保存”按钮的点击事件。
+ * @param {function} onSave - 用于处理保存逻辑的回调函数。
  */
-function handleSave() {
+function handleSave(onSave) {
     log(t('log.settings.panel.saving'));
     const newSettings = {};
 
@@ -173,26 +171,10 @@ function handleSave() {
         }
     });
 
-    const oldSettings = loadSettings();
-    const languageChanged = oldSettings.language !== newSettings.language;
-
-    updateLoggerState(newSettings.enableDebugLogging);
-    saveSettings(newSettings);
-
-    // 应用设置
-    applyTheme(newSettings.theme);
-
-    if (languageChanged) {
-        switchLanguage(newSettings.language);
+    if (onSave) {
+        onSave(newSettings);
     }
 
-    const fabContainer = uiContainer.querySelector('.text-extractor-fab-container');
-    if (fabContainer) {
-        fabContainer.classList.toggle('fab-container-visible', newSettings.showFab);
-    }
-    updateModalAddonsVisibility();
-    fire('settingsSaved');
-    showNotification(t('notifications.settingsSaved'), { type: 'success' });
     hideSettingsPanel();
 }
 
@@ -200,20 +182,31 @@ function handleSave() {
 
 /**
  * @public
- * @description 初始化设置面板功能。
+ * @description 初始化设置面板功能，并注册油猴菜单命令。
+ * @param {function} onOpen - 当用户点击菜单命令时触发的回调，用于打开面板。
  */
-export function initSettingsPanel() {
+export function initSettingsPanel(onOpen) {
     // 关键修复：确保只有在顶层窗口的脚本实例才能注册菜单命令。
     // 这可以防止在有 iframe 的页面上因脚本被多次注入而导致菜单重复。
     if (window.top === window.self) {
         // 使用“立即执行的异步函数表达式”来处理异步操作，避免阻塞主线程
         (async () => {
-            await updateSettingsMenu(showSettingsPanel);
+            await updateSettingsMenu(onOpen);
         })();
 
         // 监听语言变化事件，以更新菜单文本
         on('languageChanged', async () => {
-            await updateSettingsMenu(showSettingsPanel);
+            await updateSettingsMenu(onOpen);
         });
     }
+}
+
+/**
+ * @public
+ * @description 暴露给外部调用的函数，用于显示设置面板。
+ * @param {object} settings - 当前的设置对象。
+ * @param {function} onSaveCallback - 保存按钮的回调。
+ */
+export function openSettingsPanel(settings, onSaveCallback) {
+    showSettingsPanel(settings, onSaveCallback);
 }

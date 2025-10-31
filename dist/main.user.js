@@ -1204,6 +1204,121 @@ var TextExtractor = (() => {
   var setValue = (key, value) => {
     return GM_setValue(key, value);
   };
+  function initTheme() {
+    const { theme } = loadSettings();
+    applyTheme(theme);
+  }
+  function applyTheme(theme) {
+    let finalTheme = theme;
+    if (theme === "system") {
+      finalTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    }
+    uiContainer.host.setAttribute("data-theme", finalTheme);
+  }
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+    const { theme } = loadSettings();
+    if (theme === "system") {
+      applyTheme("system");
+    }
+  });
+  var SETTINGS_MENU_ID_KEY = "settings_menu_command_id";
+  async function updateSettingsMenu(onClick) {
+    const oldCommandId = await getValue(SETTINGS_MENU_ID_KEY, null);
+    if (oldCommandId) {
+      unregisterMenuCommand(oldCommandId);
+    }
+    const menuText = t("settings.panel.title");
+    const newCommandId = registerMenuCommand(menuText, onClick);
+    await setValue(SETTINGS_MENU_ID_KEY, newCommandId);
+  }
+  function isLanguageSupported(langCode) {
+    return supportedLanguages.some((lang) => lang.code === langCode);
+  }
+  function initializeLanguage(settings) {
+    let langToSet = "en";
+    const savedLang = settings.language;
+    if (savedLang && savedLang !== "auto") {
+      if (isLanguageSupported(savedLang)) {
+        langToSet = savedLang;
+      }
+    } else {
+      const browserLang = navigator.language;
+      if (isLanguageSupported(browserLang)) {
+        langToSet = browserLang;
+      }
+    }
+    setLanguage(langToSet);
+  }
+  function switchLanguage(langCode) {
+    if (isLanguageSupported(langCode)) {
+      setLanguage(langCode);
+      const settings = loadSettings();
+      settings.language = langCode;
+      saveSettings(settings);
+    }
+  }
+  var successIcon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q65 0 123 19t107 53l-58 59q-38-24-81-37.5T480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160q133 0 226.5-93.5T800-480q0-18-2-36t-6-35l65-65q11 32 17 66t6 70q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-56-216L254-466l56-56 114 114 400-401 56 56-456 457Z"/></svg>';
+  var closeIcon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>';
+  var notificationContainer = null;
+  function getNotificationContainer() {
+    if (!notificationContainer) {
+      notificationContainer = document.createElement("div");
+      notificationContainer.className = "tc-notification-container";
+      uiContainer.appendChild(notificationContainer);
+    }
+    return notificationContainer;
+  }
+  function createNotificationElement(message, type = "info") {
+    const notification = document.createElement("div");
+    notification.className = `tc-notification tc-notification-${type}`;
+    const iconDiv = document.createElement("div");
+    iconDiv.className = "tc-notification-icon";
+    const iconSVGString = type === "success" ? successIcon : infoIcon;
+    const iconElement = createSVGFromString(iconSVGString);
+    if (iconElement) {
+      iconDiv.appendChild(iconElement);
+    }
+    const contentDiv = document.createElement("div");
+    contentDiv.className = "tc-notification-content";
+    contentDiv.textContent = message;
+    const closeDiv = document.createElement("div");
+    closeDiv.className = "tc-notification-close";
+    const closeIconElement = createSVGFromString(closeIcon);
+    if (closeIconElement) {
+      closeDiv.appendChild(closeIconElement);
+    }
+    notification.appendChild(iconDiv);
+    notification.appendChild(contentDiv);
+    notification.appendChild(closeDiv);
+    closeDiv.addEventListener("click", () => {
+      notification.classList.add("tc-notification-fade-out");
+      notification.addEventListener("animationend", () => {
+        notification.remove();
+        if (notificationContainer && notificationContainer.childElementCount === 0) {
+          notificationContainer.remove();
+          notificationContainer = null;
+        }
+      });
+    });
+    return notification;
+  }
+  function showNotification(message, { type = "info", duration = appConfig.ui.notificationDuration } = {}) {
+    const container = getNotificationContainer();
+    const notification = createNotificationElement(message, type);
+    container.appendChild(notification);
+    const timer = setTimeout(() => {
+      const closeButton2 = notification.querySelector(".tc-notification-close");
+      if (closeButton2) {
+        closeButton2.click();
+      }
+    }, duration);
+    const closeButton = notification.querySelector(".tc-notification-close");
+    if (closeButton) {
+      closeButton.addEventListener("click", () => {
+        clearTimeout(timer);
+      });
+    }
+  }
   var defaultSettings = {
     language: "auto",
     theme: "system",
@@ -1233,6 +1348,21 @@ var TextExtractor = (() => {
       shorthandNumber: true
     }
   };
+  function applySettings(newSettings, oldSettings) {
+    updateLoggerState(newSettings.enableDebugLogging);
+    applyTheme(newSettings.theme);
+    const languageChanged = oldSettings.language !== newSettings.language;
+    if (languageChanged) {
+      switchLanguage(newSettings.language);
+    }
+    const fabContainer = uiContainer.querySelector(".text-extractor-fab-container");
+    if (fabContainer) {
+      fabContainer.classList.toggle("fab-container-visible", newSettings.showFab);
+    }
+    updateModalAddonsVisibility();
+    fire("settingsSaved");
+    showNotification(t("notifications.settingsSaved"), { type: "success" });
+  }
   function loadSettings() {
     const savedSettings = getValue("script_settings", null);
     if (savedSettings) {
@@ -1532,68 +1662,6 @@ ${result.join(",\n")}
       count: textsArray.length
     };
   };
-  var successIcon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q65 0 123 19t107 53l-58 59q-38-24-81-37.5T480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160q133 0 226.5-93.5T800-480q0-18-2-36t-6-35l65-65q11 32 17 66t6 70q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-56-216L254-466l56-56 114 114 400-401 56 56-456 457Z"/></svg>';
-  var closeIcon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>';
-  var notificationContainer = null;
-  function getNotificationContainer() {
-    if (!notificationContainer) {
-      notificationContainer = document.createElement("div");
-      notificationContainer.className = "tc-notification-container";
-      uiContainer.appendChild(notificationContainer);
-    }
-    return notificationContainer;
-  }
-  function createNotificationElement(message, type = "info") {
-    const notification = document.createElement("div");
-    notification.className = `tc-notification tc-notification-${type}`;
-    const iconDiv = document.createElement("div");
-    iconDiv.className = "tc-notification-icon";
-    const iconSVGString = type === "success" ? successIcon : infoIcon;
-    const iconElement = createSVGFromString(iconSVGString);
-    if (iconElement) {
-      iconDiv.appendChild(iconElement);
-    }
-    const contentDiv = document.createElement("div");
-    contentDiv.className = "tc-notification-content";
-    contentDiv.textContent = message;
-    const closeDiv = document.createElement("div");
-    closeDiv.className = "tc-notification-close";
-    const closeIconElement = createSVGFromString(closeIcon);
-    if (closeIconElement) {
-      closeDiv.appendChild(closeIconElement);
-    }
-    notification.appendChild(iconDiv);
-    notification.appendChild(contentDiv);
-    notification.appendChild(closeDiv);
-    closeDiv.addEventListener("click", () => {
-      notification.classList.add("tc-notification-fade-out");
-      notification.addEventListener("animationend", () => {
-        notification.remove();
-        if (notificationContainer && notificationContainer.childElementCount === 0) {
-          notificationContainer.remove();
-          notificationContainer = null;
-        }
-      });
-    });
-    return notification;
-  }
-  function showNotification(message, { type = "info", duration = appConfig.ui.notificationDuration } = {}) {
-    const container = getNotificationContainer();
-    const notification = createNotificationElement(message, type);
-    container.appendChild(notification);
-    const timer = setTimeout(() => {
-      const closeButton2 = notification.querySelector(".tc-notification-close");
-      if (closeButton2) {
-        closeButton2.click();
-      }
-    }, duration);
-    const closeButton = notification.querySelector(".tc-notification-close");
-    if (closeButton) {
-      closeButton.addEventListener("click", () => {
-        clearTimeout(timer);
-      });
-    }
-  }
   function createIconTitle(iconSVG, text) {
     const container = document.createElement("div");
     container.style.display = "flex";
@@ -4862,23 +4930,6 @@ ${result.join(",\n")}
       isVisible: settings.showFab
     });
   }
-  function initTheme() {
-    const { theme } = loadSettings();
-    applyTheme(theme);
-  }
-  function applyTheme(theme) {
-    let finalTheme = theme;
-    if (theme === "system") {
-      finalTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-    }
-    uiContainer.host.setAttribute("data-theme", finalTheme);
-  }
-  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
-    const { theme } = loadSettings();
-    if (theme === "system") {
-      applyTheme("system");
-    }
-  });
   var arrowDownIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>`;
   var CustomSelect = class {
         constructor(parentElement, options, initialValue) {
@@ -5238,42 +5289,6 @@ ${result.join(",\n")}
   var filterIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M440-160q-17 0-28.5-11.5T400-200v-240L168-736q-15-20-4.5-42t36.5-22h560q26 0 36.5 22t-4.5 42L560-440v240q0 17-11.5 28.5T520-160h-80Zm40-308 198-252H282l198 252Zm0 0Z"/></svg>`;
   var saveIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z"/></svg>`;
   var relatedSettingsIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M320-280h320v-400H320v400Zm80-80v-240h160v240H400Zm40-120h80v-80h-80v80ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/></svg>`;
-  var SETTINGS_MENU_ID_KEY = "settings_menu_command_id";
-  async function updateSettingsMenu(onClick) {
-    const oldCommandId = await getValue(SETTINGS_MENU_ID_KEY, null);
-    if (oldCommandId) {
-      unregisterMenuCommand(oldCommandId);
-    }
-    const menuText = t("settings.panel.title");
-    const newCommandId = registerMenuCommand(menuText, onClick);
-    await setValue(SETTINGS_MENU_ID_KEY, newCommandId);
-  }
-  function isLanguageSupported(langCode) {
-    return supportedLanguages.some((lang) => lang.code === langCode);
-  }
-  function initializeLanguage(settings) {
-    let langToSet = "en";
-    const savedLang = settings.language;
-    if (savedLang && savedLang !== "auto") {
-      if (isLanguageSupported(savedLang)) {
-        langToSet = savedLang;
-      }
-    } else {
-      const browserLang = navigator.language;
-      if (isLanguageSupported(browserLang)) {
-        langToSet = browserLang;
-      }
-    }
-    setLanguage(langToSet);
-  }
-  function switchLanguage(langCode) {
-    if (isLanguageSupported(langCode)) {
-      setLanguage(langCode);
-      const settings = loadSettings();
-      settings.language = langCode;
-      saveSettings(settings);
-    }
-  }
   var settingsPanel = null;
   var selectComponents = {};
   var isTooltipVisible = false;
@@ -5283,13 +5298,12 @@ ${result.join(",\n")}
       hideSettingsPanel();
     }
   };
-  function showSettingsPanel() {
+  function showSettingsPanel(currentSettings, onSave) {
     log(t("log.settings.panel.opening"));
     if (settingsPanel) {
       setTimeout(() => settingsPanel.classList.add("is-visible"), 10);
       return;
     }
-    const currentSettings = loadSettings();
     settingsPanel = document.createElement("div");
     settingsPanel.className = "settings-panel-overlay";
     settingsPanel.tabIndex = -1;
@@ -5324,7 +5338,7 @@ ${result.join(",\n")}
     const saveBtn = settingsPanel.querySelector("#save-settings-btn");
     saveBtn.appendChild(createIconTitle(saveIcon, t("common.save")));
     settingsPanel.querySelector(".settings-panel-close").addEventListener("click", hideSettingsPanel);
-    saveBtn.addEventListener("click", handleSave);
+    saveBtn.addEventListener("click", () => handleSave(onSave));
     settingsPanel.addEventListener("keydown", handleKeyDown2);
     settingsPanel.focus();
     on("infoTooltipWillShow", () => {
@@ -5348,7 +5362,7 @@ ${result.join(",\n")}
       }, 300);
     }
   }
-  function handleSave() {
+  function handleSave(onSave) {
     log(t("log.settings.panel.saving"));
     const newSettings = {};
     for (const key in selectComponents) {
@@ -5376,35 +5390,34 @@ ${result.join(",\n")}
         }
       }
     });
-    const oldSettings = loadSettings();
-    const languageChanged = oldSettings.language !== newSettings.language;
-    updateLoggerState(newSettings.enableDebugLogging);
-    saveSettings(newSettings);
-    applyTheme(newSettings.theme);
-    if (languageChanged) {
-      switchLanguage(newSettings.language);
+    if (onSave) {
+      onSave(newSettings);
     }
-    const fabContainer = uiContainer.querySelector(".text-extractor-fab-container");
-    if (fabContainer) {
-      fabContainer.classList.toggle("fab-container-visible", newSettings.showFab);
-    }
-    updateModalAddonsVisibility();
-    fire("settingsSaved");
-    showNotification(t("notifications.settingsSaved"), { type: "success" });
     hideSettingsPanel();
   }
-  function initSettingsPanel() {
+  function initSettingsPanel(onOpen) {
     if (window.top === window.self) {
       (async () => {
-        await updateSettingsMenu(showSettingsPanel);
+        await updateSettingsMenu(onOpen);
       })();
       on("languageChanged", async () => {
-        await updateSettingsMenu(showSettingsPanel);
+        await updateSettingsMenu(onOpen);
       });
     }
   }
+  function openSettingsPanel(settings, onSaveCallback) {
+    showSettingsPanel(settings, onSaveCallback);
+  }
+  function handleOpenSettings() {
+    const currentSettings = loadSettings();
+    openSettingsPanel(currentSettings, (newSettings) => {
+      const oldSettings = loadSettings();
+      saveSettings(newSettings);
+      applySettings(newSettings, oldSettings);
+    });
+  }
   function initialize() {
-    initSettingsPanel();
+    initSettingsPanel(handleOpenSettings);
   }
   function getPageTitle() {
     return document.title.replace(/[\\/:*?"<>|]/g, "_");

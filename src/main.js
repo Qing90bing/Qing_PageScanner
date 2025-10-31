@@ -1,3 +1,5 @@
+// src/main.js
+
 import { initUI } from './shared/ui/entry.js';
 import { initTheme } from './shared/ui/theme.js';
 import { initialize as initializeSettings } from './features/settings/index.js';

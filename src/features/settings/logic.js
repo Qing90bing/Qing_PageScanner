@@ -1,6 +1,12 @@
 import { getValue, setValue } from '../../shared/services/tampermonkey.js';
-import { log } from '../../shared/utils/logger.js';
+import { log, updateLoggerState } from '../../shared/utils/logger.js';
 import { t } from '../../shared/i18n/index.js';
+import { applyTheme } from '../../shared/ui/theme.js';
+import { switchLanguage } from '../../shared/i18n/management/languageManager.js';
+import { uiContainer } from '../../shared/ui/uiContainer.js';
+import { updateModalAddonsVisibility } from '../../shared/ui/mainModal.js';
+import { fire } from '../../shared/utils/eventBus.js';
+import { showNotification } from '../../shared/ui/components/notification.js';
 // src/core/settings.js
 
 /**
@@ -75,6 +81,30 @@ const defaultSettings = {
 };
 
 // --- 公开函数 ---
+
+/**
+ * @public
+ * @param {object} newSettings - 新的设置对象。
+ * @param {object} oldSettings - 旧的设置对象。
+ * @description 应用所有与设置相关的副作用，例如主题更改、语言切换等。
+ */
+export function applySettings(newSettings, oldSettings) {
+    updateLoggerState(newSettings.enableDebugLogging);
+    applyTheme(newSettings.theme);
+
+    const languageChanged = oldSettings.language !== newSettings.language;
+    if (languageChanged) {
+        switchLanguage(newSettings.language);
+    }
+
+    const fabContainer = uiContainer.querySelector('.text-extractor-fab-container');
+    if (fabContainer) {
+        fabContainer.classList.toggle('fab-container-visible', newSettings.showFab);
+    }
+    updateModalAddonsVisibility();
+    fire('settingsSaved');
+    showNotification(t('notifications.settingsSaved'), { type: 'success' });
+}
 
 /**
  * @public
