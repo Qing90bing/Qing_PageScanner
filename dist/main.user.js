@@ -5696,7 +5696,7 @@ ${result.join(",\n")}
   padding:4px 10px;
   margin-top:4px;
   border:1px solid var(--main-textarea-border);
-  border-radius:8px;
+  border-radius:12px;
   background-color:var(--main-textarea-bg);
   color:var(--main-text);
   font-size:15px;
@@ -5725,7 +5725,7 @@ ${result.join(",\n")}
   right:0;
   background-color:var(--main-bg);
   border:1px solid var(--main-border);
-  border-radius:8px;
+  border-radius:12px;
   box-shadow:0 4px 12px var(--main-shadow);
   z-index:10003;
   max-height:0;
