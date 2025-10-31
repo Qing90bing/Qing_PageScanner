@@ -142,6 +142,13 @@ var TextExtractor = (() => {
       },
       display: {
         show_fab: "Show Floating Button",
+        fab_position: "Floating Button Position",
+        fab_positions: {
+          bottom_right: "Bottom Right",
+          top_right: "Top Right",
+          bottom_left: "Bottom Left",
+          top_left: "Top Left"
+        },
         show_line_numbers: "Show Line Numbers",
         show_statistics: "Show Statistics",
         enable_word_wrap: "Enable Word Wrap",
@@ -404,6 +411,13 @@ var TextExtractor = (() => {
       },
       display: {
         show_fab: "\u663E\u793A\u60AC\u6D6E\u6309\u94AE",
+        fab_position: "\u60AC\u6D6E\u6309\u94AE\u4F4D\u7F6E",
+        fab_positions: {
+          bottom_right: "\u53F3\u4E0B\u89D2",
+          top_right: "\u53F3\u4E0A\u89D2",
+          bottom_left: "\u5DE6\u4E0B\u89D2",
+          top_left: "\u5DE6\u4E0A\u89D2"
+        },
         show_line_numbers: "\u663E\u793A\u884C\u53F7",
         show_statistics: "\u663E\u793A\u7EDF\u8BA1\u4FE1\u606F",
         enable_word_wrap: "\u542F\u7528\u6587\u672C\u81EA\u52A8\u6362\u884C",
@@ -666,6 +680,13 @@ var TextExtractor = (() => {
       },
       display: {
         show_fab: "\u986F\u793A\u61F8\u6D6E\u6309\u9215",
+        fab_position: "\u61F8\u6D6E\u6309\u9215\u4F4D\u7F6E",
+        fab_positions: {
+          bottom_right: "\u53F3\u4E0B\u89D2",
+          top_right: "\u53F3\u4E0A\u89D2",
+          bottom_left: "\u5DE6\u4E0B\u89D2",
+          top_left: "\u5DE6\u4E0A\u89D2"
+        },
         show_line_numbers: "\u986F\u793A\u884C\u865F",
         show_statistics: "\u986F\u793A\u7D71\u8A08\u8CC7\u8A0A",
         enable_word_wrap: "\u555F\u7528\u6587\u5B57\u81EA\u52D5\u63DB\u884C",
@@ -1010,6 +1031,18 @@ var TextExtractor = (() => {
   ];
   var relatedSettingsDefinitions = [
     { id: "show-fab", key: "showFab", label: "settings.display.show_fab", tooltip: { titleIcon: infoIcon, title: "settings.display.show_fab", text: "tooltip.display.show_fab" } },
+    {
+      id: "fab-position",
+      key: "fabPosition",
+      label: "settings.display.fab_position",
+      type: "select",
+      options: [
+        { value: "bottom-right", label: "settings.display.fab_positions.bottom_right" },
+        { value: "top-right", label: "settings.display.fab_positions.top_right" },
+        { value: "bottom-left", label: "settings.display.fab_positions.bottom_left" },
+        { value: "top-left", label: "settings.display.fab_positions.top_left" }
+      ]
+    },
     { id: "show-scan-count", key: "showScanCount", label: "settings.display.show_scan_count", tooltip: { titleIcon: infoIcon, title: "settings.display.show_scan_count", text: "tooltip.display.show_scan_count" } },
     { id: "show-line-numbers", key: "showLineNumbers", label: "settings.display.show_line_numbers", tooltip: { titleIcon: infoIcon, title: "settings.display.show_line_numbers", text: "tooltip.display.show_line_numbers" } },
     { id: "show-statistics", key: "showStatistics", label: "settings.display.show_statistics", tooltip: { titleIcon: infoIcon, title: "settings.display.show_statistics", text: "tooltip.display.show_statistics" } },
@@ -1076,119 +1109,6 @@ var TextExtractor = (() => {
       ]
     }
   };
-  var trustedTypePolicy = null;
-  var policyCreated = false;
-  function createTrustedTypePolicy() {
-    if (policyCreated) {
-      return trustedTypePolicy;
-    }
-    if (window.trustedTypes && window.trustedTypes.createPolicy) {
-      try {
-        trustedTypePolicy = window.trustedTypes.createPolicy("script-svg-policy", {
-          createHTML: (input) => {
-            return input;
-          }
-        });
-      } catch (e) {
-        if (e.message.includes("already exists")) {
-          trustedTypePolicy = window.trustedTypes.policies.get("script-svg-policy");
-        } else {
-          log(t("log.dom.ttpCreationError"), e);
-        }
-      }
-    }
-    policyCreated = true;
-    return trustedTypePolicy;
-  }
-  function createSVGFromString(svgString) {
-    if (!svgString || typeof svgString !== "string") return null;
-    const policy = createTrustedTypePolicy();
-    let sanitizedSVG = svgString.trim();
-    if (policy) {
-      sanitizedSVG = policy.createHTML(sanitizedSVG);
-    }
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(sanitizedSVG, "image/svg+xml");
-    const svgNode = doc.documentElement;
-    if (!svgNode || svgNode.nodeName.toLowerCase() !== "svg" || svgNode.querySelector("parsererror")) {
-      log(t("log.dom.svgParseError"), svgString);
-      return null;
-    }
-    return document.importNode(svgNode, true);
-  }
-  var summaryFab;
-  var dynamicFab;
-  var staticFab;
-  function createSingleFab(className, iconSVGString, titleKey, onClick) {
-    const fab = document.createElement("div");
-    fab.className = `text-extractor-fab ${className}`;
-    const svgIcon = createSVGFromString(iconSVGString);
-    if (svgIcon) {
-      fab.appendChild(svgIcon);
-    }
-    fab.dataset.tooltipKey = titleKey;
-    fab.addEventListener("click", onClick);
-    fab.addEventListener("mouseenter", () => {
-      showTooltip(fab, t(titleKey));
-    });
-    fab.addEventListener("mouseleave", () => {
-      hideTooltip();
-    });
-    return fab;
-  }
-  function updateFabTooltips() {
-    if (summaryFab) {
-      summaryFab.addEventListener("mouseenter", () => showTooltip(summaryFab, t(summaryFab.dataset.tooltipKey)));
-    }
-    if (dynamicFab) {
-      dynamicFab.addEventListener("mouseenter", () => showTooltip(dynamicFab, t(dynamicFab.dataset.tooltipKey)));
-    }
-    if (staticFab) {
-      staticFab.addEventListener("mouseenter", () => showTooltip(staticFab, t(staticFab.dataset.tooltipKey)));
-    }
-  }
-  function createFab({ callbacks, isVisible }) {
-    const { onStaticExtract, onDynamicExtract, onSummary } = callbacks;
-    const fabContainer = document.createElement("div");
-    fabContainer.className = "text-extractor-fab-container";
-    summaryFab = createSingleFab(
-      "fab-summary",
-      summaryIcon,
-      "tooltip.summary",
-      onSummary
-    );
-    dynamicFab = createSingleFab(
-      "fab-dynamic",
-      dynamicIcon,
-      "tooltip.dynamic_scan",
-      () => onDynamicExtract(dynamicFab)
-    );
-    staticFab = createSingleFab(
-      "fab-static",
-      translateIcon,
-      "tooltip.static_scan",
-      onStaticExtract
-    );
-    fabContainer.appendChild(summaryFab);
-    fabContainer.appendChild(dynamicFab);
-    fabContainer.appendChild(staticFab);
-    uiContainer.appendChild(fabContainer);
-    if (isVisible) {
-      setTimeout(() => {
-        fabContainer.classList.add("fab-container-visible");
-      }, appConfig.ui.fabAnimationDelay);
-    }
-    on("languageChanged", updateFabTooltips);
-  }
-  function setFabIcon(fabElement, iconSVGString) {
-    while (fabElement.firstChild) {
-      fabElement.removeChild(fabElement.firstChild);
-    }
-    const newIcon = createSVGFromString(iconSVGString);
-    if (newIcon) {
-      fabElement.appendChild(newIcon);
-    }
-  }
   var registerMenuCommand = (caption, commandFunc) => {
     return GM_registerMenuCommand(caption, commandFunc);
   };
@@ -1256,161 +1176,6 @@ var TextExtractor = (() => {
       settings.language = langCode;
       saveSettings(settings);
     }
-  }
-  var successIcon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q65 0 123 19t107 53l-58 59q-38-24-81-37.5T480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160q133 0 226.5-93.5T800-480q0-18-2-36t-6-35l65-65q11 32 17 66t6 70q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-56-216L254-466l56-56 114 114 400-401 56 56-456 457Z"/></svg>';
-  var closeIcon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>';
-  var notificationContainer = null;
-  function getNotificationContainer() {
-    if (!notificationContainer) {
-      notificationContainer = document.createElement("div");
-      notificationContainer.className = "tc-notification-container";
-      uiContainer.appendChild(notificationContainer);
-    }
-    return notificationContainer;
-  }
-  function createNotificationElement(message, type = "info") {
-    const notification = document.createElement("div");
-    notification.className = `tc-notification tc-notification-${type}`;
-    const iconDiv = document.createElement("div");
-    iconDiv.className = "tc-notification-icon";
-    const iconSVGString = type === "success" ? successIcon : infoIcon;
-    const iconElement = createSVGFromString(iconSVGString);
-    if (iconElement) {
-      iconDiv.appendChild(iconElement);
-    }
-    const contentDiv = document.createElement("div");
-    contentDiv.className = "tc-notification-content";
-    contentDiv.textContent = message;
-    const closeDiv = document.createElement("div");
-    closeDiv.className = "tc-notification-close";
-    const closeIconElement = createSVGFromString(closeIcon);
-    if (closeIconElement) {
-      closeDiv.appendChild(closeIconElement);
-    }
-    notification.appendChild(iconDiv);
-    notification.appendChild(contentDiv);
-    notification.appendChild(closeDiv);
-    closeDiv.addEventListener("click", () => {
-      notification.classList.add("tc-notification-fade-out");
-      notification.addEventListener("animationend", () => {
-        notification.remove();
-        if (notificationContainer && notificationContainer.childElementCount === 0) {
-          notificationContainer.remove();
-          notificationContainer = null;
-        }
-      });
-    });
-    return notification;
-  }
-  function showNotification(message, { type = "info", duration = appConfig.ui.notificationDuration } = {}) {
-    const container = getNotificationContainer();
-    const notification = createNotificationElement(message, type);
-    container.appendChild(notification);
-    const timer = setTimeout(() => {
-      const closeButton2 = notification.querySelector(".tc-notification-close");
-      if (closeButton2) {
-        closeButton2.click();
-      }
-    }, duration);
-    const closeButton = notification.querySelector(".tc-notification-close");
-    if (closeButton) {
-      closeButton.addEventListener("click", () => {
-        clearTimeout(timer);
-      });
-    }
-  }
-  var defaultSettings = {
-    language: "auto",
-    theme: "system",
-    showFab: true,
-    showScanCount: true,
-    showLineNumbers: true,
-    showStatistics: true,
-    enableWordWrap: false,
-    enableTextTruncation: true,
-    textTruncationLength: 5e4,
-    enableDebugLogging: false,
-    filterRules: {
-      numbers: true,
-      chinese: true,
-      containsChinese: false,
-      emojiOnly: true,
-      symbols: true,
-      termFilter: true,
-      singleLetter: false,
-      repeatingChars: true,
-      filePath: true,
-      hexColor: true,
-      email: true,
-      uuid: true,
-      gitCommitHash: true,
-      websiteUrl: true,
-      shorthandNumber: true
-    }
-  };
-  function applySettings(newSettings, oldSettings) {
-    updateLoggerState(newSettings.enableDebugLogging);
-    applyTheme(newSettings.theme);
-    const languageChanged = oldSettings.language !== newSettings.language;
-    if (languageChanged) {
-      switchLanguage(newSettings.language);
-    }
-    const fabContainer = uiContainer.querySelector(".text-extractor-fab-container");
-    if (fabContainer) {
-      fabContainer.classList.toggle("fab-container-visible", newSettings.showFab);
-    }
-    updateModalAddonsVisibility();
-    fire("settingsSaved");
-    showNotification(t("notifications.settingsSaved"), { type: "success" });
-  }
-  function loadSettings() {
-    const savedSettings = getValue("script_settings", null);
-    if (savedSettings) {
-      try {
-        const parsedSettings = JSON.parse(savedSettings);
-        const mergedSettings = {
-          ...defaultSettings,
-          ...parsedSettings,
-          filterRules: {
-            ...defaultSettings.filterRules,
-            ...parsedSettings.filterRules || {}
-          }
-        };
-        return mergedSettings;
-      } catch (error) {
-        log(t("log.settings.parseError"), error);
-        return defaultSettings;
-      }
-    }
-    return defaultSettings;
-  }
-  function saveSettings(newSettings) {
-    if (typeof newSettings !== "object" || newSettings === null) {
-      log(t("log.settings.invalidObject"), newSettings);
-      return;
-    }
-    const oldSettings = loadSettings();
-    Object.keys(newSettings).forEach((key) => {
-      if (key !== "filterRules" && oldSettings[key] !== newSettings[key]) {
-        log(t("log.settings.changed", {
-          key,
-          oldValue: oldSettings[key],
-          newValue: newSettings[key]
-        }));
-      }
-    });
-    const oldRules = oldSettings.filterRules || {};
-    const newRules = newSettings.filterRules || {};
-    const allRuleKeys =  new Set([...Object.keys(oldRules), ...Object.keys(newRules)]);
-    allRuleKeys.forEach((key) => {
-      const oldValue = !!oldRules[key];
-      const newValue = !!newRules[key];
-      if (oldValue !== newValue) {
-        const statusKey = newValue ? "log.settings.filterRuleChanged.enabled" : "log.settings.filterRuleChanged.disabled";
-        log(t(statusKey, { key }));
-      }
-    });
-    setValue("script_settings", JSON.stringify(newSettings));
   }
   var IGNORED_TERMS = [
     "Github",
@@ -1662,6 +1427,108 @@ ${result.join(",\n")}
       count: textsArray.length
     };
   };
+  var trustedTypePolicy = null;
+  var policyCreated = false;
+  function createTrustedTypePolicy() {
+    if (policyCreated) {
+      return trustedTypePolicy;
+    }
+    if (window.trustedTypes && window.trustedTypes.createPolicy) {
+      try {
+        trustedTypePolicy = window.trustedTypes.createPolicy("script-svg-policy", {
+          createHTML: (input) => {
+            return input;
+          }
+        });
+      } catch (e) {
+        if (e.message.includes("already exists")) {
+          trustedTypePolicy = window.trustedTypes.policies.get("script-svg-policy");
+        } else {
+          log(t("log.dom.ttpCreationError"), e);
+        }
+      }
+    }
+    policyCreated = true;
+    return trustedTypePolicy;
+  }
+  function createSVGFromString(svgString) {
+    if (!svgString || typeof svgString !== "string") return null;
+    const policy = createTrustedTypePolicy();
+    let sanitizedSVG = svgString.trim();
+    if (policy) {
+      sanitizedSVG = policy.createHTML(sanitizedSVG);
+    }
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(sanitizedSVG, "image/svg+xml");
+    const svgNode = doc.documentElement;
+    if (!svgNode || svgNode.nodeName.toLowerCase() !== "svg" || svgNode.querySelector("parsererror")) {
+      log(t("log.dom.svgParseError"), svgString);
+      return null;
+    }
+    return document.importNode(svgNode, true);
+  }
+  var successIcon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q65 0 123 19t107 53l-58 59q-38-24-81-37.5T480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160q133 0 226.5-93.5T800-480q0-18-2-36t-6-35l65-65q11 32 17 66t6 70q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-56-216L254-466l56-56 114 114 400-401 56 56-456 457Z"/></svg>';
+  var closeIcon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>';
+  var notificationContainer = null;
+  function getNotificationContainer() {
+    if (!notificationContainer) {
+      notificationContainer = document.createElement("div");
+      notificationContainer.className = "tc-notification-container";
+      uiContainer.appendChild(notificationContainer);
+    }
+    return notificationContainer;
+  }
+  function createNotificationElement(message, type = "info") {
+    const notification = document.createElement("div");
+    notification.className = `tc-notification tc-notification-${type}`;
+    const iconDiv = document.createElement("div");
+    iconDiv.className = "tc-notification-icon";
+    const iconSVGString = type === "success" ? successIcon : infoIcon;
+    const iconElement = createSVGFromString(iconSVGString);
+    if (iconElement) {
+      iconDiv.appendChild(iconElement);
+    }
+    const contentDiv = document.createElement("div");
+    contentDiv.className = "tc-notification-content";
+    contentDiv.textContent = message;
+    const closeDiv = document.createElement("div");
+    closeDiv.className = "tc-notification-close";
+    const closeIconElement = createSVGFromString(closeIcon);
+    if (closeIconElement) {
+      closeDiv.appendChild(closeIconElement);
+    }
+    notification.appendChild(iconDiv);
+    notification.appendChild(contentDiv);
+    notification.appendChild(closeDiv);
+    closeDiv.addEventListener("click", () => {
+      notification.classList.add("tc-notification-fade-out");
+      notification.addEventListener("animationend", () => {
+        notification.remove();
+        if (notificationContainer && notificationContainer.childElementCount === 0) {
+          notificationContainer.remove();
+          notificationContainer = null;
+        }
+      });
+    });
+    return notification;
+  }
+  function showNotification(message, { type = "info", duration = appConfig.ui.notificationDuration } = {}) {
+    const container = getNotificationContainer();
+    const notification = createNotificationElement(message, type);
+    container.appendChild(notification);
+    const timer = setTimeout(() => {
+      const closeButton2 = notification.querySelector(".tc-notification-close");
+      if (closeButton2) {
+        closeButton2.click();
+      }
+    }, duration);
+    const closeButton = notification.querySelector(".tc-notification-close");
+    if (closeButton) {
+      closeButton.addEventListener("click", () => {
+        clearTimeout(timer);
+      });
+    }
+  }
   function createIconTitle(iconSVG, text) {
     const container = document.createElement("div");
     container.style.display = "flex";
@@ -1812,6 +1679,13 @@ ${result.join(",\n")}
       },
       display: {
         show_fab: "Show Floating Button",
+        fab_position: "Floating Button Position",
+        fab_positions: {
+          bottom_right: "Bottom Right",
+          top_right: "Top Right",
+          bottom_left: "Bottom Left",
+          top_left: "Top Left"
+        },
         show_line_numbers: "Show Line Numbers",
         show_statistics: "Show Statistics",
         enable_word_wrap: "Enable Word Wrap",
@@ -2075,6 +1949,13 @@ ${result.join(",\n")}
       },
       display: {
         show_fab: "\\u663E\\u793A\\u60AC\\u6D6E\\u6309\\u94AE",
+        fab_position: "\\u60AC\\u6D6E\\u6309\\u94AE\\u4F4D\\u7F6E",
+        fab_positions: {
+          bottom_right: "\\u53F3\\u4E0B\\u89D2",
+          top_right: "\\u53F3\\u4E0A\\u89D2",
+          bottom_left: "\\u5DE6\\u4E0B\\u89D2",
+          top_left: "\\u5DE6\\u4E0A\\u89D2"
+        },
         show_line_numbers: "\\u663E\\u793A\\u884C\\u53F7",
         show_statistics: "\\u663E\\u793A\\u7EDF\\u8BA1\\u4FE1\\u606F",
         enable_word_wrap: "\\u542F\\u7528\\u6587\\u672C\\u81EA\\u52A8\\u6362\\u884C",
@@ -2338,6 +2219,13 @@ ${result.join(",\n")}
       },
       display: {
         show_fab: "\\u986F\\u793A\\u61F8\\u6D6E\\u6309\\u9215",
+        fab_position: "\\u61F8\\u6D6E\\u6309\\u9215\\u4F4D\\u7F6E",
+        fab_positions: {
+          bottom_right: "\\u53F3\\u4E0B\\u89D2",
+          top_right: "\\u53F3\\u4E0A\\u89D2",
+          bottom_left: "\\u5DE6\\u4E0B\\u89D2",
+          top_left: "\\u5DE6\\u4E0A\\u89D2"
+        },
         show_line_numbers: "\\u986F\\u793A\\u884C\\u865F",
         show_statistics: "\\u986F\\u793A\\u7D71\\u8A08\\u8CC7\\u8A0A",
         enable_word_wrap: "\\u555F\\u7528\\u6587\\u5B57\\u81EA\\u52D5\\u63DB\\u884C",
@@ -3060,6 +2948,13 @@ ${result.join(",\n")}
       },
       display: {
         show_fab: "Show Floating Button",
+        fab_position: "Floating Button Position",
+        fab_positions: {
+          bottom_right: "Bottom Right",
+          top_right: "Top Right",
+          bottom_left: "Bottom Left",
+          top_left: "Top Left"
+        },
         show_line_numbers: "Show Line Numbers",
         show_statistics: "Show Statistics",
         enable_word_wrap: "Enable Word Wrap",
@@ -3323,6 +3218,13 @@ ${result.join(",\n")}
       },
       display: {
         show_fab: "\\u663E\\u793A\\u60AC\\u6D6E\\u6309\\u94AE",
+        fab_position: "\\u60AC\\u6D6E\\u6309\\u94AE\\u4F4D\\u7F6E",
+        fab_positions: {
+          bottom_right: "\\u53F3\\u4E0B\\u89D2",
+          top_right: "\\u53F3\\u4E0A\\u89D2",
+          bottom_left: "\\u5DE6\\u4E0B\\u89D2",
+          top_left: "\\u5DE6\\u4E0A\\u89D2"
+        },
         show_line_numbers: "\\u663E\\u793A\\u884C\\u53F7",
         show_statistics: "\\u663E\\u793A\\u7EDF\\u8BA1\\u4FE1\\u606F",
         enable_word_wrap: "\\u542F\\u7528\\u6587\\u672C\\u81EA\\u52A8\\u6362\\u884C",
@@ -3586,6 +3488,13 @@ ${result.join(",\n")}
       },
       display: {
         show_fab: "\\u986F\\u793A\\u61F8\\u6D6E\\u6309\\u9215",
+        fab_position: "\\u61F8\\u6D6E\\u6309\\u9215\\u4F4D\\u7F6E",
+        fab_positions: {
+          bottom_right: "\\u53F3\\u4E0B\\u89D2",
+          top_right: "\\u53F3\\u4E0A\\u89D2",
+          bottom_left: "\\u5DE6\\u4E0B\\u89D2",
+          top_left: "\\u5DE6\\u4E0A\\u89D2"
+        },
         show_line_numbers: "\\u986F\\u793A\\u884C\\u865F",
         show_statistics: "\\u986F\\u793A\\u7D71\\u8A08\\u8CC7\\u8A0A",
         enable_word_wrap: "\\u555F\\u7528\\u6587\\u5B57\\u81EA\\u52D5\\u63DB\\u884C",
@@ -4801,6 +4710,182 @@ ${result.join(",\n")}
       outputTextarea.classList.toggle("word-wrap-disabled", !settings.enableWordWrap);
     }
   }
+  var defaultSettings = {
+    language: "auto",
+    theme: "system",
+    showFab: true,
+    fabPosition: "bottom-right",
+    showScanCount: true,
+    showLineNumbers: true,
+    showStatistics: true,
+    enableWordWrap: false,
+    enableTextTruncation: true,
+    textTruncationLength: 5e4,
+    enableDebugLogging: false,
+    filterRules: {
+      numbers: true,
+      chinese: true,
+      containsChinese: false,
+      emojiOnly: true,
+      symbols: true,
+      termFilter: true,
+      singleLetter: false,
+      repeatingChars: true,
+      filePath: true,
+      hexColor: true,
+      email: true,
+      uuid: true,
+      gitCommitHash: true,
+      websiteUrl: true,
+      shorthandNumber: true
+    }
+  };
+  function applySettings(newSettings, oldSettings) {
+    updateLoggerState(newSettings.enableDebugLogging);
+    applyTheme(newSettings.theme);
+    const languageChanged = oldSettings.language !== newSettings.language;
+    if (languageChanged) {
+      switchLanguage(newSettings.language);
+    }
+    const fabContainer = uiContainer.querySelector(".text-extractor-fab-container");
+    if (fabContainer) {
+      fabContainer.classList.toggle("fab-container-visible", newSettings.showFab);
+    }
+    updateModalAddonsVisibility();
+    fire("settingsSaved");
+    showNotification(t("notifications.settingsSaved"), { type: "success" });
+  }
+  function loadSettings() {
+    const savedSettings = getValue("script_settings", null);
+    if (savedSettings) {
+      try {
+        const parsedSettings = JSON.parse(savedSettings);
+        const mergedSettings = {
+          ...defaultSettings,
+          ...parsedSettings,
+          filterRules: {
+            ...defaultSettings.filterRules,
+            ...parsedSettings.filterRules || {}
+          }
+        };
+        return mergedSettings;
+      } catch (error) {
+        log(t("log.settings.parseError"), error);
+        return defaultSettings;
+      }
+    }
+    return defaultSettings;
+  }
+  function saveSettings(newSettings) {
+    if (typeof newSettings !== "object" || newSettings === null) {
+      log(t("log.settings.invalidObject"), newSettings);
+      return;
+    }
+    const oldSettings = loadSettings();
+    Object.keys(newSettings).forEach((key) => {
+      if (key !== "filterRules" && oldSettings[key] !== newSettings[key]) {
+        log(t("log.settings.changed", {
+          key,
+          oldValue: oldSettings[key],
+          newValue: newSettings[key]
+        }));
+      }
+    });
+    const oldRules = oldSettings.filterRules || {};
+    const newRules = newSettings.filterRules || {};
+    const allRuleKeys =  new Set([...Object.keys(oldRules), ...Object.keys(newRules)]);
+    allRuleKeys.forEach((key) => {
+      const oldValue = !!oldRules[key];
+      const newValue = !!newRules[key];
+      if (oldValue !== newValue) {
+        const statusKey = newValue ? "log.settings.filterRuleChanged.enabled" : "log.settings.filterRuleChanged.disabled";
+        log(t(statusKey, { key }));
+      }
+    });
+    setValue("script_settings", JSON.stringify(newSettings));
+  }
+  var summaryFab;
+  var dynamicFab;
+  var staticFab;
+  function createSingleFab(className, iconSVGString, titleKey, onClick) {
+    const fab = document.createElement("div");
+    fab.className = `text-extractor-fab ${className}`;
+    const svgIcon = createSVGFromString(iconSVGString);
+    if (svgIcon) {
+      fab.appendChild(svgIcon);
+    }
+    fab.dataset.tooltipKey = titleKey;
+    fab.addEventListener("click", onClick);
+    fab.addEventListener("mouseenter", () => {
+      showTooltip(fab, t(titleKey));
+    });
+    fab.addEventListener("mouseleave", () => {
+      hideTooltip();
+    });
+    return fab;
+  }
+  function updateFabTooltips() {
+    if (summaryFab) {
+      summaryFab.addEventListener("mouseenter", () => showTooltip(summaryFab, t(summaryFab.dataset.tooltipKey)));
+    }
+    if (dynamicFab) {
+      dynamicFab.addEventListener("mouseenter", () => showTooltip(dynamicFab, t(dynamicFab.dataset.tooltipKey)));
+    }
+    if (staticFab) {
+      staticFab.addEventListener("mouseenter", () => showTooltip(staticFab, t(staticFab.dataset.tooltipKey)));
+    }
+  }
+  function createFab({ callbacks, isVisible }) {
+    const { onStaticExtract, onDynamicExtract, onSummary } = callbacks;
+    const fabContainer = document.createElement("div");
+    fabContainer.className = "text-extractor-fab-container";
+    summaryFab = createSingleFab(
+      "fab-summary",
+      summaryIcon,
+      "tooltip.summary",
+      onSummary
+    );
+    dynamicFab = createSingleFab(
+      "fab-dynamic",
+      dynamicIcon,
+      "tooltip.dynamic_scan",
+      () => onDynamicExtract(dynamicFab)
+    );
+    staticFab = createSingleFab(
+      "fab-static",
+      translateIcon,
+      "tooltip.static_scan",
+      onStaticExtract
+    );
+    fabContainer.appendChild(summaryFab);
+    fabContainer.appendChild(dynamicFab);
+    fabContainer.appendChild(staticFab);
+    uiContainer.appendChild(fabContainer);
+    if (isVisible) {
+      setTimeout(() => {
+        fabContainer.classList.add("fab-container-visible");
+      }, appConfig.ui.fabAnimationDelay);
+    }
+    updateFabPosition(fabContainer);
+    on("languageChanged", updateFabTooltips);
+    on("settingsSaved", () => updateFabPosition(fabContainer));
+  }
+  function updateFabPosition(fabContainer) {
+    if (!fabContainer) return;
+    const settings = loadSettings();
+    const position = settings.fabPosition || "bottom-right";
+    fabContainer.classList.remove("fab-position-bottom-right", "fab-position-top-right", "fab-position-bottom-left", "fab-position-top-left");
+    fabContainer.classList.add(`fab-position-${position}`);
+  }
+  function setFabIcon(fabElement, iconSVGString) {
+    while (fabElement.firstChild) {
+      fabElement.removeChild(fabElement.firstChild);
+    }
+    const newIcon = createSVGFromString(iconSVGString);
+    if (newIcon) {
+      fabElement.appendChild(newIcon);
+    }
+  }
   function handleQuickScanClick() {
     log(t("scan.quick"));
     openModal();
@@ -4943,6 +5028,7 @@ ${result.join(",\n")}
         render() {
       this.container = document.createElement("div");
       this.container.className = "custom-select-container";
+      this.container.dataset.value = this.currentValue;
       this.trigger = document.createElement("div");
       this.trigger.className = "custom-select-trigger";
       this.selectedContent = document.createElement("div");
@@ -5027,6 +5113,7 @@ ${result.join(",\n")}
         return;
       }
       this.currentValue = value;
+      this.container.dataset.value = value;
       const selectedOption = this.options.find((opt) => opt.value === value);
       this.updateSelectedContent(selectedOption);
       this.optionsContainer.querySelector(".custom-select-option.selected")?.classList.remove("selected");
@@ -5257,6 +5344,18 @@ ${result.join(",\n")}
           numericInput.disabled = !event.target.checked;
         });
         relatedItem.appendChild(compositeContainer);
+      } else if (setting.type === "select") {
+        const selectContainer = document.createElement("div");
+        selectContainer.className = "setting-item-select";
+        const selectTitle = document.createElement("div");
+        selectTitle.className = "setting-label";
+        selectTitle.textContent = t(setting.label);
+        const selectWrapper = document.createElement("div");
+        selectWrapper.id = setting.id;
+        new CustomSelect(selectWrapper, setting.options.map((opt) => ({ ...opt, label: t(opt.label) })), settings[setting.key]);
+        selectContainer.appendChild(selectTitle);
+        selectContainer.appendChild(selectWrapper);
+        relatedItem.appendChild(selectContainer);
       } else {
         const checkboxElement = createCheckbox(setting.id, t(setting.label), settings[setting.key], setting.tooltip);
         relatedItem.appendChild(checkboxElement);
@@ -5375,6 +5474,13 @@ ${result.join(",\n")}
     });
     newSettings.filterRules = newFilterRules;
     relatedSettingsDefinitions.forEach((setting) => {
+      if (setting.type === "select") {
+        const selectContainer = settingsPanel.querySelector(`#${setting.id} .custom-select-container`);
+        if (selectContainer) {
+          newSettings[setting.key] = selectContainer.dataset.value;
+        }
+        return;
+      }
       const checkbox = settingsPanel.querySelector(`#${setting.id}`);
       if (!checkbox) return;
       newSettings[setting.key] = checkbox.checked;
@@ -5694,12 +5800,12 @@ ${result.join(",\n")}
   align-items:center;
   justify-content:space-between;
   padding:4px 10px;
-  margin-top:4px;
   border:1px solid var(--main-textarea-border);
   border-radius:12px;
   background-color:var(--main-textarea-bg);
   color:var(--main-text);
   font-size:15px;
+  font-weight:500;
   cursor:pointer;
   transition:border-color 0.2s, box-shadow 0.2s;
 }
@@ -5825,6 +5931,21 @@ ${result.join(",\n")}
 }
 .tc-dropdown-menu.is-hiding{
     animation:slide-down-fade-out 0.3s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+}
+.fab-position-top-right{
+    transform:translate(-30px, 30px);
+}
+.fab-position-bottom-right{
+    transform:translate(-30px, calc(100vh - 192px - 30px));
+}
+.fab-position-top-left{
+    transform:translate(calc(-100vw + 56px + 30px + 17px), 30px);
+}
+.fab-position-bottom-left{
+    transform:translate(
+        calc(-100vw + 56px + 30px + 17px),
+        calc(100vh - 192px - 30px)
+    );
 }
 .tc-button{
   font-family:'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
@@ -6106,8 +6227,8 @@ ${result.join(",\n")}
 }
 .text-extractor-fab-container{
     position:fixed;
-    bottom:30px;
-    right:30px;
+    top:0;
+    right:0;
     display:flex;
     flex-direction:column;
     align-items:center;
@@ -6115,7 +6236,8 @@ ${result.join(",\n")}
     z-index:9999;
     opacity:0;
     visibility:hidden;
-    transition:opacity 0.3s ease, visibility 0.3s;
+    transition:opacity 0.3s ease, visibility 0.3s, transform 0.3s ease-in-out;
+    transform-origin:top right;
 }
 .text-extractor-fab-container.fab-container-visible{
     opacity:1;
@@ -6680,6 +6802,13 @@ ${result.join(",\n")}
     color:var(--main-disabled-text);
     cursor:not-allowed;
     border-color:var(--main-border);
+}
+.setting-item-select{
+    font-weight:500;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-left:32px;
 }
 .text-extractor-tooltip{
     position:fixed;

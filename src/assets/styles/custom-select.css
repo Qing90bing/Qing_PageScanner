@@ -11,12 +11,12 @@
   align-items: center;
   justify-content: space-between;
   padding: 4px 10px;
-  margin-top: 4px;
   border: 1px solid var(--main-textarea-border);
   border-radius: 12px;
   background-color: var(--main-textarea-bg);
   color: var(--main-text);
   font-size: 15px;
+  font-weight: 500;
   cursor: pointer;
   transition: border-color 0.2s, box-shadow 0.2s;
 }

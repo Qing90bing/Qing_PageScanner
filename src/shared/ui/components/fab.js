@@ -11,6 +11,7 @@ import { summaryIcon } from '../../../assets/icons/summaryIcon.js';
 import { showTooltip, hideTooltip } from './tooltip.js';
 import { appConfig } from '../../../features/settings/config.js';
 import { on } from '../../utils/eventBus.js';
+import { loadSettings } from '../../../features/settings/logic.js';
 import { t } from '../../i18n/index.js';
 import { createSVGFromString } from '../../utils/dom.js';
 import { uiContainer } from '../uiContainer.js';
@@ -123,8 +124,24 @@ export function createFab({ callbacks, isVisible }) {
         }, appConfig.ui.fabAnimationDelay); // 延迟以确保CSS过渡生效
     }
 
+    // 更新位置
+    updateFabPosition(fabContainer);
+
     // 监听语言变化事件以更新工具提示
     on('languageChanged', updateFabTooltips);
+    on('settingsSaved', () => updateFabPosition(fabContainer));
+}
+
+function updateFabPosition(fabContainer) {
+    if (!fabContainer) return;
+    const settings = loadSettings();
+    const position = settings.fabPosition || 'bottom-right';
+
+    // 移除旧的位置类
+    fabContainer.classList.remove('fab-position-bottom-right', 'fab-position-top-right', 'fab-position-bottom-left', 'fab-position-top-left');
+
+    // 添加新的位置类
+    fabContainer.classList.add(`fab-position-${position}`);
 }
 
 /**

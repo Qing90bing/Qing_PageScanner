@@ -1,6 +1,7 @@
 // src/features/settings/panelBuilder.js
 
 import { createCheckbox } from '../../shared/ui/checkbox.js';
+import { CustomSelect } from '../../shared/ui/components/customSelect.js';
 import { createNumericInput } from '../../shared/ui/numericInput.js';
 import { createSVGFromString } from '../../shared/utils/dom.js';
 import { closeIcon } from '../../assets/icons/closeIcon.js';
@@ -93,6 +94,18 @@ export function buildPanelDOM(settings) {
             });
 
             relatedItem.appendChild(compositeContainer);
+        } else if (setting.type === 'select') {
+            const selectContainer = document.createElement('div');
+            selectContainer.className = 'setting-item-select';
+            const selectTitle = document.createElement('div');
+            selectTitle.className = 'setting-label';
+            selectTitle.textContent = t(setting.label);
+            const selectWrapper = document.createElement('div');
+            selectWrapper.id = setting.id;
+            new CustomSelect(selectWrapper, setting.options.map(opt => ({ ...opt, label: t(opt.label) })), settings[setting.key]);
+            selectContainer.appendChild(selectTitle);
+            selectContainer.appendChild(selectWrapper);
+            relatedItem.appendChild(selectContainer);
         } else {
             // --- 对标准复选框使用原始布局 ---
             const checkboxElement = createCheckbox(setting.id, t(setting.label), settings[setting.key], setting.tooltip);

@@ -3,8 +3,8 @@
 /* --- 悬浮操作按钮容器 --- */
 .text-extractor-fab-container {
     position: fixed;
-    bottom: 30px;
-    right: 30px;
+    top: 0;
+    right: 0;
     display: flex;
     flex-direction: column; /* 垂直排列 */
     align-items: center;
@@ -12,7 +12,9 @@
     z-index: 9999;
     opacity: 0; /* 初始透明 */
     visibility: hidden; /* 初始隐藏 */
-    transition: opacity 0.3s ease, visibility 0.3s;
+    transition: opacity 0.3s ease, visibility 0.3s, transform 0.3s ease-in-out;
+    /* 新增：为 transform 设置一个基点 */
+    transform-origin: top right;
 }
 
 .text-extractor-fab-container.fab-container-visible {

@@ -48,6 +48,13 @@
     },
     "display": {
       "show_fab": "Show Floating Button",
+      "fab_position": "Floating Button Position",
+      "fab_positions": {
+        "bottom_right": "Bottom Right",
+        "top_right": "Top Right",
+        "bottom_left": "Bottom Left",
+        "top_left": "Top Left"
+      },
       "show_line_numbers": "Show Line Numbers",
       "show_statistics": "Show Statistics",
       "enable_word_wrap": "Enable Word Wrap",

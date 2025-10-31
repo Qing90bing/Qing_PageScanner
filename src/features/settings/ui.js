@@ -150,6 +150,14 @@ function handleSave(onSave) {
 
     // 3. 收集相关设置（包括新的复合设置项）
     relatedSettingsDefinitions.forEach(setting => {
+        if (setting.type === 'select') {
+            const selectContainer = settingsPanel.querySelector(`#${setting.id} .custom-select-container`);
+            if (selectContainer) {
+                newSettings[setting.key] = selectContainer.dataset.value;
+            }
+            return;
+        }
+
         const checkbox = settingsPanel.querySelector(`#${setting.id}`);
         if (!checkbox) return; // 如果找不到复选框，跳过
 

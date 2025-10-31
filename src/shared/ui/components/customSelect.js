@@ -32,6 +32,7 @@ export class CustomSelect {
     render() {
         this.container = document.createElement('div');
         this.container.className = 'custom-select-container';
+        this.container.dataset.value = this.currentValue;
 
         // 1. 创建触发器
         this.trigger = document.createElement('div');
@@ -176,6 +177,7 @@ export class CustomSelect {
         }
 
         this.currentValue = value;
+        this.container.dataset.value = value;
         const selectedOption = this.options.find(opt => opt.value === value);
         this.updateSelectedContent(selectedOption);
 

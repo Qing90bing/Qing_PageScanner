@@ -210,3 +210,11 @@
     cursor: not-allowed;
     border-color: var(--main-border);
 }
+
+.setting-item-select {
+    font-weight: 500;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-left: 32px;
+}

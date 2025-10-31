@@ -1,0 +1,23 @@
+/*
+  使用 transform: translate() 从 (top: 0, right: 0) 基准点进行精确定位。
+  通过减去 17px 的典型滚动条宽度来补偿 vw 单位带来的偏移。
+*/
+
+.fab-position-top-right {
+    transform: translate(-30px, 30px);
+}
+
+.fab-position-bottom-right {
+    transform: translate(-30px, calc(100vh - 192px - 30px));
+}
+
+.fab-position-top-left {
+    transform: translate(calc(-100vw + 56px + 30px + 17px), 30px);
+}
+
+.fab-position-bottom-left {
+    transform: translate(
+        calc(-100vw + 56px + 30px + 17px),
+        calc(100vh - 192px - 30px)
+    );
+}

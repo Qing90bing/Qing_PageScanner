@@ -52,6 +52,18 @@ export const filterDefinitions = [
 
 export const relatedSettingsDefinitions = [
     { id: 'show-fab', key: 'showFab', label: 'settings.display.show_fab', tooltip: { titleIcon: infoIcon, title: 'settings.display.show_fab', text: 'tooltip.display.show_fab' } },
+    {
+        id: 'fab-position',
+        key: 'fabPosition',
+        label: 'settings.display.fab_position',
+        type: 'select',
+        options: [
+            { value: 'bottom-right', label: 'settings.display.fab_positions.bottom_right' },
+            { value: 'top-right', label: 'settings.display.fab_positions.top_right' },
+            { value: 'bottom-left', label: 'settings.display.fab_positions.bottom_left' },
+            { value: 'top-left', label: 'settings.display.fab_positions.top_left' },
+        ],
+    },
     { id: 'show-scan-count', key: 'showScanCount', label: 'settings.display.show_scan_count', tooltip: { titleIcon: infoIcon, title: 'settings.display.show_scan_count', text: 'tooltip.display.show_scan_count' } },
     { id: 'show-line-numbers', key: 'showLineNumbers', label: 'settings.display.show_line_numbers', tooltip: { titleIcon: infoIcon, title: 'settings.display.show_line_numbers', text: 'tooltip.display.show_line_numbers' } },
     { id: 'show-statistics', key: 'showStatistics', label: 'settings.display.show_statistics', tooltip: { titleIcon: infoIcon, title: 'settings.display.show_statistics', text: 'tooltip.display.show_statistics' } },
