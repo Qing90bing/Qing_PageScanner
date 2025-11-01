@@ -62,9 +62,54 @@ var TextExtractor = (() => {
   var uiContainer = createUIContainer();
   var currentTooltip = null;
   var hideTimeout = null;
+  var MARGIN = 12;
   function removeAllTooltips() {
     uiContainer.querySelectorAll(".text-extractor-tooltip").forEach((tip) => tip.remove());
     currentTooltip = null;
+  }
+  function checkCollision(rect, obstacles) {
+    for (const obstacle of obstacles) {
+      if (rect.left < obstacle.right && rect.left + rect.width > obstacle.left && rect.top < obstacle.bottom && rect.top + rect.height > obstacle.top) {
+        return true;
+      }
+    }
+    return false;
+  }
+  function calculateOptimalPosition(targetRect, tooltipRect, obstacles) {
+    const { innerWidth: viewportWidth, innerHeight: viewportHeight } = window;
+    const { width: ttWidth, height: ttHeight } = tooltipRect;
+    const positions = [
+      {
+        name: "right",
+        top: targetRect.top + targetRect.height / 2 - ttHeight / 2,
+        left: targetRect.right + MARGIN
+      },
+      {
+        name: "left",
+        top: targetRect.top + targetRect.height / 2 - ttHeight / 2,
+        left: targetRect.left - ttWidth - MARGIN
+      },
+      {
+        name: "bottom",
+        top: targetRect.bottom + MARGIN,
+        left: targetRect.left + targetRect.width / 2 - ttWidth / 2
+      },
+      {
+        name: "top",
+        top: targetRect.top - ttHeight - MARGIN,
+        left: targetRect.left + targetRect.width / 2 - ttWidth / 2
+      }
+    ];
+    for (const pos of positions) {
+      const proposedRect = { top: pos.top, left: pos.left, width: ttWidth, height: ttHeight };
+      const isInViewport = proposedRect.top >= 0 && proposedRect.left >= 0 && proposedRect.top + ttHeight <= viewportHeight && proposedRect.left + ttWidth <= viewportWidth;
+      if (isInViewport) {
+        if (!checkCollision(proposedRect, obstacles)) {
+          return { top: pos.top, left: pos.left };
+        }
+      }
+    }
+    return { top: positions[0].top, left: positions[0].left };
   }
   function showTooltip(targetElement, text) {
     clearTimeout(hideTimeout);
@@ -76,8 +121,8 @@ var TextExtractor = (() => {
     currentTooltip = tooltip;
     const targetRect = targetElement.getBoundingClientRect();
     const tooltipRect = tooltip.getBoundingClientRect();
-    const top = targetRect.top + targetRect.height / 2 - tooltipRect.height / 2;
-    const left = targetRect.left - tooltipRect.width - 12;
+    const obstacles = Array.from(uiContainer.querySelectorAll(".text-extractor-fab")).filter((el) => el !== targetElement).map((el) => el.getBoundingClientRect());
+    const { top, left } = calculateOptimalPosition(targetRect, tooltipRect, obstacles);
     tooltip.style.top = `${top}px`;
     tooltip.style.left = `${left}px`;
     requestAnimationFrame(() => {
