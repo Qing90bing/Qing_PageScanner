@@ -56,7 +56,8 @@
   max-height: 0;
   overflow: hidden;
   opacity: 0;
-  transition: max-height 0.3s ease-out, opacity 0.2s ease-out;
+  /* 当 .open 类被移除时，延迟 0.2s 才隐藏 visibility，让其他动画播完 */
+  transition: max-height 0.2s ease-out, opacity 0.2s ease-out, visibility 0s 0.2s;
   visibility: hidden;
 }
 
@@ -64,6 +65,8 @@
   visibility: visible;
   opacity: 1;
   max-height: 200px; /* 或者一个足够大的值 */
+  /* 打开时，立即显示 visibility，不延迟 */
+  transition: max-height 0.2s ease-out, opacity 0.2s ease-out;
 }
 
 .custom-select-option {

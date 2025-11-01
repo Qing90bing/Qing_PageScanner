@@ -5891,13 +5891,14 @@ ${result.join(",\n")}
   max-height:0;
   overflow:hidden;
   opacity:0;
-  transition:max-height 0.3s ease-out, opacity 0.2s ease-out;
+  transition:max-height 0.2s ease-out, opacity 0.2s ease-out, visibility 0s 0.2s;
   visibility:hidden;
 }
 .custom-select-container.open .custom-select-options{
   visibility:visible;
   opacity:1;
   max-height:200px;
+  transition:max-height 0.2s ease-out, opacity 0.2s ease-out;
 }
 .custom-select-option{
   display:flex;
