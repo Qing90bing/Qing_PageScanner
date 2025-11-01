@@ -46,6 +46,7 @@ var TextExtractor = (() => {
   var translateIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="m476-80 182-480h84L924-80h-84l-43-122H603L560-80h-84ZM160-200l-56-56 202-202q-35-35-63.5-80T190-640h84q20 39 40 68t48 58q33-33 68.5-92.5T484-720H40v-80h280v-80h80v80h280v80H564q-21 72-63 148t-83 116l96 98-30 82-122-125-202 201Zm468-72h144l-72-204-72 204Z"/></svg>`;
   var dynamicIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M200-766v572q-17-17-32-36t-28-39v-422q13-20 28-39t32-36Zm160-96v764q-21-7-41-15.5T280-133v-694q19-11 39-19.5t41-15.5Zm280 749v-734q106 47 173 145t67 222q0 124-67 222T640-113ZM480-80q-10 0-20-.5T440-82v-796q10-1 20-1.5t20-.5q20 0 40 2t40 6v784q-20 4-40 6t-40 2Z"/></svg>`;
   var summaryIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M280-280h280v-80H280v80Zm0-160h400v-80H280v80Zm0-160h400v-80H280v80Zm-80 480q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/></svg>`;
+  var elementScanIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M40-480v-80h80v80H40Zm800 0v-80h80v80h-80ZM40-640v-80h80v80H40Zm800 0v-80h80v80h-80ZM40-800v-80h80v80H40Zm160 320v-80h80v80h-80Zm480 0v-80h80v80h-80Zm160-320v-80h80v80h-80Zm-640 0v-80h80v80h-80Zm160 0v-80h80v80h-80Zm160 0v-80h80v80h-80Zm160 0v-80h80v80h-80ZM473-40q-24 0-46-9t-39-26L184-280l33-34q14-14 34-19t40 0l69 20v-327q0-17 11.5-28.5T400-680q17 0 28.5 11.5T440-640v433l-98-28 103 103q6 6 13 9t15 3h167q33 0 56.5-23.5T720-200v-160q0-17 11.5-28.5T760-400q17 0 28.5 11.5T800-360v160q0 66-47 113T640-40H473Zm7-280v-160q0-17 11.5-28.5T520-520q17 0 28.5 11.5T560-480v160h-80Zm120 0v-120q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440v120h-80Zm40 200H445h195Z"/></svg>`;
   function updateScrollbarWidth(container) {
     const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
     container.style.setProperty("--scrollbar-width", `${scrollbarWidth}px`);
@@ -154,7 +155,8 @@ var TextExtractor = (() => {
       discovered: "Discovered:",
       confirm: "Confirm",
       cancel: "Cancel",
-      export: "Export"
+      export: "Export",
+      reselect: "Reselect"
     },
     export: {
       exportAsTxt: "Export as TXT",
@@ -270,6 +272,7 @@ var TextExtractor = (() => {
       summary: "View Summary",
       dynamic_scan: "Dynamic Scan",
       static_scan: "Static Scan",
+      element_scan: "Element Scan",
       filters: {
         title: "Content Filter Explanation",
         numbers: 'This rule filters out text that consists <strong>entirely</strong> of numbers, spaces, thousand separators (.), decimal points (,), and some currency symbols ($, \u20AC, \xA3, \xA5).<br><br><strong>More Examples:</strong><br>\u2022 "1,234.56"<br>\u2022 "\xA5999"<br>\u2022 "\u20AC200"<br>\u2022 "$ 100"',
@@ -423,7 +426,8 @@ var TextExtractor = (() => {
       discovered: "\u5DF2\u53D1\u73B0\uFF1A",
       confirm: "\u786E\u8BA4",
       cancel: "\u53D6\u6D88",
-      export: "\u5BFC\u51FA"
+      export: "\u5BFC\u51FA",
+      reselect: "\u91CD\u65B0\u9009\u62E9"
     },
     export: {
       exportAsTxt: "\u5BFC\u51FA\u4E3A TXT",
@@ -539,6 +543,7 @@ var TextExtractor = (() => {
       summary: "\u67E5\u770B\u603B\u7ED3",
       dynamic_scan: "\u52A8\u6001\u626B\u63CF",
       static_scan: "\u9759\u6001\u626B\u63CF",
+      element_scan: "\u9009\u53D6\u5143\u7D20\u626B\u63CF",
       filters: {
         title: "\u5185\u5BB9\u8FC7\u6EE4\u5668\u8BF4\u660E",
         numbers: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389<strong>\u5B8C\u5168\u7531</strong>\u6570\u5B57\u3001\u7A7A\u683C\u3001\u5343\u4F4D\u5206\u9694\u7B26 (.)\u3001\u5C0F\u6570\u70B9 (,) \u4EE5\u53CA\u90E8\u5206\u8D27\u5E01\u7B26\u53F7 ($, \u20AC, \xA3, \xA5) \u7EC4\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u66F4\u591A\u793A\u4F8B\uFF1A</strong><br>\u2022 "1,234.56"<br>\u2022 "\xA5999"<br>\u2022 "\u20AC200"<br>\u2022 "$ 100"',
@@ -692,7 +697,8 @@ var TextExtractor = (() => {
       discovered: "\u5DF2\u767C\u73FE\uFF1A",
       confirm: "\u78BA\u8A8D",
       cancel: "\u53D6\u6D88",
-      export: "\u532F\u51FA"
+      export: "\u532F\u51FA",
+      reselect: "\u91CD\u65B0\u9078\u64C7"
     },
     export: {
       exportAsTxt: "\u532F\u51FA\u70BA TXT",
@@ -808,6 +814,7 @@ var TextExtractor = (() => {
       summary: "\u67E5\u770B\u6458\u8981",
       dynamic_scan: "\u52D5\u614B\u6383\u63CF",
       static_scan: "\u975C\u614B\u6383\u63CF",
+      element_scan: "\u9078\u53D6\u5143\u7D20\u6383\u63CF",
       filters: {
         title: "\u5167\u5BB9\u904E\u6FFE\u5668\u8AAA\u660E",
         numbers: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389<strong>\u5B8C\u5168\u7531</strong>\u6578\u5B57\u3001\u7A7A\u683C\u3001\u5343\u4F4D\u5206\u9694\u7B26 (.)\u3001\u5C0F\u6578\u9EDE (,) \u4EE5\u53CA\u90E8\u5206\u8CA8\u5E63\u7B26\u865F ($, \u20AC, \xA3, \xA5) \u7D44\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u66F4\u591A\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "1,234.56"<br>\u2022 "\xA5999"<br>\u2022 "\u20AC200"<br>\u2022 "$ 100"',
@@ -1395,6 +1402,46 @@ var TextExtractor = (() => {
     });
     return Array.from(uniqueTexts);
   };
+  var extractAndProcessTextFromElement = (element) => {
+    if (!element) return [];
+    const settings = loadSettings();
+    const { filterRules: filterRules2 } = settings;
+    const uniqueTexts =  new Set();
+    const processAndAddText = (rawText) => {
+      if (!rawText) return;
+      const normalizedText = rawText.normalize("NFC");
+      let text = normalizedText.replace(/(\\r\\n|\\n|\\r)+/g, "\\n");
+      if (text.trim() === "") return;
+      const trimmedText = text.trim();
+      const filterReason = shouldFilter(trimmedText, filterRules2);
+      if (filterReason) {
+        log(t("log.textProcessor.filtered", { text: trimmedText, reason: filterReason }));
+        return;
+      }
+      uniqueTexts.add(text);
+    };
+    const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(", ");
+    if (element.closest(ignoredSelectorString)) {
+      return [];
+    }
+    const attributesToExtract = appConfig.scanner.attributesToExtract;
+    attributesToExtract.forEach((attr) => {
+      const attrValue = element.getAttribute(attr);
+      if (attrValue) {
+        processAndAddText(attrValue);
+      }
+    });
+    const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null);
+    while (walker.nextNode()) {
+      const node = walker.currentNode;
+      const parent = node.parentElement;
+      if (parent && (parent.tagName === "SCRIPT" || parent.tagName === "STYLE" || parent.closest(ignoredSelectorString) || parent.closest(".text-extractor-fab, .text-extractor-modal-overlay, .settings-panel-overlay"))) {
+        continue;
+      }
+      processAndAddText(node.nodeValue);
+    }
+    return Array.from(uniqueTexts);
+  };
   var workerPolicy;
   var htmlPolicy;
   if (window.trustedTypes && window.trustedTypes.createPolicy) {
@@ -1691,7 +1738,8 @@ ${result.join(",\n")}
       discovered: "Discovered:",
       confirm: "Confirm",
       cancel: "Cancel",
-      export: "Export"
+      export: "Export",
+      reselect: "Reselect"
     },
     export: {
       exportAsTxt: "Export as TXT",
@@ -1807,6 +1855,7 @@ ${result.join(",\n")}
       summary: "View Summary",
       dynamic_scan: "Dynamic Scan",
       static_scan: "Static Scan",
+      element_scan: "Element Scan",
       filters: {
         title: "Content Filter Explanation",
         numbers: 'This rule filters out text that consists <strong>entirely</strong> of numbers, spaces, thousand separators (.), decimal points (,), and some currency symbols ($, \\u20AC, \\xA3, \\xA5).<br><br><strong>More Examples:</strong><br>\\u2022 "1,234.56"<br>\\u2022 "\\xA5999"<br>\\u2022 "\\u20AC200"<br>\\u2022 "$ 100"',
@@ -1961,7 +2010,8 @@ ${result.join(",\n")}
       discovered: "\\u5DF2\\u53D1\\u73B0\\uFF1A",
       confirm: "\\u786E\\u8BA4",
       cancel: "\\u53D6\\u6D88",
-      export: "\\u5BFC\\u51FA"
+      export: "\\u5BFC\\u51FA",
+      reselect: "\\u91CD\\u65B0\\u9009\\u62E9"
     },
     export: {
       exportAsTxt: "\\u5BFC\\u51FA\\u4E3A TXT",
@@ -2077,6 +2127,7 @@ ${result.join(",\n")}
       summary: "\\u67E5\\u770B\\u603B\\u7ED3",
       dynamic_scan: "\\u52A8\\u6001\\u626B\\u63CF",
       static_scan: "\\u9759\\u6001\\u626B\\u63CF",
+      element_scan: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF",
       filters: {
         title: "\\u5185\\u5BB9\\u8FC7\\u6EE4\\u5668\\u8BF4\\u660E",
         numbers: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u6570\\u5B57\\u3001\\u7A7A\\u683C\\u3001\\u5343\\u4F4D\\u5206\\u9694\\u7B26 (.)\\u3001\\u5C0F\\u6570\\u70B9 (,) \\u4EE5\\u53CA\\u90E8\\u5206\\u8D27\\u5E01\\u7B26\\u53F7 ($, \\u20AC, \\xA3, \\xA5) \\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "1,234.56"<br>\\u2022 "\\xA5999"<br>\\u2022 "\\u20AC200"<br>\\u2022 "$ 100"',
@@ -2231,7 +2282,8 @@ ${result.join(",\n")}
       discovered: "\\u5DF2\\u767C\\u73FE\\uFF1A",
       confirm: "\\u78BA\\u8A8D",
       cancel: "\\u53D6\\u6D88",
-      export: "\\u532F\\u51FA"
+      export: "\\u532F\\u51FA",
+      reselect: "\\u91CD\\u65B0\\u9078\\u64C7"
     },
     export: {
       exportAsTxt: "\\u532F\\u51FA\\u70BA TXT",
@@ -2347,6 +2399,7 @@ ${result.join(",\n")}
       summary: "\\u67E5\\u770B\\u6458\\u8981",
       dynamic_scan: "\\u52D5\\u614B\\u6383\\u63CF",
       static_scan: "\\u975C\\u614B\\u6383\\u63CF",
+      element_scan: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF",
       filters: {
         title: "\\u5167\\u5BB9\\u904E\\u6FFE\\u5668\\u8AAA\\u660E",
         numbers: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u6578\\u5B57\\u3001\\u7A7A\\u683C\\u3001\\u5343\\u4F4D\\u5206\\u9694\\u7B26 (.)\\u3001\\u5C0F\\u6578\\u9EDE (,) \\u4EE5\\u53CA\\u90E8\\u5206\\u8CA8\\u5E63\\u7B26\\u865F ($, \\u20AC, \\xA3, \\xA5) \\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "1,234.56"<br>\\u2022 "\\xA5999"<br>\\u2022 "\\u20AC200"<br>\\u2022 "$ 100"',
@@ -2960,7 +3013,8 @@ ${result.join(",\n")}
       discovered: "Discovered:",
       confirm: "Confirm",
       cancel: "Cancel",
-      export: "Export"
+      export: "Export",
+      reselect: "Reselect"
     },
     export: {
       exportAsTxt: "Export as TXT",
@@ -3076,6 +3130,7 @@ ${result.join(",\n")}
       summary: "View Summary",
       dynamic_scan: "Dynamic Scan",
       static_scan: "Static Scan",
+      element_scan: "Element Scan",
       filters: {
         title: "Content Filter Explanation",
         numbers: 'This rule filters out text that consists <strong>entirely</strong> of numbers, spaces, thousand separators (.), decimal points (,), and some currency symbols ($, \\u20AC, \\xA3, \\xA5).<br><br><strong>More Examples:</strong><br>\\u2022 "1,234.56"<br>\\u2022 "\\xA5999"<br>\\u2022 "\\u20AC200"<br>\\u2022 "$ 100"',
@@ -3230,7 +3285,8 @@ ${result.join(",\n")}
       discovered: "\\u5DF2\\u53D1\\u73B0\\uFF1A",
       confirm: "\\u786E\\u8BA4",
       cancel: "\\u53D6\\u6D88",
-      export: "\\u5BFC\\u51FA"
+      export: "\\u5BFC\\u51FA",
+      reselect: "\\u91CD\\u65B0\\u9009\\u62E9"
     },
     export: {
       exportAsTxt: "\\u5BFC\\u51FA\\u4E3A TXT",
@@ -3346,6 +3402,7 @@ ${result.join(",\n")}
       summary: "\\u67E5\\u770B\\u603B\\u7ED3",
       dynamic_scan: "\\u52A8\\u6001\\u626B\\u63CF",
       static_scan: "\\u9759\\u6001\\u626B\\u63CF",
+      element_scan: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF",
       filters: {
         title: "\\u5185\\u5BB9\\u8FC7\\u6EE4\\u5668\\u8BF4\\u660E",
         numbers: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u6570\\u5B57\\u3001\\u7A7A\\u683C\\u3001\\u5343\\u4F4D\\u5206\\u9694\\u7B26 (.)\\u3001\\u5C0F\\u6570\\u70B9 (,) \\u4EE5\\u53CA\\u90E8\\u5206\\u8D27\\u5E01\\u7B26\\u53F7 ($, \\u20AC, \\xA3, \\xA5) \\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "1,234.56"<br>\\u2022 "\\xA5999"<br>\\u2022 "\\u20AC200"<br>\\u2022 "$ 100"',
@@ -3500,7 +3557,8 @@ ${result.join(",\n")}
       discovered: "\\u5DF2\\u767C\\u73FE\\uFF1A",
       confirm: "\\u78BA\\u8A8D",
       cancel: "\\u53D6\\u6D88",
-      export: "\\u532F\\u51FA"
+      export: "\\u532F\\u51FA",
+      reselect: "\\u91CD\\u65B0\\u9078\\u64C7"
     },
     export: {
       exportAsTxt: "\\u532F\\u51FA\\u70BA TXT",
@@ -3616,6 +3674,7 @@ ${result.join(",\n")}
       summary: "\\u67E5\\u770B\\u6458\\u8981",
       dynamic_scan: "\\u52D5\\u614B\\u6383\\u63CF",
       static_scan: "\\u975C\\u614B\\u6383\\u63CF",
+      element_scan: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF",
       filters: {
         title: "\\u5167\\u5BB9\\u904E\\u6FFE\\u5668\\u8AAA\\u660E",
         numbers: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u6578\\u5B57\\u3001\\u7A7A\\u683C\\u3001\\u5343\\u4F4D\\u5206\\u9694\\u7B26 (.)\\u3001\\u5C0F\\u6578\\u9EDE (,) \\u4EE5\\u53CA\\u90E8\\u5206\\u8CA8\\u5E63\\u7B26\\u865F ($, \\u20AC, \\xA3, \\xA5) \\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "1,234.56"<br>\\u2022 "\\xA5999"<br>\\u2022 "\\u20AC200"<br>\\u2022 "$ 100"',
@@ -4858,6 +4917,7 @@ ${result.join(",\n")}
   var summaryFab;
   var dynamicFab;
   var staticFab;
+  var elementScanFab;
   function createSingleFab(className, iconSVGString, titleKey, onClick) {
     const fab = document.createElement("div");
     fab.className = `text-extractor-fab ${className}`;
@@ -4885,9 +4945,12 @@ ${result.join(",\n")}
     if (staticFab) {
       staticFab.addEventListener("mouseenter", () => showTooltip(staticFab, t(staticFab.dataset.tooltipKey)));
     }
+    if (elementScanFab) {
+      elementScanFab.addEventListener("mouseenter", () => showTooltip(elementScanFab, t(elementScanFab.dataset.tooltipKey)));
+    }
   }
   function createFab({ callbacks, isVisible }) {
-    const { onStaticExtract, onDynamicExtract, onSummary } = callbacks;
+    const { onStaticExtract, onDynamicExtract, onSummary, onElementScan } = callbacks;
     const fabContainer = document.createElement("div");
     fabContainer.className = "text-extractor-fab-container";
     summaryFab = createSingleFab(
@@ -4908,9 +4971,16 @@ ${result.join(",\n")}
       "tooltip.static_scan",
       onStaticExtract
     );
+    elementScanFab = createSingleFab(
+      "fab-element-scan",
+      elementScanIcon,
+      "tooltip.element_scan",
+      () => onElementScan(elementScanFab)
+    );
     fabContainer.appendChild(summaryFab);
     fabContainer.appendChild(dynamicFab);
     fabContainer.appendChild(staticFab);
+    fabContainer.appendChild(elementScanFab);
     uiContainer.appendChild(fabContainer);
     if (isVisible) {
       setTimeout(() => {
@@ -5052,6 +5122,203 @@ ${result.join(",\n")}
       }, 50);
     }
   }
+  var highlightOverlay = null;
+  var tagNameTooltip = null;
+  var toolbar = null;
+  function createHighlightElements() {
+    if (!highlightOverlay) {
+      highlightOverlay = document.createElement("div");
+      highlightOverlay.id = "element-scan-highlight";
+      uiContainer.appendChild(highlightOverlay);
+    }
+    if (!tagNameTooltip) {
+      tagNameTooltip = document.createElement("div");
+      tagNameTooltip.id = "element-scan-tag-name";
+      uiContainer.appendChild(tagNameTooltip);
+    }
+    highlightOverlay.style.display = "block";
+    tagNameTooltip.style.display = "block";
+  }
+  function updateHighlight(targetElement) {
+    if (!targetElement) return;
+    createHighlightElements();
+    const rect = targetElement.getBoundingClientRect();
+    const scrollX = window.scrollX;
+    const scrollY = window.scrollY;
+    highlightOverlay.style.width = `${rect.width}px`;
+    highlightOverlay.style.height = `${rect.height}px`;
+    highlightOverlay.style.top = `${rect.top + scrollY}px`;
+    highlightOverlay.style.left = `${rect.left + scrollX}px`;
+    const tagName = targetElement.tagName.toLowerCase();
+    tagNameTooltip.textContent = tagName;
+    tagNameTooltip.style.top = `${rect.bottom + scrollY + 5}px`;
+    tagNameTooltip.style.left = `${rect.left + scrollX}px`;
+    const toolbarTag = uiContainer.querySelector("#element-scan-toolbar-tag");
+    if (toolbarTag) {
+      toolbarTag.textContent = `<${tagName}>`;
+    }
+  }
+  function createAdjustmentToolbar(elementPath2) {
+    if (toolbar) cleanupToolbar();
+    toolbar = document.createElement("div");
+    toolbar.id = "element-scan-toolbar";
+    toolbar.innerHTML = `
+        <div id="element-scan-toolbar-tag">&lt;${elementPath2[0].tagName.toLowerCase()}&gt;</div>
+        <input type="range" id="element-scan-level-slider" min="0" max="${elementPath2.length - 1}" value="0" />
+        <div id="element-scan-toolbar-actions">
+            <button id="element-scan-toolbar-reselect">${t("common.reselect")}</button>
+            <button id="element-scan-toolbar-cancel">${t("common.cancel")}</button>
+            <button id="element-scan-toolbar-confirm">${t("common.confirm")}</button>
+        </div>
+    `;
+    uiContainer.appendChild(toolbar);
+    const initialRect = elementPath2[0].getBoundingClientRect();
+    toolbar.style.top = `${initialRect.top - 100}px`;
+    toolbar.style.left = `${initialRect.left}px`;
+    addToolbarEventListeners();
+    makeDraggable(toolbar);
+  }
+  function addToolbarEventListeners() {
+    const slider = uiContainer.querySelector("#element-scan-level-slider");
+    const reselectBtn = uiContainer.querySelector("#element-scan-toolbar-reselect");
+    const cancelBtn = uiContainer.querySelector("#element-scan-toolbar-cancel");
+    const confirmBtn = uiContainer.querySelector("#element-scan-toolbar-confirm");
+    slider.addEventListener("input", () => {
+      updateSelectionLevel(slider.value);
+    });
+    reselectBtn.addEventListener("click", reselectElement);
+    cancelBtn.addEventListener("click", () => {
+      const fabElement = document.querySelector(".fab-element-scan");
+      handleElementScanClick(fabElement);
+    });
+    confirmBtn.addEventListener("click", confirmSelectionAndExtract);
+  }
+  function makeDraggable(element) {
+    let offsetX, offsetY;
+    const onMouseDown = (e) => {
+      if (e.target.id !== "element-scan-toolbar" && e.target.id !== "element-scan-toolbar-tag") return;
+      e.preventDefault();
+      const rect = element.getBoundingClientRect();
+      offsetX = e.clientX - rect.left;
+      offsetY = e.clientY - rect.top;
+      document.addEventListener("mousemove", onMouseMove);
+      document.addEventListener("mouseup", onMouseUp);
+    };
+    const onMouseMove = (e) => {
+      element.style.left = `${e.clientX - offsetX}px`;
+      element.style.top = `${e.clientY - offsetY}px`;
+    };
+    const onMouseUp = () => {
+      document.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("mouseup", onMouseUp);
+    };
+    element.addEventListener("mousedown", onMouseDown);
+  }
+  function cleanupUI() {
+    if (highlightOverlay) highlightOverlay.style.display = "none";
+    if (tagNameTooltip) tagNameTooltip.style.display = "none";
+  }
+  function cleanupToolbar() {
+    if (toolbar) {
+      toolbar.remove();
+      toolbar = null;
+    }
+  }
+  var isActive = false;
+  var isAdjusting = false;
+  var currentTarget = null;
+  var elementPath = [];
+  function handleElementScanClick(fabElement) {
+    if (isActive) {
+      stopElementScan(fabElement);
+    } else {
+      startElementScan(fabElement);
+    }
+  }
+  function startElementScan(fabElement) {
+    isActive = true;
+    isAdjusting = false;
+    fabElement.classList.add("is-recording");
+    document.addEventListener("mouseover", handleMouseOver);
+    document.addEventListener("mouseout", handleMouseOut);
+    document.addEventListener("click", handleElementClick, true);
+    document.addEventListener("keydown", handleElementScanKeyDown);
+  }
+  function stopElementScan(fabElement) {
+    isActive = false;
+    isAdjusting = false;
+    if (fabElement) {
+      fabElement.classList.remove("is-recording");
+    }
+    document.removeEventListener("mouseover", handleMouseOver);
+    document.removeEventListener("mouseout", handleMouseOut);
+    document.removeEventListener("click", handleElementClick, true);
+    document.removeEventListener("keydown", handleElementScanKeyDown);
+    cleanupUI();
+    cleanupToolbar();
+    elementPath = [];
+    currentTarget = null;
+  }
+  function reselectElement() {
+    isAdjusting = false;
+    cleanupToolbar();
+    document.addEventListener("mouseover", handleMouseOver);
+    document.addEventListener("mouseout", handleMouseOut);
+    document.addEventListener("click", handleElementClick, true);
+  }
+  function handleMouseOver(event) {
+    if (!isActive || isAdjusting) return;
+    if (event.target.closest(".text-extractor-fab-container") || event.target.closest("#text-extractor-container")) {
+      cleanupUI();
+      currentTarget = null;
+      return;
+    }
+    currentTarget = event.target;
+    updateHighlight(currentTarget);
+  }
+  function handleMouseOut(event) {
+    if (event.target === currentTarget) {
+      cleanupUI();
+    }
+  }
+  function handleElementScanKeyDown(event) {
+    if (isActive && event.key === "Escape") {
+      const fabElement = document.querySelector(".fab-element-scan");
+      stopElementScan(fabElement);
+    }
+  }
+  function handleElementClick(event) {
+    if (!isActive || isAdjusting || !currentTarget) return;
+    event.preventDefault();
+    event.stopPropagation();
+    isAdjusting = true;
+    document.removeEventListener("mouseover", handleMouseOver);
+    document.removeEventListener("mouseout", handleMouseOut);
+    elementPath = [];
+    let el = currentTarget;
+    while (el && el.tagName !== "BODY") {
+      elementPath.push(el);
+      el = el.parentElement;
+    }
+    elementPath.push(document.body);
+    createAdjustmentToolbar(elementPath);
+  }
+  function updateSelectionLevel(level) {
+    const targetElement = elementPath[level];
+    if (targetElement) {
+      currentTarget = targetElement;
+      updateHighlight(targetElement);
+    }
+  }
+  function confirmSelectionAndExtract() {
+    if (!currentTarget) return;
+    const extractedTexts = extractAndProcessTextFromElement(currentTarget);
+    const formattedText = formatTextsForTranslation(extractedTexts);
+    updateModalContent(formattedText, true, "quick-scan");
+    const notificationText = simpleTemplate(t("scan.quickFinished"), { count: extractedTexts.length });
+    showNotification(notificationText, { type: "success" });
+    reselectElement();
+  }
   function initUI() {
     const settings = loadSettings();
     createMainModal({
@@ -5061,7 +5328,8 @@ ${result.join(",\n")}
       callbacks: {
         onStaticExtract: handleQuickScanClick,
         onDynamicExtract: handleDynamicExtractClick,
-        onSummary: handleSummaryClick
+        onSummary: handleSummaryClick,
+        onElementScan: handleElementScanClick
       },
       isVisible: settings.showFab
     });
@@ -5986,25 +6254,102 @@ ${result.join(",\n")}
 }
 .tc-dropdown-menu.is-hiding{
     animation:slide-down-fade-out 0.3s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
-}\r
-\r
-.fab-position-top-right{\r
-    transform:translate(-30px, 30px);\r
-}\r
-\r
-.fab-position-bottom-right{\r
-    transform:translate(-30px, calc(100vh - 192px - 30px));\r
-}\r
-\r
-.fab-position-top-left{\r
-    transform:translate(calc(-100vw + 56px + 30px + var(--scrollbar-width)), 30px);\r
-}\r
-\r
-.fab-position-bottom-left{\r
-    transform:translate(\r
-        calc(-100vw + 56px + 30px + var(--scrollbar-width)),\r
-        calc(100vh - 192px - 30px)\r
-    );\r
+}
+#element-scan-highlight{
+    position:absolute;
+    border:4px solid #3498db;
+    background-color:rgba(52, 152, 219, 0.2);
+    border-radius:6px;
+    z-index:9999998;
+    pointer-events:none;
+    transition:all 0.1s ease-in-out;
+}
+#element-scan-tag-name{
+    position:absolute;
+    background-color:#3498db;
+    color:white;
+    padding:4px 8px;
+    font-size:12px;
+    border-radius:4px;
+    z-index:9999999;
+    pointer-events:none;
+    font-family:'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
+    transition:all 0.1s ease-in-out;
+}
+#element-scan-toolbar{
+    position:fixed;
+    z-index:10000000;
+    background-color:var(--main-bg);
+    border:1px solid var(--border-color);
+    border-radius:12px;
+    padding:10px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.15);
+    cursor:move;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    width:220px;
+}
+#element-scan-toolbar-tag{
+    font-weight:bold;
+    font-family:'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
+    text-align:center;
+    color:var(--main-text);
+    background-color:var(--secondary-bg);
+    padding:5px;
+    border-radius:4px;
+    font-size:14px;
+}
+#element-scan-level-slider{
+    width:100%;
+}
+#element-scan-toolbar-actions{
+    display:flex;
+    justify-content:space-between;
+    gap:5px;
+}
+#element-scan-toolbar-actions button{
+    flex-grow:1;
+    padding:6px 8px;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+    font-size:13px;
+    background-color:var(--secondary-bg);
+    color:var(--main-text);
+    transition:background-color 0.2s;
+}
+#element-scan-toolbar-actions button:hover{
+    background-color:var(--hover-bg);
+}
+#element-scan-toolbar-confirm{
+    background-color:#f39c12;
+    color:white;
+}
+#element-scan-toolbar-confirm:hover{
+    background-color:#e67e22;
+}
+.text-extractor-fab.is-recording{
+    background-color:#f39c12;
+    animation:tc-breathing 2s ease-in-out infinite;
+}
+.text-extractor-fab.is-recording:hover{
+    background-color:#e67e22;
+}
+.fab-position-top-right{
+    transform:translate(-30px, 30px);
+}
+.fab-position-bottom-right{
+    transform:translate(-30px, calc(100vh - 260px - 30px));
+}
+.fab-position-top-left{
+    transform:translate(calc(-100vw + 56px + 30px + var(--scrollbar-width)), 30px);
+}
+.fab-position-bottom-left{
+    transform:translate(
+        calc(-100vw + 56px + 30px + var(--scrollbar-width)),
+        calc(100vh - 260px - 30px)
+    );
 }
 .tc-button{
   font-family:'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
@@ -6423,13 +6768,6 @@ ${result.join(",\n")}
     display:flex;
     align-items:center;
     gap:10px;
-}
-.text-extractor-fab.fab-dynamic.is-recording{
-    background-color:#f39c12;
-    animation:tc-breathing 2s ease-in-out infinite;
-}
-.text-extractor-fab.fab-dynamic.is-recording:hover{
-    background-color:#e67e22;
 }
 @keyframes tc-breathing{
     0%{

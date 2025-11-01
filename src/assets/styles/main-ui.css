@@ -170,16 +170,6 @@
     gap: 10px; /* 新增：按钮之间的间距 */
 }
 
-/* --- 动态扫描按钮的激活状态 --- */
-.text-extractor-fab.fab-dynamic.is-recording {
-    background-color: #f39c12; /* 橙色 */
-    animation: tc-breathing 2s ease-in-out infinite;
-}
-
-.text-extractor-fab.fab-dynamic.is-recording:hover {
-    background-color: #e67e22; /* 深一点的橙色 */
-}
-
 @keyframes tc-breathing {
     0% {
         box-shadow: 0 4px 8px var(--main-shadow), 0 0 0 0 rgba(243, 156, 18, 0.4);

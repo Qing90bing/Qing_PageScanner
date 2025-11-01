@@ -117,3 +117,59 @@ export const extractAndProcessText = () => {
     return Array.from(uniqueTexts);
 };
 
+
+/**
+ * @public
+ * @description 从指定的单个DOM元素及其后代中提取、处理并返回唯一的文本字符串数组。
+ * @param {HTMLElement} element - 开始提取文本的根元素。
+ * @returns {string[]} 一个包含处理过的、唯一文本的数组。
+ */
+export const extractAndProcessTextFromElement = (element) => {
+    if (!element) return [];
+
+    const settings = loadSettings();
+    const { filterRules } = settings;
+    const uniqueTexts = new Set();
+
+    const processAndAddText = (rawText) => {
+        if (!rawText) return;
+        const normalizedText = rawText.normalize('NFC');
+        let text = normalizedText.replace(/(\\r\\n|\\n|\\r)+/g, '\\n');
+        if (text.trim() === '') return;
+
+        const trimmedText = text.trim();
+        const filterReason = shouldFilter(trimmedText, filterRules);
+        if (filterReason) {
+            log(t('log.textProcessor.filtered', { text: trimmedText, reason: filterReason }));
+            return;
+        }
+        uniqueTexts.add(text);
+    };
+
+    const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(', ');
+    if (element.closest(ignoredSelectorString)) {
+        return [];
+    }
+
+    // 提取元素自身的属性
+    const attributesToExtract = appConfig.scanner.attributesToExtract;
+    attributesToExtract.forEach(attr => {
+        const attrValue = element.getAttribute(attr);
+        if (attrValue) {
+            processAndAddText(attrValue);
+        }
+    });
+
+    // 使用 TreeWalker 遍历其内部的所有文本节点
+    const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null);
+    while (walker.nextNode()) {
+        const node = walker.currentNode;
+        const parent = node.parentElement;
+        if (parent && (parent.tagName === 'SCRIPT' || parent.tagName === 'STYLE' || parent.closest(ignoredSelectorString) || parent.closest('.text-extractor-fab, .text-extractor-modal-overlay, .settings-panel-overlay'))) {
+            continue;
+        }
+        processAndAddText(node.nodeValue);
+    }
+
+    return Array.from(uniqueTexts);
+};

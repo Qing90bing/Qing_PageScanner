@@ -9,7 +9,8 @@
     "discovered": "Discovered:",
     "confirm": "Confirm",
     "cancel": "Cancel",
-    "export": "Export"
+    "export": "Export",
+    "reselect": "Reselect"
   },
   "export": {
     "exportAsTxt": "Export as TXT",
@@ -125,6 +126,7 @@
     "summary": "View Summary",
     "dynamic_scan": "Dynamic Scan",
     "static_scan": "Static Scan",
+    "element_scan": "Element Scan",
     "filters": {
       "title": "Content Filter Explanation",
       "numbers": "This rule filters out text that consists <strong>entirely</strong> of numbers, spaces, thousand separators (.), decimal points (,), and some currency symbols ($, €, £, ¥).<br><br><strong>More Examples:</strong><br>• \"1,234.56\"<br>• \"¥999\"<br>• \"€200\"<br>• \"$ 100\"",

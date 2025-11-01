@@ -8,6 +8,7 @@
 import { translateIcon } from '../../../assets/icons/icon.js';
 import { dynamicIcon } from '../../../assets/icons/dynamicIcon.js';
 import { summaryIcon } from '../../../assets/icons/summaryIcon.js';
+import { elementScanIcon } from '../../../assets/icons/elementScanIcon.js';
 import { showTooltip, hideTooltip } from './tooltip.js';
 import { appConfig } from '../../../features/settings/config.js';
 import { on } from '../../utils/eventBus.js';
@@ -17,7 +18,7 @@ import { createSVGFromString } from '../../utils/dom.js';
 import { uiContainer } from '../uiContainer.js';
 
 
-let summaryFab, dynamicFab, staticFab;
+let summaryFab, dynamicFab, staticFab, elementScanFab;
 
 /**
  * @private
@@ -66,6 +67,9 @@ function updateFabTooltips() {
     if (staticFab) {
         staticFab.addEventListener('mouseenter', () => showTooltip(staticFab, t(staticFab.dataset.tooltipKey)));
     }
+    if (elementScanFab) {
+        elementScanFab.addEventListener('mouseenter', () => showTooltip(elementScanFab, t(elementScanFab.dataset.tooltipKey)));
+    }
 }
 
 
@@ -75,11 +79,12 @@ function updateFabTooltips() {
  * @param {object} options.callbacks - 包含所有按钮点击事件回调的对象。
  * @param {function} options.callbacks.onStaticExtract - “静态提取”按钮的点击回调。
  * @param {function} options.callbacks.onDynamicExtract - “动态扫描”按钮的点击回调。
+ * @param {function} options.callbacks.onElementScan - “选取元素扫描”按钮的点击回调。
  * @param {function} options.callbacks.onSummary - “查看总结”按钮的点击回调。
  * @param {boolean} options.isVisible - 按钮创建后是否立即可见。
  */
 export function createFab({ callbacks, isVisible }) {
-    const { onStaticExtract, onDynamicExtract, onSummary } = callbacks;
+    const { onStaticExtract, onDynamicExtract, onSummary, onElementScan } = callbacks;
     // 创建一个容器来包裹所有的 FAB
     const fabContainer = document.createElement('div');
     fabContainer.className = 'text-extractor-fab-container';
@@ -102,7 +107,7 @@ export function createFab({ callbacks, isVisible }) {
         () => onDynamicExtract(dynamicFab) // 将fab元素本身传回去，方便UI更新
     );
 
-    // 3. 静态扫描按钮 (最下方)
+    // 3. 静态扫描按钮 (中间)
     staticFab = createSingleFab(
         'fab-static',
         translateIcon,
@@ -110,10 +115,19 @@ export function createFab({ callbacks, isVisible }) {
         onStaticExtract
     );
 
+    // 4. 选取元素扫描按钮 (最下方)
+    elementScanFab = createSingleFab(
+        'fab-element-scan',
+        elementScanIcon,
+        'tooltip.element_scan',
+        () => onElementScan(elementScanFab)
+    );
+
     // --- 添加到页面 ---
     fabContainer.appendChild(summaryFab);
     fabContainer.appendChild(dynamicFab);
     fabContainer.appendChild(staticFab);
+    fabContainer.appendChild(elementScanFab);
     uiContainer.appendChild(fabContainer);
 
     // 根据初始设置决定是否显示

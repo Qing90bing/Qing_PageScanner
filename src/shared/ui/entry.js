@@ -10,6 +10,7 @@ import { createFab } from './components/fab.js';
 import { createMainModal } from './mainModal.js';
 import { handleQuickScanClick } from '../../features/quick-scan/ui.js';
 import { handleDynamicExtractClick, handleSummaryClick } from '../../features/session-scan/ui.js';
+import { handleElementScanClick } from '../../features/element-scan/logic.js';
 import { loadSettings } from '../../features/settings/logic.js';
 import { clearSessionTexts } from '../../features/session-scan/logic.js';
 
@@ -31,6 +32,7 @@ export function initUI() {
         onStaticExtract: handleQuickScanClick,
         onDynamicExtract: handleDynamicExtractClick,
         onSummary: handleSummaryClick,
+        onElementScan: handleElementScanClick,
     },
     isVisible: settings.showFab,
   });

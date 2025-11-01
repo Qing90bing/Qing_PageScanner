@@ -9,7 +9,8 @@
     "discovered": "已發現：",
     "confirm": "確認",
     "cancel": "取消",
-    "export": "匯出"
+    "export": "匯出",
+    "reselect": "重新選擇"
   },
   "export": {
     "exportAsTxt": "匯出為 TXT",
@@ -125,6 +126,7 @@
     "summary": "查看摘要",
     "dynamic_scan": "動態掃描",
     "static_scan": "靜態掃描",
+    "element_scan": "選取元素掃描",
     "filters": {
       "title": "內容過濾器說明",
       "numbers": "此規則會過濾掉<strong>完全由</strong>數字、空格、千位分隔符 (.)、小數點 (,) 以及部分貨幣符號 ($, €, £, ¥) 組成的文本。<br><br><strong>更多範例：</strong><br>• \"1,234.56\"<br>• \"¥999\"<br>• \"€200\"<br>• \"$ 100\"",

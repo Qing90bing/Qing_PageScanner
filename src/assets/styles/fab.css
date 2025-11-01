@@ -9,7 +9,7 @@
 }
 
 .fab-position-bottom-right {
-    transform: translate(-30px, calc(100vh - 192px - 30px));
+    transform: translate(-30px, calc(100vh - 260px - 30px));
 }
 
 .fab-position-top-left {
@@ -19,6 +19,6 @@
 .fab-position-bottom-left {
     transform: translate(
         calc(-100vw + 56px + 30px + var(--scrollbar-width)),
-        calc(100vh - 192px - 30px)
+        calc(100vh - 260px - 30px)
     );
 }
