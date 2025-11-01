@@ -5162,7 +5162,7 @@ ${result.join(",\n")}
     if (toolbar) cleanupToolbar();
     toolbar = document.createElement("div");
     toolbar.id = "element-scan-toolbar";
-    toolbar.innerHTML = `
+    toolbar.innerHTML = createTrustedHTML(`
         <div id="element-scan-toolbar-tag">&lt;${elementPath2[0].tagName.toLowerCase()}&gt;</div>
         <input type="range" id="element-scan-level-slider" min="0" max="${elementPath2.length - 1}" value="0" />
         <div id="element-scan-toolbar-actions">
@@ -5170,7 +5170,7 @@ ${result.join(",\n")}
             <button id="element-scan-toolbar-cancel">${t("common.cancel")}</button>
             <button id="element-scan-toolbar-confirm">${t("common.confirm")}</button>
         </div>
-    `;
+    `);
     uiContainer.appendChild(toolbar);
     const initialRect = elementPath2[0].getBoundingClientRect();
     toolbar.style.top = `${initialRect.top - 100}px`;
@@ -6263,6 +6263,7 @@ ${result.join(",\n")}
     z-index:9999998;
     pointer-events:none;
     transition:all 0.1s ease-in-out;
+    box-sizing:border-box;
 }
 #element-scan-tag-name{
     position:absolute;

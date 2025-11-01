@@ -3,6 +3,7 @@
 import { uiContainer } from '../../shared/ui/uiContainer.js';
 import { updateSelectionLevel, reselectElement, handleElementScanClick, confirmSelectionAndExtract } from './logic.js';
 import { t } from '../../shared/i18n/index.js';
+import { createTrustedHTML } from '../../shared/utils/trustedTypes.js';
 
 let highlightOverlay = null;
 let tagNameTooltip = null;
@@ -53,7 +54,7 @@ export function createAdjustmentToolbar(elementPath) {
 
     toolbar = document.createElement('div');
     toolbar.id = 'element-scan-toolbar';
-    toolbar.innerHTML = `
+    toolbar.innerHTML = createTrustedHTML(`
         <div id="element-scan-toolbar-tag">&lt;${elementPath[0].tagName.toLowerCase()}&gt;</div>
         <input type="range" id="element-scan-level-slider" min="0" max="${elementPath.length - 1}" value="0" />
         <div id="element-scan-toolbar-actions">
@@ -61,7 +62,7 @@ export function createAdjustmentToolbar(elementPath) {
             <button id="element-scan-toolbar-cancel">${t('common.cancel')}</button>
             <button id="element-scan-toolbar-confirm">${t('common.confirm')}</button>
         </div>
-    `;
+    `);
     uiContainer.appendChild(toolbar);
 
     const initialRect = elementPath[0].getBoundingClientRect();
