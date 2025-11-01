@@ -1,6 +1,7 @@
 /*
   使用 transform: translate() 从 (top: 0, right: 0) 基准点进行精确定位。
-  通过减去 17px 的典型滚动条宽度来补偿 vw 单位带来的偏移。
+  通过减去动态计算的滚动条宽度 (CSS变量 --scrollbar-width) 来补偿 vw 单位带来的偏移。
+  这个变量由 uiContainer.js 动态设置。
 */
 
 .fab-position-top-right {
@@ -12,12 +13,12 @@
 }
 
 .fab-position-top-left {
-    transform: translate(calc(-100vw + 56px + 30px + 17px), 30px);
+    transform: translate(calc(-100vw + 56px + 30px + var(--scrollbar-width)), 30px);
 }
 
 .fab-position-bottom-left {
     transform: translate(
-        calc(-100vw + 56px + 30px + 17px),
+        calc(-100vw + 56px + 30px + var(--scrollbar-width)),
         calc(100vh - 192px - 30px)
     );
 }
