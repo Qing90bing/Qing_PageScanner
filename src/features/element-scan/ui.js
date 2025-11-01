@@ -1,7 +1,7 @@
 // src/features/element-scan/ui.js
 
 import { uiContainer } from '../../shared/ui/uiContainer.js';
-import { updateSelectionLevel, reselectElement, handleElementScanClick, confirmSelectionAndExtract } from './logic.js';
+import { updateSelectionLevel, reselectElement, stopElementScan, confirmSelectionAndExtract } from './logic.js';
 import { t } from '../../shared/i18n/index.js';
 import { createTrustedHTML } from '../../shared/utils/trustedTypes.js';
 
@@ -86,8 +86,8 @@ function addToolbarEventListeners() {
     reselectBtn.addEventListener('click', reselectElement);
 
     cancelBtn.addEventListener('click', () => {
-        const fabElement = document.querySelector('.fab-element-scan');
-        handleElementScanClick(fabElement);
+        const fabElement = uiContainer.querySelector('.fab-element-scan');
+        stopElementScan(fabElement);
     });
 
     confirmBtn.addEventListener('click', confirmSelectionAndExtract);

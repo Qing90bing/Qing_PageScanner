@@ -31,7 +31,7 @@ function startElementScan(fabElement) {
     document.addEventListener('keydown', handleElementScanKeyDown);
 }
 
-function stopElementScan(fabElement) {
+export function stopElementScan(fabElement) {
     isActive = false;
     isAdjusting = false;
     if (fabElement) {
