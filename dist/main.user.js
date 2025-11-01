@@ -5824,6 +5824,9 @@ ${result.join(",\n")}
   box-shadow:0 0 0 2px rgba(30, 144, 255, 0.2);
 }
 .custom-select-arrow{
+  display:flex;
+  align-items:center;
+  justify-content:center;
   transition:transform 0.3s ease;
   transform-origin:center;
 }
