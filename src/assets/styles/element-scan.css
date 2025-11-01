@@ -9,6 +9,7 @@
     z-index: 9999998;
     pointer-events: none; /* 允许鼠标事件穿透 */
     transition: all 0.1s ease-in-out;
+    box-sizing: border-box; /* 确保边框宽度包含在width/height内 */
 }
 
 /* 元素标签名提示 */
