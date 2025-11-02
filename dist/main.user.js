@@ -5173,8 +5173,32 @@ ${result.join(",\n")}
     `);
     uiContainer.appendChild(toolbar);
     const initialRect = elementPath2[0].getBoundingClientRect();
-    toolbar.style.top = `${initialRect.top - 100}px`;
-    toolbar.style.left = `${initialRect.left}px`;
+    const toolbarRect = toolbar.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const margin = 10;
+    let left = initialRect.right - toolbarRect.width;
+    if (left < margin) {
+      left = margin;
+    }
+    if (left + toolbarRect.width > viewportWidth - margin) {
+      left = viewportWidth - toolbarRect.width - margin;
+    }
+    const topAbove = initialRect.top - toolbarRect.height - margin;
+    const topBelow = initialRect.bottom + margin;
+    let top;
+    const canPlaceAbove = topAbove > margin;
+    const canPlaceBelow = topBelow + toolbarRect.height < viewportHeight - margin;
+    if (canPlaceAbove) {
+      top = topAbove;
+    } else if (canPlaceBelow) {
+      top = topBelow;
+    } else {
+      top = (viewportHeight - toolbarRect.height) / 2;
+      left = (viewportWidth - toolbarRect.width) / 2;
+    }
+    toolbar.style.top = `${top}px`;
+    toolbar.style.left = `${left}px`;
     addToolbarEventListeners();
     makeDraggable(toolbar);
   }
@@ -5205,8 +5229,17 @@ ${result.join(",\n")}
       document.addEventListener("mouseup", onMouseUp);
     };
     const onMouseMove = (e) => {
-      element.style.left = `${e.clientX - offsetX}px`;
-      element.style.top = `${e.clientY - offsetY}px`;
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      const rect = element.getBoundingClientRect();
+      let newLeft = e.clientX - offsetX;
+      let newTop = e.clientY - offsetY;
+      if (newLeft < 0) newLeft = 0;
+      if (newTop < 0) newTop = 0;
+      if (newLeft + rect.width > viewportWidth) newLeft = viewportWidth - rect.width;
+      if (newTop + rect.height > viewportHeight) newTop = viewportHeight - rect.height;
+      element.style.left = `${newLeft}px`;
+      element.style.top = `${newTop}px`;
     };
     const onMouseUp = () => {
       document.removeEventListener("mousemove", onMouseMove);

@@ -65,9 +65,41 @@ export function createAdjustmentToolbar(elementPath) {
     `);
     uiContainer.appendChild(toolbar);
 
+    // --- 新的定位逻辑 ---
     const initialRect = elementPath[0].getBoundingClientRect();
-    toolbar.style.top = `${initialRect.top - 100}px`; // 留出更多空间
-    toolbar.style.left = `${initialRect.left}px`;
+    const toolbarRect = toolbar.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const margin = 10; // 工具栏与元素/屏幕边缘的间距
+
+    // 优先靠右对齐
+    let left = initialRect.right - toolbarRect.width;
+    if (left < margin) {
+        left = margin; // 防止左侧超出
+    }
+    if (left + toolbarRect.width > viewportWidth - margin) {
+        left = viewportWidth - toolbarRect.width - margin; // 防止右侧超出
+    }
+
+    const topAbove = initialRect.top - toolbarRect.height - margin;
+    const topBelow = initialRect.bottom + margin;
+
+    let top;
+    const canPlaceAbove = topAbove > margin;
+    const canPlaceBelow = topBelow + toolbarRect.height < viewportHeight - margin;
+
+    if (canPlaceAbove) {
+        top = topAbove;
+    } else if (canPlaceBelow) {
+        top = topBelow;
+    } else {
+        // 如果上下都放不下，则居中显示
+        top = (viewportHeight - toolbarRect.height) / 2;
+        left = (viewportWidth - toolbarRect.width) / 2;
+    }
+
+    toolbar.style.top = `${top}px`;
+    toolbar.style.left = `${left}px`;
 
     addToolbarEventListeners();
     makeDraggable(toolbar);
@@ -107,8 +139,21 @@ function makeDraggable(element) {
     };
 
     const onMouseMove = (e) => {
-        element.style.left = `${e.clientX - offsetX}px`;
-        element.style.top = `${e.clientY - offsetY}px`;
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        const rect = element.getBoundingClientRect();
+
+        let newLeft = e.clientX - offsetX;
+        let newTop = e.clientY - offsetY;
+
+        // 限制拖动范围
+        if (newLeft < 0) newLeft = 0;
+        if (newTop < 0) newTop = 0;
+        if (newLeft + rect.width > viewportWidth) newLeft = viewportWidth - rect.width;
+        if (newTop + rect.height > viewportHeight) newTop = viewportHeight - rect.height;
+
+        element.style.left = `${newLeft}px`;
+        element.style.top = `${newTop}px`;
     };
 
     const onMouseUp = () => {
