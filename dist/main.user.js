@@ -404,6 +404,36 @@ var TextExtractor = (() => {
         ttpCreationError: "Failed to create Trusted Type policy:",
         svgParseError: "Invalid or failed to parse SVG string:"
       },
+      elementScan: {
+        starting: "Element Scan: Starting...",
+        listenersAdded: "Element Scan: Event listeners added.",
+        stopping: "Element Scan: Stopping...",
+        listenersRemoved: "Element Scan: Event listeners removed.",
+        stateReset: "Element Scan: State reset.",
+        reselecting: "Element Scan: Reselecting element...",
+        hovering: "Element Scan: Hovering over {tagName}",
+        escapePressed: "Element Scan: 'Escape' key pressed, stopping scan.",
+        clickedEnteringAdjust: "Element Scan: Element clicked, entering adjustment mode. Target: <{tagName}>",
+        pathBuilt: "Element Scan: Element path built with depth: {depth}",
+        adjustingLevel: "Element Scan: Adjusting selection level to {level}, new target: <{tagName}>",
+        confirmFailedNoTarget: "Element Scan: Confirmation attempted, but no target is selected.",
+        confirmExtracting: "Element Scan: Selection confirmed. Extracting text from <{tagName}>.",
+        extractedCount: "Element Scan: Extracted {count} text items."
+      },
+      elementScanUI: {
+        creatingHighlights: "Element Scan UI: Creating highlight elements for the first time.",
+        updatingHighlight: "Element Scan UI: Updating highlight for <{tagName}>",
+        creatingToolbar: "Element Scan UI: Creating adjustment toolbar.",
+        toolbarPositioned: "Element Scan UI: Toolbar positioned at",
+        sliderChanged: "Element Scan UI: Slider changed to level {level}",
+        reselectClicked: "Element Scan UI: 'Reselect' button clicked.",
+        cancelClicked: "Element Scan UI: 'Cancel' button clicked.",
+        confirmClicked: "Element Scan UI: 'Confirm' button clicked.",
+        dragStarted: "Element Scan UI: Drag started.",
+        dragEnded: "Element Scan UI: Drag ended.",
+        cleaningHighlights: "Element Scan UI: Cleaning up highlight elements.",
+        cleaningToolbar: "Element Scan UI: Cleaning up toolbar."
+      },
       eventBus: {
         callbackError: "Error in callback for event '{{eventName}}':"
       },
@@ -675,6 +705,36 @@ var TextExtractor = (() => {
         ttpCreationError: "\u521B\u5EFA Trusted Type \u7B56\u7565\u5931\u8D25\uFF1A",
         svgParseError: "\u65E0\u6548\u6216\u89E3\u6790\u5931\u8D25\u7684 SVG \u5B57\u7B26\u4E32\uFF1A"
       },
+      elementScan: {
+        starting: "\u5143\u7D20\u626B\u63CF\uFF1A\u6B63\u5728\u542F\u52A8...",
+        listenersAdded: "\u5143\u7D20\u626B\u63CF\uFF1A\u5DF2\u6DFB\u52A0\u4E8B\u4EF6\u76D1\u542C\u5668\u3002",
+        stopping: "\u5143\u7D20\u626B\u63CF\uFF1A\u6B63\u5728\u505C\u6B62...",
+        listenersRemoved: "\u5143\u7D20\u626B\u63CF\uFF1A\u5DF2\u79FB\u9664\u4E8B\u4EF6\u76D1\u542C\u5668\u3002",
+        stateReset: "\u5143\u7D20\u626B\u63CF\uFF1A\u72B6\u6001\u5DF2\u91CD\u7F6E\u3002",
+        reselecting: "\u5143\u7D20\u626B\u63CF\uFF1A\u6B63\u5728\u91CD\u65B0\u9009\u62E9\u5143\u7D20...",
+        hovering: "\u5143\u7D20\u626B\u63CF\uFF1A\u60AC\u505C\u5728 {tagName} \u4E0A",
+        escapePressed: "\u5143\u7D20\u626B\u63CF\uFF1A\u6309\u4E0B 'Escape' \u952E\uFF0C\u6B63\u5728\u505C\u6B62\u626B\u63CF\u3002",
+        clickedEnteringAdjust: "\u5143\u7D20\u626B\u63CF\uFF1A\u5143\u7D20\u88AB\u70B9\u51FB\uFF0C\u8FDB\u5165\u8C03\u6574\u6A21\u5F0F\u3002\u76EE\u6807\uFF1A<{tagName}>",
+        pathBuilt: "\u5143\u7D20\u626B\u63CF\uFF1A\u5143\u7D20\u8DEF\u5F84\u5DF2\u6784\u5EFA\uFF0C\u6DF1\u5EA6\u4E3A\uFF1A{depth}",
+        adjustingLevel: "\u5143\u7D20\u626B\u63CF\uFF1A\u6B63\u5728\u8C03\u6574\u9009\u62E9\u5C42\u7EA7\u81F3 {level}\uFF0C\u65B0\u76EE\u6807\uFF1A<{tagName}>",
+        confirmFailedNoTarget: "\u5143\u7D20\u626B\u63CF\uFF1A\u5C1D\u8BD5\u786E\u8BA4\uFF0C\u4F46\u672A\u9009\u62E9\u4EFB\u4F55\u76EE\u6807\u3002",
+        confirmExtracting: "\u5143\u7D20\u626B\u63CF\uFF1A\u9009\u62E9\u5DF2\u786E\u8BA4\u3002\u6B63\u5728\u4ECE <{tagName}> \u63D0\u53D6\u6587\u672C\u3002",
+        extractedCount: "\u5143\u7D20\u626B\u63CF\uFF1A\u63D0\u53D6\u4E86 {count} \u6761\u6587\u672C\u3002"
+      },
+      elementScanUI: {
+        creatingHighlights: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u9996\u6B21\u521B\u5EFA\u9AD8\u4EAE\u5143\u7D20\u3002",
+        updatingHighlight: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u6B63\u5728\u4E3A <{tagName}> \u66F4\u65B0\u9AD8\u4EAE\u3002",
+        creatingToolbar: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u6B63\u5728\u521B\u5EFA\u8C03\u6574\u5DE5\u5177\u680F\u3002",
+        toolbarPositioned: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u5DE5\u5177\u680F\u5DF2\u5B9A\u4F4D\u5728",
+        sliderChanged: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u6ED1\u5757\u5C42\u7EA7\u53D8\u4E3A {level}",
+        reselectClicked: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u201C\u91CD\u65B0\u9009\u62E9\u201D\u6309\u94AE\u88AB\u70B9\u51FB\u3002",
+        cancelClicked: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u201C\u53D6\u6D88\u201D\u6309\u94AE\u88AB\u70B9\u51FB\u3002",
+        confirmClicked: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u201C\u786E\u8BA4\u201D\u6309\u94AE\u88AB\u70B9\u51FB\u3002",
+        dragStarted: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u62D6\u52A8\u5F00\u59CB\u3002",
+        dragEnded: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u62D6\u52A8\u7ED3\u675F\u3002",
+        cleaningHighlights: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u6B63\u5728\u6E05\u7406\u9AD8\u4EAE\u5143\u7D20\u3002",
+        cleaningToolbar: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u6B63\u5728\u6E05\u7406\u5DE5\u5177\u680F\u3002"
+      },
       eventBus: {
         callbackError: "\u5728 '{{eventName}}' \u4E8B\u4EF6\u7684\u56DE\u8C03\u4E2D\u53D1\u751F\u9519\u8BEF\uFF1A"
       },
@@ -945,6 +1005,36 @@ var TextExtractor = (() => {
       dom: {
         ttpCreationError: "\u5EFA\u7ACB Trusted Type \u7B56\u7565\u5931\u6557\uFF1A",
         svgParseError: "\u7121\u6548\u6216\u89E3\u6790\u5931\u6557\u7684 SVG \u5B57\u4E32\uFF1A"
+      },
+      elementScan: {
+        starting: "\u5143\u7D20\u6383\u63CF\uFF1A\u6B63\u5728\u555F\u52D5...",
+        listenersAdded: "\u5143\u7D20\u6383\u63CF\uFF1A\u5DF2\u65B0\u589E\u4E8B\u4EF6\u76E3\u807D\u5668\u3002",
+        stopping: "\u5143\u7D20\u6383\u63CF\uFF1A\u6B63\u5728\u505C\u6B62...",
+        listenersRemoved: "\u5143\u7D20\u6383\u63CF\uFF1A\u5DF2\u79FB\u9664\u4E8B\u4EF6\u76E3\u807D\u5668\u3002",
+        stateReset: "\u5143\u7D20\u6383\u63CF\uFF1A\u72C0\u614B\u5DF2\u91CD\u8A2D\u3002",
+        reselecting: "\u5143\u7D20\u6383\u63CF\uFF1A\u6B63\u5728\u91CD\u65B0\u9078\u64C7\u5143\u7D20...",
+        hovering: "\u5143\u7D20\u6383\u63CF\uFF1A\u61F8\u505C\u5728 {tagName} \u4E0A",
+        escapePressed: "\u5143\u7D20\u6383\u63CF\uFF1A\u6309\u4E0B 'Escape' \u9375\uFF0C\u6B63\u5728\u505C\u6B62\u6383\u63CF\u3002",
+        clickedEnteringAdjust: "\u5143\u7D20\u6383\u63CF\uFF1A\u5143\u7D20\u88AB\u9EDE\u64CA\uFF0C\u9032\u5165\u8ABF\u6574\u6A21\u5F0F\u3002\u76EE\u6A19\uFF1A<{tagName}>",
+        pathBuilt: "\u5143\u7D20\u6383\u63CF\uFF1A\u5143\u7D20\u8DEF\u5F91\u5DF2\u5EFA\u7ACB\uFF0C\u6DF1\u5EA6\u70BA\uFF1A{depth}",
+        adjustingLevel: "\u5143\u7D20\u6383\u63CF\uFF1A\u6B63\u5728\u8ABF\u6574\u9078\u64C7\u5C64\u7D1A\u81F3 {level}\uFF0C\u65B0\u76EE\u6A19\uFF1A<{tagName}>",
+        confirmFailedNoTarget: "\u5143\u7D20\u6383\u63CF\uFF1A\u5617\u8A66\u78BA\u8A8D\uFF0C\u4F46\u672A\u9078\u64C7\u4EFB\u4F55\u76EE\u6A19\u3002",
+        confirmExtracting: "\u5143\u7D20\u6383\u63CF\uFF1A\u9078\u64C7\u5DF2\u78BA\u8A8D\u3002\u6B63\u5728\u5F9E <{tagName}> \u63D0\u53D6\u6587\u672C\u3002",
+        extractedCount: "\u5143\u7D20\u6383\u63CF\uFF1A\u63D0\u53D6\u4E86 {count} \u689D\u6587\u672C\u3002"
+      },
+      elementScanUI: {
+        creatingHighlights: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u9996\u6B21\u5EFA\u7ACB\u9AD8\u4EAE\u5143\u7D20\u3002",
+        updatingHighlight: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u6B63\u5728\u70BA <{tagName}> \u66F4\u65B0\u9AD8\u4EAE\u3002",
+        creatingToolbar: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u6B63\u5728\u5EFA\u7ACB\u8ABF\u6574\u5DE5\u5177\u5217\u3002",
+        toolbarPositioned: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u5DE5\u5177\u5217\u5DF2\u5B9A\u4F4D\u5728",
+        sliderChanged: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u6ED1\u687F\u5C64\u7D1A\u8B8A\u70BA {level}",
+        reselectClicked: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u300C\u91CD\u65B0\u9078\u64C7\u300D\u6309\u9215\u88AB\u9EDE\u64CA\u3002",
+        cancelClicked: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u300C\u53D6\u6D88\u300D\u6309\u9215\u88AB\u9EDE\u64CA\u3002",
+        confirmClicked: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u300C\u78BA\u8A8D\u300D\u6309\u9215\u88AB\u9EDE\u64CA\u3002",
+        dragStarted: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u62D6\u52D5\u958B\u59CB\u3002",
+        dragEnded: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u62D6\u52D5\u7D50\u675F\u3002",
+        cleaningHighlights: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u6B63\u5728\u6E05\u7406\u9AD8\u4EAE\u5143\u7D20\u3002",
+        cleaningToolbar: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u6B63\u5728\u6E05\u7406\u5DE5\u5177\u5217\u3002"
       },
       eventBus: {
         callbackError: "\u5728 '{{eventName}}' \u4E8B\u4EF6\u7684\u56DE\u547C\u4E2D\u767C\u751F\u932F\u8AA4\uFF1A"
@@ -1576,6 +1666,19 @@ ${result.join(",\n")}
     }
     return notificationContainer;
   }
+  function closeNotification(notification) {
+    if (!notification || notification.classList.contains("tc-notification-fade-out")) {
+      return;
+    }
+    notification.classList.add("tc-notification-fade-out");
+    notification.addEventListener("animationend", () => {
+      notification.remove();
+      if (notificationContainer && notificationContainer.childElementCount === 0) {
+        notificationContainer.remove();
+        notificationContainer = null;
+      }
+    }, { once: true });
+  }
   function createNotificationElement(message, type = "info") {
     const notification = document.createElement("div");
     notification.className = `tc-notification tc-notification-${type}`;
@@ -1599,14 +1702,7 @@ ${result.join(",\n")}
     notification.appendChild(contentDiv);
     notification.appendChild(closeDiv);
     closeDiv.addEventListener("click", () => {
-      notification.classList.add("tc-notification-fade-out");
-      notification.addEventListener("animationend", () => {
-        notification.remove();
-        if (notificationContainer && notificationContainer.childElementCount === 0) {
-          notificationContainer.remove();
-          notificationContainer = null;
-        }
-      });
+      closeNotification(notification);
     });
     return notification;
   }
@@ -1615,10 +1711,7 @@ ${result.join(",\n")}
     const notification = createNotificationElement(message, type);
     container.appendChild(notification);
     const timer = setTimeout(() => {
-      const closeButton2 = notification.querySelector(".tc-notification-close");
-      if (closeButton2) {
-        closeButton2.click();
-      }
+      closeNotification(notification);
     }, duration);
     const closeButton = notification.querySelector(".tc-notification-close");
     if (closeButton) {
@@ -1987,6 +2080,36 @@ ${result.join(",\n")}
         ttpCreationError: "Failed to create Trusted Type policy:",
         svgParseError: "Invalid or failed to parse SVG string:"
       },
+      elementScan: {
+        starting: "Element Scan: Starting...",
+        listenersAdded: "Element Scan: Event listeners added.",
+        stopping: "Element Scan: Stopping...",
+        listenersRemoved: "Element Scan: Event listeners removed.",
+        stateReset: "Element Scan: State reset.",
+        reselecting: "Element Scan: Reselecting element...",
+        hovering: "Element Scan: Hovering over {tagName}",
+        escapePressed: "Element Scan: 'Escape' key pressed, stopping scan.",
+        clickedEnteringAdjust: "Element Scan: Element clicked, entering adjustment mode. Target: <{tagName}>",
+        pathBuilt: "Element Scan: Element path built with depth: {depth}",
+        adjustingLevel: "Element Scan: Adjusting selection level to {level}, new target: <{tagName}>",
+        confirmFailedNoTarget: "Element Scan: Confirmation attempted, but no target is selected.",
+        confirmExtracting: "Element Scan: Selection confirmed. Extracting text from <{tagName}>.",
+        extractedCount: "Element Scan: Extracted {count} text items."
+      },
+      elementScanUI: {
+        creatingHighlights: "Element Scan UI: Creating highlight elements for the first time.",
+        updatingHighlight: "Element Scan UI: Updating highlight for <{tagName}>",
+        creatingToolbar: "Element Scan UI: Creating adjustment toolbar.",
+        toolbarPositioned: "Element Scan UI: Toolbar positioned at",
+        sliderChanged: "Element Scan UI: Slider changed to level {level}",
+        reselectClicked: "Element Scan UI: 'Reselect' button clicked.",
+        cancelClicked: "Element Scan UI: 'Cancel' button clicked.",
+        confirmClicked: "Element Scan UI: 'Confirm' button clicked.",
+        dragStarted: "Element Scan UI: Drag started.",
+        dragEnded: "Element Scan UI: Drag ended.",
+        cleaningHighlights: "Element Scan UI: Cleaning up highlight elements.",
+        cleaningToolbar: "Element Scan UI: Cleaning up toolbar."
+      },
       eventBus: {
         callbackError: "Error in callback for event '{{eventName}}':"
       },
@@ -2259,6 +2382,36 @@ ${result.join(",\n")}
         ttpCreationError: "\\u521B\\u5EFA Trusted Type \\u7B56\\u7565\\u5931\\u8D25\\uFF1A",
         svgParseError: "\\u65E0\\u6548\\u6216\\u89E3\\u6790\\u5931\\u8D25\\u7684 SVG \\u5B57\\u7B26\\u4E32\\uFF1A"
       },
+      elementScan: {
+        starting: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u6B63\\u5728\\u542F\\u52A8...",
+        listenersAdded: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u5DF2\\u6DFB\\u52A0\\u4E8B\\u4EF6\\u76D1\\u542C\\u5668\\u3002",
+        stopping: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u6B63\\u5728\\u505C\\u6B62...",
+        listenersRemoved: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u5DF2\\u79FB\\u9664\\u4E8B\\u4EF6\\u76D1\\u542C\\u5668\\u3002",
+        stateReset: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u72B6\\u6001\\u5DF2\\u91CD\\u7F6E\\u3002",
+        reselecting: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u6B63\\u5728\\u91CD\\u65B0\\u9009\\u62E9\\u5143\\u7D20...",
+        hovering: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u60AC\\u505C\\u5728 {tagName} \\u4E0A",
+        escapePressed: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u6309\\u4E0B 'Escape' \\u952E\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u626B\\u63CF\\u3002",
+        clickedEnteringAdjust: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u5143\\u7D20\\u88AB\\u70B9\\u51FB\\uFF0C\\u8FDB\\u5165\\u8C03\\u6574\\u6A21\\u5F0F\\u3002\\u76EE\\u6807\\uFF1A<{tagName}>",
+        pathBuilt: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u5143\\u7D20\\u8DEF\\u5F84\\u5DF2\\u6784\\u5EFA\\uFF0C\\u6DF1\\u5EA6\\u4E3A\\uFF1A{depth}",
+        adjustingLevel: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u6B63\\u5728\\u8C03\\u6574\\u9009\\u62E9\\u5C42\\u7EA7\\u81F3 {level}\\uFF0C\\u65B0\\u76EE\\u6807\\uFF1A<{tagName}>",
+        confirmFailedNoTarget: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u5C1D\\u8BD5\\u786E\\u8BA4\\uFF0C\\u4F46\\u672A\\u9009\\u62E9\\u4EFB\\u4F55\\u76EE\\u6807\\u3002",
+        confirmExtracting: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u9009\\u62E9\\u5DF2\\u786E\\u8BA4\\u3002\\u6B63\\u5728\\u4ECE <{tagName}> \\u63D0\\u53D6\\u6587\\u672C\\u3002",
+        extractedCount: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u63D0\\u53D6\\u4E86 {count} \\u6761\\u6587\\u672C\\u3002"
+      },
+      elementScanUI: {
+        creatingHighlights: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u9996\\u6B21\\u521B\\u5EFA\\u9AD8\\u4EAE\\u5143\\u7D20\\u3002",
+        updatingHighlight: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u6B63\\u5728\\u4E3A <{tagName}> \\u66F4\\u65B0\\u9AD8\\u4EAE\\u3002",
+        creatingToolbar: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u6B63\\u5728\\u521B\\u5EFA\\u8C03\\u6574\\u5DE5\\u5177\\u680F\\u3002",
+        toolbarPositioned: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u5DE5\\u5177\\u680F\\u5DF2\\u5B9A\\u4F4D\\u5728",
+        sliderChanged: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u6ED1\\u5757\\u5C42\\u7EA7\\u53D8\\u4E3A {level}",
+        reselectClicked: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u201C\\u91CD\\u65B0\\u9009\\u62E9\\u201D\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\u3002",
+        cancelClicked: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u201C\\u53D6\\u6D88\\u201D\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\u3002",
+        confirmClicked: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u201C\\u786E\\u8BA4\\u201D\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\u3002",
+        dragStarted: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u62D6\\u52A8\\u5F00\\u59CB\\u3002",
+        dragEnded: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u62D6\\u52A8\\u7ED3\\u675F\\u3002",
+        cleaningHighlights: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u6B63\\u5728\\u6E05\\u7406\\u9AD8\\u4EAE\\u5143\\u7D20\\u3002",
+        cleaningToolbar: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u6B63\\u5728\\u6E05\\u7406\\u5DE5\\u5177\\u680F\\u3002"
+      },
       eventBus: {
         callbackError: "\\u5728 '{{eventName}}' \\u4E8B\\u4EF6\\u7684\\u56DE\\u8C03\\u4E2D\\u53D1\\u751F\\u9519\\u8BEF\\uFF1A"
       },
@@ -2530,6 +2683,36 @@ ${result.join(",\n")}
       dom: {
         ttpCreationError: "\\u5EFA\\u7ACB Trusted Type \\u7B56\\u7565\\u5931\\u6557\\uFF1A",
         svgParseError: "\\u7121\\u6548\\u6216\\u89E3\\u6790\\u5931\\u6557\\u7684 SVG \\u5B57\\u4E32\\uFF1A"
+      },
+      elementScan: {
+        starting: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u6B63\\u5728\\u555F\\u52D5...",
+        listenersAdded: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u5DF2\\u65B0\\u589E\\u4E8B\\u4EF6\\u76E3\\u807D\\u5668\\u3002",
+        stopping: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u6B63\\u5728\\u505C\\u6B62...",
+        listenersRemoved: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u5DF2\\u79FB\\u9664\\u4E8B\\u4EF6\\u76E3\\u807D\\u5668\\u3002",
+        stateReset: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u72C0\\u614B\\u5DF2\\u91CD\\u8A2D\\u3002",
+        reselecting: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u6B63\\u5728\\u91CD\\u65B0\\u9078\\u64C7\\u5143\\u7D20...",
+        hovering: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u61F8\\u505C\\u5728 {tagName} \\u4E0A",
+        escapePressed: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u6309\\u4E0B 'Escape' \\u9375\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u6383\\u63CF\\u3002",
+        clickedEnteringAdjust: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u5143\\u7D20\\u88AB\\u9EDE\\u64CA\\uFF0C\\u9032\\u5165\\u8ABF\\u6574\\u6A21\\u5F0F\\u3002\\u76EE\\u6A19\\uFF1A<{tagName}>",
+        pathBuilt: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u5143\\u7D20\\u8DEF\\u5F91\\u5DF2\\u5EFA\\u7ACB\\uFF0C\\u6DF1\\u5EA6\\u70BA\\uFF1A{depth}",
+        adjustingLevel: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u6B63\\u5728\\u8ABF\\u6574\\u9078\\u64C7\\u5C64\\u7D1A\\u81F3 {level}\\uFF0C\\u65B0\\u76EE\\u6A19\\uFF1A<{tagName}>",
+        confirmFailedNoTarget: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u5617\\u8A66\\u78BA\\u8A8D\\uFF0C\\u4F46\\u672A\\u9078\\u64C7\\u4EFB\\u4F55\\u76EE\\u6A19\\u3002",
+        confirmExtracting: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u9078\\u64C7\\u5DF2\\u78BA\\u8A8D\\u3002\\u6B63\\u5728\\u5F9E <{tagName}> \\u63D0\\u53D6\\u6587\\u672C\\u3002",
+        extractedCount: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u63D0\\u53D6\\u4E86 {count} \\u689D\\u6587\\u672C\\u3002"
+      },
+      elementScanUI: {
+        creatingHighlights: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u9996\\u6B21\\u5EFA\\u7ACB\\u9AD8\\u4EAE\\u5143\\u7D20\\u3002",
+        updatingHighlight: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u6B63\\u5728\\u70BA <{tagName}> \\u66F4\\u65B0\\u9AD8\\u4EAE\\u3002",
+        creatingToolbar: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u6B63\\u5728\\u5EFA\\u7ACB\\u8ABF\\u6574\\u5DE5\\u5177\\u5217\\u3002",
+        toolbarPositioned: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u5DE5\\u5177\\u5217\\u5DF2\\u5B9A\\u4F4D\\u5728",
+        sliderChanged: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u6ED1\\u687F\\u5C64\\u7D1A\\u8B8A\\u70BA {level}",
+        reselectClicked: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u300C\\u91CD\\u65B0\\u9078\\u64C7\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002",
+        cancelClicked: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u300C\\u53D6\\u6D88\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002",
+        confirmClicked: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u300C\\u78BA\\u8A8D\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002",
+        dragStarted: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u62D6\\u52D5\\u958B\\u59CB\\u3002",
+        dragEnded: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u62D6\\u52D5\\u7D50\\u675F\\u3002",
+        cleaningHighlights: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u6B63\\u5728\\u6E05\\u7406\\u9AD8\\u4EAE\\u5143\\u7D20\\u3002",
+        cleaningToolbar: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u6B63\\u5728\\u6E05\\u7406\\u5DE5\\u5177\\u5217\\u3002"
       },
       eventBus: {
         callbackError: "\\u5728 '{{eventName}}' \\u4E8B\\u4EF6\\u7684\\u56DE\\u547C\\u4E2D\\u767C\\u751F\\u932F\\u8AA4\\uFF1A"
@@ -3262,6 +3445,36 @@ ${result.join(",\n")}
         ttpCreationError: "Failed to create Trusted Type policy:",
         svgParseError: "Invalid or failed to parse SVG string:"
       },
+      elementScan: {
+        starting: "Element Scan: Starting...",
+        listenersAdded: "Element Scan: Event listeners added.",
+        stopping: "Element Scan: Stopping...",
+        listenersRemoved: "Element Scan: Event listeners removed.",
+        stateReset: "Element Scan: State reset.",
+        reselecting: "Element Scan: Reselecting element...",
+        hovering: "Element Scan: Hovering over {tagName}",
+        escapePressed: "Element Scan: 'Escape' key pressed, stopping scan.",
+        clickedEnteringAdjust: "Element Scan: Element clicked, entering adjustment mode. Target: <{tagName}>",
+        pathBuilt: "Element Scan: Element path built with depth: {depth}",
+        adjustingLevel: "Element Scan: Adjusting selection level to {level}, new target: <{tagName}>",
+        confirmFailedNoTarget: "Element Scan: Confirmation attempted, but no target is selected.",
+        confirmExtracting: "Element Scan: Selection confirmed. Extracting text from <{tagName}>.",
+        extractedCount: "Element Scan: Extracted {count} text items."
+      },
+      elementScanUI: {
+        creatingHighlights: "Element Scan UI: Creating highlight elements for the first time.",
+        updatingHighlight: "Element Scan UI: Updating highlight for <{tagName}>",
+        creatingToolbar: "Element Scan UI: Creating adjustment toolbar.",
+        toolbarPositioned: "Element Scan UI: Toolbar positioned at",
+        sliderChanged: "Element Scan UI: Slider changed to level {level}",
+        reselectClicked: "Element Scan UI: 'Reselect' button clicked.",
+        cancelClicked: "Element Scan UI: 'Cancel' button clicked.",
+        confirmClicked: "Element Scan UI: 'Confirm' button clicked.",
+        dragStarted: "Element Scan UI: Drag started.",
+        dragEnded: "Element Scan UI: Drag ended.",
+        cleaningHighlights: "Element Scan UI: Cleaning up highlight elements.",
+        cleaningToolbar: "Element Scan UI: Cleaning up toolbar."
+      },
       eventBus: {
         callbackError: "Error in callback for event '{{eventName}}':"
       },
@@ -3534,6 +3747,36 @@ ${result.join(",\n")}
         ttpCreationError: "\\u521B\\u5EFA Trusted Type \\u7B56\\u7565\\u5931\\u8D25\\uFF1A",
         svgParseError: "\\u65E0\\u6548\\u6216\\u89E3\\u6790\\u5931\\u8D25\\u7684 SVG \\u5B57\\u7B26\\u4E32\\uFF1A"
       },
+      elementScan: {
+        starting: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u6B63\\u5728\\u542F\\u52A8...",
+        listenersAdded: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u5DF2\\u6DFB\\u52A0\\u4E8B\\u4EF6\\u76D1\\u542C\\u5668\\u3002",
+        stopping: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u6B63\\u5728\\u505C\\u6B62...",
+        listenersRemoved: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u5DF2\\u79FB\\u9664\\u4E8B\\u4EF6\\u76D1\\u542C\\u5668\\u3002",
+        stateReset: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u72B6\\u6001\\u5DF2\\u91CD\\u7F6E\\u3002",
+        reselecting: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u6B63\\u5728\\u91CD\\u65B0\\u9009\\u62E9\\u5143\\u7D20...",
+        hovering: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u60AC\\u505C\\u5728 {tagName} \\u4E0A",
+        escapePressed: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u6309\\u4E0B 'Escape' \\u952E\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u626B\\u63CF\\u3002",
+        clickedEnteringAdjust: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u5143\\u7D20\\u88AB\\u70B9\\u51FB\\uFF0C\\u8FDB\\u5165\\u8C03\\u6574\\u6A21\\u5F0F\\u3002\\u76EE\\u6807\\uFF1A<{tagName}>",
+        pathBuilt: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u5143\\u7D20\\u8DEF\\u5F84\\u5DF2\\u6784\\u5EFA\\uFF0C\\u6DF1\\u5EA6\\u4E3A\\uFF1A{depth}",
+        adjustingLevel: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u6B63\\u5728\\u8C03\\u6574\\u9009\\u62E9\\u5C42\\u7EA7\\u81F3 {level}\\uFF0C\\u65B0\\u76EE\\u6807\\uFF1A<{tagName}>",
+        confirmFailedNoTarget: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u5C1D\\u8BD5\\u786E\\u8BA4\\uFF0C\\u4F46\\u672A\\u9009\\u62E9\\u4EFB\\u4F55\\u76EE\\u6807\\u3002",
+        confirmExtracting: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u9009\\u62E9\\u5DF2\\u786E\\u8BA4\\u3002\\u6B63\\u5728\\u4ECE <{tagName}> \\u63D0\\u53D6\\u6587\\u672C\\u3002",
+        extractedCount: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u63D0\\u53D6\\u4E86 {count} \\u6761\\u6587\\u672C\\u3002"
+      },
+      elementScanUI: {
+        creatingHighlights: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u9996\\u6B21\\u521B\\u5EFA\\u9AD8\\u4EAE\\u5143\\u7D20\\u3002",
+        updatingHighlight: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u6B63\\u5728\\u4E3A <{tagName}> \\u66F4\\u65B0\\u9AD8\\u4EAE\\u3002",
+        creatingToolbar: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u6B63\\u5728\\u521B\\u5EFA\\u8C03\\u6574\\u5DE5\\u5177\\u680F\\u3002",
+        toolbarPositioned: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u5DE5\\u5177\\u680F\\u5DF2\\u5B9A\\u4F4D\\u5728",
+        sliderChanged: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u6ED1\\u5757\\u5C42\\u7EA7\\u53D8\\u4E3A {level}",
+        reselectClicked: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u201C\\u91CD\\u65B0\\u9009\\u62E9\\u201D\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\u3002",
+        cancelClicked: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u201C\\u53D6\\u6D88\\u201D\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\u3002",
+        confirmClicked: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u201C\\u786E\\u8BA4\\u201D\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\u3002",
+        dragStarted: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u62D6\\u52A8\\u5F00\\u59CB\\u3002",
+        dragEnded: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u62D6\\u52A8\\u7ED3\\u675F\\u3002",
+        cleaningHighlights: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u6B63\\u5728\\u6E05\\u7406\\u9AD8\\u4EAE\\u5143\\u7D20\\u3002",
+        cleaningToolbar: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u6B63\\u5728\\u6E05\\u7406\\u5DE5\\u5177\\u680F\\u3002"
+      },
       eventBus: {
         callbackError: "\\u5728 '{{eventName}}' \\u4E8B\\u4EF6\\u7684\\u56DE\\u8C03\\u4E2D\\u53D1\\u751F\\u9519\\u8BEF\\uFF1A"
       },
@@ -3805,6 +4048,36 @@ ${result.join(",\n")}
       dom: {
         ttpCreationError: "\\u5EFA\\u7ACB Trusted Type \\u7B56\\u7565\\u5931\\u6557\\uFF1A",
         svgParseError: "\\u7121\\u6548\\u6216\\u89E3\\u6790\\u5931\\u6557\\u7684 SVG \\u5B57\\u4E32\\uFF1A"
+      },
+      elementScan: {
+        starting: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u6B63\\u5728\\u555F\\u52D5...",
+        listenersAdded: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u5DF2\\u65B0\\u589E\\u4E8B\\u4EF6\\u76E3\\u807D\\u5668\\u3002",
+        stopping: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u6B63\\u5728\\u505C\\u6B62...",
+        listenersRemoved: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u5DF2\\u79FB\\u9664\\u4E8B\\u4EF6\\u76E3\\u807D\\u5668\\u3002",
+        stateReset: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u72C0\\u614B\\u5DF2\\u91CD\\u8A2D\\u3002",
+        reselecting: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u6B63\\u5728\\u91CD\\u65B0\\u9078\\u64C7\\u5143\\u7D20...",
+        hovering: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u61F8\\u505C\\u5728 {tagName} \\u4E0A",
+        escapePressed: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u6309\\u4E0B 'Escape' \\u9375\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u6383\\u63CF\\u3002",
+        clickedEnteringAdjust: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u5143\\u7D20\\u88AB\\u9EDE\\u64CA\\uFF0C\\u9032\\u5165\\u8ABF\\u6574\\u6A21\\u5F0F\\u3002\\u76EE\\u6A19\\uFF1A<{tagName}>",
+        pathBuilt: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u5143\\u7D20\\u8DEF\\u5F91\\u5DF2\\u5EFA\\u7ACB\\uFF0C\\u6DF1\\u5EA6\\u70BA\\uFF1A{depth}",
+        adjustingLevel: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u6B63\\u5728\\u8ABF\\u6574\\u9078\\u64C7\\u5C64\\u7D1A\\u81F3 {level}\\uFF0C\\u65B0\\u76EE\\u6A19\\uFF1A<{tagName}>",
+        confirmFailedNoTarget: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u5617\\u8A66\\u78BA\\u8A8D\\uFF0C\\u4F46\\u672A\\u9078\\u64C7\\u4EFB\\u4F55\\u76EE\\u6A19\\u3002",
+        confirmExtracting: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u9078\\u64C7\\u5DF2\\u78BA\\u8A8D\\u3002\\u6B63\\u5728\\u5F9E <{tagName}> \\u63D0\\u53D6\\u6587\\u672C\\u3002",
+        extractedCount: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u63D0\\u53D6\\u4E86 {count} \\u689D\\u6587\\u672C\\u3002"
+      },
+      elementScanUI: {
+        creatingHighlights: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u9996\\u6B21\\u5EFA\\u7ACB\\u9AD8\\u4EAE\\u5143\\u7D20\\u3002",
+        updatingHighlight: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u6B63\\u5728\\u70BA <{tagName}> \\u66F4\\u65B0\\u9AD8\\u4EAE\\u3002",
+        creatingToolbar: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u6B63\\u5728\\u5EFA\\u7ACB\\u8ABF\\u6574\\u5DE5\\u5177\\u5217\\u3002",
+        toolbarPositioned: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u5DE5\\u5177\\u5217\\u5DF2\\u5B9A\\u4F4D\\u5728",
+        sliderChanged: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u6ED1\\u687F\\u5C64\\u7D1A\\u8B8A\\u70BA {level}",
+        reselectClicked: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u300C\\u91CD\\u65B0\\u9078\\u64C7\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002",
+        cancelClicked: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u300C\\u53D6\\u6D88\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002",
+        confirmClicked: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u300C\\u78BA\\u8A8D\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002",
+        dragStarted: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u62D6\\u52D5\\u958B\\u59CB\\u3002",
+        dragEnded: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u62D6\\u52D5\\u7D50\\u675F\\u3002",
+        cleaningHighlights: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u6B63\\u5728\\u6E05\\u7406\\u9AD8\\u4EAE\\u5143\\u7D20\\u3002",
+        cleaningToolbar: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u6B63\\u5728\\u6E05\\u7406\\u5DE5\\u5177\\u5217\\u3002"
       },
       eventBus: {
         callbackError: "\\u5728 '{{eventName}}' \\u4E8B\\u4EF6\\u7684\\u56DE\\u547C\\u4E2D\\u767C\\u751F\\u932F\\u8AA4\\uFF1A"
@@ -5128,6 +5401,7 @@ ${result.join(",\n")}
   var toolbar = null;
   function createHighlightElements() {
     if (!scanContainer) {
+      log(t("log.elementScanUI.creatingHighlights"));
       scanContainer = document.createElement("div");
       scanContainer.id = "element-scan-container";
       highlightBorder = document.createElement("div");
@@ -5149,11 +5423,12 @@ ${result.join(",\n")}
     const scrollX = window.scrollX;
     const scrollY = window.scrollY;
     const padding = 6;
+    const tagName = targetElement.tagName.toLowerCase();
+    log(simpleTemplate(t("log.elementScanUI.updatingHighlight"), { tagName }), { top: rect.top, left: rect.left, width: rect.width, height: rect.height });
     scanContainer.style.width = `${rect.width + padding * 2}px`;
     scanContainer.style.height = `${rect.height + padding * 2}px`;
     scanContainer.style.top = `${rect.top + scrollY - padding}px`;
     scanContainer.style.left = `${rect.left + scrollX - padding}px`;
-    const tagName = targetElement.tagName.toLowerCase();
     tagNameTooltip.textContent = tagName;
     const toolbarTag = uiContainer.querySelector("#element-scan-toolbar-tag");
     if (toolbarTag) {
@@ -5162,10 +5437,11 @@ ${result.join(",\n")}
   }
   function createAdjustmentToolbar(elementPath2) {
     if (toolbar) cleanupToolbar();
+    log(t("log.elementScanUI.creatingToolbar"));
     toolbar = document.createElement("div");
     toolbar.id = "element-scan-toolbar";
     toolbar.innerHTML = createTrustedHTML(`
-        <div id="element-scan-toolbar-tag">&lt;${elementPath2[0].tagName.toLowerCase()}&gt;</div>
+        <div id="element-scan-toolbar-tag" title="${t("tooltip.dragHint")}">&lt;${elementPath2[0].tagName.toLowerCase()}&gt;</div>
         <input type="range" id="element-scan-level-slider" min="0" max="${elementPath2.length - 1}" value="0" />
         <div id="element-scan-toolbar-actions">
             <button id="element-scan-toolbar-reselect">${t("common.reselect")}</button>
@@ -5179,13 +5455,6 @@ ${result.join(",\n")}
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
     const margin = 10;
-    let left = initialRect.right - toolbarRect.width;
-    if (left < margin) {
-      left = margin;
-    }
-    if (left + toolbarRect.width > viewportWidth - margin) {
-      left = viewportWidth - toolbarRect.width - margin;
-    }
     const topAbove = initialRect.top - toolbarRect.height - margin;
     const topBelow = initialRect.bottom + margin;
     let top;
@@ -5197,10 +5466,15 @@ ${result.join(",\n")}
       top = topBelow;
     } else {
       top = (viewportHeight - toolbarRect.height) / 2;
-      left = (viewportWidth - toolbarRect.width) / 2;
+    }
+    let left = initialRect.right - toolbarRect.width;
+    if (left < margin) left = margin;
+    if (left + toolbarRect.width > viewportWidth - margin) {
+      left = viewportWidth - toolbarRect.width - margin;
     }
     toolbar.style.top = `${top}px`;
     toolbar.style.left = `${left}px`;
+    log(t("log.elementScanUI.toolbarPositioned"), { top, left });
     addToolbarEventListeners();
     makeDraggable(toolbar);
     requestAnimationFrame(() => {
@@ -5213,14 +5487,22 @@ ${result.join(",\n")}
     const cancelBtn = uiContainer.querySelector("#element-scan-toolbar-cancel");
     const confirmBtn = uiContainer.querySelector("#element-scan-toolbar-confirm");
     slider.addEventListener("input", () => {
+      log(simpleTemplate(t("log.elementScanUI.sliderChanged"), { level: slider.value }));
       updateSelectionLevel(slider.value);
     });
-    reselectBtn.addEventListener("click", reselectElement);
+    reselectBtn.addEventListener("click", () => {
+      log(t("log.elementScanUI.reselectClicked"));
+      reselectElement();
+    });
     cancelBtn.addEventListener("click", () => {
+      log(t("log.elementScanUI.cancelClicked"));
       const fabElement = uiContainer.querySelector(".fab-element-scan");
       stopElementScan(fabElement);
     });
-    confirmBtn.addEventListener("click", confirmSelectionAndExtract);
+    confirmBtn.addEventListener("click", () => {
+      log(t("log.elementScanUI.confirmClicked"));
+      confirmSelectionAndExtract();
+    });
   }
   function makeDraggable(element) {
     let offsetX, offsetY;
@@ -5232,6 +5514,7 @@ ${result.join(",\n")}
       offsetY = e.clientY - rect.top;
       document.addEventListener("mousemove", onMouseMove);
       document.addEventListener("mouseup", onMouseUp);
+      log(t("log.elementScanUI.dragStarted"));
     };
     const onMouseMove = (e) => {
       const viewportWidth = window.innerWidth;
@@ -5249,16 +5532,19 @@ ${result.join(",\n")}
     const onMouseUp = () => {
       document.removeEventListener("mousemove", onMouseMove);
       document.removeEventListener("mouseup", onMouseUp);
+      log(t("log.elementScanUI.dragEnded"));
     };
     element.addEventListener("mousedown", onMouseDown);
   }
   function cleanupUI() {
     if (scanContainer) {
+      log(t("log.elementScanUI.cleaningHighlights"));
       scanContainer.classList.remove("is-visible");
     }
   }
   function cleanupToolbar() {
     if (toolbar) {
+      log(t("log.elementScanUI.cleaningToolbar"));
       const toolbarToRemove = toolbar;
       toolbar = null;
       toolbarToRemove.classList.remove("is-visible");
@@ -5279,6 +5565,7 @@ ${result.join(",\n")}
     }
   }
   function startElementScan(fabElement) {
+    log(t("log.elementScan.starting"));
     isActive = true;
     isAdjusting = false;
     fabElement.classList.add("is-recording");
@@ -5286,8 +5573,11 @@ ${result.join(",\n")}
     document.addEventListener("mouseout", handleMouseOut);
     document.addEventListener("click", handleElementClick, true);
     document.addEventListener("keydown", handleElementScanKeyDown);
+    log(t("log.elementScan.listenersAdded"));
   }
   function stopElementScan(fabElement) {
+    if (!isActive) return;
+    log(t("log.elementScan.stopping"));
     isActive = false;
     isAdjusting = false;
     if (fabElement) {
@@ -5297,12 +5587,15 @@ ${result.join(",\n")}
     document.removeEventListener("mouseout", handleMouseOut);
     document.removeEventListener("click", handleElementClick, true);
     document.removeEventListener("keydown", handleElementScanKeyDown);
+    log(t("log.elementScan.listenersRemoved"));
     cleanupUI();
     cleanupToolbar();
     elementPath = [];
     currentTarget = null;
+    log(t("log.elementScan.stateReset"));
   }
   function reselectElement() {
+    log(t("log.elementScan.reselecting"));
     isAdjusting = false;
     cleanupUI();
     cleanupToolbar();
@@ -5318,6 +5611,7 @@ ${result.join(",\n")}
       return;
     }
     currentTarget = event.target;
+    log(simpleTemplate(t("log.elementScan.hovering"), { tagName: currentTarget.tagName }));
     updateHighlight(currentTarget);
   }
   function handleMouseOut(event) {
@@ -5327,6 +5621,7 @@ ${result.join(",\n")}
   }
   function handleElementScanKeyDown(event) {
     if (isActive && event.key === "Escape") {
+      log(t("log.elementScan.escapePressed"));
       const fabElement = document.querySelector(".fab-element-scan");
       stopElementScan(fabElement);
     }
@@ -5335,6 +5630,8 @@ ${result.join(",\n")}
     if (!isActive || isAdjusting || !currentTarget) return;
     event.preventDefault();
     event.stopPropagation();
+    const tagName = currentTarget.tagName.toLowerCase();
+    log(simpleTemplate(t("log.elementScan.clickedEnteringAdjust"), { tagName }));
     isAdjusting = true;
     document.removeEventListener("mouseover", handleMouseOver);
     document.removeEventListener("mouseout", handleMouseOut);
@@ -5345,20 +5642,30 @@ ${result.join(",\n")}
       el = el.parentElement;
     }
     elementPath.push(document.body);
+    log(simpleTemplate(t("log.elementScan.pathBuilt"), { depth: elementPath.length }));
     createAdjustmentToolbar(elementPath);
   }
   function updateSelectionLevel(level) {
     const targetElement = elementPath[level];
     if (targetElement) {
       currentTarget = targetElement;
+      const tagName = targetElement.tagName.toLowerCase();
+      log(simpleTemplate(t("log.elementScan.adjustingLevel"), { level, tagName }));
       updateHighlight(targetElement);
     }
   }
   function confirmSelectionAndExtract() {
-    if (!currentTarget) return;
+    if (!currentTarget) {
+      log(t("log.elementScan.confirmFailedNoTarget"));
+      return;
+    }
+    const tagName = currentTarget.tagName.toLowerCase();
+    log(simpleTemplate(t("log.elementScan.confirmExtracting"), { tagName }));
     const extractedTexts = extractAndProcessTextFromElement(currentTarget);
     const formattedText = formatTextsForTranslation(extractedTexts);
-    reselectElement();
+    log(simpleTemplate(t("log.elementScan.extractedCount"), { count: extractedTexts.length }));
+    const fabElement = document.querySelector(".fab-element-scan");
+    stopElementScan(fabElement);
     updateModalContent(formattedText, true, "quick-scan");
     const notificationText = simpleTemplate(t("scan.quickFinished"), { count: extractedTexts.length });
     showNotification(notificationText, { type: "success" });

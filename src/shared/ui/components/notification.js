@@ -1,4 +1,4 @@
-// src/shared/ui/notification.js
+// src/shared/ui/components/notification.js
 
 import { createSVGFromString } from '../../utils/dom.js';
 import { appConfig } from '../../../features/settings/config.js';
@@ -21,6 +21,27 @@ function getNotificationContainer() {
         uiContainer.appendChild(notificationContainer);
     }
     return notificationContainer;
+}
+
+/**
+ * 安全地关闭并移除一个通知元素
+ * @param {HTMLElement} notification - 需要关闭的通知元素
+ */
+function closeNotification(notification) {
+    // 检查元素是否已在关闭过程中，防止重复执行
+    if (!notification || notification.classList.contains('tc-notification-fade-out')) {
+        return;
+    }
+
+    notification.classList.add('tc-notification-fade-out');
+    notification.addEventListener('animationend', () => {
+        notification.remove();
+        // 检查容器是否为空，如果是，则也移除容器以进行垃圾回收
+        if (notificationContainer && notificationContainer.childElementCount === 0) {
+            notificationContainer.remove();
+            notificationContainer = null;
+        }
+    }, { once: true }); // 使用 once 确保事件监听器在执行后自动移除
 }
 
 /**
@@ -56,23 +77,14 @@ function createNotificationElement(message, type = 'info') {
     notification.appendChild(contentDiv);
     notification.appendChild(closeDiv);
 
-    // 关闭按钮事件
+    // 关闭按钮事件直接调用关闭函数
     closeDiv.addEventListener('click', () => {
-        notification.classList.add('tc-notification-fade-out');
-        notification.addEventListener('animationend', () => {
-            notification.remove();
-            // 检查容器是否为空，如果是，则也移除容器
-            if (notificationContainer && notificationContainer.childElementCount === 0) {
-                notificationContainer.remove();
-                notificationContainer = null;
-            }
-        });
+        closeNotification(notification);
     });
 
     return notification;
 }
 
-/**
 /**
  * 显示一个通知
  * @param {string} message - 要显示的消息
@@ -88,15 +100,14 @@ export function showNotification(message, { type = 'info', duration = appConfig.
 
     // 自动关闭计时器
     const timer = setTimeout(() => {
-        const closeButton = notification.querySelector('.tc-notification-close');
-        if (closeButton) {
-            closeButton.click();
-        }
+        // 直接调用关闭函数，而不是模拟点击
+        closeNotification(notification);
     }, duration);
 
     // 如果用户手动关闭，则清除计时器
     const closeButton = notification.querySelector('.tc-notification-close');
     if (closeButton) {
+        // 我们需要确保手动点击时，自动关闭的计时器被取消
         closeButton.addEventListener('click', () => {
             clearTimeout(timer);
         });

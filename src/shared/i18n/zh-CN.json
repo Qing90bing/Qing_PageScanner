@@ -258,6 +258,36 @@
       "ttpCreationError": "创建 Trusted Type 策略失败：",
       "svgParseError": "无效或解析失败的 SVG 字符串："
     },
+    "elementScan": {
+      "starting": "元素扫描：正在启动...",
+      "listenersAdded": "元素扫描：已添加事件监听器。",
+      "stopping": "元素扫描：正在停止...",
+      "listenersRemoved": "元素扫描：已移除事件监听器。",
+      "stateReset": "元素扫描：状态已重置。",
+      "reselecting": "元素扫描：正在重新选择元素...",
+      "hovering": "元素扫描：悬停在 {tagName} 上",
+      "escapePressed": "元素扫描：按下 'Escape' 键，正在停止扫描。",
+      "clickedEnteringAdjust": "元素扫描：元素被点击，进入调整模式。目标：<{tagName}>",
+      "pathBuilt": "元素扫描：元素路径已构建，深度为：{depth}",
+      "adjustingLevel": "元素扫描：正在调整选择层级至 {level}，新目标：<{tagName}>",
+      "confirmFailedNoTarget": "元素扫描：尝试确认，但未选择任何目标。",
+      "confirmExtracting": "元素扫描：选择已确认。正在从 <{tagName}> 提取文本。",
+      "extractedCount": "元素扫描：提取了 {count} 条文本。"
+    },
+    "elementScanUI": {
+      "creatingHighlights": "元素扫描UI：首次创建高亮元素。",
+      "updatingHighlight": "元素扫描UI：正在为 <{tagName}> 更新高亮。",
+      "creatingToolbar": "元素扫描UI：正在创建调整工具栏。",
+      "toolbarPositioned": "元素扫描UI：工具栏已定位在",
+      "sliderChanged": "元素扫描UI：滑块层级变为 {level}",
+      "reselectClicked": "元素扫描UI：“重新选择”按钮被点击。",
+      "cancelClicked": "元素扫描UI：“取消”按钮被点击。",
+      "confirmClicked": "元素扫描UI：“确认”按钮被点击。",
+      "dragStarted": "元素扫描UI：拖动开始。",
+      "dragEnded": "元素扫描UI：拖动结束。",
+      "cleaningHighlights": "元素扫描UI：正在清理高亮元素。",
+      "cleaningToolbar": "元素扫描UI：正在清理工具栏。"
+    },
     "eventBus": {
       "callbackError": "在 '{{eventName}}' 事件的回调中发生错误："
     },

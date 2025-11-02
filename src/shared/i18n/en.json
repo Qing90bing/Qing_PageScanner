@@ -258,6 +258,36 @@
       "ttpCreationError": "Failed to create Trusted Type policy:",
       "svgParseError": "Invalid or failed to parse SVG string:"
     },
+    "elementScan": {
+      "starting": "Element Scan: Starting...",
+      "listenersAdded": "Element Scan: Event listeners added.",
+      "stopping": "Element Scan: Stopping...",
+      "listenersRemoved": "Element Scan: Event listeners removed.",
+      "stateReset": "Element Scan: State reset.",
+      "reselecting": "Element Scan: Reselecting element...",
+      "hovering": "Element Scan: Hovering over {tagName}",
+      "escapePressed": "Element Scan: 'Escape' key pressed, stopping scan.",
+      "clickedEnteringAdjust": "Element Scan: Element clicked, entering adjustment mode. Target: <{tagName}>",
+      "pathBuilt": "Element Scan: Element path built with depth: {depth}",
+      "adjustingLevel": "Element Scan: Adjusting selection level to {level}, new target: <{tagName}>",
+      "confirmFailedNoTarget": "Element Scan: Confirmation attempted, but no target is selected.",
+      "confirmExtracting": "Element Scan: Selection confirmed. Extracting text from <{tagName}>.",
+      "extractedCount": "Element Scan: Extracted {count} text items."
+    },
+    "elementScanUI": {
+      "creatingHighlights": "Element Scan UI: Creating highlight elements for the first time.",
+      "updatingHighlight": "Element Scan UI: Updating highlight for <{tagName}>",
+      "creatingToolbar": "Element Scan UI: Creating adjustment toolbar.",
+      "toolbarPositioned": "Element Scan UI: Toolbar positioned at",
+      "sliderChanged": "Element Scan UI: Slider changed to level {level}",
+      "reselectClicked": "Element Scan UI: 'Reselect' button clicked.",
+      "cancelClicked": "Element Scan UI: 'Cancel' button clicked.",
+      "confirmClicked": "Element Scan UI: 'Confirm' button clicked.",
+      "dragStarted": "Element Scan UI: Drag started.",
+      "dragEnded": "Element Scan UI: Drag ended.",
+      "cleaningHighlights": "Element Scan UI: Cleaning up highlight elements.",
+      "cleaningToolbar": "Element Scan UI: Cleaning up toolbar."
+    },
     "eventBus": {
       "callbackError": "Error in callback for event '{{eventName}}':"
     },
