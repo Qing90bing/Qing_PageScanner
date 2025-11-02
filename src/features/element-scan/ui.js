@@ -120,28 +120,35 @@ export function createAdjustmentToolbar(elementPath) {
     const viewportHeight = window.innerHeight;
     const margin = 10; // 工具栏与元素/屏幕边缘的最小间距
 
+    let top, left;
+
+    // 水平方向的默认对齐方式：与目标元素右对齐，并确保不超出视口边界
+    const alignRight = () => {
+        let l = initialRect.right - toolbarRect.width;
+        if (l < margin) l = margin;
+        if (l + toolbarRect.width > viewportWidth - margin) {
+            l = viewportWidth - toolbarRect.width - margin;
+        }
+        return l;
+    };
+    
     // 优先尝试将工具栏放在目标元素的上方或下方
     const topAbove = initialRect.top - toolbarRect.height - margin;
     const topBelow = initialRect.bottom + margin;
-    let top;
 
     const canPlaceAbove = topAbove > margin;
     const canPlaceBelow = topBelow + toolbarRect.height < viewportHeight - margin;
 
     if (canPlaceAbove) {
         top = topAbove;
+        left = alignRight();
     } else if (canPlaceBelow) {
         top = topBelow;
+        left = alignRight();
     } else {
-        // 如果上下空间都不足，则将工具栏垂直居中于视口
+        // 如果上下空间都不足，则将工具栏在视口中完全居中
         top = (viewportHeight - toolbarRect.height) / 2;
-    }
-
-    // 水平方向上，默认与目标元素右对齐，并确保不超出视口边界
-    let left = initialRect.right - toolbarRect.width;
-    if (left < margin) left = margin;
-    if (left + toolbarRect.width > viewportWidth - margin) {
-        left = viewportWidth - toolbarRect.width - margin;
+        left = (viewportWidth - toolbarRect.width) / 2;
     }
     
     toolbar.style.top = `${top}px`;

@@ -267,6 +267,7 @@
       "reselecting": "元素掃描：正在重新選擇元素...",
       "hovering": "元素掃描：懸停在 {tagName} 上",
       "escapePressed": "元素掃描：按下 'Escape' 鍵，正在停止掃描。",
+      "rightClickExit": "元素掃描：偵測到右鍵點擊，正在停止掃描。",
       "clickedEnteringAdjust": "元素掃描：元素被點擊，進入調整模式。目標：<{tagName}>",
       "pathBuilt": "元素掃描：元素路徑已建立，深度為：{depth}",
       "adjustingLevel": "元素掃描：正在調整選擇層級至 {level}，新目標：<{tagName}>",

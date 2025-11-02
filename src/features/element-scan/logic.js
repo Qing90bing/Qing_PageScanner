@@ -3,6 +3,7 @@
 import { updateHighlight, cleanupUI, createAdjustmentToolbar, cleanupToolbar } from './ui.js';
 import { extractAndProcessTextFromElement } from '../../shared/utils/textProcessor.js';
 import { updateModalContent } from '../../shared/ui/mainModal.js';
+import { uiContainer } from '../../shared/ui/uiContainer.js';
 import { showNotification } from '../../shared/ui/components/notification.js';
 import { t } from '../../shared/i18n/index.js';
 import { simpleTemplate } from '../../shared/utils/templating.js';
@@ -66,6 +67,7 @@ function startElementScan(fabElement) {
     document.addEventListener('mouseout', handleMouseOut);
     document.addEventListener('click', handleElementClick, true); // 使用捕获阶段确保优先执行
     document.addEventListener('keydown', handleElementScanKeyDown);
+    document.addEventListener('contextmenu', handleContextMenu, true);
     log(t('log.elementScan.listenersAdded'));
 }
 
@@ -90,6 +92,7 @@ export function stopElementScan(fabElement) {
     document.removeEventListener('mouseout', handleMouseOut);
     document.removeEventListener('click', handleElementClick, true);
     document.removeEventListener('keydown', handleElementScanKeyDown);
+    document.removeEventListener('contextmenu', handleContextMenu, true);
     log(t('log.elementScan.listenersRemoved'));
 
     // 清理UI元素
@@ -163,7 +166,23 @@ function handleMouseOut(event) {
 function handleElementScanKeyDown(event) {
     if (isActive && event.key === 'Escape') {
         log(t('log.elementScan.escapePressed'));
-        const fabElement = document.querySelector('.fab-element-scan');
+        const fabElement = uiContainer.querySelector('.fab-element-scan');
+        stopElementScan(fabElement);
+    }
+}
+
+/**
+ * @private
+ * @function handleContextMenu
+ * @description 处理上下文菜单（右键点击）事件，用于在选择阶段退出扫描模式。
+ * @param {MouseEvent} event - 鼠标事件对象。
+ */
+function handleContextMenu(event) {
+    // 只在活动且非调整模式下响应
+    if (isActive && !isAdjusting) {
+        event.preventDefault(); // 阻止默认的浏览器右键菜单
+        log(t('log.elementScan.rightClickExit'));
+        const fabElement = uiContainer.querySelector('.fab-element-scan');
         stopElementScan(fabElement);
     }
 }

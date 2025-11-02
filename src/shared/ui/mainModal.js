@@ -36,6 +36,7 @@ export let fullQuickScanContent = '';
  */
 const handleKeyDown = (event) => {
     if (event.key === 'Escape') {
+        event.stopPropagation(); // 阻止事件冒泡
         closeModal();
     }
 };

@@ -413,6 +413,7 @@ var TextExtractor = (() => {
         reselecting: "Element Scan: Reselecting element...",
         hovering: "Element Scan: Hovering over {tagName}",
         escapePressed: "Element Scan: 'Escape' key pressed, stopping scan.",
+        rightClickExit: "Element Scan: Right-click detected, stopping scan.",
         clickedEnteringAdjust: "Element Scan: Element clicked, entering adjustment mode. Target: <{tagName}>",
         pathBuilt: "Element Scan: Element path built with depth: {depth}",
         adjustingLevel: "Element Scan: Adjusting selection level to {level}, new target: <{tagName}>",
@@ -714,6 +715,7 @@ var TextExtractor = (() => {
         reselecting: "\u5143\u7D20\u626B\u63CF\uFF1A\u6B63\u5728\u91CD\u65B0\u9009\u62E9\u5143\u7D20...",
         hovering: "\u5143\u7D20\u626B\u63CF\uFF1A\u60AC\u505C\u5728 {tagName} \u4E0A",
         escapePressed: "\u5143\u7D20\u626B\u63CF\uFF1A\u6309\u4E0B 'Escape' \u952E\uFF0C\u6B63\u5728\u505C\u6B62\u626B\u63CF\u3002",
+        rightClickExit: "\u5143\u7D20\u626B\u63CF\uFF1A\u68C0\u6D4B\u5230\u53F3\u952E\u70B9\u51FB\uFF0C\u6B63\u5728\u505C\u6B62\u626B\u63CF\u3002",
         clickedEnteringAdjust: "\u5143\u7D20\u626B\u63CF\uFF1A\u5143\u7D20\u88AB\u70B9\u51FB\uFF0C\u8FDB\u5165\u8C03\u6574\u6A21\u5F0F\u3002\u76EE\u6807\uFF1A<{tagName}>",
         pathBuilt: "\u5143\u7D20\u626B\u63CF\uFF1A\u5143\u7D20\u8DEF\u5F84\u5DF2\u6784\u5EFA\uFF0C\u6DF1\u5EA6\u4E3A\uFF1A{depth}",
         adjustingLevel: "\u5143\u7D20\u626B\u63CF\uFF1A\u6B63\u5728\u8C03\u6574\u9009\u62E9\u5C42\u7EA7\u81F3 {level}\uFF0C\u65B0\u76EE\u6807\uFF1A<{tagName}>",
@@ -1015,6 +1017,7 @@ var TextExtractor = (() => {
         reselecting: "\u5143\u7D20\u6383\u63CF\uFF1A\u6B63\u5728\u91CD\u65B0\u9078\u64C7\u5143\u7D20...",
         hovering: "\u5143\u7D20\u6383\u63CF\uFF1A\u61F8\u505C\u5728 {tagName} \u4E0A",
         escapePressed: "\u5143\u7D20\u6383\u63CF\uFF1A\u6309\u4E0B 'Escape' \u9375\uFF0C\u6B63\u5728\u505C\u6B62\u6383\u63CF\u3002",
+        rightClickExit: "\u5143\u7D20\u6383\u63CF\uFF1A\u5075\u6E2C\u5230\u53F3\u9375\u9EDE\u64CA\uFF0C\u6B63\u5728\u505C\u6B62\u6383\u63CF\u3002",
         clickedEnteringAdjust: "\u5143\u7D20\u6383\u63CF\uFF1A\u5143\u7D20\u88AB\u9EDE\u64CA\uFF0C\u9032\u5165\u8ABF\u6574\u6A21\u5F0F\u3002\u76EE\u6A19\uFF1A<{tagName}>",
         pathBuilt: "\u5143\u7D20\u6383\u63CF\uFF1A\u5143\u7D20\u8DEF\u5F91\u5DF2\u5EFA\u7ACB\uFF0C\u6DF1\u5EA6\u70BA\uFF1A{depth}",
         adjustingLevel: "\u5143\u7D20\u6383\u63CF\uFF1A\u6B63\u5728\u8ABF\u6574\u9078\u64C7\u5C64\u7D1A\u81F3 {level}\uFF0C\u65B0\u76EE\u6A19\uFF1A<{tagName}>",
@@ -2089,6 +2092,7 @@ ${result.join(",\n")}
         reselecting: "Element Scan: Reselecting element...",
         hovering: "Element Scan: Hovering over {tagName}",
         escapePressed: "Element Scan: 'Escape' key pressed, stopping scan.",
+        rightClickExit: "Element Scan: Right-click detected, stopping scan.",
         clickedEnteringAdjust: "Element Scan: Element clicked, entering adjustment mode. Target: <{tagName}>",
         pathBuilt: "Element Scan: Element path built with depth: {depth}",
         adjustingLevel: "Element Scan: Adjusting selection level to {level}, new target: <{tagName}>",
@@ -2391,6 +2395,7 @@ ${result.join(",\n")}
         reselecting: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u6B63\\u5728\\u91CD\\u65B0\\u9009\\u62E9\\u5143\\u7D20...",
         hovering: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u60AC\\u505C\\u5728 {tagName} \\u4E0A",
         escapePressed: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u6309\\u4E0B 'Escape' \\u952E\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u626B\\u63CF\\u3002",
+        rightClickExit: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u68C0\\u6D4B\\u5230\\u53F3\\u952E\\u70B9\\u51FB\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u626B\\u63CF\\u3002",
         clickedEnteringAdjust: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u5143\\u7D20\\u88AB\\u70B9\\u51FB\\uFF0C\\u8FDB\\u5165\\u8C03\\u6574\\u6A21\\u5F0F\\u3002\\u76EE\\u6807\\uFF1A<{tagName}>",
         pathBuilt: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u5143\\u7D20\\u8DEF\\u5F84\\u5DF2\\u6784\\u5EFA\\uFF0C\\u6DF1\\u5EA6\\u4E3A\\uFF1A{depth}",
         adjustingLevel: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u6B63\\u5728\\u8C03\\u6574\\u9009\\u62E9\\u5C42\\u7EA7\\u81F3 {level}\\uFF0C\\u65B0\\u76EE\\u6807\\uFF1A<{tagName}>",
@@ -2693,6 +2698,7 @@ ${result.join(",\n")}
         reselecting: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u6B63\\u5728\\u91CD\\u65B0\\u9078\\u64C7\\u5143\\u7D20...",
         hovering: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u61F8\\u505C\\u5728 {tagName} \\u4E0A",
         escapePressed: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u6309\\u4E0B 'Escape' \\u9375\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u6383\\u63CF\\u3002",
+        rightClickExit: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u5075\\u6E2C\\u5230\\u53F3\\u9375\\u9EDE\\u64CA\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u6383\\u63CF\\u3002",
         clickedEnteringAdjust: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u5143\\u7D20\\u88AB\\u9EDE\\u64CA\\uFF0C\\u9032\\u5165\\u8ABF\\u6574\\u6A21\\u5F0F\\u3002\\u76EE\\u6A19\\uFF1A<{tagName}>",
         pathBuilt: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u5143\\u7D20\\u8DEF\\u5F91\\u5DF2\\u5EFA\\u7ACB\\uFF0C\\u6DF1\\u5EA6\\u70BA\\uFF1A{depth}",
         adjustingLevel: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u6B63\\u5728\\u8ABF\\u6574\\u9078\\u64C7\\u5C64\\u7D1A\\u81F3 {level}\\uFF0C\\u65B0\\u76EE\\u6A19\\uFF1A<{tagName}>",
@@ -3454,6 +3460,7 @@ ${result.join(",\n")}
         reselecting: "Element Scan: Reselecting element...",
         hovering: "Element Scan: Hovering over {tagName}",
         escapePressed: "Element Scan: 'Escape' key pressed, stopping scan.",
+        rightClickExit: "Element Scan: Right-click detected, stopping scan.",
         clickedEnteringAdjust: "Element Scan: Element clicked, entering adjustment mode. Target: <{tagName}>",
         pathBuilt: "Element Scan: Element path built with depth: {depth}",
         adjustingLevel: "Element Scan: Adjusting selection level to {level}, new target: <{tagName}>",
@@ -3756,6 +3763,7 @@ ${result.join(",\n")}
         reselecting: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u6B63\\u5728\\u91CD\\u65B0\\u9009\\u62E9\\u5143\\u7D20...",
         hovering: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u60AC\\u505C\\u5728 {tagName} \\u4E0A",
         escapePressed: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u6309\\u4E0B 'Escape' \\u952E\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u626B\\u63CF\\u3002",
+        rightClickExit: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u68C0\\u6D4B\\u5230\\u53F3\\u952E\\u70B9\\u51FB\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u626B\\u63CF\\u3002",
         clickedEnteringAdjust: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u5143\\u7D20\\u88AB\\u70B9\\u51FB\\uFF0C\\u8FDB\\u5165\\u8C03\\u6574\\u6A21\\u5F0F\\u3002\\u76EE\\u6807\\uFF1A<{tagName}>",
         pathBuilt: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u5143\\u7D20\\u8DEF\\u5F84\\u5DF2\\u6784\\u5EFA\\uFF0C\\u6DF1\\u5EA6\\u4E3A\\uFF1A{depth}",
         adjustingLevel: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u6B63\\u5728\\u8C03\\u6574\\u9009\\u62E9\\u5C42\\u7EA7\\u81F3 {level}\\uFF0C\\u65B0\\u76EE\\u6807\\uFF1A<{tagName}>",
@@ -4058,6 +4066,7 @@ ${result.join(",\n")}
         reselecting: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u6B63\\u5728\\u91CD\\u65B0\\u9078\\u64C7\\u5143\\u7D20...",
         hovering: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u61F8\\u505C\\u5728 {tagName} \\u4E0A",
         escapePressed: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u6309\\u4E0B 'Escape' \\u9375\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u6383\\u63CF\\u3002",
+        rightClickExit: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u5075\\u6E2C\\u5230\\u53F3\\u9375\\u9EDE\\u64CA\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u6383\\u63CF\\u3002",
         clickedEnteringAdjust: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u5143\\u7D20\\u88AB\\u9EDE\\u64CA\\uFF0C\\u9032\\u5165\\u8ABF\\u6574\\u6A21\\u5F0F\\u3002\\u76EE\\u6A19\\uFF1A<{tagName}>",
         pathBuilt: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u5143\\u7D20\\u8DEF\\u5F91\\u5DF2\\u5EFA\\u7ACB\\uFF0C\\u6DF1\\u5EA6\\u70BA\\uFF1A{depth}",
         adjustingLevel: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u6B63\\u5728\\u8ABF\\u6574\\u9078\\u64C7\\u5C64\\u7D1A\\u81F3 {level}\\uFF0C\\u65B0\\u76EE\\u6A19\\uFF1A<{tagName}>",
@@ -4970,6 +4979,7 @@ ${result.join(",\n")}
   var fullQuickScanContent = "";
   var handleKeyDown = (event) => {
     if (event.key === "Escape") {
+      event.stopPropagation();
       closeModal();
     }
   };
@@ -5456,22 +5466,28 @@ ${result.join(",\n")}
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
     const margin = 10;
+    let top, left;
+    const alignRight = () => {
+      let l = initialRect.right - toolbarRect.width;
+      if (l < margin) l = margin;
+      if (l + toolbarRect.width > viewportWidth - margin) {
+        l = viewportWidth - toolbarRect.width - margin;
+      }
+      return l;
+    };
     const topAbove = initialRect.top - toolbarRect.height - margin;
     const topBelow = initialRect.bottom + margin;
-    let top;
     const canPlaceAbove = topAbove > margin;
     const canPlaceBelow = topBelow + toolbarRect.height < viewportHeight - margin;
     if (canPlaceAbove) {
       top = topAbove;
+      left = alignRight();
     } else if (canPlaceBelow) {
       top = topBelow;
+      left = alignRight();
     } else {
       top = (viewportHeight - toolbarRect.height) / 2;
-    }
-    let left = initialRect.right - toolbarRect.width;
-    if (left < margin) left = margin;
-    if (left + toolbarRect.width > viewportWidth - margin) {
-      left = viewportWidth - toolbarRect.width - margin;
+      left = (viewportWidth - toolbarRect.width) / 2;
     }
     toolbar.style.top = `${top}px`;
     toolbar.style.left = `${left}px`;
@@ -5581,6 +5597,7 @@ ${result.join(",\n")}
     document.addEventListener("mouseout", handleMouseOut);
     document.addEventListener("click", handleElementClick, true);
     document.addEventListener("keydown", handleElementScanKeyDown);
+    document.addEventListener("contextmenu", handleContextMenu, true);
     log(t("log.elementScan.listenersAdded"));
   }
   function stopElementScan(fabElement) {
@@ -5595,6 +5612,7 @@ ${result.join(",\n")}
     document.removeEventListener("mouseout", handleMouseOut);
     document.removeEventListener("click", handleElementClick, true);
     document.removeEventListener("keydown", handleElementScanKeyDown);
+    document.removeEventListener("contextmenu", handleContextMenu, true);
     log(t("log.elementScan.listenersRemoved"));
     cleanupUI();
     cleanupToolbar();
@@ -5630,7 +5648,15 @@ ${result.join(",\n")}
   function handleElementScanKeyDown(event) {
     if (isActive && event.key === "Escape") {
       log(t("log.elementScan.escapePressed"));
-      const fabElement = document.querySelector(".fab-element-scan");
+      const fabElement = uiContainer.querySelector(".fab-element-scan");
+      stopElementScan(fabElement);
+    }
+  }
+  function handleContextMenu(event) {
+    if (isActive && !isAdjusting) {
+      event.preventDefault();
+      log(t("log.elementScan.rightClickExit"));
+      const fabElement = uiContainer.querySelector(".fab-element-scan");
       stopElementScan(fabElement);
     }
   }

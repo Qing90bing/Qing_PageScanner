@@ -267,6 +267,7 @@
       "reselecting": "Element Scan: Reselecting element...",
       "hovering": "Element Scan: Hovering over {tagName}",
       "escapePressed": "Element Scan: 'Escape' key pressed, stopping scan.",
+      "rightClickExit": "Element Scan: Right-click detected, stopping scan.",
       "clickedEnteringAdjust": "Element Scan: Element clicked, entering adjustment mode. Target: <{tagName}>",
       "pathBuilt": "Element Scan: Element path built with depth: {depth}",
       "adjustingLevel": "Element Scan: Adjusting selection level to {level}, new target: <{tagName}>",
