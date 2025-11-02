@@ -5122,21 +5122,23 @@ ${result.join(",\n")}
       }, 50);
     }
   }
-  var highlightOverlay = null;
+  var scanContainer = null;
+  var highlightBorder = null;
   var tagNameTooltip = null;
   var toolbar = null;
   function createHighlightElements() {
-    if (!highlightOverlay) {
-      highlightOverlay = document.createElement("div");
-      highlightOverlay.id = "element-scan-highlight";
-      if (!tagNameTooltip) {
-        tagNameTooltip = document.createElement("div");
-        tagNameTooltip.id = "element-scan-tag-name";
-        highlightOverlay.appendChild(tagNameTooltip);
-      }
-      uiContainer.appendChild(highlightOverlay);
+    if (!scanContainer) {
+      scanContainer = document.createElement("div");
+      scanContainer.id = "element-scan-container";
+      highlightBorder = document.createElement("div");
+      highlightBorder.id = "element-scan-highlight-border";
+      scanContainer.appendChild(highlightBorder);
+      tagNameTooltip = document.createElement("div");
+      tagNameTooltip.id = "element-scan-tag-name";
+      scanContainer.appendChild(tagNameTooltip);
+      uiContainer.appendChild(scanContainer);
     }
-    highlightOverlay.style.display = "block";
+    scanContainer.style.display = "block";
   }
   function updateHighlight(targetElement) {
     if (!targetElement) return;
@@ -5145,10 +5147,10 @@ ${result.join(",\n")}
     const scrollX = window.scrollX;
     const scrollY = window.scrollY;
     const padding = 6;
-    highlightOverlay.style.width = `${rect.width + padding * 2}px`;
-    highlightOverlay.style.height = `${rect.height + padding * 2}px`;
-    highlightOverlay.style.top = `${rect.top + scrollY - padding}px`;
-    highlightOverlay.style.left = `${rect.left + scrollX - padding}px`;
+    scanContainer.style.width = `${rect.width + padding * 2}px`;
+    scanContainer.style.height = `${rect.height + padding * 2}px`;
+    scanContainer.style.top = `${rect.top + scrollY - padding}px`;
+    scanContainer.style.left = `${rect.left + scrollX - padding}px`;
     const tagName = targetElement.tagName.toLowerCase();
     tagNameTooltip.textContent = tagName;
     const toolbarTag = uiContainer.querySelector("#element-scan-toolbar-tag");
@@ -5246,7 +5248,9 @@ ${result.join(",\n")}
     element.addEventListener("mousedown", onMouseDown);
   }
   function cleanupUI() {
-    if (highlightOverlay) highlightOverlay.style.display = "none";
+    if (scanContainer) {
+      scanContainer.style.display = "none";
+    }
   }
   function cleanupToolbar() {
     if (toolbar) {
@@ -6285,29 +6289,30 @@ ${result.join(",\n")}
 .tc-dropdown-menu.is-hiding{
     animation:slide-down-fade-out 0.3s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
 }\r
-#element-scan-highlight{\r
+#element-scan-container{\r
     position:absolute;\r
-    border:4px solid #3498db;\r
-    background-color:rgba(52, 152, 219, 0.2);\r
-    border-radius:6px 6px 6px 0;\r
     z-index:9999998;\r
     pointer-events:none;\r
     transition:all 0.1s ease-in-out;\r
+}\r
+#element-scan-highlight-border{\r
+    width:100%;\r
+    height:100%;\r
+    border:4px solid #3498db;\r
+    background-color:rgba(52, 152, 219, 0.2);\r
+    border-radius:6px 6px 6px 0;\r
     box-sizing:border-box;\r
 }\r
 #element-scan-tag-name{\r
     position:absolute;\r
     top:100%;\r
-    left:-4px;\r
     background-color:#3498db;\r
     color:white;\r
     padding:4px 8px;\r
     font-size:12px;\r
     border-radius:0 0 6px 6px;\r
-    z-index:9999999;\r
-    pointer-events:none;\r
+    z-index:1;\r
     font-family:'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';\r
-    transition:all 0.1s ease-in-out;\r
     white-space:nowrap;\r
 }\r
 #element-scan-toolbar{\r

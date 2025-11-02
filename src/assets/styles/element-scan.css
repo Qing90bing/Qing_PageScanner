@@ -1,31 +1,34 @@
 /* src/assets/styles/element-scan.css */
 
-/* 元素悬停高亮框 */
-#element-scan-highlight {
+/* 新的扫描容器，负责定位和动画 */
+#element-scan-container {
     position: absolute;
+    z-index: 9999998;
+    pointer-events: none; /* 允许鼠标事件穿透 */
+    transition: all 0.1s ease-in-out; /* 统一的动画 */
+}
+
+/* 元素悬停高亮边框 (仅负责外观) */
+#element-scan-highlight-border {
+    width: 100%;
+    height: 100%;
     border: 4px solid #3498db; /* 活力蓝 */
     background-color: rgba(52, 152, 219, 0.2); /* 半透明活力蓝背景 */
     border-radius: 6px 6px 6px 0; /* 左下角为直角，以便与标签拼接 */
-    z-index: 9999998;
-    pointer-events: none; /* 允许鼠标事件穿透 */
-    transition: all 0.1s ease-in-out;
     box-sizing: border-box; /* 确保边框宽度包含在width/height内 */
 }
 
-/* 元素标签名提示 */
+/* 元素标签名提示 (相对于容器定位) */
 #element-scan-tag-name {
     position: absolute;
-    top: 100%; /* 定位到父元素的底部 */
-    left: -4px;  /* 与父元素的左边框对齐 */
+    top: 100%; /* 定位到父容器的底部 */
     background-color: #3498db;
     color: white;
     padding: 4px 8px;
     font-size: 12px;
     border-radius: 0 0 6px 6px; /* 配合高亮框的拼接处 */
-    z-index: 9999999;
-    pointer-events: none;
+    z-index: 1; /* 在容器内部，层级高于边框即可 */
     font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
-    transition: all 0.1s ease-in-out;
     white-space: nowrap; /* 防止标签换行 */
 }
 

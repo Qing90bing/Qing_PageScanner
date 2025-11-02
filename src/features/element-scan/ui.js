@@ -5,27 +5,30 @@ import { updateSelectionLevel, reselectElement, stopElementScan, confirmSelectio
 import { t } from '../../shared/i18n/index.js';
 import { createTrustedHTML } from '../../shared/utils/trustedTypes.js';
 
-let highlightOverlay = null;
+let scanContainer = null;
+let highlightBorder = null;
 let tagNameTooltip = null;
 let toolbar = null;
 
 function createHighlightElements() {
-    if (!highlightOverlay) {
-        highlightOverlay = document.createElement('div');
-        highlightOverlay.id = 'element-scan-highlight';
+    // 创建一个统一的容器，它将负责定位和动画。
+    // 内部的边框和标签元素则只负责外观，并且它们的相对位置是固定的。
+    if (!scanContainer) {
+        scanContainer = document.createElement('div');
+        scanContainer.id = 'element-scan-container';
+
+        highlightBorder = document.createElement('div');
+        highlightBorder.id = 'element-scan-highlight-border'; // 新ID，仅用于样式
+        scanContainer.appendChild(highlightBorder);
+
+        tagNameTooltip = document.createElement('div');
+        tagNameTooltip.id = 'element-scan-tag-name';
+        scanContainer.appendChild(tagNameTooltip);
         
-        // The tooltip is now a child of the highlight overlay
-        // to ensure they are positioned together.
-        if (!tagNameTooltip) {
-            tagNameTooltip = document.createElement('div');
-            tagNameTooltip.id = 'element-scan-tag-name';
-            highlightOverlay.appendChild(tagNameTooltip);
-        }
-        
-        uiContainer.appendChild(highlightOverlay);
+        uiContainer.appendChild(scanContainer);
     }
     
-    highlightOverlay.style.display = 'block';
+    scanContainer.style.display = 'block';
 }
 
 export function updateHighlight(targetElement) {
@@ -36,16 +39,16 @@ export function updateHighlight(targetElement) {
     const rect = targetElement.getBoundingClientRect();
     const scrollX = window.scrollX;
     const scrollY = window.scrollY;
-    const padding = 6; // Add padding to prevent the border from obscuring content.
+    const padding = 6; // 为内容添加内边距，防止边框遮挡
 
-    highlightOverlay.style.width = `${rect.width + padding * 2}px`;
-    highlightOverlay.style.height = `${rect.height + padding * 2}px`;
-    highlightOverlay.style.top = `${rect.top + scrollY - padding}px`;
-    highlightOverlay.style.left = `${rect.left + scrollX - padding}px`;
+    // 所有的定位和尺寸变化都只应用于容器
+    scanContainer.style.width = `${rect.width + padding * 2}px`;
+    scanContainer.style.height = `${rect.height + padding * 2}px`;
+    scanContainer.style.top = `${rect.top + scrollY - padding}px`;
+    scanContainer.style.left = `${rect.left + scrollX - padding}px`;
 
     const tagName = targetElement.tagName.toLowerCase();
     tagNameTooltip.textContent = tagName;
-    // The tooltip position is now controlled by CSS relative to the highlight overlay.
 
     const toolbarTag = uiContainer.querySelector('#element-scan-toolbar-tag');
     if (toolbarTag) {
@@ -169,8 +172,9 @@ function makeDraggable(element) {
 }
 
 export function cleanupUI() {
-    // Hiding the parent overlay is sufficient, the child tooltip will be hidden with it.
-    if (highlightOverlay) highlightOverlay.style.display = 'none';
+    if (scanContainer) {
+        scanContainer.style.display = 'none';
+    }
 }
 
 export function cleanupToolbar() {
