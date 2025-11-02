@@ -6287,87 +6287,76 @@ ${result.join(",\n")}
 }
 .tc-dropdown-menu.is-hiding{
     animation:slide-down-fade-out 0.3s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
-}
-#element-scan-highlight{
-    position:absolute;
-    border:4px solid #3498db;
-    background-color:rgba(52, 152, 219, 0.2);
-    border-radius:6px;
-    z-index:9999998;
-    pointer-events:none;
-    transition:all 0.1s ease-in-out;
-    box-sizing:border-box;
-}
-#element-scan-tag-name{
-    position:absolute;
-    background-color:#3498db;
-    color:white;
-    padding:4px 8px;
-    font-size:12px;
-    border-radius:4px;
-    z-index:9999999;
-    pointer-events:none;
-    font-family:'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
-    transition:all 0.1s ease-in-out;
-}
-#element-scan-toolbar{
-    position:fixed;
-    z-index:10000000;
-    background-color:var(--main-bg);
-    border:1px solid var(--border-color);
-    border-radius:16px;
-    padding:10px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.15);
-    cursor:move;
-    display:flex;
-    flex-direction:column;
-    width:220px;
-}
-#element-scan-toolbar-tag{
-    font-weight:bold;
-    font-family:'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
-    text-align:center;
-    color:var(--main-text);
-    background-color:var(--secondary-bg);
-    padding:5px;
-    border-radius:4px;
-    font-size:14px;
-}
-#element-scan-level-slider{
-    width:100%;
-}
-#element-scan-toolbar-actions{
-    display:flex;
-    justify-content:space-between;
-    gap:5px;
-}
-#element-scan-toolbar-actions button{
-    flex-grow:1;
-    padding:6px 8px;
-    border:none;
-    border-radius:5px;
-    cursor:pointer;
-    font-size:13px;
-    background-color:var(--secondary-bg);
-    color:var(--main-text);
-    transition:background-color 0.2s;
-}
-#element-scan-toolbar-actions button:hover{
-    background-color:var(--hover-bg);
-}
-#element-scan-toolbar-confirm{
-    background-color:#f39c12;
-    color:white;
-}
-#element-scan-toolbar-confirm:hover{
-    background-color:#e67e22;
-}
-.text-extractor-fab.is-recording{
-    background-color:#f39c12;
-    animation:tc-breathing 2s ease-in-out infinite;
-}
-.text-extractor-fab.is-recording:hover{
-    background-color:#e67e22;
+}\r
+#element-scan-highlight{\r
+    position:absolute;\r
+    border:4px solid #3498db;\r
+    background-color:rgba(52, 152, 219, 0.2);\r
+    border-radius:6px;\r
+    z-index:9999998;\r
+    pointer-events:none;\r
+    transition:all 0.1s ease-in-out;\r
+    box-sizing:border-box;\r
+}\r
+#element-scan-tag-name{\r
+    position:absolute;\r
+    background-color:#3498db;\r
+    color:white;\r
+    padding:4px 8px;\r
+    font-size:12px;\r
+    border-radius:4px;\r
+    z-index:9999999;\r
+    pointer-events:none;\r
+    font-family:'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';\r
+    transition:all 0.1s ease-in-out;\r
+}\r
+#element-scan-toolbar{\r
+    position:fixed;\r
+    z-index:10000000;\r
+    background-color:var(--main-bg);\r
+    border:1px solid var(--main-border);\r
+    border-radius:16px;\r
+    padding:10px;\r
+    box-shadow:0 4px 12px rgba(0,0,0,0.15);\r
+    cursor:move;\r
+    display:flex;\r
+    flex-direction:column;\r
+    width:220px;\r
+}\r
+#element-scan-toolbar-tag{\r
+    font-weight:bold;\r
+    font-family:'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';\r
+    text-align:center;\r
+    color:var(--main-text);\r
+    padding:5px;\r
+    border-radius:4px;\r
+    font-size:14px;\r
+}\r
+#element-scan-level-slider{\r
+    width:100%;\r
+}\r
+#element-scan-toolbar-actions{\r
+    display:flex;\r
+    justify-content:space-between;\r
+    gap:5px;\r
+}\r
+#element-scan-toolbar-actions button{\r
+    flex-grow:1;\r
+    padding:6px 8px;\r
+    border:none;\r
+    border-radius:12px;\r
+    cursor:pointer;\r
+    font-size:13px;\r
+    color:var(--main-text);\r
+    transition:background-color 0.2s;\r
+}\r
+.text-extractor-fab.is-recording{\r
+    background-color:#f39c12;\r
+    animation:tc-breathing 2s ease-in-out infinite;\r
+}\r
+\r
+.text-extractor-fab.is-recording:hover{\r
+    background-color:#e67e22;\r
 }
 .fab-position-top-right{
     transform:translate(-30px, 30px);

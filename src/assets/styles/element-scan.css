@@ -31,7 +31,7 @@
     position: fixed;
     z-index: 10000000;
     background-color: var(--main-bg);
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--main-border);
     border-radius: 16px;
     padding: 10px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
@@ -47,7 +47,6 @@
     font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
     text-align: center;
     color: var(--main-text);
-    background-color: var(--secondary-bg);
     padding: 5px;
     border-radius: 4px;
     font-size: 14px;
@@ -70,25 +69,11 @@
     flex-grow: 1;
     padding: 6px 8px;
     border: none;
-    border-radius: 5px;
+    border-radius: 12px;
     cursor: pointer;
     font-size: 13px;
-    background-color: var(--secondary-bg);
     color: var(--main-text);
     transition: background-color 0.2s;
-}
-
-#element-scan-toolbar-actions button:hover {
-    background-color: var(--hover-bg);
-}
-
-/* 确认按钮特殊样式 */
-#element-scan-toolbar-confirm {
-    background-color: #f39c12; /* 活力橙 */
-    color: white;
-}
-#element-scan-toolbar-confirm:hover {
-    background-color: #e67e22;
 }
 
 /* --- FAB按钮的激活状态 --- */
