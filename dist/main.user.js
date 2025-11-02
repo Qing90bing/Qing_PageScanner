@@ -5129,15 +5129,14 @@ ${result.join(",\n")}
     if (!highlightOverlay) {
       highlightOverlay = document.createElement("div");
       highlightOverlay.id = "element-scan-highlight";
+      if (!tagNameTooltip) {
+        tagNameTooltip = document.createElement("div");
+        tagNameTooltip.id = "element-scan-tag-name";
+        highlightOverlay.appendChild(tagNameTooltip);
+      }
       uiContainer.appendChild(highlightOverlay);
     }
-    if (!tagNameTooltip) {
-      tagNameTooltip = document.createElement("div");
-      tagNameTooltip.id = "element-scan-tag-name";
-      uiContainer.appendChild(tagNameTooltip);
-    }
     highlightOverlay.style.display = "block";
-    tagNameTooltip.style.display = "block";
   }
   function updateHighlight(targetElement) {
     if (!targetElement) return;
@@ -5145,14 +5144,13 @@ ${result.join(",\n")}
     const rect = targetElement.getBoundingClientRect();
     const scrollX = window.scrollX;
     const scrollY = window.scrollY;
-    highlightOverlay.style.width = `${rect.width}px`;
-    highlightOverlay.style.height = `${rect.height}px`;
-    highlightOverlay.style.top = `${rect.top + scrollY}px`;
-    highlightOverlay.style.left = `${rect.left + scrollX}px`;
+    const padding = 6;
+    highlightOverlay.style.width = `${rect.width + padding * 2}px`;
+    highlightOverlay.style.height = `${rect.height + padding * 2}px`;
+    highlightOverlay.style.top = `${rect.top + scrollY - padding}px`;
+    highlightOverlay.style.left = `${rect.left + scrollX - padding}px`;
     const tagName = targetElement.tagName.toLowerCase();
     tagNameTooltip.textContent = tagName;
-    tagNameTooltip.style.top = `${rect.bottom + scrollY + 5}px`;
-    tagNameTooltip.style.left = `${rect.left + scrollX}px`;
     const toolbarTag = uiContainer.querySelector("#element-scan-toolbar-tag");
     if (toolbarTag) {
       toolbarTag.textContent = `<${tagName}>`;
@@ -5249,7 +5247,6 @@ ${result.join(",\n")}
   }
   function cleanupUI() {
     if (highlightOverlay) highlightOverlay.style.display = "none";
-    if (tagNameTooltip) tagNameTooltip.style.display = "none";
   }
   function cleanupToolbar() {
     if (toolbar) {
@@ -6292,7 +6289,7 @@ ${result.join(",\n")}
     position:absolute;\r
     border:4px solid #3498db;\r
     background-color:rgba(52, 152, 219, 0.2);\r
-    border-radius:6px;\r
+    border-radius:6px 6px 6px 0;\r
     z-index:9999998;\r
     pointer-events:none;\r
     transition:all 0.1s ease-in-out;\r
@@ -6300,15 +6297,18 @@ ${result.join(",\n")}
 }\r
 #element-scan-tag-name{\r
     position:absolute;\r
+    top:100%;\r
+    left:-4px;\r
     background-color:#3498db;\r
     color:white;\r
     padding:4px 8px;\r
     font-size:12px;\r
-    border-radius:4px;\r
+    border-radius:0 0 6px 6px;\r
     z-index:9999999;\r
     pointer-events:none;\r
     font-family:'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';\r
     transition:all 0.1s ease-in-out;\r
+    white-space:nowrap;\r
 }\r
 #element-scan-toolbar{\r
     position:fixed;\r

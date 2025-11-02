@@ -13,15 +13,19 @@ function createHighlightElements() {
     if (!highlightOverlay) {
         highlightOverlay = document.createElement('div');
         highlightOverlay.id = 'element-scan-highlight';
+        
+        // The tooltip is now a child of the highlight overlay
+        // to ensure they are positioned together.
+        if (!tagNameTooltip) {
+            tagNameTooltip = document.createElement('div');
+            tagNameTooltip.id = 'element-scan-tag-name';
+            highlightOverlay.appendChild(tagNameTooltip);
+        }
+        
         uiContainer.appendChild(highlightOverlay);
     }
-    if (!tagNameTooltip) {
-        tagNameTooltip = document.createElement('div');
-        tagNameTooltip.id = 'element-scan-tag-name';
-        uiContainer.appendChild(tagNameTooltip);
-    }
+    
     highlightOverlay.style.display = 'block';
-    tagNameTooltip.style.display = 'block';
 }
 
 export function updateHighlight(targetElement) {
@@ -32,16 +36,16 @@ export function updateHighlight(targetElement) {
     const rect = targetElement.getBoundingClientRect();
     const scrollX = window.scrollX;
     const scrollY = window.scrollY;
+    const padding = 6; // Add padding to prevent the border from obscuring content.
 
-    highlightOverlay.style.width = `${rect.width}px`;
-    highlightOverlay.style.height = `${rect.height}px`;
-    highlightOverlay.style.top = `${rect.top + scrollY}px`;
-    highlightOverlay.style.left = `${rect.left + scrollX}px`;
+    highlightOverlay.style.width = `${rect.width + padding * 2}px`;
+    highlightOverlay.style.height = `${rect.height + padding * 2}px`;
+    highlightOverlay.style.top = `${rect.top + scrollY - padding}px`;
+    highlightOverlay.style.left = `${rect.left + scrollX - padding}px`;
 
     const tagName = targetElement.tagName.toLowerCase();
     tagNameTooltip.textContent = tagName;
-    tagNameTooltip.style.top = `${rect.bottom + scrollY + 5}px`;
-    tagNameTooltip.style.left = `${rect.left + scrollX}px`;
+    // The tooltip position is now controlled by CSS relative to the highlight overlay.
 
     const toolbarTag = uiContainer.querySelector('#element-scan-toolbar-tag');
     if (toolbarTag) {
@@ -165,8 +169,8 @@ function makeDraggable(element) {
 }
 
 export function cleanupUI() {
+    // Hiding the parent overlay is sufficient, the child tooltip will be hidden with it.
     if (highlightOverlay) highlightOverlay.style.display = 'none';
-    if (tagNameTooltip) tagNameTooltip.style.display = 'none';
 }
 
 export function cleanupToolbar() {
