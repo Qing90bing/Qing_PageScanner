@@ -23,6 +23,17 @@ let currentTarget = null;
 /** @type {HTMLElement[]} - 从当前选中元素到 body 的 DOM 元素路径数组，用于层级调整。 */
 let elementPath = [];
 
+/** @type {boolean} - 标记关闭结果窗口后是否应恢复元素扫描。 */
+let shouldResumeAfterModalClose = false;
+
+export function getShouldResumeAfterModalClose() {
+    return shouldResumeAfterModalClose;
+}
+
+export function setShouldResumeAfterModalClose(value) {
+    shouldResumeAfterModalClose = value;
+}
+
 /**
  * @public
  * @function handleElementScanClick
@@ -226,10 +237,15 @@ export function confirmSelectionAndExtract() {
     const formattedText = formatTextsForTranslation(extractedTexts);
     log(simpleTemplate(t('log.elementScan.extractedCount'), { count: extractedTexts.length }));
 
-    // 文本提取后，立即停止扫描功能，清理所有UI和事件监听器
-    // 这可以避免在模态框弹出时，高亮和工具栏仍然显示在页面上
-    const fabElement = document.querySelector('.fab-element-scan');
-    stopElementScan(fabElement);
+    // 标记在模态框关闭后应恢复扫描
+    shouldResumeAfterModalClose = true;
+
+    // 暂停扫描UI，但保持 isActive = true 的状态
+    isAdjusting = true; // 进入“调整”模式以暂停悬停
+    document.removeEventListener('mouseover', handleMouseOver);
+    document.removeEventListener('mouseout', handleMouseOut);
+    cleanupUI();
+    cleanupToolbar();
 
     // 在主模态框中显示提取到的文本
     updateModalContent(formattedText, true, 'quick-scan');

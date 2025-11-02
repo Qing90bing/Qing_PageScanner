@@ -14,6 +14,7 @@ import { log } from '../utils/logger.js';
 import { t } from '../i18n/index.js';
 import { simpleTemplate } from '../utils/templating.js';
 import * as state from './mainModal/modalState.js';
+import { fire } from '../utils/eventBus.js';
 import { isSessionRecording } from '../../features/session-scan/logic.js';
 
 // 重新导出常量以保持API兼容性
@@ -128,6 +129,9 @@ export function closeModal() {
         log(t('log.ui.modal.closing'));
         state.modalOverlay.classList.remove('is-visible');
         state.modalOverlay.removeEventListener('keydown', handleKeyDown);
+        
+        // 触发一个全局事件，通知其他模块模态框已关闭
+        fire('modalClosed');
     }
 }
 

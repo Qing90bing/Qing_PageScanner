@@ -10,9 +10,10 @@ import { createFab } from './components/fab.js';
 import { createMainModal } from './mainModal.js';
 import { handleQuickScanClick } from '../../features/quick-scan/ui.js';
 import { handleDynamicExtractClick, handleSummaryClick } from '../../features/session-scan/ui.js';
-import { handleElementScanClick } from '../../features/element-scan/logic.js';
+import { handleElementScanClick, reselectElement, getShouldResumeAfterModalClose, setShouldResumeAfterModalClose } from '../../features/element-scan/logic.js';
 import { loadSettings } from '../../features/settings/logic.js';
 import { clearSessionTexts } from '../../features/session-scan/logic.js';
+import { on } from '../utils/eventBus.js';
 
 /**
  * @description 初始化脚本的整个用户界面。
@@ -35,5 +36,13 @@ export function initUI() {
         onElementScan: handleElementScanClick,
     },
     isVisible: settings.showFab,
+  });
+
+  // 添加事件监听器，以在模态框关闭后恢复元素扫描
+  on('modalClosed', () => {
+    if (getShouldResumeAfterModalClose()) {
+        setShouldResumeAfterModalClose(false); // 重置标志
+        reselectElement();
+    }
   });
 }

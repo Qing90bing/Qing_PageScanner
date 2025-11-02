@@ -5019,6 +5019,7 @@ ${result.join(",\n")}
       log(t("log.ui.modal.closing"));
       modalOverlay.classList.remove("is-visible");
       modalOverlay.removeEventListener("keydown", handleKeyDown);
+      fire("modalClosed");
     }
   }
   function updateModalContent(content, shouldOpen = false, mode = "quick-scan") {
@@ -5557,6 +5558,13 @@ ${result.join(",\n")}
   var isAdjusting = false;
   var currentTarget = null;
   var elementPath = [];
+  var shouldResumeAfterModalClose = false;
+  function getShouldResumeAfterModalClose() {
+    return shouldResumeAfterModalClose;
+  }
+  function setShouldResumeAfterModalClose(value) {
+    shouldResumeAfterModalClose = value;
+  }
   function handleElementScanClick(fabElement) {
     if (isActive) {
       stopElementScan(fabElement);
@@ -5664,8 +5672,12 @@ ${result.join(",\n")}
     const extractedTexts = extractAndProcessTextFromElement(currentTarget);
     const formattedText = formatTextsForTranslation(extractedTexts);
     log(simpleTemplate(t("log.elementScan.extractedCount"), { count: extractedTexts.length }));
-    const fabElement = document.querySelector(".fab-element-scan");
-    stopElementScan(fabElement);
+    shouldResumeAfterModalClose = true;
+    isAdjusting = true;
+    document.removeEventListener("mouseover", handleMouseOver);
+    document.removeEventListener("mouseout", handleMouseOut);
+    cleanupUI();
+    cleanupToolbar();
     updateModalContent(formattedText, true, "quick-scan");
     const notificationText = simpleTemplate(t("scan.quickFinished"), { count: extractedTexts.length });
     showNotification(notificationText, { type: "success" });
@@ -5683,6 +5695,12 @@ ${result.join(",\n")}
         onElementScan: handleElementScanClick
       },
       isVisible: settings.showFab
+    });
+    on("modalClosed", () => {
+      if (getShouldResumeAfterModalClose()) {
+        setShouldResumeAfterModalClose(false);
+        reselectElement();
+      }
     });
   }
   var arrowDownIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>`;
