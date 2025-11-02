@@ -49,6 +49,7 @@ export function stopElementScan(fabElement) {
 
 export function reselectElement() {
     isAdjusting = false;
+    cleanupUI(); // 清理高亮边框
     cleanupToolbar();
     // 重新激活悬停监听
     document.addEventListener('mouseover', handleMouseOver);
@@ -113,11 +114,11 @@ export function confirmSelectionAndExtract() {
     const extractedTexts = extractAndProcessTextFromElement(currentTarget);
     const formattedText = formatTextsForTranslation(extractedTexts);
 
+    // 提前开始清理UI，以避免在模态框弹出时出现覆盖
+    reselectElement();
+
     updateModalContent(formattedText, true, 'quick-scan');
 
     const notificationText = simpleTemplate(t('scan.quickFinished'), { count: extractedTexts.length });
     showNotification(notificationText, { type: 'success' });
-
-    // 返回到悬停选择模式，而不是完全停止
-    reselectElement();
 }

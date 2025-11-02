@@ -5138,7 +5138,9 @@ ${result.join(",\n")}
       scanContainer.appendChild(tagNameTooltip);
       uiContainer.appendChild(scanContainer);
     }
-    scanContainer.style.display = "block";
+    requestAnimationFrame(() => {
+      scanContainer.classList.add("is-visible");
+    });
   }
   function updateHighlight(targetElement) {
     if (!targetElement) return;
@@ -5201,6 +5203,9 @@ ${result.join(",\n")}
     toolbar.style.left = `${left}px`;
     addToolbarEventListeners();
     makeDraggable(toolbar);
+    requestAnimationFrame(() => {
+      toolbar.classList.add("is-visible");
+    });
   }
   function addToolbarEventListeners() {
     const slider = uiContainer.querySelector("#element-scan-level-slider");
@@ -5249,13 +5254,17 @@ ${result.join(",\n")}
   }
   function cleanupUI() {
     if (scanContainer) {
-      scanContainer.style.display = "none";
+      scanContainer.classList.remove("is-visible");
     }
   }
   function cleanupToolbar() {
     if (toolbar) {
-      toolbar.remove();
+      const toolbarToRemove = toolbar;
       toolbar = null;
+      toolbarToRemove.classList.remove("is-visible");
+      setTimeout(() => {
+        toolbarToRemove.remove();
+      }, 300);
     }
   }
   var isActive = false;
@@ -5295,6 +5304,7 @@ ${result.join(",\n")}
   }
   function reselectElement() {
     isAdjusting = false;
+    cleanupUI();
     cleanupToolbar();
     document.addEventListener("mouseover", handleMouseOver);
     document.addEventListener("mouseout", handleMouseOut);
@@ -5348,10 +5358,10 @@ ${result.join(",\n")}
     if (!currentTarget) return;
     const extractedTexts = extractAndProcessTextFromElement(currentTarget);
     const formattedText = formatTextsForTranslation(extractedTexts);
+    reselectElement();
     updateModalContent(formattedText, true, "quick-scan");
     const notificationText = simpleTemplate(t("scan.quickFinished"), { count: extractedTexts.length });
     showNotification(notificationText, { type: "success" });
-    reselectElement();
   }
   function initUI() {
     const settings = loadSettings();
@@ -6293,7 +6303,9 @@ ${result.join(",\n")}
     position:absolute;\r
     z-index:9999998;\r
     pointer-events:none;\r
-    transition:all 0.1s ease-in-out;\r
+    transition:all 0.1s ease-in-out, opacity 0.2s ease-in-out, visibility 0s linear 0.2s;\r
+    opacity:0;\r
+    visibility:hidden;\r
 }\r
 #element-scan-highlight-border{\r
     width:100%;\r
@@ -6327,6 +6339,15 @@ ${result.join(",\n")}
     display:flex;\r
     flex-direction:column;\r
     width:220px;\r
+    opacity:0;\r
+    visibility:hidden;\r
+    transition:opacity 0.2s ease-in-out, visibility 0s linear 0.2s;\r
+}\r
+#element-scan-container.is-visible,\r
+#element-scan-toolbar.is-visible{\r
+    opacity:1;\r
+    visibility:visible;\r
+    transition-delay:0s;\r
 }\r
 #element-scan-toolbar-tag{\r
     font-weight:bold;\r

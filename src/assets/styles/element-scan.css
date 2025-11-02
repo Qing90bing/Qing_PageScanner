@@ -5,7 +5,9 @@
     position: absolute;
     z-index: 9999998;
     pointer-events: none; /* 允许鼠标事件穿透 */
-    transition: all 0.1s ease-in-out; /* 统一的动画 */
+    transition: all 0.1s ease-in-out, opacity 0.2s ease-in-out, visibility 0s linear 0.2s; /* 位置和透明度动画 */
+    opacity: 0;
+    visibility: hidden;
 }
 
 /* 元素悬停高亮边框 (仅负责外观) */
@@ -45,7 +47,19 @@
     display: flex;
     flex-direction: column;
     width: 220px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease-in-out, visibility 0s linear 0.2s;
 }
+
+/* 通用的可见状态，用于触发过渡 */
+#element-scan-container.is-visible,
+#element-scan-toolbar.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transition-delay: 0s;
+}
+
 
 /* 工具栏标题/当前标签显示 */
 #element-scan-toolbar-tag {

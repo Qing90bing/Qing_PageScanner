@@ -28,7 +28,10 @@ function createHighlightElements() {
         uiContainer.appendChild(scanContainer);
     }
     
-    scanContainer.style.display = 'block';
+    // 使用 classList.add 触发 CSS 过渡
+    requestAnimationFrame(() => {
+        scanContainer.classList.add('is-visible');
+    });
 }
 
 export function updateHighlight(targetElement) {
@@ -110,6 +113,11 @@ export function createAdjustmentToolbar(elementPath) {
 
     addToolbarEventListeners();
     makeDraggable(toolbar);
+
+    // 使用 classList.add 触发 CSS 过渡
+    requestAnimationFrame(() => {
+        toolbar.classList.add('is-visible');
+    });
 }
 
 function addToolbarEventListeners() {
@@ -163,6 +171,8 @@ function makeDraggable(element) {
         element.style.top = `${newTop}px`;
     };
 
+
+
     const onMouseUp = () => {
         document.removeEventListener('mousemove', onMouseMove);
         document.removeEventListener('mouseup', onMouseUp);
@@ -173,13 +183,17 @@ function makeDraggable(element) {
 
 export function cleanupUI() {
     if (scanContainer) {
-        scanContainer.style.display = 'none';
+        scanContainer.classList.remove('is-visible');
     }
 }
 
 export function cleanupToolbar() {
     if (toolbar) {
-        toolbar.remove();
+        const toolbarToRemove = toolbar;
         toolbar = null;
+        toolbarToRemove.classList.remove('is-visible');
+        setTimeout(() => {
+            toolbarToRemove.remove();
+        }, 300); // 匹配 CSS 过渡时间
     }
 }
