@@ -89,9 +89,13 @@ class Tooltip {
         // 短暂延迟以确保 DOM 更新完毕，从而使 CSS 过渡动画能够生效
         setTimeout(() => {
             if (this.tooltipElement) {
+                const onTransitionEnd = () => {
+                    this.tooltipElement.focus(); // 将焦点设置到覆盖层
+                    this.tooltipElement.addEventListener('keydown', this.handleEscKey);
+                    this.tooltipElement.removeEventListener('transitionend', onTransitionEnd);
+                };
+                this.tooltipElement.addEventListener('transitionend', onTransitionEnd);
                 this.tooltipElement.classList.add('is-visible');
-                this.tooltipElement.focus(); // 将焦点设置到覆盖层
-                this.tooltipElement.addEventListener('keydown', this.handleEscKey);
             }
         }, 10);
     }

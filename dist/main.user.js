@@ -7341,9 +7341,13 @@ ${result.join(",\n")}
       fire("infoTooltipWillShow");
       setTimeout(() => {
         if (this.tooltipElement) {
+          const onTransitionEnd = () => {
+            this.tooltipElement.focus();
+            this.tooltipElement.addEventListener("keydown", this.handleEscKey);
+            this.tooltipElement.removeEventListener("transitionend", onTransitionEnd);
+          };
+          this.tooltipElement.addEventListener("transitionend", onTransitionEnd);
           this.tooltipElement.classList.add("is-visible");
-          this.tooltipElement.focus();
-          this.tooltipElement.addEventListener("keydown", this.handleEscKey);
         }
       }, 10);
     }
