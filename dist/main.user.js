@@ -229,6 +229,7 @@ var TextExtractor = (() => {
     scan: {
       quick: "Quick Scan",
       session: "Session Scan",
+      elementFinished: "Element scan finished, found {{count}} items.",
       startSession: "Start Dynamic Scan Session",
       stopSession: "Stop Dynamic Scan Session",
       finished: "Scan finished, found {count} items.",
@@ -405,21 +406,33 @@ var TextExtractor = (() => {
         svgParseError: "Invalid or failed to parse SVG string:"
       },
       elementScan: {
-        starting: "Element Scan: Starting...",
-        listenersAdded: "Element Scan: Event listeners added.",
-        stopping: "Element Scan: Stopping...",
-        listenersRemoved: "Element Scan: Event listeners removed.",
-        stateReset: "Element Scan: State reset.",
-        reselecting: "Element Scan: Reselecting element...",
-        hovering: "Element Scan: Hovering over {tagName}",
-        escapePressed: "Element Scan: 'Escape' key pressed, stopping scan.",
-        rightClickExit: "Element Scan: Right-click detected, stopping scan.",
-        clickedEnteringAdjust: "Element Scan: Element clicked, entering adjustment mode. Target: <{tagName}>",
-        pathBuilt: "Element Scan: Element path built with depth: {depth}",
-        adjustingLevel: "Element Scan: Adjusting selection level to {level}, new target: <{tagName}>",
-        confirmFailedNoTarget: "Element Scan: Confirmation attempted, but no target is selected.",
-        confirmExtracting: "Element Scan: Selection confirmed. Extracting text from <{tagName}>.",
-        extractedCount: "Element Scan: Extracted {count} text items."
+        starting: "Element Scan started.",
+        stopping: "Element Scan stopped.",
+        listenersAdded: "Global event listeners for element scan added.",
+        listenersRemoved: "Global event listeners for element scan removed.",
+        stateReset: "Element scan state has been reset.",
+        reselecting: "Returning to element reselection mode.",
+        hovering: "Hovering over <{{tagName}}>.",
+        escapePressed: "Escape key pressed, stopping element scan.",
+        clickedEnteringAdjust: "Element <{{tagName}}> clicked, entering adjustment mode.",
+        pathBuilt: "Element path built, depth: {{depth}}.",
+        adjustingLevel: "Adjusting selection level to {{level}} ({{tagName}}).",
+        confirmExtracting: "Selection confirmed, extracting text from <{{tagName}}>.",
+        extractedCount: "Extracted {{count}} raw text fragments from element.",
+        confirmFailedNoTarget: "Confirmation failed: no target element selected.",
+        rightClickExit: "Right-click detected, stopping element scan.",
+        processingError: "An error occurred during text processing: {{error}}",
+        worker: {
+          logPrefix: "[ES Worker]",
+          starting: "Element Scan Worker is starting...",
+          sendingData: "Sending {{count}} text fragments to Element Scan Worker.",
+          completed: "Element Scan Worker completed, found {{count}} unique texts.",
+          initFailed: "Element Scan Worker initialization failed. The browser's CSP might be blocking data: URLs.",
+          initSyncError: "Synchronous error during Element Scan Worker initialization: {{error}}",
+          originalError: "Original worker error: {{error}}"
+        },
+        switchToFallback: "Switching to main thread fallback for Element Scan.",
+        fallbackFailed: "Element Scan fallback mode failed: {{error}}"
       },
       elementScanUI: {
         creatingHighlights: "Element Scan UI: Creating highlight elements for the first time.",
@@ -531,6 +544,7 @@ var TextExtractor = (() => {
     scan: {
       quick: "\u5FEB\u901F\u626B\u63CF",
       session: "\u4F1A\u8BDD\u626B\u63CF",
+      elementFinished: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5B8C\u6210\uFF0C\u53D1\u73B0 {{count}} \u6761\u6587\u672C\u3002",
       startSession: "\u5F00\u59CB\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD",
       stopSession: "\u505C\u6B62\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD",
       finished: "\u626B\u63CF\u7ED3\u675F\uFF0C\u5171\u53D1\u73B0 {count} \u6761\u6587\u672C",
@@ -707,21 +721,33 @@ var TextExtractor = (() => {
         svgParseError: "\u65E0\u6548\u6216\u89E3\u6790\u5931\u8D25\u7684 SVG \u5B57\u7B26\u4E32\uFF1A"
       },
       elementScan: {
-        starting: "\u5143\u7D20\u626B\u63CF\uFF1A\u6B63\u5728\u542F\u52A8...",
-        listenersAdded: "\u5143\u7D20\u626B\u63CF\uFF1A\u5DF2\u6DFB\u52A0\u4E8B\u4EF6\u76D1\u542C\u5668\u3002",
-        stopping: "\u5143\u7D20\u626B\u63CF\uFF1A\u6B63\u5728\u505C\u6B62...",
-        listenersRemoved: "\u5143\u7D20\u626B\u63CF\uFF1A\u5DF2\u79FB\u9664\u4E8B\u4EF6\u76D1\u542C\u5668\u3002",
-        stateReset: "\u5143\u7D20\u626B\u63CF\uFF1A\u72B6\u6001\u5DF2\u91CD\u7F6E\u3002",
-        reselecting: "\u5143\u7D20\u626B\u63CF\uFF1A\u6B63\u5728\u91CD\u65B0\u9009\u62E9\u5143\u7D20...",
-        hovering: "\u5143\u7D20\u626B\u63CF\uFF1A\u60AC\u505C\u5728 {tagName} \u4E0A",
-        escapePressed: "\u5143\u7D20\u626B\u63CF\uFF1A\u6309\u4E0B 'Escape' \u952E\uFF0C\u6B63\u5728\u505C\u6B62\u626B\u63CF\u3002",
-        rightClickExit: "\u5143\u7D20\u626B\u63CF\uFF1A\u68C0\u6D4B\u5230\u53F3\u952E\u70B9\u51FB\uFF0C\u6B63\u5728\u505C\u6B62\u626B\u63CF\u3002",
-        clickedEnteringAdjust: "\u5143\u7D20\u626B\u63CF\uFF1A\u5143\u7D20\u88AB\u70B9\u51FB\uFF0C\u8FDB\u5165\u8C03\u6574\u6A21\u5F0F\u3002\u76EE\u6807\uFF1A<{tagName}>",
-        pathBuilt: "\u5143\u7D20\u626B\u63CF\uFF1A\u5143\u7D20\u8DEF\u5F84\u5DF2\u6784\u5EFA\uFF0C\u6DF1\u5EA6\u4E3A\uFF1A{depth}",
-        adjustingLevel: "\u5143\u7D20\u626B\u63CF\uFF1A\u6B63\u5728\u8C03\u6574\u9009\u62E9\u5C42\u7EA7\u81F3 {level}\uFF0C\u65B0\u76EE\u6807\uFF1A<{tagName}>",
-        confirmFailedNoTarget: "\u5143\u7D20\u626B\u63CF\uFF1A\u5C1D\u8BD5\u786E\u8BA4\uFF0C\u4F46\u672A\u9009\u62E9\u4EFB\u4F55\u76EE\u6807\u3002",
-        confirmExtracting: "\u5143\u7D20\u626B\u63CF\uFF1A\u9009\u62E9\u5DF2\u786E\u8BA4\u3002\u6B63\u5728\u4ECE <{tagName}> \u63D0\u53D6\u6587\u672C\u3002",
-        extractedCount: "\u5143\u7D20\u626B\u63CF\uFF1A\u63D0\u53D6\u4E86 {count} \u6761\u6587\u672C\u3002"
+        starting: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5DF2\u542F\u52A8\u3002",
+        stopping: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5DF2\u505C\u6B62\u3002",
+        listenersAdded: "\u5DF2\u6DFB\u52A0\u9009\u53D6\u5143\u7D20\u626B\u63CF\u7684\u5168\u5C40\u4E8B\u4EF6\u76D1\u542C\u5668\u3002",
+        listenersRemoved: "\u5DF2\u79FB\u9664\u9009\u53D6\u5143\u7D20\u626B\u63CF\u7684\u5168\u5C40\u4E8B\u4EF6\u76D1\u542C\u5668\u3002",
+        stateReset: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u72B6\u6001\u5DF2\u91CD\u7F6E\u3002",
+        reselecting: "\u6B63\u5728\u8FD4\u56DE\u5143\u7D20\u91CD\u65B0\u9009\u62E9\u6A21\u5F0F\u3002",
+        hovering: "\u5F53\u524D\u60AC\u505C\u4E8E <{{tagName}}>\u3002",
+        escapePressed: "\u7528\u6237\u6309\u4E0B Escape \u952E\uFF0C\u6B63\u5728\u505C\u6B62\u9009\u53D6\u5143\u7D20\u626B\u63CF\u3002",
+        clickedEnteringAdjust: "\u5DF2\u70B9\u51FB\u5143\u7D20 <{{tagName}}>\uFF0C\u8FDB\u5165\u5C42\u7EA7\u8C03\u6574\u6A21\u5F0F\u3002",
+        pathBuilt: "\u5143\u7D20\u5C42\u7EA7\u8DEF\u5F84\u5DF2\u6784\u5EFA\uFF0C\u6DF1\u5EA6\u4E3A\uFF1A{{depth}}\u3002",
+        adjustingLevel: "\u6B63\u5728\u8C03\u6574\u9009\u62E9\u5C42\u7EA7\u81F3 {{level}} ({{tagName}})\u3002",
+        confirmExtracting: "\u9009\u62E9\u5DF2\u786E\u8BA4\uFF0C\u6B63\u5728\u4ECE <{{tagName}}> \u63D0\u53D6\u6587\u672C\u3002",
+        extractedCount: "\u5DF2\u4ECE\u5143\u7D20\u4E2D\u63D0\u53D6 {{count}} \u6761\u539F\u59CB\u6587\u672C\u3002",
+        confirmFailedNoTarget: "\u786E\u8BA4\u5931\u8D25\uFF1A\u672A\u9009\u62E9\u4EFB\u4F55\u76EE\u6807\u5143\u7D20\u3002",
+        rightClickExit: "\u68C0\u6D4B\u5230\u53F3\u952E\u70B9\u51FB\uFF0C\u6B63\u5728\u505C\u6B62\u9009\u53D6\u5143\u7D20\u626B\u63CF\u3002",
+        processingError: "\u6587\u672C\u5904\u7406\u8FC7\u7A0B\u4E2D\u53D1\u751F\u9519\u8BEF: {{error}}",
+        worker: {
+          logPrefix: "[\u9009\u53D6\u5143\u7D20\u626B\u63CF Worker]",
+          starting: "\u9009\u53D6\u5143\u7D20\u626B\u63CF Worker \u6B63\u5728\u542F\u52A8...",
+          sendingData: "\u6B63\u5728\u53D1\u9001 {{count}} \u6761\u6587\u672C\u81F3\u9009\u53D6\u5143\u7D20\u626B\u63CF Worker\u3002",
+          completed: "\u9009\u53D6\u5143\u7D20\u626B\u63CF Worker \u5904\u7406\u5B8C\u6210\uFF0C\u53D1\u73B0 {{count}} \u6761\u6709\u6548\u6587\u672C\u3002",
+          initFailed: "\u9009\u53D6\u5143\u7D20\u626B\u63CF Worker \u521D\u59CB\u5316\u5931\u8D25\u3002\u53EF\u80FD\u662F\u7F51\u7AD9\u7684 CSP \u7B56\u7565\u963B\u6B62\u4E86 data: URL\u3002",
+          initSyncError: "\u9009\u53D6\u5143\u7D20\u626B\u63CF Worker \u521D\u59CB\u5316\u65F6\u53D1\u751F\u540C\u6B65\u9519\u8BEF: {{error}}",
+          originalError: "\u539F\u59CB Worker \u9519\u8BEF: {{error}}"
+        },
+        switchToFallback: "\u6B63\u5728\u4E3A\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5207\u6362\u5230\u4E3B\u7EBF\u7A0B\u5907\u9009\u65B9\u6848\u3002",
+        fallbackFailed: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5907\u9009\u65B9\u6848\u6267\u884C\u5931\u8D25: {{error}}"
       },
       elementScanUI: {
         creatingHighlights: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u9996\u6B21\u521B\u5EFA\u9AD8\u4EAE\u5143\u7D20\u3002",
@@ -833,6 +859,7 @@ var TextExtractor = (() => {
     scan: {
       quick: "\u5FEB\u901F\u6383\u63CF",
       session: "\u6703\u8A71\u6383\u63CF",
+      elementFinished: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5B8C\u6210\uFF0C\u767C\u73FE {{count}} \u689D\u6587\u672C\u3002",
       startSession: "\u958B\u59CB\u52D5\u614B\u6383\u63CF\u6703\u8A71",
       stopSession: "\u505C\u6B62\u52D5\u614B\u6383\u63CF\u6703\u8A71",
       finished: "\u6383\u63CF\u7D50\u675F\uFF0C\u5171\u767C\u73FE {count} \u689D\u6587\u672C",
@@ -1009,21 +1036,33 @@ var TextExtractor = (() => {
         svgParseError: "\u7121\u6548\u6216\u89E3\u6790\u5931\u6557\u7684 SVG \u5B57\u4E32\uFF1A"
       },
       elementScan: {
-        starting: "\u5143\u7D20\u6383\u63CF\uFF1A\u6B63\u5728\u555F\u52D5...",
-        listenersAdded: "\u5143\u7D20\u6383\u63CF\uFF1A\u5DF2\u65B0\u589E\u4E8B\u4EF6\u76E3\u807D\u5668\u3002",
-        stopping: "\u5143\u7D20\u6383\u63CF\uFF1A\u6B63\u5728\u505C\u6B62...",
-        listenersRemoved: "\u5143\u7D20\u6383\u63CF\uFF1A\u5DF2\u79FB\u9664\u4E8B\u4EF6\u76E3\u807D\u5668\u3002",
-        stateReset: "\u5143\u7D20\u6383\u63CF\uFF1A\u72C0\u614B\u5DF2\u91CD\u8A2D\u3002",
-        reselecting: "\u5143\u7D20\u6383\u63CF\uFF1A\u6B63\u5728\u91CD\u65B0\u9078\u64C7\u5143\u7D20...",
-        hovering: "\u5143\u7D20\u6383\u63CF\uFF1A\u61F8\u505C\u5728 {tagName} \u4E0A",
-        escapePressed: "\u5143\u7D20\u6383\u63CF\uFF1A\u6309\u4E0B 'Escape' \u9375\uFF0C\u6B63\u5728\u505C\u6B62\u6383\u63CF\u3002",
-        rightClickExit: "\u5143\u7D20\u6383\u63CF\uFF1A\u5075\u6E2C\u5230\u53F3\u9375\u9EDE\u64CA\uFF0C\u6B63\u5728\u505C\u6B62\u6383\u63CF\u3002",
-        clickedEnteringAdjust: "\u5143\u7D20\u6383\u63CF\uFF1A\u5143\u7D20\u88AB\u9EDE\u64CA\uFF0C\u9032\u5165\u8ABF\u6574\u6A21\u5F0F\u3002\u76EE\u6A19\uFF1A<{tagName}>",
-        pathBuilt: "\u5143\u7D20\u6383\u63CF\uFF1A\u5143\u7D20\u8DEF\u5F91\u5DF2\u5EFA\u7ACB\uFF0C\u6DF1\u5EA6\u70BA\uFF1A{depth}",
-        adjustingLevel: "\u5143\u7D20\u6383\u63CF\uFF1A\u6B63\u5728\u8ABF\u6574\u9078\u64C7\u5C64\u7D1A\u81F3 {level}\uFF0C\u65B0\u76EE\u6A19\uFF1A<{tagName}>",
-        confirmFailedNoTarget: "\u5143\u7D20\u6383\u63CF\uFF1A\u5617\u8A66\u78BA\u8A8D\uFF0C\u4F46\u672A\u9078\u64C7\u4EFB\u4F55\u76EE\u6A19\u3002",
-        confirmExtracting: "\u5143\u7D20\u6383\u63CF\uFF1A\u9078\u64C7\u5DF2\u78BA\u8A8D\u3002\u6B63\u5728\u5F9E <{tagName}> \u63D0\u53D6\u6587\u672C\u3002",
-        extractedCount: "\u5143\u7D20\u6383\u63CF\uFF1A\u63D0\u53D6\u4E86 {count} \u689D\u6587\u672C\u3002"
+        starting: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5DF2\u555F\u52D5\u3002",
+        stopping: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5DF2\u505C\u6B62\u3002",
+        listenersAdded: "\u5DF2\u65B0\u589E\u9078\u53D6\u5143\u7D20\u6383\u63CF\u7684\u5168\u57DF\u4E8B\u4EF6\u76E3\u807D\u5668\u3002",
+        listenersRemoved: "\u5DF2\u79FB\u9664\u9078\u53D6\u5143\u7D20\u6383\u63CF\u7684\u5168\u57DF\u4E8B\u4EF6\u76E3\u807D\u5668\u3002",
+        stateReset: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u72C0\u614B\u5DF2\u91CD\u8A2D\u3002",
+        reselecting: "\u6B63\u5728\u8FD4\u56DE\u5143\u7D20\u91CD\u65B0\u9078\u64C7\u6A21\u5F0F\u3002",
+        hovering: "\u7576\u524D\u61F8\u505C\u65BC <{{tagName}}>\u3002",
+        escapePressed: "\u4F7F\u7528\u8005\u6309\u4E0B Escape \u9375\uFF0C\u6B63\u5728\u505C\u6B62\u9078\u53D6\u5143\u7D20\u6383\u63CF\u3002",
+        clickedEnteringAdjust: "\u5DF2\u9EDE\u64CA\u5143\u7D20 <{{tagName}}>\uFF0C\u9032\u5165\u5C64\u7D1A\u8ABF\u6574\u6A21\u5F0F\u3002",
+        pathBuilt: "\u5143\u7D20\u5C64\u7D1A\u8DEF\u5F91\u5DF2\u69CB\u5EFA\uFF0C\u6DF1\u5EA6\u70BA\uFF1A{{depth}}\u3002",
+        adjustingLevel: "\u6B63\u5728\u8ABF\u6574\u9078\u64C7\u5C64\u7D1A\u81F3 {{level}} ({{tagName}})\u3002",
+        confirmExtracting: "\u9078\u64C7\u5DF2\u78BA\u8A8D\uFF0C\u6B63\u5728\u5F9E <{{tagName}}> \u63D0\u53D6\u6587\u672C\u3002",
+        extractedCount: "\u5DF2\u5F9E\u5143\u7D20\u4E2D\u63D0\u53D6 {{count}} \u689D\u539F\u59CB\u6587\u672C\u3002",
+        confirmFailedNoTarget: "\u78BA\u8A8D\u5931\u6557\uFF1A\u672A\u9078\u64C7\u4EFB\u4F55\u76EE\u6A19\u5143\u7D20\u3002",
+        rightClickExit: "\u5075\u6E2C\u5230\u53F3\u9375\u9EDE\u64CA\uFF0C\u6B63\u5728\u505C\u6B62\u9078\u53D6\u5143\u7D20\u6383\u63CF\u3002",
+        processingError: "\u6587\u672C\u8655\u7406\u904E\u7A0B\u4E2D\u767C\u751F\u932F\u8AA4: {{error}}",
+        worker: {
+          logPrefix: "[\u9078\u53D6\u5143\u7D20\u6383\u63CF Worker]",
+          starting: "\u9078\u53D6\u5143\u7D20\u6383\u63CF Worker \u6B63\u5728\u555F\u52D5...",
+          sendingData: "\u6B63\u5728\u767C\u9001 {{count}} \u689D\u6587\u672C\u81F3\u9078\u53D6\u5143\u7D20\u6383\u63CF Worker\u3002",
+          completed: "\u9078\u53D6\u5143\u7D20\u6383\u63CF Worker \u8655\u7406\u5B8C\u6210\uFF0C\u767C\u73FE {{count}} \u689D\u6709\u6548\u6587\u672C\u3002",
+          initFailed: "\u9078\u53D6\u5143\u7D20\u6383\u63CF Worker \u521D\u59CB\u5316\u5931\u6557\u3002\u53EF\u80FD\u662F\u7DB2\u7AD9\u7684 CSP \u7B56\u7565\u963B\u6B62\u4E86 data: URL\u3002",
+          initSyncError: "\u9078\u53D6\u5143\u7D20\u6383\u63CF Worker \u521D\u59CB\u5316\u6642\u767C\u751F\u540C\u6B65\u932F\u8AA4: {{error}}",
+          originalError: "\u539F\u59CB Worker \u932F\u8AA4: {{error}}"
+        },
+        switchToFallback: "\u6B63\u5728\u70BA\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5207\u63DB\u5230\u4E3B\u7DDA\u7A0B\u5099\u9078\u65B9\u6848\u3002",
+        fallbackFailed: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5099\u9078\u65B9\u6848\u57F7\u884C\u5931\u6557: {{error}}"
       },
       elementScanUI: {
         creatingHighlights: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u9996\u6B21\u5EFA\u7ACB\u9AD8\u4EAE\u5143\u7D20\u3002",
@@ -1495,24 +1534,9 @@ var TextExtractor = (() => {
     });
     return Array.from(uniqueTexts);
   };
-  var extractAndProcessTextFromElement = (element) => {
+  var extractRawTextFromElement = (element) => {
     if (!element) return [];
-    const settings = loadSettings();
-    const { filterRules: filterRules2 } = settings;
-    const uniqueTexts =  new Set();
-    const processAndAddText = (rawText) => {
-      if (!rawText) return;
-      const normalizedText = rawText.normalize("NFC");
-      let text = normalizedText.replace(/(\\r\\n|\\n|\\r)+/g, "\\n");
-      if (text.trim() === "") return;
-      const trimmedText = text.trim();
-      const filterReason = shouldFilter(trimmedText, filterRules2);
-      if (filterReason) {
-        log(t("log.textProcessor.filtered", { text: trimmedText, reason: filterReason }));
-        return;
-      }
-      uniqueTexts.add(text);
-    };
+    const texts = [];
     const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(", ");
     if (element.closest(ignoredSelectorString)) {
       return [];
@@ -1521,7 +1545,7 @@ var TextExtractor = (() => {
     attributesToExtract.forEach((attr) => {
       const attrValue = element.getAttribute(attr);
       if (attrValue) {
-        processAndAddText(attrValue);
+        texts.push(attrValue);
       }
     });
     const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null);
@@ -1531,9 +1555,11 @@ var TextExtractor = (() => {
       if (parent && (parent.tagName === "SCRIPT" || parent.tagName === "STYLE" || parent.closest(ignoredSelectorString) || parent.closest(".text-extractor-fab, .text-extractor-modal-overlay, .settings-panel-overlay"))) {
         continue;
       }
-      processAndAddText(node.nodeValue);
+      if (node.nodeValue) {
+        texts.push(node.nodeValue);
+      }
     }
-    return Array.from(uniqueTexts);
+    return texts;
   };
   var workerPolicy;
   var htmlPolicy;
@@ -1908,6 +1934,7 @@ ${result.join(",\n")}
     scan: {
       quick: "Quick Scan",
       session: "Session Scan",
+      elementFinished: "Element scan finished, found {{count}} items.",
       startSession: "Start Dynamic Scan Session",
       stopSession: "Stop Dynamic Scan Session",
       finished: "Scan finished, found {count} items.",
@@ -2084,21 +2111,33 @@ ${result.join(",\n")}
         svgParseError: "Invalid or failed to parse SVG string:"
       },
       elementScan: {
-        starting: "Element Scan: Starting...",
-        listenersAdded: "Element Scan: Event listeners added.",
-        stopping: "Element Scan: Stopping...",
-        listenersRemoved: "Element Scan: Event listeners removed.",
-        stateReset: "Element Scan: State reset.",
-        reselecting: "Element Scan: Reselecting element...",
-        hovering: "Element Scan: Hovering over {tagName}",
-        escapePressed: "Element Scan: 'Escape' key pressed, stopping scan.",
-        rightClickExit: "Element Scan: Right-click detected, stopping scan.",
-        clickedEnteringAdjust: "Element Scan: Element clicked, entering adjustment mode. Target: <{tagName}>",
-        pathBuilt: "Element Scan: Element path built with depth: {depth}",
-        adjustingLevel: "Element Scan: Adjusting selection level to {level}, new target: <{tagName}>",
-        confirmFailedNoTarget: "Element Scan: Confirmation attempted, but no target is selected.",
-        confirmExtracting: "Element Scan: Selection confirmed. Extracting text from <{tagName}>.",
-        extractedCount: "Element Scan: Extracted {count} text items."
+        starting: "Element Scan started.",
+        stopping: "Element Scan stopped.",
+        listenersAdded: "Global event listeners for element scan added.",
+        listenersRemoved: "Global event listeners for element scan removed.",
+        stateReset: "Element scan state has been reset.",
+        reselecting: "Returning to element reselection mode.",
+        hovering: "Hovering over <{{tagName}}>.",
+        escapePressed: "Escape key pressed, stopping element scan.",
+        clickedEnteringAdjust: "Element <{{tagName}}> clicked, entering adjustment mode.",
+        pathBuilt: "Element path built, depth: {{depth}}.",
+        adjustingLevel: "Adjusting selection level to {{level}} ({{tagName}}).",
+        confirmExtracting: "Selection confirmed, extracting text from <{{tagName}}>.",
+        extractedCount: "Extracted {{count}} raw text fragments from element.",
+        confirmFailedNoTarget: "Confirmation failed: no target element selected.",
+        rightClickExit: "Right-click detected, stopping element scan.",
+        processingError: "An error occurred during text processing: {{error}}",
+        worker: {
+          logPrefix: "[ES Worker]",
+          starting: "Element Scan Worker is starting...",
+          sendingData: "Sending {{count}} text fragments to Element Scan Worker.",
+          completed: "Element Scan Worker completed, found {{count}} unique texts.",
+          initFailed: "Element Scan Worker initialization failed. The browser's CSP might be blocking data: URLs.",
+          initSyncError: "Synchronous error during Element Scan Worker initialization: {{error}}",
+          originalError: "Original worker error: {{error}}"
+        },
+        switchToFallback: "Switching to main thread fallback for Element Scan.",
+        fallbackFailed: "Element Scan fallback mode failed: {{error}}"
       },
       elementScanUI: {
         creatingHighlights: "Element Scan UI: Creating highlight elements for the first time.",
@@ -2211,6 +2250,7 @@ ${result.join(",\n")}
     scan: {
       quick: "\\u5FEB\\u901F\\u626B\\u63CF",
       session: "\\u4F1A\\u8BDD\\u626B\\u63CF",
+      elementFinished: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {{count}} \\u6761\\u6587\\u672C\\u3002",
       startSession: "\\u5F00\\u59CB\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD",
       stopSession: "\\u505C\\u6B62\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD",
       finished: "\\u626B\\u63CF\\u7ED3\\u675F\\uFF0C\\u5171\\u53D1\\u73B0 {count} \\u6761\\u6587\\u672C",
@@ -2387,21 +2427,33 @@ ${result.join(",\n")}
         svgParseError: "\\u65E0\\u6548\\u6216\\u89E3\\u6790\\u5931\\u8D25\\u7684 SVG \\u5B57\\u7B26\\u4E32\\uFF1A"
       },
       elementScan: {
-        starting: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u6B63\\u5728\\u542F\\u52A8...",
-        listenersAdded: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u5DF2\\u6DFB\\u52A0\\u4E8B\\u4EF6\\u76D1\\u542C\\u5668\\u3002",
-        stopping: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u6B63\\u5728\\u505C\\u6B62...",
-        listenersRemoved: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u5DF2\\u79FB\\u9664\\u4E8B\\u4EF6\\u76D1\\u542C\\u5668\\u3002",
-        stateReset: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u72B6\\u6001\\u5DF2\\u91CD\\u7F6E\\u3002",
-        reselecting: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u6B63\\u5728\\u91CD\\u65B0\\u9009\\u62E9\\u5143\\u7D20...",
-        hovering: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u60AC\\u505C\\u5728 {tagName} \\u4E0A",
-        escapePressed: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u6309\\u4E0B 'Escape' \\u952E\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u626B\\u63CF\\u3002",
-        rightClickExit: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u68C0\\u6D4B\\u5230\\u53F3\\u952E\\u70B9\\u51FB\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u626B\\u63CF\\u3002",
-        clickedEnteringAdjust: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u5143\\u7D20\\u88AB\\u70B9\\u51FB\\uFF0C\\u8FDB\\u5165\\u8C03\\u6574\\u6A21\\u5F0F\\u3002\\u76EE\\u6807\\uFF1A<{tagName}>",
-        pathBuilt: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u5143\\u7D20\\u8DEF\\u5F84\\u5DF2\\u6784\\u5EFA\\uFF0C\\u6DF1\\u5EA6\\u4E3A\\uFF1A{depth}",
-        adjustingLevel: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u6B63\\u5728\\u8C03\\u6574\\u9009\\u62E9\\u5C42\\u7EA7\\u81F3 {level}\\uFF0C\\u65B0\\u76EE\\u6807\\uFF1A<{tagName}>",
-        confirmFailedNoTarget: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u5C1D\\u8BD5\\u786E\\u8BA4\\uFF0C\\u4F46\\u672A\\u9009\\u62E9\\u4EFB\\u4F55\\u76EE\\u6807\\u3002",
-        confirmExtracting: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u9009\\u62E9\\u5DF2\\u786E\\u8BA4\\u3002\\u6B63\\u5728\\u4ECE <{tagName}> \\u63D0\\u53D6\\u6587\\u672C\\u3002",
-        extractedCount: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u63D0\\u53D6\\u4E86 {count} \\u6761\\u6587\\u672C\\u3002"
+        starting: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5DF2\\u542F\\u52A8\\u3002",
+        stopping: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5DF2\\u505C\\u6B62\\u3002",
+        listenersAdded: "\\u5DF2\\u6DFB\\u52A0\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u7684\\u5168\\u5C40\\u4E8B\\u4EF6\\u76D1\\u542C\\u5668\\u3002",
+        listenersRemoved: "\\u5DF2\\u79FB\\u9664\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u7684\\u5168\\u5C40\\u4E8B\\u4EF6\\u76D1\\u542C\\u5668\\u3002",
+        stateReset: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u72B6\\u6001\\u5DF2\\u91CD\\u7F6E\\u3002",
+        reselecting: "\\u6B63\\u5728\\u8FD4\\u56DE\\u5143\\u7D20\\u91CD\\u65B0\\u9009\\u62E9\\u6A21\\u5F0F\\u3002",
+        hovering: "\\u5F53\\u524D\\u60AC\\u505C\\u4E8E <{{tagName}}>\\u3002",
+        escapePressed: "\\u7528\\u6237\\u6309\\u4E0B Escape \\u952E\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u3002",
+        clickedEnteringAdjust: "\\u5DF2\\u70B9\\u51FB\\u5143\\u7D20 <{{tagName}}>\\uFF0C\\u8FDB\\u5165\\u5C42\\u7EA7\\u8C03\\u6574\\u6A21\\u5F0F\\u3002",
+        pathBuilt: "\\u5143\\u7D20\\u5C42\\u7EA7\\u8DEF\\u5F84\\u5DF2\\u6784\\u5EFA\\uFF0C\\u6DF1\\u5EA6\\u4E3A\\uFF1A{{depth}}\\u3002",
+        adjustingLevel: "\\u6B63\\u5728\\u8C03\\u6574\\u9009\\u62E9\\u5C42\\u7EA7\\u81F3 {{level}} ({{tagName}})\\u3002",
+        confirmExtracting: "\\u9009\\u62E9\\u5DF2\\u786E\\u8BA4\\uFF0C\\u6B63\\u5728\\u4ECE <{{tagName}}> \\u63D0\\u53D6\\u6587\\u672C\\u3002",
+        extractedCount: "\\u5DF2\\u4ECE\\u5143\\u7D20\\u4E2D\\u63D0\\u53D6 {{count}} \\u6761\\u539F\\u59CB\\u6587\\u672C\\u3002",
+        confirmFailedNoTarget: "\\u786E\\u8BA4\\u5931\\u8D25\\uFF1A\\u672A\\u9009\\u62E9\\u4EFB\\u4F55\\u76EE\\u6807\\u5143\\u7D20\\u3002",
+        rightClickExit: "\\u68C0\\u6D4B\\u5230\\u53F3\\u952E\\u70B9\\u51FB\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u3002",
+        processingError: "\\u6587\\u672C\\u5904\\u7406\\u8FC7\\u7A0B\\u4E2D\\u53D1\\u751F\\u9519\\u8BEF: {{error}}",
+        worker: {
+          logPrefix: "[\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker]",
+          starting: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u6B63\\u5728\\u542F\\u52A8...",
+          sendingData: "\\u6B63\\u5728\\u53D1\\u9001 {{count}} \\u6761\\u6587\\u672C\\u81F3\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker\\u3002",
+          completed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u5904\\u7406\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {{count}} \\u6761\\u6709\\u6548\\u6587\\u672C\\u3002",
+          initFailed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u521D\\u59CB\\u5316\\u5931\\u8D25\\u3002\\u53EF\\u80FD\\u662F\\u7F51\\u7AD9\\u7684 CSP \\u7B56\\u7565\\u963B\\u6B62\\u4E86 data: URL\\u3002",
+          initSyncError: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u521D\\u59CB\\u5316\\u65F6\\u53D1\\u751F\\u540C\\u6B65\\u9519\\u8BEF: {{error}}",
+          originalError: "\\u539F\\u59CB Worker \\u9519\\u8BEF: {{error}}"
+        },
+        switchToFallback: "\\u6B63\\u5728\\u4E3A\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
+        fallbackFailed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5907\\u9009\\u65B9\\u6848\\u6267\\u884C\\u5931\\u8D25: {{error}}"
       },
       elementScanUI: {
         creatingHighlights: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u9996\\u6B21\\u521B\\u5EFA\\u9AD8\\u4EAE\\u5143\\u7D20\\u3002",
@@ -2514,6 +2566,7 @@ ${result.join(",\n")}
     scan: {
       quick: "\\u5FEB\\u901F\\u6383\\u63CF",
       session: "\\u6703\\u8A71\\u6383\\u63CF",
+      elementFinished: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {{count}} \\u689D\\u6587\\u672C\\u3002",
       startSession: "\\u958B\\u59CB\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71",
       stopSession: "\\u505C\\u6B62\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71",
       finished: "\\u6383\\u63CF\\u7D50\\u675F\\uFF0C\\u5171\\u767C\\u73FE {count} \\u689D\\u6587\\u672C",
@@ -2690,21 +2743,33 @@ ${result.join(",\n")}
         svgParseError: "\\u7121\\u6548\\u6216\\u89E3\\u6790\\u5931\\u6557\\u7684 SVG \\u5B57\\u4E32\\uFF1A"
       },
       elementScan: {
-        starting: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u6B63\\u5728\\u555F\\u52D5...",
-        listenersAdded: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u5DF2\\u65B0\\u589E\\u4E8B\\u4EF6\\u76E3\\u807D\\u5668\\u3002",
-        stopping: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u6B63\\u5728\\u505C\\u6B62...",
-        listenersRemoved: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u5DF2\\u79FB\\u9664\\u4E8B\\u4EF6\\u76E3\\u807D\\u5668\\u3002",
-        stateReset: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u72C0\\u614B\\u5DF2\\u91CD\\u8A2D\\u3002",
-        reselecting: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u6B63\\u5728\\u91CD\\u65B0\\u9078\\u64C7\\u5143\\u7D20...",
-        hovering: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u61F8\\u505C\\u5728 {tagName} \\u4E0A",
-        escapePressed: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u6309\\u4E0B 'Escape' \\u9375\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u6383\\u63CF\\u3002",
-        rightClickExit: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u5075\\u6E2C\\u5230\\u53F3\\u9375\\u9EDE\\u64CA\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u6383\\u63CF\\u3002",
-        clickedEnteringAdjust: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u5143\\u7D20\\u88AB\\u9EDE\\u64CA\\uFF0C\\u9032\\u5165\\u8ABF\\u6574\\u6A21\\u5F0F\\u3002\\u76EE\\u6A19\\uFF1A<{tagName}>",
-        pathBuilt: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u5143\\u7D20\\u8DEF\\u5F91\\u5DF2\\u5EFA\\u7ACB\\uFF0C\\u6DF1\\u5EA6\\u70BA\\uFF1A{depth}",
-        adjustingLevel: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u6B63\\u5728\\u8ABF\\u6574\\u9078\\u64C7\\u5C64\\u7D1A\\u81F3 {level}\\uFF0C\\u65B0\\u76EE\\u6A19\\uFF1A<{tagName}>",
-        confirmFailedNoTarget: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u5617\\u8A66\\u78BA\\u8A8D\\uFF0C\\u4F46\\u672A\\u9078\\u64C7\\u4EFB\\u4F55\\u76EE\\u6A19\\u3002",
-        confirmExtracting: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u9078\\u64C7\\u5DF2\\u78BA\\u8A8D\\u3002\\u6B63\\u5728\\u5F9E <{tagName}> \\u63D0\\u53D6\\u6587\\u672C\\u3002",
-        extractedCount: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u63D0\\u53D6\\u4E86 {count} \\u689D\\u6587\\u672C\\u3002"
+        starting: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5DF2\\u555F\\u52D5\\u3002",
+        stopping: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5DF2\\u505C\\u6B62\\u3002",
+        listenersAdded: "\\u5DF2\\u65B0\\u589E\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u7684\\u5168\\u57DF\\u4E8B\\u4EF6\\u76E3\\u807D\\u5668\\u3002",
+        listenersRemoved: "\\u5DF2\\u79FB\\u9664\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u7684\\u5168\\u57DF\\u4E8B\\u4EF6\\u76E3\\u807D\\u5668\\u3002",
+        stateReset: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u72C0\\u614B\\u5DF2\\u91CD\\u8A2D\\u3002",
+        reselecting: "\\u6B63\\u5728\\u8FD4\\u56DE\\u5143\\u7D20\\u91CD\\u65B0\\u9078\\u64C7\\u6A21\\u5F0F\\u3002",
+        hovering: "\\u7576\\u524D\\u61F8\\u505C\\u65BC <{{tagName}}>\\u3002",
+        escapePressed: "\\u4F7F\\u7528\\u8005\\u6309\\u4E0B Escape \\u9375\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u3002",
+        clickedEnteringAdjust: "\\u5DF2\\u9EDE\\u64CA\\u5143\\u7D20 <{{tagName}}>\\uFF0C\\u9032\\u5165\\u5C64\\u7D1A\\u8ABF\\u6574\\u6A21\\u5F0F\\u3002",
+        pathBuilt: "\\u5143\\u7D20\\u5C64\\u7D1A\\u8DEF\\u5F91\\u5DF2\\u69CB\\u5EFA\\uFF0C\\u6DF1\\u5EA6\\u70BA\\uFF1A{{depth}}\\u3002",
+        adjustingLevel: "\\u6B63\\u5728\\u8ABF\\u6574\\u9078\\u64C7\\u5C64\\u7D1A\\u81F3 {{level}} ({{tagName}})\\u3002",
+        confirmExtracting: "\\u9078\\u64C7\\u5DF2\\u78BA\\u8A8D\\uFF0C\\u6B63\\u5728\\u5F9E <{{tagName}}> \\u63D0\\u53D6\\u6587\\u672C\\u3002",
+        extractedCount: "\\u5DF2\\u5F9E\\u5143\\u7D20\\u4E2D\\u63D0\\u53D6 {{count}} \\u689D\\u539F\\u59CB\\u6587\\u672C\\u3002",
+        confirmFailedNoTarget: "\\u78BA\\u8A8D\\u5931\\u6557\\uFF1A\\u672A\\u9078\\u64C7\\u4EFB\\u4F55\\u76EE\\u6A19\\u5143\\u7D20\\u3002",
+        rightClickExit: "\\u5075\\u6E2C\\u5230\\u53F3\\u9375\\u9EDE\\u64CA\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u3002",
+        processingError: "\\u6587\\u672C\\u8655\\u7406\\u904E\\u7A0B\\u4E2D\\u767C\\u751F\\u932F\\u8AA4: {{error}}",
+        worker: {
+          logPrefix: "[\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker]",
+          starting: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u6B63\\u5728\\u555F\\u52D5...",
+          sendingData: "\\u6B63\\u5728\\u767C\\u9001 {{count}} \\u689D\\u6587\\u672C\\u81F3\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker\\u3002",
+          completed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u8655\\u7406\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {{count}} \\u689D\\u6709\\u6548\\u6587\\u672C\\u3002",
+          initFailed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u521D\\u59CB\\u5316\\u5931\\u6557\\u3002\\u53EF\\u80FD\\u662F\\u7DB2\\u7AD9\\u7684 CSP \\u7B56\\u7565\\u963B\\u6B62\\u4E86 data: URL\\u3002",
+          initSyncError: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u521D\\u59CB\\u5316\\u6642\\u767C\\u751F\\u540C\\u6B65\\u932F\\u8AA4: {{error}}",
+          originalError: "\\u539F\\u59CB Worker \\u932F\\u8AA4: {{error}}"
+        },
+        switchToFallback: "\\u6B63\\u5728\\u70BA\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
+        fallbackFailed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5099\\u9078\\u65B9\\u6848\\u57F7\\u884C\\u5931\\u6557: {{error}}"
       },
       elementScanUI: {
         creatingHighlights: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u9996\\u6B21\\u5EFA\\u7ACB\\u9AD8\\u4EAE\\u5143\\u7D20\\u3002",
@@ -3276,6 +3341,7 @@ ${result.join(",\n")}
     scan: {
       quick: "Quick Scan",
       session: "Session Scan",
+      elementFinished: "Element scan finished, found {{count}} items.",
       startSession: "Start Dynamic Scan Session",
       stopSession: "Stop Dynamic Scan Session",
       finished: "Scan finished, found {count} items.",
@@ -3452,21 +3518,33 @@ ${result.join(",\n")}
         svgParseError: "Invalid or failed to parse SVG string:"
       },
       elementScan: {
-        starting: "Element Scan: Starting...",
-        listenersAdded: "Element Scan: Event listeners added.",
-        stopping: "Element Scan: Stopping...",
-        listenersRemoved: "Element Scan: Event listeners removed.",
-        stateReset: "Element Scan: State reset.",
-        reselecting: "Element Scan: Reselecting element...",
-        hovering: "Element Scan: Hovering over {tagName}",
-        escapePressed: "Element Scan: 'Escape' key pressed, stopping scan.",
-        rightClickExit: "Element Scan: Right-click detected, stopping scan.",
-        clickedEnteringAdjust: "Element Scan: Element clicked, entering adjustment mode. Target: <{tagName}>",
-        pathBuilt: "Element Scan: Element path built with depth: {depth}",
-        adjustingLevel: "Element Scan: Adjusting selection level to {level}, new target: <{tagName}>",
-        confirmFailedNoTarget: "Element Scan: Confirmation attempted, but no target is selected.",
-        confirmExtracting: "Element Scan: Selection confirmed. Extracting text from <{tagName}>.",
-        extractedCount: "Element Scan: Extracted {count} text items."
+        starting: "Element Scan started.",
+        stopping: "Element Scan stopped.",
+        listenersAdded: "Global event listeners for element scan added.",
+        listenersRemoved: "Global event listeners for element scan removed.",
+        stateReset: "Element scan state has been reset.",
+        reselecting: "Returning to element reselection mode.",
+        hovering: "Hovering over <{{tagName}}>.",
+        escapePressed: "Escape key pressed, stopping element scan.",
+        clickedEnteringAdjust: "Element <{{tagName}}> clicked, entering adjustment mode.",
+        pathBuilt: "Element path built, depth: {{depth}}.",
+        adjustingLevel: "Adjusting selection level to {{level}} ({{tagName}}).",
+        confirmExtracting: "Selection confirmed, extracting text from <{{tagName}}>.",
+        extractedCount: "Extracted {{count}} raw text fragments from element.",
+        confirmFailedNoTarget: "Confirmation failed: no target element selected.",
+        rightClickExit: "Right-click detected, stopping element scan.",
+        processingError: "An error occurred during text processing: {{error}}",
+        worker: {
+          logPrefix: "[ES Worker]",
+          starting: "Element Scan Worker is starting...",
+          sendingData: "Sending {{count}} text fragments to Element Scan Worker.",
+          completed: "Element Scan Worker completed, found {{count}} unique texts.",
+          initFailed: "Element Scan Worker initialization failed. The browser's CSP might be blocking data: URLs.",
+          initSyncError: "Synchronous error during Element Scan Worker initialization: {{error}}",
+          originalError: "Original worker error: {{error}}"
+        },
+        switchToFallback: "Switching to main thread fallback for Element Scan.",
+        fallbackFailed: "Element Scan fallback mode failed: {{error}}"
       },
       elementScanUI: {
         creatingHighlights: "Element Scan UI: Creating highlight elements for the first time.",
@@ -3579,6 +3657,7 @@ ${result.join(",\n")}
     scan: {
       quick: "\\u5FEB\\u901F\\u626B\\u63CF",
       session: "\\u4F1A\\u8BDD\\u626B\\u63CF",
+      elementFinished: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {{count}} \\u6761\\u6587\\u672C\\u3002",
       startSession: "\\u5F00\\u59CB\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD",
       stopSession: "\\u505C\\u6B62\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD",
       finished: "\\u626B\\u63CF\\u7ED3\\u675F\\uFF0C\\u5171\\u53D1\\u73B0 {count} \\u6761\\u6587\\u672C",
@@ -3755,21 +3834,33 @@ ${result.join(",\n")}
         svgParseError: "\\u65E0\\u6548\\u6216\\u89E3\\u6790\\u5931\\u8D25\\u7684 SVG \\u5B57\\u7B26\\u4E32\\uFF1A"
       },
       elementScan: {
-        starting: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u6B63\\u5728\\u542F\\u52A8...",
-        listenersAdded: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u5DF2\\u6DFB\\u52A0\\u4E8B\\u4EF6\\u76D1\\u542C\\u5668\\u3002",
-        stopping: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u6B63\\u5728\\u505C\\u6B62...",
-        listenersRemoved: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u5DF2\\u79FB\\u9664\\u4E8B\\u4EF6\\u76D1\\u542C\\u5668\\u3002",
-        stateReset: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u72B6\\u6001\\u5DF2\\u91CD\\u7F6E\\u3002",
-        reselecting: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u6B63\\u5728\\u91CD\\u65B0\\u9009\\u62E9\\u5143\\u7D20...",
-        hovering: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u60AC\\u505C\\u5728 {tagName} \\u4E0A",
-        escapePressed: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u6309\\u4E0B 'Escape' \\u952E\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u626B\\u63CF\\u3002",
-        rightClickExit: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u68C0\\u6D4B\\u5230\\u53F3\\u952E\\u70B9\\u51FB\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u626B\\u63CF\\u3002",
-        clickedEnteringAdjust: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u5143\\u7D20\\u88AB\\u70B9\\u51FB\\uFF0C\\u8FDB\\u5165\\u8C03\\u6574\\u6A21\\u5F0F\\u3002\\u76EE\\u6807\\uFF1A<{tagName}>",
-        pathBuilt: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u5143\\u7D20\\u8DEF\\u5F84\\u5DF2\\u6784\\u5EFA\\uFF0C\\u6DF1\\u5EA6\\u4E3A\\uFF1A{depth}",
-        adjustingLevel: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u6B63\\u5728\\u8C03\\u6574\\u9009\\u62E9\\u5C42\\u7EA7\\u81F3 {level}\\uFF0C\\u65B0\\u76EE\\u6807\\uFF1A<{tagName}>",
-        confirmFailedNoTarget: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u5C1D\\u8BD5\\u786E\\u8BA4\\uFF0C\\u4F46\\u672A\\u9009\\u62E9\\u4EFB\\u4F55\\u76EE\\u6807\\u3002",
-        confirmExtracting: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u9009\\u62E9\\u5DF2\\u786E\\u8BA4\\u3002\\u6B63\\u5728\\u4ECE <{tagName}> \\u63D0\\u53D6\\u6587\\u672C\\u3002",
-        extractedCount: "\\u5143\\u7D20\\u626B\\u63CF\\uFF1A\\u63D0\\u53D6\\u4E86 {count} \\u6761\\u6587\\u672C\\u3002"
+        starting: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5DF2\\u542F\\u52A8\\u3002",
+        stopping: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5DF2\\u505C\\u6B62\\u3002",
+        listenersAdded: "\\u5DF2\\u6DFB\\u52A0\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u7684\\u5168\\u5C40\\u4E8B\\u4EF6\\u76D1\\u542C\\u5668\\u3002",
+        listenersRemoved: "\\u5DF2\\u79FB\\u9664\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u7684\\u5168\\u5C40\\u4E8B\\u4EF6\\u76D1\\u542C\\u5668\\u3002",
+        stateReset: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u72B6\\u6001\\u5DF2\\u91CD\\u7F6E\\u3002",
+        reselecting: "\\u6B63\\u5728\\u8FD4\\u56DE\\u5143\\u7D20\\u91CD\\u65B0\\u9009\\u62E9\\u6A21\\u5F0F\\u3002",
+        hovering: "\\u5F53\\u524D\\u60AC\\u505C\\u4E8E <{{tagName}}>\\u3002",
+        escapePressed: "\\u7528\\u6237\\u6309\\u4E0B Escape \\u952E\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u3002",
+        clickedEnteringAdjust: "\\u5DF2\\u70B9\\u51FB\\u5143\\u7D20 <{{tagName}}>\\uFF0C\\u8FDB\\u5165\\u5C42\\u7EA7\\u8C03\\u6574\\u6A21\\u5F0F\\u3002",
+        pathBuilt: "\\u5143\\u7D20\\u5C42\\u7EA7\\u8DEF\\u5F84\\u5DF2\\u6784\\u5EFA\\uFF0C\\u6DF1\\u5EA6\\u4E3A\\uFF1A{{depth}}\\u3002",
+        adjustingLevel: "\\u6B63\\u5728\\u8C03\\u6574\\u9009\\u62E9\\u5C42\\u7EA7\\u81F3 {{level}} ({{tagName}})\\u3002",
+        confirmExtracting: "\\u9009\\u62E9\\u5DF2\\u786E\\u8BA4\\uFF0C\\u6B63\\u5728\\u4ECE <{{tagName}}> \\u63D0\\u53D6\\u6587\\u672C\\u3002",
+        extractedCount: "\\u5DF2\\u4ECE\\u5143\\u7D20\\u4E2D\\u63D0\\u53D6 {{count}} \\u6761\\u539F\\u59CB\\u6587\\u672C\\u3002",
+        confirmFailedNoTarget: "\\u786E\\u8BA4\\u5931\\u8D25\\uFF1A\\u672A\\u9009\\u62E9\\u4EFB\\u4F55\\u76EE\\u6807\\u5143\\u7D20\\u3002",
+        rightClickExit: "\\u68C0\\u6D4B\\u5230\\u53F3\\u952E\\u70B9\\u51FB\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u3002",
+        processingError: "\\u6587\\u672C\\u5904\\u7406\\u8FC7\\u7A0B\\u4E2D\\u53D1\\u751F\\u9519\\u8BEF: {{error}}",
+        worker: {
+          logPrefix: "[\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker]",
+          starting: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u6B63\\u5728\\u542F\\u52A8...",
+          sendingData: "\\u6B63\\u5728\\u53D1\\u9001 {{count}} \\u6761\\u6587\\u672C\\u81F3\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker\\u3002",
+          completed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u5904\\u7406\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {{count}} \\u6761\\u6709\\u6548\\u6587\\u672C\\u3002",
+          initFailed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u521D\\u59CB\\u5316\\u5931\\u8D25\\u3002\\u53EF\\u80FD\\u662F\\u7F51\\u7AD9\\u7684 CSP \\u7B56\\u7565\\u963B\\u6B62\\u4E86 data: URL\\u3002",
+          initSyncError: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u521D\\u59CB\\u5316\\u65F6\\u53D1\\u751F\\u540C\\u6B65\\u9519\\u8BEF: {{error}}",
+          originalError: "\\u539F\\u59CB Worker \\u9519\\u8BEF: {{error}}"
+        },
+        switchToFallback: "\\u6B63\\u5728\\u4E3A\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
+        fallbackFailed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5907\\u9009\\u65B9\\u6848\\u6267\\u884C\\u5931\\u8D25: {{error}}"
       },
       elementScanUI: {
         creatingHighlights: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u9996\\u6B21\\u521B\\u5EFA\\u9AD8\\u4EAE\\u5143\\u7D20\\u3002",
@@ -3882,6 +3973,7 @@ ${result.join(",\n")}
     scan: {
       quick: "\\u5FEB\\u901F\\u6383\\u63CF",
       session: "\\u6703\\u8A71\\u6383\\u63CF",
+      elementFinished: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {{count}} \\u689D\\u6587\\u672C\\u3002",
       startSession: "\\u958B\\u59CB\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71",
       stopSession: "\\u505C\\u6B62\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71",
       finished: "\\u6383\\u63CF\\u7D50\\u675F\\uFF0C\\u5171\\u767C\\u73FE {count} \\u689D\\u6587\\u672C",
@@ -4058,21 +4150,33 @@ ${result.join(",\n")}
         svgParseError: "\\u7121\\u6548\\u6216\\u89E3\\u6790\\u5931\\u6557\\u7684 SVG \\u5B57\\u4E32\\uFF1A"
       },
       elementScan: {
-        starting: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u6B63\\u5728\\u555F\\u52D5...",
-        listenersAdded: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u5DF2\\u65B0\\u589E\\u4E8B\\u4EF6\\u76E3\\u807D\\u5668\\u3002",
-        stopping: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u6B63\\u5728\\u505C\\u6B62...",
-        listenersRemoved: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u5DF2\\u79FB\\u9664\\u4E8B\\u4EF6\\u76E3\\u807D\\u5668\\u3002",
-        stateReset: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u72C0\\u614B\\u5DF2\\u91CD\\u8A2D\\u3002",
-        reselecting: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u6B63\\u5728\\u91CD\\u65B0\\u9078\\u64C7\\u5143\\u7D20...",
-        hovering: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u61F8\\u505C\\u5728 {tagName} \\u4E0A",
-        escapePressed: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u6309\\u4E0B 'Escape' \\u9375\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u6383\\u63CF\\u3002",
-        rightClickExit: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u5075\\u6E2C\\u5230\\u53F3\\u9375\\u9EDE\\u64CA\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u6383\\u63CF\\u3002",
-        clickedEnteringAdjust: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u5143\\u7D20\\u88AB\\u9EDE\\u64CA\\uFF0C\\u9032\\u5165\\u8ABF\\u6574\\u6A21\\u5F0F\\u3002\\u76EE\\u6A19\\uFF1A<{tagName}>",
-        pathBuilt: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u5143\\u7D20\\u8DEF\\u5F91\\u5DF2\\u5EFA\\u7ACB\\uFF0C\\u6DF1\\u5EA6\\u70BA\\uFF1A{depth}",
-        adjustingLevel: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u6B63\\u5728\\u8ABF\\u6574\\u9078\\u64C7\\u5C64\\u7D1A\\u81F3 {level}\\uFF0C\\u65B0\\u76EE\\u6A19\\uFF1A<{tagName}>",
-        confirmFailedNoTarget: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u5617\\u8A66\\u78BA\\u8A8D\\uFF0C\\u4F46\\u672A\\u9078\\u64C7\\u4EFB\\u4F55\\u76EE\\u6A19\\u3002",
-        confirmExtracting: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u9078\\u64C7\\u5DF2\\u78BA\\u8A8D\\u3002\\u6B63\\u5728\\u5F9E <{tagName}> \\u63D0\\u53D6\\u6587\\u672C\\u3002",
-        extractedCount: "\\u5143\\u7D20\\u6383\\u63CF\\uFF1A\\u63D0\\u53D6\\u4E86 {count} \\u689D\\u6587\\u672C\\u3002"
+        starting: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5DF2\\u555F\\u52D5\\u3002",
+        stopping: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5DF2\\u505C\\u6B62\\u3002",
+        listenersAdded: "\\u5DF2\\u65B0\\u589E\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u7684\\u5168\\u57DF\\u4E8B\\u4EF6\\u76E3\\u807D\\u5668\\u3002",
+        listenersRemoved: "\\u5DF2\\u79FB\\u9664\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u7684\\u5168\\u57DF\\u4E8B\\u4EF6\\u76E3\\u807D\\u5668\\u3002",
+        stateReset: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u72C0\\u614B\\u5DF2\\u91CD\\u8A2D\\u3002",
+        reselecting: "\\u6B63\\u5728\\u8FD4\\u56DE\\u5143\\u7D20\\u91CD\\u65B0\\u9078\\u64C7\\u6A21\\u5F0F\\u3002",
+        hovering: "\\u7576\\u524D\\u61F8\\u505C\\u65BC <{{tagName}}>\\u3002",
+        escapePressed: "\\u4F7F\\u7528\\u8005\\u6309\\u4E0B Escape \\u9375\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u3002",
+        clickedEnteringAdjust: "\\u5DF2\\u9EDE\\u64CA\\u5143\\u7D20 <{{tagName}}>\\uFF0C\\u9032\\u5165\\u5C64\\u7D1A\\u8ABF\\u6574\\u6A21\\u5F0F\\u3002",
+        pathBuilt: "\\u5143\\u7D20\\u5C64\\u7D1A\\u8DEF\\u5F91\\u5DF2\\u69CB\\u5EFA\\uFF0C\\u6DF1\\u5EA6\\u70BA\\uFF1A{{depth}}\\u3002",
+        adjustingLevel: "\\u6B63\\u5728\\u8ABF\\u6574\\u9078\\u64C7\\u5C64\\u7D1A\\u81F3 {{level}} ({{tagName}})\\u3002",
+        confirmExtracting: "\\u9078\\u64C7\\u5DF2\\u78BA\\u8A8D\\uFF0C\\u6B63\\u5728\\u5F9E <{{tagName}}> \\u63D0\\u53D6\\u6587\\u672C\\u3002",
+        extractedCount: "\\u5DF2\\u5F9E\\u5143\\u7D20\\u4E2D\\u63D0\\u53D6 {{count}} \\u689D\\u539F\\u59CB\\u6587\\u672C\\u3002",
+        confirmFailedNoTarget: "\\u78BA\\u8A8D\\u5931\\u6557\\uFF1A\\u672A\\u9078\\u64C7\\u4EFB\\u4F55\\u76EE\\u6A19\\u5143\\u7D20\\u3002",
+        rightClickExit: "\\u5075\\u6E2C\\u5230\\u53F3\\u9375\\u9EDE\\u64CA\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u3002",
+        processingError: "\\u6587\\u672C\\u8655\\u7406\\u904E\\u7A0B\\u4E2D\\u767C\\u751F\\u932F\\u8AA4: {{error}}",
+        worker: {
+          logPrefix: "[\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker]",
+          starting: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u6B63\\u5728\\u555F\\u52D5...",
+          sendingData: "\\u6B63\\u5728\\u767C\\u9001 {{count}} \\u689D\\u6587\\u672C\\u81F3\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker\\u3002",
+          completed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u8655\\u7406\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {{count}} \\u689D\\u6709\\u6548\\u6587\\u672C\\u3002",
+          initFailed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u521D\\u59CB\\u5316\\u5931\\u6557\\u3002\\u53EF\\u80FD\\u662F\\u7DB2\\u7AD9\\u7684 CSP \\u7B56\\u7565\\u963B\\u6B62\\u4E86 data: URL\\u3002",
+          initSyncError: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u521D\\u59CB\\u5316\\u6642\\u767C\\u751F\\u540C\\u6B65\\u932F\\u8AA4: {{error}}",
+          originalError: "\\u539F\\u59CB Worker \\u932F\\u8AA4: {{error}}"
+        },
+        switchToFallback: "\\u6B63\\u5728\\u70BA\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
+        fallbackFailed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5099\\u9078\\u65B9\\u6848\\u57F7\\u884C\\u5931\\u6557: {{error}}"
       },
       elementScanUI: {
         creatingHighlights: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u9996\\u6B21\\u5EFA\\u7ACB\\u9AD8\\u4EAE\\u5143\\u7D20\\u3002",
@@ -5570,6 +5674,34 @@ ${result.join(",\n")}
       }, 300);
     }
   }
+  var performScanInMainThread2 = (texts, filterRules2, enableDebugLogging) => {
+    const uniqueTexts =  new Set();
+    const mainThreadLog = (message, ...args) => {
+      if (enableDebugLogging) {
+        log(message, ...args);
+      }
+    };
+    if (Array.isArray(texts)) {
+      texts.forEach((rawText) => {
+        if (!rawText || typeof rawText !== "string") return;
+        const normalizedText = rawText.normalize("NFC");
+        const textForFiltering = normalizedText.replace(/(\r\n|\n|\r)+/g, "\n").trim();
+        if (textForFiltering === "") return;
+        const filterResult = shouldFilter(textForFiltering, filterRules2);
+        if (filterResult) {
+          mainThreadLog(t("log.textProcessor.filtered", { text: textForFiltering, reason: filterResult }));
+          return;
+        }
+        uniqueTexts.add(normalizedText.replace(/(\r\n|\n|\r)+/g, "\n"));
+      });
+    }
+    const textsArray = Array.from(uniqueTexts);
+    const formattedText = formatTextsForTranslation(textsArray);
+    return {
+      formattedText,
+      count: textsArray.length
+    };
+  };
   var isActive = false;
   var isAdjusting = false;
   var currentTarget = null;
@@ -5688,25 +5820,1306 @@ ${result.join(",\n")}
       updateHighlight(targetElement);
     }
   }
-  function confirmSelectionAndExtract() {
+  function processTextsWithWorker(texts) {
+    return new Promise((resolve, reject) => {
+      const { filterRules: filterRules2, enableDebugLogging } = loadSettings();
+      const runFallback = () => {
+        log(t("log.elementScan.switchToFallback"));
+        showNotification(t("notifications.cspWorkerWarning"), { type: "info", duration: 5e3 });
+        try {
+          const result = performScanInMainThread2(texts, filterRules2, enableDebugLogging);
+          updateScanCount(result.count, "element");
+          resolve(result);
+        } catch (fallbackError) {
+          log(t("log.elementScan.fallbackFailed", { error: fallbackError.message }), "error");
+          reject(fallbackError);
+        }
+      };
+      try {
+        log(t("log.elementScan.worker.starting"));
+        const workerScript = `(() => {
+  // src/shared/i18n/en.json
+  var en_default = {
+    common: {
+      scan: "Scan",
+      stop: "Stop",
+      resume: "Resume",
+      clear: "Clear",
+      copy: "Copy",
+      save: "Save",
+      discovered: "Discovered:",
+      confirm: "Confirm",
+      cancel: "Cancel",
+      export: "Export",
+      reselect: "Reselect"
+    },
+    export: {
+      exportAsTxt: "Export as TXT",
+      exportAsJson: "Export as JSON",
+      exportAsCsv: "Export as CSV",
+      csv: {
+        id: "ID",
+        original: "Original",
+        translation: "Translation"
+      }
+    },
+    settings: {
+      title: "Settings",
+      theme: "Theme",
+      language: "Language",
+      relatedSettings: "Related Settings",
+      filterRules: "Content Filtering Rules",
+      filters: {
+        numbers: "Filter Numbers/Currency",
+        chinese: "Filter Chinese-Only Text",
+        contains_chinese: "Filter Text Containing Chinese",
+        emoji_only: "Filter Emoji-Only Text",
+        symbols: "Filter Symbol-Only Text",
+        term: "Filter Specific Terms",
+        single_letter: "Filter Single English Letters",
+        repeating_chars: "Filter Repeating Characters",
+        file_paths: "Filter File Paths",
+        hex_color_codes: "Filter Hex Color Codes",
+        email_addresses: "Filter Email Addresses",
+        uuids: "Filter UUIDs",
+        git_commit_hashes: "Filter Git Commit Hashes",
+        website_urls: "Filter Website URLs",
+        website_urls_title: "Filter Website URLs",
+        shorthand_numbers: "Filter Shorthand Numbers",
+        shorthand_numbers_title: "Filter Shorthand Numbers"
+      },
+      display: {
+        show_fab: "Show Floating Button",
+        fab_position: "Floating Button Position",
+        fab_positions: {
+          bottom_right: "Bottom Right",
+          top_right: "Top Right",
+          bottom_left: "Bottom Left",
+          top_left: "Top Left"
+        },
+        show_line_numbers: "Show Line Numbers",
+        show_statistics: "Show Statistics",
+        enable_word_wrap: "Enable Word Wrap",
+        text_truncation_limit: "Enable Text Truncation Limit",
+        character_limit: "Character Limit",
+        show_scan_count: "Enable Scan Count in Title"
+      },
+      advanced: {
+        enable_debug_logging: "Enable Debug Logging"
+      },
+      panel: {
+        title: "Settings Panel"
+      },
+      languages: {
+        en: "English",
+        zh_CN: "\\u7B80\\u4F53\\u4E2D\\u6587",
+        zh_TW: "\\u7E41\\u9AD4\\u4E2D\\u6587"
+      },
+      themes: {
+        light: "Light",
+        dark: "Dark",
+        system: "System"
+      }
+    },
+    scan: {
+      quick: "Quick Scan",
+      session: "Session Scan",
+      elementFinished: "Element scan finished, found {{count}} items.",
+      startSession: "Start Dynamic Scan Session",
+      stopSession: "Stop Dynamic Scan Session",
+      finished: "Scan finished, found {count} items.",
+      quickFinished: "Quick scan finished, found {count} items.",
+      sessionStarted: "Session scan started.",
+      sessionInProgress: "Scan in progress...",
+      truncationWarning: "To maintain UI fluency, only a portion of the text is displayed here. The full content will be available upon export."
+    },
+    results: {
+      title: "Extracted Text",
+      scanCountSession: "Scanned {count} items",
+      scanCountStatic: "Total {count} items scanned",
+      totalCharacters: "Total Characters",
+      totalLines: "Total Lines",
+      noSummary: "No summary available",
+      stats: {
+        lines: "Lines",
+        chars: "Chars"
+      }
+    },
+    notifications: {
+      copiedToClipboard: "Copied to clipboard!",
+      settingsSaved: "Settings saved!",
+      modalInitError: "Modal not initialized.",
+      nothingToCopy: "Nothing to copy.",
+      contentCleared: "Content cleared.",
+      noTextSelected: "No text selected.",
+      cspWorkerWarning: "Switched to compatibility scan mode due to website security restrictions."
+    },
+    placeholders: {
+      click: "Click ",
+      dynamicScan: "[Dynamic Scan]",
+      startNewScanSession: " to start a new scan session",
+      staticScan: "[Static Scan]",
+      performOneTimeScan: " to perform a one-time quick extraction"
+    },
+    confirmation: {
+      clear: "Are you sure you want to clear the content? This action cannot be undone."
+    },
+    tooltip: {
+      summary: "View Summary",
+      dynamic_scan: "Dynamic Scan",
+      static_scan: "Static Scan",
+      element_scan: "Element Scan",
+      filters: {
+        title: "Content Filter Explanation",
+        numbers: 'This rule filters out text that consists <strong>entirely</strong> of numbers, spaces, thousand separators (.), decimal points (,), and some currency symbols ($, \\u20AC, \\xA3, \\xA5).<br><br><strong>More Examples:</strong><br>\\u2022 "1,234.56"<br>\\u2022 "\\xA5999"<br>\\u2022 "\\u20AC200"<br>\\u2022 "$ 100"',
+        chinese: 'This rule filters out text that consists <strong>entirely</strong> of Chinese characters and spaces, excluding any punctuation.<br><br><strong>Examples:</strong><br>\\u2022 "\\u4F60\\u597D \\u4E16\\u754C" (will be filtered)<br>\\u2022 "\\u4F60\\u597D\\uFF0C\\u4E16\\u754C" (will not be filtered)',
+        contains_chinese: \`This rule filters out <strong>any</strong> text that contains at least one Chinese character, regardless of other characters.<br><br><strong>Examples:</strong><br>\\u2022 "\\u4F60\\u597D World" (will be filtered)<br>\\u2022 "Chapter 1" (will be filtered, as '\\u7B2C 1 \\u7AE0' contains '\\u7B2C' and '\\u7AE0')\`,
+        emoji_only: 'This rule filters out text that consists <strong>entirely</strong> of one or more emoji characters and spaces.<br><br><strong>Examples:</strong><br>\\u2022 "\\u{1F44D}"<br>\\u2022 "\\u{1F60A} \\u{1F389} \\u{1F680}"',
+        symbols: 'This rule filters out text that consists <strong>entirely</strong> of various punctuation and symbols.<br><br><strong>More Examples:</strong><br>\\u2022 "@#*&^%"<br>\\u2022 "()[]{}"<br>\\u2022 "---...---"',
+        term: 'This rule filters out common UI terms that typically do not require translation.<br><br><strong>More Examples:</strong><br>\\u2022 "OK", "Cancel", "Submit"<br>\\u2022 "Login", "Settings", "Help"',
+        single_letter: 'This rule filters out text consisting of a <strong>single</strong> English letter, case-insensitive.<br><br><strong>Examples:</strong><br>\\u2022 "A" (will be filtered)<br>\\u2022 "b" (will be filtered)<br>\\u2022 "AB" (will not be filtered)',
+        repeating_chars: 'This rule filters out text composed of the <strong>same character</strong> repeating 2 or more times consecutively.<br><br><strong>Examples:</strong><br>\\u2022 "aa"<br>\\u2022 "======"<br>\\u2022 "bbbbb"',
+        file_paths: 'This rule attempts to identify and filter out text that resembles an operating system file path and <strong>includes a file extension</strong>. It does not match URLs.<br><br><strong>More Examples:</strong><br>\\u2022 "/path/to/file.js"<br>\\u2022 "C:\\\\Users\\\\Test\\\\document.docx"<br>\\u2022 "./config.json"',
+        hex_color_codes: 'This rule filters out standard CSS hexadecimal color codes (3, 4, 6, or 8 digits, the latter including an alpha channel).<br><br><strong>Examples:</strong><br>\\u2022 "#FFFFFF"<br>\\u2022 "#ff0000"<br>\\u2022 "#f0c"<br>\\u2022 "#f0c8" (4-digit)<br>\\u2022 "#ff000080" (8-digit)',
+        email_addresses: 'This rule filters out text that matches the standard format of an email address.<br><br><strong>Examples:</strong><br>\\u2022 "example@domain.com"<br>\\u2022 "user.name@sub.domain.org"',
+        uuids: 'This rule filters out Universally Unique Identifiers (UUIDs).<br><br><strong>Example:</strong><br>\\u2022 "123e4567-e89b-12d3-a456-426614174000"',
+        git_commit_hashes: 'This rule filters out standard Git commit hashes (long or short).<br><br><strong>Examples:</strong><br>\\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\\u2022 "a1b2c3d"',
+        website_urls: 'This rule filters out text that is a <strong>standalone URL</strong>. It is designed to be strict to avoid accidentally removing text that is not a link.<br><br><strong>More Examples:</strong><br>\\u2022 "https://www.example.com"<br>\\u2022 "http://test.co.uk"<br>\\u2022 "www.google.com"<br>\\u2022 "example.org"',
+        shorthand_numbers: 'This rule filters out numbers that use <strong>common shorthand suffixes</strong> for thousands (k), millions (m), or billions (b), case-insensitive.<br><br><strong>More Examples:</strong><br>\\u2022 "1.2k"<br>\\u2022 "15M"<br>\\u2022 "2.5b"<br>\\u2022 "100K"'
+      },
+      display: {
+        title: "Display Settings Explanation",
+        show_fab: "Control whether to display the <strong>Floating Action Button (FAB)</strong> in the bottom-right corner of webpages. This serves as the primary entry point for both static and dynamic text extraction. <br><br>If you disable this button, you can re-enable it via the settings panel in the Tampermonkey extension menu.",
+        show_scan_count: "When enabled, the title bar of the results window will show a <strong>real-time count</strong> of the total text items found in the current scan. This is especially useful for monitoring the progress of a long-running <strong>Dynamic Scan</strong>.",
+        show_line_numbers: "Displays line numbers to the left of the text area in the results window. This provides a <strong>precise reference point</strong> when you need to discuss or note a specific line of text.",
+        show_statistics: "Displays <strong>real-time statistics</strong> about the extracted content in the status bar at the bottom of the results window, including <strong>total lines</strong> and <strong>total characters</strong>. This helps you quickly assess the volume of the content.",
+        enable_word_wrap: "Controls how long lines of text are displayed in the results window.<br><br>\\u2022 <strong>Enabled:</strong> Long lines will wrap to fit the window's width.<br>\\u2022 <strong>Disabled:</strong> Long lines will remain on a single line, causing a horizontal scrollbar to appear.",
+        text_truncation_limit: "This is a <strong>performance-saving</strong> feature. If the script extracts an <strong>extremely long single line of text</strong> (e.g., a base64 encoded image), it could cause the browser to <strong>lag or become unresponsive</strong>.<br><br>This setting truncates any single line exceeding the specified length to ensure the UI remains smooth. <strong>Note: This only affects the display; the exported file will still contain the full, untruncated content.</strong>"
+      },
+      advanced: {
+        title: "Advanced Settings Explanation",
+        enable_debug_logging: "When enabled, the script will output detailed internal status, execution steps, and error messages to the browser's <strong>Developer Tools Console</strong> (usually opened with F12). This is primarily for developers or users who need to submit detailed bug reports."
+      }
+    },
+    log: {
+      prefix: "[Text Extractor Script-Debug]",
+      language: {
+        switched: "Language switched to: {{lang}}",
+        notFound: "Language '{{lang}}' not found, falling back to 'en'."
+      },
+      settings: {
+        changed: "Setting '{{key}}' changed from '{{oldValue}}' to '{{newValue}}'",
+        filterRuleChanged: {
+          enabled: "Filter rule '{{key}}' has been enabled",
+          disabled: "Filter rule '{{key}}' has been disabled"
+        },
+        panel: {
+          opening: "Opening settings panel...",
+          closing: "Closing settings panel...",
+          saving: "Saving settings..."
+        },
+        parseError: "Error parsing saved settings:",
+        invalidObject: "Attempted to save an invalid object for settings:"
+      },
+      textProcessor: {
+        filtered: 'Text filtered: "{{text}}" (Reason: {{reason}})'
+      },
+      quickScan: {
+        switchToFallback: "[Quick Scan] Switching to main thread fallback.",
+        fallbackFailed: "[Quick Scan] Main thread fallback failed: {{error}}",
+        fallback: {
+          starting: "[Quick Scan - Fallback] Starting processing in main thread...",
+          completed: "[Quick Scan - Fallback] Processing complete, found {{count}} unique texts."
+        },
+        worker: {
+          logPrefix: "[Quick Scan Worker]",
+          starting: "[Quick Scan] Starting execution, attempting to use Web Worker...",
+          completed: "[Quick Scan] Worker processing successful, received {{count}} texts.",
+          scanComplete: "[Quick Scan Worker] Processing complete, found {{count}} unique texts. Sending back to main thread...",
+          initFailed: "[Quick Scan] Worker initialization failed. This is likely due to the website's Content Security Policy (CSP).",
+          originalError: "[Quick Scan] Original error: {{error}}",
+          sendingData: "[Quick Scan] Web Worker created, sending {{count}} texts for processing...",
+          initSyncError: "[Quick Scan] Synchronous error during Worker initialization: {{error}}"
+        }
+      },
+      sessionScan: {
+        switchToFallback: "[Session Scan] Switching to main thread fallback.",
+        domObserver: {
+          stopped: "[Session Scan] Stopped listening for DOM changes."
+        },
+        fallback: {
+          initialized: "[Session Scan - Fallback] Initialized.",
+          cleared: "[Session Scan - Fallback] Data cleared."
+        },
+        worker: {
+          logPrefix: "[Session Scan Worker]",
+          starting: "Session Scan: Attempting to start Web Worker...",
+          initFailed: "[Session Scan] Worker initialization failed. This is likely due to the website's Content Security Policy (CSP).",
+          originalError: "[Session Scan] Original error: {{error}}",
+          initialized: "[Session Scan] Worker initialized successfully, sent {{count}} initial texts to start the session.",
+          initSyncError: "[Session Scan] Synchronous error during Worker initialization: {{error}}",
+          clearCommandSent: "[Session Scan] Clear command sent to worker."
+        }
+      },
+      ui: {
+        copyButton: {
+          copied: "Copy button clicked, copied {{count}} characters.",
+          nothingToCopy: "Copy button clicked, but there was no content to copy or the button was disabled."
+        },
+        confirmationModal: {
+          sessionScan: {
+            confirmed: "User confirmed clearing session scan texts, invoking callback..."
+          },
+          quickScan: {
+            confirmed: "User confirmed clearing quick scan texts."
+          },
+          cancelled: "User cancelled the clear operation."
+        },
+        modal: {
+          opening: "Opening main modal...",
+          closing: "Closing main modal...",
+          scanFailed: "Static scan failed: {{error}}",
+          clearContent: "Clear content button clicked."
+        }
+      },
+      exporter: {
+        buttonClicked: "Export button clicked, format: {{format}}.",
+        csvError: "Error while parsing text and generating CSV: {{error}}",
+        fileExported: "File exported: {{filename}}",
+        noContent: "No content to export.",
+        unknownFormat: "Unknown export format: {{format}}"
+      },
+      main: {
+        requestingSessionScanData: "Requesting full data from session-scan mode...",
+        exportingQuickScanData: "Exporting full data from quick-scan mode's memory...",
+        inIframe: "Script is in an iframe, skipping initialization.",
+        initializing: "Script initialization started...",
+        initialSettingsLoaded: "Initial settings loaded:"
+      },
+      dom: {
+        ttpCreationError: "Failed to create Trusted Type policy:",
+        svgParseError: "Invalid or failed to parse SVG string:"
+      },
+      elementScan: {
+        starting: "Element Scan started.",
+        stopping: "Element Scan stopped.",
+        listenersAdded: "Global event listeners for element scan added.",
+        listenersRemoved: "Global event listeners for element scan removed.",
+        stateReset: "Element scan state has been reset.",
+        reselecting: "Returning to element reselection mode.",
+        hovering: "Hovering over <{{tagName}}>.",
+        escapePressed: "Escape key pressed, stopping element scan.",
+        clickedEnteringAdjust: "Element <{{tagName}}> clicked, entering adjustment mode.",
+        pathBuilt: "Element path built, depth: {{depth}}.",
+        adjustingLevel: "Adjusting selection level to {{level}} ({{tagName}}).",
+        confirmExtracting: "Selection confirmed, extracting text from <{{tagName}}>.",
+        extractedCount: "Extracted {{count}} raw text fragments from element.",
+        confirmFailedNoTarget: "Confirmation failed: no target element selected.",
+        rightClickExit: "Right-click detected, stopping element scan.",
+        processingError: "An error occurred during text processing: {{error}}",
+        worker: {
+          logPrefix: "[ES Worker]",
+          starting: "Element Scan Worker is starting...",
+          sendingData: "Sending {{count}} text fragments to Element Scan Worker.",
+          completed: "Element Scan Worker completed, found {{count}} unique texts.",
+          initFailed: "Element Scan Worker initialization failed. The browser's CSP might be blocking data: URLs.",
+          initSyncError: "Synchronous error during Element Scan Worker initialization: {{error}}",
+          originalError: "Original worker error: {{error}}"
+        },
+        switchToFallback: "Switching to main thread fallback for Element Scan.",
+        fallbackFailed: "Element Scan fallback mode failed: {{error}}"
+      },
+      elementScanUI: {
+        creatingHighlights: "Element Scan UI: Creating highlight elements for the first time.",
+        updatingHighlight: "Element Scan UI: Updating highlight for <{tagName}>",
+        creatingToolbar: "Element Scan UI: Creating adjustment toolbar.",
+        toolbarPositioned: "Element Scan UI: Toolbar positioned at",
+        sliderChanged: "Element Scan UI: Slider changed to level {level}",
+        reselectClicked: "Element Scan UI: 'Reselect' button clicked.",
+        cancelClicked: "Element Scan UI: 'Cancel' button clicked.",
+        confirmClicked: "Element Scan UI: 'Confirm' button clicked.",
+        dragStarted: "Element Scan UI: Drag started.",
+        dragEnded: "Element Scan UI: Drag ended.",
+        cleaningHighlights: "Element Scan UI: Cleaning up highlight elements.",
+        cleaningToolbar: "Element Scan UI: Cleaning up toolbar."
+      },
+      eventBus: {
+        callbackError: "Error in callback for event '{{eventName}}':"
+      },
+      trustedTypes: {
+        workerPolicyError: "Failed to create Trusted Types worker policy:",
+        htmlPolicyError: "Failed to create Trusted Types HTML policy:",
+        defaultWorkerPolicyWarning: "Trusted Types default policy failed for worker URL, falling back to raw URL.",
+        defaultHtmlPolicyWarning: "Trusted Types default policy failed for HTML, falling back to raw string."
+      }
+    }
+  };
+  // src/shared/i18n/zh-CN.json
+  var zh_CN_default = {
+    common: {
+      scan: "\\u626B\\u63CF",
+      stop: "\\u505C\\u6B62",
+      resume: "\\u7EE7\\u7EED",
+      clear: "\\u6E05\\u7A7A",
+      copy: "\\u590D\\u5236",
+      save: "\\u4FDD\\u5B58",
+      discovered: "\\u5DF2\\u53D1\\u73B0\\uFF1A",
+      confirm: "\\u786E\\u8BA4",
+      cancel: "\\u53D6\\u6D88",
+      export: "\\u5BFC\\u51FA",
+      reselect: "\\u91CD\\u65B0\\u9009\\u62E9"
+    },
+    export: {
+      exportAsTxt: "\\u5BFC\\u51FA\\u4E3A TXT",
+      exportAsJson: "\\u5BFC\\u51FA\\u4E3A JSON",
+      exportAsCsv: "\\u5BFC\\u51FA\\u4E3A CSV",
+      csv: {
+        id: "ID",
+        original: "\\u539F\\u6587",
+        translation: "\\u8BD1\\u6587"
+      }
+    },
+    settings: {
+      title: "\\u8BBE\\u7F6E",
+      theme: "\\u754C\\u9762\\u4E3B\\u9898",
+      language: "\\u8BED\\u8A00\\u8BBE\\u7F6E",
+      relatedSettings: "\\u76F8\\u5173\\u8BBE\\u7F6E",
+      filterRules: "\\u5185\\u5BB9\\u8FC7\\u6EE4\\u89C4\\u5219",
+      filters: {
+        numbers: "\\u8FC7\\u6EE4\\u7EAF\\u6570\\u5B57/\\u8D27\\u5E01",
+        chinese: "\\u8FC7\\u6EE4\\u7EAF\\u4E2D\\u6587",
+        contains_chinese: "\\u8FC7\\u6EE4\\u5305\\u542B\\u4E2D\\u6587\\u7684\\u6587\\u672C",
+        emoji_only: "\\u8FC7\\u6EE4\\u7EAF\\u8868\\u60C5\\u7B26\\u53F7",
+        symbols: "\\u8FC7\\u6EE4\\u7EAF\\u7B26\\u53F7",
+        term: "\\u8FC7\\u6EE4\\u7279\\u5B9A\\u672F\\u8BED",
+        single_letter: "\\u8FC7\\u6EE4\\u7EAF\\u5355\\u4E2A\\u82F1\\u6587\\u5B57\\u6BCD",
+        repeating_chars: "\\u8FC7\\u6EE4\\u5355\\u4E00\\u91CD\\u590D\\u5B57\\u7B26",
+        file_paths: "\\u8FC7\\u6EE4\\u6587\\u4EF6\\u8DEF\\u5F84",
+        hex_color_codes: "\\u8FC7\\u6EE4\\u5341\\u516D\\u8FDB\\u5236\\u989C\\u8272",
+        email_addresses: "\\u8FC7\\u6EE4\\u90AE\\u4EF6\\u5730\\u5740",
+        uuids: "\\u8FC7\\u6EE4 UUID",
+        git_commit_hashes: "\\u8FC7\\u6EE4 Git \\u63D0\\u4EA4\\u54C8\\u5E0C\\u503C",
+        website_urls: "\\u8FC7\\u6EE4\\u7F51\\u5740",
+        website_urls_title: "\\u8FC7\\u6EE4\\u7F51\\u5740 (URL)",
+        shorthand_numbers: "\\u8FC7\\u6EE4\\u7B80\\u5199\\u6570\\u5B57",
+        shorthand_numbers_title: "\\u8FC7\\u6EE4\\u5E26\\u5355\\u4F4D\\u7684\\u7B80\\u5199\\u6570\\u5B57"
+      },
+      display: {
+        show_fab: "\\u663E\\u793A\\u60AC\\u6D6E\\u6309\\u94AE",
+        fab_position: "\\u60AC\\u6D6E\\u6309\\u94AE\\u4F4D\\u7F6E",
+        fab_positions: {
+          bottom_right: "\\u53F3\\u4E0B\\u89D2",
+          top_right: "\\u53F3\\u4E0A\\u89D2",
+          bottom_left: "\\u5DE6\\u4E0B\\u89D2",
+          top_left: "\\u5DE6\\u4E0A\\u89D2"
+        },
+        show_line_numbers: "\\u663E\\u793A\\u884C\\u53F7",
+        show_statistics: "\\u663E\\u793A\\u7EDF\\u8BA1\\u4FE1\\u606F",
+        enable_word_wrap: "\\u542F\\u7528\\u6587\\u672C\\u81EA\\u52A8\\u6362\\u884C",
+        text_truncation_limit: "\\u542F\\u7528\\u6587\\u672C\\u6846\\u5B57\\u7B26\\u9650\\u5236",
+        character_limit: "\\u5B57\\u7B26\\u6570",
+        show_scan_count: "\\u542F\\u7528\\u6807\\u9898\\u680F\\u663E\\u793A\\u626B\\u63CF\\u8BA1\\u6570"
+      },
+      advanced: {
+        enable_debug_logging: "\\u542F\\u7528\\u8C03\\u8BD5\\u65E5\\u5FD7"
+      },
+      panel: {
+        title: "\\u8BBE\\u7F6E\\u9762\\u677F"
+      },
+      languages: {
+        en: "English",
+        zh_CN: "\\u7B80\\u4F53\\u4E2D\\u6587",
+        zh_TW: "\\u7E41\\u9AD4\\u4E2D\\u6587"
+      },
+      themes: {
+        light: "\\u6D45\\u8272",
+        dark: "\\u6DF1\\u8272",
+        system: "\\u8DDF\\u968F\\u7CFB\\u7EDF"
+      }
+    },
+    scan: {
+      quick: "\\u5FEB\\u901F\\u626B\\u63CF",
+      session: "\\u4F1A\\u8BDD\\u626B\\u63CF",
+      elementFinished: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {{count}} \\u6761\\u6587\\u672C\\u3002",
+      startSession: "\\u5F00\\u59CB\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD",
+      stopSession: "\\u505C\\u6B62\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD",
+      finished: "\\u626B\\u63CF\\u7ED3\\u675F\\uFF0C\\u5171\\u53D1\\u73B0 {count} \\u6761\\u6587\\u672C",
+      quickFinished: "\\u5FEB\\u6377\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {count} \\u6761\\u6587\\u672C",
+      sessionStarted: "\\u4F1A\\u8BDD\\u626B\\u63CF\\u5DF2\\u5F00\\u59CB",
+      sessionInProgress: "\\u626B\\u63CF\\u6B63\\u5728\\u8FDB\\u884C\\u4E2D...",
+      truncationWarning: "\\u4E3A\\u4FDD\\u6301\\u754C\\u9762\\u6D41\\u7545\\uFF0C\\u6B64\\u5904\\u4EC5\\u663E\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u5B8C\\u6574\\u5185\\u5BB9\\u5C06\\u5728\\u5BFC\\u51FA\\u65F6\\u63D0\\u4F9B\\u3002"
+    },
+    results: {
+      title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",
+      scanCountSession: "\\u5DF2\\u626B\\u63CF {count} \\u6761\\u6587\\u672C",
+      scanCountStatic: "\\u5171\\u626B\\u63CF {count} \\u6761\\u6587\\u672C",
+      totalCharacters: "\\u603B\\u5B57\\u6570",
+      totalLines: "\\u603B\\u884C\\u6570",
+      noSummary: "\\u5F53\\u524D\\u6CA1\\u6709\\u603B\\u7ED3\\u6587\\u672C",
+      stats: {
+        lines: "\\u884C",
+        chars: "\\u5B57\\u7B26\\u6570"
+      }
+    },
+    notifications: {
+      copiedToClipboard: "\\u5DF2\\u590D\\u5236\\u5230\\u526A\\u8D34\\u677F!",
+      settingsSaved: "\\u8BBE\\u7F6E\\u5DF2\\u4FDD\\u5B58\\uFF01",
+      modalInitError: "\\u6A21\\u6001\\u6846\\u5C1A\\u672A\\u521D\\u59CB\\u5316\\u3002",
+      nothingToCopy: "\\u6C92\\u6709\\u5167\\u5BB9\\u53EF\\u8907\\u88FD",
+      contentCleared: "\\u5185\\u5BB9\\u5DF2\\u6E05\\u7A7A",
+      noTextSelected: "\\u672A\\u9009\\u62E9\\u6587\\u672C",
+      cspWorkerWarning: "\\u7531\\u4E8E\\u7F51\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u6362\\u5230\\u517C\\u5BB9\\u626B\\u63CF\\u6A21\\u5F0F\\u3002"
+    },
+    placeholders: {
+      click: "\\u70B9\\u51FB ",
+      dynamicScan: "[\\u52A8\\u6001\\u626B\\u63CF]",
+      startNewScanSession: " \\u6309\\u94AE\\u5F00\\u59CB\\u4E00\\u4E2A\\u65B0\\u7684\\u626B\\u63CF\\u4F1A\\u8BDD",
+      staticScan: "[\\u9759\\u6001\\u626B\\u63CF]",
+      performOneTimeScan: " \\u6309\\u94AE\\u53EF\\u8FDB\\u884C\\u4E00\\u6B21\\u6027\\u7684\\u5FEB\\u6377\\u63D0\\u53D6"
+    },
+    confirmation: {
+      clear: "\\u4F60\\u786E\\u8BA4\\u8981\\u6E05\\u7A7A\\u5417\\uFF1F\\u6B64\\u64CD\\u4F5C\\u4E0D\\u53EF\\u64A4\\u9500\\u3002"
+    },
+    tooltip: {
+      summary: "\\u67E5\\u770B\\u603B\\u7ED3",
+      dynamic_scan: "\\u52A8\\u6001\\u626B\\u63CF",
+      static_scan: "\\u9759\\u6001\\u626B\\u63CF",
+      element_scan: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF",
+      filters: {
+        title: "\\u5185\\u5BB9\\u8FC7\\u6EE4\\u5668\\u8BF4\\u660E",
+        numbers: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u6570\\u5B57\\u3001\\u7A7A\\u683C\\u3001\\u5343\\u4F4D\\u5206\\u9694\\u7B26 (.)\\u3001\\u5C0F\\u6570\\u70B9 (,) \\u4EE5\\u53CA\\u90E8\\u5206\\u8D27\\u5E01\\u7B26\\u53F7 ($, \\u20AC, \\xA3, \\xA5) \\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "1,234.56"<br>\\u2022 "\\xA5999"<br>\\u2022 "\\u20AC200"<br>\\u2022 "$ 100"',
+        chinese: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u4E2D\\u6587\\u5B57\\u7B26\\u548C\\u7A7A\\u683C\\u7EC4\\u6210\\u7684\\u6587\\u672C\\uFF0C\\u4E0D\\u5305\\u62EC\\u4EFB\\u4F55\\u6807\\u70B9\\u7B26\\u53F7\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "\\u4F60\\u597D \\u4E16\\u754C" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "\\u4F60\\u597D\\uFF0C\\u4E16\\u754C" (\\u4E0D\\u4F1A\\u88AB\\u8FC7\\u6EE4)',
+        contains_chinese: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389<strong>\\u4EFB\\u4F55\\u5305\\u542B</strong>\\u81F3\\u5C11\\u4E00\\u4E2A\\u4E2D\\u6587\\u5B57\\u7B26\\u7684\\u6587\\u672C\\uFF0C\\u65E0\\u8BBA\\u662F\\u5426\\u5305\\u542B\\u5176\\u4ED6\\u5B57\\u7B26\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "\\u4F60\\u597D World" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "\\u7B2C 1 \\u7AE0" (\\u5C06\\u88AB\\u8FC7\\u6EE4)',
+        emoji_only: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u4E00\\u4E2A\\u6216\\u591A\\u4E2A\\u8868\\u60C5\\u7B26\\u53F7\\u53CA\\u7A7A\\u683C\\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "\\u{1F44D}"<br>\\u2022 "\\u{1F60A} \\u{1F389} \\u{1F680}"',
+        symbols: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u5404\\u7C7B\\u6807\\u70B9\\u548C\\u7B26\\u53F7\\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "@#*&^%"<br>\\u2022 "()[]{}"<br>\\u2022 "---...---"',
+        term: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u5E38\\u89C1\\u7684\\u3001\\u901A\\u5E38\\u65E0\\u9700\\u7FFB\\u8BD1\\u7684 UI \\u672F\\u8BED\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "OK", "Cancel", "Submit"<br>\\u2022 "Login", "Settings", "Help"',
+        single_letter: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u7531<strong>\\u5355\\u4E2A</strong>\\u82F1\\u6587\\u5B57\\u6BCD\\u7EC4\\u6210\\u7684\\u6587\\u672C\\uFF0C\\u5FFD\\u7565\\u5927\\u5C0F\\u5199\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "A" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "b" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "AB" (\\u4E0D\\u4F1A\\u88AB\\u8FC7\\u6EE4)',
+        repeating_chars: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u7531<strong>\\u540C\\u4E00\\u4E2A\\u5B57\\u7B26</strong>\\u8FDE\\u7EED\\u91CD\\u590D 2 \\u6B21\\u6216\\u4EE5\\u4E0A\\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "aa"<br>\\u2022 "======"<br>\\u2022 "bbbbb"',
+        file_paths: '\\u6B64\\u89C4\\u5219\\u4F1A\\u5C1D\\u8BD5\\u8BC6\\u522B\\u5E76\\u8FC7\\u6EE4\\u6389\\u7C7B\\u4F3C\\u64CD\\u4F5C\\u7CFB\\u7EDF\\u7684\\u3001\\u4E14<strong>\\u5305\\u542B\\u6587\\u4EF6\\u6269\\u5C55\\u540D</strong>\\u7684\\u6587\\u4EF6\\u8DEF\\u5F84\\uFF0C\\u4F46\\u5B83\\u4E0D\\u4F1A\\u5339\\u914D URL\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "/path/to/file.js"<br>\\u2022 "C:\\\\Users\\\\Test\\\\document.docx"<br>\\u2022 "./config.json"',
+        hex_color_codes: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u6807\\u51C6\\u7684 CSS \\u5341\\u516D\\u8FDB\\u5236\\u989C\\u8272\\u4EE3\\u7801\\uFF083\\u30014\\u30016 \\u6216 8 \\u4F4D\\uFF0C\\u540E\\u8005\\u53EF\\u5305\\u542B Alpha \\u901A\\u9053\\uFF09\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "#FFFFFF"<br>\\u2022 "#ff0000"<br>\\u2022 "#f0c"<br>\\u2022 "#f0c8" (4\\u4F4D)<br>\\u2022 "#ff000080" (8\\u4F4D)',
+        email_addresses: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u7B26\\u5408\\u6807\\u51C6\\u683C\\u5F0F\\u7684\\u7535\\u5B50\\u90AE\\u4EF6\\u5730\\u5740\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "example@domain.com"<br>\\u2022 "user.name@sub.domain.org"',
+        uuids: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u901A\\u7528\\u552F\\u4E00\\u6807\\u8BC6\\u7B26 (UUID)\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "123e4567-e89b-12d3-a456-426614174000"',
+        git_commit_hashes: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u6807\\u51C6\\u7684 Git \\u63D0\\u4EA4\\u54C8\\u5E0C\\u503C\\uFF08\\u957F\\u54C8\\u5E0C\\u6216\\u77ED\\u54C8\\u5E0C\\uFF09\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\\u2022 "a1b2c3d"',
+        website_urls: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389<strong>\\u72EC\\u7ACB\\u7684 URL</strong> \\u6587\\u672C\\u3002\\u5B83\\u7684\\u5339\\u914D\\u89C4\\u5219\\u88AB\\u8BBE\\u8BA1\\u5F97\\u975E\\u5E38\\u4E25\\u683C\\uFF0C\\u4EE5\\u907F\\u514D\\u610F\\u5916\\u79FB\\u9664\\u4E0D\\u662F\\u94FE\\u63A5\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "https://www.example.com"<br>\\u2022 "http://test.co.uk"<br>\\u2022 "www.google.com"<br>\\u2022 "example.org"',
+        shorthand_numbers: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u4F7F\\u7528<strong>\\u5E38\\u89C1\\u7B80\\u5199\\u540E\\u7F00</strong>\\u7684\\u6570\\u5B57\\uFF0C\\u4F8B\\u5982 k (\\u5343)\\u3001m (\\u767E\\u4E07) \\u6216 b (\\u5341\\u4EBF)\\uFF0C\\u4E0D\\u533A\\u5206\\u5927\\u5C0F\\u5199\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "1.2k"<br>\\u2022 "15M"<br>\\u2022 "2.5b"<br>\\u2022 "100K"'
+      },
+      display: {
+        title: "\\u663E\\u793A\\u8BBE\\u7F6E\\u8BF4\\u660E",
+        show_fab: "\\u63A7\\u5236\\u662F\\u5426\\u5728\\u7F51\\u9875\\u53F3\\u4E0B\\u89D2\\u663E\\u793A<strong>\\u60AC\\u6D6E\\u52A8\\u4F5C\\u6309\\u94AE (FAB)</strong>\\u3002\\u8FD9\\u662F\\u9759\\u6001\\u6587\\u672C\\u63D0\\u53D6\\u3001\\u52A8\\u6001\\u6587\\u672C\\u63D0\\u53D6\\u7684\\u6838\\u5FC3\\u5165\\u53E3\\u3002<br><br>\\u5982\\u679C\\u60A8\\u7981\\u7528\\u4E86\\u6B64\\u6309\\u94AE\\uFF0C\\u53EF\\u4EE5\\u901A\\u8FC7\\u6CB9\\u7334\\u6269\\u5C55\\u83DC\\u5355\\u7684\\u8BBE\\u7F6E\\u9762\\u677F\\u91CD\\u65B0\\u6253\\u5F00\\u3002",
+        show_scan_count: "\\u542F\\u7528\\u540E\\uFF0C\\u5728\\u7ED3\\u679C\\u7A97\\u53E3\\u7684\\u6807\\u9898\\u680F\\u4F1A<strong>\\u5B9E\\u65F6\\u66F4\\u65B0</strong>\\u672C\\u6B21\\u626B\\u63CF\\u53D1\\u73B0\\u7684\\u6587\\u672C\\u6761\\u76EE\\u603B\\u6570\\u3002\\u5728\\u8FDB\\u884C\\u957F\\u65F6\\u95F4\\u7684<strong>\\u52A8\\u6001\\u626B\\u63CF</strong>\\u65F6\\uFF0C\\u8FD9\\u4E2A\\u8BA1\\u6570\\u5668\\u53EF\\u4EE5\\u5F88\\u76F4\\u89C2\\u5730\\u53CD\\u6620\\u626B\\u63CF\\u8FDB\\u5EA6\\u3002",
+        show_line_numbers: "\\u5728\\u7ED3\\u679C\\u7A97\\u53E3\\u7684\\u6587\\u672C\\u533A\\u57DF\\u5DE6\\u4FA7\\u663E\\u793A\\u884C\\u53F7\\u3002\\u5F53\\u60A8\\u9700\\u8981\\u4E0E\\u4ED6\\u4EBA\\u8BA8\\u8BBA\\u6216\\u8BB0\\u5F55\\u7279\\u5B9A\\u67D0\\u884C\\u6587\\u672C\\u65F6\\uFF0C\\u884C\\u53F7\\u53EF\\u4EE5\\u63D0\\u4F9B\\u4E00\\u4E2A<strong>\\u7CBE\\u786E\\u7684\\u5B9A\\u4F4D\\u6807\\u8BB0</strong>\\u3002",
+        show_statistics: "\\u5728\\u7ED3\\u679C\\u7A97\\u53E3\\u5E95\\u90E8\\u7684\\u72B6\\u6001\\u680F\\u663E\\u793A\\u5F53\\u524D\\u5DF2\\u63D0\\u53D6\\u5185\\u5BB9\\u7684<strong>\\u5B9E\\u65F6\\u7EDF\\u8BA1</strong>\\uFF0C\\u5305\\u62EC<strong>\\u603B\\u884C\\u6570</strong>\\u548C<strong>\\u603B\\u5B57\\u7B26\\u6570</strong>\\u3002\\u8FD9\\u53EF\\u4EE5\\u5E2E\\u52A9\\u60A8\\u5FEB\\u901F\\u8BC4\\u4F30\\u63D0\\u53D6\\u5185\\u5BB9\\u7684\\u89C4\\u6A21\\u3002",
+        enable_word_wrap: "\\u63A7\\u5236\\u7ED3\\u679C\\u7A97\\u53E3\\u4E2D\\u7684\\u957F\\u6587\\u672C\\u884C\\u5982\\u4F55\\u663E\\u793A\\u3002<br><br>\\u2022 <strong>\\u542F\\u7528\\uFF1A</strong>\\u957F\\u6587\\u672C\\u5C06\\u81EA\\u52A8\\u6362\\u884C\\u4EE5\\u9002\\u5E94\\u7A97\\u53E3\\u5BBD\\u5EA6\\u3002<br>\\u2022 <strong>\\u7981\\u7528\\uFF1A</strong>\\u957F\\u6587\\u672C\\u5C06\\u4FDD\\u6301\\u5728\\u5355\\u884C\\uFF0C\\u5E76\\u51FA\\u73B0\\u6C34\\u5E73\\u6EDA\\u52A8\\u6761\\u3002",
+        text_truncation_limit: "\\u8FD9\\u662F\\u4E00\\u4E2A<strong>\\u6027\\u80FD\\u4FDD\\u62A4</strong>\\u673A\\u5236\\u3002\\u5F53\\u811A\\u672C\\u63D0\\u53D6\\u5230<strong>\\u5355\\u884C\\u8D85\\u957F\\u6587\\u672C</strong>\\uFF08\\u4F8B\\u5982\\uFF0C\\u4E00\\u4E2A\\u5B8C\\u6574\\u7684 base64 \\u7F16\\u7801\\u56FE\\u7247\\uFF09\\u65F6\\uFF0C\\u82E5\\u4E0D\\u622A\\u65AD\\uFF0C\\u53EF\\u80FD\\u4F1A\\u5BFC\\u81F4\\u6D4F\\u89C8\\u5668<strong>\\u5361\\u987F\\u6216\\u65E0\\u54CD\\u5E94</strong>\\u3002<br><br>\\u6B64\\u8BBE\\u7F6E\\u4F1A\\u622A\\u65AD\\u8D85\\u51FA\\u6307\\u5B9A\\u957F\\u5EA6\\u7684\\u5355\\u884C\\u6587\\u672C\\uFF0C\\u4EE5\\u4FDD\\u8BC1\\u754C\\u9762\\u6D41\\u7545\\u3002<strong>\\u6CE8\\u610F\\uFF1A\\u6B64\\u622A\\u65AD\\u4EC5\\u5F71\\u54CD\\u754C\\u9762\\u663E\\u793A\\uFF0C\\u5BFC\\u51FA\\u7684\\u6587\\u4EF6\\u4ECD\\u5C06\\u5305\\u542B\\u5B8C\\u6574\\u5185\\u5BB9\\u3002</strong>"
+      },
+      advanced: {
+        title: "\\u9AD8\\u7EA7\\u8BBE\\u7F6E\\u8BF4\\u660E",
+        enable_debug_logging: "\\u542F\\u7528\\u540E\\uFF0C\\u811A\\u672C\\u4F1A\\u5C06\\u8BE6\\u7EC6\\u7684\\u5185\\u90E8\\u8FD0\\u884C\\u72B6\\u6001\\u3001\\u6267\\u884C\\u6B65\\u9AA4\\u3001\\u9519\\u8BEF\\u4FE1\\u606F\\u7B49\\u8F93\\u51FA\\u5230\\u6D4F\\u89C8\\u5668\\u7684<strong>\\u5F00\\u53D1\\u8005\\u5DE5\\u5177\\u63A7\\u5236\\u53F0</strong>\\uFF08\\u901A\\u5E38\\u6309 F12 \\u6253\\u5F00\\uFF09\\u3002\\u6B64\\u529F\\u80FD\\u4E3B\\u8981\\u9762\\u5411\\u5F00\\u53D1\\u8005\\u6216\\u9700\\u8981\\u63D0\\u4EA4\\u8BE6\\u7EC6\\u9519\\u8BEF\\u62A5\\u544A\\u7684\\u7528\\u6237\\u3002"
+      }
+    },
+    log: {
+      prefix: "[\\u6587\\u672C\\u63D0\\u53D6\\u811A\\u672C-Debug]",
+      language: {
+        switched: "\\u8BED\\u8A00\\u5DF2\\u5207\\u6362\\u81F3: {{lang}}",
+        notFound: "\\u8BED\\u8A00 '{{lang}}' \\u4E0D\\u5B58\\u5728\\uFF0C\\u56DE\\u9000\\u5230 'en'\\u3002"
+      },
+      settings: {
+        changed: "\\u8BBE\\u7F6E '{{key}}' \\u5DF2\\u4ECE '{{oldValue}}' \\u66F4\\u6539\\u4E3A '{{newValue}}'",
+        filterRuleChanged: {
+          enabled: "\\u8FC7\\u6EE4\\u89C4\\u5219 '{{key}}' \\u5DF2\\u88AB\\u542F\\u7528",
+          disabled: "\\u8FC7\\u6EE4\\u89C4\\u5219 '{{key}}' \\u5DF2\\u88AB\\u7981\\u7528"
+        },
+        panel: {
+          opening: "\\u6B63\\u5728\\u6253\\u5F00\\u8BBE\\u7F6E\\u9762\\u677F...",
+          closing: "\\u6B63\\u5728\\u5173\\u95ED\\u8BBE\\u7F6E\\u9762\\u677F...",
+          saving: "\\u6B63\\u5728\\u4FDD\\u5B58\\u8BBE\\u7F6E..."
+        },
+        parseError: "\\u89E3\\u6790\\u5DF2\\u4FDD\\u5B58\\u7684\\u8BBE\\u7F6E\\u65F6\\u51FA\\u9519\\uFF1A",
+        invalidObject: "\\u5C1D\\u8BD5\\u4FDD\\u5B58\\u4E00\\u4E2A\\u65E0\\u6548\\u7684\\u5BF9\\u8C61\\u4F5C\\u4E3A\\u8BBE\\u7F6E\\uFF1A"
+      },
+      textProcessor: {
+        filtered: '\\u6587\\u672C\\u5DF2\\u8FC7\\u6EE4: "{{text}}" (\\u539F\\u56E0: {{reason}})'
+      },
+      quickScan: {
+        switchToFallback: "[\\u9759\\u6001\\u626B\\u63CF] \\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
+        fallbackFailed: "[\\u9759\\u6001\\u626B\\u63CF] \\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u5931\\u8D25: {{error}}",
+        fallback: {
+          starting: "[\\u9759\\u6001\\u626B\\u63CF - \\u5907\\u9009\\u65B9\\u6848] \\u5F00\\u59CB\\u5728\\u4E3B\\u7EBF\\u7A0B\\u4E2D\\u5904\\u7406...",
+          completed: "[\\u9759\\u6001\\u626B\\u63CF - \\u5907\\u9009\\u65B9\\u6848] \\u5904\\u7406\\u5B8C\\u6210\\uFF0C\\u5171 {{count}} \\u6761\\u6709\\u6548\\u6587\\u672C\\u3002"
+        },
+        worker: {
+          logPrefix: "[\\u9759\\u6001\\u626B\\u63CF Worker]",
+          starting: "[\\u9759\\u6001\\u626B\\u63CF] \\u5F00\\u59CB\\u6267\\u884C\\uFF0C\\u5C1D\\u8BD5\\u4F7F\\u7528 Web Worker...",
+          completed: "[\\u9759\\u6001\\u626B\\u63CF] Worker \\u5904\\u7406\\u6210\\u529F\\uFF0C\\u6536\\u5230 {{count}} \\u6761\\u6587\\u672C\\u3002",
+          scanComplete: "[\\u9759\\u6001\\u626B\\u63CF Worker] \\u5904\\u7406\\u5B8C\\u6210\\uFF0C\\u5171 {{count}} \\u6761\\u6709\\u6548\\u6587\\u672C\\u3002\\u6B63\\u5728\\u53D1\\u56DE\\u4E3B\\u7EBF\\u7A0B...",
+          initFailed: "[\\u9759\\u6001\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u8D25\\u3002\\u8FD9\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u4E8E\\u7F51\\u7AD9\\u7684\\u5185\\u5BB9\\u5B89\\u5168\\u7B56\\u7565\\uFF08CSP\\uFF09\\u963B\\u6B62\\u4E86\\u811A\\u672C\\u3002",
+          originalError: "[\\u9759\\u6001\\u626B\\u63CF] \\u539F\\u59CB\\u9519\\u8BEF: {{error}}",
+          sendingData: "[\\u9759\\u6001\\u626B\\u63CF] Web Worker \\u5DF2\\u521B\\u5EFA\\uFF0C\\u6B63\\u5728\\u53D1\\u9001 {{count}} \\u6761\\u6587\\u672C\\u8FDB\\u884C\\u5904\\u7406...",
+          initSyncError: "[\\u9759\\u6001\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u65F6\\u53D1\\u751F\\u540C\\u6B65\\u9519\\u8BEF: {{error}}"
+        }
+      },
+      sessionScan: {
+        switchToFallback: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
+        domObserver: {
+          stopped: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u5DF2\\u505C\\u6B62\\u76D1\\u542C DOM \\u53D8\\u5316\\u3002"
+        },
+        fallback: {
+          initialized: "[\\u4F1A\\u8BDD\\u626B\\u63CF - \\u5907\\u9009\\u65B9\\u6848] \\u521D\\u59CB\\u5316\\u5B8C\\u6210\\u3002",
+          cleared: "[\\u4F1A\\u8BDD\\u626B\\u63CF - \\u5907\\u9009\\u65B9\\u6848] \\u6570\\u636E\\u5DF2\\u6E05\\u7A7A\\u3002"
+        },
+        worker: {
+          logPrefix: "[\\u4F1A\\u8BDD\\u626B\\u63CF Worker]",
+          starting: "\\u4F1A\\u8BDD\\u626B\\u63CF\\uFF1A\\u5C1D\\u8BD5\\u542F\\u52A8 Web Worker...",
+          initFailed: "[\\u4F1A\\u8BDD\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u8D25\\u3002\\u8FD9\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u4E8E\\u7F51\\u7AD9\\u7684\\u5185\\u5BB9\\u5B89\\u5168\\u7B56\\u7565\\uFF08CSP\\uFF09\\u963B\\u6B62\\u4E86\\u811A\\u672C\\u3002",
+          originalError: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u539F\\u59CB\\u9519\\u8BEF: {{error}}",
+          initialized: "[\\u4F1A\\u8BDD\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u6210\\u529F\\uFF0C\\u5DF2\\u53D1\\u9001 {{count}} \\u6761\\u521D\\u59CB\\u6587\\u672C\\u4EE5\\u5F00\\u59CB\\u4F1A\\u8BDD\\u3002",
+          initSyncError: "[\\u4F1A\\u8BDD\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u65F6\\u53D1\\u751F\\u540C\\u6B65\\u9519\\u8BEF: {{error}}",
+          clearCommandSent: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u5DF2\\u5411 Worker \\u53D1\\u9001\\u6E05\\u7A7A\\u6307\\u4EE4\\u3002"
+        }
+      },
+      ui: {
+        copyButton: {
+          copied: "\\u590D\\u5236\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\uFF0C\\u590D\\u5236\\u4E86 {{count}} \\u4E2A\\u5B57\\u7B26\\u3002",
+          nothingToCopy: "\\u590D\\u5236\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\uFF0C\\u4F46\\u6CA1\\u6709\\u5185\\u5BB9\\u53EF\\u590D\\u5236\\u6216\\u6309\\u94AE\\u88AB\\u7981\\u7528\\u3002"
+        },
+        confirmationModal: {
+          sessionScan: {
+            confirmed: "\\u7528\\u6237\\u786E\\u8BA4\\u6E05\\u7A7A\\u4F1A\\u8BDD\\u626B\\u63CF\\u6587\\u672C\\uFF0C\\u6B63\\u5728\\u8C03\\u7528\\u56DE\\u8C03..."
+          },
+          quickScan: {
+            confirmed: "\\u7528\\u6237\\u786E\\u8BA4\\u6E05\\u7A7A\\u5FEB\\u901F\\u626B\\u63CF\\u6587\\u672C\\u3002"
+          },
+          cancelled: "\\u7528\\u6237\\u53D6\\u6D88\\u4E86\\u6E05\\u7A7A\\u64CD\\u4F5C\\u3002"
+        },
+        modal: {
+          opening: "\\u6B63\\u5728\\u6253\\u5F00\\u4E3B\\u7A97\\u53E3...",
+          closing: "\\u6B63\\u5728\\u5173\\u95ED\\u4E3B\\u7A97\\u53E3...",
+          scanFailed: "\\u9759\\u6001\\u626B\\u63CF\\u5931\\u8D25: {{error}}",
+          clearContent: "\\u201C\\u6E05\\u7A7A\\u5185\\u5BB9\\u201D\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\u3002"
+        }
+      },
+      exporter: {
+        buttonClicked: "\\u5BFC\\u51FA\\u6309\\u94AE\\u88AB\\u70B9\\u51FB, \\u5BFC\\u51FA\\u683C\\u5F0F: {{format}}\\u3002",
+        csvError: "\\u5728\\u89E3\\u6790\\u6587\\u672C\\u5E76\\u751F\\u6210 CSV \\u65F6\\u53D1\\u751F\\u9519\\u8BEF: {{error}}",
+        fileExported: "\\u6587\\u4EF6\\u5DF2\\u5BFC\\u51FA: {{filename}}",
+        noContent: "\\u6CA1\\u6709\\u5185\\u5BB9\\u53EF\\u5BFC\\u51FA\\u3002",
+        unknownFormat: "\\u672A\\u77E5\\u7684\\u5BFC\\u51FA\\u683C\\u5F0F: {{format}}"
+      },
+      main: {
+        requestingSessionScanData: "\\u4ECE session-scan \\u6A21\\u5F0F\\u8BF7\\u6C42\\u5B8C\\u6574\\u6570\\u636E...",
+        exportingQuickScanData: "\\u4ECE quick-scan \\u6A21\\u5F0F\\u7684\\u5185\\u5B58\\u4E2D\\u5BFC\\u51FA\\u5B8C\\u6574\\u6570\\u636E...",
+        inIframe: "\\u811A\\u672C\\u5728 iframe \\u4E2D\\uFF0C\\u5DF2\\u8DF3\\u8FC7\\u521D\\u59CB\\u5316\\u3002",
+        initializing: "\\u811A\\u672C\\u5F00\\u59CB\\u521D\\u59CB\\u5316...",
+        initialSettingsLoaded: "\\u521D\\u59CB\\u8BBE\\u7F6E\\u5DF2\\u52A0\\u8F7D:"
+      },
+      dom: {
+        ttpCreationError: "\\u521B\\u5EFA Trusted Type \\u7B56\\u7565\\u5931\\u8D25\\uFF1A",
+        svgParseError: "\\u65E0\\u6548\\u6216\\u89E3\\u6790\\u5931\\u8D25\\u7684 SVG \\u5B57\\u7B26\\u4E32\\uFF1A"
+      },
+      elementScan: {
+        starting: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5DF2\\u542F\\u52A8\\u3002",
+        stopping: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5DF2\\u505C\\u6B62\\u3002",
+        listenersAdded: "\\u5DF2\\u6DFB\\u52A0\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u7684\\u5168\\u5C40\\u4E8B\\u4EF6\\u76D1\\u542C\\u5668\\u3002",
+        listenersRemoved: "\\u5DF2\\u79FB\\u9664\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u7684\\u5168\\u5C40\\u4E8B\\u4EF6\\u76D1\\u542C\\u5668\\u3002",
+        stateReset: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u72B6\\u6001\\u5DF2\\u91CD\\u7F6E\\u3002",
+        reselecting: "\\u6B63\\u5728\\u8FD4\\u56DE\\u5143\\u7D20\\u91CD\\u65B0\\u9009\\u62E9\\u6A21\\u5F0F\\u3002",
+        hovering: "\\u5F53\\u524D\\u60AC\\u505C\\u4E8E <{{tagName}}>\\u3002",
+        escapePressed: "\\u7528\\u6237\\u6309\\u4E0B Escape \\u952E\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u3002",
+        clickedEnteringAdjust: "\\u5DF2\\u70B9\\u51FB\\u5143\\u7D20 <{{tagName}}>\\uFF0C\\u8FDB\\u5165\\u5C42\\u7EA7\\u8C03\\u6574\\u6A21\\u5F0F\\u3002",
+        pathBuilt: "\\u5143\\u7D20\\u5C42\\u7EA7\\u8DEF\\u5F84\\u5DF2\\u6784\\u5EFA\\uFF0C\\u6DF1\\u5EA6\\u4E3A\\uFF1A{{depth}}\\u3002",
+        adjustingLevel: "\\u6B63\\u5728\\u8C03\\u6574\\u9009\\u62E9\\u5C42\\u7EA7\\u81F3 {{level}} ({{tagName}})\\u3002",
+        confirmExtracting: "\\u9009\\u62E9\\u5DF2\\u786E\\u8BA4\\uFF0C\\u6B63\\u5728\\u4ECE <{{tagName}}> \\u63D0\\u53D6\\u6587\\u672C\\u3002",
+        extractedCount: "\\u5DF2\\u4ECE\\u5143\\u7D20\\u4E2D\\u63D0\\u53D6 {{count}} \\u6761\\u539F\\u59CB\\u6587\\u672C\\u3002",
+        confirmFailedNoTarget: "\\u786E\\u8BA4\\u5931\\u8D25\\uFF1A\\u672A\\u9009\\u62E9\\u4EFB\\u4F55\\u76EE\\u6807\\u5143\\u7D20\\u3002",
+        rightClickExit: "\\u68C0\\u6D4B\\u5230\\u53F3\\u952E\\u70B9\\u51FB\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u3002",
+        processingError: "\\u6587\\u672C\\u5904\\u7406\\u8FC7\\u7A0B\\u4E2D\\u53D1\\u751F\\u9519\\u8BEF: {{error}}",
+        worker: {
+          logPrefix: "[\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker]",
+          starting: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u6B63\\u5728\\u542F\\u52A8...",
+          sendingData: "\\u6B63\\u5728\\u53D1\\u9001 {{count}} \\u6761\\u6587\\u672C\\u81F3\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker\\u3002",
+          completed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u5904\\u7406\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {{count}} \\u6761\\u6709\\u6548\\u6587\\u672C\\u3002",
+          initFailed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u521D\\u59CB\\u5316\\u5931\\u8D25\\u3002\\u53EF\\u80FD\\u662F\\u7F51\\u7AD9\\u7684 CSP \\u7B56\\u7565\\u963B\\u6B62\\u4E86 data: URL\\u3002",
+          initSyncError: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u521D\\u59CB\\u5316\\u65F6\\u53D1\\u751F\\u540C\\u6B65\\u9519\\u8BEF: {{error}}",
+          originalError: "\\u539F\\u59CB Worker \\u9519\\u8BEF: {{error}}"
+        },
+        switchToFallback: "\\u6B63\\u5728\\u4E3A\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
+        fallbackFailed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5907\\u9009\\u65B9\\u6848\\u6267\\u884C\\u5931\\u8D25: {{error}}"
+      },
+      elementScanUI: {
+        creatingHighlights: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u9996\\u6B21\\u521B\\u5EFA\\u9AD8\\u4EAE\\u5143\\u7D20\\u3002",
+        updatingHighlight: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u6B63\\u5728\\u4E3A <{tagName}> \\u66F4\\u65B0\\u9AD8\\u4EAE\\u3002",
+        creatingToolbar: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u6B63\\u5728\\u521B\\u5EFA\\u8C03\\u6574\\u5DE5\\u5177\\u680F\\u3002",
+        toolbarPositioned: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u5DE5\\u5177\\u680F\\u5DF2\\u5B9A\\u4F4D\\u5728",
+        sliderChanged: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u6ED1\\u5757\\u5C42\\u7EA7\\u53D8\\u4E3A {level}",
+        reselectClicked: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u201C\\u91CD\\u65B0\\u9009\\u62E9\\u201D\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\u3002",
+        cancelClicked: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u201C\\u53D6\\u6D88\\u201D\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\u3002",
+        confirmClicked: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u201C\\u786E\\u8BA4\\u201D\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\u3002",
+        dragStarted: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u62D6\\u52A8\\u5F00\\u59CB\\u3002",
+        dragEnded: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u62D6\\u52A8\\u7ED3\\u675F\\u3002",
+        cleaningHighlights: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u6B63\\u5728\\u6E05\\u7406\\u9AD8\\u4EAE\\u5143\\u7D20\\u3002",
+        cleaningToolbar: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u6B63\\u5728\\u6E05\\u7406\\u5DE5\\u5177\\u680F\\u3002"
+      },
+      eventBus: {
+        callbackError: "\\u5728 '{{eventName}}' \\u4E8B\\u4EF6\\u7684\\u56DE\\u8C03\\u4E2D\\u53D1\\u751F\\u9519\\u8BEF\\uFF1A"
+      },
+      trustedTypes: {
+        workerPolicyError: "\\u521B\\u5EFA Trusted Types worker \\u7B56\\u7565\\u5931\\u8D25\\uFF1A",
+        htmlPolicyError: "\\u521B\\u5EFA Trusted Types HTML \\u7B56\\u7565\\u5931\\u8D25\\uFF1A",
+        defaultWorkerPolicyWarning: "Trusted Types \\u9ED8\\u8BA4\\u7B56\\u7565\\u5904\\u7406 worker URL \\u5931\\u8D25\\uFF0C\\u56DE\\u9000\\u5230\\u539F\\u59CB URL\\u3002",
+        defaultHtmlPolicyWarning: "Trusted Types \\u9ED8\\u8BA4\\u7B56\\u7565\\u5904\\u7406 HTML \\u5931\\u8D25\\uFF0C\\u56DE\\u9000\\u5230\\u539F\\u59CB\\u5B57\\u7B26\\u4E32\\u3002"
+      }
+    }
+  };
+  // src/shared/i18n/zh-TW.json
+  var zh_TW_default = {
+    common: {
+      scan: "\\u6383\\u63CF",
+      stop: "\\u505C\\u6B62",
+      resume: "\\u7E7C\\u7E8C",
+      clear: "\\u6E05\\u7A7A",
+      copy: "\\u8907\\u88FD",
+      save: "\\u5132\\u5B58",
+      discovered: "\\u5DF2\\u767C\\u73FE\\uFF1A",
+      confirm: "\\u78BA\\u8A8D",
+      cancel: "\\u53D6\\u6D88",
+      export: "\\u532F\\u51FA",
+      reselect: "\\u91CD\\u65B0\\u9078\\u64C7"
+    },
+    export: {
+      exportAsTxt: "\\u532F\\u51FA\\u70BA TXT",
+      exportAsJson: "\\u532F\\u51FA\\u70BA JSON",
+      exportAsCsv: "\\u532F\\u51FA\\u70BA CSV",
+      csv: {
+        id: "ID",
+        original: "\\u539F\\u6587",
+        translation: "\\u8B6F\\u6587"
+      }
+    },
+    settings: {
+      title: "\\u8A2D\\u5B9A",
+      theme: "\\u4ECB\\u9762\\u4E3B\\u984C",
+      language: "\\u8A9E\\u8A00\\u8A2D\\u5B9A",
+      relatedSettings: "\\u76F8\\u95DC\\u8A2D\\u5B9A",
+      filterRules: "\\u5167\\u5BB9\\u904E\\u6FFE\\u898F\\u5247",
+      filters: {
+        numbers: "\\u904E\\u6FFE\\u7D14\\u6578\\u5B57/\\u8CA8\\u5E63",
+        chinese: "\\u904E\\u6FFE\\u7D14\\u4E2D\\u6587",
+        contains_chinese: "\\u904E\\u6FFE\\u5305\\u542B\\u4E2D\\u6587\\u7684\\u6587\\u672C",
+        emoji_only: "\\u904E\\u6FFE\\u7D14\\u8868\\u60C5\\u7B26\\u865F",
+        symbols: "\\u904E\\u6FFE\\u7D14\\u7B26\\u865F",
+        term: "\\u904E\\u6FFE\\u7279\\u5B9A\\u8853\\u8A9E",
+        single_letter: "\\u904E\\u6FFE\\u7D14\\u55AE\\u500B\\u82F1\\u6587\\u5B57\\u6BCD",
+        repeating_chars: "\\u904E\\u6FFE\\u55AE\\u4E00\\u91CD\\u8907\\u5B57\\u5143",
+        file_paths: "\\u904E\\u6FFE\\u6A94\\u6848\\u8DEF\\u5F91",
+        hex_color_codes: "\\u904E\\u6FFE\\u5341\\u516D\\u9032\\u4F4D\\u984F\\u8272",
+        email_addresses: "\\u904E\\u6FFE\\u90F5\\u4EF6\\u5730\\u5740",
+        uuids: "\\u904E\\u6FFE UUID",
+        git_commit_hashes: "\\u904E\\u6FFE Git \\u63D0\\u4EA4\\u96DC\\u6E4A\\u503C",
+        website_urls: "\\u904E\\u6FFE\\u7DB2\\u5740",
+        website_urls_title: "\\u904E\\u6FFE\\u7DB2\\u5740 (URL)",
+        shorthand_numbers: "\\u904E\\u6FFE\\u7C21\\u5BEB\\u6578\\u5B57",
+        shorthand_numbers_title: "\\u904E\\u6FFE\\u5E36\\u6709\\u55AE\\u4F4D\\u7684\\u7C21\\u5BEB\\u6578\\u5B57"
+      },
+      display: {
+        show_fab: "\\u986F\\u793A\\u61F8\\u6D6E\\u6309\\u9215",
+        fab_position: "\\u61F8\\u6D6E\\u6309\\u9215\\u4F4D\\u7F6E",
+        fab_positions: {
+          bottom_right: "\\u53F3\\u4E0B\\u89D2",
+          top_right: "\\u53F3\\u4E0A\\u89D2",
+          bottom_left: "\\u5DE6\\u4E0B\\u89D2",
+          top_left: "\\u5DE6\\u4E0A\\u89D2"
+        },
+        show_line_numbers: "\\u986F\\u793A\\u884C\\u865F",
+        show_statistics: "\\u986F\\u793A\\u7D71\\u8A08\\u8CC7\\u8A0A",
+        enable_word_wrap: "\\u555F\\u7528\\u6587\\u5B57\\u81EA\\u52D5\\u63DB\\u884C",
+        text_truncation_limit: "\\u555F\\u7528\\u6587\\u5B57\\u6846\\u5B57\\u5143\\u9650\\u5236",
+        character_limit: "\\u5B57\\u5143\\u6578",
+        show_scan_count: "\\u555F\\u7528\\u6A19\\u984C\\u5217\\u986F\\u793A\\u6383\\u63CF\\u8A08\\u6578"
+      },
+      advanced: {
+        enable_debug_logging: "\\u555F\\u7528\\u5075\\u932F\\u65E5\\u8A8C"
+      },
+      panel: {
+        title: "\\u8A2D\\u5B9A\\u9762\\u677F"
+      },
+      languages: {
+        en: "English",
+        zh_CN: "\\u7B80\\u4F53\\u4E2D\\u6587",
+        zh_TW: "\\u7E41\\u9AD4\\u4E2D\\u6587"
+      },
+      themes: {
+        light: "\\u6DFA\\u8272",
+        dark: "\\u6DF1\\u8272",
+        system: "\\u8DDF\\u96A8\\u7CFB\\u7D71"
+      }
+    },
+    scan: {
+      quick: "\\u5FEB\\u901F\\u6383\\u63CF",
+      session: "\\u6703\\u8A71\\u6383\\u63CF",
+      elementFinished: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {{count}} \\u689D\\u6587\\u672C\\u3002",
+      startSession: "\\u958B\\u59CB\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71",
+      stopSession: "\\u505C\\u6B62\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71",
+      finished: "\\u6383\\u63CF\\u7D50\\u675F\\uFF0C\\u5171\\u767C\\u73FE {count} \\u689D\\u6587\\u672C",
+      quickFinished: "\\u5FEB\\u6377\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {count} \\u689D\\u6587\\u672C",
+      sessionStarted: "\\u6703\\u8A71\\u6383\\u63CF\\u5DF2\\u958B\\u59CB",
+      sessionInProgress: "\\u6383\\u63CF\\u6B63\\u5728\\u9032\\u884C\\u4E2D...",
+      truncationWarning: "\\u70BA\\u4FDD\\u6301\\u4ECB\\u9762\\u6D41\\u66A2\\uFF0C\\u6B64\\u8655\\u50C5\\u986F\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u5B8C\\u6574\\u5167\\u5BB9\\u5C07\\u5728\\u532F\\u51FA\\u6642\\u63D0\\u4F9B\\u3002"
+    },
+    results: {
+      title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",
+      scanCountSession: "\\u5DF2\\u6383\\u63CF {count} \\u689D\\u6587\\u672C",
+      scanCountStatic: "\\u5171\\u6383\\u63CF {count} \\u689D\\u6587\\u672C",
+      totalCharacters: "\\u7E3D\\u5B57\\u6578",
+      totalLines: "\\u7E3D\\u884C\\u6578",
+      noSummary: "\\u7576\\u524D\\u6C92\\u6709\\u6458\\u8981\\u6587\\u672C",
+      stats: {
+        lines: "\\u884C",
+        chars: "\\u5B57\\u5143\\u6578"
+      }
+    },
+    notifications: {
+      copiedToClipboard: "\\u5DF2\\u8907\\u88FD\\u5230\\u526A\\u8CBC\\u7C3F\\uFF01",
+      settingsSaved: "\\u8A2D\\u5B9A\\u5DF2\\u5132\\u5B58\\uFF01",
+      modalInitError: "\\u6A21\\u614B\\u6846\\u5C1A\\u672A\\u521D\\u59CB\\u5316\\u3002",
+      nothingToCopy: "\\u6C92\\u6709\\u5167\\u5BB9\\u53EF\\u8907\\u88FD",
+      contentCleared: "\\u5167\\u5BB9\\u5DF2\\u6E05\\u7A7A",
+      noTextSelected: "\\u672A\\u9078\\u64C7\\u6587\\u672C",
+      cspWorkerWarning: "\\u7531\\u65BC\\u7DB2\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u63DB\\u5230\\u76F8\\u5BB9\\u6383\\u63CF\\u6A21\\u5F0F\\u3002"
+    },
+    placeholders: {
+      click: "\\u9EDE\\u64CA ",
+      dynamicScan: "[\\u52D5\\u614B\\u6383\\u63CF]",
+      startNewScanSession: " \\u6309\\u9215\\u958B\\u59CB\\u4E00\\u500B\\u65B0\\u7684\\u6383\\u63CF\\u6703\\u8A71",
+      staticScan: "[\\u975C\\u614B\\u6383\\u63CF]",
+      performOneTimeScan: " \\u6309\\u9215\\u53EF\\u9032\\u884C\\u4E00\\u6B21\\u6027\\u7684\\u5FEB\\u6377\\u63D0\\u53D6"
+    },
+    confirmation: {
+      clear: "\\u4F60\\u78BA\\u8A8D\\u8981\\u6E05\\u7A7A\\u55CE\\uFF1F\\u6B64\\u64CD\\u4F5C\\u4E0D\\u53EF\\u64A4\\u92B7\\u3002"
+    },
+    tooltip: {
+      summary: "\\u67E5\\u770B\\u6458\\u8981",
+      dynamic_scan: "\\u52D5\\u614B\\u6383\\u63CF",
+      static_scan: "\\u975C\\u614B\\u6383\\u63CF",
+      element_scan: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF",
+      filters: {
+        title: "\\u5167\\u5BB9\\u904E\\u6FFE\\u5668\\u8AAA\\u660E",
+        numbers: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u6578\\u5B57\\u3001\\u7A7A\\u683C\\u3001\\u5343\\u4F4D\\u5206\\u9694\\u7B26 (.)\\u3001\\u5C0F\\u6578\\u9EDE (,) \\u4EE5\\u53CA\\u90E8\\u5206\\u8CA8\\u5E63\\u7B26\\u865F ($, \\u20AC, \\xA3, \\xA5) \\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "1,234.56"<br>\\u2022 "\\xA5999"<br>\\u2022 "\\u20AC200"<br>\\u2022 "$ 100"',
+        chinese: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u4E2D\\u6587\\u5B57\\u5143\\u548C\\u7A7A\\u683C\\u7D44\\u6210\\u7684\\u6587\\u672C\\uFF0C\\u4E0D\\u5305\\u62EC\\u4EFB\\u4F55\\u6A19\\u9EDE\\u7B26\\u865F\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "\\u4F60\\u597D \\u4E16\\u754C" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "\\u4F60\\u597D\\uFF0C\\u4E16\\u754C" (\\u4E0D\\u6703\\u88AB\\u904E\\u6FFE)',
+        contains_chinese: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389<strong>\\u4EFB\\u4F55\\u5305\\u542B</strong>\\u81F3\\u5C11\\u4E00\\u500B\\u4E2D\\u6587\\u5B57\\u5143\\u7684\\u6587\\u672C\\uFF0C\\u7121\\u8AD6\\u662F\\u5426\\u5305\\u542B\\u5176\\u4ED6\\u5B57\\u5143\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "\\u4F60\\u597D World" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "\\u7B2C 1 \\u7AE0" (\\u5C07\\u88AB\\u904E\\u6FFE)',
+        emoji_only: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u4E00\\u500B\\u6216\\u591A\\u500B\\u8868\\u60C5\\u7B26\\u865F\\u53CA\\u7A7A\\u683C\\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "\\u{1F44D}"<br>\\u2022 "\\u{1F60A} \\u{1F389} \\u{1F680}"',
+        symbols: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u5404\\u985E\\u6A19\\u9EDE\\u548C\\u7B26\\u865F\\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "@#*&^%"<br>\\u2022 "()[]{}"<br>\\u2022 "---...---"',
+        term: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u5E38\\u898B\\u7684\\u3001\\u901A\\u5E38\\u7121\\u9700\\u7FFB\\u8B6F\\u7684 UI \\u8853\\u8A9E\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "OK", "Cancel", "Submit"<br>\\u2022 "Login", "Settings", "Help"',
+        single_letter: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u7531<strong>\\u55AE\\u500B</strong>\\u82F1\\u6587\\u5B57\\u6BCD\\u7D44\\u6210\\u7684\\u6587\\u672C\\uFF0C\\u5FFD\\u7565\\u5927\\u5C0F\\u5BEB\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "A" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "b" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "AB" (\\u4E0D\\u6703\\u88AB\\u904E\\u6FFE)',
+        repeating_chars: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u7531<strong>\\u540C\\u4E00\\u500B\\u5B57\\u5143</strong>\\u9023\\u7E8C\\u91CD\\u8907 2 \\u6B21\\u6216\\u4EE5\\u4E0A\\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "aa"<br>\\u2022 "======"<br>\\u2022 "bbbbb"',
+        file_paths: '\\u6B64\\u898F\\u5247\\u6703\\u5617\\u8A66\\u8B58\\u5225\\u4E26\\u904E\\u6FFE\\u6389\\u985E\\u4F3C\\u4F5C\\u696D\\u7CFB\\u7D71\\u7684\\u3001\\u4E14<strong>\\u5305\\u542B\\u526F\\u6A94\\u540D</strong>\\u7684\\u6A94\\u6848\\u8DEF\\u5F91\\uFF0C\\u4F46\\u5B83\\u4E0D\\u6703\\u5339\\u914D URL\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "/path/to/file.js"<br>\\u2022 "C:\\\\Users\\\\Test\\\\document.docx"<br>\\u2022 "./config.json"',
+        hex_color_codes: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u6A19\\u6E96\\u7684 CSS \\u5341\\u516D\\u9032\\u4F4D\\u984F\\u8272\\u4EE3\\u78BC\\uFF083\\u30014\\u30016 \\u6216 8 \\u4F4D\\uFF0C\\u5F8C\\u8005\\u53EF\\u5305\\u542B Alpha \\u901A\\u9053\\uFF09\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "#FFFFFF"<br>\\u2022 "#ff0000"<br>\\u2022 "#f0c"<br>\\u2022 "#f0c8" (4\\u4F4D)<br>\\u2022 "#ff000080" (8\\u4F4D)',
+        email_addresses: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u7B26\\u5408\\u6A19\\u6E96\\u683C\\u5F0F\\u7684\\u96FB\\u5B50\\u90F5\\u4EF6\\u5730\\u5740\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "example@domain.com"<br>\\u2022 "user.name@sub.domain.org"',
+        uuids: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u901A\\u7528\\u552F\\u4E00\\u8B58\\u5225\\u78BC (UUID)\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "123e4567-e89b-12d3-a456-426614174000"',
+        git_commit_hashes: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u6A19\\u6E96\\u7684 Git \\u63D0\\u4EA4\\u96DC\\u6E4A\\u503C\\uFF08\\u9577\\u96DC\\u6E4A\\u6216\\u77ED\\u96DC\\u6E4A\\uFF09\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\\u2022 "a1b2c3d"',
+        website_urls: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389<strong>\\u7368\\u7ACB\\u7684 URL</strong> \\u6587\\u5B57\\u3002\\u5B83\\u7684\\u6BD4\\u5C0D\\u898F\\u5247\\u88AB\\u8A2D\\u8A08\\u5F97\\u975E\\u5E38\\u56B4\\u683C\\uFF0C\\u4EE5\\u907F\\u514D\\u610F\\u5916\\u79FB\\u9664\\u4E0D\\u662F\\u9023\\u7D50\\u7684\\u6587\\u5B57\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "https://www.example.com"<br>\\u2022 "http://test.co.uk"<br>\\u2022 "www.google.com"<br>\\u2022 "example.org"',
+        shorthand_numbers: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u4F7F\\u7528<strong>\\u5E38\\u898B\\u7C21\\u5BEB\\u5F8C\\u7DB4</strong>\\u7684\\u6578\\u5B57\\uFF0C\\u4F8B\\u5982 k (\\u5343)\\u3001m (\\u767E\\u842C) \\u6216 b (\\u5341\\u5104)\\uFF0C\\u4E0D\\u5340\\u5206\\u5927\\u5C0F\\u5BEB\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "1.2k"<br>\\u2022 "15M"<br>\\u2022 "2.5b"<br>\\u2022 "100K"'
+      },
+      display: {
+        title: "\\u986F\\u793A\\u8A2D\\u5B9A\\u8AAA\\u660E",
+        show_fab: "\\u63A7\\u5236\\u662F\\u5426\\u5728\\u7DB2\\u9801\\u53F3\\u4E0B\\u89D2\\u986F\\u793A <strong>\\u6D6E\\u52D5\\u52D5\\u4F5C\\u6309\\u9215 (FAB)</strong>\\u3002\\u9019\\u662F\\u975C\\u614B\\u6587\\u5B57\\u8403\\u53D6\\u3001\\u52D5\\u614B\\u6587\\u5B57\\u8403\\u53D6\\u7684\\u6838\\u5FC3\\u5165\\u53E3\\u3002<br><br>\\u5982\\u679C\\u60A8\\u7981\\u7528\\u4E86\\u6B64\\u6309\\u9215\\uFF0C\\u53EF\\u4EE5\\u900F\\u904E\\u6CB9\\u7334\\u64F4\\u5145\\u529F\\u80FD\\u9078\\u55AE\\u7684\\u8A2D\\u5B9A\\u9762\\u677F\\u91CD\\u65B0\\u958B\\u555F\\u3002",
+        show_scan_count: "\\u555F\\u7528\\u5F8C\\uFF0C\\u5728\\u7D50\\u679C\\u8996\\u7A97\\u7684\\u6A19\\u984C\\u5217\\u6703<strong>\\u5373\\u6642\\u66F4\\u65B0</strong>\\u672C\\u6B21\\u6383\\u63CF\\u767C\\u73FE\\u7684\\u6587\\u672C\\u689D\\u76EE\\u7E3D\\u6578\\u3002\\u5728\\u9032\\u884C\\u9577\\u6642\\u9593\\u7684<strong>\\u52D5\\u614B\\u6383\\u63CF</strong>\\u6642\\uFF0C\\u9019\\u500B\\u8A08\\u6578\\u5668\\u53EF\\u4EE5\\u5F88\\u76F4\\u89C0\\u5730\\u53CD\\u6620\\u6383\\u63CF\\u9032\\u5EA6\\u3002",
+        show_line_numbers: "\\u5728\\u7D50\\u679C\\u8996\\u7A97\\u7684\\u6587\\u672C\\u5340\\u57DF\\u5DE6\\u5074\\u986F\\u793A\\u884C\\u865F\\u3002\\u7576\\u60A8\\u9700\\u8981\\u8207\\u4ED6\\u4EBA\\u8A0E\\u8AD6\\u6216\\u8A18\\u9304\\u7279\\u5B9A\\u67D0\\u884C\\u6587\\u672C\\u6642\\uFF0C\\u884C\\u865F\\u53EF\\u4EE5\\u63D0\\u4F9B\\u4E00\\u500B<strong>\\u7CBE\\u78BA\\u7684\\u5B9A\\u4F4D\\u6A19\\u8A18</strong>\\u3002",
+        show_statistics: "\\u5728\\u7D50\\u679C\\u8996\\u7A97\\u5E95\\u90E8\\u7684\\u72C0\\u614B\\u5217\\u986F\\u793A\\u7576\\u524D\\u5DF2\\u63D0\\u53D6\\u5167\\u5BB9\\u7684<strong>\\u5373\\u6642\\u7D71\\u8A08</strong>\\uFF0C\\u5305\\u62EC<strong>\\u7E3D\\u884C\\u6578</strong>\\u548C<strong>\\u7E3D\\u5B57\\u5143\\u6578</strong>\\u3002\\u9019\\u53EF\\u4EE5\\u5E6B\\u52A9\\u60A8\\u5FEB\\u901F\\u8A55\\u4F30\\u63D0\\u53D6\\u5167\\u5BB9\\u7684\\u898F\\u6A21\\u3002",
+        enable_word_wrap: "\\u63A7\\u5236\\u7D50\\u679C\\u8996\\u7A97\\u4E2D\\u7684\\u9577\\u6587\\u672C\\u884C\\u5982\\u4F55\\u986F\\u793A\\u3002<br><br>\\u2022 <strong>\\u555F\\u7528\\uFF1A</strong>\\u9577\\u6587\\u672C\\u5C07\\u81EA\\u52D5\\u63DB\\u884C\\u4EE5\\u9069\\u61C9\\u8996\\u7A97\\u5BEC\\u5EA6\\u3002<br>\\u2022 <strong>\\u7981\\u7528\\uFF1A</strong>\\u9577\\u6587\\u672C\\u5C07\\u4FDD\\u6301\\u5728\\u55AE\\u884C\\uFF0C\\u4E26\\u51FA\\u73FE\\u6C34\\u5E73\\u6372\\u52D5\\u689D\\u3002",
+        text_truncation_limit: "\\u9019\\u662F\\u4E00\\u500B<strong>\\u6548\\u80FD\\u4FDD\\u8B77</strong>\\u6A5F\\u5236\\u3002\\u7576\\u8173\\u672C\\u63D0\\u53D6\\u5230<strong>\\u55AE\\u884C\\u8D85\\u9577\\u6587\\u672C</strong>\\uFF08\\u4F8B\\u5982\\uFF0C\\u4E00\\u500B\\u5B8C\\u6574\\u7684 base64 \\u7DE8\\u78BC\\u5716\\u7247\\uFF09\\u6642\\uFF0C\\u82E5\\u4E0D\\u622A\\u65B7\\uFF0C\\u53EF\\u80FD\\u6703\\u5C0E\\u81F4\\u700F\\u89BD\\u5668<strong>\\u5361\\u9813\\u6216\\u7121\\u97FF\\u61C9</strong>\\u3002<br><br>\\u6B64\\u8A2D\\u5B9A\\u6703\\u622A\\u65B7\\u8D85\\u51FA\\u6307\\u5B9A\\u9577\\u5EA6\\u7684\\u55AE\\u884C\\u6587\\u672C\\uFF0C\\u4EE5\\u4FDD\\u8B49\\u4ECB\\u9762\\u6D41\\u66A2\\u3002<strong>\\u6CE8\\u610F\\uFF1A\\u6B64\\u622A\\u65B7\\u50C5\\u5F71\\u97FF\\u4ECB\\u9762\\u986F\\u793A\\uFF0C\\u532F\\u51FA\\u7684\\u6A94\\u6848\\u4ECD\\u5C07\\u5305\\u542B\\u5B8C\\u6574\\u5167\\u5BB9\\u3002</strong>"
+      },
+      advanced: {
+        title: "\\u9032\\u968E\\u8A2D\\u5B9A\\u8AAA\\u660E",
+        enable_debug_logging: "\\u555F\\u7528\\u5F8C\\uFF0C\\u8173\\u672C\\u6703\\u5C07\\u8A73\\u7D30\\u7684\\u5167\\u90E8\\u904B\\u884C\\u72C0\\u614B\\u3001\\u57F7\\u884C\\u6B65\\u9A5F\\u3001\\u932F\\u8AA4\\u8CC7\\u8A0A\\u7B49\\u8F38\\u51FA\\u5230\\u700F\\u89BD\\u5668\\u7684<strong>\\u958B\\u767C\\u8005\\u5DE5\\u5177\\u63A7\\u5236\\u53F0</strong>\\uFF08\\u901A\\u5E38\\u6309 F12 \\u958B\\u555F\\uFF09\\u3002\\u6B64\\u529F\\u80FD\\u4E3B\\u8981\\u9762\\u5411\\u958B\\u767C\\u8005\\u6216\\u9700\\u8981\\u63D0\\u4EA4\\u8A73\\u7D30\\u932F\\u8AA4\\u5831\\u544A\\u7684\\u4F7F\\u7528\\u8005\\u3002"
+      }
+    },
+    log: {
+      prefix: "[\\u6587\\u672C\\u63D0\\u53D6\\u8173\\u672C-Debug]",
+      language: {
+        switched: "\\u8A9E\\u8A00\\u5DF2\\u5207\\u63DB\\u81F3\\uFF1A{{lang}}",
+        notFound: "\\u8A9E\\u8A00 '{{lang}}' \\u4E0D\\u5B58\\u5728\\uFF0C\\u9000\\u56DE\\u81F3 'en'\\u3002"
+      },
+      settings: {
+        changed: "\\u8A2D\\u5B9A '{{key}}' \\u5DF2\\u5F9E '{{oldValue}}' \\u8B8A\\u66F4\\u70BA '{{newValue}}'",
+        filterRuleChanged: {
+          enabled: "\\u904E\\u6FFE\\u898F\\u5247 '{{key}}' \\u5DF2\\u88AB\\u555F\\u7528",
+          disabled: "\\u904E\\u6FFE\\u898F\\u5247 '{{key}}' \\u5DF2\\u88AB\\u7981\\u7528"
+        },
+        panel: {
+          opening: "\\u6B63\\u5728\\u958B\\u555F\\u8A2D\\u5B9A\\u9762\\u677F...",
+          closing: "\\u6B63\\u5728\\u95DC\\u9589\\u8A2D\\u5B9A\\u9762\\u677F...",
+          saving: "\\u6B63\\u5728\\u5132\\u5B58\\u8A2D\\u5B9A..."
+        },
+        parseError: "\\u89E3\\u6790\\u5DF2\\u5132\\u5B58\\u7684\\u8A2D\\u5B9A\\u6642\\u51FA\\u932F\\uFF1A",
+        invalidObject: "\\u8A66\\u5716\\u5132\\u5B58\\u4E00\\u500B\\u7121\\u6548\\u7684\\u7269\\u4EF6\\u4F5C\\u70BA\\u8A2D\\u5B9A\\uFF1A"
+      },
+      textProcessor: {
+        filtered: '\\u6587\\u672C\\u5DF2\\u904E\\u6FFE\\uFF1A"{{text}}" (\\u539F\\u56E0\\uFF1A{{reason}})'
+      },
+      quickScan: {
+        switchToFallback: "[\\u975C\\u614B\\u6383\\u63CF] \\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
+        fallbackFailed: "[\\u975C\\u614B\\u6383\\u63CF] \\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u5931\\u6557\\uFF1A{{error}}",
+        fallback: {
+          starting: "[\\u975C\\u614B\\u6383\\u63CF - \\u5099\\u9078\\u65B9\\u6848] \\u958B\\u59CB\\u5728\\u4E3B\\u7DDA\\u7A0B\\u4E2D\\u8655\\u7406...",
+          completed: "[\\u975C\\u614B\\u6383\\u63CF - \\u5099\\u9078\\u65B9\\u6848] \\u8655\\u7406\\u5B8C\\u6210\\uFF0C\\u5171 {{count}} \\u689D\\u6709\\u6548\\u6587\\u672C\\u3002"
+        },
+        worker: {
+          logPrefix: "[\\u975C\\u614B\\u6383\\u63CF Worker]",
+          starting: "[\\u975C\\u614B\\u6383\\u63CF] \\u958B\\u59CB\\u57F7\\u884C\\uFF0C\\u5617\\u8A66\\u4F7F\\u7528 Web Worker...",
+          completed: "[\\u975C\\u614B\\u6383\\u63CF] Worker \\u8655\\u7406\\u6210\\u529F\\uFF0C\\u6536\\u5230 {{count}} \\u689D\\u6587\\u672C\\u3002",
+          scanComplete: "[\\u975C\\u614B\\u6383\\u63CF Worker] \\u8655\\u7406\\u5B8C\\u6210\\uFF0C\\u5171 {{count}} \\u689D\\u6709\\u6548\\u6587\\u672C\\u3002\\u6B63\\u5728\\u767C\\u56DE\\u4E3B\\u7DDA\\u7A0B...",
+          initFailed: "[\\u975C\\u614B\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u6557\\u3002\\u9019\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u65BC\\u7DB2\\u7AD9\\u7684\\u5167\\u5BB9\\u5B89\\u5168\\u7B56\\u7565\\uFF08CSP\\uFF09\\u963B\\u6B62\\u4E86\\u8173\\u672C\\u3002",
+          originalError: "[\\u975C\\u614B\\u6383\\u63CF] \\u539F\\u59CB\\u932F\\u8AA4\\uFF1A{{error}}",
+          sendingData: "[\\u975C\\u614B\\u6383\\u63CF] Web Worker \\u5DF2\\u5EFA\\u7ACB\\uFF0C\\u6B63\\u5728\\u767C\\u9001 {{count}} \\u689D\\u6587\\u672C\\u9032\\u884C\\u8655\\u7406...",
+          initSyncError: "[\\u975C\\u614B\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u6642\\u767C\\u751F\\u540C\\u6B65\\u932F\\u8AA4\\uFF1A{{error}}"
+        }
+      },
+      sessionScan: {
+        switchToFallback: "[\\u6703\\u8A71\\u6383\\u63CF] \\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
+        domObserver: {
+          stopped: "[\\u6703\\u8A71\\u6383\\u63CF] \\u5DF2\\u505C\\u6B62\\u76E3\\u807D DOM \\u8B8A\\u5316\\u3002"
+        },
+        fallback: {
+          initialized: "[\\u6703\\u8A71\\u6383\\u63CF - \\u5099\\u9078\\u65B9\\u6848] \\u521D\\u59CB\\u5316\\u5B8C\\u6210\\u3002",
+          cleared: "[\\u6703\\u8A71\\u6383\\u63CF - \\u5099\\u9078\\u65B9\\u6848] \\u8CC7\\u6599\\u5DF2\\u6E05\\u7A7A\\u3002"
+        },
+        worker: {
+          logPrefix: "[\\u6703\\u8A71\\u6383\\u63CF Worker]",
+          starting: "\\u6703\\u8A71\\u6383\\u63CF\\uFF1A\\u5617\\u8A66\\u555F\\u52D5 Web Worker...",
+          initFailed: "[\\u6703\\u8A71\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u6557\\u3002\\u9019\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u65BC\\u7DB2\\u7AD9\\u7684\\u5167\\u5BB9\\u5B89\\u5168\\u7B56\\u7565\\uFF08CSP\\uFF09\\u963B\\u6B62\\u4E86\\u8173\\u672C\\u3002",
+          originalError: "[\\u6703\\u8A71\\u6383\\u63CF] \\u539F\\u59CB\\u932F\\u8AA4\\uFF1A{{error}}",
+          initialized: "[\\u6703\\u8A71\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u6210\\u529F\\uFF0C\\u5DF2\\u767C\\u9001 {{count}} \\u689D\\u521D\\u59CB\\u6587\\u672C\\u4EE5\\u958B\\u59CB\\u6703\\u8A71\\u3002",
+          initSyncError: "[\\u6703\\u8A71\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u6642\\u767C\\u751F\\u540C\\u6B65\\u932F\\u8AA4\\uFF1A{{error}}",
+          clearCommandSent: "[\\u6703\\u8A71\\u6383\\u63CF] \\u5DF2\\u5411 Worker \\u767C\\u9001\\u6E05\\u7A7A\\u6307\\u4EE4\\u3002"
+        }
+      },
+      ui: {
+        copyButton: {
+          copied: "\\u8907\\u88FD\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\uFF0C\\u8907\\u88FD\\u4E86 {{count}} \\u500B\\u5B57\\u5143\\u3002",
+          nothingToCopy: "\\u8907\\u88FD\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\uFF0C\\u4F46\\u6C92\\u6709\\u5167\\u5BB9\\u53EF\\u8907\\u88FD\\u6216\\u6309\\u9215\\u88AB\\u7981\\u7528\\u3002"
+        },
+        confirmationModal: {
+          sessionScan: {
+            confirmed: "\\u4F7F\\u7528\\u8005\\u78BA\\u8A8D\\u6E05\\u7A7A\\u6703\\u8A71\\u6383\\u63CF\\u6587\\u672C\\uFF0C\\u6B63\\u5728\\u547C\\u53EB\\u56DE\\u8ABF..."
+          },
+          quickScan: {
+            confirmed: "\\u4F7F\\u7528\\u8005\\u78BA\\u8A8D\\u6E05\\u7A7A\\u5FEB\\u901F\\u6383\\u63CF\\u6587\\u672C\\u3002"
+          },
+          cancelled: "\\u4F7F\\u7528\\u8005\\u53D6\\u6D88\\u4E86\\u6E05\\u7A7A\\u64CD\\u4F5C\\u3002"
+        },
+        modal: {
+          opening: "\\u6B63\\u5728\\u6253\\u958B\\u4E3B\\u8996\\u7A97...",
+          closing: "\\u6B63\\u5728\\u95DC\\u9589\\u4E3B\\u8996\\u7A97...",
+          scanFailed: "\\u975C\\u614B\\u6383\\u63CF\\u5931\\u6557\\uFF1A{{error}}",
+          clearContent: "\\u300C\\u6E05\\u7A7A\\u5167\\u5BB9\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002"
+        }
+      },
+      exporter: {
+        buttonClicked: "\\u532F\\u51FA\\u6309\\u9215\\u88AB\\u9EDE\\u64CA, \\u532F\\u51FA\\u683C\\u5F0F: {{format}}\\u3002",
+        csvError: "\\u5728\\u89E3\\u6790\\u6587\\u672C\\u4E26\\u751F\\u6210 CSV \\u6642\\u767C\\u751F\\u932F\\u8AA4\\uFF1A{{error}}",
+        fileExported: "\\u6A94\\u6848\\u5DF2\\u532F\\u51FA\\uFF1A{{filename}}",
+        noContent: "\\u6C92\\u6709\\u5167\\u5BB9\\u53EF\\u532F\\u51FA\\u3002",
+        unknownFormat: "\\u672A\\u77E5\\u7684\\u532F\\u51FA\\u683C\\u5F0F\\uFF1A{{format}}"
+      },
+      main: {
+        requestingSessionScanData: "\\u5F9E session-scan \\u6A21\\u5F0F\\u8ACB\\u6C42\\u5B8C\\u6574\\u8CC7\\u6599...",
+        exportingQuickScanData: "\\u5F9E quick-scan \\u6A21\\u5F0F\\u7684\\u8A18\\u61B6\\u9AD4\\u4E2D\\u532F\\u51FA\\u5B8C\\u6574\\u8CC7\\u6599...",
+        inIframe: "\\u8173\\u672C\\u5728 iframe \\u4E2D\\uFF0C\\u5DF2\\u8DF3\\u904E\\u521D\\u59CB\\u5316\\u3002",
+        initializing: "\\u8173\\u672C\\u958B\\u59CB\\u521D\\u59CB\\u5316...",
+        initialSettingsLoaded: "\\u521D\\u59CB\\u8A2D\\u5B9A\\u5DF2\\u8F09\\u5165:"
+      },
+      dom: {
+        ttpCreationError: "\\u5EFA\\u7ACB Trusted Type \\u7B56\\u7565\\u5931\\u6557\\uFF1A",
+        svgParseError: "\\u7121\\u6548\\u6216\\u89E3\\u6790\\u5931\\u6557\\u7684 SVG \\u5B57\\u4E32\\uFF1A"
+      },
+      elementScan: {
+        starting: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5DF2\\u555F\\u52D5\\u3002",
+        stopping: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5DF2\\u505C\\u6B62\\u3002",
+        listenersAdded: "\\u5DF2\\u65B0\\u589E\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u7684\\u5168\\u57DF\\u4E8B\\u4EF6\\u76E3\\u807D\\u5668\\u3002",
+        listenersRemoved: "\\u5DF2\\u79FB\\u9664\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u7684\\u5168\\u57DF\\u4E8B\\u4EF6\\u76E3\\u807D\\u5668\\u3002",
+        stateReset: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u72C0\\u614B\\u5DF2\\u91CD\\u8A2D\\u3002",
+        reselecting: "\\u6B63\\u5728\\u8FD4\\u56DE\\u5143\\u7D20\\u91CD\\u65B0\\u9078\\u64C7\\u6A21\\u5F0F\\u3002",
+        hovering: "\\u7576\\u524D\\u61F8\\u505C\\u65BC <{{tagName}}>\\u3002",
+        escapePressed: "\\u4F7F\\u7528\\u8005\\u6309\\u4E0B Escape \\u9375\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u3002",
+        clickedEnteringAdjust: "\\u5DF2\\u9EDE\\u64CA\\u5143\\u7D20 <{{tagName}}>\\uFF0C\\u9032\\u5165\\u5C64\\u7D1A\\u8ABF\\u6574\\u6A21\\u5F0F\\u3002",
+        pathBuilt: "\\u5143\\u7D20\\u5C64\\u7D1A\\u8DEF\\u5F91\\u5DF2\\u69CB\\u5EFA\\uFF0C\\u6DF1\\u5EA6\\u70BA\\uFF1A{{depth}}\\u3002",
+        adjustingLevel: "\\u6B63\\u5728\\u8ABF\\u6574\\u9078\\u64C7\\u5C64\\u7D1A\\u81F3 {{level}} ({{tagName}})\\u3002",
+        confirmExtracting: "\\u9078\\u64C7\\u5DF2\\u78BA\\u8A8D\\uFF0C\\u6B63\\u5728\\u5F9E <{{tagName}}> \\u63D0\\u53D6\\u6587\\u672C\\u3002",
+        extractedCount: "\\u5DF2\\u5F9E\\u5143\\u7D20\\u4E2D\\u63D0\\u53D6 {{count}} \\u689D\\u539F\\u59CB\\u6587\\u672C\\u3002",
+        confirmFailedNoTarget: "\\u78BA\\u8A8D\\u5931\\u6557\\uFF1A\\u672A\\u9078\\u64C7\\u4EFB\\u4F55\\u76EE\\u6A19\\u5143\\u7D20\\u3002",
+        rightClickExit: "\\u5075\\u6E2C\\u5230\\u53F3\\u9375\\u9EDE\\u64CA\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u3002",
+        processingError: "\\u6587\\u672C\\u8655\\u7406\\u904E\\u7A0B\\u4E2D\\u767C\\u751F\\u932F\\u8AA4: {{error}}",
+        worker: {
+          logPrefix: "[\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker]",
+          starting: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u6B63\\u5728\\u555F\\u52D5...",
+          sendingData: "\\u6B63\\u5728\\u767C\\u9001 {{count}} \\u689D\\u6587\\u672C\\u81F3\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker\\u3002",
+          completed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u8655\\u7406\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {{count}} \\u689D\\u6709\\u6548\\u6587\\u672C\\u3002",
+          initFailed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u521D\\u59CB\\u5316\\u5931\\u6557\\u3002\\u53EF\\u80FD\\u662F\\u7DB2\\u7AD9\\u7684 CSP \\u7B56\\u7565\\u963B\\u6B62\\u4E86 data: URL\\u3002",
+          initSyncError: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u521D\\u59CB\\u5316\\u6642\\u767C\\u751F\\u540C\\u6B65\\u932F\\u8AA4: {{error}}",
+          originalError: "\\u539F\\u59CB Worker \\u932F\\u8AA4: {{error}}"
+        },
+        switchToFallback: "\\u6B63\\u5728\\u70BA\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
+        fallbackFailed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5099\\u9078\\u65B9\\u6848\\u57F7\\u884C\\u5931\\u6557: {{error}}"
+      },
+      elementScanUI: {
+        creatingHighlights: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u9996\\u6B21\\u5EFA\\u7ACB\\u9AD8\\u4EAE\\u5143\\u7D20\\u3002",
+        updatingHighlight: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u6B63\\u5728\\u70BA <{tagName}> \\u66F4\\u65B0\\u9AD8\\u4EAE\\u3002",
+        creatingToolbar: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u6B63\\u5728\\u5EFA\\u7ACB\\u8ABF\\u6574\\u5DE5\\u5177\\u5217\\u3002",
+        toolbarPositioned: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u5DE5\\u5177\\u5217\\u5DF2\\u5B9A\\u4F4D\\u5728",
+        sliderChanged: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u6ED1\\u687F\\u5C64\\u7D1A\\u8B8A\\u70BA {level}",
+        reselectClicked: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u300C\\u91CD\\u65B0\\u9078\\u64C7\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002",
+        cancelClicked: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u300C\\u53D6\\u6D88\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002",
+        confirmClicked: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u300C\\u78BA\\u8A8D\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002",
+        dragStarted: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u62D6\\u52D5\\u958B\\u59CB\\u3002",
+        dragEnded: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u62D6\\u52D5\\u7D50\\u675F\\u3002",
+        cleaningHighlights: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u6B63\\u5728\\u6E05\\u7406\\u9AD8\\u4EAE\\u5143\\u7D20\\u3002",
+        cleaningToolbar: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u6B63\\u5728\\u6E05\\u7406\\u5DE5\\u5177\\u5217\\u3002"
+      },
+      eventBus: {
+        callbackError: "\\u5728 '{{eventName}}' \\u4E8B\\u4EF6\\u7684\\u56DE\\u547C\\u4E2D\\u767C\\u751F\\u932F\\u8AA4\\uFF1A"
+      },
+      trustedTypes: {
+        workerPolicyError: "\\u5EFA\\u7ACB Trusted Types worker \\u7B56\\u7565\\u5931\\u6557\\uFF1A",
+        htmlPolicyError: "\\u5EFA\\u7ACB Trusted Types HTML \\u7B56\\u7565\\u5931\\u6557\\uFF1A",
+        defaultWorkerPolicyWarning: "Trusted Types \\u9810\\u8A2D\\u7B56\\u7565\\u8655\\u7406 worker URL \\u5931\\u6557\\uFF0C\\u9000\\u56DE\\u81F3\\u539F\\u59CB URL\\u3002",
+        defaultHtmlPolicyWarning: "Trusted Types \\u9810\\u8A2D\\u7B56\\u7565\\u8655\\u7406 HTML \\u5931\\u6557\\uFF0C\\u9000\\u56DE\\u81F3\\u539F\\u59CB\\u5B57\\u4E32\\u3002"
+      }
+    }
+  };
+  // src/shared/i18n/management/languages.js
+  var supportedLanguages = [
+    { code: "en", name: "English" },
+    { code: "zh-CN", name: "\\u7B80\\u4F53\\u4E2D\\u6587" },
+    { code: "zh-TW", name: "\\u7E41\\u9AD4\\u4E2D\\u6587" }
+  ];
+  // src/shared/i18n/index.js
+  var translationModules = {
+    en: en_default,
+    "zh-CN": zh_CN_default,
+    "zh-TW": zh_TW_default
+  };
+  var translations = supportedLanguages.reduce((acc, lang) => {
+    if (translationModules[lang.code]) {
+      acc[lang.code] = translationModules[lang.code];
+    }
+    return acc;
+  }, {});
+  var currentTranslations = translations.en;
+  function t(key, replacements) {
+    let value = key.split(".").reduce((obj, k) => {
+      if (typeof obj === "object" && obj !== null && k in obj) {
+        return obj[k];
+      }
+      return void 0;
+    }, currentTranslations);
+    if (value === void 0) {
+      return key;
+    }
+    if (replacements) {
+      Object.keys(replacements).forEach((placeholder) => {
+        const regex = new RegExp(\`{{\${placeholder}}}\`, "g");
+        value = value.replace(regex, replacements[placeholder]);
+      });
+    }
+    return value;
+  }
+  function getAvailableLanguages() {
+    return supportedLanguages.map((lang) => ({
+      value: lang.code,
+      label: lang.name
+    }));
+  }
+  // src/shared/utils/ignoredTerms.js
+  var IGNORED_TERMS = [
+    "Github",
+    "Microsoft",
+    "Tampermonkey",
+    "JavaScript",
+    "TypeScript",
+    "Hugging Face",
+    "Google",
+    "Facebook",
+    "Twitter",
+    "LinkedIn",
+    "OpenAI",
+    "ChatGPT",
+    "API",
+    "Glossary of computer science",
+    "HTML",
+    "CSS",
+    "JSON",
+    "XML",
+    "HTTP",
+    "HTTPS",
+    "URL",
+    "IP address",
+    "DNS",
+    "CPU",
+    "GPU",
+    "RAM",
+    "SSD",
+    "USB",
+    "Wi-Fi",
+    "Bluetooth",
+    "VPN",
+    "AI"
+  ];
+  var ignoredTerms_default = IGNORED_TERMS;
+  // src/assets/icons/themeIcon.js
+  var themeIcon = \`<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 32.5-156t88-127Q256-817 330-848.5T488-880q80 0 151 27.5t124.5 76q53.5 48.5 85 115T880-518q0 115-70 176.5T640-280h-74q-9 0-12.5 5t-3.5 11q0 12 15 34.5t15 51.5q0 50-27.5 74T480-80Zm0-400Zm-220 40q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120-160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm200 0q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120 160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17ZM480-160q9 0 14.5-5t5.5-13q0-14-15-33t-15-57q0-42 29-67t71-25h70q66 0 113-38.5T800-518q0-121-92.5-201.5T488-800q-136 0-232 93t-96 227q0 133 93.5 226.5T480-160Z"/></svg>\`;
+  // src/assets/icons/languageIcon.js
+  var languageIcon_default = \`<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-155.5t86-127Q252-817 325-848.5T480-880q83 0 155.5 31.5t127 86q54.5 54.5 86 127T880-480q0 82-31.5 155t-86 127.5q-54.5 54.5-127 86T480-80Zm0-82q26-36 45-75t31-83H404q12 44 31 83t45 75Zm-104-16q-18-33-31.5-68.5T322-320H204q29 50 72.5 87t99.5 55Zm208 0q56-18 99.5-55t72.5-87H638q-9 38-22.5 73.5T584-178ZM170-400h136q-3-20-4.5-39.5T300-480q0-21 1.5-40.5T306-560H170q-5 20-7.5 39.5T160-480q0 21 2.5 40.5T170-400Zm216 0h188q3-20 4.5-39.5T580-480q0-21-1.5-40.5T574-560H386q-3 20-4.5 39.5T380-480q0 21 1.5 40.5T386-400Zm268 0h136q5-20 7.5-39.5T800-480q0-21-2.5-40.5T790-560H654q3 20 4.5 39.5T660-480q0 21-1.5 40.5T654-400Zm-16-240h118q-29-50-72.5-87T584-782q18 33 31.5 68.5T638-640Zm-234 0h152q-12-44-31-83t-45-75q-26 36-45 75t-31 83Zm-200 0h118q9-38 22.5-73.5T376-782q-56 18-99.5 55T204-640Z"/></svg>\`;
+  // src/assets/icons/infoIcon.js
+  var infoIcon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>';
+  // src/features/settings/config.js
+  var selectSettingsDefinitions = [
+    {
+      id: "theme-select",
+      key: "theme",
+      label: "settings.theme",
+      icon: themeIcon,
+      options: [
+        { value: "light", label: "settings.themes.light" },
+        { value: "dark", label: "settings.themes.dark" },
+        { value: "system", label: "settings.themes.system" }
+      ]
+    },
+    {
+      id: "language-select",
+      key: "language",
+      label: "settings.language",
+      icon: languageIcon_default,
+      // \u76F4\u63A5\u4ECE i18n \u6A21\u5757\u83B7\u53D6\u8BED\u8A00\u5217\u8868\uFF0C\u5176\u6807\u7B7E\u5DF2\u7ECF\u662F\u539F\u751F\u540D\u79F0\uFF0C\u65E0\u9700\u518D\u7FFB\u8BD1\u3002
+      options: getAvailableLanguages()
+    }
+  ];
+  var filterDefinitions = [
+    { id: "filter-numbers", key: "numbers", label: "settings.filters.numbers", tooltip: { titleIcon: infoIcon, title: "settings.filters.numbers", text: "tooltip.filters.numbers" } },
+    { id: "filter-chinese", key: "chinese", label: "settings.filters.chinese", tooltip: { titleIcon: infoIcon, title: "settings.filters.chinese", text: "tooltip.filters.chinese" } },
+    { id: "filter-contains-chinese", key: "containsChinese", label: "settings.filters.contains_chinese", tooltip: { titleIcon: infoIcon, title: "settings.filters.contains_chinese", text: "tooltip.filters.contains_chinese" } },
+    { id: "filter-emoji-only", key: "emojiOnly", label: "settings.filters.emoji_only", tooltip: { titleIcon: infoIcon, title: "settings.filters.emoji_only", text: "tooltip.filters.emoji_only" } },
+    { id: "filter-symbols", key: "symbols", label: "settings.filters.symbols", tooltip: { titleIcon: infoIcon, title: "settings.filters.symbols", text: "tooltip.filters.symbols" } },
+    { id: "filter-term", key: "termFilter", label: "settings.filters.term", tooltip: { titleIcon: infoIcon, title: "settings.filters.term", text: "tooltip.filters.term" } },
+    { id: "filter-single-letter", key: "singleLetter", label: "settings.filters.single_letter", tooltip: { titleIcon: infoIcon, title: "settings.filters.single_letter", text: "tooltip.filters.single_letter" } },
+    {
+      id: "filter-repeating-chars",
+      key: "repeatingChars",
+      label: "settings.filters.repeating_chars",
+      tooltip: {
+        titleIcon: infoIcon,
+        title: "settings.filters.repeating_chars",
+        text: "tooltip.filters.repeating_chars"
+      }
+    },
+    { id: "filter-file-paths", key: "filePath", label: "settings.filters.file_paths", tooltip: { titleIcon: infoIcon, title: "settings.filters.file_paths", text: "tooltip.filters.file_paths" } },
+    { id: "filter-hex-colors", key: "hexColor", label: "settings.filters.hex_color_codes", tooltip: { titleIcon: infoIcon, title: "settings.filters.hex_color_codes", text: "tooltip.filters.hex_color_codes" } },
+    { id: "filter-emails", key: "email", label: "settings.filters.email_addresses", tooltip: { titleIcon: infoIcon, title: "settings.filters.email_addresses", text: "tooltip.filters.email_addresses" } },
+    { id: "filter-uuids", key: "uuid", label: "settings.filters.uuids", tooltip: { titleIcon: infoIcon, title: "settings.filters.uuids", text: "tooltip.filters.uuids" } },
+    { id: "filter-git-hashes", key: "gitCommitHash", label: "settings.filters.git_commit_hashes", tooltip: { titleIcon: infoIcon, title: "settings.filters.git_commit_hashes", text: "tooltip.filters.git_commit_hashes" } },
+    { id: "filter-website-urls", key: "websiteUrl", label: "settings.filters.website_urls", tooltip: { titleIcon: infoIcon, title: "settings.filters.website_urls_title", text: "tooltip.filters.website_urls" } },
+    { id: "filter-shorthand-numbers", key: "shorthandNumber", label: "settings.filters.shorthand_numbers", tooltip: { titleIcon: infoIcon, title: "settings.filters.shorthand_numbers_title", text: "tooltip.filters.shorthand_numbers" } }
+  ];
+  // src/shared/utils/filterLogic.js
+  var filterConfigMap = new Map(filterDefinitions.map((def) => [def.key, def.label]));
+  var ruleChecks = /* @__PURE__ */ new Map([
+    ["numbers", {
+      regex: /^[$\\\u20AC\\\xA3\\\xA5\\d,.\\s]+$/,
+      label: filterConfigMap.get("numbers")
+    }],
+    ["chinese", {
+      regex: /^[\\u4e00-\\u9fa5\\s]+$/u,
+      label: filterConfigMap.get("chinese")
+    }],
+    ["containsChinese", {
+      regex: /[\\u4e00-\\u9fa5]/u,
+      label: filterConfigMap.get("containsChinese")
+    }],
+    ["emojiOnly", {
+      regex: /^[\\p{Emoji}\\s]+$/u,
+      label: filterConfigMap.get("emojiOnly")
+    }],
+    ["symbols", {
+      // \u8FD9\u4E2A\u903B\u8F91\u6BD4\u8F83\u7279\u6B8A\uFF0C\u662F\u201C\u4E0D\u5305\u542B\u5B57\u6BCD\u6216\u6570\u5B57\u201D\uFF0C\u6240\u4EE5\u6211\u4EEC\u7528\u4E00\u4E2A\u51FD\u6570\u6765\u5904\u7406
+      test: (text) => !/[\\p{L}\\p{N}]/u.test(text),
+      label: filterConfigMap.get("symbols")
+    }],
+    ["termFilter", {
+      test: (text) => ignoredTerms_default.includes(text),
+      label: filterConfigMap.get("termFilter")
+    }],
+    ["singleLetter", {
+      regex: /^[a-zA-Z]$/,
+      label: filterConfigMap.get("singleLetter")
+    }],
+    ["repeatingChars", {
+      regex: /^\\s*(.)\\1+\\s*$/,
+      label: filterConfigMap.get("repeatingChars")
+    }],
+    ["filePath", {
+      regex: /^(?:[a-zA-Z]:\\\\|\\\\\\\\|~|\\.\\.?\\/)[\\w\\-\\.\\/ \\\\]*[\\w\\-\\.]+\\.[\\w]{2,4}$/,
+      label: filterConfigMap.get("filePath")
+    }],
+    ["hexColor", {
+      regex: /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3,4}|[A-Fa-f0-9]{8})$/,
+      label: filterConfigMap.get("hexColor")
+    }],
+    ["email", {
+      regex: /^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$/,
+      label: filterConfigMap.get("email")
+    }],
+    ["uuid", {
+      regex: /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/,
+      label: filterConfigMap.get("uuid")
+    }],
+    ["gitCommitHash", {
+      regex: /^[0-9a-f]{7,40}$/i,
+      label: filterConfigMap.get("gitCommitHash")
+    }],
+    ["websiteUrl", {
+      // \u5339\u914D\u5E38\u89C1\u7684\u7F51\u5740\u683C\u5F0F\uFF0C\u5305\u62EC\u534F\u8BAE\u3001www\u524D\u7F00\u548C\u88F8\u57DF\u540D\uFF0C\u8981\u6C42\u4E25\u683C\u5339\u914D\u6574\u4E2A\u5B57\u7B26\u4E32\u4EE5\u907F\u514D\u8BEF\u4F24\u3002
+      regex: /^(?:(?:https?|ftp):\\/\\/)?(?:www\\.)?([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}(?:\\/.*)?$/,
+      label: filterConfigMap.get("websiteUrl")
+    }],
+    ["shorthandNumber", {
+      // \u5339\u914D\u5E26k/m/b\u540E\u7F00\u7684\u6570\u5B57\uFF0C\u652F\u6301\u6574\u6570\u3001\u6D6E\u70B9\u6570\u3001\u5927\u5C0F\u5199\u4EE5\u53CA\u53EF\u9009\u7684\u7A7A\u683C\u3002
+      regex: /^\\d+(\\.\\d+)?\\s?[kmb]$/i,
+      label: filterConfigMap.get("shorthandNumber")
+    }]
+  ]);
+  function shouldFilter(text, filterRules) {
+    for (const [key, rule] of ruleChecks.entries()) {
+      if (filterRules[key]) {
+        const isFiltered = rule.regex ? rule.regex.test(text) : rule.test(text);
+        if (isFiltered) {
+          return t(rule.label);
+        }
+      }
+    }
+    return null;
+  }
+  // src/shared/utils/formatting.js
+  var formatTextsForTranslation = (texts) => {
+    const result = texts.map(
+      (text) => \`    ["\${text.replace(/"/g, '\\\\"').replace(/\\n/g, "\\\\n")}", ""]\`
+    );
+    return \`[
+\${result.join(",\\n")}
+]\`;
+  };
+  // src/features/element-scan/worker.js
+  self.onmessage = (event) => {
+    const { type, payload } = event.data;
+    const enableDebugLogging = payload.enableDebugLogging || false;
+    const translations2 = payload.translations || {};
+    const t2 = (key, replacements) => {
+      let value = translations2[key] || key;
+      if (replacements) {
+        Object.keys(replacements).forEach((placeholder) => {
+          const regex = new RegExp(\`{{\${placeholder}}}\`, "g");
+          value = value.replace(regex, replacements[placeholder]);
+        });
+      }
+      return value;
+    };
+    const log2 = (...args) => {
+      if (enableDebugLogging) {
+        console.log(t2("workerLogPrefix"), ...args);
+      }
+    };
+    if (type === "scan-element") {
+      const { texts, filterRules } = payload;
+      const uniqueTexts = /* @__PURE__ */ new Set();
+      if (Array.isArray(texts)) {
+        texts.forEach((rawText) => {
+          if (!rawText || typeof rawText !== "string") return;
+          const normalizedText = rawText.normalize("NFC");
+          const textForFiltering = normalizedText.replace(/(\\r\\n|\\n|\\r)+/g, "\\n").trim();
+          if (textForFiltering === "") return;
+          const filterResult = shouldFilter(textForFiltering, filterRules);
+          if (filterResult) {
+            log2(t2("textFiltered", { text: textForFiltering, reason: filterResult }));
+            return;
+          }
+          uniqueTexts.add(normalizedText.replace(/(\\r\\n|\\n|\\r)+/g, "\\n"));
+        });
+      }
+      const textsArray = Array.from(uniqueTexts);
+      const formattedText = formatTextsForTranslation(textsArray);
+      log2(t2("scanComplete", { count: textsArray.length }));
+      self.postMessage({
+        type: "scanCompleted",
+        payload: {
+          formattedText,
+          count: textsArray.length
+        }
+      });
+    }
+  };
+})();
+`;
+        const workerUrl = `data:application/javascript,${encodeURIComponent(workerScript)}`;
+        const trustedUrl = createTrustedWorkerUrl(workerUrl);
+        const worker2 = new Worker(trustedUrl);
+        worker2.onmessage = (event) => {
+          const { type, payload } = event.data;
+          if (type === "scanCompleted") {
+            log(t("log.elementScan.worker.completed", { count: payload.count }));
+            updateScanCount(payload.count, "element");
+            resolve(payload);
+            worker2.terminate();
+          }
+        };
+        worker2.onerror = (error) => {
+          log(t("log.elementScan.worker.initFailed"), "warn");
+          log(t("log.elementScan.worker.originalError", { error: error.message }), "debug");
+          worker2.terminate();
+          runFallback();
+        };
+        log(t("log.elementScan.worker.sendingData", { count: texts.length }));
+        worker2.postMessage({
+          type: "scan-element",
+          payload: {
+            texts,
+            filterRules: filterRules2,
+            enableDebugLogging,
+            translations: {
+              workerLogPrefix: t("log.elementScan.worker.logPrefix"),
+              textFiltered: t("log.textProcessor.filtered"),
+              scanComplete: t("log.elementScan.worker.completed")
+            }
+          }
+        });
+      } catch (e) {
+        log(t("log.elementScan.worker.initSyncError", { error: e.message }), "error");
+        runFallback();
+      }
+    });
+  }
+  async function confirmSelectionAndExtract() {
     if (!currentTarget) {
       log(t("log.elementScan.confirmFailedNoTarget"));
       return;
     }
     const tagName = currentTarget.tagName.toLowerCase();
     log(simpleTemplate(t("log.elementScan.confirmExtracting"), { tagName }));
-    const extractedTexts = extractAndProcessTextFromElement(currentTarget);
-    const formattedText = formatTextsForTranslation(extractedTexts);
-    log(simpleTemplate(t("log.elementScan.extractedCount"), { count: extractedTexts.length }));
-    shouldResumeAfterModalClose = true;
     isAdjusting = true;
     document.removeEventListener("mouseover", handleMouseOver);
     document.removeEventListener("mouseout", handleMouseOut);
     cleanupUI();
     cleanupToolbar();
-    updateModalContent(formattedText, true, "quick-scan");
-    const notificationText = simpleTemplate(t("scan.quickFinished"), { count: extractedTexts.length });
-    showNotification(notificationText, { type: "success" });
+    shouldResumeAfterModalClose = true;
+    try {
+      const rawTexts = extractRawTextFromElement(currentTarget);
+      log(simpleTemplate(t("log.elementScan.extractedCount"), { count: rawTexts.length }));
+      const { formattedText, count } = await processTextsWithWorker(rawTexts);
+      updateModalContent(formattedText, true, "element-scan");
+      const notificationText = simpleTemplate(t("scan.elementFinished"), { count });
+      showNotification(notificationText, { type: "success" });
+    } catch (error) {
+      log(t("log.elementScan.processingError", { error: error.message }), "error");
+      showNotification(t("notifications.scanFailed"), { type: "error" });
+      stopElementScan();
+    }
   }
   function initUI() {
     const settings = loadSettings();
@@ -6335,97 +7748,97 @@ ${result.join(",\n")}
     log(t("log.main.initializing"));
     log(t("log.main.initialSettingsLoaded"), settings);
     const styleElement = document.createElement("style");
-    styleElement.textContent = `:host{\r
-  --color-bg:#ffffff;\r
-  --color-text:#333333;\r
-  --color-text-secondary:#666666;\r
-  --color-border:#e0e0e0;\r
-  --color-overlay-bg:rgba(0,0,0,0.5);\r
-  --color-shadow:rgba(0,0,0,0.2);\r
-  --color-primary:#1a73e8;\r
-  --color-primary-hover:#185abc;\r
-  --color-primary-text:#ffffff;\r
-  --color-toast-bg:#333333;\r
-  --color-toast-text:#ffffff;\r
-  --color-textarea-bg:#ffffff;\r
-  --color-textarea-border:#cccccc;\r
-  --color-tooltip-bg:#333333;\r
-  --color-tooltip-text:#ffffff;\r
-  --color-line-number-text:#888888;\r
-  --color-line-number-active-text:#000000;\r
-  --dark-color-bg:#2d2d2d;\r
-  --dark-color-text:#f0f0f0;\r
-  --dark-color-text-secondary:#aaaaaa;\r
-  --dark-color-border:#555555;\r
-  --dark-color-overlay-bg:rgba(0,0,0,0.7);\r
-  --dark-color-shadow:rgba(0,0,0,0.4);\r
-  --dark-color-primary:#1e90ff;\r
-  --dark-color-primary-hover:#1c86ee;\r
-  --dark-color-primary-text:#ffffff;\r
-  --dark-color-toast-bg:#eeeeee;\r
-  --dark-color-toast-text:#111111;\r
-  --dark-color-textarea-bg:#3a3a3a;\r
-  --dark-color-textarea-border:#666666;\r
-  --dark-color-tooltip-bg:#e0e0e0;\r
-  --dark-color-tooltip-text:#111111;\r
-  --dark-color-line-number-text:#777777;\r
-  --dark-color-line-number-active-text:#ffffff;\r
-  --color-scrollbar-thumb:#c1c1c1;\r
-  --color-scrollbar-thumb-hover:#a8a8a8;\r
-  --color-scrollbar-border:#ffffff;\r
-  --dark-color-scrollbar-thumb:#555555;\r
-  --dark-color-scrollbar-thumb-hover:#777777;\r
-  --dark-color-scrollbar-border:#2d2d2d;\r
-}\r
-:host([data-theme='light']){\r
-  --main-bg:var(--color-bg);\r
-  --main-text:var(--color-text);\r
-  --main-text-secondary:var(--color-text-secondary);\r
-  --tc-secondary-text-color:var(--color-text-secondary);\r
-  --main-border:var(--color-border);\r
-  --main-overlay-bg:var(--color-overlay-bg);\r
-  --main-shadow:var(--color-shadow);\r
-  --main-primary:var(--color-primary);\r
-  --main-primary-hover:var(--color-primary-hover);\r
-  --main-primary-text:var(--color-primary-text);\r
-  --main-toast-bg:var(--color-toast-bg);\r
-  --main-toast-text:var(--color-toast-text);\r
-  --main-textarea-bg:var(--color-textarea-bg);\r
-  --main-textarea-border:var(--color-textarea-border);\r
-  --main-tooltip-bg:var(--color-tooltip-bg);\r
-  --main-tooltip-text:var(--color-tooltip-text);\r
-  --main-disabled:#cccccc;\r
-  --main-disabled-text:#666666;\r
-  --main-line-number-text:var(--color-line-number-text);\r
-  --main-line-number-active-text:var(--color-line-number-active-text);\r
-  --tc-scrollbar-thumb-color:var(--color-scrollbar-thumb);\r
-  --tc-scrollbar-thumb-hover-color:var(--color-scrollbar-thumb-hover);\r
-  --tc-scrollbar-border-color:var(--color-scrollbar-border);\r
-}\r
-:host([data-theme='dark']){\r
-  --main-bg:var(--dark-color-bg);\r
-  --main-text:var(--dark-color-text);\r
-  --main-text-secondary:var(--dark-color-text-secondary);\r
-  --tc-secondary-text-color:var(--dark-color-text-secondary);\r
-  --main-border:var(--dark-color-border);\r
-  --main-overlay-bg:var(--dark-color-overlay-bg);\r
-  --main-shadow:var(--dark-color-shadow);\r
-  --main-primary:var(--dark-color-primary);\r
-  --main-primary-hover:var(--dark-color-primary-hover);\r
-  --main-primary-text:var(--dark-color-primary-text);\r
-  --main-toast-bg:var(--dark-color-toast-bg);\r
-  --main-toast-text:var(--dark-color-toast-text);\r
-  --main-textarea-bg:var(--dark-color-textarea-bg);\r
-  --main-textarea-border:var(--dark-color-textarea-border);\r
-  --main-tooltip-bg:var(--dark-color-tooltip-bg);\r
-  --main-tooltip-text:var(--dark-color-tooltip-text);\r
-  --main-disabled:#444444;\r
-  --main-disabled-text:#888888;\r
-  --main-line-number-text:var(--dark-color-line-number-text);\r
-  --main-line-number-active-text:var(--dark-color-line-number-active-text);\r
-  --tc-scrollbar-thumb-color:var(--dark-color-scrollbar-thumb);\r
-  --tc-scrollbar-thumb-hover-color:var(--dark-color-scrollbar-thumb-hover);\r
-  --tc-scrollbar-border-color:var(--dark-color-scrollbar-border);\r
+    styleElement.textContent = `:host{
+  --color-bg:#ffffff;
+  --color-text:#333333;
+  --color-text-secondary:#666666;
+  --color-border:#e0e0e0;
+  --color-overlay-bg:rgba(0,0,0,0.5);
+  --color-shadow:rgba(0,0,0,0.2);
+  --color-primary:#1a73e8;
+  --color-primary-hover:#185abc;
+  --color-primary-text:#ffffff;
+  --color-toast-bg:#333333;
+  --color-toast-text:#ffffff;
+  --color-textarea-bg:#ffffff;
+  --color-textarea-border:#cccccc;
+  --color-tooltip-bg:#333333;
+  --color-tooltip-text:#ffffff;
+  --color-line-number-text:#888888;
+  --color-line-number-active-text:#000000;
+  --dark-color-bg:#2d2d2d;
+  --dark-color-text:#f0f0f0;
+  --dark-color-text-secondary:#aaaaaa;
+  --dark-color-border:#555555;
+  --dark-color-overlay-bg:rgba(0,0,0,0.7);
+  --dark-color-shadow:rgba(0,0,0,0.4);
+  --dark-color-primary:#1e90ff;
+  --dark-color-primary-hover:#1c86ee;
+  --dark-color-primary-text:#ffffff;
+  --dark-color-toast-bg:#eeeeee;
+  --dark-color-toast-text:#111111;
+  --dark-color-textarea-bg:#3a3a3a;
+  --dark-color-textarea-border:#666666;
+  --dark-color-tooltip-bg:#e0e0e0;
+  --dark-color-tooltip-text:#111111;
+  --dark-color-line-number-text:#777777;
+  --dark-color-line-number-active-text:#ffffff;
+  --color-scrollbar-thumb:#c1c1c1;
+  --color-scrollbar-thumb-hover:#a8a8a8;
+  --color-scrollbar-border:#ffffff;
+  --dark-color-scrollbar-thumb:#555555;
+  --dark-color-scrollbar-thumb-hover:#777777;
+  --dark-color-scrollbar-border:#2d2d2d;
+}
+:host([data-theme='light']){
+  --main-bg:var(--color-bg);
+  --main-text:var(--color-text);
+  --main-text-secondary:var(--color-text-secondary);
+  --tc-secondary-text-color:var(--color-text-secondary);
+  --main-border:var(--color-border);
+  --main-overlay-bg:var(--color-overlay-bg);
+  --main-shadow:var(--color-shadow);
+  --main-primary:var(--color-primary);
+  --main-primary-hover:var(--color-primary-hover);
+  --main-primary-text:var(--color-primary-text);
+  --main-toast-bg:var(--color-toast-bg);
+  --main-toast-text:var(--color-toast-text);
+  --main-textarea-bg:var(--color-textarea-bg);
+  --main-textarea-border:var(--color-textarea-border);
+  --main-tooltip-bg:var(--color-tooltip-bg);
+  --main-tooltip-text:var(--color-tooltip-text);
+  --main-disabled:#cccccc;
+  --main-disabled-text:#666666;
+  --main-line-number-text:var(--color-line-number-text);
+  --main-line-number-active-text:var(--color-line-number-active-text);
+  --tc-scrollbar-thumb-color:var(--color-scrollbar-thumb);
+  --tc-scrollbar-thumb-hover-color:var(--color-scrollbar-thumb-hover);
+  --tc-scrollbar-border-color:var(--color-scrollbar-border);
+}
+:host([data-theme='dark']){
+  --main-bg:var(--dark-color-bg);
+  --main-text:var(--dark-color-text);
+  --main-text-secondary:var(--dark-color-text-secondary);
+  --tc-secondary-text-color:var(--dark-color-text-secondary);
+  --main-border:var(--dark-color-border);
+  --main-overlay-bg:var(--dark-color-overlay-bg);
+  --main-shadow:var(--dark-color-shadow);
+  --main-primary:var(--dark-color-primary);
+  --main-primary-hover:var(--dark-color-primary-hover);
+  --main-primary-text:var(--dark-color-primary-text);
+  --main-toast-bg:var(--dark-color-toast-bg);
+  --main-toast-text:var(--dark-color-toast-text);
+  --main-textarea-bg:var(--dark-color-textarea-bg);
+  --main-textarea-border:var(--dark-color-textarea-border);
+  --main-tooltip-bg:var(--dark-color-tooltip-bg);
+  --main-tooltip-text:var(--dark-color-tooltip-text);
+  --main-disabled:#444444;
+  --main-disabled-text:#888888;
+  --main-line-number-text:var(--dark-color-line-number-text);
+  --main-line-number-active-text:var(--dark-color-line-number-active-text);
+  --tc-scrollbar-thumb-color:var(--dark-color-scrollbar-thumb);
+  --tc-scrollbar-thumb-hover-color:var(--dark-color-scrollbar-thumb-hover);
+  --tc-scrollbar-border-color:var(--dark-color-scrollbar-border);
 }
 .confirmation-modal-overlay{
   position:fixed;
@@ -6649,91 +8062,90 @@ ${result.join(",\n")}
 }
 .tc-dropdown-menu.is-hiding{
     animation:slide-down-fade-out 0.3s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
-}\r
-#element-scan-container{\r
-    position:absolute;\r
-    z-index:9999998;\r
-    pointer-events:none;\r
-    transition:all 0.1s ease-in-out, opacity 0.2s ease-in-out, visibility 0s linear 0.2s;\r
-    opacity:0;\r
-    visibility:hidden;\r
-}\r
-#element-scan-highlight-border{\r
-    width:100%;\r
-    height:100%;\r
-    border:4px solid #3498db;\r
-    background-color:rgba(52, 152, 219, 0.2);\r
-    border-radius:6px 6px 6px 0;\r
-    box-sizing:border-box;\r
-}\r
-#element-scan-tag-name{\r
-    position:absolute;\r
-    top:100%;\r
-    background-color:#3498db;\r
-    color:white;\r
-    padding:4px 8px;\r
-    font-size:12px;\r
-    border-radius:0 0 6px 6px;\r
-    z-index:1;\r
-    font-family:'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';\r
-    white-space:nowrap;\r
-}\r
-#element-scan-toolbar{\r
-    position:fixed;\r
-    z-index:10000000;\r
-    background-color:var(--main-bg);\r
-    border:1px solid var(--main-border);\r
-    border-radius:16px;\r
-    padding:10px;\r
-    box-shadow:0 4px 12px rgba(0,0,0,0.15);\r
-    cursor:move;\r
-    display:flex;\r
-    flex-direction:column;\r
-    width:220px;\r
-    opacity:0;\r
-    visibility:hidden;\r
-    transition:opacity 0.2s ease-in-out, visibility 0s linear 0.2s;\r
-}\r
-#element-scan-container.is-visible,\r
-#element-scan-toolbar.is-visible{\r
-    opacity:1;\r
-    visibility:visible;\r
-    transition-delay:0s;\r
-}\r
-#element-scan-toolbar-tag{\r
-    font-weight:bold;\r
-    font-family:'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';\r
-    text-align:center;\r
-    color:var(--main-text);\r
-    padding:5px;\r
-    border-radius:4px;\r
-    font-size:14px;\r
-}\r
-#element-scan-level-slider{\r
-    width:100%;\r
-}\r
-#element-scan-toolbar-actions{\r
-    display:flex;\r
-    justify-content:space-between;\r
-    gap:5px;\r
-}\r
-#element-scan-toolbar-actions button{\r
-    flex-grow:1;\r
-    padding:6px 8px;\r
-    border:none;\r
-    border-radius:12px;\r
-    cursor:pointer;\r
-    font-size:13px;\r
-    color:var(--main-text);\r
-    transition:background-color 0.2s;\r
-}\r
-.text-extractor-fab.is-recording{\r
-    background-color:#f39c12;\r
-    animation:tc-breathing 2s ease-in-out infinite;\r
-}\r
-\r
-.text-extractor-fab.is-recording:hover{\r
-    background-color:#e67e22;\r
+}
+#element-scan-container{
+    position:absolute;
+    z-index:9999998;
+    pointer-events:none;
+    transition:all 0.1s ease-in-out, opacity 0.2s ease-in-out, visibility 0s linear 0.2s;
+    opacity:0;
+    visibility:hidden;
+}
+#element-scan-highlight-border{
+    width:100%;
+    height:100%;
+    border:4px solid #3498db;
+    background-color:rgba(52, 152, 219, 0.2);
+    border-radius:6px 6px 6px 0;
+    box-sizing:border-box;
+}
+#element-scan-tag-name{
+    position:absolute;
+    top:100%;
+    background-color:#3498db;
+    color:white;
+    padding:4px 8px;
+    font-size:12px;
+    border-radius:0 0 6px 6px;
+    z-index:1;
+    font-family:'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
+    white-space:nowrap;
+}
+#element-scan-toolbar{
+    position:fixed;
+    z-index:10000000;
+    background-color:var(--main-bg);
+    border:1px solid var(--main-border);
+    border-radius:16px;
+    padding:10px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.15);
+    cursor:move;
+    display:flex;
+    flex-direction:column;
+    width:220px;
+    opacity:0;
+    visibility:hidden;
+    transition:opacity 0.2s ease-in-out, visibility 0s linear 0.2s;
+}
+#element-scan-container.is-visible,
+#element-scan-toolbar.is-visible{
+    opacity:1;
+    visibility:visible;
+    transition-delay:0s;
+}
+#element-scan-toolbar-tag{
+    font-weight:bold;
+    font-family:'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
+    text-align:center;
+    color:var(--main-text);
+    padding:5px;
+    border-radius:4px;
+    font-size:14px;
+}
+#element-scan-level-slider{
+    width:100%;
+}
+#element-scan-toolbar-actions{
+    display:flex;
+    justify-content:space-between;
+    gap:5px;
+}
+#element-scan-toolbar-actions button{
+    flex-grow:1;
+    padding:6px 8px;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+    font-size:13px;
+    color:var(--main-text);
+    transition:background-color 0.2s;
+}
+.text-extractor-fab.is-recording{
+    background-color:#f39c12;
+    animation:tc-breathing 2s ease-in-out infinite;
+}
+.text-extractor-fab.is-recording:hover{
+    background-color:#e67e22;
 }
 .fab-position-top-right{
     transform:translate(-30px, 30px);

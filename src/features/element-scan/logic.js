@@ -1,7 +1,7 @@
 // src/features/element-scan/logic.js
 
 import { updateHighlight, cleanupUI, createAdjustmentToolbar, cleanupToolbar } from './ui.js';
-import { extractAndProcessTextFromElement } from '../../shared/utils/textProcessor.js';
+import { extractAndProcessTextFromElement, extractRawTextFromElement } from '../../shared/utils/textProcessor.js';
 import { updateModalContent } from '../../shared/ui/mainModal.js';
 import { uiContainer } from '../../shared/ui/uiContainer.js';
 import { showNotification } from '../../shared/ui/components/notification.js';
@@ -9,6 +9,10 @@ import { t } from '../../shared/i18n/index.js';
 import { simpleTemplate } from '../../shared/utils/templating.js';
 import { formatTextsForTranslation } from '../../shared/utils/formatting.js';
 import { log } from '../../shared/utils/logger.js';
+import { loadSettings } from '../settings/logic.js';
+import { createTrustedWorkerUrl } from '../../shared/utils/trustedTypes.js';
+import { performScanInMainThread } from './fallback.js';
+import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
 
 // --- 模块级状态变量 ---
 
@@ -240,11 +244,83 @@ export function updateSelectionLevel(level) {
 }
 
 /**
+ * @private
+ * @function processTextsWithWorker
+ * @description 使用 Web Worker 处理提取的原始文本。
+ * @param {string[]} texts - 从 DOM 提取的原始文本数组。
+ * @returns {Promise<{formattedText: string, count: number}>} - 返回一个 Promise，
+ *          该 Promise 在处理完成时解析为一个包含格式化文本和计数的对象。
+ */
+function processTextsWithWorker(texts) {
+    return new Promise((resolve, reject) => {
+        const { filterRules, enableDebugLogging } = loadSettings();
+
+        const runFallback = () => {
+            log(t('log.elementScan.switchToFallback'));
+            showNotification(t('notifications.cspWorkerWarning'), { type: 'info', duration: 5000 });
+            try {
+                const result = performScanInMainThread(texts, filterRules, enableDebugLogging);
+                updateScanCount(result.count, 'element');
+                resolve(result);
+            } catch (fallbackError) {
+                log(t('log.elementScan.fallbackFailed', { error: fallbackError.message }), 'error');
+                reject(fallbackError);
+            }
+        };
+
+        try {
+            log(t('log.elementScan.worker.starting'));
+            const workerScript = __ELEMENT_SCAN_WORKER_STRING__;
+            const workerUrl = `data:application/javascript,${encodeURIComponent(workerScript)}`;
+            const trustedUrl = createTrustedWorkerUrl(workerUrl);
+            const worker = new Worker(trustedUrl);
+
+            worker.onmessage = (event) => {
+                const { type, payload } = event.data;
+                if (type === 'scanCompleted') {
+                    log(t('log.elementScan.worker.completed', { count: payload.count }));
+                    updateScanCount(payload.count, 'element');
+                    resolve(payload);
+                    worker.terminate();
+                }
+            };
+
+            worker.onerror = (error) => {
+                log(t('log.elementScan.worker.initFailed'), 'warn');
+                log(t('log.elementScan.worker.originalError', { error: error.message }), 'debug');
+                worker.terminate();
+                runFallback();
+            };
+
+            log(t('log.elementScan.worker.sendingData', { count: texts.length }));
+            worker.postMessage({
+                type: 'scan-element',
+                payload: {
+                    texts,
+                    filterRules,
+                    enableDebugLogging,
+                    translations: {
+                        workerLogPrefix: t('log.elementScan.worker.logPrefix'),
+                        textFiltered: t('log.textProcessor.filtered'),
+                        scanComplete: t('log.elementScan.worker.completed'),
+                    },
+                },
+            });
+
+        } catch (e) {
+            log(t('log.elementScan.worker.initSyncError', { error: e.message }), 'error');
+            runFallback();
+        }
+    });
+}
+
+
+/**
  * @public
  * @function confirmSelectionAndExtract
  * @description 确认最终选择的元素，并从中提取、处理和显示文本。
  */
-export function confirmSelectionAndExtract() {
+export async function confirmSelectionAndExtract() {
     if (!currentTarget) {
         log(t('log.elementScan.confirmFailedNoTarget'));
         return;
@@ -252,24 +328,35 @@ export function confirmSelectionAndExtract() {
     const tagName = currentTarget.tagName.toLowerCase();
     log(simpleTemplate(t('log.elementScan.confirmExtracting'), { tagName }));
 
-    const extractedTexts = extractAndProcessTextFromElement(currentTarget);
-    const formattedText = formatTextsForTranslation(extractedTexts);
-    log(simpleTemplate(t('log.elementScan.extractedCount'), { count: extractedTexts.length }));
-
-    // 标记在模态框关闭后应恢复扫描
-    shouldResumeAfterModalClose = true;
-
     // 暂停扫描UI，但保持 isActive = true 的状态
-    isAdjusting = true; // 进入“调整”模式以暂停悬停
+    isAdjusting = true;
     document.removeEventListener('mouseover', handleMouseOver);
     document.removeEventListener('mouseout', handleMouseOut);
     cleanupUI();
     cleanupToolbar();
 
-    // 在主模态框中显示提取到的文本
-    updateModalContent(formattedText, true, 'quick-scan');
+    // 标记在模态框关闭后应恢复扫描
+    shouldResumeAfterModalClose = true;
 
-    // 显示一个成功的通知
-    const notificationText = simpleTemplate(t('scan.quickFinished'), { count: extractedTexts.length });
-    showNotification(notificationText, { type: 'success' });
+    try {
+        // 1. 在主线程中提取原始文本
+        const rawTexts = extractRawTextFromElement(currentTarget);
+        log(simpleTemplate(t('log.elementScan.extractedCount'), { count: rawTexts.length }));
+
+        // 2. 使用 Worker 处理文本
+        const { formattedText, count } = await processTextsWithWorker(rawTexts);
+
+        // 3. 在主模态框中显示结果
+        updateModalContent(formattedText, true, 'element-scan');
+
+        // 4. 显示成功通知
+        const notificationText = simpleTemplate(t('scan.elementFinished'), { count });
+        showNotification(notificationText, { type: 'success' });
+
+    } catch (error) {
+        log(t('log.elementScan.processingError', { error: error.message }), 'error');
+        showNotification(t('notifications.scanFailed'), { type: 'error' });
+        // 如果处理失败，也要确保UI状态正确
+        stopElementScan();
+    }
 }

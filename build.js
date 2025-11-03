@@ -49,7 +49,8 @@ async function build() {
         const workerBuildResult = await esbuild.build({
             entryPoints: [
                 'src/features/session-scan/worker.js',
-                'src/features/quick-scan/worker.js'
+                'src/features/quick-scan/worker.js',
+                'src/features/element-scan/worker.js'
             ],
             bundle: true,
             write: false,
@@ -60,6 +61,7 @@ async function build() {
         // 分别获取两个 worker 的代码
         const sessionScanWorkerCode = workerBuildResult.outputFiles.find(f => f.path.includes('session-scan')).text;
         const quickScanWorkerCode = workerBuildResult.outputFiles.find(f => f.path.includes('quick-scan')).text;
+        const elementScanWorkerCode = workerBuildResult.outputFiles.find(f => f.path.includes('element-scan')).text;
         console.log('Web Workers 打包完成。');
 
         // 4. 从 src/main.js 开始打包主应用程序代码
@@ -77,6 +79,7 @@ async function build() {
                 // 将打包好的、无依赖的 Worker 代码注入
                 '__WORKER_STRING__': JSON.stringify(sessionScanWorkerCode),
                 '__QUICK_SCAN_WORKER_STRING__': JSON.stringify(quickScanWorkerCode),
+                '__ELEMENT_SCAN_WORKER_STRING__': JSON.stringify(elementScanWorkerCode),
             }
         });
         console.log('主应用程序打包完成。');

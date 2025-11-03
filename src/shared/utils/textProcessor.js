@@ -120,6 +120,49 @@ export const extractAndProcessText = () => {
 
 /**
  * @public
+ * @description 从指定的单个DOM元素及其后代中提取所有原始文本，不进行过滤或去重。
+ *              此函数设计为在主线程中运行，为 Web Worker 准备数据。
+ * @param {HTMLElement} element - 开始提取文本的根元素。
+ * @returns {string[]} 一个包含所有找到的原始文本的数组。
+ */
+export const extractRawTextFromElement = (element) => {
+    if (!element) return [];
+
+    const texts = [];
+
+    const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(', ');
+    if (element.closest(ignoredSelectorString)) {
+        return [];
+    }
+
+    // 提取元素自身的属性
+    const attributesToExtract = appConfig.scanner.attributesToExtract;
+    attributesToExtract.forEach(attr => {
+        const attrValue = element.getAttribute(attr);
+        if (attrValue) {
+            texts.push(attrValue);
+        }
+    });
+
+    // 使用 TreeWalker 遍历其内部的所有文本节点
+    const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null);
+    while (walker.nextNode()) {
+        const node = walker.currentNode;
+        const parent = node.parentElement;
+        if (parent && (parent.tagName === 'SCRIPT' || parent.tagName === 'STYLE' || parent.closest(ignoredSelectorString) || parent.closest('.text-extractor-fab, .text-extractor-modal-overlay, .settings-panel-overlay'))) {
+            continue;
+        }
+        if (node.nodeValue) {
+            texts.push(node.nodeValue);
+        }
+    }
+
+    return texts;
+};
+
+
+/**
+ * @public
  * @description 从指定的单个DOM元素及其后代中提取、处理并返回唯一的文本字符串数组。
  * @param {HTMLElement} element - 开始提取文本的根元素。
  * @returns {string[]} 一个包含处理过的、唯一文本的数组。
