@@ -217,7 +217,13 @@ export function updateModalContent(content, shouldOpen = false, mode = 'quick-sc
     if (shouldOpen) {
         state.modalOverlay.classList.add('is-visible');
         state.modalOverlay.addEventListener('keydown', handleKeyDown);
-        state.modalOverlay.focus();
+
+        // 修复：确保在CSS过渡动画完成后再设置焦点。
+        // 这可以防止因元素在调用focus()时还不可见而导致的焦点设置失败。
+        // 使用 { once: true } 确保监听器在触发一次后自动移除。
+        state.modalOverlay.addEventListener('transitionend', () => {
+            state.modalOverlay.focus();
+        }, { once: true });
     }
 }
 

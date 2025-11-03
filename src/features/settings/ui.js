@@ -59,10 +59,6 @@ function showSettingsPanel(currentSettings, onSave) {
 
     uiContainer.appendChild(settingsPanel);
 
-    setTimeout(() => {
-        if (settingsPanel) settingsPanel.classList.add('is-visible');
-    }, 10);
-
     // --- 填充标题和组件 ---
     const titleContainer = settingsPanel.querySelector('#settings-panel-title-container');
     titleContainer.appendChild(createIconTitle(settingsIcon, t('settings.title')));
@@ -100,11 +96,20 @@ function showSettingsPanel(currentSettings, onSave) {
     settingsPanel.querySelector('.settings-panel-close').addEventListener('click', hideSettingsPanel);
     saveBtn.addEventListener('click', () => handleSave(onSave));
     settingsPanel.addEventListener('keydown', handleKeyDown);
-    settingsPanel.focus();
 
     // 监听 tooltip 事件以暂停/恢复 ESC 键的处理
     on('infoTooltipWillShow', () => { isTooltipVisible = true; });
     on('infoTooltipDidHide', () => { isTooltipVisible = false; });
+
+    // 修复：确保在CSS过渡动画完成后再设置焦点。
+    settingsPanel.addEventListener('transitionend', () => {
+        settingsPanel.focus();
+    }, { once: true });
+
+    // 触发显示
+    setTimeout(() => {
+        if (settingsPanel) settingsPanel.classList.add('is-visible');
+    }, 10);
 }
 
 /**

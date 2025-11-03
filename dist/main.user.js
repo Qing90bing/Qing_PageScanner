@@ -5191,7 +5191,9 @@ ${result.join(",\n")}
     if (shouldOpen) {
       modalOverlay.classList.add("is-visible");
       modalOverlay.addEventListener("keydown", handleKeyDown);
-      modalOverlay.focus();
+      modalOverlay.addEventListener("transitionend", () => {
+        modalOverlay.focus();
+      }, { once: true });
     }
   }
   function updateModalAddonsVisibility() {
@@ -7552,9 +7554,6 @@ ${result.join(",\n")}
     const panelModal = buildPanelDOM(currentSettings);
     settingsPanel.appendChild(panelModal);
     uiContainer.appendChild(settingsPanel);
-    setTimeout(() => {
-      if (settingsPanel) settingsPanel.classList.add("is-visible");
-    }, 10);
     const titleContainer2 = settingsPanel.querySelector("#settings-panel-title-container");
     titleContainer2.appendChild(createIconTitle(settingsIcon, t("settings.title")));
     selectComponents = {};
@@ -7582,13 +7581,18 @@ ${result.join(",\n")}
     settingsPanel.querySelector(".settings-panel-close").addEventListener("click", hideSettingsPanel);
     saveBtn.addEventListener("click", () => handleSave(onSave));
     settingsPanel.addEventListener("keydown", handleKeyDown2);
-    settingsPanel.focus();
     on("infoTooltipWillShow", () => {
       isTooltipVisible = true;
     });
     on("infoTooltipDidHide", () => {
       isTooltipVisible = false;
     });
+    settingsPanel.addEventListener("transitionend", () => {
+      settingsPanel.focus();
+    }, { once: true });
+    setTimeout(() => {
+      if (settingsPanel) settingsPanel.classList.add("is-visible");
+    }, 10);
   }
   function hideSettingsPanel() {
     if (settingsPanel && settingsPanel.classList.contains("is-visible")) {
