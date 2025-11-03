@@ -293,6 +293,14 @@ function processTextsWithWorker(texts) {
             };
 
             log(t('log.elementScan.worker.sendingData', { count: texts.length }));
+
+            // 为了让 Worker 能够显示本地化的过滤原因，我们需要提取所有过滤规则的翻译
+            const filterReasonTranslations = Object.keys(filterRules).reduce((acc, key) => {
+                // `t` 函数的键路径是 'settings.filters.key'
+                acc[key] = t(`settings.filters.${key}`);
+                return acc;
+            }, {});
+
             worker.postMessage({
                 type: 'scan-element',
                 payload: {
@@ -303,6 +311,8 @@ function processTextsWithWorker(texts) {
                         workerLogPrefix: t('log.elementScan.worker.logPrefix'),
                         textFiltered: t('log.textProcessor.filtered'),
                         scanComplete: t('log.elementScan.worker.completed'),
+                        // 将过滤原因的翻译传递给 worker
+                        filterReasons: filterReasonTranslations,
                     },
                 },
             });

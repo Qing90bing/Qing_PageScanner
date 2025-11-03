@@ -72,7 +72,13 @@ export function updateHighlight(targetElement) {
     const padding = 6; // 为内容添加内边距，使边框看起来更舒适
     const tagName = targetElement.tagName.toLowerCase();
 
-    log(simpleTemplate(t('log.elementScanUI.updatingHighlight'), { tagName }), { top: rect.top, left: rect.left, width: rect.width, height: rect.height });
+    const coordinates = {
+        top: rect.top.toFixed(2),
+        left: rect.left.toFixed(2),
+        width: rect.width.toFixed(2),
+        height: rect.height.toFixed(2)
+    };
+    log(simpleTemplate(t('log.elementScanUI.updatingHighlight'), { tagName }), coordinates);
 
     // 所有的定位和尺寸变化都只应用于容器，内部元素相对静态，以实现同步动画
     scanContainer.style.width = `${rect.width + padding * 2}px`;
@@ -153,7 +159,7 @@ export function createAdjustmentToolbar(elementPath) {
     
     toolbar.style.top = `${top}px`;
     toolbar.style.left = `${left}px`;
-    log(t('log.elementScanUI.toolbarPositioned'), { top, left });
+    log(t('log.elementScanUI.toolbarPositioned'));
 
     addToolbarEventListeners();
     makeDraggable(toolbar);

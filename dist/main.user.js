@@ -232,16 +232,16 @@ var TextExtractor = (() => {
       elementFinished: "Element scan finished, found {{count}} items.",
       startSession: "Start Dynamic Scan Session",
       stopSession: "Stop Dynamic Scan Session",
-      finished: "Scan finished, found {count} items.",
-      quickFinished: "Quick scan finished, found {count} items.",
+      finished: "Scan finished, found {{count}} items.",
+      quickFinished: "Quick scan finished, found {{count}} items.",
       sessionStarted: "Session scan started.",
       sessionInProgress: "Scan in progress...",
       truncationWarning: "To maintain UI fluency, only a portion of the text is displayed here. The full content will be available upon export."
     },
     results: {
       title: "Extracted Text",
-      scanCountSession: "Scanned {count} items",
-      scanCountStatic: "Total {count} items scanned",
+      scanCountSession: "Scanned {{count}} items",
+      scanCountStatic: "Total {{count}} items scanned",
       totalCharacters: "Total Characters",
       totalLines: "Total Lines",
       noSummary: "No summary available",
@@ -436,10 +436,10 @@ var TextExtractor = (() => {
       },
       elementScanUI: {
         creatingHighlights: "Element Scan UI: Creating highlight elements for the first time.",
-        updatingHighlight: "Element Scan UI: Updating highlight for <{tagName}>",
+        updatingHighlight: "Element Scan UI: Updating highlight for <{{tagName}}>.",
         creatingToolbar: "Element Scan UI: Creating adjustment toolbar.",
-        toolbarPositioned: "Element Scan UI: Toolbar positioned at",
-        sliderChanged: "Element Scan UI: Slider changed to level {level}",
+        toolbarPositioned: "Element Scan UI: Toolbar positioned.",
+        sliderChanged: "Element Scan UI: Slider changed to level {{level}}",
         reselectClicked: "Element Scan UI: 'Reselect' button clicked.",
         cancelClicked: "Element Scan UI: 'Cancel' button clicked.",
         confirmClicked: "Element Scan UI: 'Confirm' button clicked.",
@@ -547,16 +547,16 @@ var TextExtractor = (() => {
       elementFinished: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5B8C\u6210\uFF0C\u53D1\u73B0 {{count}} \u6761\u6587\u672C\u3002",
       startSession: "\u5F00\u59CB\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD",
       stopSession: "\u505C\u6B62\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD",
-      finished: "\u626B\u63CF\u7ED3\u675F\uFF0C\u5171\u53D1\u73B0 {count} \u6761\u6587\u672C",
-      quickFinished: "\u5FEB\u6377\u626B\u63CF\u5B8C\u6210\uFF0C\u53D1\u73B0 {count} \u6761\u6587\u672C",
+      finished: "\u626B\u63CF\u7ED3\u675F\uFF0C\u5171\u53D1\u73B0 {{count}} \u6761\u6587\u672C",
+      quickFinished: "\u5FEB\u6377\u626B\u63CF\u5B8C\u6210\uFF0C\u53D1\u73B0 {{count}} \u6761\u6587\u672C",
       sessionStarted: "\u4F1A\u8BDD\u626B\u63CF\u5DF2\u5F00\u59CB",
       sessionInProgress: "\u626B\u63CF\u6B63\u5728\u8FDB\u884C\u4E2D...",
       truncationWarning: "\u4E3A\u4FDD\u6301\u754C\u9762\u6D41\u7545\uFF0C\u6B64\u5904\u4EC5\u663E\u793A\u90E8\u5206\u6587\u672C\u3002\u5B8C\u6574\u5185\u5BB9\u5C06\u5728\u5BFC\u51FA\u65F6\u63D0\u4F9B\u3002"
     },
     results: {
       title: "\u63D0\u53D6\u7684\u6587\u672C",
-      scanCountSession: "\u5DF2\u626B\u63CF {count} \u6761\u6587\u672C",
-      scanCountStatic: "\u5171\u626B\u63CF {count} \u6761\u6587\u672C",
+      scanCountSession: "\u5DF2\u626B\u63CF {{count}} \u6761\u6587\u672C",
+      scanCountStatic: "\u5171\u626B\u63CF {{count}} \u6761\u6587\u672C",
       totalCharacters: "\u603B\u5B57\u6570",
       totalLines: "\u603B\u884C\u6570",
       noSummary: "\u5F53\u524D\u6CA1\u6709\u603B\u7ED3\u6587\u672C",
@@ -751,10 +751,10 @@ var TextExtractor = (() => {
       },
       elementScanUI: {
         creatingHighlights: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u9996\u6B21\u521B\u5EFA\u9AD8\u4EAE\u5143\u7D20\u3002",
-        updatingHighlight: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u6B63\u5728\u4E3A <{tagName}> \u66F4\u65B0\u9AD8\u4EAE\u3002",
+        updatingHighlight: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u6B63\u5728\u4E3A <{{tagName}}> \u66F4\u65B0\u9AD8\u4EAE\u3002",
         creatingToolbar: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u6B63\u5728\u521B\u5EFA\u8C03\u6574\u5DE5\u5177\u680F\u3002",
-        toolbarPositioned: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u5DE5\u5177\u680F\u5DF2\u5B9A\u4F4D\u5728",
-        sliderChanged: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u6ED1\u5757\u5C42\u7EA7\u53D8\u4E3A {level}",
+        toolbarPositioned: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u5DE5\u5177\u680F\u5DF2\u5B9A\u4F4D\u3002",
+        sliderChanged: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u6ED1\u5757\u5C42\u7EA7\u53D8\u4E3A {{level}}",
         reselectClicked: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u201C\u91CD\u65B0\u9009\u62E9\u201D\u6309\u94AE\u88AB\u70B9\u51FB\u3002",
         cancelClicked: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u201C\u53D6\u6D88\u201D\u6309\u94AE\u88AB\u70B9\u51FB\u3002",
         confirmClicked: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u201C\u786E\u8BA4\u201D\u6309\u94AE\u88AB\u70B9\u51FB\u3002",
@@ -862,16 +862,16 @@ var TextExtractor = (() => {
       elementFinished: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5B8C\u6210\uFF0C\u767C\u73FE {{count}} \u689D\u6587\u672C\u3002",
       startSession: "\u958B\u59CB\u52D5\u614B\u6383\u63CF\u6703\u8A71",
       stopSession: "\u505C\u6B62\u52D5\u614B\u6383\u63CF\u6703\u8A71",
-      finished: "\u6383\u63CF\u7D50\u675F\uFF0C\u5171\u767C\u73FE {count} \u689D\u6587\u672C",
-      quickFinished: "\u5FEB\u6377\u6383\u63CF\u5B8C\u6210\uFF0C\u767C\u73FE {count} \u689D\u6587\u672C",
+      finished: "\u6383\u63CF\u7D50\u675F\uFF0C\u5171\u767C\u73FE {{count}} \u689D\u6587\u672C",
+      quickFinished: "\u5FEB\u6377\u6383\u63CF\u5B8C\u6210\uFF0C\u767C\u73FE {{count}} \u689D\u6587\u672C",
       sessionStarted: "\u6703\u8A71\u6383\u63CF\u5DF2\u958B\u59CB",
       sessionInProgress: "\u6383\u63CF\u6B63\u5728\u9032\u884C\u4E2D...",
       truncationWarning: "\u70BA\u4FDD\u6301\u4ECB\u9762\u6D41\u66A2\uFF0C\u6B64\u8655\u50C5\u986F\u793A\u90E8\u5206\u6587\u672C\u3002\u5B8C\u6574\u5167\u5BB9\u5C07\u5728\u532F\u51FA\u6642\u63D0\u4F9B\u3002"
     },
     results: {
       title: "\u63D0\u53D6\u7684\u6587\u672C",
-      scanCountSession: "\u5DF2\u6383\u63CF {count} \u689D\u6587\u672C",
-      scanCountStatic: "\u5171\u6383\u63CF {count} \u689D\u6587\u672C",
+      scanCountSession: "\u5DF2\u6383\u63CF {{count}} \u689D\u6587\u672C",
+      scanCountStatic: "\u5171\u6383\u63CF {{count}} \u689D\u6587\u672C",
       totalCharacters: "\u7E3D\u5B57\u6578",
       totalLines: "\u7E3D\u884C\u6578",
       noSummary: "\u7576\u524D\u6C92\u6709\u6458\u8981\u6587\u672C",
@@ -1066,10 +1066,10 @@ var TextExtractor = (() => {
       },
       elementScanUI: {
         creatingHighlights: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u9996\u6B21\u5EFA\u7ACB\u9AD8\u4EAE\u5143\u7D20\u3002",
-        updatingHighlight: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u6B63\u5728\u70BA <{tagName}> \u66F4\u65B0\u9AD8\u4EAE\u3002",
+        updatingHighlight: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u6B63\u5728\u70BA <{{tagName}}> \u66F4\u65B0\u9AD8\u4EAE\u3002",
         creatingToolbar: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u6B63\u5728\u5EFA\u7ACB\u8ABF\u6574\u5DE5\u5177\u5217\u3002",
-        toolbarPositioned: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u5DE5\u5177\u5217\u5DF2\u5B9A\u4F4D\u5728",
-        sliderChanged: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u6ED1\u687F\u5C64\u7D1A\u8B8A\u70BA {level}",
+        toolbarPositioned: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u5DE5\u5177\u5217\u5DF2\u5B9A\u4F4D\u3002",
+        sliderChanged: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u6ED1\u687F\u5C64\u7D1A\u8B8A\u70BA {{level}}",
         reselectClicked: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u300C\u91CD\u65B0\u9078\u64C7\u300D\u6309\u9215\u88AB\u9EDE\u64CA\u3002",
         cancelClicked: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u300C\u53D6\u6D88\u300D\u6309\u9215\u88AB\u9EDE\u64CA\u3002",
         confirmClicked: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u300C\u78BA\u8A8D\u300D\u6309\u9215\u88AB\u9EDE\u64CA\u3002",
@@ -1772,7 +1772,7 @@ ${result.join(",\n")}
   }
   var simpleTemplate = (template, values) => {
     if (!template) return "";
-    return template.replace(/{(\w+)}/g, (match, key) => {
+    return template.replace(/{{\s*(\w+)\s*}}/g, (match, key) => {
       return values.hasOwnProperty(key) ? values[key] : match;
     });
   };
@@ -1937,16 +1937,16 @@ ${result.join(",\n")}
       elementFinished: "Element scan finished, found {{count}} items.",
       startSession: "Start Dynamic Scan Session",
       stopSession: "Stop Dynamic Scan Session",
-      finished: "Scan finished, found {count} items.",
-      quickFinished: "Quick scan finished, found {count} items.",
+      finished: "Scan finished, found {{count}} items.",
+      quickFinished: "Quick scan finished, found {{count}} items.",
       sessionStarted: "Session scan started.",
       sessionInProgress: "Scan in progress...",
       truncationWarning: "To maintain UI fluency, only a portion of the text is displayed here. The full content will be available upon export."
     },
     results: {
       title: "Extracted Text",
-      scanCountSession: "Scanned {count} items",
-      scanCountStatic: "Total {count} items scanned",
+      scanCountSession: "Scanned {{count}} items",
+      scanCountStatic: "Total {{count}} items scanned",
       totalCharacters: "Total Characters",
       totalLines: "Total Lines",
       noSummary: "No summary available",
@@ -2141,10 +2141,10 @@ ${result.join(",\n")}
       },
       elementScanUI: {
         creatingHighlights: "Element Scan UI: Creating highlight elements for the first time.",
-        updatingHighlight: "Element Scan UI: Updating highlight for <{tagName}>",
+        updatingHighlight: "Element Scan UI: Updating highlight for <{{tagName}}>.",
         creatingToolbar: "Element Scan UI: Creating adjustment toolbar.",
-        toolbarPositioned: "Element Scan UI: Toolbar positioned at",
-        sliderChanged: "Element Scan UI: Slider changed to level {level}",
+        toolbarPositioned: "Element Scan UI: Toolbar positioned.",
+        sliderChanged: "Element Scan UI: Slider changed to level {{level}}",
         reselectClicked: "Element Scan UI: 'Reselect' button clicked.",
         cancelClicked: "Element Scan UI: 'Cancel' button clicked.",
         confirmClicked: "Element Scan UI: 'Confirm' button clicked.",
@@ -2253,16 +2253,16 @@ ${result.join(",\n")}
       elementFinished: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {{count}} \\u6761\\u6587\\u672C\\u3002",
       startSession: "\\u5F00\\u59CB\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD",
       stopSession: "\\u505C\\u6B62\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD",
-      finished: "\\u626B\\u63CF\\u7ED3\\u675F\\uFF0C\\u5171\\u53D1\\u73B0 {count} \\u6761\\u6587\\u672C",
-      quickFinished: "\\u5FEB\\u6377\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {count} \\u6761\\u6587\\u672C",
+      finished: "\\u626B\\u63CF\\u7ED3\\u675F\\uFF0C\\u5171\\u53D1\\u73B0 {{count}} \\u6761\\u6587\\u672C",
+      quickFinished: "\\u5FEB\\u6377\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {{count}} \\u6761\\u6587\\u672C",
       sessionStarted: "\\u4F1A\\u8BDD\\u626B\\u63CF\\u5DF2\\u5F00\\u59CB",
       sessionInProgress: "\\u626B\\u63CF\\u6B63\\u5728\\u8FDB\\u884C\\u4E2D...",
       truncationWarning: "\\u4E3A\\u4FDD\\u6301\\u754C\\u9762\\u6D41\\u7545\\uFF0C\\u6B64\\u5904\\u4EC5\\u663E\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u5B8C\\u6574\\u5185\\u5BB9\\u5C06\\u5728\\u5BFC\\u51FA\\u65F6\\u63D0\\u4F9B\\u3002"
     },
     results: {
       title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",
-      scanCountSession: "\\u5DF2\\u626B\\u63CF {count} \\u6761\\u6587\\u672C",
-      scanCountStatic: "\\u5171\\u626B\\u63CF {count} \\u6761\\u6587\\u672C",
+      scanCountSession: "\\u5DF2\\u626B\\u63CF {{count}} \\u6761\\u6587\\u672C",
+      scanCountStatic: "\\u5171\\u626B\\u63CF {{count}} \\u6761\\u6587\\u672C",
       totalCharacters: "\\u603B\\u5B57\\u6570",
       totalLines: "\\u603B\\u884C\\u6570",
       noSummary: "\\u5F53\\u524D\\u6CA1\\u6709\\u603B\\u7ED3\\u6587\\u672C",
@@ -2457,10 +2457,10 @@ ${result.join(",\n")}
       },
       elementScanUI: {
         creatingHighlights: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u9996\\u6B21\\u521B\\u5EFA\\u9AD8\\u4EAE\\u5143\\u7D20\\u3002",
-        updatingHighlight: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u6B63\\u5728\\u4E3A <{tagName}> \\u66F4\\u65B0\\u9AD8\\u4EAE\\u3002",
+        updatingHighlight: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u6B63\\u5728\\u4E3A <{{tagName}}> \\u66F4\\u65B0\\u9AD8\\u4EAE\\u3002",
         creatingToolbar: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u6B63\\u5728\\u521B\\u5EFA\\u8C03\\u6574\\u5DE5\\u5177\\u680F\\u3002",
-        toolbarPositioned: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u5DE5\\u5177\\u680F\\u5DF2\\u5B9A\\u4F4D\\u5728",
-        sliderChanged: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u6ED1\\u5757\\u5C42\\u7EA7\\u53D8\\u4E3A {level}",
+        toolbarPositioned: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u5DE5\\u5177\\u680F\\u5DF2\\u5B9A\\u4F4D\\u3002",
+        sliderChanged: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u6ED1\\u5757\\u5C42\\u7EA7\\u53D8\\u4E3A {{level}}",
         reselectClicked: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u201C\\u91CD\\u65B0\\u9009\\u62E9\\u201D\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\u3002",
         cancelClicked: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u201C\\u53D6\\u6D88\\u201D\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\u3002",
         confirmClicked: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u201C\\u786E\\u8BA4\\u201D\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\u3002",
@@ -2569,16 +2569,16 @@ ${result.join(",\n")}
       elementFinished: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {{count}} \\u689D\\u6587\\u672C\\u3002",
       startSession: "\\u958B\\u59CB\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71",
       stopSession: "\\u505C\\u6B62\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71",
-      finished: "\\u6383\\u63CF\\u7D50\\u675F\\uFF0C\\u5171\\u767C\\u73FE {count} \\u689D\\u6587\\u672C",
-      quickFinished: "\\u5FEB\\u6377\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {count} \\u689D\\u6587\\u672C",
+      finished: "\\u6383\\u63CF\\u7D50\\u675F\\uFF0C\\u5171\\u767C\\u73FE {{count}} \\u689D\\u6587\\u672C",
+      quickFinished: "\\u5FEB\\u6377\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {{count}} \\u689D\\u6587\\u672C",
       sessionStarted: "\\u6703\\u8A71\\u6383\\u63CF\\u5DF2\\u958B\\u59CB",
       sessionInProgress: "\\u6383\\u63CF\\u6B63\\u5728\\u9032\\u884C\\u4E2D...",
       truncationWarning: "\\u70BA\\u4FDD\\u6301\\u4ECB\\u9762\\u6D41\\u66A2\\uFF0C\\u6B64\\u8655\\u50C5\\u986F\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u5B8C\\u6574\\u5167\\u5BB9\\u5C07\\u5728\\u532F\\u51FA\\u6642\\u63D0\\u4F9B\\u3002"
     },
     results: {
       title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",
-      scanCountSession: "\\u5DF2\\u6383\\u63CF {count} \\u689D\\u6587\\u672C",
-      scanCountStatic: "\\u5171\\u6383\\u63CF {count} \\u689D\\u6587\\u672C",
+      scanCountSession: "\\u5DF2\\u6383\\u63CF {{count}} \\u689D\\u6587\\u672C",
+      scanCountStatic: "\\u5171\\u6383\\u63CF {{count}} \\u689D\\u6587\\u672C",
       totalCharacters: "\\u7E3D\\u5B57\\u6578",
       totalLines: "\\u7E3D\\u884C\\u6578",
       noSummary: "\\u7576\\u524D\\u6C92\\u6709\\u6458\\u8981\\u6587\\u672C",
@@ -2773,10 +2773,10 @@ ${result.join(",\n")}
       },
       elementScanUI: {
         creatingHighlights: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u9996\\u6B21\\u5EFA\\u7ACB\\u9AD8\\u4EAE\\u5143\\u7D20\\u3002",
-        updatingHighlight: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u6B63\\u5728\\u70BA <{tagName}> \\u66F4\\u65B0\\u9AD8\\u4EAE\\u3002",
+        updatingHighlight: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u6B63\\u5728\\u70BA <{{tagName}}> \\u66F4\\u65B0\\u9AD8\\u4EAE\\u3002",
         creatingToolbar: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u6B63\\u5728\\u5EFA\\u7ACB\\u8ABF\\u6574\\u5DE5\\u5177\\u5217\\u3002",
-        toolbarPositioned: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u5DE5\\u5177\\u5217\\u5DF2\\u5B9A\\u4F4D\\u5728",
-        sliderChanged: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u6ED1\\u687F\\u5C64\\u7D1A\\u8B8A\\u70BA {level}",
+        toolbarPositioned: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u5DE5\\u5177\\u5217\\u5DF2\\u5B9A\\u4F4D\\u3002",
+        sliderChanged: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u6ED1\\u687F\\u5C64\\u7D1A\\u8B8A\\u70BA {{level}}",
         reselectClicked: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u300C\\u91CD\\u65B0\\u9078\\u64C7\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002",
         cancelClicked: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u300C\\u53D6\\u6D88\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002",
         confirmClicked: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u300C\\u78BA\\u8A8D\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002",
@@ -3344,16 +3344,16 @@ ${result.join(",\n")}
       elementFinished: "Element scan finished, found {{count}} items.",
       startSession: "Start Dynamic Scan Session",
       stopSession: "Stop Dynamic Scan Session",
-      finished: "Scan finished, found {count} items.",
-      quickFinished: "Quick scan finished, found {count} items.",
+      finished: "Scan finished, found {{count}} items.",
+      quickFinished: "Quick scan finished, found {{count}} items.",
       sessionStarted: "Session scan started.",
       sessionInProgress: "Scan in progress...",
       truncationWarning: "To maintain UI fluency, only a portion of the text is displayed here. The full content will be available upon export."
     },
     results: {
       title: "Extracted Text",
-      scanCountSession: "Scanned {count} items",
-      scanCountStatic: "Total {count} items scanned",
+      scanCountSession: "Scanned {{count}} items",
+      scanCountStatic: "Total {{count}} items scanned",
       totalCharacters: "Total Characters",
       totalLines: "Total Lines",
       noSummary: "No summary available",
@@ -3548,10 +3548,10 @@ ${result.join(",\n")}
       },
       elementScanUI: {
         creatingHighlights: "Element Scan UI: Creating highlight elements for the first time.",
-        updatingHighlight: "Element Scan UI: Updating highlight for <{tagName}>",
+        updatingHighlight: "Element Scan UI: Updating highlight for <{{tagName}}>.",
         creatingToolbar: "Element Scan UI: Creating adjustment toolbar.",
-        toolbarPositioned: "Element Scan UI: Toolbar positioned at",
-        sliderChanged: "Element Scan UI: Slider changed to level {level}",
+        toolbarPositioned: "Element Scan UI: Toolbar positioned.",
+        sliderChanged: "Element Scan UI: Slider changed to level {{level}}",
         reselectClicked: "Element Scan UI: 'Reselect' button clicked.",
         cancelClicked: "Element Scan UI: 'Cancel' button clicked.",
         confirmClicked: "Element Scan UI: 'Confirm' button clicked.",
@@ -3660,16 +3660,16 @@ ${result.join(",\n")}
       elementFinished: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {{count}} \\u6761\\u6587\\u672C\\u3002",
       startSession: "\\u5F00\\u59CB\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD",
       stopSession: "\\u505C\\u6B62\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD",
-      finished: "\\u626B\\u63CF\\u7ED3\\u675F\\uFF0C\\u5171\\u53D1\\u73B0 {count} \\u6761\\u6587\\u672C",
-      quickFinished: "\\u5FEB\\u6377\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {count} \\u6761\\u6587\\u672C",
+      finished: "\\u626B\\u63CF\\u7ED3\\u675F\\uFF0C\\u5171\\u53D1\\u73B0 {{count}} \\u6761\\u6587\\u672C",
+      quickFinished: "\\u5FEB\\u6377\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {{count}} \\u6761\\u6587\\u672C",
       sessionStarted: "\\u4F1A\\u8BDD\\u626B\\u63CF\\u5DF2\\u5F00\\u59CB",
       sessionInProgress: "\\u626B\\u63CF\\u6B63\\u5728\\u8FDB\\u884C\\u4E2D...",
       truncationWarning: "\\u4E3A\\u4FDD\\u6301\\u754C\\u9762\\u6D41\\u7545\\uFF0C\\u6B64\\u5904\\u4EC5\\u663E\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u5B8C\\u6574\\u5185\\u5BB9\\u5C06\\u5728\\u5BFC\\u51FA\\u65F6\\u63D0\\u4F9B\\u3002"
     },
     results: {
       title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",
-      scanCountSession: "\\u5DF2\\u626B\\u63CF {count} \\u6761\\u6587\\u672C",
-      scanCountStatic: "\\u5171\\u626B\\u63CF {count} \\u6761\\u6587\\u672C",
+      scanCountSession: "\\u5DF2\\u626B\\u63CF {{count}} \\u6761\\u6587\\u672C",
+      scanCountStatic: "\\u5171\\u626B\\u63CF {{count}} \\u6761\\u6587\\u672C",
       totalCharacters: "\\u603B\\u5B57\\u6570",
       totalLines: "\\u603B\\u884C\\u6570",
       noSummary: "\\u5F53\\u524D\\u6CA1\\u6709\\u603B\\u7ED3\\u6587\\u672C",
@@ -3864,10 +3864,10 @@ ${result.join(",\n")}
       },
       elementScanUI: {
         creatingHighlights: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u9996\\u6B21\\u521B\\u5EFA\\u9AD8\\u4EAE\\u5143\\u7D20\\u3002",
-        updatingHighlight: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u6B63\\u5728\\u4E3A <{tagName}> \\u66F4\\u65B0\\u9AD8\\u4EAE\\u3002",
+        updatingHighlight: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u6B63\\u5728\\u4E3A <{{tagName}}> \\u66F4\\u65B0\\u9AD8\\u4EAE\\u3002",
         creatingToolbar: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u6B63\\u5728\\u521B\\u5EFA\\u8C03\\u6574\\u5DE5\\u5177\\u680F\\u3002",
-        toolbarPositioned: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u5DE5\\u5177\\u680F\\u5DF2\\u5B9A\\u4F4D\\u5728",
-        sliderChanged: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u6ED1\\u5757\\u5C42\\u7EA7\\u53D8\\u4E3A {level}",
+        toolbarPositioned: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u5DE5\\u5177\\u680F\\u5DF2\\u5B9A\\u4F4D\\u3002",
+        sliderChanged: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u6ED1\\u5757\\u5C42\\u7EA7\\u53D8\\u4E3A {{level}}",
         reselectClicked: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u201C\\u91CD\\u65B0\\u9009\\u62E9\\u201D\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\u3002",
         cancelClicked: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u201C\\u53D6\\u6D88\\u201D\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\u3002",
         confirmClicked: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u201C\\u786E\\u8BA4\\u201D\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\u3002",
@@ -3976,16 +3976,16 @@ ${result.join(",\n")}
       elementFinished: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {{count}} \\u689D\\u6587\\u672C\\u3002",
       startSession: "\\u958B\\u59CB\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71",
       stopSession: "\\u505C\\u6B62\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71",
-      finished: "\\u6383\\u63CF\\u7D50\\u675F\\uFF0C\\u5171\\u767C\\u73FE {count} \\u689D\\u6587\\u672C",
-      quickFinished: "\\u5FEB\\u6377\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {count} \\u689D\\u6587\\u672C",
+      finished: "\\u6383\\u63CF\\u7D50\\u675F\\uFF0C\\u5171\\u767C\\u73FE {{count}} \\u689D\\u6587\\u672C",
+      quickFinished: "\\u5FEB\\u6377\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {{count}} \\u689D\\u6587\\u672C",
       sessionStarted: "\\u6703\\u8A71\\u6383\\u63CF\\u5DF2\\u958B\\u59CB",
       sessionInProgress: "\\u6383\\u63CF\\u6B63\\u5728\\u9032\\u884C\\u4E2D...",
       truncationWarning: "\\u70BA\\u4FDD\\u6301\\u4ECB\\u9762\\u6D41\\u66A2\\uFF0C\\u6B64\\u8655\\u50C5\\u986F\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u5B8C\\u6574\\u5167\\u5BB9\\u5C07\\u5728\\u532F\\u51FA\\u6642\\u63D0\\u4F9B\\u3002"
     },
     results: {
       title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",
-      scanCountSession: "\\u5DF2\\u6383\\u63CF {count} \\u689D\\u6587\\u672C",
-      scanCountStatic: "\\u5171\\u6383\\u63CF {count} \\u689D\\u6587\\u672C",
+      scanCountSession: "\\u5DF2\\u6383\\u63CF {{count}} \\u689D\\u6587\\u672C",
+      scanCountStatic: "\\u5171\\u6383\\u63CF {{count}} \\u689D\\u6587\\u672C",
       totalCharacters: "\\u7E3D\\u5B57\\u6578",
       totalLines: "\\u7E3D\\u884C\\u6578",
       noSummary: "\\u7576\\u524D\\u6C92\\u6709\\u6458\\u8981\\u6587\\u672C",
@@ -4180,10 +4180,10 @@ ${result.join(",\n")}
       },
       elementScanUI: {
         creatingHighlights: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u9996\\u6B21\\u5EFA\\u7ACB\\u9AD8\\u4EAE\\u5143\\u7D20\\u3002",
-        updatingHighlight: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u6B63\\u5728\\u70BA <{tagName}> \\u66F4\\u65B0\\u9AD8\\u4EAE\\u3002",
+        updatingHighlight: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u6B63\\u5728\\u70BA <{{tagName}}> \\u66F4\\u65B0\\u9AD8\\u4EAE\\u3002",
         creatingToolbar: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u6B63\\u5728\\u5EFA\\u7ACB\\u8ABF\\u6574\\u5DE5\\u5177\\u5217\\u3002",
-        toolbarPositioned: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u5DE5\\u5177\\u5217\\u5DF2\\u5B9A\\u4F4D\\u5728",
-        sliderChanged: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u6ED1\\u687F\\u5C64\\u7D1A\\u8B8A\\u70BA {level}",
+        toolbarPositioned: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u5DE5\\u5177\\u5217\\u5DF2\\u5B9A\\u4F4D\\u3002",
+        sliderChanged: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u6ED1\\u687F\\u5C64\\u7D1A\\u8B8A\\u70BA {{level}}",
         reselectClicked: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u300C\\u91CD\\u65B0\\u9078\\u64C7\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002",
         cancelClicked: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u300C\\u53D6\\u6D88\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002",
         confirmClicked: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u300C\\u78BA\\u8A8D\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002",
@@ -5539,7 +5539,13 @@ ${result.join(",\n")}
     const scrollY = window.scrollY;
     const padding = 6;
     const tagName = targetElement.tagName.toLowerCase();
-    log(simpleTemplate(t("log.elementScanUI.updatingHighlight"), { tagName }), { top: rect.top, left: rect.left, width: rect.width, height: rect.height });
+    const coordinates = {
+      top: rect.top.toFixed(2),
+      left: rect.left.toFixed(2),
+      width: rect.width.toFixed(2),
+      height: rect.height.toFixed(2)
+    };
+    log(simpleTemplate(t("log.elementScanUI.updatingHighlight"), { tagName }), coordinates);
     scanContainer.style.width = `${rect.width + padding * 2}px`;
     scanContainer.style.height = `${rect.height + padding * 2}px`;
     scanContainer.style.top = `${rect.top + scrollY - padding}px`;
@@ -5595,7 +5601,7 @@ ${result.join(",\n")}
     }
     toolbar.style.top = `${top}px`;
     toolbar.style.left = `${left}px`;
-    log(t("log.elementScanUI.toolbarPositioned"), { top, left });
+    log(t("log.elementScanUI.toolbarPositioned"));
     addToolbarEventListeners();
     makeDraggable(toolbar);
     requestAnimationFrame(() => {
@@ -5927,16 +5933,16 @@ ${result.join(",\n")}
       elementFinished: "Element scan finished, found {{count}} items.",
       startSession: "Start Dynamic Scan Session",
       stopSession: "Stop Dynamic Scan Session",
-      finished: "Scan finished, found {count} items.",
-      quickFinished: "Quick scan finished, found {count} items.",
+      finished: "Scan finished, found {{count}} items.",
+      quickFinished: "Quick scan finished, found {{count}} items.",
       sessionStarted: "Session scan started.",
       sessionInProgress: "Scan in progress...",
       truncationWarning: "To maintain UI fluency, only a portion of the text is displayed here. The full content will be available upon export."
     },
     results: {
       title: "Extracted Text",
-      scanCountSession: "Scanned {count} items",
-      scanCountStatic: "Total {count} items scanned",
+      scanCountSession: "Scanned {{count}} items",
+      scanCountStatic: "Total {{count}} items scanned",
       totalCharacters: "Total Characters",
       totalLines: "Total Lines",
       noSummary: "No summary available",
@@ -6131,10 +6137,10 @@ ${result.join(",\n")}
       },
       elementScanUI: {
         creatingHighlights: "Element Scan UI: Creating highlight elements for the first time.",
-        updatingHighlight: "Element Scan UI: Updating highlight for <{tagName}>",
+        updatingHighlight: "Element Scan UI: Updating highlight for <{{tagName}}>.",
         creatingToolbar: "Element Scan UI: Creating adjustment toolbar.",
-        toolbarPositioned: "Element Scan UI: Toolbar positioned at",
-        sliderChanged: "Element Scan UI: Slider changed to level {level}",
+        toolbarPositioned: "Element Scan UI: Toolbar positioned.",
+        sliderChanged: "Element Scan UI: Slider changed to level {{level}}",
         reselectClicked: "Element Scan UI: 'Reselect' button clicked.",
         cancelClicked: "Element Scan UI: 'Cancel' button clicked.",
         confirmClicked: "Element Scan UI: 'Confirm' button clicked.",
@@ -6243,16 +6249,16 @@ ${result.join(",\n")}
       elementFinished: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {{count}} \\u6761\\u6587\\u672C\\u3002",
       startSession: "\\u5F00\\u59CB\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD",
       stopSession: "\\u505C\\u6B62\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD",
-      finished: "\\u626B\\u63CF\\u7ED3\\u675F\\uFF0C\\u5171\\u53D1\\u73B0 {count} \\u6761\\u6587\\u672C",
-      quickFinished: "\\u5FEB\\u6377\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {count} \\u6761\\u6587\\u672C",
+      finished: "\\u626B\\u63CF\\u7ED3\\u675F\\uFF0C\\u5171\\u53D1\\u73B0 {{count}} \\u6761\\u6587\\u672C",
+      quickFinished: "\\u5FEB\\u6377\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {{count}} \\u6761\\u6587\\u672C",
       sessionStarted: "\\u4F1A\\u8BDD\\u626B\\u63CF\\u5DF2\\u5F00\\u59CB",
       sessionInProgress: "\\u626B\\u63CF\\u6B63\\u5728\\u8FDB\\u884C\\u4E2D...",
       truncationWarning: "\\u4E3A\\u4FDD\\u6301\\u754C\\u9762\\u6D41\\u7545\\uFF0C\\u6B64\\u5904\\u4EC5\\u663E\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u5B8C\\u6574\\u5185\\u5BB9\\u5C06\\u5728\\u5BFC\\u51FA\\u65F6\\u63D0\\u4F9B\\u3002"
     },
     results: {
       title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",
-      scanCountSession: "\\u5DF2\\u626B\\u63CF {count} \\u6761\\u6587\\u672C",
-      scanCountStatic: "\\u5171\\u626B\\u63CF {count} \\u6761\\u6587\\u672C",
+      scanCountSession: "\\u5DF2\\u626B\\u63CF {{count}} \\u6761\\u6587\\u672C",
+      scanCountStatic: "\\u5171\\u626B\\u63CF {{count}} \\u6761\\u6587\\u672C",
       totalCharacters: "\\u603B\\u5B57\\u6570",
       totalLines: "\\u603B\\u884C\\u6570",
       noSummary: "\\u5F53\\u524D\\u6CA1\\u6709\\u603B\\u7ED3\\u6587\\u672C",
@@ -6447,10 +6453,10 @@ ${result.join(",\n")}
       },
       elementScanUI: {
         creatingHighlights: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u9996\\u6B21\\u521B\\u5EFA\\u9AD8\\u4EAE\\u5143\\u7D20\\u3002",
-        updatingHighlight: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u6B63\\u5728\\u4E3A <{tagName}> \\u66F4\\u65B0\\u9AD8\\u4EAE\\u3002",
+        updatingHighlight: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u6B63\\u5728\\u4E3A <{{tagName}}> \\u66F4\\u65B0\\u9AD8\\u4EAE\\u3002",
         creatingToolbar: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u6B63\\u5728\\u521B\\u5EFA\\u8C03\\u6574\\u5DE5\\u5177\\u680F\\u3002",
-        toolbarPositioned: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u5DE5\\u5177\\u680F\\u5DF2\\u5B9A\\u4F4D\\u5728",
-        sliderChanged: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u6ED1\\u5757\\u5C42\\u7EA7\\u53D8\\u4E3A {level}",
+        toolbarPositioned: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u5DE5\\u5177\\u680F\\u5DF2\\u5B9A\\u4F4D\\u3002",
+        sliderChanged: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u6ED1\\u5757\\u5C42\\u7EA7\\u53D8\\u4E3A {{level}}",
         reselectClicked: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u201C\\u91CD\\u65B0\\u9009\\u62E9\\u201D\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\u3002",
         cancelClicked: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u201C\\u53D6\\u6D88\\u201D\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\u3002",
         confirmClicked: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u201C\\u786E\\u8BA4\\u201D\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\u3002",
@@ -6559,16 +6565,16 @@ ${result.join(",\n")}
       elementFinished: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {{count}} \\u689D\\u6587\\u672C\\u3002",
       startSession: "\\u958B\\u59CB\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71",
       stopSession: "\\u505C\\u6B62\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71",
-      finished: "\\u6383\\u63CF\\u7D50\\u675F\\uFF0C\\u5171\\u767C\\u73FE {count} \\u689D\\u6587\\u672C",
-      quickFinished: "\\u5FEB\\u6377\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {count} \\u689D\\u6587\\u672C",
+      finished: "\\u6383\\u63CF\\u7D50\\u675F\\uFF0C\\u5171\\u767C\\u73FE {{count}} \\u689D\\u6587\\u672C",
+      quickFinished: "\\u5FEB\\u6377\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {{count}} \\u689D\\u6587\\u672C",
       sessionStarted: "\\u6703\\u8A71\\u6383\\u63CF\\u5DF2\\u958B\\u59CB",
       sessionInProgress: "\\u6383\\u63CF\\u6B63\\u5728\\u9032\\u884C\\u4E2D...",
       truncationWarning: "\\u70BA\\u4FDD\\u6301\\u4ECB\\u9762\\u6D41\\u66A2\\uFF0C\\u6B64\\u8655\\u50C5\\u986F\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u5B8C\\u6574\\u5167\\u5BB9\\u5C07\\u5728\\u532F\\u51FA\\u6642\\u63D0\\u4F9B\\u3002"
     },
     results: {
       title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",
-      scanCountSession: "\\u5DF2\\u6383\\u63CF {count} \\u689D\\u6587\\u672C",
-      scanCountStatic: "\\u5171\\u6383\\u63CF {count} \\u689D\\u6587\\u672C",
+      scanCountSession: "\\u5DF2\\u6383\\u63CF {{count}} \\u689D\\u6587\\u672C",
+      scanCountStatic: "\\u5171\\u6383\\u63CF {{count}} \\u689D\\u6587\\u672C",
       totalCharacters: "\\u7E3D\\u5B57\\u6578",
       totalLines: "\\u7E3D\\u884C\\u6578",
       noSummary: "\\u7576\\u524D\\u6C92\\u6709\\u6458\\u8981\\u6587\\u672C",
@@ -6763,10 +6769,10 @@ ${result.join(",\n")}
       },
       elementScanUI: {
         creatingHighlights: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u9996\\u6B21\\u5EFA\\u7ACB\\u9AD8\\u4EAE\\u5143\\u7D20\\u3002",
-        updatingHighlight: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u6B63\\u5728\\u70BA <{tagName}> \\u66F4\\u65B0\\u9AD8\\u4EAE\\u3002",
+        updatingHighlight: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u6B63\\u5728\\u70BA <{{tagName}}> \\u66F4\\u65B0\\u9AD8\\u4EAE\\u3002",
         creatingToolbar: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u6B63\\u5728\\u5EFA\\u7ACB\\u8ABF\\u6574\\u5DE5\\u5177\\u5217\\u3002",
-        toolbarPositioned: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u5DE5\\u5177\\u5217\\u5DF2\\u5B9A\\u4F4D\\u5728",
-        sliderChanged: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u6ED1\\u687F\\u5C64\\u7D1A\\u8B8A\\u70BA {level}",
+        toolbarPositioned: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u5DE5\\u5177\\u5217\\u5DF2\\u5B9A\\u4F4D\\u3002",
+        sliderChanged: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u6ED1\\u687F\\u5C64\\u7D1A\\u8B8A\\u70BA {{level}}",
         reselectClicked: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u300C\\u91CD\\u65B0\\u9078\\u64C7\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002",
         cancelClicked: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u300C\\u53D6\\u6D88\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002",
         confirmClicked: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u300C\\u78BA\\u8A8D\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002",
@@ -7014,9 +7020,14 @@ ${result.join(",\n")}
     const t2 = (key, replacements) => {
       let value = translations2[key] || key;
       if (replacements) {
-        Object.keys(replacements).forEach((placeholder) => {
+        let finalReplacements = { ...replacements };
+        if (key === "textFiltered" && replacements.reason && translations2.filterReasons) {
+          const reasonKey = replacements.reason;
+          finalReplacements.reason = translations2.filterReasons[reasonKey] || reasonKey;
+        }
+        Object.keys(finalReplacements).forEach((placeholder) => {
           const regex = new RegExp(\`{{\${placeholder}}}\`, "g");
-          value = value.replace(regex, replacements[placeholder]);
+          value = value.replace(regex, finalReplacements[placeholder]);
         });
       }
       return value;
@@ -7076,6 +7087,10 @@ ${result.join(",\n")}
           runFallback();
         };
         log(t("log.elementScan.worker.sendingData", { count: texts.length }));
+        const filterReasonTranslations = Object.keys(filterRules2).reduce((acc, key) => {
+          acc[key] = t(`settings.filters.${key}`);
+          return acc;
+        }, {});
         worker2.postMessage({
           type: "scan-element",
           payload: {
@@ -7085,7 +7100,8 @@ ${result.join(",\n")}
             translations: {
               workerLogPrefix: t("log.elementScan.worker.logPrefix"),
               textFiltered: t("log.textProcessor.filtered"),
-              scanComplete: t("log.elementScan.worker.completed")
+              scanComplete: t("log.elementScan.worker.completed"),
+              filterReasons: filterReasonTranslations
             }
           }
         });

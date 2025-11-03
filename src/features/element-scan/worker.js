@@ -28,9 +28,18 @@ self.onmessage = (event) => {
     const t = (key, replacements) => {
         let value = translations[key] || key;
         if (replacements) {
-            Object.keys(replacements).forEach(placeholder => {
+            let finalReplacements = { ...replacements };
+
+            // 如果是过滤日志，特殊处理 reason 的翻译
+            if (key === 'textFiltered' && replacements.reason && translations.filterReasons) {
+                const reasonKey = replacements.reason;
+                // 从 filterReasons 中查找本地化的原因文本
+                finalReplacements.reason = translations.filterReasons[reasonKey] || reasonKey;
+            }
+
+            Object.keys(finalReplacements).forEach(placeholder => {
                 const regex = new RegExp(`{{${placeholder}}}`, 'g');
-                value = value.replace(regex, replacements[placeholder]);
+                value = value.replace(regex, finalReplacements[placeholder]);
             });
         }
         return value;

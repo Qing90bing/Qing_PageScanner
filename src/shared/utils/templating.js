@@ -8,7 +8,8 @@
  */
 export const simpleTemplate = (template, values) => {
     if (!template) return '';
-    return template.replace(/{(\w+)}/g, (match, key) => {
+    // 使用 {{key}} 作为占位符，并允许 key 两边有空格
+    return template.replace(/{{\s*(\w+)\s*}}/g, (match, key) => {
         return values.hasOwnProperty(key) ? values[key] : match;
     });
 };
