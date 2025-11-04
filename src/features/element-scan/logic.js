@@ -58,6 +58,7 @@ export function handleElementScanClick(fabElement) {
 
 function startElementScan(fabElement) {
     log(t('log.elementScan.starting'));
+    showNotification(t('notifications.elementScanStarted'), { type: 'info' });
     isActive = true;
     isAdjusting = false;
     fabElement.classList.add('is-recording');

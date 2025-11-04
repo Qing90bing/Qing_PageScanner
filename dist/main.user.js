@@ -260,6 +260,7 @@ var TextExtractor = (() => {
       contentCleared: "Content cleared.",
       noTextSelected: "No text selected.",
       scanFailed: "Scan failed.",
+      elementScanStarted: "Element scan started.",
       cspWorkerWarning: "Switched to compatibility scan mode due to website security restrictions."
     },
     placeholders: {
@@ -584,6 +585,7 @@ var TextExtractor = (() => {
       contentCleared: "\u5185\u5BB9\u5DF2\u6E05\u9664\u3002",
       noTextSelected: "\u672A\u9009\u62E9\u4EFB\u4F55\u6587\u672C\u3002",
       scanFailed: "\u626B\u63CF\u5931\u8D25\u3002",
+      elementScanStarted: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5DF2\u5F00\u59CB\u3002",
       cspWorkerWarning: "\u56E0\u7F51\u7AD9\u5B89\u5168\u9650\u5236\uFF0C\u5DF2\u5207\u6362\u81F3\u517C\u5BB9\u626B\u63CF\u6A21\u5F0F\u3002"
     },
     placeholders: {
@@ -908,6 +910,7 @@ var TextExtractor = (() => {
       contentCleared: "\u5167\u5BB9\u5DF2\u6E05\u9664\u3002",
       noTextSelected: "\u672A\u9078\u64C7\u4EFB\u4F55\u6587\u672C\u3002",
       scanFailed: "\u6383\u63CF\u5931\u6557\u3002",
+      elementScanStarted: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5DF2\u958B\u59CB\u3002",
       cspWorkerWarning: "\u56E0\u7DB2\u7AD9\u5B89\u5168\u9650\u5236\uFF0C\u5DF2\u5207\u63DB\u81F3\u76F8\u5BB9\u6383\u63CF\u6A21\u5F0F\u3002"
     },
     placeholders: {
@@ -2005,6 +2008,7 @@ ${result.join(",\n")}
       contentCleared: "Content cleared.",
       noTextSelected: "No text selected.",
       scanFailed: "Scan failed.",
+      elementScanStarted: "Element scan started.",
       cspWorkerWarning: "Switched to compatibility scan mode due to website security restrictions."
     },
     placeholders: {
@@ -2330,6 +2334,7 @@ ${result.join(",\n")}
       contentCleared: "\\u5185\\u5BB9\\u5DF2\\u6E05\\u9664\\u3002",
       noTextSelected: "\\u672A\\u9009\\u62E9\\u4EFB\\u4F55\\u6587\\u672C\\u3002",
       scanFailed: "\\u626B\\u63CF\\u5931\\u8D25\\u3002",
+      elementScanStarted: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5DF2\\u5F00\\u59CB\\u3002",
       cspWorkerWarning: "\\u56E0\\u7F51\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u6362\\u81F3\\u517C\\u5BB9\\u626B\\u63CF\\u6A21\\u5F0F\\u3002"
     },
     placeholders: {
@@ -2655,6 +2660,7 @@ ${result.join(",\n")}
       contentCleared: "\\u5167\\u5BB9\\u5DF2\\u6E05\\u9664\\u3002",
       noTextSelected: "\\u672A\\u9078\\u64C7\\u4EFB\\u4F55\\u6587\\u672C\\u3002",
       scanFailed: "\\u6383\\u63CF\\u5931\\u6557\\u3002",
+      elementScanStarted: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5DF2\\u958B\\u59CB\\u3002",
       cspWorkerWarning: "\\u56E0\\u7DB2\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u63DB\\u81F3\\u76F8\\u5BB9\\u6383\\u63CF\\u6A21\\u5F0F\\u3002"
     },
     placeholders: {
@@ -3455,6 +3461,7 @@ ${result.join(",\n")}
       contentCleared: "Content cleared.",
       noTextSelected: "No text selected.",
       scanFailed: "Scan failed.",
+      elementScanStarted: "Element scan started.",
       cspWorkerWarning: "Switched to compatibility scan mode due to website security restrictions."
     },
     placeholders: {
@@ -3780,6 +3787,7 @@ ${result.join(",\n")}
       contentCleared: "\\u5185\\u5BB9\\u5DF2\\u6E05\\u9664\\u3002",
       noTextSelected: "\\u672A\\u9009\\u62E9\\u4EFB\\u4F55\\u6587\\u672C\\u3002",
       scanFailed: "\\u626B\\u63CF\\u5931\\u8D25\\u3002",
+      elementScanStarted: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5DF2\\u5F00\\u59CB\\u3002",
       cspWorkerWarning: "\\u56E0\\u7F51\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u6362\\u81F3\\u517C\\u5BB9\\u626B\\u63CF\\u6A21\\u5F0F\\u3002"
     },
     placeholders: {
@@ -4105,6 +4113,7 @@ ${result.join(",\n")}
       contentCleared: "\\u5167\\u5BB9\\u5DF2\\u6E05\\u9664\\u3002",
       noTextSelected: "\\u672A\\u9078\\u64C7\\u4EFB\\u4F55\\u6587\\u672C\\u3002",
       scanFailed: "\\u6383\\u63CF\\u5931\\u6557\\u3002",
+      elementScanStarted: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5DF2\\u958B\\u59CB\\u3002",
       cspWorkerWarning: "\\u56E0\\u7DB2\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u63DB\\u81F3\\u76F8\\u5BB9\\u6383\\u63CF\\u6A21\\u5F0F\\u3002"
     },
     placeholders: {
@@ -5884,6 +5893,7 @@ ${result.join(",\n")}
   }
   function startElementScan(fabElement) {
     log(t("log.elementScan.starting"));
+    showNotification(t("notifications.elementScanStarted"), { type: "info" });
     isActive = true;
     isAdjusting = false;
     fabElement.classList.add("is-recording");
@@ -6148,6 +6158,7 @@ ${result.join(",\n")}
       contentCleared: "Content cleared.",
       noTextSelected: "No text selected.",
       scanFailed: "Scan failed.",
+      elementScanStarted: "Element scan started.",
       cspWorkerWarning: "Switched to compatibility scan mode due to website security restrictions."
     },
     placeholders: {
@@ -6473,6 +6484,7 @@ ${result.join(",\n")}
       contentCleared: "\\u5185\\u5BB9\\u5DF2\\u6E05\\u9664\\u3002",
       noTextSelected: "\\u672A\\u9009\\u62E9\\u4EFB\\u4F55\\u6587\\u672C\\u3002",
       scanFailed: "\\u626B\\u63CF\\u5931\\u8D25\\u3002",
+      elementScanStarted: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5DF2\\u5F00\\u59CB\\u3002",
       cspWorkerWarning: "\\u56E0\\u7F51\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u6362\\u81F3\\u517C\\u5BB9\\u626B\\u63CF\\u6A21\\u5F0F\\u3002"
     },
     placeholders: {
@@ -6798,6 +6810,7 @@ ${result.join(",\n")}
       contentCleared: "\\u5167\\u5BB9\\u5DF2\\u6E05\\u9664\\u3002",
       noTextSelected: "\\u672A\\u9078\\u64C7\\u4EFB\\u4F55\\u6587\\u672C\\u3002",
       scanFailed: "\\u6383\\u63CF\\u5931\\u6557\\u3002",
+      elementScanStarted: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5DF2\\u958B\\u59CB\\u3002",
       cspWorkerWarning: "\\u56E0\\u7DB2\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u63DB\\u81F3\\u76F8\\u5BB9\\u6383\\u63CF\\u6A21\\u5F0F\\u3002"
     },
     placeholders: {

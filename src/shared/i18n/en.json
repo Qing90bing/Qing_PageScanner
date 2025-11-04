@@ -114,6 +114,7 @@
     "contentCleared": "Content cleared.",
     "noTextSelected": "No text selected.",
     "scanFailed": "Scan failed.",
+    "elementScanStarted": "Element scan started.",
     "cspWorkerWarning": "Switched to compatibility scan mode due to website security restrictions."
   },
   "placeholders": {

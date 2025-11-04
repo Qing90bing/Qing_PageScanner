@@ -114,6 +114,7 @@
     "contentCleared": "内容已清除。",
     "noTextSelected": "未选择任何文本。",
     "scanFailed": "扫描失败。",
+    "elementScanStarted": "选取元素扫描已开始。",
     "cspWorkerWarning": "因网站安全限制，已切换至兼容扫描模式。"
   },
   "placeholders": {
