@@ -259,6 +259,7 @@ var TextExtractor = (() => {
       nothingToCopy: "Nothing to copy.",
       contentCleared: "Content cleared.",
       noTextSelected: "No text selected.",
+      scanFailed: "Scan failed.",
       cspWorkerWarning: "Switched to compatibility scan mode due to website security restrictions."
     },
     placeholders: {
@@ -276,6 +277,9 @@ var TextExtractor = (() => {
       dynamic_scan: "Dynamic Scan",
       static_scan: "Static Scan",
       element_scan: "Element Scan",
+      disabled: {
+        scan_in_progress: "Another scan is in progress"
+      },
       filters: {
         title: "Content Filter Explanation",
         numbers: 'This rule filters out text that consists <strong>entirely</strong> of numbers, spaces, thousand separators (.), decimal points (,), and some currency symbols ($, \u20AC, \xA3, \xA5).<br><br><strong>More Examples:</strong><br>\u2022 "1,234.56"<br>\u2022 "\xA5999"<br>\u2022 "\u20AC200"<br>\u2022 "$ 100"',
@@ -579,6 +583,7 @@ var TextExtractor = (() => {
       nothingToCopy: "\u6CA1\u6709\u53EF\u590D\u5236\u7684\u5185\u5BB9\u3002",
       contentCleared: "\u5185\u5BB9\u5DF2\u6E05\u9664\u3002",
       noTextSelected: "\u672A\u9009\u62E9\u4EFB\u4F55\u6587\u672C\u3002",
+      scanFailed: "\u626B\u63CF\u5931\u8D25\u3002",
       cspWorkerWarning: "\u56E0\u7F51\u7AD9\u5B89\u5168\u9650\u5236\uFF0C\u5DF2\u5207\u6362\u81F3\u517C\u5BB9\u626B\u63CF\u6A21\u5F0F\u3002"
     },
     placeholders: {
@@ -596,6 +601,9 @@ var TextExtractor = (() => {
       dynamic_scan: "\u52A8\u6001\u626B\u63CF",
       static_scan: "\u9759\u6001\u626B\u63CF",
       element_scan: "\u9009\u53D6\u5143\u7D20\u626B\u63CF",
+      disabled: {
+        scan_in_progress: "\u53E6\u4E00\u9879\u626B\u63CF\u6B63\u5728\u8FDB\u884C\u4E2D"
+      },
       filters: {
         title: "\u5185\u5BB9\u8FC7\u6EE4\u5668\u8BF4\u660E",
         numbers: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389<strong>\u5B8C\u5168</strong>\u7531\u6570\u5B57\u3001\u7A7A\u683C\u3001\u5343\u4F4D\u5206\u9694\u7B26(,)\u3001\u5C0F\u6570\u70B9(.)\u4EE5\u53CA\u90E8\u5206\u8D27\u5E01\u7B26\u53F7($, \u20AC, \xA3, \xA5)\u7EC4\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u66F4\u591A\u793A\u4F8B:</strong><br>\u2022 "1,234.56"<br>\u2022 "\xA5999"<br>\u2022 "\u20AC200"<br>\u2022 "$ 100"',
@@ -899,6 +907,7 @@ var TextExtractor = (() => {
       nothingToCopy: "\u6C92\u6709\u53EF\u8907\u88FD\u7684\u5167\u5BB9\u3002",
       contentCleared: "\u5167\u5BB9\u5DF2\u6E05\u9664\u3002",
       noTextSelected: "\u672A\u9078\u64C7\u4EFB\u4F55\u6587\u672C\u3002",
+      scanFailed: "\u6383\u63CF\u5931\u6557\u3002",
       cspWorkerWarning: "\u56E0\u7DB2\u7AD9\u5B89\u5168\u9650\u5236\uFF0C\u5DF2\u5207\u63DB\u81F3\u76F8\u5BB9\u6383\u63CF\u6A21\u5F0F\u3002"
     },
     placeholders: {
@@ -916,6 +925,9 @@ var TextExtractor = (() => {
       dynamic_scan: "\u52D5\u614B\u6383\u63CF",
       static_scan: "\u975C\u614B\u6383\u63CF",
       element_scan: "\u9078\u53D6\u5143\u7D20\u6383\u63CF",
+      disabled: {
+        scan_in_progress: "\u53E6\u4E00\u9805\u6383\u63CF\u6B63\u5728\u9032\u884C\u4E2D"
+      },
       filters: {
         title: "\u5167\u5BB9\u904E\u6FFE\u5668\u8AAA\u660E",
         numbers: '\u6B64\u898F\u5247\u904E\u6FFE\u6389<strong>\u5B8C\u5168</strong>\u7531\u6578\u5B57\u3001\u7A7A\u683C\u3001\u5343\u4F4D\u5206\u9694\u7B26(,)\u3001\u5C0F\u6578\u9EDE(.)\u4EE5\u53CA\u90E8\u5206\u8CA8\u5E63\u7B26\u865F($, \u20AC, \xA3, \xA5)\u7D44\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u66F4\u591A\u7BC4\u4F8B:</strong><br>\u2022 "1,234.56"<br>\u2022 "\xA5999"<br>\u2022 "\u20AC200"<br>\u2022 "$ 100"',
@@ -1992,6 +2004,7 @@ ${result.join(",\n")}
       nothingToCopy: "Nothing to copy.",
       contentCleared: "Content cleared.",
       noTextSelected: "No text selected.",
+      scanFailed: "Scan failed.",
       cspWorkerWarning: "Switched to compatibility scan mode due to website security restrictions."
     },
     placeholders: {
@@ -2009,6 +2022,9 @@ ${result.join(",\n")}
       dynamic_scan: "Dynamic Scan",
       static_scan: "Static Scan",
       element_scan: "Element Scan",
+      disabled: {
+        scan_in_progress: "Another scan is in progress"
+      },
       filters: {
         title: "Content Filter Explanation",
         numbers: 'This rule filters out text that consists <strong>entirely</strong> of numbers, spaces, thousand separators (.), decimal points (,), and some currency symbols ($, \\u20AC, \\xA3, \\xA5).<br><br><strong>More Examples:</strong><br>\\u2022 "1,234.56"<br>\\u2022 "\\xA5999"<br>\\u2022 "\\u20AC200"<br>\\u2022 "$ 100"',
@@ -2313,6 +2329,7 @@ ${result.join(",\n")}
       nothingToCopy: "\\u6CA1\\u6709\\u53EF\\u590D\\u5236\\u7684\\u5185\\u5BB9\\u3002",
       contentCleared: "\\u5185\\u5BB9\\u5DF2\\u6E05\\u9664\\u3002",
       noTextSelected: "\\u672A\\u9009\\u62E9\\u4EFB\\u4F55\\u6587\\u672C\\u3002",
+      scanFailed: "\\u626B\\u63CF\\u5931\\u8D25\\u3002",
       cspWorkerWarning: "\\u56E0\\u7F51\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u6362\\u81F3\\u517C\\u5BB9\\u626B\\u63CF\\u6A21\\u5F0F\\u3002"
     },
     placeholders: {
@@ -2330,6 +2347,9 @@ ${result.join(",\n")}
       dynamic_scan: "\\u52A8\\u6001\\u626B\\u63CF",
       static_scan: "\\u9759\\u6001\\u626B\\u63CF",
       element_scan: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF",
+      disabled: {
+        scan_in_progress: "\\u53E6\\u4E00\\u9879\\u626B\\u63CF\\u6B63\\u5728\\u8FDB\\u884C\\u4E2D"
+      },
       filters: {
         title: "\\u5185\\u5BB9\\u8FC7\\u6EE4\\u5668\\u8BF4\\u660E",
         numbers: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168</strong>\\u7531\\u6570\\u5B57\\u3001\\u7A7A\\u683C\\u3001\\u5343\\u4F4D\\u5206\\u9694\\u7B26(,)\\u3001\\u5C0F\\u6570\\u70B9(.)\\u4EE5\\u53CA\\u90E8\\u5206\\u8D27\\u5E01\\u7B26\\u53F7($, \\u20AC, \\xA3, \\xA5)\\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B:</strong><br>\\u2022 "1,234.56"<br>\\u2022 "\\xA5999"<br>\\u2022 "\\u20AC200"<br>\\u2022 "$ 100"',
@@ -2634,6 +2654,7 @@ ${result.join(",\n")}
       nothingToCopy: "\\u6C92\\u6709\\u53EF\\u8907\\u88FD\\u7684\\u5167\\u5BB9\\u3002",
       contentCleared: "\\u5167\\u5BB9\\u5DF2\\u6E05\\u9664\\u3002",
       noTextSelected: "\\u672A\\u9078\\u64C7\\u4EFB\\u4F55\\u6587\\u672C\\u3002",
+      scanFailed: "\\u6383\\u63CF\\u5931\\u6557\\u3002",
       cspWorkerWarning: "\\u56E0\\u7DB2\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u63DB\\u81F3\\u76F8\\u5BB9\\u6383\\u63CF\\u6A21\\u5F0F\\u3002"
     },
     placeholders: {
@@ -2651,6 +2672,9 @@ ${result.join(",\n")}
       dynamic_scan: "\\u52D5\\u614B\\u6383\\u63CF",
       static_scan: "\\u975C\\u614B\\u6383\\u63CF",
       element_scan: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF",
+      disabled: {
+        scan_in_progress: "\\u53E6\\u4E00\\u9805\\u6383\\u63CF\\u6B63\\u5728\\u9032\\u884C\\u4E2D"
+      },
       filters: {
         title: "\\u5167\\u5BB9\\u904E\\u6FFE\\u5668\\u8AAA\\u660E",
         numbers: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168</strong>\\u7531\\u6578\\u5B57\\u3001\\u7A7A\\u683C\\u3001\\u5343\\u4F4D\\u5206\\u9694\\u7B26(,)\\u3001\\u5C0F\\u6578\\u9EDE(.)\\u4EE5\\u53CA\\u90E8\\u5206\\u8CA8\\u5E63\\u7B26\\u865F($, \\u20AC, \\xA3, \\xA5)\\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B:</strong><br>\\u2022 "1,234.56"<br>\\u2022 "\\xA5999"<br>\\u2022 "\\u20AC200"<br>\\u2022 "$ 100"',
@@ -3430,6 +3454,7 @@ ${result.join(",\n")}
       nothingToCopy: "Nothing to copy.",
       contentCleared: "Content cleared.",
       noTextSelected: "No text selected.",
+      scanFailed: "Scan failed.",
       cspWorkerWarning: "Switched to compatibility scan mode due to website security restrictions."
     },
     placeholders: {
@@ -3447,6 +3472,9 @@ ${result.join(",\n")}
       dynamic_scan: "Dynamic Scan",
       static_scan: "Static Scan",
       element_scan: "Element Scan",
+      disabled: {
+        scan_in_progress: "Another scan is in progress"
+      },
       filters: {
         title: "Content Filter Explanation",
         numbers: 'This rule filters out text that consists <strong>entirely</strong> of numbers, spaces, thousand separators (.), decimal points (,), and some currency symbols ($, \\u20AC, \\xA3, \\xA5).<br><br><strong>More Examples:</strong><br>\\u2022 "1,234.56"<br>\\u2022 "\\xA5999"<br>\\u2022 "\\u20AC200"<br>\\u2022 "$ 100"',
@@ -3751,6 +3779,7 @@ ${result.join(",\n")}
       nothingToCopy: "\\u6CA1\\u6709\\u53EF\\u590D\\u5236\\u7684\\u5185\\u5BB9\\u3002",
       contentCleared: "\\u5185\\u5BB9\\u5DF2\\u6E05\\u9664\\u3002",
       noTextSelected: "\\u672A\\u9009\\u62E9\\u4EFB\\u4F55\\u6587\\u672C\\u3002",
+      scanFailed: "\\u626B\\u63CF\\u5931\\u8D25\\u3002",
       cspWorkerWarning: "\\u56E0\\u7F51\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u6362\\u81F3\\u517C\\u5BB9\\u626B\\u63CF\\u6A21\\u5F0F\\u3002"
     },
     placeholders: {
@@ -3768,6 +3797,9 @@ ${result.join(",\n")}
       dynamic_scan: "\\u52A8\\u6001\\u626B\\u63CF",
       static_scan: "\\u9759\\u6001\\u626B\\u63CF",
       element_scan: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF",
+      disabled: {
+        scan_in_progress: "\\u53E6\\u4E00\\u9879\\u626B\\u63CF\\u6B63\\u5728\\u8FDB\\u884C\\u4E2D"
+      },
       filters: {
         title: "\\u5185\\u5BB9\\u8FC7\\u6EE4\\u5668\\u8BF4\\u660E",
         numbers: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168</strong>\\u7531\\u6570\\u5B57\\u3001\\u7A7A\\u683C\\u3001\\u5343\\u4F4D\\u5206\\u9694\\u7B26(,)\\u3001\\u5C0F\\u6570\\u70B9(.)\\u4EE5\\u53CA\\u90E8\\u5206\\u8D27\\u5E01\\u7B26\\u53F7($, \\u20AC, \\xA3, \\xA5)\\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B:</strong><br>\\u2022 "1,234.56"<br>\\u2022 "\\xA5999"<br>\\u2022 "\\u20AC200"<br>\\u2022 "$ 100"',
@@ -4072,6 +4104,7 @@ ${result.join(",\n")}
       nothingToCopy: "\\u6C92\\u6709\\u53EF\\u8907\\u88FD\\u7684\\u5167\\u5BB9\\u3002",
       contentCleared: "\\u5167\\u5BB9\\u5DF2\\u6E05\\u9664\\u3002",
       noTextSelected: "\\u672A\\u9078\\u64C7\\u4EFB\\u4F55\\u6587\\u672C\\u3002",
+      scanFailed: "\\u6383\\u63CF\\u5931\\u6557\\u3002",
       cspWorkerWarning: "\\u56E0\\u7DB2\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u63DB\\u81F3\\u76F8\\u5BB9\\u6383\\u63CF\\u6A21\\u5F0F\\u3002"
     },
     placeholders: {
@@ -4089,6 +4122,9 @@ ${result.join(",\n")}
       dynamic_scan: "\\u52D5\\u614B\\u6383\\u63CF",
       static_scan: "\\u975C\\u614B\\u6383\\u63CF",
       element_scan: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF",
+      disabled: {
+        scan_in_progress: "\\u53E6\\u4E00\\u9805\\u6383\\u63CF\\u6B63\\u5728\\u9032\\u884C\\u4E2D"
+      },
       filters: {
         title: "\\u5167\\u5BB9\\u904E\\u6FFE\\u5668\\u8AAA\\u660E",
         numbers: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168</strong>\\u7531\\u6578\\u5B57\\u3001\\u7A7A\\u683C\\u3001\\u5343\\u4F4D\\u5206\\u9694\\u7B26(,)\\u3001\\u5C0F\\u6578\\u9EDE(.)\\u4EE5\\u53CA\\u90E8\\u5206\\u8CA8\\u5E63\\u7B26\\u865F($, \\u20AC, \\xA3, \\xA5)\\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B:</strong><br>\\u2022 "1,234.56"<br>\\u2022 "\\xA5999"<br>\\u2022 "\\u20AC200"<br>\\u2022 "$ 100"',
@@ -5381,9 +5417,15 @@ ${result.join(",\n")}
       fab.appendChild(svgIcon);
     }
     fab.dataset.tooltipKey = titleKey;
-    fab.addEventListener("click", onClick);
+    fab.addEventListener("click", (event) => {
+      if (fab.classList.contains("fab-disabled")) {
+        event.stopPropagation();
+        return;
+      }
+      onClick(event);
+    });
     fab.addEventListener("mouseenter", () => {
-      showTooltip(fab, t(titleKey));
+      showTooltip(fab, t(fab.dataset.tooltipKey));
     });
     fab.addEventListener("mouseleave", () => {
       hideTooltip();
@@ -5460,6 +5502,17 @@ ${result.join(",\n")}
     const newIcon = createSVGFromString(iconSVGString);
     if (newIcon) {
       fabElement.appendChild(newIcon);
+    }
+  }
+  function getDynamicFab() {
+    return dynamicFab;
+  }
+  function getElementScanFab() {
+    return elementScanFab;
+  }
+  function updateFabTooltip(fabElement, newTooltipKey) {
+    if (fabElement) {
+      fabElement.dataset.tooltipKey = newTooltipKey;
     }
   }
   function handleQuickScanClick() {
@@ -5558,6 +5611,7 @@ ${result.join(",\n")}
     }, 50);
   }
   function handleDynamicExtractClick(dynamicFab2) {
+    const elementScanFab2 = getElementScanFab();
     if (isSessionRecording()) {
       log(t("scan.stopSession"));
       stop((finalCount) => {
@@ -5567,13 +5621,24 @@ ${result.join(",\n")}
       });
       setFabIcon(dynamicFab2, dynamicIcon);
       dynamicFab2.classList.remove("is-recording");
-      dynamicFab2.title = t("scan.startSession");
+      updateFabTooltip(dynamicFab2, "tooltip.dynamic_scan");
       hideTopCenterCounter();
+      if (elementScanFab2) {
+        elementScanFab2.classList.remove("fab-disabled");
+        if (elementScanFab2.dataset.originalTooltipKey) {
+          updateFabTooltip(elementScanFab2, elementScanFab2.dataset.originalTooltipKey);
+        }
+      }
     } else {
       log(t("scan.startSession"));
       setFabIcon(dynamicFab2, stopIcon);
       dynamicFab2.classList.add("is-recording");
-      dynamicFab2.title = t("scan.stopSession");
+      updateFabTooltip(dynamicFab2, "scan.stopSession");
+      if (elementScanFab2) {
+        elementScanFab2.dataset.originalTooltipKey = elementScanFab2.dataset.tooltipKey;
+        updateFabTooltip(elementScanFab2, "tooltip.disabled.scan_in_progress");
+        elementScanFab2.classList.add("fab-disabled");
+      }
       showNotification(t("scan.sessionStarted"), { type: "info" });
       showTopCenterCounter("common.discovered");
       setTimeout(() => {
@@ -5822,7 +5887,14 @@ ${result.join(",\n")}
     isActive = true;
     isAdjusting = false;
     fabElement.classList.add("is-recording");
+    updateFabTooltip(fabElement, "scan.stopSession");
     showTopCenterCounter("scan.stagedCount");
+    const dynamicFab2 = getDynamicFab();
+    if (dynamicFab2) {
+      dynamicFab2.dataset.originalTooltipKey = dynamicFab2.dataset.tooltipKey;
+      updateFabTooltip(dynamicFab2, "tooltip.disabled.scan_in_progress");
+      dynamicFab2.classList.add("fab-disabled");
+    }
     document.addEventListener("mouseover", handleMouseOver);
     document.addEventListener("mouseout", handleMouseOut);
     document.addEventListener("click", handleElementClick, true);
@@ -5837,6 +5909,14 @@ ${result.join(",\n")}
     isAdjusting = false;
     if (fabElement) {
       fabElement.classList.remove("is-recording");
+      updateFabTooltip(fabElement, "tooltip.element_scan");
+    }
+    const dynamicFab2 = getDynamicFab();
+    if (dynamicFab2) {
+      dynamicFab2.classList.remove("fab-disabled");
+      if (dynamicFab2.dataset.originalTooltipKey) {
+        updateFabTooltip(dynamicFab2, dynamicFab2.dataset.originalTooltipKey);
+      }
     }
     document.removeEventListener("mouseover", handleMouseOver);
     document.removeEventListener("mouseout", handleMouseOut);
@@ -6067,6 +6147,7 @@ ${result.join(",\n")}
       nothingToCopy: "Nothing to copy.",
       contentCleared: "Content cleared.",
       noTextSelected: "No text selected.",
+      scanFailed: "Scan failed.",
       cspWorkerWarning: "Switched to compatibility scan mode due to website security restrictions."
     },
     placeholders: {
@@ -6084,6 +6165,9 @@ ${result.join(",\n")}
       dynamic_scan: "Dynamic Scan",
       static_scan: "Static Scan",
       element_scan: "Element Scan",
+      disabled: {
+        scan_in_progress: "Another scan is in progress"
+      },
       filters: {
         title: "Content Filter Explanation",
         numbers: 'This rule filters out text that consists <strong>entirely</strong> of numbers, spaces, thousand separators (.), decimal points (,), and some currency symbols ($, \\u20AC, \\xA3, \\xA5).<br><br><strong>More Examples:</strong><br>\\u2022 "1,234.56"<br>\\u2022 "\\xA5999"<br>\\u2022 "\\u20AC200"<br>\\u2022 "$ 100"',
@@ -6388,6 +6472,7 @@ ${result.join(",\n")}
       nothingToCopy: "\\u6CA1\\u6709\\u53EF\\u590D\\u5236\\u7684\\u5185\\u5BB9\\u3002",
       contentCleared: "\\u5185\\u5BB9\\u5DF2\\u6E05\\u9664\\u3002",
       noTextSelected: "\\u672A\\u9009\\u62E9\\u4EFB\\u4F55\\u6587\\u672C\\u3002",
+      scanFailed: "\\u626B\\u63CF\\u5931\\u8D25\\u3002",
       cspWorkerWarning: "\\u56E0\\u7F51\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u6362\\u81F3\\u517C\\u5BB9\\u626B\\u63CF\\u6A21\\u5F0F\\u3002"
     },
     placeholders: {
@@ -6405,6 +6490,9 @@ ${result.join(",\n")}
       dynamic_scan: "\\u52A8\\u6001\\u626B\\u63CF",
       static_scan: "\\u9759\\u6001\\u626B\\u63CF",
       element_scan: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF",
+      disabled: {
+        scan_in_progress: "\\u53E6\\u4E00\\u9879\\u626B\\u63CF\\u6B63\\u5728\\u8FDB\\u884C\\u4E2D"
+      },
       filters: {
         title: "\\u5185\\u5BB9\\u8FC7\\u6EE4\\u5668\\u8BF4\\u660E",
         numbers: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168</strong>\\u7531\\u6570\\u5B57\\u3001\\u7A7A\\u683C\\u3001\\u5343\\u4F4D\\u5206\\u9694\\u7B26(,)\\u3001\\u5C0F\\u6570\\u70B9(.)\\u4EE5\\u53CA\\u90E8\\u5206\\u8D27\\u5E01\\u7B26\\u53F7($, \\u20AC, \\xA3, \\xA5)\\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B:</strong><br>\\u2022 "1,234.56"<br>\\u2022 "\\xA5999"<br>\\u2022 "\\u20AC200"<br>\\u2022 "$ 100"',
@@ -6709,6 +6797,7 @@ ${result.join(",\n")}
       nothingToCopy: "\\u6C92\\u6709\\u53EF\\u8907\\u88FD\\u7684\\u5167\\u5BB9\\u3002",
       contentCleared: "\\u5167\\u5BB9\\u5DF2\\u6E05\\u9664\\u3002",
       noTextSelected: "\\u672A\\u9078\\u64C7\\u4EFB\\u4F55\\u6587\\u672C\\u3002",
+      scanFailed: "\\u6383\\u63CF\\u5931\\u6557\\u3002",
       cspWorkerWarning: "\\u56E0\\u7DB2\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u63DB\\u81F3\\u76F8\\u5BB9\\u6383\\u63CF\\u6A21\\u5F0F\\u3002"
     },
     placeholders: {
@@ -6726,6 +6815,9 @@ ${result.join(",\n")}
       dynamic_scan: "\\u52D5\\u614B\\u6383\\u63CF",
       static_scan: "\\u975C\\u614B\\u6383\\u63CF",
       element_scan: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF",
+      disabled: {
+        scan_in_progress: "\\u53E6\\u4E00\\u9805\\u6383\\u63CF\\u6B63\\u5728\\u9032\\u884C\\u4E2D"
+      },
       filters: {
         title: "\\u5167\\u5BB9\\u904E\\u6FFE\\u5668\\u8AAA\\u660E",
         numbers: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168</strong>\\u7531\\u6578\\u5B57\\u3001\\u7A7A\\u683C\\u3001\\u5343\\u4F4D\\u5206\\u9694\\u7B26(,)\\u3001\\u5C0F\\u6578\\u9EDE(.)\\u4EE5\\u53CA\\u90E8\\u5206\\u8CA8\\u5E63\\u7B26\\u865F($, \\u20AC, \\xA3, \\xA5)\\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B:</strong><br>\\u2022 "1,234.56"<br>\\u2022 "\\xA5999"<br>\\u2022 "\\u20AC200"<br>\\u2022 "$ 100"',
@@ -8593,7 +8685,7 @@ ${result.join(",\n")}
     border-radius:50%;
     box-shadow:0 4px 8px var(--main-shadow);
     cursor:pointer;
-    transition:background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+    transition:background-color 0.3s, transform 0.2s, box-shadow 0.3s, color 0.3s;
     color:var(--main-primary-text);
     border:1px solid var(--main-border);
 }
@@ -8734,6 +8826,13 @@ ${result.join(",\n")}
 }
 #scan-count-display.is-visible{
     opacity:1;
+}
+.text-extractor-fab-container.fab-container-visible .text-extractor-fab.fab-disabled{
+    background-color:var(--main-disabled);
+    color:var(--main-disabled-text);
+    cursor:not-allowed;
+    box-shadow:none;
+    transform:none;
 }
 .tc-textarea-container{
     display:flex;

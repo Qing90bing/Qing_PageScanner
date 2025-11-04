@@ -113,6 +113,7 @@
     "nothingToCopy": "沒有可複製的內容。",
     "contentCleared": "內容已清除。",
     "noTextSelected": "未選擇任何文本。",
+    "scanFailed": "掃描失敗。",
     "cspWorkerWarning": "因網站安全限制，已切換至相容掃描模式。"
   },
   "placeholders": {
@@ -130,6 +131,9 @@
     "dynamic_scan": "動態掃描",
     "static_scan": "靜態掃描",
     "element_scan": "選取元素掃描",
+    "disabled": {
+      "scan_in_progress": "另一項掃描正在進行中"
+    },
     "filters": {
       "title": "內容過濾器說明",
       "numbers": "此規則過濾掉<strong>完全</strong>由數字、空格、千位分隔符(,)、小數點(.)以及部分貨幣符號($, €, £, ¥)組成的文本。<br><br><strong>更多範例:</strong><br>• \"1,234.56\"<br>• \"¥999\"<br>• \"€200\"<br>• \"$ 100\"",

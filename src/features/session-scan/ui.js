@@ -6,7 +6,7 @@ import * as sessionExtractor from './logic.js';
 import { showNotification } from '../../shared/ui/components/notification.js';
 import { showTopCenterCounter, hideTopCenterCounter, updateTopCenterCounter } from '../../shared/ui/components/topCenterCounter.js';
 import { t } from '../../shared/i18n/index.js';
-import { setFabIcon } from '../../shared/ui/components/fab.js';
+import { setFabIcon, getElementScanFab, updateFabTooltip } from '../../shared/ui/components/fab.js';
 import { dynamicIcon } from '../../assets/icons/dynamicIcon.js';
 import { stopIcon } from '../../assets/icons/stopIcon.js';
 import { simpleTemplate } from '../../shared/utils/templating.js';
@@ -53,6 +53,8 @@ export function showSessionSummary() {
  * @param {HTMLElement} dynamicFab - 动态扫描按钮的DOM元素。
  */
 export function handleDynamicExtractClick(dynamicFab) {
+    const elementScanFab = getElementScanFab();
+
     if (sessionExtractor.isSessionRecording()) {
         log(t('scan.stopSession'));
         // 异步停止，并在回调中获取最终计数
@@ -64,13 +66,28 @@ export function handleDynamicExtractClick(dynamicFab) {
 
         setFabIcon(dynamicFab, dynamicIcon);
         dynamicFab.classList.remove('is-recording');
-        dynamicFab.title = t('scan.startSession');
+        updateFabTooltip(dynamicFab, 'tooltip.dynamic_scan');
         hideTopCenterCounter();
+
+        // 启用“选取元素扫描”按钮并恢复其工具提示
+        if (elementScanFab) {
+            elementScanFab.classList.remove('fab-disabled');
+            if (elementScanFab.dataset.originalTooltipKey) {
+                updateFabTooltip(elementScanFab, elementScanFab.dataset.originalTooltipKey);
+            }
+        }
     } else {
         log(t('scan.startSession'));
         setFabIcon(dynamicFab, stopIcon);
         dynamicFab.classList.add('is-recording');
-        dynamicFab.title = t('scan.stopSession');
+        updateFabTooltip(dynamicFab, 'scan.stopSession');
+
+        // 禁用“选取元素扫描”按钮并更新其工具提示
+        if (elementScanFab) {
+            elementScanFab.dataset.originalTooltipKey = elementScanFab.dataset.tooltipKey;
+            updateFabTooltip(elementScanFab, 'tooltip.disabled.scan_in_progress');
+            elementScanFab.classList.add('fab-disabled');
+        }
 
         showNotification(t('scan.sessionStarted'), { type: 'info' });
         showTopCenterCounter('common.discovered');

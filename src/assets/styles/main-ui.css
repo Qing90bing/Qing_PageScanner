@@ -31,7 +31,7 @@
     border-radius: 50%;
     box-shadow: 0 4px 8px var(--main-shadow);
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s, color 0.3s;
     color: var(--main-primary-text); /* SVG 图标将继承这个颜色 */
     border: 1px solid var(--main-border); /* 添加描边 */
 }
@@ -201,4 +201,17 @@
 
 #scan-count-display.is-visible {
     opacity: 1;
+}
+
+/* --- FAB 禁用状态 --- */
+/*
+  通过提高选择器的特异性来确保禁用样式能覆盖容器的 `opacity: 1` 规则，
+  从而避免使用 `!important`。
+*/
+.text-extractor-fab-container.fab-container-visible .text-extractor-fab.fab-disabled {
+    background-color: var(--main-disabled);
+    color: var(--main-disabled-text);
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
 }

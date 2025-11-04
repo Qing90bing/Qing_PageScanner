@@ -113,6 +113,7 @@
     "nothingToCopy": "Nothing to copy.",
     "contentCleared": "Content cleared.",
     "noTextSelected": "No text selected.",
+    "scanFailed": "Scan failed.",
     "cspWorkerWarning": "Switched to compatibility scan mode due to website security restrictions."
   },
   "placeholders": {
@@ -130,6 +131,9 @@
     "dynamic_scan": "Dynamic Scan",
     "static_scan": "Static Scan",
     "element_scan": "Element Scan",
+    "disabled": {
+      "scan_in_progress": "Another scan is in progress"
+    },
     "filters": {
       "title": "Content Filter Explanation",
       "numbers": "This rule filters out text that consists <strong>entirely</strong> of numbers, spaces, thousand separators (.), decimal points (,), and some currency symbols ($, €, £, ¥).<br><br><strong>More Examples:</strong><br>• \"1,234.56\"<br>• \"¥999\"<br>• \"€200\"<br>• \"$ 100\"",

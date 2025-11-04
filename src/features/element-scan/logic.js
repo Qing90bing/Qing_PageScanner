@@ -4,6 +4,7 @@ import { updateHighlight, cleanupUI, createAdjustmentToolbar, cleanupToolbar } f
 import { extractAndProcessTextFromElement } from '../../shared/utils/textProcessor.js';
 import { updateModalContent } from '../../shared/ui/mainModal.js';
 import { uiContainer } from '../../shared/ui/uiContainer.js';
+import { getDynamicFab, updateFabTooltip } from '../../shared/ui/components/fab.js';
 import { showNotification } from '../../shared/ui/components/notification.js';
 import { t } from '../../shared/i18n/index.js';
 import { simpleTemplate } from '../../shared/utils/templating.js';
@@ -60,7 +61,16 @@ function startElementScan(fabElement) {
     isActive = true;
     isAdjusting = false;
     fabElement.classList.add('is-recording');
+    updateFabTooltip(fabElement, 'scan.stopSession'); // 更新自己的工具提示
     showTopCenterCounter('scan.stagedCount');
+
+    // 禁用“动态扫描”按钮并更新其工具提示
+    const dynamicFab = getDynamicFab();
+    if (dynamicFab) {
+        dynamicFab.dataset.originalTooltipKey = dynamicFab.dataset.tooltipKey;
+        updateFabTooltip(dynamicFab, 'tooltip.disabled.scan_in_progress');
+        dynamicFab.classList.add('fab-disabled');
+    }
 
     document.addEventListener('mouseover', handleMouseOver);
     document.addEventListener('mouseout', handleMouseOut);
@@ -78,6 +88,16 @@ export function stopElementScan(fabElement) {
 
     if (fabElement) {
         fabElement.classList.remove('is-recording');
+        updateFabTooltip(fabElement, 'tooltip.element_scan'); // 恢复自己的工具提示
+    }
+
+    // 启用“动态扫描”按钮并恢复其工具提示
+    const dynamicFab = getDynamicFab();
+    if (dynamicFab) {
+        dynamicFab.classList.remove('fab-disabled');
+        if (dynamicFab.dataset.originalTooltipKey) {
+            updateFabTooltip(dynamicFab, dynamicFab.dataset.originalTooltipKey);
+        }
     }
 
     document.removeEventListener('mouseover', handleMouseOver);

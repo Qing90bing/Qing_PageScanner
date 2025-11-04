@@ -40,11 +40,19 @@ function createSingleFab(className, iconSVGString, titleKey, onClick) {
     // 保存翻译键以便后续更新
     fab.dataset.tooltipKey = titleKey;
 
-    fab.addEventListener('click', onClick);
+    fab.addEventListener('click', (event) => {
+        // 如果按钮被禁用，则不执行任何操作
+        if (fab.classList.contains('fab-disabled')) {
+            event.stopPropagation();
+            return;
+        }
+        onClick(event);
+    });
 
     // 使用自定义的 Tooltip
     fab.addEventListener('mouseenter', () => {
-        showTooltip(fab, t(titleKey));
+        // 从 dataset 动态读取 key，以确保工具提示总是最新的
+        showTooltip(fab, t(fab.dataset.tooltipKey));
     });
     fab.addEventListener('mouseleave', () => {
         hideTooltip();
@@ -171,5 +179,35 @@ export function setFabIcon(fabElement, iconSVGString) {
     const newIcon = createSVGFromString(iconSVGString);
     if (newIcon) {
         fabElement.appendChild(newIcon);
+    }
+}
+
+/**
+ * @public
+ * @description 获取对“动态扫描”按钮的引用。
+ * @returns {HTMLElement | undefined}
+ */
+export function getDynamicFab() {
+    return dynamicFab;
+}
+
+/**
+ * @public
+ * @description 获取对“选取元素扫描”按钮的引用。
+ * @returns {HTMLElement | undefined}
+ */
+export function getElementScanFab() {
+    return elementScanFab;
+}
+
+/**
+ * @public
+ * @description 更新指定 FAB 的工具提示文本。
+ * @param {HTMLElement} fabElement - 要更新的 FAB 元素。
+ * @param {string} newTooltipKey - 新的 i18n 翻译键。
+ */
+export function updateFabTooltip(fabElement, newTooltipKey) {
+    if (fabElement) {
+        fabElement.dataset.tooltipKey = newTooltipKey;
     }
 }
