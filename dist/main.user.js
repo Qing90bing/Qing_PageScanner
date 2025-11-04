@@ -156,7 +156,8 @@ var TextExtractor = (() => {
       confirm: "Confirm",
       cancel: "Cancel",
       export: "Export",
-      reselect: "Reselect"
+      reselect: "Reselect",
+      stage: "Stage"
     },
     export: {
       exportAsTxt: "Export as TXT",
@@ -229,6 +230,7 @@ var TextExtractor = (() => {
     scan: {
       quick: "Quick Scan",
       session: "Session Scan",
+      stagedCount: "Staged:",
       elementFinished: "Element scan finished, found {{count}} items.",
       startSession: "Start Dynamic Scan Session",
       stopSession: "Stop Dynamic Scan Session",
@@ -418,6 +420,8 @@ var TextExtractor = (() => {
         pathBuilt: "Element path built, depth: {{depth}}.",
         adjustingLevel: "Adjusting selection level to {{level}} ({{tagName}}).",
         confirmExtracting: "Selection confirmed, extracting text from <{{tagName}}>.",
+        staged: "Element staged. Total staged: {{count}}.",
+        confirmingStaged: "Confirming selection. Processing {{count}} staged elements.",
         extractedCount: "Extracted {{count}} raw text fragments from element.",
         confirmFailedNoTarget: "Confirmation failed: no target element selected.",
         rightClickExit: "Right-click detected, stopping element scan.",
@@ -441,6 +445,7 @@ var TextExtractor = (() => {
         toolbarPositioned: "Element Scan UI: Toolbar positioned.",
         sliderChanged: "Element Scan UI: Slider changed to level {{level}}",
         reselectClicked: "Element Scan UI: 'Reselect' button clicked.",
+        stageClicked: "Element Scan UI: 'Stage' button clicked.",
         cancelClicked: "Element Scan UI: 'Cancel' button clicked.",
         confirmClicked: "Element Scan UI: 'Confirm' button clicked.",
         dragStarted: "Element Scan UI: Drag started.",
@@ -463,15 +468,16 @@ var TextExtractor = (() => {
     common: {
       scan: "\u626B\u63CF",
       stop: "\u505C\u6B62",
-      resume: "\u7EE7\u7EED",
+      resume: "\u6062\u590D",
       clear: "\u6E05\u7A7A",
       copy: "\u590D\u5236",
       save: "\u4FDD\u5B58",
-      discovered: "\u5DF2\u53D1\u73B0\uFF1A",
+      discovered: "\u5DF2\u53D1\u73B0:",
       confirm: "\u786E\u8BA4",
       cancel: "\u53D6\u6D88",
       export: "\u5BFC\u51FA",
-      reselect: "\u91CD\u65B0\u9009\u62E9"
+      reselect: "\u91CD\u65B0\u9009\u62E9",
+      stage: "\u6682\u5B58"
     },
     export: {
       exportAsTxt: "\u5BFC\u51FA\u4E3A TXT",
@@ -485,28 +491,28 @@ var TextExtractor = (() => {
     },
     settings: {
       title: "\u8BBE\u7F6E",
-      theme: "\u754C\u9762\u4E3B\u9898",
-      language: "\u8BED\u8A00\u8BBE\u7F6E",
+      theme: "\u4E3B\u9898",
+      language: "\u8BED\u8A00",
       relatedSettings: "\u76F8\u5173\u8BBE\u7F6E",
       filterRules: "\u5185\u5BB9\u8FC7\u6EE4\u89C4\u5219",
       filters: {
-        numbers: "\u8FC7\u6EE4\u7EAF\u6570\u5B57/\u8D27\u5E01",
-        chinese: "\u8FC7\u6EE4\u7EAF\u4E2D\u6587",
-        contains_chinese: "\u8FC7\u6EE4\u5305\u542B\u4E2D\u6587\u7684\u6587\u672C",
-        emoji_only: "\u8FC7\u6EE4\u7EAF\u8868\u60C5\u7B26\u53F7",
-        symbols: "\u8FC7\u6EE4\u7EAF\u7B26\u53F7",
+        numbers: "\u8FC7\u6EE4\u6570\u5B57/\u8D27\u5E01",
+        chinese: "\u8FC7\u6EE4\u7EAF\u4E2D\u6587\u6587\u672C",
+        contains_chinese: "\u8FC7\u6EE4\u542B\u4E2D\u6587\u7684\u6587\u672C",
+        emoji_only: "\u8FC7\u6EE4\u7EAF\u8868\u60C5\u7B26\u53F7\u6587\u672C",
+        symbols: "\u8FC7\u6EE4\u7EAF\u7B26\u53F7\u6587\u672C",
         term: "\u8FC7\u6EE4\u7279\u5B9A\u672F\u8BED",
-        single_letter: "\u8FC7\u6EE4\u7EAF\u5355\u4E2A\u82F1\u6587\u5B57\u6BCD",
-        repeating_chars: "\u8FC7\u6EE4\u5355\u4E00\u91CD\u590D\u5B57\u7B26",
+        single_letter: "\u8FC7\u6EE4\u5355\u4E2A\u82F1\u6587\u5B57\u6BCD",
+        repeating_chars: "\u8FC7\u6EE4\u91CD\u590D\u5B57\u7B26",
         file_paths: "\u8FC7\u6EE4\u6587\u4EF6\u8DEF\u5F84",
-        hex_color_codes: "\u8FC7\u6EE4\u5341\u516D\u8FDB\u5236\u989C\u8272",
-        email_addresses: "\u8FC7\u6EE4\u90AE\u4EF6\u5730\u5740",
+        hex_color_codes: "\u8FC7\u6EE4\u5341\u516D\u8FDB\u5236\u989C\u8272\u4EE3\u7801",
+        email_addresses: "\u8FC7\u6EE4\u7535\u5B50\u90AE\u4EF6\u5730\u5740",
         uuids: "\u8FC7\u6EE4 UUID",
         git_commit_hashes: "\u8FC7\u6EE4 Git \u63D0\u4EA4\u54C8\u5E0C\u503C",
-        website_urls: "\u8FC7\u6EE4\u7F51\u5740",
-        website_urls_title: "\u8FC7\u6EE4\u7F51\u5740 (URL)",
-        shorthand_numbers: "\u8FC7\u6EE4\u7B80\u5199\u6570\u5B57",
-        shorthand_numbers_title: "\u8FC7\u6EE4\u5E26\u5355\u4F4D\u7684\u7B80\u5199\u6570\u5B57"
+        website_urls: "\u8FC7\u6EE4\u7F51\u7AD9\u94FE\u63A5",
+        website_urls_title: "\u8FC7\u6EE4\u7F51\u7AD9\u94FE\u63A5",
+        shorthand_numbers: "\u8FC7\u6EE4\u901F\u8BB0\u6570\u5B57",
+        shorthand_numbers_title: "\u8FC7\u6EE4\u901F\u8BB0\u6570\u5B57"
       },
       display: {
         show_fab: "\u663E\u793A\u60AC\u6D6E\u6309\u94AE",
@@ -519,13 +525,13 @@ var TextExtractor = (() => {
         },
         show_line_numbers: "\u663E\u793A\u884C\u53F7",
         show_statistics: "\u663E\u793A\u7EDF\u8BA1\u4FE1\u606F",
-        enable_word_wrap: "\u542F\u7528\u6587\u672C\u81EA\u52A8\u6362\u884C",
-        text_truncation_limit: "\u542F\u7528\u6587\u672C\u6846\u5B57\u7B26\u9650\u5236",
-        character_limit: "\u5B57\u7B26\u6570",
-        show_scan_count: "\u542F\u7528\u6807\u9898\u680F\u663E\u793A\u626B\u63CF\u8BA1\u6570"
+        enable_word_wrap: "\u542F\u7528\u81EA\u52A8\u6362\u884C",
+        text_truncation_limit: "\u542F\u7528\u6587\u672C\u622A\u65AD\u9650\u5236",
+        character_limit: "\u5B57\u7B26\u9650\u5236",
+        show_scan_count: "\u5728\u6807\u9898\u4E2D\u542F\u7528\u626B\u63CF\u8BA1\u6570"
       },
       advanced: {
-        enable_debug_logging: "\u542F\u7528\u8C03\u8BD5\u65E5\u5FD7"
+        enable_debug_logging: "\u542F\u7528\u8C03\u8BD5\u65E5\u5FD7\u8BB0\u5F55"
       },
       panel: {
         title: "\u8BBE\u7F6E\u9762\u677F"
@@ -544,94 +550,95 @@ var TextExtractor = (() => {
     scan: {
       quick: "\u5FEB\u901F\u626B\u63CF",
       session: "\u4F1A\u8BDD\u626B\u63CF",
+      stagedCount: "\u5DF2\u6682\u5B58:",
       elementFinished: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5B8C\u6210\uFF0C\u53D1\u73B0 {{count}} \u6761\u6587\u672C\u3002",
       startSession: "\u5F00\u59CB\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD",
       stopSession: "\u505C\u6B62\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD",
-      finished: "\u626B\u63CF\u7ED3\u675F\uFF0C\u5171\u53D1\u73B0 {{count}} \u6761\u6587\u672C",
-      quickFinished: "\u5FEB\u6377\u626B\u63CF\u5B8C\u6210\uFF0C\u53D1\u73B0 {{count}} \u6761\u6587\u672C",
-      sessionStarted: "\u4F1A\u8BDD\u626B\u63CF\u5DF2\u5F00\u59CB",
-      sessionInProgress: "\u626B\u63CF\u6B63\u5728\u8FDB\u884C\u4E2D...",
-      truncationWarning: "\u4E3A\u4FDD\u6301\u754C\u9762\u6D41\u7545\uFF0C\u6B64\u5904\u4EC5\u663E\u793A\u90E8\u5206\u6587\u672C\u3002\u5B8C\u6574\u5185\u5BB9\u5C06\u5728\u5BFC\u51FA\u65F6\u63D0\u4F9B\u3002"
+      finished: "\u626B\u63CF\u5B8C\u6210\uFF0C\u53D1\u73B0 {{count}} \u6761\u6587\u672C\u3002",
+      quickFinished: "\u5FEB\u901F\u626B\u63CF\u5B8C\u6210\uFF0C\u53D1\u73B0 {{count}} \u6761\u6587\u672C\u3002",
+      sessionStarted: "\u4F1A\u8BDD\u626B\u63CF\u5DF2\u5F00\u59CB\u3002",
+      sessionInProgress: "\u626B\u63CF\u8FDB\u884C\u4E2D...",
+      truncationWarning: "\u4E3A\u4FDD\u6301\u754C\u9762\u6D41\u7545\uFF0C\u6B64\u5904\u4EC5\u663E\u793A\u90E8\u5206\u6587\u672C\u3002\u5BFC\u51FA\u540E\u5C06\u5305\u542B\u5B8C\u6574\u5185\u5BB9\u3002"
     },
     results: {
       title: "\u63D0\u53D6\u7684\u6587\u672C",
-      scanCountSession: "\u5DF2\u626B\u63CF {{count}} \u6761\u6587\u672C",
-      scanCountStatic: "\u5171\u626B\u63CF {{count}} \u6761\u6587\u672C",
-      totalCharacters: "\u603B\u5B57\u6570",
+      scanCountSession: "\u5DF2\u626B\u63CF {{count}} \u4E2A\u9879\u76EE",
+      scanCountStatic: "\u5171\u626B\u63CF {{count}} \u4E2A\u9879\u76EE",
+      totalCharacters: "\u603B\u5B57\u7B26\u6570",
       totalLines: "\u603B\u884C\u6570",
-      noSummary: "\u5F53\u524D\u6CA1\u6709\u603B\u7ED3\u6587\u672C",
+      noSummary: "\u65E0\u53EF\u7528\u6458\u8981",
       stats: {
         lines: "\u884C",
-        chars: "\u5B57\u7B26\u6570"
+        chars: "\u5B57\u7B26"
       }
     },
     notifications: {
-      copiedToClipboard: "\u5DF2\u590D\u5236\u5230\u526A\u8D34\u677F!",
+      copiedToClipboard: "\u5DF2\u590D\u5236\u5230\u526A\u8D34\u677F\uFF01",
       settingsSaved: "\u8BBE\u7F6E\u5DF2\u4FDD\u5B58\uFF01",
-      modalInitError: "\u6A21\u6001\u6846\u5C1A\u672A\u521D\u59CB\u5316\u3002",
-      nothingToCopy: "\u6C92\u6709\u5167\u5BB9\u53EF\u8907\u88FD",
-      contentCleared: "\u5185\u5BB9\u5DF2\u6E05\u7A7A",
-      noTextSelected: "\u672A\u9009\u62E9\u6587\u672C",
-      cspWorkerWarning: "\u7531\u4E8E\u7F51\u7AD9\u5B89\u5168\u9650\u5236\uFF0C\u5DF2\u5207\u6362\u5230\u517C\u5BB9\u626B\u63CF\u6A21\u5F0F\u3002"
+      modalInitError: "\u6A21\u6001\u6846\u672A\u521D\u59CB\u5316\u3002",
+      nothingToCopy: "\u6CA1\u6709\u53EF\u590D\u5236\u7684\u5185\u5BB9\u3002",
+      contentCleared: "\u5185\u5BB9\u5DF2\u6E05\u9664\u3002",
+      noTextSelected: "\u672A\u9009\u62E9\u4EFB\u4F55\u6587\u672C\u3002",
+      cspWorkerWarning: "\u56E0\u7F51\u7AD9\u5B89\u5168\u9650\u5236\uFF0C\u5DF2\u5207\u6362\u81F3\u517C\u5BB9\u626B\u63CF\u6A21\u5F0F\u3002"
     },
     placeholders: {
       click: "\u70B9\u51FB ",
       dynamicScan: "[\u52A8\u6001\u626B\u63CF]",
-      startNewScanSession: " \u6309\u94AE\u5F00\u59CB\u4E00\u4E2A\u65B0\u7684\u626B\u63CF\u4F1A\u8BDD",
+      startNewScanSession: " \u5F00\u59CB\u65B0\u7684\u626B\u63CF\u4F1A\u8BDD",
       staticScan: "[\u9759\u6001\u626B\u63CF]",
-      performOneTimeScan: " \u6309\u94AE\u53EF\u8FDB\u884C\u4E00\u6B21\u6027\u7684\u5FEB\u6377\u63D0\u53D6"
+      performOneTimeScan: " \u6267\u884C\u4E00\u6B21\u6027\u5FEB\u901F\u63D0\u53D6"
     },
     confirmation: {
-      clear: "\u4F60\u786E\u8BA4\u8981\u6E05\u7A7A\u5417\uFF1F\u6B64\u64CD\u4F5C\u4E0D\u53EF\u64A4\u9500\u3002"
+      clear: "\u60A8\u786E\u5B9A\u8981\u6E05\u9664\u5185\u5BB9\u5417\uFF1F\u6B64\u64CD\u4F5C\u65E0\u6CD5\u64A4\u9500\u3002"
     },
     tooltip: {
-      summary: "\u67E5\u770B\u603B\u7ED3",
+      summary: "\u67E5\u770B\u6458\u8981",
       dynamic_scan: "\u52A8\u6001\u626B\u63CF",
       static_scan: "\u9759\u6001\u626B\u63CF",
       element_scan: "\u9009\u53D6\u5143\u7D20\u626B\u63CF",
       filters: {
         title: "\u5185\u5BB9\u8FC7\u6EE4\u5668\u8BF4\u660E",
-        numbers: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389<strong>\u5B8C\u5168\u7531</strong>\u6570\u5B57\u3001\u7A7A\u683C\u3001\u5343\u4F4D\u5206\u9694\u7B26 (.)\u3001\u5C0F\u6570\u70B9 (,) \u4EE5\u53CA\u90E8\u5206\u8D27\u5E01\u7B26\u53F7 ($, \u20AC, \xA3, \xA5) \u7EC4\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u66F4\u591A\u793A\u4F8B\uFF1A</strong><br>\u2022 "1,234.56"<br>\u2022 "\xA5999"<br>\u2022 "\u20AC200"<br>\u2022 "$ 100"',
-        chinese: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389<strong>\u5B8C\u5168\u7531</strong>\u4E2D\u6587\u5B57\u7B26\u548C\u7A7A\u683C\u7EC4\u6210\u7684\u6587\u672C\uFF0C\u4E0D\u5305\u62EC\u4EFB\u4F55\u6807\u70B9\u7B26\u53F7\u3002<br><br><strong>\u793A\u4F8B\uFF1A</strong><br>\u2022 "\u4F60\u597D \u4E16\u754C" (\u5C06\u88AB\u8FC7\u6EE4)<br>\u2022 "\u4F60\u597D\uFF0C\u4E16\u754C" (\u4E0D\u4F1A\u88AB\u8FC7\u6EE4)',
-        contains_chinese: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389<strong>\u4EFB\u4F55\u5305\u542B</strong>\u81F3\u5C11\u4E00\u4E2A\u4E2D\u6587\u5B57\u7B26\u7684\u6587\u672C\uFF0C\u65E0\u8BBA\u662F\u5426\u5305\u542B\u5176\u4ED6\u5B57\u7B26\u3002<br><br><strong>\u793A\u4F8B\uFF1A</strong><br>\u2022 "\u4F60\u597D World" (\u5C06\u88AB\u8FC7\u6EE4)<br>\u2022 "\u7B2C 1 \u7AE0" (\u5C06\u88AB\u8FC7\u6EE4)',
-        emoji_only: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389<strong>\u5B8C\u5168\u7531</strong>\u4E00\u4E2A\u6216\u591A\u4E2A\u8868\u60C5\u7B26\u53F7\u53CA\u7A7A\u683C\u7EC4\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u793A\u4F8B\uFF1A</strong><br>\u2022 "\u{1F44D}"<br>\u2022 "\u{1F60A} \u{1F389} \u{1F680}"',
-        symbols: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389<strong>\u5B8C\u5168\u7531</strong>\u5404\u7C7B\u6807\u70B9\u548C\u7B26\u53F7\u7EC4\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u66F4\u591A\u793A\u4F8B\uFF1A</strong><br>\u2022 "@#*&^%"<br>\u2022 "()[]{}"<br>\u2022 "---...---"',
-        term: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389\u5E38\u89C1\u7684\u3001\u901A\u5E38\u65E0\u9700\u7FFB\u8BD1\u7684 UI \u672F\u8BED\u3002<br><br><strong>\u66F4\u591A\u793A\u4F8B\uFF1A</strong><br>\u2022 "OK", "Cancel", "Submit"<br>\u2022 "Login", "Settings", "Help"',
-        single_letter: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389\u7531<strong>\u5355\u4E2A</strong>\u82F1\u6587\u5B57\u6BCD\u7EC4\u6210\u7684\u6587\u672C\uFF0C\u5FFD\u7565\u5927\u5C0F\u5199\u3002<br><br><strong>\u793A\u4F8B\uFF1A</strong><br>\u2022 "A" (\u5C06\u88AB\u8FC7\u6EE4)<br>\u2022 "b" (\u5C06\u88AB\u8FC7\u6EE4)<br>\u2022 "AB" (\u4E0D\u4F1A\u88AB\u8FC7\u6EE4)',
-        repeating_chars: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389\u7531<strong>\u540C\u4E00\u4E2A\u5B57\u7B26</strong>\u8FDE\u7EED\u91CD\u590D 2 \u6B21\u6216\u4EE5\u4E0A\u7EC4\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u793A\u4F8B\uFF1A</strong><br>\u2022 "aa"<br>\u2022 "======"<br>\u2022 "bbbbb"',
-        file_paths: '\u6B64\u89C4\u5219\u4F1A\u5C1D\u8BD5\u8BC6\u522B\u5E76\u8FC7\u6EE4\u6389\u7C7B\u4F3C\u64CD\u4F5C\u7CFB\u7EDF\u7684\u3001\u4E14<strong>\u5305\u542B\u6587\u4EF6\u6269\u5C55\u540D</strong>\u7684\u6587\u4EF6\u8DEF\u5F84\uFF0C\u4F46\u5B83\u4E0D\u4F1A\u5339\u914D URL\u3002<br><br><strong>\u66F4\u591A\u793A\u4F8B\uFF1A</strong><br>\u2022 "/path/to/file.js"<br>\u2022 "C:\\Users\\Test\\document.docx"<br>\u2022 "./config.json"',
-        hex_color_codes: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389\u6807\u51C6\u7684 CSS \u5341\u516D\u8FDB\u5236\u989C\u8272\u4EE3\u7801\uFF083\u30014\u30016 \u6216 8 \u4F4D\uFF0C\u540E\u8005\u53EF\u5305\u542B Alpha \u901A\u9053\uFF09\u3002<br><br><strong>\u793A\u4F8B\uFF1A</strong><br>\u2022 "#FFFFFF"<br>\u2022 "#ff0000"<br>\u2022 "#f0c"<br>\u2022 "#f0c8" (4\u4F4D)<br>\u2022 "#ff000080" (8\u4F4D)',
-        email_addresses: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389\u7B26\u5408\u6807\u51C6\u683C\u5F0F\u7684\u7535\u5B50\u90AE\u4EF6\u5730\u5740\u3002<br><br><strong>\u793A\u4F8B\uFF1A</strong><br>\u2022 "example@domain.com"<br>\u2022 "user.name@sub.domain.org"',
-        uuids: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389\u901A\u7528\u552F\u4E00\u6807\u8BC6\u7B26 (UUID)\u3002<br><br><strong>\u793A\u4F8B\uFF1A</strong><br>\u2022 "123e4567-e89b-12d3-a456-426614174000"',
-        git_commit_hashes: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389\u6807\u51C6\u7684 Git \u63D0\u4EA4\u54C8\u5E0C\u503C\uFF08\u957F\u54C8\u5E0C\u6216\u77ED\u54C8\u5E0C\uFF09\u3002<br><br><strong>\u793A\u4F8B\uFF1A</strong><br>\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\u2022 "a1b2c3d"',
-        website_urls: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389<strong>\u72EC\u7ACB\u7684 URL</strong> \u6587\u672C\u3002\u5B83\u7684\u5339\u914D\u89C4\u5219\u88AB\u8BBE\u8BA1\u5F97\u975E\u5E38\u4E25\u683C\uFF0C\u4EE5\u907F\u514D\u610F\u5916\u79FB\u9664\u4E0D\u662F\u94FE\u63A5\u7684\u6587\u672C\u3002<br><br><strong>\u66F4\u591A\u793A\u4F8B\uFF1A</strong><br>\u2022 "https://www.example.com"<br>\u2022 "http://test.co.uk"<br>\u2022 "www.google.com"<br>\u2022 "example.org"',
-        shorthand_numbers: '\u6B64\u89C4\u5219\u4F1A\u8FC7\u6EE4\u6389\u4F7F\u7528<strong>\u5E38\u89C1\u7B80\u5199\u540E\u7F00</strong>\u7684\u6570\u5B57\uFF0C\u4F8B\u5982 k (\u5343)\u3001m (\u767E\u4E07) \u6216 b (\u5341\u4EBF)\uFF0C\u4E0D\u533A\u5206\u5927\u5C0F\u5199\u3002<br><br><strong>\u66F4\u591A\u793A\u4F8B\uFF1A</strong><br>\u2022 "1.2k"<br>\u2022 "15M"<br>\u2022 "2.5b"<br>\u2022 "100K"'
+        numbers: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389<strong>\u5B8C\u5168</strong>\u7531\u6570\u5B57\u3001\u7A7A\u683C\u3001\u5343\u4F4D\u5206\u9694\u7B26(,)\u3001\u5C0F\u6570\u70B9(.)\u4EE5\u53CA\u90E8\u5206\u8D27\u5E01\u7B26\u53F7($, \u20AC, \xA3, \xA5)\u7EC4\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u66F4\u591A\u793A\u4F8B:</strong><br>\u2022 "1,234.56"<br>\u2022 "\xA5999"<br>\u2022 "\u20AC200"<br>\u2022 "$ 100"',
+        chinese: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389<strong>\u5B8C\u5168</strong>\u7531\u6C49\u5B57\u548C\u7A7A\u683C\u7EC4\u6210\uFF0C\u4E14\u4E0D\u542B\u4EFB\u4F55\u6807\u70B9\u7684\u6587\u672C\u3002<br><br><strong>\u793A\u4F8B:</strong><br>\u2022 "\u4F60\u597D \u4E16\u754C" (\u5C06\u88AB\u8FC7\u6EE4)<br>\u2022 "\u4F60\u597D\uFF0C\u4E16\u754C" (\u4E0D\u4F1A\u88AB\u8FC7\u6EE4)',
+        contains_chinese: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389\u4EFB\u4F55\u542B\u6709\u81F3\u5C11\u4E00\u4E2A\u6C49\u5B57\u7684\u6587\u672C\uFF0C\u65E0\u8BBA\u5176\u4ED6\u5B57\u7B26\u662F\u4EC0\u4E48\u3002<br><br><strong>\u793A\u4F8B:</strong><br>\u2022 "\u4F60\u597D World" (\u5C06\u88AB\u8FC7\u6EE4)<br>\u2022 "\u7B2C\u4E00\u7AE0" (\u5C06\u88AB\u8FC7\u6EE4)',
+        emoji_only: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389<strong>\u5B8C\u5168</strong>\u7531\u4E00\u4E2A\u6216\u591A\u4E2A\u8868\u60C5\u7B26\u53F7\u53CA\u7A7A\u683C\u7EC4\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u793A\u4F8B:</strong><br>\u2022 "\u{1F44D}"<br>\u2022 "\u{1F60A} \u{1F389} \u{1F680}"',
+        symbols: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389<strong>\u5B8C\u5168</strong>\u7531\u5404\u79CD\u6807\u70B9\u548C\u7B26\u53F7\u7EC4\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u66F4\u591A\u793A\u4F8B:</strong><br>\u2022 "@#*&^%"<br>\u2022 "()[]{}"<br>\u2022 "---...---"',
+        term: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389\u901A\u5E38\u4E0D\u9700\u8981\u7FFB\u8BD1\u7684\u5E38\u89C1UI\u672F\u8BED\u3002<br><br><strong>\u66F4\u591A\u793A\u4F8B:</strong><br>\u2022 "OK", "Cancel", "Submit"<br>\u2022 "Login", "Settings", "Help"',
+        single_letter: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389\u7531<strong>\u5355\u4E2A</strong>\u82F1\u6587\u5B57\u6BCD\u7EC4\u6210\u7684\u6587\u672C\uFF08\u4E0D\u533A\u5206\u5927\u5C0F\u5199\uFF09\u3002<br><br><strong>\u793A\u4F8B:</strong><br>\u2022 "A" (\u5C06\u88AB\u8FC7\u6EE4)<br>\u2022 "b" (\u5C06\u88AB\u8FC7\u6EE4)<br>\u2022 "AB" (\u4E0D\u4F1A\u88AB\u8FC7\u6EE4)',
+        repeating_chars: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389\u7531<strong>\u540C\u4E00\u4E2A\u5B57\u7B26</strong>\u8FDE\u7EED\u91CD\u590D2\u6B21\u6216\u4EE5\u4E0A\u7684\u6587\u672C\u3002<br><br><strong>\u793A\u4F8B:</strong><br>\u2022 "aa"<br>\u2022 "======"<br>\u2022 "bbbbb"',
+        file_paths: '\u6B64\u89C4\u5219\u5C1D\u8BD5\u8BC6\u522B\u5E76\u8FC7\u6EE4\u6389\u7C7B\u4F3C\u64CD\u4F5C\u7CFB\u7EDF\u6587\u4EF6\u8DEF\u5F84\u4E14<strong>\u5305\u542B\u6587\u4EF6\u6269\u5C55\u540D</strong>\u7684\u6587\u672C\u3002\u5B83\u4E0D\u5339\u914D\u7F51\u5740\u3002<br><br><strong>\u66F4\u591A\u793A\u4F8B:</strong><br>\u2022 "/path/to/file.js"<br>\u2022 "C:\\Users\\Test\\document.docx"<br>\u2022 "./config.json"',
+        hex_color_codes: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389\u6807\u51C6\u7684CSS\u5341\u516D\u8FDB\u5236\u989C\u8272\u4EE3\u7801\uFF083\u30014\u30016\u62168\u4F4D\uFF0C\u540E\u8005\u5305\u542B\u900F\u660E\u5EA6\u901A\u9053\uFF09\u3002<br><br><strong>\u793A\u4F8B:</strong><br>\u2022 "#FFFFFF"<br>\u2022 "#ff0000"<br>\u2022 "#f0c"<br>\u2022 "#f0c8" (4\u4F4D)<br>\u2022 "#ff000080" (8\u4F4D)',
+        email_addresses: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389\u7B26\u5408\u6807\u51C6\u7535\u5B50\u90AE\u4EF6\u5730\u5740\u683C\u5F0F\u7684\u6587\u672C\u3002<br><br><strong>\u793A\u4F8B:</strong><br>\u2022 "example@domain.com"<br>\u2022 "user.name@sub.domain.org"',
+        uuids: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389\u901A\u7528\u552F\u4E00\u6807\u8BC6\u7B26 (UUID)\u3002<br><br><strong>\u793A\u4F8B:</strong><br>\u2022 "123e4567-e89b-12d3-a456-426614174000"',
+        git_commit_hashes: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389\u6807\u51C6\u7684Git\u63D0\u4EA4\u54C8\u5E0C\u503C\uFF08\u957F\u6216\u77ED\uFF09\u3002<br><br><strong>\u793A\u4F8B:</strong><br>\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\u2022 "a1b2c3d"',
+        website_urls: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389<strong>\u72EC\u7ACB\u7684\u7F51\u5740</strong>\u3002\u5B83\u8BBE\u8BA1\u5F97\u6BD4\u8F83\u4E25\u683C\uFF0C\u4EE5\u907F\u514D\u610F\u5916\u79FB\u9664\u4E0D\u662F\u94FE\u63A5\u7684\u6587\u672C\u3002<br><br><strong>\u66F4\u591A\u793A\u4F8B:</strong><br>\u2022 "https://www.example.com"<br>\u2022 "http://test.co.uk"<br>\u2022 "www.google.com"<br>\u2022 "example.org"',
+        shorthand_numbers: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389\u4F7F\u7528<strong>\u5E38\u89C1\u901F\u8BB0\u540E\u7F00</strong>\u8868\u793A\u5343(k)\u3001\u767E\u4E07(m)\u6216\u5341\u4EBF(b)\u7684\u6570\u5B57\uFF08\u4E0D\u533A\u5206\u5927\u5C0F\u5199\uFF09\u3002<br><br><strong>\u66F4\u591A\u793A\u4F8B:</strong><br>\u2022 "1.2k"<br>\u2022 "15M"<br>\u2022 "2.5b"<br>\u2022 "100K"'
       },
       display: {
         title: "\u663E\u793A\u8BBE\u7F6E\u8BF4\u660E",
-        show_fab: "\u63A7\u5236\u662F\u5426\u5728\u7F51\u9875\u53F3\u4E0B\u89D2\u663E\u793A<strong>\u60AC\u6D6E\u52A8\u4F5C\u6309\u94AE (FAB)</strong>\u3002\u8FD9\u662F\u9759\u6001\u6587\u672C\u63D0\u53D6\u3001\u52A8\u6001\u6587\u672C\u63D0\u53D6\u7684\u6838\u5FC3\u5165\u53E3\u3002<br><br>\u5982\u679C\u60A8\u7981\u7528\u4E86\u6B64\u6309\u94AE\uFF0C\u53EF\u4EE5\u901A\u8FC7\u6CB9\u7334\u6269\u5C55\u83DC\u5355\u7684\u8BBE\u7F6E\u9762\u677F\u91CD\u65B0\u6253\u5F00\u3002",
-        show_scan_count: "\u542F\u7528\u540E\uFF0C\u5728\u7ED3\u679C\u7A97\u53E3\u7684\u6807\u9898\u680F\u4F1A<strong>\u5B9E\u65F6\u66F4\u65B0</strong>\u672C\u6B21\u626B\u63CF\u53D1\u73B0\u7684\u6587\u672C\u6761\u76EE\u603B\u6570\u3002\u5728\u8FDB\u884C\u957F\u65F6\u95F4\u7684<strong>\u52A8\u6001\u626B\u63CF</strong>\u65F6\uFF0C\u8FD9\u4E2A\u8BA1\u6570\u5668\u53EF\u4EE5\u5F88\u76F4\u89C2\u5730\u53CD\u6620\u626B\u63CF\u8FDB\u5EA6\u3002",
-        show_line_numbers: "\u5728\u7ED3\u679C\u7A97\u53E3\u7684\u6587\u672C\u533A\u57DF\u5DE6\u4FA7\u663E\u793A\u884C\u53F7\u3002\u5F53\u60A8\u9700\u8981\u4E0E\u4ED6\u4EBA\u8BA8\u8BBA\u6216\u8BB0\u5F55\u7279\u5B9A\u67D0\u884C\u6587\u672C\u65F6\uFF0C\u884C\u53F7\u53EF\u4EE5\u63D0\u4F9B\u4E00\u4E2A<strong>\u7CBE\u786E\u7684\u5B9A\u4F4D\u6807\u8BB0</strong>\u3002",
-        show_statistics: "\u5728\u7ED3\u679C\u7A97\u53E3\u5E95\u90E8\u7684\u72B6\u6001\u680F\u663E\u793A\u5F53\u524D\u5DF2\u63D0\u53D6\u5185\u5BB9\u7684<strong>\u5B9E\u65F6\u7EDF\u8BA1</strong>\uFF0C\u5305\u62EC<strong>\u603B\u884C\u6570</strong>\u548C<strong>\u603B\u5B57\u7B26\u6570</strong>\u3002\u8FD9\u53EF\u4EE5\u5E2E\u52A9\u60A8\u5FEB\u901F\u8BC4\u4F30\u63D0\u53D6\u5185\u5BB9\u7684\u89C4\u6A21\u3002",
-        enable_word_wrap: "\u63A7\u5236\u7ED3\u679C\u7A97\u53E3\u4E2D\u7684\u957F\u6587\u672C\u884C\u5982\u4F55\u663E\u793A\u3002<br><br>\u2022 <strong>\u542F\u7528\uFF1A</strong>\u957F\u6587\u672C\u5C06\u81EA\u52A8\u6362\u884C\u4EE5\u9002\u5E94\u7A97\u53E3\u5BBD\u5EA6\u3002<br>\u2022 <strong>\u7981\u7528\uFF1A</strong>\u957F\u6587\u672C\u5C06\u4FDD\u6301\u5728\u5355\u884C\uFF0C\u5E76\u51FA\u73B0\u6C34\u5E73\u6EDA\u52A8\u6761\u3002",
-        text_truncation_limit: "\u8FD9\u662F\u4E00\u4E2A<strong>\u6027\u80FD\u4FDD\u62A4</strong>\u673A\u5236\u3002\u5F53\u811A\u672C\u63D0\u53D6\u5230<strong>\u5355\u884C\u8D85\u957F\u6587\u672C</strong>\uFF08\u4F8B\u5982\uFF0C\u4E00\u4E2A\u5B8C\u6574\u7684 base64 \u7F16\u7801\u56FE\u7247\uFF09\u65F6\uFF0C\u82E5\u4E0D\u622A\u65AD\uFF0C\u53EF\u80FD\u4F1A\u5BFC\u81F4\u6D4F\u89C8\u5668<strong>\u5361\u987F\u6216\u65E0\u54CD\u5E94</strong>\u3002<br><br>\u6B64\u8BBE\u7F6E\u4F1A\u622A\u65AD\u8D85\u51FA\u6307\u5B9A\u957F\u5EA6\u7684\u5355\u884C\u6587\u672C\uFF0C\u4EE5\u4FDD\u8BC1\u754C\u9762\u6D41\u7545\u3002<strong>\u6CE8\u610F\uFF1A\u6B64\u622A\u65AD\u4EC5\u5F71\u54CD\u754C\u9762\u663E\u793A\uFF0C\u5BFC\u51FA\u7684\u6587\u4EF6\u4ECD\u5C06\u5305\u542B\u5B8C\u6574\u5185\u5BB9\u3002</strong>"
+        show_fab: "\u63A7\u5236\u662F\u5426\u5728\u7F51\u9875\u53F3\u4E0B\u89D2\u663E\u793A<strong>\u60AC\u6D6E\u64CD\u4F5C\u6309\u94AE(FAB)</strong>\u3002\u8FD9\u662F\u8FDB\u884C\u9759\u6001\u548C\u52A8\u6001\u6587\u672C\u63D0\u53D6\u7684\u4E3B\u8981\u5165\u53E3\u3002<br><br>\u5982\u679C\u60A8\u7981\u7528\u4E86\u6B64\u6309\u94AE\uFF0C\u53EF\u4EE5\u901A\u8FC7\u6CB9\u7334\u6269\u5C55\u83DC\u5355\u4E2D\u7684\u8BBE\u7F6E\u9762\u677F\u91CD\u65B0\u542F\u7528\u5B83\u3002",
+        show_scan_count: "\u542F\u7528\u540E\uFF0C\u7ED3\u679C\u7A97\u53E3\u7684\u6807\u9898\u680F\u5C06<strong>\u5B9E\u65F6\u663E\u793A</strong>\u5F53\u524D\u626B\u63CF\u4E2D\u627E\u5230\u7684\u603B\u6587\u672C\u9879\u76EE\u6570\u3002\u8FD9\u5BF9\u4E8E\u76D1\u63A7\u957F\u65F6\u95F4\u8FD0\u884C\u7684<strong>\u52A8\u6001\u626B\u63CF</strong>\u7684\u8FDB\u5EA6\u7279\u522B\u6709\u7528\u3002",
+        show_line_numbers: "\u5728\u7ED3\u679C\u7A97\u53E3\u7684\u6587\u672C\u533A\u57DF\u5DE6\u4FA7\u663E\u793A\u884C\u53F7\u3002\u5F53\u60A8\u9700\u8981\u8BA8\u8BBA\u6216\u8BB0\u5F55\u7279\u5B9A\u6587\u672C\u884C\u65F6\uFF0C\u8FD9\u63D0\u4F9B\u4E86\u4E00\u4E2A<strong>\u7CBE\u786E\u7684\u53C2\u8003\u70B9</strong>\u3002",
+        show_statistics: "\u5728\u7ED3\u679C\u7A97\u53E3\u5E95\u90E8\u7684\u72B6\u6001\u680F\u4E2D\u663E\u793A\u6709\u5173\u63D0\u53D6\u5185\u5BB9\u7684<strong>\u5B9E\u65F6\u7EDF\u8BA1\u6570\u636E</strong>\uFF0C\u5305\u62EC<strong>\u603B\u884C\u6570</strong>\u548C<strong>\u603B\u5B57\u7B26\u6570</strong>\u3002\u8FD9\u6709\u52A9\u4E8E\u60A8\u5FEB\u901F\u8BC4\u4F30\u5185\u5BB9\u7684\u4F53\u91CF\u3002",
+        enable_word_wrap: "\u63A7\u5236\u7ED3\u679C\u7A97\u53E3\u4E2D\u957F\u6587\u672C\u884C\u7684\u663E\u793A\u65B9\u5F0F\u3002<br><br>\u2022 <strong>\u542F\u7528:</strong> \u957F\u884C\u5C06\u81EA\u52A8\u6362\u884C\u4EE5\u9002\u5E94\u7A97\u53E3\u5BBD\u5EA6\u3002<br>\u2022 <strong>\u7981\u7528:</strong> \u957F\u884C\u5C06\u4FDD\u6301\u5728\u5355\u884C\uFF0C\u5E76\u51FA\u73B0\u6C34\u5E73\u6EDA\u52A8\u6761\u3002",
+        text_truncation_limit: "\u8FD9\u662F\u4E00\u4E2A<strong>\u6027\u80FD\u4F18\u5316</strong>\u529F\u80FD\u3002\u5982\u679C\u811A\u672C\u63D0\u53D6\u5230<strong>\u6781\u957F\u7684\u5355\u884C\u6587\u672C</strong>\uFF08\u4F8B\u5982\uFF0Cbase64\u7F16\u7801\u7684\u56FE\u7247\uFF09\uFF0C\u53EF\u80FD\u4F1A\u5BFC\u81F4\u6D4F\u89C8\u5668<strong>\u5361\u987F\u6216\u65E0\u54CD\u5E94</strong>\u3002<br><br>\u6B64\u8BBE\u7F6E\u4F1A\u622A\u65AD\u4EFB\u4F55\u8D85\u8FC7\u6307\u5B9A\u957F\u5EA6\u7684\u5355\u884C\u6587\u672C\uFF0C\u4EE5\u786E\u4FDDUI\u4FDD\u6301\u6D41\u7545\u3002<strong>\u6CE8\u610F\uFF1A\u8FD9\u4EC5\u5F71\u54CD\u663E\u793A\uFF1B\u5BFC\u51FA\u7684\u6587\u4EF6\u4ECD\u5C06\u5305\u542B\u5B8C\u6574\u7684\u3001\u672A\u622A\u65AD\u7684\u5185\u5BB9\u3002</strong>"
       },
       advanced: {
         title: "\u9AD8\u7EA7\u8BBE\u7F6E\u8BF4\u660E",
-        enable_debug_logging: "\u542F\u7528\u540E\uFF0C\u811A\u672C\u4F1A\u5C06\u8BE6\u7EC6\u7684\u5185\u90E8\u8FD0\u884C\u72B6\u6001\u3001\u6267\u884C\u6B65\u9AA4\u3001\u9519\u8BEF\u4FE1\u606F\u7B49\u8F93\u51FA\u5230\u6D4F\u89C8\u5668\u7684<strong>\u5F00\u53D1\u8005\u5DE5\u5177\u63A7\u5236\u53F0</strong>\uFF08\u901A\u5E38\u6309 F12 \u6253\u5F00\uFF09\u3002\u6B64\u529F\u80FD\u4E3B\u8981\u9762\u5411\u5F00\u53D1\u8005\u6216\u9700\u8981\u63D0\u4EA4\u8BE6\u7EC6\u9519\u8BEF\u62A5\u544A\u7684\u7528\u6237\u3002"
+        enable_debug_logging: "\u542F\u7528\u540E\uFF0C\u811A\u672C\u4F1A\u5C06\u8BE6\u7EC6\u7684\u5185\u90E8\u72B6\u6001\u3001\u6267\u884C\u6B65\u9AA4\u548C\u9519\u8BEF\u4FE1\u606F\u8F93\u51FA\u5230\u6D4F\u89C8\u5668\u7684<strong>\u5F00\u53D1\u8005\u5DE5\u5177\u63A7\u5236\u53F0</strong>\uFF08\u901A\u5E38\u7528F12\u6253\u5F00\uFF09\u3002\u8FD9\u4E3B\u8981\u4F9B\u5F00\u53D1\u8005\u6216\u9700\u8981\u63D0\u4EA4\u8BE6\u7EC6\u9519\u8BEF\u62A5\u544A\u7684\u7528\u6237\u4F7F\u7528\u3002"
       }
     },
     log: {
-      prefix: "[\u6587\u672C\u63D0\u53D6\u811A\u672C-Debug]",
+      prefix: "[\u6587\u672C\u63D0\u53D6\u811A\u672C-\u8C03\u8BD5]",
       language: {
-        switched: "\u8BED\u8A00\u5DF2\u5207\u6362\u81F3: {{lang}}",
-        notFound: "\u8BED\u8A00 '{{lang}}' \u4E0D\u5B58\u5728\uFF0C\u56DE\u9000\u5230 'en'\u3002"
+        switched: "\u8BED\u8A00\u5DF2\u5207\u6362\u81F3\uFF1A{{lang}}",
+        notFound: "\u672A\u627E\u5230\u8BED\u8A00 '{{lang}}'\uFF0C\u5DF2\u56DE\u9000\u81F3 'en'\u3002"
       },
       settings: {
         changed: "\u8BBE\u7F6E '{{key}}' \u5DF2\u4ECE '{{oldValue}}' \u66F4\u6539\u4E3A '{{newValue}}'",
         filterRuleChanged: {
-          enabled: "\u8FC7\u6EE4\u89C4\u5219 '{{key}}' \u5DF2\u88AB\u542F\u7528",
-          disabled: "\u8FC7\u6EE4\u89C4\u5219 '{{key}}' \u5DF2\u88AB\u7981\u7528"
+          enabled: "\u8FC7\u6EE4\u89C4\u5219 '{{key}}' \u5DF2\u542F\u7528",
+          disabled: "\u8FC7\u6EE4\u89C4\u5219 '{{key}}' \u5DF2\u7981\u7528"
         },
         panel: {
           opening: "\u6B63\u5728\u6253\u5F00\u8BBE\u7F6E\u9762\u677F...",
@@ -639,111 +646,113 @@ var TextExtractor = (() => {
           saving: "\u6B63\u5728\u4FDD\u5B58\u8BBE\u7F6E..."
         },
         parseError: "\u89E3\u6790\u5DF2\u4FDD\u5B58\u7684\u8BBE\u7F6E\u65F6\u51FA\u9519\uFF1A",
-        invalidObject: "\u5C1D\u8BD5\u4FDD\u5B58\u4E00\u4E2A\u65E0\u6548\u7684\u5BF9\u8C61\u4F5C\u4E3A\u8BBE\u7F6E\uFF1A"
+        invalidObject: "\u8BD5\u56FE\u4E3A\u8BBE\u7F6E\u4FDD\u5B58\u4E00\u4E2A\u65E0\u6548\u5BF9\u8C61\uFF1A"
       },
       textProcessor: {
         filtered: '\u6587\u672C\u5DF2\u8FC7\u6EE4: "{{text}}" (\u539F\u56E0: {{reason}})'
       },
       quickScan: {
-        switchToFallback: "[\u9759\u6001\u626B\u63CF] \u5207\u6362\u5230\u4E3B\u7EBF\u7A0B\u5907\u9009\u65B9\u6848\u3002",
-        fallbackFailed: "[\u9759\u6001\u626B\u63CF] \u4E3B\u7EBF\u7A0B\u5907\u9009\u65B9\u6848\u5931\u8D25: {{error}}",
+        switchToFallback: "[\u5FEB\u901F\u626B\u63CF] \u6B63\u5728\u5207\u6362\u5230\u4E3B\u7EBF\u7A0B\u5907\u9009\u65B9\u6848\u3002",
+        fallbackFailed: "[\u5FEB\u901F\u626B\u63CF] \u4E3B\u7EBF\u7A0B\u5907\u9009\u65B9\u6848\u6267\u884C\u5931\u8D25: {{error}}",
         fallback: {
-          starting: "[\u9759\u6001\u626B\u63CF - \u5907\u9009\u65B9\u6848] \u5F00\u59CB\u5728\u4E3B\u7EBF\u7A0B\u4E2D\u5904\u7406...",
-          completed: "[\u9759\u6001\u626B\u63CF - \u5907\u9009\u65B9\u6848] \u5904\u7406\u5B8C\u6210\uFF0C\u5171 {{count}} \u6761\u6709\u6548\u6587\u672C\u3002"
+          starting: "[\u5FEB\u901F\u626B\u63CF - \u5907\u9009] \u6B63\u5728\u4E3B\u7EBF\u7A0B\u4E2D\u5F00\u59CB\u5904\u7406...",
+          completed: "[\u5FEB\u901F\u626B\u63CF - \u5907\u9009] \u5904\u7406\u5B8C\u6210\uFF0C\u627E\u5230 {{count}} \u6761\u4E0D\u91CD\u590D\u6587\u672C\u3002"
         },
         worker: {
-          logPrefix: "[\u9759\u6001\u626B\u63CF Worker]",
-          starting: "[\u9759\u6001\u626B\u63CF] \u5F00\u59CB\u6267\u884C\uFF0C\u5C1D\u8BD5\u4F7F\u7528 Web Worker...",
-          completed: "[\u9759\u6001\u626B\u63CF] Worker \u5904\u7406\u6210\u529F\uFF0C\u6536\u5230 {{count}} \u6761\u6587\u672C\u3002",
-          scanComplete: "[\u9759\u6001\u626B\u63CF Worker] \u5904\u7406\u5B8C\u6210\uFF0C\u5171 {{count}} \u6761\u6709\u6548\u6587\u672C\u3002\u6B63\u5728\u53D1\u56DE\u4E3B\u7EBF\u7A0B...",
-          initFailed: "[\u9759\u6001\u626B\u63CF] Worker \u521D\u59CB\u5316\u5931\u8D25\u3002\u8FD9\u5F88\u53EF\u80FD\u662F\u7531\u4E8E\u7F51\u7AD9\u7684\u5185\u5BB9\u5B89\u5168\u7B56\u7565\uFF08CSP\uFF09\u963B\u6B62\u4E86\u811A\u672C\u3002",
-          originalError: "[\u9759\u6001\u626B\u63CF] \u539F\u59CB\u9519\u8BEF: {{error}}",
-          sendingData: "[\u9759\u6001\u626B\u63CF] Web Worker \u5DF2\u521B\u5EFA\uFF0C\u6B63\u5728\u53D1\u9001 {{count}} \u6761\u6587\u672C\u8FDB\u884C\u5904\u7406...",
-          initSyncError: "[\u9759\u6001\u626B\u63CF] Worker \u521D\u59CB\u5316\u65F6\u53D1\u751F\u540C\u6B65\u9519\u8BEF: {{error}}"
+          logPrefix: "[\u5FEB\u901F\u626B\u63CF Worker]",
+          starting: "[\u5FEB\u901F\u626B\u63CF] \u5F00\u59CB\u6267\u884C\uFF0C\u5C1D\u8BD5\u4F7F\u7528 Web Worker...",
+          completed: "[\u5FEB\u901F\u626B\u63CF] Worker \u5904\u7406\u6210\u529F\uFF0C\u6536\u5230 {{count}} \u6761\u6587\u672C\u3002",
+          scanComplete: "[\u5FEB\u901F\u626B\u63CF Worker] \u5904\u7406\u5B8C\u6210\uFF0C\u627E\u5230 {{count}} \u6761\u4E0D\u91CD\u590D\u6587\u672C\u3002\u6B63\u5728\u53D1\u56DE\u4E3B\u7EBF\u7A0B...",
+          initFailed: "[\u5FEB\u901F\u626B\u63CF] Worker \u521D\u59CB\u5316\u5931\u8D25\u3002\u8FD9\u5F88\u53EF\u80FD\u662F\u7531\u4E8E\u7F51\u7AD9\u7684\u5185\u5BB9\u5B89\u5168\u7B56\u7565 (CSP) \u5BFC\u81F4\u7684\u3002",
+          originalError: "[\u5FEB\u901F\u626B\u63CF] \u539F\u59CB\u9519\u8BEF: {{error}}",
+          sendingData: "[\u5FEB\u901F\u626B\u63CF] Web Worker \u5DF2\u521B\u5EFA\uFF0C\u6B63\u5728\u53D1\u9001 {{count}} \u6761\u6587\u672C\u8FDB\u884C\u5904\u7406...",
+          initSyncError: "[\u5FEB\u901F\u626B\u63CF] Worker \u521D\u59CB\u5316\u671F\u95F4\u53D1\u751F\u540C\u6B65\u9519\u8BEF: {{error}}"
         }
       },
       sessionScan: {
-        switchToFallback: "[\u4F1A\u8BDD\u626B\u63CF] \u5207\u6362\u5230\u4E3B\u7EBF\u7A0B\u5907\u9009\u65B9\u6848\u3002",
+        switchToFallback: "[\u4F1A\u8BDD\u626B\u63CF] \u6B63\u5728\u5207\u6362\u5230\u4E3B\u7EBF\u7A0B\u5907\u9009\u65B9\u6848\u3002",
         domObserver: {
           stopped: "[\u4F1A\u8BDD\u626B\u63CF] \u5DF2\u505C\u6B62\u76D1\u542C DOM \u53D8\u5316\u3002"
         },
         fallback: {
-          initialized: "[\u4F1A\u8BDD\u626B\u63CF - \u5907\u9009\u65B9\u6848] \u521D\u59CB\u5316\u5B8C\u6210\u3002",
-          cleared: "[\u4F1A\u8BDD\u626B\u63CF - \u5907\u9009\u65B9\u6848] \u6570\u636E\u5DF2\u6E05\u7A7A\u3002"
+          initialized: "[\u4F1A\u8BDD\u626B\u63CF - \u5907\u9009] \u5DF2\u521D\u59CB\u5316\u3002",
+          cleared: "[\u4F1A\u8BDD\u626B\u63CF - \u5907\u9009] \u6570\u636E\u5DF2\u6E05\u9664\u3002"
         },
         worker: {
           logPrefix: "[\u4F1A\u8BDD\u626B\u63CF Worker]",
-          starting: "\u4F1A\u8BDD\u626B\u63CF\uFF1A\u5C1D\u8BD5\u542F\u52A8 Web Worker...",
-          initFailed: "[\u4F1A\u8BDD\u626B\u63CF] Worker \u521D\u59CB\u5316\u5931\u8D25\u3002\u8FD9\u5F88\u53EF\u80FD\u662F\u7531\u4E8E\u7F51\u7AD9\u7684\u5185\u5BB9\u5B89\u5168\u7B56\u7565\uFF08CSP\uFF09\u963B\u6B62\u4E86\u811A\u672C\u3002",
+          starting: "\u4F1A\u8BDD\u626B\u63CF\uFF1A\u6B63\u5728\u5C1D\u8BD5\u542F\u52A8 Web Worker...",
+          initFailed: "[\u4F1A\u8BDD\u626B\u63CF] Worker \u521D\u59CB\u5316\u5931\u8D25\u3002\u8FD9\u5F88\u53EF\u80FD\u662F\u7531\u4E8E\u7F51\u7AD9\u7684\u5185\u5BB9\u5B89\u5168\u7B56\u7565 (CSP) \u5BFC\u81F4\u7684\u3002",
           originalError: "[\u4F1A\u8BDD\u626B\u63CF] \u539F\u59CB\u9519\u8BEF: {{error}}",
           initialized: "[\u4F1A\u8BDD\u626B\u63CF] Worker \u521D\u59CB\u5316\u6210\u529F\uFF0C\u5DF2\u53D1\u9001 {{count}} \u6761\u521D\u59CB\u6587\u672C\u4EE5\u5F00\u59CB\u4F1A\u8BDD\u3002",
-          initSyncError: "[\u4F1A\u8BDD\u626B\u63CF] Worker \u521D\u59CB\u5316\u65F6\u53D1\u751F\u540C\u6B65\u9519\u8BEF: {{error}}",
-          clearCommandSent: "[\u4F1A\u8BDD\u626B\u63CF] \u5DF2\u5411 Worker \u53D1\u9001\u6E05\u7A7A\u6307\u4EE4\u3002"
+          initSyncError: "[\u4F1A\u8BDD\u626B\u63CF] Worker \u521D\u59CB\u5316\u671F\u95F4\u53D1\u751F\u540C\u6B65\u9519\u8BEF: {{error}}",
+          clearCommandSent: "[\u4F1A\u8BDD\u626B\u63CF] \u6E05\u9664\u547D\u4EE4\u5DF2\u53D1\u9001\u81F3 worker\u3002"
         }
       },
       ui: {
         copyButton: {
-          copied: "\u590D\u5236\u6309\u94AE\u88AB\u70B9\u51FB\uFF0C\u590D\u5236\u4E86 {{count}} \u4E2A\u5B57\u7B26\u3002",
-          nothingToCopy: "\u590D\u5236\u6309\u94AE\u88AB\u70B9\u51FB\uFF0C\u4F46\u6CA1\u6709\u5185\u5BB9\u53EF\u590D\u5236\u6216\u6309\u94AE\u88AB\u7981\u7528\u3002"
+          copied: "\u590D\u5236\u6309\u94AE\u5DF2\u70B9\u51FB\uFF0C\u590D\u5236\u4E86 {{count}} \u4E2A\u5B57\u7B26\u3002",
+          nothingToCopy: "\u590D\u5236\u6309\u94AE\u5DF2\u70B9\u51FB\uFF0C\u4F46\u6CA1\u6709\u5185\u5BB9\u53EF\u590D\u5236\u6216\u6309\u94AE\u88AB\u7981\u7528\u3002"
         },
         confirmationModal: {
           sessionScan: {
-            confirmed: "\u7528\u6237\u786E\u8BA4\u6E05\u7A7A\u4F1A\u8BDD\u626B\u63CF\u6587\u672C\uFF0C\u6B63\u5728\u8C03\u7528\u56DE\u8C03..."
+            confirmed: "\u7528\u6237\u5DF2\u786E\u8BA4\u6E05\u9664\u4F1A\u8BDD\u626B\u63CF\u6587\u672C\uFF0C\u6B63\u5728\u8C03\u7528\u56DE\u8C03..."
           },
           quickScan: {
-            confirmed: "\u7528\u6237\u786E\u8BA4\u6E05\u7A7A\u5FEB\u901F\u626B\u63CF\u6587\u672C\u3002"
+            confirmed: "\u7528\u6237\u5DF2\u786E\u8BA4\u6E05\u9664\u5FEB\u901F\u626B\u63CF\u6587\u672C\u3002"
           },
-          cancelled: "\u7528\u6237\u53D6\u6D88\u4E86\u6E05\u7A7A\u64CD\u4F5C\u3002"
+          cancelled: "\u7528\u6237\u5DF2\u53D6\u6D88\u6E05\u9664\u64CD\u4F5C\u3002"
         },
         modal: {
-          opening: "\u6B63\u5728\u6253\u5F00\u4E3B\u7A97\u53E3...",
-          closing: "\u6B63\u5728\u5173\u95ED\u4E3B\u7A97\u53E3...",
+          opening: "\u6B63\u5728\u6253\u5F00\u4E3B\u6A21\u6001\u6846...",
+          closing: "\u6B63\u5728\u5173\u95ED\u4E3B\u6A21\u6001\u6846...",
           scanFailed: "\u9759\u6001\u626B\u63CF\u5931\u8D25: {{error}}",
-          clearContent: "\u201C\u6E05\u7A7A\u5185\u5BB9\u201D\u6309\u94AE\u88AB\u70B9\u51FB\u3002"
+          clearContent: "\u6E05\u7A7A\u5185\u5BB9\u6309\u94AE\u5DF2\u70B9\u51FB\u3002"
         }
       },
       exporter: {
-        buttonClicked: "\u5BFC\u51FA\u6309\u94AE\u88AB\u70B9\u51FB, \u5BFC\u51FA\u683C\u5F0F: {{format}}\u3002",
-        csvError: "\u5728\u89E3\u6790\u6587\u672C\u5E76\u751F\u6210 CSV \u65F6\u53D1\u751F\u9519\u8BEF: {{error}}",
+        buttonClicked: "\u5BFC\u51FA\u6309\u94AE\u5DF2\u70B9\u51FB\uFF0C\u683C\u5F0F: {{format}}\u3002",
+        csvError: "\u89E3\u6790\u6587\u672C\u5E76\u751F\u6210CSV\u65F6\u51FA\u9519: {{error}}",
         fileExported: "\u6587\u4EF6\u5DF2\u5BFC\u51FA: {{filename}}",
-        noContent: "\u6CA1\u6709\u5185\u5BB9\u53EF\u5BFC\u51FA\u3002",
+        noContent: "\u65E0\u5185\u5BB9\u53EF\u5BFC\u51FA\u3002",
         unknownFormat: "\u672A\u77E5\u7684\u5BFC\u51FA\u683C\u5F0F: {{format}}"
       },
       main: {
-        requestingSessionScanData: "\u4ECE session-scan \u6A21\u5F0F\u8BF7\u6C42\u5B8C\u6574\u6570\u636E...",
-        exportingQuickScanData: "\u4ECE quick-scan \u6A21\u5F0F\u7684\u5185\u5B58\u4E2D\u5BFC\u51FA\u5B8C\u6574\u6570\u636E...",
+        requestingSessionScanData: "\u6B63\u5728\u8BF7\u6C42\u4F1A\u8BDD\u626B\u63CF\u6A21\u5F0F\u7684\u5B8C\u6574\u6570\u636E...",
+        exportingQuickScanData: "\u6B63\u5728\u5BFC\u51FA\u5FEB\u901F\u626B\u63CF\u6A21\u5F0F\u5185\u5B58\u4E2D\u7684\u5B8C\u6574\u6570\u636E...",
         inIframe: "\u811A\u672C\u5728 iframe \u4E2D\uFF0C\u5DF2\u8DF3\u8FC7\u521D\u59CB\u5316\u3002",
-        initializing: "\u811A\u672C\u5F00\u59CB\u521D\u59CB\u5316...",
+        initializing: "\u811A\u672C\u521D\u59CB\u5316\u5F00\u59CB...",
         initialSettingsLoaded: "\u521D\u59CB\u8BBE\u7F6E\u5DF2\u52A0\u8F7D:"
       },
       dom: {
-        ttpCreationError: "\u521B\u5EFA Trusted Type \u7B56\u7565\u5931\u8D25\uFF1A",
-        svgParseError: "\u65E0\u6548\u6216\u89E3\u6790\u5931\u8D25\u7684 SVG \u5B57\u7B26\u4E32\uFF1A"
+        ttpCreationError: "\u521B\u5EFA Trusted Type \u7B56\u7565\u5931\u8D25:",
+        svgParseError: "SVG \u5B57\u7B26\u4E32\u65E0\u6548\u6216\u89E3\u6790\u5931\u8D25:"
       },
       elementScan: {
-        starting: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5DF2\u542F\u52A8\u3002",
+        starting: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5DF2\u5F00\u59CB\u3002",
         stopping: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5DF2\u505C\u6B62\u3002",
-        listenersAdded: "\u5DF2\u6DFB\u52A0\u9009\u53D6\u5143\u7D20\u626B\u63CF\u7684\u5168\u5C40\u4E8B\u4EF6\u76D1\u542C\u5668\u3002",
-        listenersRemoved: "\u5DF2\u79FB\u9664\u9009\u53D6\u5143\u7D20\u626B\u63CF\u7684\u5168\u5C40\u4E8B\u4EF6\u76D1\u542C\u5668\u3002",
+        listenersAdded: "\u5DF2\u4E3A\u9009\u53D6\u5143\u7D20\u626B\u63CF\u6DFB\u52A0\u5168\u5C40\u4E8B\u4EF6\u76D1\u542C\u5668\u3002",
+        listenersRemoved: "\u5DF2\u4E3A\u9009\u53D6\u5143\u7D20\u626B\u63CF\u79FB\u9664\u5168\u5C40\u4E8B\u4EF6\u76D1\u542C\u5668\u3002",
         stateReset: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u72B6\u6001\u5DF2\u91CD\u7F6E\u3002",
         reselecting: "\u6B63\u5728\u8FD4\u56DE\u5143\u7D20\u91CD\u65B0\u9009\u62E9\u6A21\u5F0F\u3002",
-        hovering: "\u5F53\u524D\u60AC\u505C\u4E8E <{{tagName}}>\u3002",
-        escapePressed: "\u7528\u6237\u6309\u4E0B Escape \u952E\uFF0C\u6B63\u5728\u505C\u6B62\u9009\u53D6\u5143\u7D20\u626B\u63CF\u3002",
-        clickedEnteringAdjust: "\u5DF2\u70B9\u51FB\u5143\u7D20 <{{tagName}}>\uFF0C\u8FDB\u5165\u5C42\u7EA7\u8C03\u6574\u6A21\u5F0F\u3002",
+        hovering: "\u6B63\u5728\u60AC\u505C\u4E8E <{{tagName}}>\u3002",
+        escapePressed: "\u6309\u4E0B Escape \u952E\uFF0C\u6B63\u5728\u505C\u6B62\u9009\u53D6\u5143\u7D20\u626B\u63CF\u3002",
+        clickedEnteringAdjust: "\u5143\u7D20 <{{tagName}}> \u5DF2\u88AB\u70B9\u51FB\uFF0C\u6B63\u5728\u8FDB\u5165\u8C03\u6574\u6A21\u5F0F\u3002",
         pathBuilt: "\u5143\u7D20\u5C42\u7EA7\u8DEF\u5F84\u5DF2\u6784\u5EFA\uFF0C\u6DF1\u5EA6\u4E3A\uFF1A{{depth}}\u3002",
         adjustingLevel: "\u6B63\u5728\u8C03\u6574\u9009\u62E9\u5C42\u7EA7\u81F3 {{level}} ({{tagName}})\u3002",
         confirmExtracting: "\u9009\u62E9\u5DF2\u786E\u8BA4\uFF0C\u6B63\u5728\u4ECE <{{tagName}}> \u63D0\u53D6\u6587\u672C\u3002",
+        staged: "\u5143\u7D20\u5DF2\u6682\u5B58\u3002\u603B\u6570\uFF1A{{count}}\u3002",
+        confirmingStaged: "\u786E\u8BA4\u9009\u62E9\u3002\u6B63\u5728\u5904\u7406 {{count}} \u4E2A\u5DF2\u6682\u5B58\u7684\u5143\u7D20\u3002",
         extractedCount: "\u5DF2\u4ECE\u5143\u7D20\u4E2D\u63D0\u53D6 {{count}} \u6761\u539F\u59CB\u6587\u672C\u3002",
         confirmFailedNoTarget: "\u786E\u8BA4\u5931\u8D25\uFF1A\u672A\u9009\u62E9\u4EFB\u4F55\u76EE\u6807\u5143\u7D20\u3002",
         rightClickExit: "\u68C0\u6D4B\u5230\u53F3\u952E\u70B9\u51FB\uFF0C\u6B63\u5728\u505C\u6B62\u9009\u53D6\u5143\u7D20\u626B\u63CF\u3002",
         processingError: "\u6587\u672C\u5904\u7406\u8FC7\u7A0B\u4E2D\u53D1\u751F\u9519\u8BEF: {{error}}",
         worker: {
-          logPrefix: "[\u9009\u53D6\u5143\u7D20\u626B\u63CF Worker]",
+          logPrefix: "[ES Worker]",
           starting: "\u9009\u53D6\u5143\u7D20\u626B\u63CF Worker \u6B63\u5728\u542F\u52A8...",
-          sendingData: "\u6B63\u5728\u53D1\u9001 {{count}} \u6761\u6587\u672C\u81F3\u9009\u53D6\u5143\u7D20\u626B\u63CF Worker\u3002",
-          completed: "\u9009\u53D6\u5143\u7D20\u626B\u63CF Worker \u5904\u7406\u5B8C\u6210\uFF0C\u53D1\u73B0 {{count}} \u6761\u6709\u6548\u6587\u672C\u3002",
-          initFailed: "\u9009\u53D6\u5143\u7D20\u626B\u63CF Worker \u521D\u59CB\u5316\u5931\u8D25\u3002\u53EF\u80FD\u662F\u7F51\u7AD9\u7684 CSP \u7B56\u7565\u963B\u6B62\u4E86 data: URL\u3002",
-          initSyncError: "\u9009\u53D6\u5143\u7D20\u626B\u63CF Worker \u521D\u59CB\u5316\u65F6\u53D1\u751F\u540C\u6B65\u9519\u8BEF: {{error}}",
+          sendingData: "\u6B63\u5728\u5411\u9009\u53D6\u5143\u7D20\u626B\u63CF Worker \u53D1\u9001 {{count}} \u6761\u6587\u672C\u7247\u6BB5\u3002",
+          completed: "\u9009\u53D6\u5143\u7D20\u626B\u63CF Worker \u5DF2\u5B8C\u6210\uFF0C\u627E\u5230 {{count}} \u6761\u4E0D\u91CD\u590D\u6587\u672C\u3002",
+          initFailed: "\u9009\u53D6\u5143\u7D20\u626B\u63CF Worker \u521D\u59CB\u5316\u5931\u8D25\u3002\u6D4F\u89C8\u5668\u7684CSP\u53EF\u80FD\u963B\u6B62\u4E86 data: URL\u3002",
+          initSyncError: "\u9009\u53D6\u5143\u7D20\u626B\u63CF Worker \u521D\u59CB\u5316\u671F\u95F4\u53D1\u751F\u540C\u6B65\u9519\u8BEF: {{error}}",
           originalError: "\u539F\u59CB Worker \u9519\u8BEF: {{error}}"
         },
         switchToFallback: "\u6B63\u5728\u4E3A\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5207\u6362\u5230\u4E3B\u7EBF\u7A0B\u5907\u9009\u65B9\u6848\u3002",
@@ -756,6 +765,7 @@ var TextExtractor = (() => {
         toolbarPositioned: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u5DE5\u5177\u680F\u5DF2\u5B9A\u4F4D\u3002",
         sliderChanged: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u6ED1\u5757\u5C42\u7EA7\u53D8\u4E3A {{level}}",
         reselectClicked: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u201C\u91CD\u65B0\u9009\u62E9\u201D\u6309\u94AE\u88AB\u70B9\u51FB\u3002",
+        stageClicked: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u201C\u6682\u5B58\u201D\u6309\u94AE\u88AB\u70B9\u51FB\u3002",
         cancelClicked: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u201C\u53D6\u6D88\u201D\u6309\u94AE\u88AB\u70B9\u51FB\u3002",
         confirmClicked: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u201C\u786E\u8BA4\u201D\u6309\u94AE\u88AB\u70B9\u51FB\u3002",
         dragStarted: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u62D6\u52A8\u5F00\u59CB\u3002",
@@ -764,13 +774,13 @@ var TextExtractor = (() => {
         cleaningToolbar: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u6B63\u5728\u6E05\u7406\u5DE5\u5177\u680F\u3002"
       },
       eventBus: {
-        callbackError: "\u5728 '{{eventName}}' \u4E8B\u4EF6\u7684\u56DE\u8C03\u4E2D\u53D1\u751F\u9519\u8BEF\uFF1A"
+        callbackError: "\u4E8B\u4EF6 '{{eventName}}' \u7684\u56DE\u8C03\u51FD\u6570\u51FA\u9519:"
       },
       trustedTypes: {
-        workerPolicyError: "\u521B\u5EFA Trusted Types worker \u7B56\u7565\u5931\u8D25\uFF1A",
-        htmlPolicyError: "\u521B\u5EFA Trusted Types HTML \u7B56\u7565\u5931\u8D25\uFF1A",
-        defaultWorkerPolicyWarning: "Trusted Types \u9ED8\u8BA4\u7B56\u7565\u5904\u7406 worker URL \u5931\u8D25\uFF0C\u56DE\u9000\u5230\u539F\u59CB URL\u3002",
-        defaultHtmlPolicyWarning: "Trusted Types \u9ED8\u8BA4\u7B56\u7565\u5904\u7406 HTML \u5931\u8D25\uFF0C\u56DE\u9000\u5230\u539F\u59CB\u5B57\u7B26\u4E32\u3002"
+        workerPolicyError: "\u521B\u5EFA Trusted Types worker \u7B56\u7565\u5931\u8D25:",
+        htmlPolicyError: "\u521B\u5EFA Trusted Types HTML \u7B56\u7565\u5931\u8D25:",
+        defaultWorkerPolicyWarning: "\u7528\u4E8E worker URL \u7684 Trusted Types \u9ED8\u8BA4\u7B56\u7565\u5931\u8D25\uFF0C\u56DE\u9000\u5230\u539F\u59CB URL\u3002",
+        defaultHtmlPolicyWarning: "\u7528\u4E8E HTML \u7684 Trusted Types \u9ED8\u8BA4\u7B56\u7565\u5931\u8D25\uFF0C\u56DE\u9000\u5230\u539F\u59CB\u5B57\u7B26\u4E32\u3002"
       }
     }
   };
@@ -778,15 +788,16 @@ var TextExtractor = (() => {
     common: {
       scan: "\u6383\u63CF",
       stop: "\u505C\u6B62",
-      resume: "\u7E7C\u7E8C",
+      resume: "\u6062\u5FA9",
       clear: "\u6E05\u7A7A",
       copy: "\u8907\u88FD",
       save: "\u5132\u5B58",
-      discovered: "\u5DF2\u767C\u73FE\uFF1A",
+      discovered: "\u5DF2\u767C\u73FE:",
       confirm: "\u78BA\u8A8D",
       cancel: "\u53D6\u6D88",
       export: "\u532F\u51FA",
-      reselect: "\u91CD\u65B0\u9078\u64C7"
+      reselect: "\u91CD\u65B0\u9078\u64C7",
+      stage: "\u66AB\u5B58"
     },
     export: {
       exportAsTxt: "\u532F\u51FA\u70BA TXT",
@@ -800,28 +811,28 @@ var TextExtractor = (() => {
     },
     settings: {
       title: "\u8A2D\u5B9A",
-      theme: "\u4ECB\u9762\u4E3B\u984C",
-      language: "\u8A9E\u8A00\u8A2D\u5B9A",
+      theme: "\u4E3B\u984C",
+      language: "\u8A9E\u8A00",
       relatedSettings: "\u76F8\u95DC\u8A2D\u5B9A",
       filterRules: "\u5167\u5BB9\u904E\u6FFE\u898F\u5247",
       filters: {
-        numbers: "\u904E\u6FFE\u7D14\u6578\u5B57/\u8CA8\u5E63",
-        chinese: "\u904E\u6FFE\u7D14\u4E2D\u6587",
-        contains_chinese: "\u904E\u6FFE\u5305\u542B\u4E2D\u6587\u7684\u6587\u672C",
-        emoji_only: "\u904E\u6FFE\u7D14\u8868\u60C5\u7B26\u865F",
-        symbols: "\u904E\u6FFE\u7D14\u7B26\u865F",
+        numbers: "\u904E\u6FFE\u6578\u5B57/\u8CA8\u5E63",
+        chinese: "\u904E\u6FFE\u7D14\u4E2D\u6587\u6587\u672C",
+        contains_chinese: "\u904E\u6FFE\u542B\u4E2D\u6587\u7684\u6587\u672C",
+        emoji_only: "\u904E\u6FFE\u7D14\u8868\u60C5\u7B26\u865F\u6587\u672C",
+        symbols: "\u904E\u6FFE\u7D14\u7B26\u865F\u6587\u672C",
         term: "\u904E\u6FFE\u7279\u5B9A\u8853\u8A9E",
-        single_letter: "\u904E\u6FFE\u7D14\u55AE\u500B\u82F1\u6587\u5B57\u6BCD",
-        repeating_chars: "\u904E\u6FFE\u55AE\u4E00\u91CD\u8907\u5B57\u5143",
+        single_letter: "\u904E\u6FFE\u55AE\u500B\u82F1\u6587\u5B57\u6BCD",
+        repeating_chars: "\u904E\u6FFE\u91CD\u8907\u5B57\u5143",
         file_paths: "\u904E\u6FFE\u6A94\u6848\u8DEF\u5F91",
-        hex_color_codes: "\u904E\u6FFE\u5341\u516D\u9032\u4F4D\u984F\u8272",
-        email_addresses: "\u904E\u6FFE\u90F5\u4EF6\u5730\u5740",
+        hex_color_codes: "\u904E\u6FFE\u5341\u516D\u9032\u4F4D\u984F\u8272\u4EE3\u78BC",
+        email_addresses: "\u904E\u6FFE\u96FB\u5B50\u90F5\u4EF6\u5730\u5740",
         uuids: "\u904E\u6FFE UUID",
         git_commit_hashes: "\u904E\u6FFE Git \u63D0\u4EA4\u96DC\u6E4A\u503C",
-        website_urls: "\u904E\u6FFE\u7DB2\u5740",
-        website_urls_title: "\u904E\u6FFE\u7DB2\u5740 (URL)",
-        shorthand_numbers: "\u904E\u6FFE\u7C21\u5BEB\u6578\u5B57",
-        shorthand_numbers_title: "\u904E\u6FFE\u5E36\u6709\u55AE\u4F4D\u7684\u7C21\u5BEB\u6578\u5B57"
+        website_urls: "\u904E\u6FFE\u7DB2\u7AD9\u9023\u7D50",
+        website_urls_title: "\u904E\u6FFE\u7DB2\u7AD9\u9023\u7D50",
+        shorthand_numbers: "\u904E\u6FFE\u901F\u8A18\u6578\u5B57",
+        shorthand_numbers_title: "\u904E\u6FFE\u901F\u8A18\u6578\u5B57"
       },
       display: {
         show_fab: "\u986F\u793A\u61F8\u6D6E\u6309\u9215",
@@ -834,13 +845,13 @@ var TextExtractor = (() => {
         },
         show_line_numbers: "\u986F\u793A\u884C\u865F",
         show_statistics: "\u986F\u793A\u7D71\u8A08\u8CC7\u8A0A",
-        enable_word_wrap: "\u555F\u7528\u6587\u5B57\u81EA\u52D5\u63DB\u884C",
-        text_truncation_limit: "\u555F\u7528\u6587\u5B57\u6846\u5B57\u5143\u9650\u5236",
-        character_limit: "\u5B57\u5143\u6578",
-        show_scan_count: "\u555F\u7528\u6A19\u984C\u5217\u986F\u793A\u6383\u63CF\u8A08\u6578"
+        enable_word_wrap: "\u555F\u7528\u81EA\u52D5\u63DB\u884C",
+        text_truncation_limit: "\u555F\u7528\u6587\u672C\u622A\u65B7\u9650\u5236",
+        character_limit: "\u5B57\u5143\u9650\u5236",
+        show_scan_count: "\u5728\u6A19\u984C\u4E2D\u555F\u7528\u6383\u63CF\u8A08\u6578"
       },
       advanced: {
-        enable_debug_logging: "\u555F\u7528\u5075\u932F\u65E5\u8A8C"
+        enable_debug_logging: "\u555F\u7528\u5075\u932F\u65E5\u8A8C\u8A18\u9304"
       },
       panel: {
         title: "\u8A2D\u5B9A\u9762\u677F"
@@ -859,45 +870,46 @@ var TextExtractor = (() => {
     scan: {
       quick: "\u5FEB\u901F\u6383\u63CF",
       session: "\u6703\u8A71\u6383\u63CF",
+      stagedCount: "\u5DF2\u66AB\u5B58:",
       elementFinished: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5B8C\u6210\uFF0C\u767C\u73FE {{count}} \u689D\u6587\u672C\u3002",
       startSession: "\u958B\u59CB\u52D5\u614B\u6383\u63CF\u6703\u8A71",
       stopSession: "\u505C\u6B62\u52D5\u614B\u6383\u63CF\u6703\u8A71",
-      finished: "\u6383\u63CF\u7D50\u675F\uFF0C\u5171\u767C\u73FE {{count}} \u689D\u6587\u672C",
-      quickFinished: "\u5FEB\u6377\u6383\u63CF\u5B8C\u6210\uFF0C\u767C\u73FE {{count}} \u689D\u6587\u672C",
-      sessionStarted: "\u6703\u8A71\u6383\u63CF\u5DF2\u958B\u59CB",
-      sessionInProgress: "\u6383\u63CF\u6B63\u5728\u9032\u884C\u4E2D...",
-      truncationWarning: "\u70BA\u4FDD\u6301\u4ECB\u9762\u6D41\u66A2\uFF0C\u6B64\u8655\u50C5\u986F\u793A\u90E8\u5206\u6587\u672C\u3002\u5B8C\u6574\u5167\u5BB9\u5C07\u5728\u532F\u51FA\u6642\u63D0\u4F9B\u3002"
+      finished: "\u6383\u63CF\u5B8C\u6210\uFF0C\u767C\u73FE {{count}} \u689D\u6587\u672C\u3002",
+      quickFinished: "\u5FEB\u901F\u6383\u63CF\u5B8C\u6210\uFF0C\u767C\u73FE {{count}} \u689D\u6587\u672C\u3002",
+      sessionStarted: "\u6703\u8A71\u6383\u63CF\u5DF2\u958B\u59CB\u3002",
+      sessionInProgress: "\u6383\u63CF\u9032\u884C\u4E2D...",
+      truncationWarning: "\u70BA\u4FDD\u6301\u4ECB\u9762\u6D41\u66A2\uFF0C\u6B64\u8655\u50C5\u986F\u793A\u90E8\u5206\u6587\u672C\u3002\u532F\u51FA\u5F8C\u5C07\u5305\u542B\u5B8C\u6574\u5167\u5BB9\u3002"
     },
     results: {
       title: "\u63D0\u53D6\u7684\u6587\u672C",
-      scanCountSession: "\u5DF2\u6383\u63CF {{count}} \u689D\u6587\u672C",
-      scanCountStatic: "\u5171\u6383\u63CF {{count}} \u689D\u6587\u672C",
-      totalCharacters: "\u7E3D\u5B57\u6578",
+      scanCountSession: "\u5DF2\u6383\u63CF {{count}} \u500B\u9805\u76EE",
+      scanCountStatic: "\u5171\u6383\u63CF {{count}} \u500B\u9805\u76EE",
+      totalCharacters: "\u7E3D\u5B57\u5143\u6578",
       totalLines: "\u7E3D\u884C\u6578",
-      noSummary: "\u7576\u524D\u6C92\u6709\u6458\u8981\u6587\u672C",
+      noSummary: "\u7121\u53EF\u7528\u6458\u8981",
       stats: {
         lines: "\u884C",
-        chars: "\u5B57\u5143\u6578"
+        chars: "\u5B57\u5143"
       }
     },
     notifications: {
       copiedToClipboard: "\u5DF2\u8907\u88FD\u5230\u526A\u8CBC\u7C3F\uFF01",
       settingsSaved: "\u8A2D\u5B9A\u5DF2\u5132\u5B58\uFF01",
-      modalInitError: "\u6A21\u614B\u6846\u5C1A\u672A\u521D\u59CB\u5316\u3002",
-      nothingToCopy: "\u6C92\u6709\u5167\u5BB9\u53EF\u8907\u88FD",
-      contentCleared: "\u5167\u5BB9\u5DF2\u6E05\u7A7A",
-      noTextSelected: "\u672A\u9078\u64C7\u6587\u672C",
-      cspWorkerWarning: "\u7531\u65BC\u7DB2\u7AD9\u5B89\u5168\u9650\u5236\uFF0C\u5DF2\u5207\u63DB\u5230\u76F8\u5BB9\u6383\u63CF\u6A21\u5F0F\u3002"
+      modalInitError: "\u6A21\u614B\u6846\u672A\u521D\u59CB\u5316\u3002",
+      nothingToCopy: "\u6C92\u6709\u53EF\u8907\u88FD\u7684\u5167\u5BB9\u3002",
+      contentCleared: "\u5167\u5BB9\u5DF2\u6E05\u9664\u3002",
+      noTextSelected: "\u672A\u9078\u64C7\u4EFB\u4F55\u6587\u672C\u3002",
+      cspWorkerWarning: "\u56E0\u7DB2\u7AD9\u5B89\u5168\u9650\u5236\uFF0C\u5DF2\u5207\u63DB\u81F3\u76F8\u5BB9\u6383\u63CF\u6A21\u5F0F\u3002"
     },
     placeholders: {
       click: "\u9EDE\u64CA ",
       dynamicScan: "[\u52D5\u614B\u6383\u63CF]",
-      startNewScanSession: " \u6309\u9215\u958B\u59CB\u4E00\u500B\u65B0\u7684\u6383\u63CF\u6703\u8A71",
+      startNewScanSession: " \u958B\u59CB\u65B0\u7684\u6383\u63CF\u6703\u8A71",
       staticScan: "[\u975C\u614B\u6383\u63CF]",
-      performOneTimeScan: " \u6309\u9215\u53EF\u9032\u884C\u4E00\u6B21\u6027\u7684\u5FEB\u6377\u63D0\u53D6"
+      performOneTimeScan: " \u57F7\u884C\u4E00\u6B21\u6027\u5FEB\u901F\u63D0\u53D6"
     },
     confirmation: {
-      clear: "\u4F60\u78BA\u8A8D\u8981\u6E05\u7A7A\u55CE\uFF1F\u6B64\u64CD\u4F5C\u4E0D\u53EF\u64A4\u92B7\u3002"
+      clear: "\u60A8\u78BA\u5B9A\u8981\u6E05\u9664\u5167\u5BB9\u55CE\uFF1F\u6B64\u64CD\u4F5C\u7121\u6CD5\u64A4\u92B7\u3002"
     },
     tooltip: {
       summary: "\u67E5\u770B\u6458\u8981",
@@ -906,47 +918,47 @@ var TextExtractor = (() => {
       element_scan: "\u9078\u53D6\u5143\u7D20\u6383\u63CF",
       filters: {
         title: "\u5167\u5BB9\u904E\u6FFE\u5668\u8AAA\u660E",
-        numbers: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389<strong>\u5B8C\u5168\u7531</strong>\u6578\u5B57\u3001\u7A7A\u683C\u3001\u5343\u4F4D\u5206\u9694\u7B26 (.)\u3001\u5C0F\u6578\u9EDE (,) \u4EE5\u53CA\u90E8\u5206\u8CA8\u5E63\u7B26\u865F ($, \u20AC, \xA3, \xA5) \u7D44\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u66F4\u591A\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "1,234.56"<br>\u2022 "\xA5999"<br>\u2022 "\u20AC200"<br>\u2022 "$ 100"',
-        chinese: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389<strong>\u5B8C\u5168\u7531</strong>\u4E2D\u6587\u5B57\u5143\u548C\u7A7A\u683C\u7D44\u6210\u7684\u6587\u672C\uFF0C\u4E0D\u5305\u62EC\u4EFB\u4F55\u6A19\u9EDE\u7B26\u865F\u3002<br><br><strong>\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "\u4F60\u597D \u4E16\u754C" (\u5C07\u88AB\u904E\u6FFE)<br>\u2022 "\u4F60\u597D\uFF0C\u4E16\u754C" (\u4E0D\u6703\u88AB\u904E\u6FFE)',
-        contains_chinese: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389<strong>\u4EFB\u4F55\u5305\u542B</strong>\u81F3\u5C11\u4E00\u500B\u4E2D\u6587\u5B57\u5143\u7684\u6587\u672C\uFF0C\u7121\u8AD6\u662F\u5426\u5305\u542B\u5176\u4ED6\u5B57\u5143\u3002<br><br><strong>\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "\u4F60\u597D World" (\u5C07\u88AB\u904E\u6FFE)<br>\u2022 "\u7B2C 1 \u7AE0" (\u5C07\u88AB\u904E\u6FFE)',
-        emoji_only: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389<strong>\u5B8C\u5168\u7531</strong>\u4E00\u500B\u6216\u591A\u500B\u8868\u60C5\u7B26\u865F\u53CA\u7A7A\u683C\u7D44\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "\u{1F44D}"<br>\u2022 "\u{1F60A} \u{1F389} \u{1F680}"',
-        symbols: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389<strong>\u5B8C\u5168\u7531</strong>\u5404\u985E\u6A19\u9EDE\u548C\u7B26\u865F\u7D44\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u66F4\u591A\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "@#*&^%"<br>\u2022 "()[]{}"<br>\u2022 "---...---"',
-        term: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389\u5E38\u898B\u7684\u3001\u901A\u5E38\u7121\u9700\u7FFB\u8B6F\u7684 UI \u8853\u8A9E\u3002<br><br><strong>\u66F4\u591A\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "OK", "Cancel", "Submit"<br>\u2022 "Login", "Settings", "Help"',
-        single_letter: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389\u7531<strong>\u55AE\u500B</strong>\u82F1\u6587\u5B57\u6BCD\u7D44\u6210\u7684\u6587\u672C\uFF0C\u5FFD\u7565\u5927\u5C0F\u5BEB\u3002<br><br><strong>\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "A" (\u5C07\u88AB\u904E\u6FFE)<br>\u2022 "b" (\u5C07\u88AB\u904E\u6FFE)<br>\u2022 "AB" (\u4E0D\u6703\u88AB\u904E\u6FFE)',
-        repeating_chars: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389\u7531<strong>\u540C\u4E00\u500B\u5B57\u5143</strong>\u9023\u7E8C\u91CD\u8907 2 \u6B21\u6216\u4EE5\u4E0A\u7D44\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "aa"<br>\u2022 "======"<br>\u2022 "bbbbb"',
-        file_paths: '\u6B64\u898F\u5247\u6703\u5617\u8A66\u8B58\u5225\u4E26\u904E\u6FFE\u6389\u985E\u4F3C\u4F5C\u696D\u7CFB\u7D71\u7684\u3001\u4E14<strong>\u5305\u542B\u526F\u6A94\u540D</strong>\u7684\u6A94\u6848\u8DEF\u5F91\uFF0C\u4F46\u5B83\u4E0D\u6703\u5339\u914D URL\u3002<br><br><strong>\u66F4\u591A\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "/path/to/file.js"<br>\u2022 "C:\\Users\\Test\\document.docx"<br>\u2022 "./config.json"',
-        hex_color_codes: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389\u6A19\u6E96\u7684 CSS \u5341\u516D\u9032\u4F4D\u984F\u8272\u4EE3\u78BC\uFF083\u30014\u30016 \u6216 8 \u4F4D\uFF0C\u5F8C\u8005\u53EF\u5305\u542B Alpha \u901A\u9053\uFF09\u3002<br><br><strong>\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "#FFFFFF"<br>\u2022 "#ff0000"<br>\u2022 "#f0c"<br>\u2022 "#f0c8" (4\u4F4D)<br>\u2022 "#ff000080" (8\u4F4D)',
-        email_addresses: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389\u7B26\u5408\u6A19\u6E96\u683C\u5F0F\u7684\u96FB\u5B50\u90F5\u4EF6\u5730\u5740\u3002<br><br><strong>\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "example@domain.com"<br>\u2022 "user.name@sub.domain.org"',
-        uuids: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389\u901A\u7528\u552F\u4E00\u8B58\u5225\u78BC (UUID)\u3002<br><br><strong>\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "123e4567-e89b-12d3-a456-426614174000"',
-        git_commit_hashes: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389\u6A19\u6E96\u7684 Git \u63D0\u4EA4\u96DC\u6E4A\u503C\uFF08\u9577\u96DC\u6E4A\u6216\u77ED\u96DC\u6E4A\uFF09\u3002<br><br><strong>\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\u2022 "a1b2c3d"',
-        website_urls: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389<strong>\u7368\u7ACB\u7684 URL</strong> \u6587\u5B57\u3002\u5B83\u7684\u6BD4\u5C0D\u898F\u5247\u88AB\u8A2D\u8A08\u5F97\u975E\u5E38\u56B4\u683C\uFF0C\u4EE5\u907F\u514D\u610F\u5916\u79FB\u9664\u4E0D\u662F\u9023\u7D50\u7684\u6587\u5B57\u3002<br><br><strong>\u66F4\u591A\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "https://www.example.com"<br>\u2022 "http://test.co.uk"<br>\u2022 "www.google.com"<br>\u2022 "example.org"',
-        shorthand_numbers: '\u6B64\u898F\u5247\u6703\u904E\u6FFE\u6389\u4F7F\u7528<strong>\u5E38\u898B\u7C21\u5BEB\u5F8C\u7DB4</strong>\u7684\u6578\u5B57\uFF0C\u4F8B\u5982 k (\u5343)\u3001m (\u767E\u842C) \u6216 b (\u5341\u5104)\uFF0C\u4E0D\u5340\u5206\u5927\u5C0F\u5BEB\u3002<br><br><strong>\u66F4\u591A\u7BC4\u4F8B\uFF1A</strong><br>\u2022 "1.2k"<br>\u2022 "15M"<br>\u2022 "2.5b"<br>\u2022 "100K"'
+        numbers: '\u6B64\u898F\u5247\u904E\u6FFE\u6389<strong>\u5B8C\u5168</strong>\u7531\u6578\u5B57\u3001\u7A7A\u683C\u3001\u5343\u4F4D\u5206\u9694\u7B26(,)\u3001\u5C0F\u6578\u9EDE(.)\u4EE5\u53CA\u90E8\u5206\u8CA8\u5E63\u7B26\u865F($, \u20AC, \xA3, \xA5)\u7D44\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u66F4\u591A\u7BC4\u4F8B:</strong><br>\u2022 "1,234.56"<br>\u2022 "\xA5999"<br>\u2022 "\u20AC200"<br>\u2022 "$ 100"',
+        chinese: '\u6B64\u898F\u5247\u904E\u6FFE\u6389<strong>\u5B8C\u5168</strong>\u7531\u6F22\u5B57\u548C\u7A7A\u683C\u7D44\u6210\uFF0C\u4E14\u4E0D\u542B\u4EFB\u4F55\u6A19\u9EDE\u7684\u6587\u672C\u3002<br><br><strong>\u7BC4\u4F8B:</strong><br>\u2022 "\u4F60\u597D \u4E16\u754C" (\u5C07\u88AB\u904E\u6FFE)<br>\u2022 "\u4F60\u597D\uFF0C\u4E16\u754C" (\u4E0D\u6703\u88AB\u904E\u6FFE)',
+        contains_chinese: '\u6B64\u898F\u5247\u904E\u6FFE\u6389\u4EFB\u4F55\u542B\u6709\u81F3\u5C11\u4E00\u500B\u6F22\u5B57\u7684\u6587\u672C\uFF0C\u7121\u8AD6\u5176\u4ED6\u5B57\u5143\u662F\u4EC0\u9EBC\u3002<br><br><strong>\u7BC4\u4F8B:</strong><br>\u2022 "\u4F60\u597D World" (\u5C07\u88AB\u904E\u6FFE)<br>\u2022 "\u7B2C\u4E00\u7AE0" (\u5C07\u88AB\u904E\u6FFE)',
+        emoji_only: '\u6B64\u898F\u5247\u904E\u6FFE\u6389<strong>\u5B8C\u5168</strong>\u7531\u4E00\u500B\u6216\u591A\u500B\u8868\u60C5\u7B26\u865F\u53CA\u7A7A\u683C\u7D44\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u7BC4\u4F8B:</strong><br>\u2022 "\u{1F44D}"<br>\u2022 "\u{1F60A} \u{1F389} \u{1F680}"',
+        symbols: '\u6B64\u898F\u5247\u904E\u6FFE\u6389<strong>\u5B8C\u5168</strong>\u7531\u5404\u7A2E\u6A19\u9EDE\u548C\u7B26\u865F\u7D44\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u66F4\u591A\u7BC4\u4F8B:</strong><br>\u2022 "@#*&^%"<br>\u2022 "()[]{}"<br>\u2022 "---...---"',
+        term: '\u6B64\u898F\u5247\u904E\u6FFE\u6389\u901A\u5E38\u4E0D\u9700\u8981\u7FFB\u8B6F\u7684\u5E38\u898BUI\u8853\u8A9E\u3002<br><br><strong>\u66F4\u591A\u7BC4\u4F8B:</strong><br>\u2022 "OK", "Cancel", "Submit"<br>\u2022 "Login", "Settings", "Help"',
+        single_letter: '\u6B64\u898F\u5247\u904E\u6FFE\u6389\u7531<strong>\u55AE\u500B</strong>\u82F1\u6587\u5B57\u6BCD\u7D44\u6210\u7684\u6587\u672C\uFF08\u4E0D\u5340\u5206\u5927\u5C0F\u5BEB\uFF09\u3002<br><br><strong>\u7BC4\u4F8B:</strong><br>\u2022 "A" (\u5C07\u88AB\u904E\u6FFE)<br>\u2022 "b" (\u5C07\u88AB\u904E\u6FFE)<br>\u2022 "AB" (\u4E0D\u6703\u88AB\u904E\u6FFE)',
+        repeating_chars: '\u6B64\u898F\u5247\u904E\u6FFE\u6389\u7531<strong>\u540C\u4E00\u500B\u5B57\u5143</strong>\u9023\u7E8C\u91CD\u89072\u6B21\u6216\u4EE5\u4E0A\u7684\u6587\u672C\u3002<br><br><strong>\u7BC4\u4F8B:</strong><br>\u2022 "aa"<br>\u2022 "======"<br>\u2022 "bbbbb"',
+        file_paths: '\u6B64\u898F\u5247\u5617\u8A66\u8B58\u5225\u4E26\u904E\u6FFE\u6389\u985E\u4F3C\u4F5C\u696D\u7CFB\u7D71\u6A94\u6848\u8DEF\u5F91\u4E14<strong>\u5305\u542B\u6A94\u6848\u526F\u6A94\u540D</strong>\u7684\u6587\u672C\u3002\u5B83\u4E0D\u5339\u914D\u7DB2\u5740\u3002<br><br><strong>\u66F4\u591A\u7BC4\u4F8B:</strong><br>\u2022 "/path/to/file.js"<br>\u2022 "C:\\Users\\Test\\document.docx"<br>\u2022 "./config.json"',
+        hex_color_codes: '\u6B64\u898F\u5247\u904E\u6FFE\u6389\u6A19\u6E96\u7684CSS\u5341\u516D\u9032\u4F4D\u984F\u8272\u4EE3\u78BC\uFF083\u30014\u30016\u62168\u4F4D\uFF0C\u5F8C\u8005\u5305\u542B\u900F\u660E\u5EA6\u901A\u9053\uFF09\u3002<br><br><strong>\u7BC4\u4F8B:</strong><br>\u2022 "#FFFFFF"<br>\u2022 "#ff0000"<br>\u2022 "#f0c"<br>\u2022 "#f0c8" (4\u4F4D)<br>\u2022 "#ff000080" (8\u4F4D)',
+        email_addresses: '\u6B64\u898F\u5247\u904E\u6FFE\u6389\u7B26\u5408\u6A19\u6E96\u96FB\u5B50\u90F5\u4EF6\u5730\u5740\u683C\u5F0F\u7684\u6587\u672C\u3002<br><br><strong>\u7BC4\u4F8B:</strong><br>\u2022 "example@domain.com"<br>\u2022 "user.name@sub.domain.org"',
+        uuids: '\u6B64\u898F\u5247\u904E\u6FFE\u6389\u901A\u7528\u552F\u4E00\u8B58\u5225\u78BC (UUID)\u3002<br><br><strong>\u7BC4\u4F8B:</strong><br>\u2022 "123e4567-e89b-12d3-a456-426614174000"',
+        git_commit_hashes: '\u6B64\u898F\u5247\u904E\u6FFE\u6389\u6A19\u6E96\u7684Git\u63D0\u4EA4\u96DC\u6E4A\u503C\uFF08\u9577\u6216\u77ED\uFF09\u3002<br><br><strong>\u7BC4\u4F8B:</strong><br>\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\u2022 "a1b2c3d"',
+        website_urls: '\u6B64\u898F\u5247\u904E\u6FFE\u6389<strong>\u7368\u7ACB\u7684\u7DB2\u5740</strong>\u3002\u5B83\u8A2D\u8A08\u5F97\u6BD4\u8F03\u56B4\u683C\uFF0C\u4EE5\u907F\u514D\u610F\u5916\u79FB\u9664\u4E0D\u662F\u9023\u7D50\u7684\u6587\u672C\u3002<br><br><strong>\u66F4\u591A\u7BC4\u4F8B:</strong><br>\u2022 "https://www.example.com"<br>\u2022 "http://test.co.uk"<br>\u2022 "www.google.com"<br>\u2022 "example.org"',
+        shorthand_numbers: '\u6B64\u898F\u5247\u904E\u6FFE\u6389\u4F7F\u7528<strong>\u5E38\u898B\u901F\u8A18\u5F8C\u7DB4</strong>\u8868\u793A\u5343(k)\u3001\u767E\u842C(m)\u6216\u5341\u5104(b)\u7684\u6578\u5B57\uFF08\u4E0D\u5340\u5206\u5927\u5C0F\u5BEB\uFF09\u3002<br><br><strong>\u66F4\u591A\u7BC4\u4F8B:</strong><br>\u2022 "1.2k"<br>\u2022 "15M"<br>\u2022 "2.5b"<br>\u2022 "100K"'
       },
       display: {
         title: "\u986F\u793A\u8A2D\u5B9A\u8AAA\u660E",
-        show_fab: "\u63A7\u5236\u662F\u5426\u5728\u7DB2\u9801\u53F3\u4E0B\u89D2\u986F\u793A <strong>\u6D6E\u52D5\u52D5\u4F5C\u6309\u9215 (FAB)</strong>\u3002\u9019\u662F\u975C\u614B\u6587\u5B57\u8403\u53D6\u3001\u52D5\u614B\u6587\u5B57\u8403\u53D6\u7684\u6838\u5FC3\u5165\u53E3\u3002<br><br>\u5982\u679C\u60A8\u7981\u7528\u4E86\u6B64\u6309\u9215\uFF0C\u53EF\u4EE5\u900F\u904E\u6CB9\u7334\u64F4\u5145\u529F\u80FD\u9078\u55AE\u7684\u8A2D\u5B9A\u9762\u677F\u91CD\u65B0\u958B\u555F\u3002",
-        show_scan_count: "\u555F\u7528\u5F8C\uFF0C\u5728\u7D50\u679C\u8996\u7A97\u7684\u6A19\u984C\u5217\u6703<strong>\u5373\u6642\u66F4\u65B0</strong>\u672C\u6B21\u6383\u63CF\u767C\u73FE\u7684\u6587\u672C\u689D\u76EE\u7E3D\u6578\u3002\u5728\u9032\u884C\u9577\u6642\u9593\u7684<strong>\u52D5\u614B\u6383\u63CF</strong>\u6642\uFF0C\u9019\u500B\u8A08\u6578\u5668\u53EF\u4EE5\u5F88\u76F4\u89C0\u5730\u53CD\u6620\u6383\u63CF\u9032\u5EA6\u3002",
-        show_line_numbers: "\u5728\u7D50\u679C\u8996\u7A97\u7684\u6587\u672C\u5340\u57DF\u5DE6\u5074\u986F\u793A\u884C\u865F\u3002\u7576\u60A8\u9700\u8981\u8207\u4ED6\u4EBA\u8A0E\u8AD6\u6216\u8A18\u9304\u7279\u5B9A\u67D0\u884C\u6587\u672C\u6642\uFF0C\u884C\u865F\u53EF\u4EE5\u63D0\u4F9B\u4E00\u500B<strong>\u7CBE\u78BA\u7684\u5B9A\u4F4D\u6A19\u8A18</strong>\u3002",
-        show_statistics: "\u5728\u7D50\u679C\u8996\u7A97\u5E95\u90E8\u7684\u72C0\u614B\u5217\u986F\u793A\u7576\u524D\u5DF2\u63D0\u53D6\u5167\u5BB9\u7684<strong>\u5373\u6642\u7D71\u8A08</strong>\uFF0C\u5305\u62EC<strong>\u7E3D\u884C\u6578</strong>\u548C<strong>\u7E3D\u5B57\u5143\u6578</strong>\u3002\u9019\u53EF\u4EE5\u5E6B\u52A9\u60A8\u5FEB\u901F\u8A55\u4F30\u63D0\u53D6\u5167\u5BB9\u7684\u898F\u6A21\u3002",
-        enable_word_wrap: "\u63A7\u5236\u7D50\u679C\u8996\u7A97\u4E2D\u7684\u9577\u6587\u672C\u884C\u5982\u4F55\u986F\u793A\u3002<br><br>\u2022 <strong>\u555F\u7528\uFF1A</strong>\u9577\u6587\u672C\u5C07\u81EA\u52D5\u63DB\u884C\u4EE5\u9069\u61C9\u8996\u7A97\u5BEC\u5EA6\u3002<br>\u2022 <strong>\u7981\u7528\uFF1A</strong>\u9577\u6587\u672C\u5C07\u4FDD\u6301\u5728\u55AE\u884C\uFF0C\u4E26\u51FA\u73FE\u6C34\u5E73\u6372\u52D5\u689D\u3002",
-        text_truncation_limit: "\u9019\u662F\u4E00\u500B<strong>\u6548\u80FD\u4FDD\u8B77</strong>\u6A5F\u5236\u3002\u7576\u8173\u672C\u63D0\u53D6\u5230<strong>\u55AE\u884C\u8D85\u9577\u6587\u672C</strong>\uFF08\u4F8B\u5982\uFF0C\u4E00\u500B\u5B8C\u6574\u7684 base64 \u7DE8\u78BC\u5716\u7247\uFF09\u6642\uFF0C\u82E5\u4E0D\u622A\u65B7\uFF0C\u53EF\u80FD\u6703\u5C0E\u81F4\u700F\u89BD\u5668<strong>\u5361\u9813\u6216\u7121\u97FF\u61C9</strong>\u3002<br><br>\u6B64\u8A2D\u5B9A\u6703\u622A\u65B7\u8D85\u51FA\u6307\u5B9A\u9577\u5EA6\u7684\u55AE\u884C\u6587\u672C\uFF0C\u4EE5\u4FDD\u8B49\u4ECB\u9762\u6D41\u66A2\u3002<strong>\u6CE8\u610F\uFF1A\u6B64\u622A\u65B7\u50C5\u5F71\u97FF\u4ECB\u9762\u986F\u793A\uFF0C\u532F\u51FA\u7684\u6A94\u6848\u4ECD\u5C07\u5305\u542B\u5B8C\u6574\u5167\u5BB9\u3002</strong>"
+        show_fab: "\u63A7\u5236\u662F\u5426\u5728\u7DB2\u9801\u53F3\u4E0B\u89D2\u986F\u793A<strong>\u61F8\u6D6E\u64CD\u4F5C\u6309\u9215(FAB)</strong>\u3002\u9019\u662F\u9032\u884C\u975C\u614B\u548C\u52D5\u614B\u6587\u672C\u63D0\u53D6\u7684\u4E3B\u8981\u5165\u53E3\u3002<br><br>\u5982\u679C\u60A8\u7981\u7528\u4E86\u6B64\u6309\u9215\uFF0C\u53EF\u4EE5\u900F\u904E\u6CB9\u7334\u64F4\u5145\u5957\u4EF6\u9078\u55AE\u4E2D\u7684\u8A2D\u5B9A\u9762\u677F\u91CD\u65B0\u555F\u7528\u5B83\u3002",
+        show_scan_count: "\u555F\u7528\u5F8C\uFF0C\u7D50\u679C\u8996\u7A97\u7684\u6A19\u984C\u5217\u5C07<strong>\u5373\u6642\u986F\u793A</strong>\u76EE\u524D\u6383\u63CF\u4E2D\u627E\u5230\u7684\u7E3D\u6587\u672C\u9805\u76EE\u6578\u3002\u9019\u5C0D\u65BC\u76E3\u63A7\u9577\u6642\u9593\u57F7\u884C\u7684<strong>\u52D5\u614B\u6383\u63CF</strong>\u7684\u9032\u5EA6\u7279\u5225\u6709\u7528\u3002",
+        show_line_numbers: "\u5728\u7D50\u679C\u8996\u7A97\u7684\u6587\u672C\u5340\u57DF\u5DE6\u5074\u986F\u793A\u884C\u865F\u3002\u7576\u60A8\u9700\u8981\u8A0E\u8AD6\u6216\u8A18\u9304\u7279\u5B9A\u6587\u672C\u884C\u6642\uFF0C\u9019\u63D0\u4F9B\u4E86\u4E00\u500B<strong>\u7CBE\u78BA\u7684\u53C3\u8003\u9EDE</strong>\u3002",
+        show_statistics: "\u5728\u7D50\u679C\u8996\u7A97\u5E95\u90E8\u7684\u72C0\u614B\u5217\u4E2D\u986F\u793A\u6709\u95DC\u63D0\u53D6\u5167\u5BB9\u7684<strong>\u5373\u6642\u7D71\u8A08\u6578\u64DA</strong>\uFF0C\u5305\u62EC<strong>\u7E3D\u884C\u6578</strong>\u548C<strong>\u7E3D\u5B57\u5143\u6578</strong>\u3002\u9019\u6709\u52A9\u65BC\u60A8\u5FEB\u901F\u8A55\u4F30\u5167\u5BB9\u7684\u9AD4\u91CF\u3002",
+        enable_word_wrap: "\u63A7\u5236\u7D50\u679C\u8996\u7A97\u4E2D\u9577\u6587\u672C\u884C\u7684\u986F\u793A\u65B9\u5F0F\u3002<br><br>\u2022 <strong>\u555F\u7528:</strong> \u9577\u884C\u5C07\u81EA\u52D5\u63DB\u884C\u4EE5\u9069\u61C9\u8996\u7A97\u5BEC\u5EA6\u3002<br>\u2022 <strong>\u7981\u7528:</strong> \u9577\u884C\u5C07\u4FDD\u6301\u5728\u55AE\u884C\uFF0C\u4E26\u51FA\u73FE\u6C34\u5E73\u6372\u8EF8\u3002",
+        text_truncation_limit: "\u9019\u662F\u4E00\u500B<strong>\u6548\u80FD\u512A\u5316</strong>\u529F\u80FD\u3002\u5982\u679C\u8173\u672C\u63D0\u53D6\u5230<strong>\u6975\u9577\u7684\u55AE\u884C\u6587\u672C</strong>\uFF08\u4F8B\u5982\uFF0Cbase64\u7DE8\u78BC\u7684\u5716\u7247\uFF09\uFF0C\u53EF\u80FD\u6703\u5C0E\u81F4\u700F\u89BD\u5668<strong>\u5361\u9813\u6216\u7121\u56DE\u61C9</strong>\u3002<br><br>\u6B64\u8A2D\u5B9A\u6703\u622A\u65B7\u4EFB\u4F55\u8D85\u904E\u6307\u5B9A\u9577\u5EA6\u7684\u55AE\u884C\u6587\u672C\uFF0C\u4EE5\u78BA\u4FDDUI\u4FDD\u6301\u6D41\u66A2\u3002<strong>\u6CE8\u610F\uFF1A\u9019\u50C5\u5F71\u97FF\u986F\u793A\uFF1B\u532F\u51FA\u7684\u6A94\u6848\u4ECD\u5C07\u5305\u542B\u5B8C\u6574\u7684\u3001\u672A\u622A\u65B7\u7684\u5167\u5BB9\u3002</strong>"
       },
       advanced: {
         title: "\u9032\u968E\u8A2D\u5B9A\u8AAA\u660E",
-        enable_debug_logging: "\u555F\u7528\u5F8C\uFF0C\u8173\u672C\u6703\u5C07\u8A73\u7D30\u7684\u5167\u90E8\u904B\u884C\u72C0\u614B\u3001\u57F7\u884C\u6B65\u9A5F\u3001\u932F\u8AA4\u8CC7\u8A0A\u7B49\u8F38\u51FA\u5230\u700F\u89BD\u5668\u7684<strong>\u958B\u767C\u8005\u5DE5\u5177\u63A7\u5236\u53F0</strong>\uFF08\u901A\u5E38\u6309 F12 \u958B\u555F\uFF09\u3002\u6B64\u529F\u80FD\u4E3B\u8981\u9762\u5411\u958B\u767C\u8005\u6216\u9700\u8981\u63D0\u4EA4\u8A73\u7D30\u932F\u8AA4\u5831\u544A\u7684\u4F7F\u7528\u8005\u3002"
+        enable_debug_logging: "\u555F\u7528\u5F8C\uFF0C\u8173\u672C\u6703\u5C07\u8A73\u7D30\u7684\u5167\u90E8\u72C0\u614B\u3001\u57F7\u884C\u6B65\u9A5F\u548C\u932F\u8AA4\u8A0A\u606F\u8F38\u51FA\u5230\u700F\u89BD\u5668\u7684<strong>\u958B\u767C\u8005\u5DE5\u5177\u63A7\u5236\u53F0</strong>\uFF08\u901A\u5E38\u7528F12\u958B\u555F\uFF09\u3002\u9019\u4E3B\u8981\u4F9B\u958B\u767C\u8005\u6216\u9700\u8981\u63D0\u4EA4\u8A73\u7D30\u932F\u8AA4\u5831\u544A\u7684\u4F7F\u7528\u8005\u4F7F\u7528\u3002"
       }
     },
     log: {
-      prefix: "[\u6587\u672C\u63D0\u53D6\u8173\u672C-Debug]",
+      prefix: "[\u6587\u672C\u63D0\u53D6\u8173\u672C-\u5075\u932F]",
       language: {
         switched: "\u8A9E\u8A00\u5DF2\u5207\u63DB\u81F3\uFF1A{{lang}}",
-        notFound: "\u8A9E\u8A00 '{{lang}}' \u4E0D\u5B58\u5728\uFF0C\u9000\u56DE\u81F3 'en'\u3002"
+        notFound: "\u672A\u627E\u5230\u8A9E\u8A00 '{{lang}}'\uFF0C\u5DF2\u56DE\u9000\u81F3 'en'\u3002"
       },
       settings: {
         changed: "\u8A2D\u5B9A '{{key}}' \u5DF2\u5F9E '{{oldValue}}' \u8B8A\u66F4\u70BA '{{newValue}}'",
         filterRuleChanged: {
-          enabled: "\u904E\u6FFE\u898F\u5247 '{{key}}' \u5DF2\u88AB\u555F\u7528",
-          disabled: "\u904E\u6FFE\u898F\u5247 '{{key}}' \u5DF2\u88AB\u7981\u7528"
+          enabled: "\u904E\u6FFE\u898F\u5247 '{{key}}' \u5DF2\u555F\u7528",
+          disabled: "\u904E\u6FFE\u898F\u5247 '{{key}}' \u5DF2\u7981\u7528"
         },
         panel: {
           opening: "\u6B63\u5728\u958B\u555F\u8A2D\u5B9A\u9762\u677F...",
@@ -954,111 +966,113 @@ var TextExtractor = (() => {
           saving: "\u6B63\u5728\u5132\u5B58\u8A2D\u5B9A..."
         },
         parseError: "\u89E3\u6790\u5DF2\u5132\u5B58\u7684\u8A2D\u5B9A\u6642\u51FA\u932F\uFF1A",
-        invalidObject: "\u8A66\u5716\u5132\u5B58\u4E00\u500B\u7121\u6548\u7684\u7269\u4EF6\u4F5C\u70BA\u8A2D\u5B9A\uFF1A"
+        invalidObject: "\u8A66\u5716\u70BA\u8A2D\u5B9A\u5132\u5B58\u4E00\u500B\u7121\u6548\u7269\u4EF6\uFF1A"
       },
       textProcessor: {
-        filtered: '\u6587\u672C\u5DF2\u904E\u6FFE\uFF1A"{{text}}" (\u539F\u56E0\uFF1A{{reason}})'
+        filtered: '\u6587\u672C\u5DF2\u904E\u6FFE: "{{text}}" (\u539F\u56E0: {{reason}})'
       },
       quickScan: {
-        switchToFallback: "[\u975C\u614B\u6383\u63CF] \u5207\u63DB\u5230\u4E3B\u7DDA\u7A0B\u5099\u9078\u65B9\u6848\u3002",
-        fallbackFailed: "[\u975C\u614B\u6383\u63CF] \u4E3B\u7DDA\u7A0B\u5099\u9078\u65B9\u6848\u5931\u6557\uFF1A{{error}}",
+        switchToFallback: "[\u5FEB\u901F\u6383\u63CF] \u6B63\u5728\u5207\u63DB\u5230\u4E3B\u7DDA\u7A0B\u5099\u9078\u65B9\u6848\u3002",
+        fallbackFailed: "[\u5FEB\u901F\u6383\u63CF] \u4E3B\u7DDA\u7A0B\u5099\u9078\u65B9\u6848\u57F7\u884C\u5931\u6557: {{error}}",
         fallback: {
-          starting: "[\u975C\u614B\u6383\u63CF - \u5099\u9078\u65B9\u6848] \u958B\u59CB\u5728\u4E3B\u7DDA\u7A0B\u4E2D\u8655\u7406...",
-          completed: "[\u975C\u614B\u6383\u63CF - \u5099\u9078\u65B9\u6848] \u8655\u7406\u5B8C\u6210\uFF0C\u5171 {{count}} \u689D\u6709\u6548\u6587\u672C\u3002"
+          starting: "[\u5FEB\u901F\u6383\u63CF - \u5099\u9078] \u6B63\u5728\u4E3B\u7DDA\u7A0B\u4E2D\u958B\u59CB\u8655\u7406...",
+          completed: "[\u5FEB\u901F\u6383\u63CF - \u5099\u9078] \u8655\u7406\u5B8C\u6210\uFF0C\u627E\u5230 {{count}} \u689D\u4E0D\u91CD\u8907\u6587\u672C\u3002"
         },
         worker: {
-          logPrefix: "[\u975C\u614B\u6383\u63CF Worker]",
-          starting: "[\u975C\u614B\u6383\u63CF] \u958B\u59CB\u57F7\u884C\uFF0C\u5617\u8A66\u4F7F\u7528 Web Worker...",
-          completed: "[\u975C\u614B\u6383\u63CF] Worker \u8655\u7406\u6210\u529F\uFF0C\u6536\u5230 {{count}} \u689D\u6587\u672C\u3002",
-          scanComplete: "[\u975C\u614B\u6383\u63CF Worker] \u8655\u7406\u5B8C\u6210\uFF0C\u5171 {{count}} \u689D\u6709\u6548\u6587\u672C\u3002\u6B63\u5728\u767C\u56DE\u4E3B\u7DDA\u7A0B...",
-          initFailed: "[\u975C\u614B\u6383\u63CF] Worker \u521D\u59CB\u5316\u5931\u6557\u3002\u9019\u5F88\u53EF\u80FD\u662F\u7531\u65BC\u7DB2\u7AD9\u7684\u5167\u5BB9\u5B89\u5168\u7B56\u7565\uFF08CSP\uFF09\u963B\u6B62\u4E86\u8173\u672C\u3002",
-          originalError: "[\u975C\u614B\u6383\u63CF] \u539F\u59CB\u932F\u8AA4\uFF1A{{error}}",
-          sendingData: "[\u975C\u614B\u6383\u63CF] Web Worker \u5DF2\u5EFA\u7ACB\uFF0C\u6B63\u5728\u767C\u9001 {{count}} \u689D\u6587\u672C\u9032\u884C\u8655\u7406...",
-          initSyncError: "[\u975C\u614B\u6383\u63CF] Worker \u521D\u59CB\u5316\u6642\u767C\u751F\u540C\u6B65\u932F\u8AA4\uFF1A{{error}}"
+          logPrefix: "[\u5FEB\u901F\u6383\u63CF Worker]",
+          starting: "[\u5FEB\u901F\u6383\u63CF] \u958B\u59CB\u57F7\u884C\uFF0C\u5617\u8A66\u4F7F\u7528 Web Worker...",
+          completed: "[\u5FEB\u901F\u6383\u63CF] Worker \u8655\u7406\u6210\u529F\uFF0C\u6536\u5230 {{count}} \u689D\u6587\u672C\u3002",
+          scanComplete: "[\u5FEB\u901F\u6383\u63CF Worker] \u8655\u7406\u5B8C\u6210\uFF0C\u627E\u5230 {{count}} \u689D\u4E0D\u91CD\u8907\u6587\u672C\u3002\u6B63\u5728\u767C\u56DE\u4E3B\u7DDA\u7A0B...",
+          initFailed: "[\u5FEB\u901F\u6383\u63CF] Worker \u521D\u59CB\u5316\u5931\u6557\u3002\u9019\u5F88\u53EF\u80FD\u662F\u7531\u65BC\u7DB2\u7AD9\u7684\u5167\u5BB9\u5B89\u5168\u7B56\u7565 (CSP) \u5C0E\u81F4\u7684\u3002",
+          originalError: "[\u5FEB\u901F\u6383\u63CF] \u539F\u59CB\u932F\u8AA4: {{error}}",
+          sendingData: "[\u5FEB\u901F\u6383\u63CF] Web Worker \u5DF2\u5EFA\u7ACB\uFF0C\u6B63\u5728\u767C\u9001 {{count}} \u689D\u6587\u672C\u9032\u884C\u8655\u7406...",
+          initSyncError: "[\u5FEB\u901F\u6383\u63CF] Worker \u521D\u59CB\u5316\u671F\u9593\u767C\u751F\u540C\u6B65\u932F\u8AA4: {{error}}"
         }
       },
       sessionScan: {
-        switchToFallback: "[\u6703\u8A71\u6383\u63CF] \u5207\u63DB\u5230\u4E3B\u7DDA\u7A0B\u5099\u9078\u65B9\u6848\u3002",
+        switchToFallback: "[\u6703\u8A71\u6383\u63CF] \u6B63\u5728\u5207\u63DB\u5230\u4E3B\u7DDA\u7A0B\u5099\u9078\u65B9\u6848\u3002",
         domObserver: {
           stopped: "[\u6703\u8A71\u6383\u63CF] \u5DF2\u505C\u6B62\u76E3\u807D DOM \u8B8A\u5316\u3002"
         },
         fallback: {
-          initialized: "[\u6703\u8A71\u6383\u63CF - \u5099\u9078\u65B9\u6848] \u521D\u59CB\u5316\u5B8C\u6210\u3002",
-          cleared: "[\u6703\u8A71\u6383\u63CF - \u5099\u9078\u65B9\u6848] \u8CC7\u6599\u5DF2\u6E05\u7A7A\u3002"
+          initialized: "[\u6703\u8A71\u6383\u63CF - \u5099\u9078] \u5DF2\u521D\u59CB\u5316\u3002",
+          cleared: "[\u6703\u8A71\u6383\u63CF - \u5099\u9078] \u8CC7\u6599\u5DF2\u6E05\u9664\u3002"
         },
         worker: {
           logPrefix: "[\u6703\u8A71\u6383\u63CF Worker]",
-          starting: "\u6703\u8A71\u6383\u63CF\uFF1A\u5617\u8A66\u555F\u52D5 Web Worker...",
-          initFailed: "[\u6703\u8A71\u6383\u63CF] Worker \u521D\u59CB\u5316\u5931\u6557\u3002\u9019\u5F88\u53EF\u80FD\u662F\u7531\u65BC\u7DB2\u7AD9\u7684\u5167\u5BB9\u5B89\u5168\u7B56\u7565\uFF08CSP\uFF09\u963B\u6B62\u4E86\u8173\u672C\u3002",
-          originalError: "[\u6703\u8A71\u6383\u63CF] \u539F\u59CB\u932F\u8AA4\uFF1A{{error}}",
+          starting: "\u6703\u8A71\u6383\u63CF\uFF1A\u6B63\u5728\u5617\u8A66\u555F\u52D5 Web Worker...",
+          initFailed: "[\u6703\u8A71\u6383\u63CF] Worker \u521D\u59CB\u5316\u5931\u6557\u3002\u9019\u5F88\u53EF\u80FD\u662F\u7531\u65BC\u7DB2\u7AD9\u7684\u5167\u5BB9\u5B89\u5168\u7B56\u7565 (CSP) \u5C0E\u81F4\u7684\u3002",
+          originalError: "[\u6703\u8A71\u6383\u63CF] \u539F\u59CB\u932F\u8AA4: {{error}}",
           initialized: "[\u6703\u8A71\u6383\u63CF] Worker \u521D\u59CB\u5316\u6210\u529F\uFF0C\u5DF2\u767C\u9001 {{count}} \u689D\u521D\u59CB\u6587\u672C\u4EE5\u958B\u59CB\u6703\u8A71\u3002",
-          initSyncError: "[\u6703\u8A71\u6383\u63CF] Worker \u521D\u59CB\u5316\u6642\u767C\u751F\u540C\u6B65\u932F\u8AA4\uFF1A{{error}}",
-          clearCommandSent: "[\u6703\u8A71\u6383\u63CF] \u5DF2\u5411 Worker \u767C\u9001\u6E05\u7A7A\u6307\u4EE4\u3002"
+          initSyncError: "[\u6703\u8A71\u6383\u63CF] Worker \u521D\u59CB\u5316\u671F\u9593\u767C\u751F\u540C\u6B65\u932F\u8AA4: {{error}}",
+          clearCommandSent: "[\u6703\u8A71\u6383\u63CF] \u6E05\u9664\u547D\u4EE4\u5DF2\u767C\u9001\u81F3 worker\u3002"
         }
       },
       ui: {
         copyButton: {
-          copied: "\u8907\u88FD\u6309\u9215\u88AB\u9EDE\u64CA\uFF0C\u8907\u88FD\u4E86 {{count}} \u500B\u5B57\u5143\u3002",
-          nothingToCopy: "\u8907\u88FD\u6309\u9215\u88AB\u9EDE\u64CA\uFF0C\u4F46\u6C92\u6709\u5167\u5BB9\u53EF\u8907\u88FD\u6216\u6309\u9215\u88AB\u7981\u7528\u3002"
+          copied: "\u8907\u88FD\u6309\u9215\u5DF2\u9EDE\u64CA\uFF0C\u8907\u88FD\u4E86 {{count}} \u500B\u5B57\u5143\u3002",
+          nothingToCopy: "\u8907\u88FD\u6309\u9215\u5DF2\u9EDE\u64CA\uFF0C\u4F46\u6C92\u6709\u5167\u5BB9\u53EF\u8907\u88FD\u6216\u6309\u9215\u88AB\u7981\u7528\u3002"
         },
         confirmationModal: {
           sessionScan: {
-            confirmed: "\u4F7F\u7528\u8005\u78BA\u8A8D\u6E05\u7A7A\u6703\u8A71\u6383\u63CF\u6587\u672C\uFF0C\u6B63\u5728\u547C\u53EB\u56DE\u8ABF..."
+            confirmed: "\u4F7F\u7528\u8005\u5DF2\u78BA\u8A8D\u6E05\u9664\u6703\u8A71\u6383\u63CF\u6587\u672C\uFF0C\u6B63\u5728\u8ABF\u7528\u56DE\u547C..."
           },
           quickScan: {
-            confirmed: "\u4F7F\u7528\u8005\u78BA\u8A8D\u6E05\u7A7A\u5FEB\u901F\u6383\u63CF\u6587\u672C\u3002"
+            confirmed: "\u4F7F\u7528\u8005\u5DF2\u78BA\u8A8D\u6E05\u9664\u5FEB\u901F\u6383\u63CF\u6587\u672C\u3002"
           },
-          cancelled: "\u4F7F\u7528\u8005\u53D6\u6D88\u4E86\u6E05\u7A7A\u64CD\u4F5C\u3002"
+          cancelled: "\u4F7F\u7528\u8005\u5DF2\u53D6\u6D88\u6E05\u9664\u64CD\u4F5C\u3002"
         },
         modal: {
-          opening: "\u6B63\u5728\u6253\u958B\u4E3B\u8996\u7A97...",
-          closing: "\u6B63\u5728\u95DC\u9589\u4E3B\u8996\u7A97...",
-          scanFailed: "\u975C\u614B\u6383\u63CF\u5931\u6557\uFF1A{{error}}",
-          clearContent: "\u300C\u6E05\u7A7A\u5167\u5BB9\u300D\u6309\u9215\u88AB\u9EDE\u64CA\u3002"
+          opening: "\u6B63\u5728\u958B\u555F\u4E3B\u6A21\u614B\u6846...",
+          closing: "\u6B63\u5728\u95DC\u9589\u4E3B\u6A21\u614B\u6846...",
+          scanFailed: "\u975C\u614B\u6383\u63CF\u5931\u6557: {{error}}",
+          clearContent: "\u6E05\u7A7A\u5167\u5BB9\u6309\u9215\u5DF2\u9EDE\u64CA\u3002"
         }
       },
       exporter: {
-        buttonClicked: "\u532F\u51FA\u6309\u9215\u88AB\u9EDE\u64CA, \u532F\u51FA\u683C\u5F0F: {{format}}\u3002",
-        csvError: "\u5728\u89E3\u6790\u6587\u672C\u4E26\u751F\u6210 CSV \u6642\u767C\u751F\u932F\u8AA4\uFF1A{{error}}",
-        fileExported: "\u6A94\u6848\u5DF2\u532F\u51FA\uFF1A{{filename}}",
-        noContent: "\u6C92\u6709\u5167\u5BB9\u53EF\u532F\u51FA\u3002",
-        unknownFormat: "\u672A\u77E5\u7684\u532F\u51FA\u683C\u5F0F\uFF1A{{format}}"
+        buttonClicked: "\u532F\u51FA\u6309\u9215\u5DF2\u9EDE\u64CA\uFF0C\u683C\u5F0F: {{format}}\u3002",
+        csvError: "\u89E3\u6790\u6587\u672C\u4E26\u7522\u751FCSV\u6642\u51FA\u932F: {{error}}",
+        fileExported: "\u6A94\u6848\u5DF2\u532F\u51FA: {{filename}}",
+        noContent: "\u7121\u5167\u5BB9\u53EF\u532F\u51FA\u3002",
+        unknownFormat: "\u672A\u77E5\u7684\u532F\u51FA\u683C\u5F0F: {{format}}"
       },
       main: {
-        requestingSessionScanData: "\u5F9E session-scan \u6A21\u5F0F\u8ACB\u6C42\u5B8C\u6574\u8CC7\u6599...",
-        exportingQuickScanData: "\u5F9E quick-scan \u6A21\u5F0F\u7684\u8A18\u61B6\u9AD4\u4E2D\u532F\u51FA\u5B8C\u6574\u8CC7\u6599...",
+        requestingSessionScanData: "\u6B63\u5728\u8ACB\u6C42\u6703\u8A71\u6383\u63CF\u6A21\u5F0F\u7684\u5B8C\u6574\u8CC7\u6599...",
+        exportingQuickScanData: "\u6B63\u5728\u532F\u51FA\u5FEB\u901F\u6383\u63CF\u6A21\u5F0F\u8A18\u61B6\u9AD4\u4E2D\u7684\u5B8C\u6574\u8CC7\u6599...",
         inIframe: "\u8173\u672C\u5728 iframe \u4E2D\uFF0C\u5DF2\u8DF3\u904E\u521D\u59CB\u5316\u3002",
-        initializing: "\u8173\u672C\u958B\u59CB\u521D\u59CB\u5316...",
+        initializing: "\u8173\u672C\u521D\u59CB\u5316\u958B\u59CB...",
         initialSettingsLoaded: "\u521D\u59CB\u8A2D\u5B9A\u5DF2\u8F09\u5165:"
       },
       dom: {
-        ttpCreationError: "\u5EFA\u7ACB Trusted Type \u7B56\u7565\u5931\u6557\uFF1A",
-        svgParseError: "\u7121\u6548\u6216\u89E3\u6790\u5931\u6557\u7684 SVG \u5B57\u4E32\uFF1A"
+        ttpCreationError: "\u5EFA\u7ACB Trusted Type \u7B56\u7565\u5931\u6557:",
+        svgParseError: "SVG \u5B57\u4E32\u7121\u6548\u6216\u89E3\u6790\u5931\u6557:"
       },
       elementScan: {
-        starting: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5DF2\u555F\u52D5\u3002",
+        starting: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5DF2\u958B\u59CB\u3002",
         stopping: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5DF2\u505C\u6B62\u3002",
-        listenersAdded: "\u5DF2\u65B0\u589E\u9078\u53D6\u5143\u7D20\u6383\u63CF\u7684\u5168\u57DF\u4E8B\u4EF6\u76E3\u807D\u5668\u3002",
-        listenersRemoved: "\u5DF2\u79FB\u9664\u9078\u53D6\u5143\u7D20\u6383\u63CF\u7684\u5168\u57DF\u4E8B\u4EF6\u76E3\u807D\u5668\u3002",
+        listenersAdded: "\u5DF2\u70BA\u9078\u53D6\u5143\u7D20\u6383\u63CF\u65B0\u589E\u5168\u57DF\u4E8B\u4EF6\u76E3\u807D\u5668\u3002",
+        listenersRemoved: "\u5DF2\u70BA\u9078\u53D6\u5143\u7D20\u6383\u63CF\u79FB\u9664\u5168\u57DF\u4E8B\u4EF6\u76E3\u807D\u5668\u3002",
         stateReset: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u72C0\u614B\u5DF2\u91CD\u8A2D\u3002",
         reselecting: "\u6B63\u5728\u8FD4\u56DE\u5143\u7D20\u91CD\u65B0\u9078\u64C7\u6A21\u5F0F\u3002",
-        hovering: "\u7576\u524D\u61F8\u505C\u65BC <{{tagName}}>\u3002",
-        escapePressed: "\u4F7F\u7528\u8005\u6309\u4E0B Escape \u9375\uFF0C\u6B63\u5728\u505C\u6B62\u9078\u53D6\u5143\u7D20\u6383\u63CF\u3002",
-        clickedEnteringAdjust: "\u5DF2\u9EDE\u64CA\u5143\u7D20 <{{tagName}}>\uFF0C\u9032\u5165\u5C64\u7D1A\u8ABF\u6574\u6A21\u5F0F\u3002",
+        hovering: "\u6B63\u5728\u61F8\u505C\u65BC <{{tagName}}>\u3002",
+        escapePressed: "\u6309\u4E0B Escape \u9375\uFF0C\u6B63\u5728\u505C\u6B62\u9078\u53D6\u5143\u7D20\u6383\u63CF\u3002",
+        clickedEnteringAdjust: "\u5143\u7D20 <{{tagName}}> \u5DF2\u88AB\u9EDE\u64CA\uFF0C\u6B63\u5728\u9032\u5165\u8ABF\u6574\u6A21\u5F0F\u3002",
         pathBuilt: "\u5143\u7D20\u5C64\u7D1A\u8DEF\u5F91\u5DF2\u69CB\u5EFA\uFF0C\u6DF1\u5EA6\u70BA\uFF1A{{depth}}\u3002",
         adjustingLevel: "\u6B63\u5728\u8ABF\u6574\u9078\u64C7\u5C64\u7D1A\u81F3 {{level}} ({{tagName}})\u3002",
         confirmExtracting: "\u9078\u64C7\u5DF2\u78BA\u8A8D\uFF0C\u6B63\u5728\u5F9E <{{tagName}}> \u63D0\u53D6\u6587\u672C\u3002",
+        staged: "\u5143\u7D20\u5DF2\u66AB\u5B58\u3002\u7E3D\u6578\uFF1A{{count}}\u3002",
+        confirmingStaged: "\u78BA\u8A8D\u9078\u64C7\u3002\u6B63\u5728\u8655\u7406 {{count}} \u500B\u5DF2\u66AB\u5B58\u7684\u5143\u7D20\u3002",
         extractedCount: "\u5DF2\u5F9E\u5143\u7D20\u4E2D\u63D0\u53D6 {{count}} \u689D\u539F\u59CB\u6587\u672C\u3002",
         confirmFailedNoTarget: "\u78BA\u8A8D\u5931\u6557\uFF1A\u672A\u9078\u64C7\u4EFB\u4F55\u76EE\u6A19\u5143\u7D20\u3002",
         rightClickExit: "\u5075\u6E2C\u5230\u53F3\u9375\u9EDE\u64CA\uFF0C\u6B63\u5728\u505C\u6B62\u9078\u53D6\u5143\u7D20\u6383\u63CF\u3002",
         processingError: "\u6587\u672C\u8655\u7406\u904E\u7A0B\u4E2D\u767C\u751F\u932F\u8AA4: {{error}}",
         worker: {
-          logPrefix: "[\u9078\u53D6\u5143\u7D20\u6383\u63CF Worker]",
+          logPrefix: "[ES Worker]",
           starting: "\u9078\u53D6\u5143\u7D20\u6383\u63CF Worker \u6B63\u5728\u555F\u52D5...",
-          sendingData: "\u6B63\u5728\u767C\u9001 {{count}} \u689D\u6587\u672C\u81F3\u9078\u53D6\u5143\u7D20\u6383\u63CF Worker\u3002",
-          completed: "\u9078\u53D6\u5143\u7D20\u6383\u63CF Worker \u8655\u7406\u5B8C\u6210\uFF0C\u767C\u73FE {{count}} \u689D\u6709\u6548\u6587\u672C\u3002",
-          initFailed: "\u9078\u53D6\u5143\u7D20\u6383\u63CF Worker \u521D\u59CB\u5316\u5931\u6557\u3002\u53EF\u80FD\u662F\u7DB2\u7AD9\u7684 CSP \u7B56\u7565\u963B\u6B62\u4E86 data: URL\u3002",
-          initSyncError: "\u9078\u53D6\u5143\u7D20\u6383\u63CF Worker \u521D\u59CB\u5316\u6642\u767C\u751F\u540C\u6B65\u932F\u8AA4: {{error}}",
+          sendingData: "\u6B63\u5728\u5411\u9078\u53D6\u5143\u7D20\u6383\u63CF Worker \u767C\u9001 {{count}} \u689D\u6587\u672C\u7247\u6BB5\u3002",
+          completed: "\u9078\u53D6\u5143\u7D20\u6383\u63CF Worker \u5DF2\u5B8C\u6210\uFF0C\u627E\u5230 {{count}} \u689D\u4E0D\u91CD\u8907\u6587\u672C\u3002",
+          initFailed: "\u9078\u53D6\u5143\u7D20\u6383\u63CF Worker \u521D\u59CB\u5316\u5931\u6557\u3002\u700F\u89BD\u5668\u7684CSP\u53EF\u80FD\u963B\u6B62\u4E86 data: URL\u3002",
+          initSyncError: "\u9078\u53D6\u5143\u7D20\u6383\u63CF Worker \u521D\u59CB\u5316\u671F\u9593\u767C\u751F\u540C\u6B65\u932F\u8AA4: {{error}}",
           originalError: "\u539F\u59CB Worker \u932F\u8AA4: {{error}}"
         },
         switchToFallback: "\u6B63\u5728\u70BA\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5207\u63DB\u5230\u4E3B\u7DDA\u7A0B\u5099\u9078\u65B9\u6848\u3002",
@@ -1071,7 +1085,8 @@ var TextExtractor = (() => {
         toolbarPositioned: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u5DE5\u5177\u5217\u5DF2\u5B9A\u4F4D\u3002",
         sliderChanged: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u6ED1\u687F\u5C64\u7D1A\u8B8A\u70BA {{level}}",
         reselectClicked: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u300C\u91CD\u65B0\u9078\u64C7\u300D\u6309\u9215\u88AB\u9EDE\u64CA\u3002",
-        cancelClicked: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u300C\u53D6\u6D88\u300D\u6309\u9215\u88AB\u9EDE\u64CA\u3002",
+        stageClicked: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u300C\u66AB\u5B58\u300D\u6309\u9215\u88AB\u9EDE\u64CA\u3002",
+        cancelClicked: "\u5143\u7D20\u6383\u89C0UI\uFF1A\u300C\u53D6\u6D88\u300D\u6309\u9215\u88AB\u9EDE\u64CA\u3002",
         confirmClicked: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u300C\u78BA\u8A8D\u300D\u6309\u9215\u88AB\u9EDE\u64CA\u3002",
         dragStarted: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u62D6\u52D5\u958B\u59CB\u3002",
         dragEnded: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u62D6\u52D5\u7D50\u675F\u3002",
@@ -1079,13 +1094,13 @@ var TextExtractor = (() => {
         cleaningToolbar: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u6B63\u5728\u6E05\u7406\u5DE5\u5177\u5217\u3002"
       },
       eventBus: {
-        callbackError: "\u5728 '{{eventName}}' \u4E8B\u4EF6\u7684\u56DE\u547C\u4E2D\u767C\u751F\u932F\u8AA4\uFF1A"
+        callbackError: "\u4E8B\u4EF6 '{{eventName}}' \u7684\u56DE\u547C\u51FD\u6578\u51FA\u932F:"
       },
       trustedTypes: {
-        workerPolicyError: "\u5EFA\u7ACB Trusted Types worker \u7B56\u7565\u5931\u6557\uFF1A",
-        htmlPolicyError: "\u5EFA\u7ACB Trusted Types HTML \u7B56\u7565\u5931\u6557\uFF1A",
-        defaultWorkerPolicyWarning: "Trusted Types \u9810\u8A2D\u7B56\u7565\u8655\u7406 worker URL \u5931\u6557\uFF0C\u9000\u56DE\u81F3\u539F\u59CB URL\u3002",
-        defaultHtmlPolicyWarning: "Trusted Types \u9810\u8A2D\u7B56\u7565\u8655\u7406 HTML \u5931\u6557\uFF0C\u9000\u56DE\u81F3\u539F\u59CB\u5B57\u4E32\u3002"
+        workerPolicyError: "\u5EFA\u7ACB Trusted Types worker \u7B56\u7565\u5931\u6557:",
+        htmlPolicyError: "\u5EFA\u7ACB Trusted Types HTML \u7B56\u7565\u5931\u6557:",
+        defaultWorkerPolicyWarning: "\u7528\u65BC worker URL \u7684 Trusted Types \u9810\u8A2D\u7B56\u7565\u5931\u6557\uFF0C\u56DE\u9000\u5230\u539F\u59CB URL\u3002",
+        defaultHtmlPolicyWarning: "\u7528\u65BC HTML \u7684 Trusted Types \u9810\u8A2D\u7B56\u7565\u5931\u6557\uFF0C\u56DE\u9000\u5230\u539F\u59CB\u5B57\u4E32\u3002"
       }
     }
   };
@@ -1534,9 +1549,24 @@ var TextExtractor = (() => {
     });
     return Array.from(uniqueTexts);
   };
-  var extractRawTextFromElement = (element) => {
+  var extractAndProcessTextFromElement = (element) => {
     if (!element) return [];
-    const texts = [];
+    const settings = loadSettings();
+    const { filterRules: filterRules2 } = settings;
+    const uniqueTexts =  new Set();
+    const processAndAddText = (rawText) => {
+      if (!rawText) return;
+      const normalizedText = rawText.normalize("NFC");
+      let text = normalizedText.replace(/(\\r\\n|\\n|\\r)+/g, "\\n");
+      if (text.trim() === "") return;
+      const trimmedText = text.trim();
+      const filterReason = shouldFilter(trimmedText, filterRules2);
+      if (filterReason) {
+        log(t("log.textProcessor.filtered", { text: trimmedText, reason: filterReason }));
+        return;
+      }
+      uniqueTexts.add(text);
+    };
     const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(", ");
     if (element.closest(ignoredSelectorString)) {
       return [];
@@ -1545,7 +1575,7 @@ var TextExtractor = (() => {
     attributesToExtract.forEach((attr) => {
       const attrValue = element.getAttribute(attr);
       if (attrValue) {
-        texts.push(attrValue);
+        processAndAddText(attrValue);
       }
     });
     const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null);
@@ -1555,11 +1585,9 @@ var TextExtractor = (() => {
       if (parent && (parent.tagName === "SCRIPT" || parent.tagName === "STYLE" || parent.closest(ignoredSelectorString) || parent.closest(".text-extractor-fab, .text-extractor-modal-overlay, .settings-panel-overlay"))) {
         continue;
       }
-      if (node.nodeValue) {
-        texts.push(node.nodeValue);
-      }
+      processAndAddText(node.nodeValue);
     }
-    return texts;
+    return Array.from(uniqueTexts);
   };
   var workerPolicy;
   var htmlPolicy;
@@ -1861,7 +1889,8 @@ ${result.join(",\n")}
       confirm: "Confirm",
       cancel: "Cancel",
       export: "Export",
-      reselect: "Reselect"
+      reselect: "Reselect",
+      stage: "Stage"
     },
     export: {
       exportAsTxt: "Export as TXT",
@@ -1934,6 +1963,7 @@ ${result.join(",\n")}
     scan: {
       quick: "Quick Scan",
       session: "Session Scan",
+      stagedCount: "Staged:",
       elementFinished: "Element scan finished, found {{count}} items.",
       startSession: "Start Dynamic Scan Session",
       stopSession: "Stop Dynamic Scan Session",
@@ -2123,6 +2153,8 @@ ${result.join(",\n")}
         pathBuilt: "Element path built, depth: {{depth}}.",
         adjustingLevel: "Adjusting selection level to {{level}} ({{tagName}}).",
         confirmExtracting: "Selection confirmed, extracting text from <{{tagName}}>.",
+        staged: "Element staged. Total staged: {{count}}.",
+        confirmingStaged: "Confirming selection. Processing {{count}} staged elements.",
         extractedCount: "Extracted {{count}} raw text fragments from element.",
         confirmFailedNoTarget: "Confirmation failed: no target element selected.",
         rightClickExit: "Right-click detected, stopping element scan.",
@@ -2146,6 +2178,7 @@ ${result.join(",\n")}
         toolbarPositioned: "Element Scan UI: Toolbar positioned.",
         sliderChanged: "Element Scan UI: Slider changed to level {{level}}",
         reselectClicked: "Element Scan UI: 'Reselect' button clicked.",
+        stageClicked: "Element Scan UI: 'Stage' button clicked.",
         cancelClicked: "Element Scan UI: 'Cancel' button clicked.",
         confirmClicked: "Element Scan UI: 'Confirm' button clicked.",
         dragStarted: "Element Scan UI: Drag started.",
@@ -2169,15 +2202,16 @@ ${result.join(",\n")}
     common: {
       scan: "\\u626B\\u63CF",
       stop: "\\u505C\\u6B62",
-      resume: "\\u7EE7\\u7EED",
+      resume: "\\u6062\\u590D",
       clear: "\\u6E05\\u7A7A",
       copy: "\\u590D\\u5236",
       save: "\\u4FDD\\u5B58",
-      discovered: "\\u5DF2\\u53D1\\u73B0\\uFF1A",
+      discovered: "\\u5DF2\\u53D1\\u73B0:",
       confirm: "\\u786E\\u8BA4",
       cancel: "\\u53D6\\u6D88",
       export: "\\u5BFC\\u51FA",
-      reselect: "\\u91CD\\u65B0\\u9009\\u62E9"
+      reselect: "\\u91CD\\u65B0\\u9009\\u62E9",
+      stage: "\\u6682\\u5B58"
     },
     export: {
       exportAsTxt: "\\u5BFC\\u51FA\\u4E3A TXT",
@@ -2191,28 +2225,28 @@ ${result.join(",\n")}
     },
     settings: {
       title: "\\u8BBE\\u7F6E",
-      theme: "\\u754C\\u9762\\u4E3B\\u9898",
-      language: "\\u8BED\\u8A00\\u8BBE\\u7F6E",
+      theme: "\\u4E3B\\u9898",
+      language: "\\u8BED\\u8A00",
       relatedSettings: "\\u76F8\\u5173\\u8BBE\\u7F6E",
       filterRules: "\\u5185\\u5BB9\\u8FC7\\u6EE4\\u89C4\\u5219",
       filters: {
-        numbers: "\\u8FC7\\u6EE4\\u7EAF\\u6570\\u5B57/\\u8D27\\u5E01",
-        chinese: "\\u8FC7\\u6EE4\\u7EAF\\u4E2D\\u6587",
-        contains_chinese: "\\u8FC7\\u6EE4\\u5305\\u542B\\u4E2D\\u6587\\u7684\\u6587\\u672C",
-        emoji_only: "\\u8FC7\\u6EE4\\u7EAF\\u8868\\u60C5\\u7B26\\u53F7",
-        symbols: "\\u8FC7\\u6EE4\\u7EAF\\u7B26\\u53F7",
+        numbers: "\\u8FC7\\u6EE4\\u6570\\u5B57/\\u8D27\\u5E01",
+        chinese: "\\u8FC7\\u6EE4\\u7EAF\\u4E2D\\u6587\\u6587\\u672C",
+        contains_chinese: "\\u8FC7\\u6EE4\\u542B\\u4E2D\\u6587\\u7684\\u6587\\u672C",
+        emoji_only: "\\u8FC7\\u6EE4\\u7EAF\\u8868\\u60C5\\u7B26\\u53F7\\u6587\\u672C",
+        symbols: "\\u8FC7\\u6EE4\\u7EAF\\u7B26\\u53F7\\u6587\\u672C",
         term: "\\u8FC7\\u6EE4\\u7279\\u5B9A\\u672F\\u8BED",
-        single_letter: "\\u8FC7\\u6EE4\\u7EAF\\u5355\\u4E2A\\u82F1\\u6587\\u5B57\\u6BCD",
-        repeating_chars: "\\u8FC7\\u6EE4\\u5355\\u4E00\\u91CD\\u590D\\u5B57\\u7B26",
+        single_letter: "\\u8FC7\\u6EE4\\u5355\\u4E2A\\u82F1\\u6587\\u5B57\\u6BCD",
+        repeating_chars: "\\u8FC7\\u6EE4\\u91CD\\u590D\\u5B57\\u7B26",
         file_paths: "\\u8FC7\\u6EE4\\u6587\\u4EF6\\u8DEF\\u5F84",
-        hex_color_codes: "\\u8FC7\\u6EE4\\u5341\\u516D\\u8FDB\\u5236\\u989C\\u8272",
-        email_addresses: "\\u8FC7\\u6EE4\\u90AE\\u4EF6\\u5730\\u5740",
+        hex_color_codes: "\\u8FC7\\u6EE4\\u5341\\u516D\\u8FDB\\u5236\\u989C\\u8272\\u4EE3\\u7801",
+        email_addresses: "\\u8FC7\\u6EE4\\u7535\\u5B50\\u90AE\\u4EF6\\u5730\\u5740",
         uuids: "\\u8FC7\\u6EE4 UUID",
         git_commit_hashes: "\\u8FC7\\u6EE4 Git \\u63D0\\u4EA4\\u54C8\\u5E0C\\u503C",
-        website_urls: "\\u8FC7\\u6EE4\\u7F51\\u5740",
-        website_urls_title: "\\u8FC7\\u6EE4\\u7F51\\u5740 (URL)",
-        shorthand_numbers: "\\u8FC7\\u6EE4\\u7B80\\u5199\\u6570\\u5B57",
-        shorthand_numbers_title: "\\u8FC7\\u6EE4\\u5E26\\u5355\\u4F4D\\u7684\\u7B80\\u5199\\u6570\\u5B57"
+        website_urls: "\\u8FC7\\u6EE4\\u7F51\\u7AD9\\u94FE\\u63A5",
+        website_urls_title: "\\u8FC7\\u6EE4\\u7F51\\u7AD9\\u94FE\\u63A5",
+        shorthand_numbers: "\\u8FC7\\u6EE4\\u901F\\u8BB0\\u6570\\u5B57",
+        shorthand_numbers_title: "\\u8FC7\\u6EE4\\u901F\\u8BB0\\u6570\\u5B57"
       },
       display: {
         show_fab: "\\u663E\\u793A\\u60AC\\u6D6E\\u6309\\u94AE",
@@ -2225,13 +2259,13 @@ ${result.join(",\n")}
         },
         show_line_numbers: "\\u663E\\u793A\\u884C\\u53F7",
         show_statistics: "\\u663E\\u793A\\u7EDF\\u8BA1\\u4FE1\\u606F",
-        enable_word_wrap: "\\u542F\\u7528\\u6587\\u672C\\u81EA\\u52A8\\u6362\\u884C",
-        text_truncation_limit: "\\u542F\\u7528\\u6587\\u672C\\u6846\\u5B57\\u7B26\\u9650\\u5236",
-        character_limit: "\\u5B57\\u7B26\\u6570",
-        show_scan_count: "\\u542F\\u7528\\u6807\\u9898\\u680F\\u663E\\u793A\\u626B\\u63CF\\u8BA1\\u6570"
+        enable_word_wrap: "\\u542F\\u7528\\u81EA\\u52A8\\u6362\\u884C",
+        text_truncation_limit: "\\u542F\\u7528\\u6587\\u672C\\u622A\\u65AD\\u9650\\u5236",
+        character_limit: "\\u5B57\\u7B26\\u9650\\u5236",
+        show_scan_count: "\\u5728\\u6807\\u9898\\u4E2D\\u542F\\u7528\\u626B\\u63CF\\u8BA1\\u6570"
       },
       advanced: {
-        enable_debug_logging: "\\u542F\\u7528\\u8C03\\u8BD5\\u65E5\\u5FD7"
+        enable_debug_logging: "\\u542F\\u7528\\u8C03\\u8BD5\\u65E5\\u5FD7\\u8BB0\\u5F55"
       },
       panel: {
         title: "\\u8BBE\\u7F6E\\u9762\\u677F"
@@ -2250,94 +2284,95 @@ ${result.join(",\n")}
     scan: {
       quick: "\\u5FEB\\u901F\\u626B\\u63CF",
       session: "\\u4F1A\\u8BDD\\u626B\\u63CF",
+      stagedCount: "\\u5DF2\\u6682\\u5B58:",
       elementFinished: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {{count}} \\u6761\\u6587\\u672C\\u3002",
       startSession: "\\u5F00\\u59CB\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD",
       stopSession: "\\u505C\\u6B62\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD",
-      finished: "\\u626B\\u63CF\\u7ED3\\u675F\\uFF0C\\u5171\\u53D1\\u73B0 {{count}} \\u6761\\u6587\\u672C",
-      quickFinished: "\\u5FEB\\u6377\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {{count}} \\u6761\\u6587\\u672C",
-      sessionStarted: "\\u4F1A\\u8BDD\\u626B\\u63CF\\u5DF2\\u5F00\\u59CB",
-      sessionInProgress: "\\u626B\\u63CF\\u6B63\\u5728\\u8FDB\\u884C\\u4E2D...",
-      truncationWarning: "\\u4E3A\\u4FDD\\u6301\\u754C\\u9762\\u6D41\\u7545\\uFF0C\\u6B64\\u5904\\u4EC5\\u663E\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u5B8C\\u6574\\u5185\\u5BB9\\u5C06\\u5728\\u5BFC\\u51FA\\u65F6\\u63D0\\u4F9B\\u3002"
+      finished: "\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {{count}} \\u6761\\u6587\\u672C\\u3002",
+      quickFinished: "\\u5FEB\\u901F\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {{count}} \\u6761\\u6587\\u672C\\u3002",
+      sessionStarted: "\\u4F1A\\u8BDD\\u626B\\u63CF\\u5DF2\\u5F00\\u59CB\\u3002",
+      sessionInProgress: "\\u626B\\u63CF\\u8FDB\\u884C\\u4E2D...",
+      truncationWarning: "\\u4E3A\\u4FDD\\u6301\\u754C\\u9762\\u6D41\\u7545\\uFF0C\\u6B64\\u5904\\u4EC5\\u663E\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u5BFC\\u51FA\\u540E\\u5C06\\u5305\\u542B\\u5B8C\\u6574\\u5185\\u5BB9\\u3002"
     },
     results: {
       title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",
-      scanCountSession: "\\u5DF2\\u626B\\u63CF {{count}} \\u6761\\u6587\\u672C",
-      scanCountStatic: "\\u5171\\u626B\\u63CF {{count}} \\u6761\\u6587\\u672C",
-      totalCharacters: "\\u603B\\u5B57\\u6570",
+      scanCountSession: "\\u5DF2\\u626B\\u63CF {{count}} \\u4E2A\\u9879\\u76EE",
+      scanCountStatic: "\\u5171\\u626B\\u63CF {{count}} \\u4E2A\\u9879\\u76EE",
+      totalCharacters: "\\u603B\\u5B57\\u7B26\\u6570",
       totalLines: "\\u603B\\u884C\\u6570",
-      noSummary: "\\u5F53\\u524D\\u6CA1\\u6709\\u603B\\u7ED3\\u6587\\u672C",
+      noSummary: "\\u65E0\\u53EF\\u7528\\u6458\\u8981",
       stats: {
         lines: "\\u884C",
-        chars: "\\u5B57\\u7B26\\u6570"
+        chars: "\\u5B57\\u7B26"
       }
     },
     notifications: {
-      copiedToClipboard: "\\u5DF2\\u590D\\u5236\\u5230\\u526A\\u8D34\\u677F!",
+      copiedToClipboard: "\\u5DF2\\u590D\\u5236\\u5230\\u526A\\u8D34\\u677F\\uFF01",
       settingsSaved: "\\u8BBE\\u7F6E\\u5DF2\\u4FDD\\u5B58\\uFF01",
-      modalInitError: "\\u6A21\\u6001\\u6846\\u5C1A\\u672A\\u521D\\u59CB\\u5316\\u3002",
-      nothingToCopy: "\\u6C92\\u6709\\u5167\\u5BB9\\u53EF\\u8907\\u88FD",
-      contentCleared: "\\u5185\\u5BB9\\u5DF2\\u6E05\\u7A7A",
-      noTextSelected: "\\u672A\\u9009\\u62E9\\u6587\\u672C",
-      cspWorkerWarning: "\\u7531\\u4E8E\\u7F51\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u6362\\u5230\\u517C\\u5BB9\\u626B\\u63CF\\u6A21\\u5F0F\\u3002"
+      modalInitError: "\\u6A21\\u6001\\u6846\\u672A\\u521D\\u59CB\\u5316\\u3002",
+      nothingToCopy: "\\u6CA1\\u6709\\u53EF\\u590D\\u5236\\u7684\\u5185\\u5BB9\\u3002",
+      contentCleared: "\\u5185\\u5BB9\\u5DF2\\u6E05\\u9664\\u3002",
+      noTextSelected: "\\u672A\\u9009\\u62E9\\u4EFB\\u4F55\\u6587\\u672C\\u3002",
+      cspWorkerWarning: "\\u56E0\\u7F51\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u6362\\u81F3\\u517C\\u5BB9\\u626B\\u63CF\\u6A21\\u5F0F\\u3002"
     },
     placeholders: {
       click: "\\u70B9\\u51FB ",
       dynamicScan: "[\\u52A8\\u6001\\u626B\\u63CF]",
-      startNewScanSession: " \\u6309\\u94AE\\u5F00\\u59CB\\u4E00\\u4E2A\\u65B0\\u7684\\u626B\\u63CF\\u4F1A\\u8BDD",
+      startNewScanSession: " \\u5F00\\u59CB\\u65B0\\u7684\\u626B\\u63CF\\u4F1A\\u8BDD",
       staticScan: "[\\u9759\\u6001\\u626B\\u63CF]",
-      performOneTimeScan: " \\u6309\\u94AE\\u53EF\\u8FDB\\u884C\\u4E00\\u6B21\\u6027\\u7684\\u5FEB\\u6377\\u63D0\\u53D6"
+      performOneTimeScan: " \\u6267\\u884C\\u4E00\\u6B21\\u6027\\u5FEB\\u901F\\u63D0\\u53D6"
     },
     confirmation: {
-      clear: "\\u4F60\\u786E\\u8BA4\\u8981\\u6E05\\u7A7A\\u5417\\uFF1F\\u6B64\\u64CD\\u4F5C\\u4E0D\\u53EF\\u64A4\\u9500\\u3002"
+      clear: "\\u60A8\\u786E\\u5B9A\\u8981\\u6E05\\u9664\\u5185\\u5BB9\\u5417\\uFF1F\\u6B64\\u64CD\\u4F5C\\u65E0\\u6CD5\\u64A4\\u9500\\u3002"
     },
     tooltip: {
-      summary: "\\u67E5\\u770B\\u603B\\u7ED3",
+      summary: "\\u67E5\\u770B\\u6458\\u8981",
       dynamic_scan: "\\u52A8\\u6001\\u626B\\u63CF",
       static_scan: "\\u9759\\u6001\\u626B\\u63CF",
       element_scan: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF",
       filters: {
         title: "\\u5185\\u5BB9\\u8FC7\\u6EE4\\u5668\\u8BF4\\u660E",
-        numbers: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u6570\\u5B57\\u3001\\u7A7A\\u683C\\u3001\\u5343\\u4F4D\\u5206\\u9694\\u7B26 (.)\\u3001\\u5C0F\\u6570\\u70B9 (,) \\u4EE5\\u53CA\\u90E8\\u5206\\u8D27\\u5E01\\u7B26\\u53F7 ($, \\u20AC, \\xA3, \\xA5) \\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "1,234.56"<br>\\u2022 "\\xA5999"<br>\\u2022 "\\u20AC200"<br>\\u2022 "$ 100"',
-        chinese: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u4E2D\\u6587\\u5B57\\u7B26\\u548C\\u7A7A\\u683C\\u7EC4\\u6210\\u7684\\u6587\\u672C\\uFF0C\\u4E0D\\u5305\\u62EC\\u4EFB\\u4F55\\u6807\\u70B9\\u7B26\\u53F7\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "\\u4F60\\u597D \\u4E16\\u754C" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "\\u4F60\\u597D\\uFF0C\\u4E16\\u754C" (\\u4E0D\\u4F1A\\u88AB\\u8FC7\\u6EE4)',
-        contains_chinese: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389<strong>\\u4EFB\\u4F55\\u5305\\u542B</strong>\\u81F3\\u5C11\\u4E00\\u4E2A\\u4E2D\\u6587\\u5B57\\u7B26\\u7684\\u6587\\u672C\\uFF0C\\u65E0\\u8BBA\\u662F\\u5426\\u5305\\u542B\\u5176\\u4ED6\\u5B57\\u7B26\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "\\u4F60\\u597D World" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "\\u7B2C 1 \\u7AE0" (\\u5C06\\u88AB\\u8FC7\\u6EE4)',
-        emoji_only: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u4E00\\u4E2A\\u6216\\u591A\\u4E2A\\u8868\\u60C5\\u7B26\\u53F7\\u53CA\\u7A7A\\u683C\\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "\\u{1F44D}"<br>\\u2022 "\\u{1F60A} \\u{1F389} \\u{1F680}"',
-        symbols: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u5404\\u7C7B\\u6807\\u70B9\\u548C\\u7B26\\u53F7\\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "@#*&^%"<br>\\u2022 "()[]{}"<br>\\u2022 "---...---"',
-        term: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u5E38\\u89C1\\u7684\\u3001\\u901A\\u5E38\\u65E0\\u9700\\u7FFB\\u8BD1\\u7684 UI \\u672F\\u8BED\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "OK", "Cancel", "Submit"<br>\\u2022 "Login", "Settings", "Help"',
-        single_letter: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u7531<strong>\\u5355\\u4E2A</strong>\\u82F1\\u6587\\u5B57\\u6BCD\\u7EC4\\u6210\\u7684\\u6587\\u672C\\uFF0C\\u5FFD\\u7565\\u5927\\u5C0F\\u5199\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "A" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "b" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "AB" (\\u4E0D\\u4F1A\\u88AB\\u8FC7\\u6EE4)',
-        repeating_chars: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u7531<strong>\\u540C\\u4E00\\u4E2A\\u5B57\\u7B26</strong>\\u8FDE\\u7EED\\u91CD\\u590D 2 \\u6B21\\u6216\\u4EE5\\u4E0A\\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "aa"<br>\\u2022 "======"<br>\\u2022 "bbbbb"',
-        file_paths: '\\u6B64\\u89C4\\u5219\\u4F1A\\u5C1D\\u8BD5\\u8BC6\\u522B\\u5E76\\u8FC7\\u6EE4\\u6389\\u7C7B\\u4F3C\\u64CD\\u4F5C\\u7CFB\\u7EDF\\u7684\\u3001\\u4E14<strong>\\u5305\\u542B\\u6587\\u4EF6\\u6269\\u5C55\\u540D</strong>\\u7684\\u6587\\u4EF6\\u8DEF\\u5F84\\uFF0C\\u4F46\\u5B83\\u4E0D\\u4F1A\\u5339\\u914D URL\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "/path/to/file.js"<br>\\u2022 "C:\\\\Users\\\\Test\\\\document.docx"<br>\\u2022 "./config.json"',
-        hex_color_codes: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u6807\\u51C6\\u7684 CSS \\u5341\\u516D\\u8FDB\\u5236\\u989C\\u8272\\u4EE3\\u7801\\uFF083\\u30014\\u30016 \\u6216 8 \\u4F4D\\uFF0C\\u540E\\u8005\\u53EF\\u5305\\u542B Alpha \\u901A\\u9053\\uFF09\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "#FFFFFF"<br>\\u2022 "#ff0000"<br>\\u2022 "#f0c"<br>\\u2022 "#f0c8" (4\\u4F4D)<br>\\u2022 "#ff000080" (8\\u4F4D)',
-        email_addresses: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u7B26\\u5408\\u6807\\u51C6\\u683C\\u5F0F\\u7684\\u7535\\u5B50\\u90AE\\u4EF6\\u5730\\u5740\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "example@domain.com"<br>\\u2022 "user.name@sub.domain.org"',
-        uuids: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u901A\\u7528\\u552F\\u4E00\\u6807\\u8BC6\\u7B26 (UUID)\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "123e4567-e89b-12d3-a456-426614174000"',
-        git_commit_hashes: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u6807\\u51C6\\u7684 Git \\u63D0\\u4EA4\\u54C8\\u5E0C\\u503C\\uFF08\\u957F\\u54C8\\u5E0C\\u6216\\u77ED\\u54C8\\u5E0C\\uFF09\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\\u2022 "a1b2c3d"',
-        website_urls: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389<strong>\\u72EC\\u7ACB\\u7684 URL</strong> \\u6587\\u672C\\u3002\\u5B83\\u7684\\u5339\\u914D\\u89C4\\u5219\\u88AB\\u8BBE\\u8BA1\\u5F97\\u975E\\u5E38\\u4E25\\u683C\\uFF0C\\u4EE5\\u907F\\u514D\\u610F\\u5916\\u79FB\\u9664\\u4E0D\\u662F\\u94FE\\u63A5\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "https://www.example.com"<br>\\u2022 "http://test.co.uk"<br>\\u2022 "www.google.com"<br>\\u2022 "example.org"',
-        shorthand_numbers: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u4F7F\\u7528<strong>\\u5E38\\u89C1\\u7B80\\u5199\\u540E\\u7F00</strong>\\u7684\\u6570\\u5B57\\uFF0C\\u4F8B\\u5982 k (\\u5343)\\u3001m (\\u767E\\u4E07) \\u6216 b (\\u5341\\u4EBF)\\uFF0C\\u4E0D\\u533A\\u5206\\u5927\\u5C0F\\u5199\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "1.2k"<br>\\u2022 "15M"<br>\\u2022 "2.5b"<br>\\u2022 "100K"'
+        numbers: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168</strong>\\u7531\\u6570\\u5B57\\u3001\\u7A7A\\u683C\\u3001\\u5343\\u4F4D\\u5206\\u9694\\u7B26(,)\\u3001\\u5C0F\\u6570\\u70B9(.)\\u4EE5\\u53CA\\u90E8\\u5206\\u8D27\\u5E01\\u7B26\\u53F7($, \\u20AC, \\xA3, \\xA5)\\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B:</strong><br>\\u2022 "1,234.56"<br>\\u2022 "\\xA5999"<br>\\u2022 "\\u20AC200"<br>\\u2022 "$ 100"',
+        chinese: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168</strong>\\u7531\\u6C49\\u5B57\\u548C\\u7A7A\\u683C\\u7EC4\\u6210\\uFF0C\\u4E14\\u4E0D\\u542B\\u4EFB\\u4F55\\u6807\\u70B9\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u793A\\u4F8B:</strong><br>\\u2022 "\\u4F60\\u597D \\u4E16\\u754C" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "\\u4F60\\u597D\\uFF0C\\u4E16\\u754C" (\\u4E0D\\u4F1A\\u88AB\\u8FC7\\u6EE4)',
+        contains_chinese: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389\\u4EFB\\u4F55\\u542B\\u6709\\u81F3\\u5C11\\u4E00\\u4E2A\\u6C49\\u5B57\\u7684\\u6587\\u672C\\uFF0C\\u65E0\\u8BBA\\u5176\\u4ED6\\u5B57\\u7B26\\u662F\\u4EC0\\u4E48\\u3002<br><br><strong>\\u793A\\u4F8B:</strong><br>\\u2022 "\\u4F60\\u597D World" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "\\u7B2C\\u4E00\\u7AE0" (\\u5C06\\u88AB\\u8FC7\\u6EE4)',
+        emoji_only: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168</strong>\\u7531\\u4E00\\u4E2A\\u6216\\u591A\\u4E2A\\u8868\\u60C5\\u7B26\\u53F7\\u53CA\\u7A7A\\u683C\\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u793A\\u4F8B:</strong><br>\\u2022 "\\u{1F44D}"<br>\\u2022 "\\u{1F60A} \\u{1F389} \\u{1F680}"',
+        symbols: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168</strong>\\u7531\\u5404\\u79CD\\u6807\\u70B9\\u548C\\u7B26\\u53F7\\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B:</strong><br>\\u2022 "@#*&^%"<br>\\u2022 "()[]{}"<br>\\u2022 "---...---"',
+        term: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389\\u901A\\u5E38\\u4E0D\\u9700\\u8981\\u7FFB\\u8BD1\\u7684\\u5E38\\u89C1UI\\u672F\\u8BED\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B:</strong><br>\\u2022 "OK", "Cancel", "Submit"<br>\\u2022 "Login", "Settings", "Help"',
+        single_letter: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389\\u7531<strong>\\u5355\\u4E2A</strong>\\u82F1\\u6587\\u5B57\\u6BCD\\u7EC4\\u6210\\u7684\\u6587\\u672C\\uFF08\\u4E0D\\u533A\\u5206\\u5927\\u5C0F\\u5199\\uFF09\\u3002<br><br><strong>\\u793A\\u4F8B:</strong><br>\\u2022 "A" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "b" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "AB" (\\u4E0D\\u4F1A\\u88AB\\u8FC7\\u6EE4)',
+        repeating_chars: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389\\u7531<strong>\\u540C\\u4E00\\u4E2A\\u5B57\\u7B26</strong>\\u8FDE\\u7EED\\u91CD\\u590D2\\u6B21\\u6216\\u4EE5\\u4E0A\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u793A\\u4F8B:</strong><br>\\u2022 "aa"<br>\\u2022 "======"<br>\\u2022 "bbbbb"',
+        file_paths: '\\u6B64\\u89C4\\u5219\\u5C1D\\u8BD5\\u8BC6\\u522B\\u5E76\\u8FC7\\u6EE4\\u6389\\u7C7B\\u4F3C\\u64CD\\u4F5C\\u7CFB\\u7EDF\\u6587\\u4EF6\\u8DEF\\u5F84\\u4E14<strong>\\u5305\\u542B\\u6587\\u4EF6\\u6269\\u5C55\\u540D</strong>\\u7684\\u6587\\u672C\\u3002\\u5B83\\u4E0D\\u5339\\u914D\\u7F51\\u5740\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B:</strong><br>\\u2022 "/path/to/file.js"<br>\\u2022 "C:\\\\Users\\\\Test\\\\document.docx"<br>\\u2022 "./config.json"',
+        hex_color_codes: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389\\u6807\\u51C6\\u7684CSS\\u5341\\u516D\\u8FDB\\u5236\\u989C\\u8272\\u4EE3\\u7801\\uFF083\\u30014\\u30016\\u62168\\u4F4D\\uFF0C\\u540E\\u8005\\u5305\\u542B\\u900F\\u660E\\u5EA6\\u901A\\u9053\\uFF09\\u3002<br><br><strong>\\u793A\\u4F8B:</strong><br>\\u2022 "#FFFFFF"<br>\\u2022 "#ff0000"<br>\\u2022 "#f0c"<br>\\u2022 "#f0c8" (4\\u4F4D)<br>\\u2022 "#ff000080" (8\\u4F4D)',
+        email_addresses: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389\\u7B26\\u5408\\u6807\\u51C6\\u7535\\u5B50\\u90AE\\u4EF6\\u5730\\u5740\\u683C\\u5F0F\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u793A\\u4F8B:</strong><br>\\u2022 "example@domain.com"<br>\\u2022 "user.name@sub.domain.org"',
+        uuids: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389\\u901A\\u7528\\u552F\\u4E00\\u6807\\u8BC6\\u7B26 (UUID)\\u3002<br><br><strong>\\u793A\\u4F8B:</strong><br>\\u2022 "123e4567-e89b-12d3-a456-426614174000"',
+        git_commit_hashes: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389\\u6807\\u51C6\\u7684Git\\u63D0\\u4EA4\\u54C8\\u5E0C\\u503C\\uFF08\\u957F\\u6216\\u77ED\\uFF09\\u3002<br><br><strong>\\u793A\\u4F8B:</strong><br>\\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\\u2022 "a1b2c3d"',
+        website_urls: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389<strong>\\u72EC\\u7ACB\\u7684\\u7F51\\u5740</strong>\\u3002\\u5B83\\u8BBE\\u8BA1\\u5F97\\u6BD4\\u8F83\\u4E25\\u683C\\uFF0C\\u4EE5\\u907F\\u514D\\u610F\\u5916\\u79FB\\u9664\\u4E0D\\u662F\\u94FE\\u63A5\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B:</strong><br>\\u2022 "https://www.example.com"<br>\\u2022 "http://test.co.uk"<br>\\u2022 "www.google.com"<br>\\u2022 "example.org"',
+        shorthand_numbers: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389\\u4F7F\\u7528<strong>\\u5E38\\u89C1\\u901F\\u8BB0\\u540E\\u7F00</strong>\\u8868\\u793A\\u5343(k)\\u3001\\u767E\\u4E07(m)\\u6216\\u5341\\u4EBF(b)\\u7684\\u6570\\u5B57\\uFF08\\u4E0D\\u533A\\u5206\\u5927\\u5C0F\\u5199\\uFF09\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B:</strong><br>\\u2022 "1.2k"<br>\\u2022 "15M"<br>\\u2022 "2.5b"<br>\\u2022 "100K"'
       },
       display: {
         title: "\\u663E\\u793A\\u8BBE\\u7F6E\\u8BF4\\u660E",
-        show_fab: "\\u63A7\\u5236\\u662F\\u5426\\u5728\\u7F51\\u9875\\u53F3\\u4E0B\\u89D2\\u663E\\u793A<strong>\\u60AC\\u6D6E\\u52A8\\u4F5C\\u6309\\u94AE (FAB)</strong>\\u3002\\u8FD9\\u662F\\u9759\\u6001\\u6587\\u672C\\u63D0\\u53D6\\u3001\\u52A8\\u6001\\u6587\\u672C\\u63D0\\u53D6\\u7684\\u6838\\u5FC3\\u5165\\u53E3\\u3002<br><br>\\u5982\\u679C\\u60A8\\u7981\\u7528\\u4E86\\u6B64\\u6309\\u94AE\\uFF0C\\u53EF\\u4EE5\\u901A\\u8FC7\\u6CB9\\u7334\\u6269\\u5C55\\u83DC\\u5355\\u7684\\u8BBE\\u7F6E\\u9762\\u677F\\u91CD\\u65B0\\u6253\\u5F00\\u3002",
-        show_scan_count: "\\u542F\\u7528\\u540E\\uFF0C\\u5728\\u7ED3\\u679C\\u7A97\\u53E3\\u7684\\u6807\\u9898\\u680F\\u4F1A<strong>\\u5B9E\\u65F6\\u66F4\\u65B0</strong>\\u672C\\u6B21\\u626B\\u63CF\\u53D1\\u73B0\\u7684\\u6587\\u672C\\u6761\\u76EE\\u603B\\u6570\\u3002\\u5728\\u8FDB\\u884C\\u957F\\u65F6\\u95F4\\u7684<strong>\\u52A8\\u6001\\u626B\\u63CF</strong>\\u65F6\\uFF0C\\u8FD9\\u4E2A\\u8BA1\\u6570\\u5668\\u53EF\\u4EE5\\u5F88\\u76F4\\u89C2\\u5730\\u53CD\\u6620\\u626B\\u63CF\\u8FDB\\u5EA6\\u3002",
-        show_line_numbers: "\\u5728\\u7ED3\\u679C\\u7A97\\u53E3\\u7684\\u6587\\u672C\\u533A\\u57DF\\u5DE6\\u4FA7\\u663E\\u793A\\u884C\\u53F7\\u3002\\u5F53\\u60A8\\u9700\\u8981\\u4E0E\\u4ED6\\u4EBA\\u8BA8\\u8BBA\\u6216\\u8BB0\\u5F55\\u7279\\u5B9A\\u67D0\\u884C\\u6587\\u672C\\u65F6\\uFF0C\\u884C\\u53F7\\u53EF\\u4EE5\\u63D0\\u4F9B\\u4E00\\u4E2A<strong>\\u7CBE\\u786E\\u7684\\u5B9A\\u4F4D\\u6807\\u8BB0</strong>\\u3002",
-        show_statistics: "\\u5728\\u7ED3\\u679C\\u7A97\\u53E3\\u5E95\\u90E8\\u7684\\u72B6\\u6001\\u680F\\u663E\\u793A\\u5F53\\u524D\\u5DF2\\u63D0\\u53D6\\u5185\\u5BB9\\u7684<strong>\\u5B9E\\u65F6\\u7EDF\\u8BA1</strong>\\uFF0C\\u5305\\u62EC<strong>\\u603B\\u884C\\u6570</strong>\\u548C<strong>\\u603B\\u5B57\\u7B26\\u6570</strong>\\u3002\\u8FD9\\u53EF\\u4EE5\\u5E2E\\u52A9\\u60A8\\u5FEB\\u901F\\u8BC4\\u4F30\\u63D0\\u53D6\\u5185\\u5BB9\\u7684\\u89C4\\u6A21\\u3002",
-        enable_word_wrap: "\\u63A7\\u5236\\u7ED3\\u679C\\u7A97\\u53E3\\u4E2D\\u7684\\u957F\\u6587\\u672C\\u884C\\u5982\\u4F55\\u663E\\u793A\\u3002<br><br>\\u2022 <strong>\\u542F\\u7528\\uFF1A</strong>\\u957F\\u6587\\u672C\\u5C06\\u81EA\\u52A8\\u6362\\u884C\\u4EE5\\u9002\\u5E94\\u7A97\\u53E3\\u5BBD\\u5EA6\\u3002<br>\\u2022 <strong>\\u7981\\u7528\\uFF1A</strong>\\u957F\\u6587\\u672C\\u5C06\\u4FDD\\u6301\\u5728\\u5355\\u884C\\uFF0C\\u5E76\\u51FA\\u73B0\\u6C34\\u5E73\\u6EDA\\u52A8\\u6761\\u3002",
-        text_truncation_limit: "\\u8FD9\\u662F\\u4E00\\u4E2A<strong>\\u6027\\u80FD\\u4FDD\\u62A4</strong>\\u673A\\u5236\\u3002\\u5F53\\u811A\\u672C\\u63D0\\u53D6\\u5230<strong>\\u5355\\u884C\\u8D85\\u957F\\u6587\\u672C</strong>\\uFF08\\u4F8B\\u5982\\uFF0C\\u4E00\\u4E2A\\u5B8C\\u6574\\u7684 base64 \\u7F16\\u7801\\u56FE\\u7247\\uFF09\\u65F6\\uFF0C\\u82E5\\u4E0D\\u622A\\u65AD\\uFF0C\\u53EF\\u80FD\\u4F1A\\u5BFC\\u81F4\\u6D4F\\u89C8\\u5668<strong>\\u5361\\u987F\\u6216\\u65E0\\u54CD\\u5E94</strong>\\u3002<br><br>\\u6B64\\u8BBE\\u7F6E\\u4F1A\\u622A\\u65AD\\u8D85\\u51FA\\u6307\\u5B9A\\u957F\\u5EA6\\u7684\\u5355\\u884C\\u6587\\u672C\\uFF0C\\u4EE5\\u4FDD\\u8BC1\\u754C\\u9762\\u6D41\\u7545\\u3002<strong>\\u6CE8\\u610F\\uFF1A\\u6B64\\u622A\\u65AD\\u4EC5\\u5F71\\u54CD\\u754C\\u9762\\u663E\\u793A\\uFF0C\\u5BFC\\u51FA\\u7684\\u6587\\u4EF6\\u4ECD\\u5C06\\u5305\\u542B\\u5B8C\\u6574\\u5185\\u5BB9\\u3002</strong>"
+        show_fab: "\\u63A7\\u5236\\u662F\\u5426\\u5728\\u7F51\\u9875\\u53F3\\u4E0B\\u89D2\\u663E\\u793A<strong>\\u60AC\\u6D6E\\u64CD\\u4F5C\\u6309\\u94AE(FAB)</strong>\\u3002\\u8FD9\\u662F\\u8FDB\\u884C\\u9759\\u6001\\u548C\\u52A8\\u6001\\u6587\\u672C\\u63D0\\u53D6\\u7684\\u4E3B\\u8981\\u5165\\u53E3\\u3002<br><br>\\u5982\\u679C\\u60A8\\u7981\\u7528\\u4E86\\u6B64\\u6309\\u94AE\\uFF0C\\u53EF\\u4EE5\\u901A\\u8FC7\\u6CB9\\u7334\\u6269\\u5C55\\u83DC\\u5355\\u4E2D\\u7684\\u8BBE\\u7F6E\\u9762\\u677F\\u91CD\\u65B0\\u542F\\u7528\\u5B83\\u3002",
+        show_scan_count: "\\u542F\\u7528\\u540E\\uFF0C\\u7ED3\\u679C\\u7A97\\u53E3\\u7684\\u6807\\u9898\\u680F\\u5C06<strong>\\u5B9E\\u65F6\\u663E\\u793A</strong>\\u5F53\\u524D\\u626B\\u63CF\\u4E2D\\u627E\\u5230\\u7684\\u603B\\u6587\\u672C\\u9879\\u76EE\\u6570\\u3002\\u8FD9\\u5BF9\\u4E8E\\u76D1\\u63A7\\u957F\\u65F6\\u95F4\\u8FD0\\u884C\\u7684<strong>\\u52A8\\u6001\\u626B\\u63CF</strong>\\u7684\\u8FDB\\u5EA6\\u7279\\u522B\\u6709\\u7528\\u3002",
+        show_line_numbers: "\\u5728\\u7ED3\\u679C\\u7A97\\u53E3\\u7684\\u6587\\u672C\\u533A\\u57DF\\u5DE6\\u4FA7\\u663E\\u793A\\u884C\\u53F7\\u3002\\u5F53\\u60A8\\u9700\\u8981\\u8BA8\\u8BBA\\u6216\\u8BB0\\u5F55\\u7279\\u5B9A\\u6587\\u672C\\u884C\\u65F6\\uFF0C\\u8FD9\\u63D0\\u4F9B\\u4E86\\u4E00\\u4E2A<strong>\\u7CBE\\u786E\\u7684\\u53C2\\u8003\\u70B9</strong>\\u3002",
+        show_statistics: "\\u5728\\u7ED3\\u679C\\u7A97\\u53E3\\u5E95\\u90E8\\u7684\\u72B6\\u6001\\u680F\\u4E2D\\u663E\\u793A\\u6709\\u5173\\u63D0\\u53D6\\u5185\\u5BB9\\u7684<strong>\\u5B9E\\u65F6\\u7EDF\\u8BA1\\u6570\\u636E</strong>\\uFF0C\\u5305\\u62EC<strong>\\u603B\\u884C\\u6570</strong>\\u548C<strong>\\u603B\\u5B57\\u7B26\\u6570</strong>\\u3002\\u8FD9\\u6709\\u52A9\\u4E8E\\u60A8\\u5FEB\\u901F\\u8BC4\\u4F30\\u5185\\u5BB9\\u7684\\u4F53\\u91CF\\u3002",
+        enable_word_wrap: "\\u63A7\\u5236\\u7ED3\\u679C\\u7A97\\u53E3\\u4E2D\\u957F\\u6587\\u672C\\u884C\\u7684\\u663E\\u793A\\u65B9\\u5F0F\\u3002<br><br>\\u2022 <strong>\\u542F\\u7528:</strong> \\u957F\\u884C\\u5C06\\u81EA\\u52A8\\u6362\\u884C\\u4EE5\\u9002\\u5E94\\u7A97\\u53E3\\u5BBD\\u5EA6\\u3002<br>\\u2022 <strong>\\u7981\\u7528:</strong> \\u957F\\u884C\\u5C06\\u4FDD\\u6301\\u5728\\u5355\\u884C\\uFF0C\\u5E76\\u51FA\\u73B0\\u6C34\\u5E73\\u6EDA\\u52A8\\u6761\\u3002",
+        text_truncation_limit: "\\u8FD9\\u662F\\u4E00\\u4E2A<strong>\\u6027\\u80FD\\u4F18\\u5316</strong>\\u529F\\u80FD\\u3002\\u5982\\u679C\\u811A\\u672C\\u63D0\\u53D6\\u5230<strong>\\u6781\\u957F\\u7684\\u5355\\u884C\\u6587\\u672C</strong>\\uFF08\\u4F8B\\u5982\\uFF0Cbase64\\u7F16\\u7801\\u7684\\u56FE\\u7247\\uFF09\\uFF0C\\u53EF\\u80FD\\u4F1A\\u5BFC\\u81F4\\u6D4F\\u89C8\\u5668<strong>\\u5361\\u987F\\u6216\\u65E0\\u54CD\\u5E94</strong>\\u3002<br><br>\\u6B64\\u8BBE\\u7F6E\\u4F1A\\u622A\\u65AD\\u4EFB\\u4F55\\u8D85\\u8FC7\\u6307\\u5B9A\\u957F\\u5EA6\\u7684\\u5355\\u884C\\u6587\\u672C\\uFF0C\\u4EE5\\u786E\\u4FDDUI\\u4FDD\\u6301\\u6D41\\u7545\\u3002<strong>\\u6CE8\\u610F\\uFF1A\\u8FD9\\u4EC5\\u5F71\\u54CD\\u663E\\u793A\\uFF1B\\u5BFC\\u51FA\\u7684\\u6587\\u4EF6\\u4ECD\\u5C06\\u5305\\u542B\\u5B8C\\u6574\\u7684\\u3001\\u672A\\u622A\\u65AD\\u7684\\u5185\\u5BB9\\u3002</strong>"
       },
       advanced: {
         title: "\\u9AD8\\u7EA7\\u8BBE\\u7F6E\\u8BF4\\u660E",
-        enable_debug_logging: "\\u542F\\u7528\\u540E\\uFF0C\\u811A\\u672C\\u4F1A\\u5C06\\u8BE6\\u7EC6\\u7684\\u5185\\u90E8\\u8FD0\\u884C\\u72B6\\u6001\\u3001\\u6267\\u884C\\u6B65\\u9AA4\\u3001\\u9519\\u8BEF\\u4FE1\\u606F\\u7B49\\u8F93\\u51FA\\u5230\\u6D4F\\u89C8\\u5668\\u7684<strong>\\u5F00\\u53D1\\u8005\\u5DE5\\u5177\\u63A7\\u5236\\u53F0</strong>\\uFF08\\u901A\\u5E38\\u6309 F12 \\u6253\\u5F00\\uFF09\\u3002\\u6B64\\u529F\\u80FD\\u4E3B\\u8981\\u9762\\u5411\\u5F00\\u53D1\\u8005\\u6216\\u9700\\u8981\\u63D0\\u4EA4\\u8BE6\\u7EC6\\u9519\\u8BEF\\u62A5\\u544A\\u7684\\u7528\\u6237\\u3002"
+        enable_debug_logging: "\\u542F\\u7528\\u540E\\uFF0C\\u811A\\u672C\\u4F1A\\u5C06\\u8BE6\\u7EC6\\u7684\\u5185\\u90E8\\u72B6\\u6001\\u3001\\u6267\\u884C\\u6B65\\u9AA4\\u548C\\u9519\\u8BEF\\u4FE1\\u606F\\u8F93\\u51FA\\u5230\\u6D4F\\u89C8\\u5668\\u7684<strong>\\u5F00\\u53D1\\u8005\\u5DE5\\u5177\\u63A7\\u5236\\u53F0</strong>\\uFF08\\u901A\\u5E38\\u7528F12\\u6253\\u5F00\\uFF09\\u3002\\u8FD9\\u4E3B\\u8981\\u4F9B\\u5F00\\u53D1\\u8005\\u6216\\u9700\\u8981\\u63D0\\u4EA4\\u8BE6\\u7EC6\\u9519\\u8BEF\\u62A5\\u544A\\u7684\\u7528\\u6237\\u4F7F\\u7528\\u3002"
       }
     },
     log: {
-      prefix: "[\\u6587\\u672C\\u63D0\\u53D6\\u811A\\u672C-Debug]",
+      prefix: "[\\u6587\\u672C\\u63D0\\u53D6\\u811A\\u672C-\\u8C03\\u8BD5]",
       language: {
-        switched: "\\u8BED\\u8A00\\u5DF2\\u5207\\u6362\\u81F3: {{lang}}",
-        notFound: "\\u8BED\\u8A00 '{{lang}}' \\u4E0D\\u5B58\\u5728\\uFF0C\\u56DE\\u9000\\u5230 'en'\\u3002"
+        switched: "\\u8BED\\u8A00\\u5DF2\\u5207\\u6362\\u81F3\\uFF1A{{lang}}",
+        notFound: "\\u672A\\u627E\\u5230\\u8BED\\u8A00 '{{lang}}'\\uFF0C\\u5DF2\\u56DE\\u9000\\u81F3 'en'\\u3002"
       },
       settings: {
         changed: "\\u8BBE\\u7F6E '{{key}}' \\u5DF2\\u4ECE '{{oldValue}}' \\u66F4\\u6539\\u4E3A '{{newValue}}'",
         filterRuleChanged: {
-          enabled: "\\u8FC7\\u6EE4\\u89C4\\u5219 '{{key}}' \\u5DF2\\u88AB\\u542F\\u7528",
-          disabled: "\\u8FC7\\u6EE4\\u89C4\\u5219 '{{key}}' \\u5DF2\\u88AB\\u7981\\u7528"
+          enabled: "\\u8FC7\\u6EE4\\u89C4\\u5219 '{{key}}' \\u5DF2\\u542F\\u7528",
+          disabled: "\\u8FC7\\u6EE4\\u89C4\\u5219 '{{key}}' \\u5DF2\\u7981\\u7528"
         },
         panel: {
           opening: "\\u6B63\\u5728\\u6253\\u5F00\\u8BBE\\u7F6E\\u9762\\u677F...",
@@ -2345,111 +2380,113 @@ ${result.join(",\n")}
           saving: "\\u6B63\\u5728\\u4FDD\\u5B58\\u8BBE\\u7F6E..."
         },
         parseError: "\\u89E3\\u6790\\u5DF2\\u4FDD\\u5B58\\u7684\\u8BBE\\u7F6E\\u65F6\\u51FA\\u9519\\uFF1A",
-        invalidObject: "\\u5C1D\\u8BD5\\u4FDD\\u5B58\\u4E00\\u4E2A\\u65E0\\u6548\\u7684\\u5BF9\\u8C61\\u4F5C\\u4E3A\\u8BBE\\u7F6E\\uFF1A"
+        invalidObject: "\\u8BD5\\u56FE\\u4E3A\\u8BBE\\u7F6E\\u4FDD\\u5B58\\u4E00\\u4E2A\\u65E0\\u6548\\u5BF9\\u8C61\\uFF1A"
       },
       textProcessor: {
         filtered: '\\u6587\\u672C\\u5DF2\\u8FC7\\u6EE4: "{{text}}" (\\u539F\\u56E0: {{reason}})'
       },
       quickScan: {
-        switchToFallback: "[\\u9759\\u6001\\u626B\\u63CF] \\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
-        fallbackFailed: "[\\u9759\\u6001\\u626B\\u63CF] \\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u5931\\u8D25: {{error}}",
+        switchToFallback: "[\\u5FEB\\u901F\\u626B\\u63CF] \\u6B63\\u5728\\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
+        fallbackFailed: "[\\u5FEB\\u901F\\u626B\\u63CF] \\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u6267\\u884C\\u5931\\u8D25: {{error}}",
         fallback: {
-          starting: "[\\u9759\\u6001\\u626B\\u63CF - \\u5907\\u9009\\u65B9\\u6848] \\u5F00\\u59CB\\u5728\\u4E3B\\u7EBF\\u7A0B\\u4E2D\\u5904\\u7406...",
-          completed: "[\\u9759\\u6001\\u626B\\u63CF - \\u5907\\u9009\\u65B9\\u6848] \\u5904\\u7406\\u5B8C\\u6210\\uFF0C\\u5171 {{count}} \\u6761\\u6709\\u6548\\u6587\\u672C\\u3002"
+          starting: "[\\u5FEB\\u901F\\u626B\\u63CF - \\u5907\\u9009] \\u6B63\\u5728\\u4E3B\\u7EBF\\u7A0B\\u4E2D\\u5F00\\u59CB\\u5904\\u7406...",
+          completed: "[\\u5FEB\\u901F\\u626B\\u63CF - \\u5907\\u9009] \\u5904\\u7406\\u5B8C\\u6210\\uFF0C\\u627E\\u5230 {{count}} \\u6761\\u4E0D\\u91CD\\u590D\\u6587\\u672C\\u3002"
         },
         worker: {
-          logPrefix: "[\\u9759\\u6001\\u626B\\u63CF Worker]",
-          starting: "[\\u9759\\u6001\\u626B\\u63CF] \\u5F00\\u59CB\\u6267\\u884C\\uFF0C\\u5C1D\\u8BD5\\u4F7F\\u7528 Web Worker...",
-          completed: "[\\u9759\\u6001\\u626B\\u63CF] Worker \\u5904\\u7406\\u6210\\u529F\\uFF0C\\u6536\\u5230 {{count}} \\u6761\\u6587\\u672C\\u3002",
-          scanComplete: "[\\u9759\\u6001\\u626B\\u63CF Worker] \\u5904\\u7406\\u5B8C\\u6210\\uFF0C\\u5171 {{count}} \\u6761\\u6709\\u6548\\u6587\\u672C\\u3002\\u6B63\\u5728\\u53D1\\u56DE\\u4E3B\\u7EBF\\u7A0B...",
-          initFailed: "[\\u9759\\u6001\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u8D25\\u3002\\u8FD9\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u4E8E\\u7F51\\u7AD9\\u7684\\u5185\\u5BB9\\u5B89\\u5168\\u7B56\\u7565\\uFF08CSP\\uFF09\\u963B\\u6B62\\u4E86\\u811A\\u672C\\u3002",
-          originalError: "[\\u9759\\u6001\\u626B\\u63CF] \\u539F\\u59CB\\u9519\\u8BEF: {{error}}",
-          sendingData: "[\\u9759\\u6001\\u626B\\u63CF] Web Worker \\u5DF2\\u521B\\u5EFA\\uFF0C\\u6B63\\u5728\\u53D1\\u9001 {{count}} \\u6761\\u6587\\u672C\\u8FDB\\u884C\\u5904\\u7406...",
-          initSyncError: "[\\u9759\\u6001\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u65F6\\u53D1\\u751F\\u540C\\u6B65\\u9519\\u8BEF: {{error}}"
+          logPrefix: "[\\u5FEB\\u901F\\u626B\\u63CF Worker]",
+          starting: "[\\u5FEB\\u901F\\u626B\\u63CF] \\u5F00\\u59CB\\u6267\\u884C\\uFF0C\\u5C1D\\u8BD5\\u4F7F\\u7528 Web Worker...",
+          completed: "[\\u5FEB\\u901F\\u626B\\u63CF] Worker \\u5904\\u7406\\u6210\\u529F\\uFF0C\\u6536\\u5230 {{count}} \\u6761\\u6587\\u672C\\u3002",
+          scanComplete: "[\\u5FEB\\u901F\\u626B\\u63CF Worker] \\u5904\\u7406\\u5B8C\\u6210\\uFF0C\\u627E\\u5230 {{count}} \\u6761\\u4E0D\\u91CD\\u590D\\u6587\\u672C\\u3002\\u6B63\\u5728\\u53D1\\u56DE\\u4E3B\\u7EBF\\u7A0B...",
+          initFailed: "[\\u5FEB\\u901F\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u8D25\\u3002\\u8FD9\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u4E8E\\u7F51\\u7AD9\\u7684\\u5185\\u5BB9\\u5B89\\u5168\\u7B56\\u7565 (CSP) \\u5BFC\\u81F4\\u7684\\u3002",
+          originalError: "[\\u5FEB\\u901F\\u626B\\u63CF] \\u539F\\u59CB\\u9519\\u8BEF: {{error}}",
+          sendingData: "[\\u5FEB\\u901F\\u626B\\u63CF] Web Worker \\u5DF2\\u521B\\u5EFA\\uFF0C\\u6B63\\u5728\\u53D1\\u9001 {{count}} \\u6761\\u6587\\u672C\\u8FDB\\u884C\\u5904\\u7406...",
+          initSyncError: "[\\u5FEB\\u901F\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u671F\\u95F4\\u53D1\\u751F\\u540C\\u6B65\\u9519\\u8BEF: {{error}}"
         }
       },
       sessionScan: {
-        switchToFallback: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
+        switchToFallback: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u6B63\\u5728\\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
         domObserver: {
           stopped: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u5DF2\\u505C\\u6B62\\u76D1\\u542C DOM \\u53D8\\u5316\\u3002"
         },
         fallback: {
-          initialized: "[\\u4F1A\\u8BDD\\u626B\\u63CF - \\u5907\\u9009\\u65B9\\u6848] \\u521D\\u59CB\\u5316\\u5B8C\\u6210\\u3002",
-          cleared: "[\\u4F1A\\u8BDD\\u626B\\u63CF - \\u5907\\u9009\\u65B9\\u6848] \\u6570\\u636E\\u5DF2\\u6E05\\u7A7A\\u3002"
+          initialized: "[\\u4F1A\\u8BDD\\u626B\\u63CF - \\u5907\\u9009] \\u5DF2\\u521D\\u59CB\\u5316\\u3002",
+          cleared: "[\\u4F1A\\u8BDD\\u626B\\u63CF - \\u5907\\u9009] \\u6570\\u636E\\u5DF2\\u6E05\\u9664\\u3002"
         },
         worker: {
           logPrefix: "[\\u4F1A\\u8BDD\\u626B\\u63CF Worker]",
-          starting: "\\u4F1A\\u8BDD\\u626B\\u63CF\\uFF1A\\u5C1D\\u8BD5\\u542F\\u52A8 Web Worker...",
-          initFailed: "[\\u4F1A\\u8BDD\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u8D25\\u3002\\u8FD9\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u4E8E\\u7F51\\u7AD9\\u7684\\u5185\\u5BB9\\u5B89\\u5168\\u7B56\\u7565\\uFF08CSP\\uFF09\\u963B\\u6B62\\u4E86\\u811A\\u672C\\u3002",
+          starting: "\\u4F1A\\u8BDD\\u626B\\u63CF\\uFF1A\\u6B63\\u5728\\u5C1D\\u8BD5\\u542F\\u52A8 Web Worker...",
+          initFailed: "[\\u4F1A\\u8BDD\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u8D25\\u3002\\u8FD9\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u4E8E\\u7F51\\u7AD9\\u7684\\u5185\\u5BB9\\u5B89\\u5168\\u7B56\\u7565 (CSP) \\u5BFC\\u81F4\\u7684\\u3002",
           originalError: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u539F\\u59CB\\u9519\\u8BEF: {{error}}",
           initialized: "[\\u4F1A\\u8BDD\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u6210\\u529F\\uFF0C\\u5DF2\\u53D1\\u9001 {{count}} \\u6761\\u521D\\u59CB\\u6587\\u672C\\u4EE5\\u5F00\\u59CB\\u4F1A\\u8BDD\\u3002",
-          initSyncError: "[\\u4F1A\\u8BDD\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u65F6\\u53D1\\u751F\\u540C\\u6B65\\u9519\\u8BEF: {{error}}",
-          clearCommandSent: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u5DF2\\u5411 Worker \\u53D1\\u9001\\u6E05\\u7A7A\\u6307\\u4EE4\\u3002"
+          initSyncError: "[\\u4F1A\\u8BDD\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u671F\\u95F4\\u53D1\\u751F\\u540C\\u6B65\\u9519\\u8BEF: {{error}}",
+          clearCommandSent: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u6E05\\u9664\\u547D\\u4EE4\\u5DF2\\u53D1\\u9001\\u81F3 worker\\u3002"
         }
       },
       ui: {
         copyButton: {
-          copied: "\\u590D\\u5236\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\uFF0C\\u590D\\u5236\\u4E86 {{count}} \\u4E2A\\u5B57\\u7B26\\u3002",
-          nothingToCopy: "\\u590D\\u5236\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\uFF0C\\u4F46\\u6CA1\\u6709\\u5185\\u5BB9\\u53EF\\u590D\\u5236\\u6216\\u6309\\u94AE\\u88AB\\u7981\\u7528\\u3002"
+          copied: "\\u590D\\u5236\\u6309\\u94AE\\u5DF2\\u70B9\\u51FB\\uFF0C\\u590D\\u5236\\u4E86 {{count}} \\u4E2A\\u5B57\\u7B26\\u3002",
+          nothingToCopy: "\\u590D\\u5236\\u6309\\u94AE\\u5DF2\\u70B9\\u51FB\\uFF0C\\u4F46\\u6CA1\\u6709\\u5185\\u5BB9\\u53EF\\u590D\\u5236\\u6216\\u6309\\u94AE\\u88AB\\u7981\\u7528\\u3002"
         },
         confirmationModal: {
           sessionScan: {
-            confirmed: "\\u7528\\u6237\\u786E\\u8BA4\\u6E05\\u7A7A\\u4F1A\\u8BDD\\u626B\\u63CF\\u6587\\u672C\\uFF0C\\u6B63\\u5728\\u8C03\\u7528\\u56DE\\u8C03..."
+            confirmed: "\\u7528\\u6237\\u5DF2\\u786E\\u8BA4\\u6E05\\u9664\\u4F1A\\u8BDD\\u626B\\u63CF\\u6587\\u672C\\uFF0C\\u6B63\\u5728\\u8C03\\u7528\\u56DE\\u8C03..."
           },
           quickScan: {
-            confirmed: "\\u7528\\u6237\\u786E\\u8BA4\\u6E05\\u7A7A\\u5FEB\\u901F\\u626B\\u63CF\\u6587\\u672C\\u3002"
+            confirmed: "\\u7528\\u6237\\u5DF2\\u786E\\u8BA4\\u6E05\\u9664\\u5FEB\\u901F\\u626B\\u63CF\\u6587\\u672C\\u3002"
           },
-          cancelled: "\\u7528\\u6237\\u53D6\\u6D88\\u4E86\\u6E05\\u7A7A\\u64CD\\u4F5C\\u3002"
+          cancelled: "\\u7528\\u6237\\u5DF2\\u53D6\\u6D88\\u6E05\\u9664\\u64CD\\u4F5C\\u3002"
         },
         modal: {
-          opening: "\\u6B63\\u5728\\u6253\\u5F00\\u4E3B\\u7A97\\u53E3...",
-          closing: "\\u6B63\\u5728\\u5173\\u95ED\\u4E3B\\u7A97\\u53E3...",
+          opening: "\\u6B63\\u5728\\u6253\\u5F00\\u4E3B\\u6A21\\u6001\\u6846...",
+          closing: "\\u6B63\\u5728\\u5173\\u95ED\\u4E3B\\u6A21\\u6001\\u6846...",
           scanFailed: "\\u9759\\u6001\\u626B\\u63CF\\u5931\\u8D25: {{error}}",
-          clearContent: "\\u201C\\u6E05\\u7A7A\\u5185\\u5BB9\\u201D\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\u3002"
+          clearContent: "\\u6E05\\u7A7A\\u5185\\u5BB9\\u6309\\u94AE\\u5DF2\\u70B9\\u51FB\\u3002"
         }
       },
       exporter: {
-        buttonClicked: "\\u5BFC\\u51FA\\u6309\\u94AE\\u88AB\\u70B9\\u51FB, \\u5BFC\\u51FA\\u683C\\u5F0F: {{format}}\\u3002",
-        csvError: "\\u5728\\u89E3\\u6790\\u6587\\u672C\\u5E76\\u751F\\u6210 CSV \\u65F6\\u53D1\\u751F\\u9519\\u8BEF: {{error}}",
+        buttonClicked: "\\u5BFC\\u51FA\\u6309\\u94AE\\u5DF2\\u70B9\\u51FB\\uFF0C\\u683C\\u5F0F: {{format}}\\u3002",
+        csvError: "\\u89E3\\u6790\\u6587\\u672C\\u5E76\\u751F\\u6210CSV\\u65F6\\u51FA\\u9519: {{error}}",
         fileExported: "\\u6587\\u4EF6\\u5DF2\\u5BFC\\u51FA: {{filename}}",
-        noContent: "\\u6CA1\\u6709\\u5185\\u5BB9\\u53EF\\u5BFC\\u51FA\\u3002",
+        noContent: "\\u65E0\\u5185\\u5BB9\\u53EF\\u5BFC\\u51FA\\u3002",
         unknownFormat: "\\u672A\\u77E5\\u7684\\u5BFC\\u51FA\\u683C\\u5F0F: {{format}}"
       },
       main: {
-        requestingSessionScanData: "\\u4ECE session-scan \\u6A21\\u5F0F\\u8BF7\\u6C42\\u5B8C\\u6574\\u6570\\u636E...",
-        exportingQuickScanData: "\\u4ECE quick-scan \\u6A21\\u5F0F\\u7684\\u5185\\u5B58\\u4E2D\\u5BFC\\u51FA\\u5B8C\\u6574\\u6570\\u636E...",
+        requestingSessionScanData: "\\u6B63\\u5728\\u8BF7\\u6C42\\u4F1A\\u8BDD\\u626B\\u63CF\\u6A21\\u5F0F\\u7684\\u5B8C\\u6574\\u6570\\u636E...",
+        exportingQuickScanData: "\\u6B63\\u5728\\u5BFC\\u51FA\\u5FEB\\u901F\\u626B\\u63CF\\u6A21\\u5F0F\\u5185\\u5B58\\u4E2D\\u7684\\u5B8C\\u6574\\u6570\\u636E...",
         inIframe: "\\u811A\\u672C\\u5728 iframe \\u4E2D\\uFF0C\\u5DF2\\u8DF3\\u8FC7\\u521D\\u59CB\\u5316\\u3002",
-        initializing: "\\u811A\\u672C\\u5F00\\u59CB\\u521D\\u59CB\\u5316...",
+        initializing: "\\u811A\\u672C\\u521D\\u59CB\\u5316\\u5F00\\u59CB...",
         initialSettingsLoaded: "\\u521D\\u59CB\\u8BBE\\u7F6E\\u5DF2\\u52A0\\u8F7D:"
       },
       dom: {
-        ttpCreationError: "\\u521B\\u5EFA Trusted Type \\u7B56\\u7565\\u5931\\u8D25\\uFF1A",
-        svgParseError: "\\u65E0\\u6548\\u6216\\u89E3\\u6790\\u5931\\u8D25\\u7684 SVG \\u5B57\\u7B26\\u4E32\\uFF1A"
+        ttpCreationError: "\\u521B\\u5EFA Trusted Type \\u7B56\\u7565\\u5931\\u8D25:",
+        svgParseError: "SVG \\u5B57\\u7B26\\u4E32\\u65E0\\u6548\\u6216\\u89E3\\u6790\\u5931\\u8D25:"
       },
       elementScan: {
-        starting: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5DF2\\u542F\\u52A8\\u3002",
+        starting: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5DF2\\u5F00\\u59CB\\u3002",
         stopping: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5DF2\\u505C\\u6B62\\u3002",
-        listenersAdded: "\\u5DF2\\u6DFB\\u52A0\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u7684\\u5168\\u5C40\\u4E8B\\u4EF6\\u76D1\\u542C\\u5668\\u3002",
-        listenersRemoved: "\\u5DF2\\u79FB\\u9664\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u7684\\u5168\\u5C40\\u4E8B\\u4EF6\\u76D1\\u542C\\u5668\\u3002",
+        listenersAdded: "\\u5DF2\\u4E3A\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u6DFB\\u52A0\\u5168\\u5C40\\u4E8B\\u4EF6\\u76D1\\u542C\\u5668\\u3002",
+        listenersRemoved: "\\u5DF2\\u4E3A\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u79FB\\u9664\\u5168\\u5C40\\u4E8B\\u4EF6\\u76D1\\u542C\\u5668\\u3002",
         stateReset: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u72B6\\u6001\\u5DF2\\u91CD\\u7F6E\\u3002",
         reselecting: "\\u6B63\\u5728\\u8FD4\\u56DE\\u5143\\u7D20\\u91CD\\u65B0\\u9009\\u62E9\\u6A21\\u5F0F\\u3002",
-        hovering: "\\u5F53\\u524D\\u60AC\\u505C\\u4E8E <{{tagName}}>\\u3002",
-        escapePressed: "\\u7528\\u6237\\u6309\\u4E0B Escape \\u952E\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u3002",
-        clickedEnteringAdjust: "\\u5DF2\\u70B9\\u51FB\\u5143\\u7D20 <{{tagName}}>\\uFF0C\\u8FDB\\u5165\\u5C42\\u7EA7\\u8C03\\u6574\\u6A21\\u5F0F\\u3002",
+        hovering: "\\u6B63\\u5728\\u60AC\\u505C\\u4E8E <{{tagName}}>\\u3002",
+        escapePressed: "\\u6309\\u4E0B Escape \\u952E\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u3002",
+        clickedEnteringAdjust: "\\u5143\\u7D20 <{{tagName}}> \\u5DF2\\u88AB\\u70B9\\u51FB\\uFF0C\\u6B63\\u5728\\u8FDB\\u5165\\u8C03\\u6574\\u6A21\\u5F0F\\u3002",
         pathBuilt: "\\u5143\\u7D20\\u5C42\\u7EA7\\u8DEF\\u5F84\\u5DF2\\u6784\\u5EFA\\uFF0C\\u6DF1\\u5EA6\\u4E3A\\uFF1A{{depth}}\\u3002",
         adjustingLevel: "\\u6B63\\u5728\\u8C03\\u6574\\u9009\\u62E9\\u5C42\\u7EA7\\u81F3 {{level}} ({{tagName}})\\u3002",
         confirmExtracting: "\\u9009\\u62E9\\u5DF2\\u786E\\u8BA4\\uFF0C\\u6B63\\u5728\\u4ECE <{{tagName}}> \\u63D0\\u53D6\\u6587\\u672C\\u3002",
+        staged: "\\u5143\\u7D20\\u5DF2\\u6682\\u5B58\\u3002\\u603B\\u6570\\uFF1A{{count}}\\u3002",
+        confirmingStaged: "\\u786E\\u8BA4\\u9009\\u62E9\\u3002\\u6B63\\u5728\\u5904\\u7406 {{count}} \\u4E2A\\u5DF2\\u6682\\u5B58\\u7684\\u5143\\u7D20\\u3002",
         extractedCount: "\\u5DF2\\u4ECE\\u5143\\u7D20\\u4E2D\\u63D0\\u53D6 {{count}} \\u6761\\u539F\\u59CB\\u6587\\u672C\\u3002",
         confirmFailedNoTarget: "\\u786E\\u8BA4\\u5931\\u8D25\\uFF1A\\u672A\\u9009\\u62E9\\u4EFB\\u4F55\\u76EE\\u6807\\u5143\\u7D20\\u3002",
         rightClickExit: "\\u68C0\\u6D4B\\u5230\\u53F3\\u952E\\u70B9\\u51FB\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u3002",
         processingError: "\\u6587\\u672C\\u5904\\u7406\\u8FC7\\u7A0B\\u4E2D\\u53D1\\u751F\\u9519\\u8BEF: {{error}}",
         worker: {
-          logPrefix: "[\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker]",
+          logPrefix: "[ES Worker]",
           starting: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u6B63\\u5728\\u542F\\u52A8...",
-          sendingData: "\\u6B63\\u5728\\u53D1\\u9001 {{count}} \\u6761\\u6587\\u672C\\u81F3\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker\\u3002",
-          completed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u5904\\u7406\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {{count}} \\u6761\\u6709\\u6548\\u6587\\u672C\\u3002",
-          initFailed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u521D\\u59CB\\u5316\\u5931\\u8D25\\u3002\\u53EF\\u80FD\\u662F\\u7F51\\u7AD9\\u7684 CSP \\u7B56\\u7565\\u963B\\u6B62\\u4E86 data: URL\\u3002",
-          initSyncError: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u521D\\u59CB\\u5316\\u65F6\\u53D1\\u751F\\u540C\\u6B65\\u9519\\u8BEF: {{error}}",
+          sendingData: "\\u6B63\\u5728\\u5411\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u53D1\\u9001 {{count}} \\u6761\\u6587\\u672C\\u7247\\u6BB5\\u3002",
+          completed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u5DF2\\u5B8C\\u6210\\uFF0C\\u627E\\u5230 {{count}} \\u6761\\u4E0D\\u91CD\\u590D\\u6587\\u672C\\u3002",
+          initFailed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u521D\\u59CB\\u5316\\u5931\\u8D25\\u3002\\u6D4F\\u89C8\\u5668\\u7684CSP\\u53EF\\u80FD\\u963B\\u6B62\\u4E86 data: URL\\u3002",
+          initSyncError: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u521D\\u59CB\\u5316\\u671F\\u95F4\\u53D1\\u751F\\u540C\\u6B65\\u9519\\u8BEF: {{error}}",
           originalError: "\\u539F\\u59CB Worker \\u9519\\u8BEF: {{error}}"
         },
         switchToFallback: "\\u6B63\\u5728\\u4E3A\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
@@ -2462,6 +2499,7 @@ ${result.join(",\n")}
         toolbarPositioned: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u5DE5\\u5177\\u680F\\u5DF2\\u5B9A\\u4F4D\\u3002",
         sliderChanged: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u6ED1\\u5757\\u5C42\\u7EA7\\u53D8\\u4E3A {{level}}",
         reselectClicked: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u201C\\u91CD\\u65B0\\u9009\\u62E9\\u201D\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\u3002",
+        stageClicked: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u201C\\u6682\\u5B58\\u201D\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\u3002",
         cancelClicked: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u201C\\u53D6\\u6D88\\u201D\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\u3002",
         confirmClicked: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u201C\\u786E\\u8BA4\\u201D\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\u3002",
         dragStarted: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u62D6\\u52A8\\u5F00\\u59CB\\u3002",
@@ -2470,13 +2508,13 @@ ${result.join(",\n")}
         cleaningToolbar: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u6B63\\u5728\\u6E05\\u7406\\u5DE5\\u5177\\u680F\\u3002"
       },
       eventBus: {
-        callbackError: "\\u5728 '{{eventName}}' \\u4E8B\\u4EF6\\u7684\\u56DE\\u8C03\\u4E2D\\u53D1\\u751F\\u9519\\u8BEF\\uFF1A"
+        callbackError: "\\u4E8B\\u4EF6 '{{eventName}}' \\u7684\\u56DE\\u8C03\\u51FD\\u6570\\u51FA\\u9519:"
       },
       trustedTypes: {
-        workerPolicyError: "\\u521B\\u5EFA Trusted Types worker \\u7B56\\u7565\\u5931\\u8D25\\uFF1A",
-        htmlPolicyError: "\\u521B\\u5EFA Trusted Types HTML \\u7B56\\u7565\\u5931\\u8D25\\uFF1A",
-        defaultWorkerPolicyWarning: "Trusted Types \\u9ED8\\u8BA4\\u7B56\\u7565\\u5904\\u7406 worker URL \\u5931\\u8D25\\uFF0C\\u56DE\\u9000\\u5230\\u539F\\u59CB URL\\u3002",
-        defaultHtmlPolicyWarning: "Trusted Types \\u9ED8\\u8BA4\\u7B56\\u7565\\u5904\\u7406 HTML \\u5931\\u8D25\\uFF0C\\u56DE\\u9000\\u5230\\u539F\\u59CB\\u5B57\\u7B26\\u4E32\\u3002"
+        workerPolicyError: "\\u521B\\u5EFA Trusted Types worker \\u7B56\\u7565\\u5931\\u8D25:",
+        htmlPolicyError: "\\u521B\\u5EFA Trusted Types HTML \\u7B56\\u7565\\u5931\\u8D25:",
+        defaultWorkerPolicyWarning: "\\u7528\\u4E8E worker URL \\u7684 Trusted Types \\u9ED8\\u8BA4\\u7B56\\u7565\\u5931\\u8D25\\uFF0C\\u56DE\\u9000\\u5230\\u539F\\u59CB URL\\u3002",
+        defaultHtmlPolicyWarning: "\\u7528\\u4E8E HTML \\u7684 Trusted Types \\u9ED8\\u8BA4\\u7B56\\u7565\\u5931\\u8D25\\uFF0C\\u56DE\\u9000\\u5230\\u539F\\u59CB\\u5B57\\u7B26\\u4E32\\u3002"
       }
     }
   };
@@ -2485,15 +2523,16 @@ ${result.join(",\n")}
     common: {
       scan: "\\u6383\\u63CF",
       stop: "\\u505C\\u6B62",
-      resume: "\\u7E7C\\u7E8C",
+      resume: "\\u6062\\u5FA9",
       clear: "\\u6E05\\u7A7A",
       copy: "\\u8907\\u88FD",
       save: "\\u5132\\u5B58",
-      discovered: "\\u5DF2\\u767C\\u73FE\\uFF1A",
+      discovered: "\\u5DF2\\u767C\\u73FE:",
       confirm: "\\u78BA\\u8A8D",
       cancel: "\\u53D6\\u6D88",
       export: "\\u532F\\u51FA",
-      reselect: "\\u91CD\\u65B0\\u9078\\u64C7"
+      reselect: "\\u91CD\\u65B0\\u9078\\u64C7",
+      stage: "\\u66AB\\u5B58"
     },
     export: {
       exportAsTxt: "\\u532F\\u51FA\\u70BA TXT",
@@ -2507,28 +2546,28 @@ ${result.join(",\n")}
     },
     settings: {
       title: "\\u8A2D\\u5B9A",
-      theme: "\\u4ECB\\u9762\\u4E3B\\u984C",
-      language: "\\u8A9E\\u8A00\\u8A2D\\u5B9A",
+      theme: "\\u4E3B\\u984C",
+      language: "\\u8A9E\\u8A00",
       relatedSettings: "\\u76F8\\u95DC\\u8A2D\\u5B9A",
       filterRules: "\\u5167\\u5BB9\\u904E\\u6FFE\\u898F\\u5247",
       filters: {
-        numbers: "\\u904E\\u6FFE\\u7D14\\u6578\\u5B57/\\u8CA8\\u5E63",
-        chinese: "\\u904E\\u6FFE\\u7D14\\u4E2D\\u6587",
-        contains_chinese: "\\u904E\\u6FFE\\u5305\\u542B\\u4E2D\\u6587\\u7684\\u6587\\u672C",
-        emoji_only: "\\u904E\\u6FFE\\u7D14\\u8868\\u60C5\\u7B26\\u865F",
-        symbols: "\\u904E\\u6FFE\\u7D14\\u7B26\\u865F",
+        numbers: "\\u904E\\u6FFE\\u6578\\u5B57/\\u8CA8\\u5E63",
+        chinese: "\\u904E\\u6FFE\\u7D14\\u4E2D\\u6587\\u6587\\u672C",
+        contains_chinese: "\\u904E\\u6FFE\\u542B\\u4E2D\\u6587\\u7684\\u6587\\u672C",
+        emoji_only: "\\u904E\\u6FFE\\u7D14\\u8868\\u60C5\\u7B26\\u865F\\u6587\\u672C",
+        symbols: "\\u904E\\u6FFE\\u7D14\\u7B26\\u865F\\u6587\\u672C",
         term: "\\u904E\\u6FFE\\u7279\\u5B9A\\u8853\\u8A9E",
-        single_letter: "\\u904E\\u6FFE\\u7D14\\u55AE\\u500B\\u82F1\\u6587\\u5B57\\u6BCD",
-        repeating_chars: "\\u904E\\u6FFE\\u55AE\\u4E00\\u91CD\\u8907\\u5B57\\u5143",
+        single_letter: "\\u904E\\u6FFE\\u55AE\\u500B\\u82F1\\u6587\\u5B57\\u6BCD",
+        repeating_chars: "\\u904E\\u6FFE\\u91CD\\u8907\\u5B57\\u5143",
         file_paths: "\\u904E\\u6FFE\\u6A94\\u6848\\u8DEF\\u5F91",
-        hex_color_codes: "\\u904E\\u6FFE\\u5341\\u516D\\u9032\\u4F4D\\u984F\\u8272",
-        email_addresses: "\\u904E\\u6FFE\\u90F5\\u4EF6\\u5730\\u5740",
+        hex_color_codes: "\\u904E\\u6FFE\\u5341\\u516D\\u9032\\u4F4D\\u984F\\u8272\\u4EE3\\u78BC",
+        email_addresses: "\\u904E\\u6FFE\\u96FB\\u5B50\\u90F5\\u4EF6\\u5730\\u5740",
         uuids: "\\u904E\\u6FFE UUID",
         git_commit_hashes: "\\u904E\\u6FFE Git \\u63D0\\u4EA4\\u96DC\\u6E4A\\u503C",
-        website_urls: "\\u904E\\u6FFE\\u7DB2\\u5740",
-        website_urls_title: "\\u904E\\u6FFE\\u7DB2\\u5740 (URL)",
-        shorthand_numbers: "\\u904E\\u6FFE\\u7C21\\u5BEB\\u6578\\u5B57",
-        shorthand_numbers_title: "\\u904E\\u6FFE\\u5E36\\u6709\\u55AE\\u4F4D\\u7684\\u7C21\\u5BEB\\u6578\\u5B57"
+        website_urls: "\\u904E\\u6FFE\\u7DB2\\u7AD9\\u9023\\u7D50",
+        website_urls_title: "\\u904E\\u6FFE\\u7DB2\\u7AD9\\u9023\\u7D50",
+        shorthand_numbers: "\\u904E\\u6FFE\\u901F\\u8A18\\u6578\\u5B57",
+        shorthand_numbers_title: "\\u904E\\u6FFE\\u901F\\u8A18\\u6578\\u5B57"
       },
       display: {
         show_fab: "\\u986F\\u793A\\u61F8\\u6D6E\\u6309\\u9215",
@@ -2541,13 +2580,13 @@ ${result.join(",\n")}
         },
         show_line_numbers: "\\u986F\\u793A\\u884C\\u865F",
         show_statistics: "\\u986F\\u793A\\u7D71\\u8A08\\u8CC7\\u8A0A",
-        enable_word_wrap: "\\u555F\\u7528\\u6587\\u5B57\\u81EA\\u52D5\\u63DB\\u884C",
-        text_truncation_limit: "\\u555F\\u7528\\u6587\\u5B57\\u6846\\u5B57\\u5143\\u9650\\u5236",
-        character_limit: "\\u5B57\\u5143\\u6578",
-        show_scan_count: "\\u555F\\u7528\\u6A19\\u984C\\u5217\\u986F\\u793A\\u6383\\u63CF\\u8A08\\u6578"
+        enable_word_wrap: "\\u555F\\u7528\\u81EA\\u52D5\\u63DB\\u884C",
+        text_truncation_limit: "\\u555F\\u7528\\u6587\\u672C\\u622A\\u65B7\\u9650\\u5236",
+        character_limit: "\\u5B57\\u5143\\u9650\\u5236",
+        show_scan_count: "\\u5728\\u6A19\\u984C\\u4E2D\\u555F\\u7528\\u6383\\u63CF\\u8A08\\u6578"
       },
       advanced: {
-        enable_debug_logging: "\\u555F\\u7528\\u5075\\u932F\\u65E5\\u8A8C"
+        enable_debug_logging: "\\u555F\\u7528\\u5075\\u932F\\u65E5\\u8A8C\\u8A18\\u9304"
       },
       panel: {
         title: "\\u8A2D\\u5B9A\\u9762\\u677F"
@@ -2566,45 +2605,46 @@ ${result.join(",\n")}
     scan: {
       quick: "\\u5FEB\\u901F\\u6383\\u63CF",
       session: "\\u6703\\u8A71\\u6383\\u63CF",
+      stagedCount: "\\u5DF2\\u66AB\\u5B58:",
       elementFinished: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {{count}} \\u689D\\u6587\\u672C\\u3002",
       startSession: "\\u958B\\u59CB\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71",
       stopSession: "\\u505C\\u6B62\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71",
-      finished: "\\u6383\\u63CF\\u7D50\\u675F\\uFF0C\\u5171\\u767C\\u73FE {{count}} \\u689D\\u6587\\u672C",
-      quickFinished: "\\u5FEB\\u6377\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {{count}} \\u689D\\u6587\\u672C",
-      sessionStarted: "\\u6703\\u8A71\\u6383\\u63CF\\u5DF2\\u958B\\u59CB",
-      sessionInProgress: "\\u6383\\u63CF\\u6B63\\u5728\\u9032\\u884C\\u4E2D...",
-      truncationWarning: "\\u70BA\\u4FDD\\u6301\\u4ECB\\u9762\\u6D41\\u66A2\\uFF0C\\u6B64\\u8655\\u50C5\\u986F\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u5B8C\\u6574\\u5167\\u5BB9\\u5C07\\u5728\\u532F\\u51FA\\u6642\\u63D0\\u4F9B\\u3002"
+      finished: "\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {{count}} \\u689D\\u6587\\u672C\\u3002",
+      quickFinished: "\\u5FEB\\u901F\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {{count}} \\u689D\\u6587\\u672C\\u3002",
+      sessionStarted: "\\u6703\\u8A71\\u6383\\u63CF\\u5DF2\\u958B\\u59CB\\u3002",
+      sessionInProgress: "\\u6383\\u63CF\\u9032\\u884C\\u4E2D...",
+      truncationWarning: "\\u70BA\\u4FDD\\u6301\\u4ECB\\u9762\\u6D41\\u66A2\\uFF0C\\u6B64\\u8655\\u50C5\\u986F\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u532F\\u51FA\\u5F8C\\u5C07\\u5305\\u542B\\u5B8C\\u6574\\u5167\\u5BB9\\u3002"
     },
     results: {
       title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",
-      scanCountSession: "\\u5DF2\\u6383\\u63CF {{count}} \\u689D\\u6587\\u672C",
-      scanCountStatic: "\\u5171\\u6383\\u63CF {{count}} \\u689D\\u6587\\u672C",
-      totalCharacters: "\\u7E3D\\u5B57\\u6578",
+      scanCountSession: "\\u5DF2\\u6383\\u63CF {{count}} \\u500B\\u9805\\u76EE",
+      scanCountStatic: "\\u5171\\u6383\\u63CF {{count}} \\u500B\\u9805\\u76EE",
+      totalCharacters: "\\u7E3D\\u5B57\\u5143\\u6578",
       totalLines: "\\u7E3D\\u884C\\u6578",
-      noSummary: "\\u7576\\u524D\\u6C92\\u6709\\u6458\\u8981\\u6587\\u672C",
+      noSummary: "\\u7121\\u53EF\\u7528\\u6458\\u8981",
       stats: {
         lines: "\\u884C",
-        chars: "\\u5B57\\u5143\\u6578"
+        chars: "\\u5B57\\u5143"
       }
     },
     notifications: {
       copiedToClipboard: "\\u5DF2\\u8907\\u88FD\\u5230\\u526A\\u8CBC\\u7C3F\\uFF01",
       settingsSaved: "\\u8A2D\\u5B9A\\u5DF2\\u5132\\u5B58\\uFF01",
-      modalInitError: "\\u6A21\\u614B\\u6846\\u5C1A\\u672A\\u521D\\u59CB\\u5316\\u3002",
-      nothingToCopy: "\\u6C92\\u6709\\u5167\\u5BB9\\u53EF\\u8907\\u88FD",
-      contentCleared: "\\u5167\\u5BB9\\u5DF2\\u6E05\\u7A7A",
-      noTextSelected: "\\u672A\\u9078\\u64C7\\u6587\\u672C",
-      cspWorkerWarning: "\\u7531\\u65BC\\u7DB2\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u63DB\\u5230\\u76F8\\u5BB9\\u6383\\u63CF\\u6A21\\u5F0F\\u3002"
+      modalInitError: "\\u6A21\\u614B\\u6846\\u672A\\u521D\\u59CB\\u5316\\u3002",
+      nothingToCopy: "\\u6C92\\u6709\\u53EF\\u8907\\u88FD\\u7684\\u5167\\u5BB9\\u3002",
+      contentCleared: "\\u5167\\u5BB9\\u5DF2\\u6E05\\u9664\\u3002",
+      noTextSelected: "\\u672A\\u9078\\u64C7\\u4EFB\\u4F55\\u6587\\u672C\\u3002",
+      cspWorkerWarning: "\\u56E0\\u7DB2\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u63DB\\u81F3\\u76F8\\u5BB9\\u6383\\u63CF\\u6A21\\u5F0F\\u3002"
     },
     placeholders: {
       click: "\\u9EDE\\u64CA ",
       dynamicScan: "[\\u52D5\\u614B\\u6383\\u63CF]",
-      startNewScanSession: " \\u6309\\u9215\\u958B\\u59CB\\u4E00\\u500B\\u65B0\\u7684\\u6383\\u63CF\\u6703\\u8A71",
+      startNewScanSession: " \\u958B\\u59CB\\u65B0\\u7684\\u6383\\u63CF\\u6703\\u8A71",
       staticScan: "[\\u975C\\u614B\\u6383\\u63CF]",
-      performOneTimeScan: " \\u6309\\u9215\\u53EF\\u9032\\u884C\\u4E00\\u6B21\\u6027\\u7684\\u5FEB\\u6377\\u63D0\\u53D6"
+      performOneTimeScan: " \\u57F7\\u884C\\u4E00\\u6B21\\u6027\\u5FEB\\u901F\\u63D0\\u53D6"
     },
     confirmation: {
-      clear: "\\u4F60\\u78BA\\u8A8D\\u8981\\u6E05\\u7A7A\\u55CE\\uFF1F\\u6B64\\u64CD\\u4F5C\\u4E0D\\u53EF\\u64A4\\u92B7\\u3002"
+      clear: "\\u60A8\\u78BA\\u5B9A\\u8981\\u6E05\\u9664\\u5167\\u5BB9\\u55CE\\uFF1F\\u6B64\\u64CD\\u4F5C\\u7121\\u6CD5\\u64A4\\u92B7\\u3002"
     },
     tooltip: {
       summary: "\\u67E5\\u770B\\u6458\\u8981",
@@ -2613,47 +2653,47 @@ ${result.join(",\n")}
       element_scan: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF",
       filters: {
         title: "\\u5167\\u5BB9\\u904E\\u6FFE\\u5668\\u8AAA\\u660E",
-        numbers: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u6578\\u5B57\\u3001\\u7A7A\\u683C\\u3001\\u5343\\u4F4D\\u5206\\u9694\\u7B26 (.)\\u3001\\u5C0F\\u6578\\u9EDE (,) \\u4EE5\\u53CA\\u90E8\\u5206\\u8CA8\\u5E63\\u7B26\\u865F ($, \\u20AC, \\xA3, \\xA5) \\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "1,234.56"<br>\\u2022 "\\xA5999"<br>\\u2022 "\\u20AC200"<br>\\u2022 "$ 100"',
-        chinese: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u4E2D\\u6587\\u5B57\\u5143\\u548C\\u7A7A\\u683C\\u7D44\\u6210\\u7684\\u6587\\u672C\\uFF0C\\u4E0D\\u5305\\u62EC\\u4EFB\\u4F55\\u6A19\\u9EDE\\u7B26\\u865F\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "\\u4F60\\u597D \\u4E16\\u754C" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "\\u4F60\\u597D\\uFF0C\\u4E16\\u754C" (\\u4E0D\\u6703\\u88AB\\u904E\\u6FFE)',
-        contains_chinese: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389<strong>\\u4EFB\\u4F55\\u5305\\u542B</strong>\\u81F3\\u5C11\\u4E00\\u500B\\u4E2D\\u6587\\u5B57\\u5143\\u7684\\u6587\\u672C\\uFF0C\\u7121\\u8AD6\\u662F\\u5426\\u5305\\u542B\\u5176\\u4ED6\\u5B57\\u5143\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "\\u4F60\\u597D World" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "\\u7B2C 1 \\u7AE0" (\\u5C07\\u88AB\\u904E\\u6FFE)',
-        emoji_only: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u4E00\\u500B\\u6216\\u591A\\u500B\\u8868\\u60C5\\u7B26\\u865F\\u53CA\\u7A7A\\u683C\\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "\\u{1F44D}"<br>\\u2022 "\\u{1F60A} \\u{1F389} \\u{1F680}"',
-        symbols: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u5404\\u985E\\u6A19\\u9EDE\\u548C\\u7B26\\u865F\\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "@#*&^%"<br>\\u2022 "()[]{}"<br>\\u2022 "---...---"',
-        term: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u5E38\\u898B\\u7684\\u3001\\u901A\\u5E38\\u7121\\u9700\\u7FFB\\u8B6F\\u7684 UI \\u8853\\u8A9E\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "OK", "Cancel", "Submit"<br>\\u2022 "Login", "Settings", "Help"',
-        single_letter: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u7531<strong>\\u55AE\\u500B</strong>\\u82F1\\u6587\\u5B57\\u6BCD\\u7D44\\u6210\\u7684\\u6587\\u672C\\uFF0C\\u5FFD\\u7565\\u5927\\u5C0F\\u5BEB\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "A" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "b" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "AB" (\\u4E0D\\u6703\\u88AB\\u904E\\u6FFE)',
-        repeating_chars: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u7531<strong>\\u540C\\u4E00\\u500B\\u5B57\\u5143</strong>\\u9023\\u7E8C\\u91CD\\u8907 2 \\u6B21\\u6216\\u4EE5\\u4E0A\\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "aa"<br>\\u2022 "======"<br>\\u2022 "bbbbb"',
-        file_paths: '\\u6B64\\u898F\\u5247\\u6703\\u5617\\u8A66\\u8B58\\u5225\\u4E26\\u904E\\u6FFE\\u6389\\u985E\\u4F3C\\u4F5C\\u696D\\u7CFB\\u7D71\\u7684\\u3001\\u4E14<strong>\\u5305\\u542B\\u526F\\u6A94\\u540D</strong>\\u7684\\u6A94\\u6848\\u8DEF\\u5F91\\uFF0C\\u4F46\\u5B83\\u4E0D\\u6703\\u5339\\u914D URL\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "/path/to/file.js"<br>\\u2022 "C:\\\\Users\\\\Test\\\\document.docx"<br>\\u2022 "./config.json"',
-        hex_color_codes: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u6A19\\u6E96\\u7684 CSS \\u5341\\u516D\\u9032\\u4F4D\\u984F\\u8272\\u4EE3\\u78BC\\uFF083\\u30014\\u30016 \\u6216 8 \\u4F4D\\uFF0C\\u5F8C\\u8005\\u53EF\\u5305\\u542B Alpha \\u901A\\u9053\\uFF09\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "#FFFFFF"<br>\\u2022 "#ff0000"<br>\\u2022 "#f0c"<br>\\u2022 "#f0c8" (4\\u4F4D)<br>\\u2022 "#ff000080" (8\\u4F4D)',
-        email_addresses: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u7B26\\u5408\\u6A19\\u6E96\\u683C\\u5F0F\\u7684\\u96FB\\u5B50\\u90F5\\u4EF6\\u5730\\u5740\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "example@domain.com"<br>\\u2022 "user.name@sub.domain.org"',
-        uuids: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u901A\\u7528\\u552F\\u4E00\\u8B58\\u5225\\u78BC (UUID)\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "123e4567-e89b-12d3-a456-426614174000"',
-        git_commit_hashes: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u6A19\\u6E96\\u7684 Git \\u63D0\\u4EA4\\u96DC\\u6E4A\\u503C\\uFF08\\u9577\\u96DC\\u6E4A\\u6216\\u77ED\\u96DC\\u6E4A\\uFF09\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\\u2022 "a1b2c3d"',
-        website_urls: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389<strong>\\u7368\\u7ACB\\u7684 URL</strong> \\u6587\\u5B57\\u3002\\u5B83\\u7684\\u6BD4\\u5C0D\\u898F\\u5247\\u88AB\\u8A2D\\u8A08\\u5F97\\u975E\\u5E38\\u56B4\\u683C\\uFF0C\\u4EE5\\u907F\\u514D\\u610F\\u5916\\u79FB\\u9664\\u4E0D\\u662F\\u9023\\u7D50\\u7684\\u6587\\u5B57\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "https://www.example.com"<br>\\u2022 "http://test.co.uk"<br>\\u2022 "www.google.com"<br>\\u2022 "example.org"',
-        shorthand_numbers: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u4F7F\\u7528<strong>\\u5E38\\u898B\\u7C21\\u5BEB\\u5F8C\\u7DB4</strong>\\u7684\\u6578\\u5B57\\uFF0C\\u4F8B\\u5982 k (\\u5343)\\u3001m (\\u767E\\u842C) \\u6216 b (\\u5341\\u5104)\\uFF0C\\u4E0D\\u5340\\u5206\\u5927\\u5C0F\\u5BEB\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "1.2k"<br>\\u2022 "15M"<br>\\u2022 "2.5b"<br>\\u2022 "100K"'
+        numbers: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168</strong>\\u7531\\u6578\\u5B57\\u3001\\u7A7A\\u683C\\u3001\\u5343\\u4F4D\\u5206\\u9694\\u7B26(,)\\u3001\\u5C0F\\u6578\\u9EDE(.)\\u4EE5\\u53CA\\u90E8\\u5206\\u8CA8\\u5E63\\u7B26\\u865F($, \\u20AC, \\xA3, \\xA5)\\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B:</strong><br>\\u2022 "1,234.56"<br>\\u2022 "\\xA5999"<br>\\u2022 "\\u20AC200"<br>\\u2022 "$ 100"',
+        chinese: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168</strong>\\u7531\\u6F22\\u5B57\\u548C\\u7A7A\\u683C\\u7D44\\u6210\\uFF0C\\u4E14\\u4E0D\\u542B\\u4EFB\\u4F55\\u6A19\\u9EDE\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u7BC4\\u4F8B:</strong><br>\\u2022 "\\u4F60\\u597D \\u4E16\\u754C" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "\\u4F60\\u597D\\uFF0C\\u4E16\\u754C" (\\u4E0D\\u6703\\u88AB\\u904E\\u6FFE)',
+        contains_chinese: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389\\u4EFB\\u4F55\\u542B\\u6709\\u81F3\\u5C11\\u4E00\\u500B\\u6F22\\u5B57\\u7684\\u6587\\u672C\\uFF0C\\u7121\\u8AD6\\u5176\\u4ED6\\u5B57\\u5143\\u662F\\u4EC0\\u9EBC\\u3002<br><br><strong>\\u7BC4\\u4F8B:</strong><br>\\u2022 "\\u4F60\\u597D World" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "\\u7B2C\\u4E00\\u7AE0" (\\u5C07\\u88AB\\u904E\\u6FFE)',
+        emoji_only: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168</strong>\\u7531\\u4E00\\u500B\\u6216\\u591A\\u500B\\u8868\\u60C5\\u7B26\\u865F\\u53CA\\u7A7A\\u683C\\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u7BC4\\u4F8B:</strong><br>\\u2022 "\\u{1F44D}"<br>\\u2022 "\\u{1F60A} \\u{1F389} \\u{1F680}"',
+        symbols: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168</strong>\\u7531\\u5404\\u7A2E\\u6A19\\u9EDE\\u548C\\u7B26\\u865F\\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B:</strong><br>\\u2022 "@#*&^%"<br>\\u2022 "()[]{}"<br>\\u2022 "---...---"',
+        term: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389\\u901A\\u5E38\\u4E0D\\u9700\\u8981\\u7FFB\\u8B6F\\u7684\\u5E38\\u898BUI\\u8853\\u8A9E\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B:</strong><br>\\u2022 "OK", "Cancel", "Submit"<br>\\u2022 "Login", "Settings", "Help"',
+        single_letter: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389\\u7531<strong>\\u55AE\\u500B</strong>\\u82F1\\u6587\\u5B57\\u6BCD\\u7D44\\u6210\\u7684\\u6587\\u672C\\uFF08\\u4E0D\\u5340\\u5206\\u5927\\u5C0F\\u5BEB\\uFF09\\u3002<br><br><strong>\\u7BC4\\u4F8B:</strong><br>\\u2022 "A" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "b" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "AB" (\\u4E0D\\u6703\\u88AB\\u904E\\u6FFE)',
+        repeating_chars: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389\\u7531<strong>\\u540C\\u4E00\\u500B\\u5B57\\u5143</strong>\\u9023\\u7E8C\\u91CD\\u89072\\u6B21\\u6216\\u4EE5\\u4E0A\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u7BC4\\u4F8B:</strong><br>\\u2022 "aa"<br>\\u2022 "======"<br>\\u2022 "bbbbb"',
+        file_paths: '\\u6B64\\u898F\\u5247\\u5617\\u8A66\\u8B58\\u5225\\u4E26\\u904E\\u6FFE\\u6389\\u985E\\u4F3C\\u4F5C\\u696D\\u7CFB\\u7D71\\u6A94\\u6848\\u8DEF\\u5F91\\u4E14<strong>\\u5305\\u542B\\u6A94\\u6848\\u526F\\u6A94\\u540D</strong>\\u7684\\u6587\\u672C\\u3002\\u5B83\\u4E0D\\u5339\\u914D\\u7DB2\\u5740\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B:</strong><br>\\u2022 "/path/to/file.js"<br>\\u2022 "C:\\\\Users\\\\Test\\\\document.docx"<br>\\u2022 "./config.json"',
+        hex_color_codes: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389\\u6A19\\u6E96\\u7684CSS\\u5341\\u516D\\u9032\\u4F4D\\u984F\\u8272\\u4EE3\\u78BC\\uFF083\\u30014\\u30016\\u62168\\u4F4D\\uFF0C\\u5F8C\\u8005\\u5305\\u542B\\u900F\\u660E\\u5EA6\\u901A\\u9053\\uFF09\\u3002<br><br><strong>\\u7BC4\\u4F8B:</strong><br>\\u2022 "#FFFFFF"<br>\\u2022 "#ff0000"<br>\\u2022 "#f0c"<br>\\u2022 "#f0c8" (4\\u4F4D)<br>\\u2022 "#ff000080" (8\\u4F4D)',
+        email_addresses: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389\\u7B26\\u5408\\u6A19\\u6E96\\u96FB\\u5B50\\u90F5\\u4EF6\\u5730\\u5740\\u683C\\u5F0F\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u7BC4\\u4F8B:</strong><br>\\u2022 "example@domain.com"<br>\\u2022 "user.name@sub.domain.org"',
+        uuids: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389\\u901A\\u7528\\u552F\\u4E00\\u8B58\\u5225\\u78BC (UUID)\\u3002<br><br><strong>\\u7BC4\\u4F8B:</strong><br>\\u2022 "123e4567-e89b-12d3-a456-426614174000"',
+        git_commit_hashes: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389\\u6A19\\u6E96\\u7684Git\\u63D0\\u4EA4\\u96DC\\u6E4A\\u503C\\uFF08\\u9577\\u6216\\u77ED\\uFF09\\u3002<br><br><strong>\\u7BC4\\u4F8B:</strong><br>\\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\\u2022 "a1b2c3d"',
+        website_urls: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389<strong>\\u7368\\u7ACB\\u7684\\u7DB2\\u5740</strong>\\u3002\\u5B83\\u8A2D\\u8A08\\u5F97\\u6BD4\\u8F03\\u56B4\\u683C\\uFF0C\\u4EE5\\u907F\\u514D\\u610F\\u5916\\u79FB\\u9664\\u4E0D\\u662F\\u9023\\u7D50\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B:</strong><br>\\u2022 "https://www.example.com"<br>\\u2022 "http://test.co.uk"<br>\\u2022 "www.google.com"<br>\\u2022 "example.org"',
+        shorthand_numbers: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389\\u4F7F\\u7528<strong>\\u5E38\\u898B\\u901F\\u8A18\\u5F8C\\u7DB4</strong>\\u8868\\u793A\\u5343(k)\\u3001\\u767E\\u842C(m)\\u6216\\u5341\\u5104(b)\\u7684\\u6578\\u5B57\\uFF08\\u4E0D\\u5340\\u5206\\u5927\\u5C0F\\u5BEB\\uFF09\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B:</strong><br>\\u2022 "1.2k"<br>\\u2022 "15M"<br>\\u2022 "2.5b"<br>\\u2022 "100K"'
       },
       display: {
         title: "\\u986F\\u793A\\u8A2D\\u5B9A\\u8AAA\\u660E",
-        show_fab: "\\u63A7\\u5236\\u662F\\u5426\\u5728\\u7DB2\\u9801\\u53F3\\u4E0B\\u89D2\\u986F\\u793A <strong>\\u6D6E\\u52D5\\u52D5\\u4F5C\\u6309\\u9215 (FAB)</strong>\\u3002\\u9019\\u662F\\u975C\\u614B\\u6587\\u5B57\\u8403\\u53D6\\u3001\\u52D5\\u614B\\u6587\\u5B57\\u8403\\u53D6\\u7684\\u6838\\u5FC3\\u5165\\u53E3\\u3002<br><br>\\u5982\\u679C\\u60A8\\u7981\\u7528\\u4E86\\u6B64\\u6309\\u9215\\uFF0C\\u53EF\\u4EE5\\u900F\\u904E\\u6CB9\\u7334\\u64F4\\u5145\\u529F\\u80FD\\u9078\\u55AE\\u7684\\u8A2D\\u5B9A\\u9762\\u677F\\u91CD\\u65B0\\u958B\\u555F\\u3002",
-        show_scan_count: "\\u555F\\u7528\\u5F8C\\uFF0C\\u5728\\u7D50\\u679C\\u8996\\u7A97\\u7684\\u6A19\\u984C\\u5217\\u6703<strong>\\u5373\\u6642\\u66F4\\u65B0</strong>\\u672C\\u6B21\\u6383\\u63CF\\u767C\\u73FE\\u7684\\u6587\\u672C\\u689D\\u76EE\\u7E3D\\u6578\\u3002\\u5728\\u9032\\u884C\\u9577\\u6642\\u9593\\u7684<strong>\\u52D5\\u614B\\u6383\\u63CF</strong>\\u6642\\uFF0C\\u9019\\u500B\\u8A08\\u6578\\u5668\\u53EF\\u4EE5\\u5F88\\u76F4\\u89C0\\u5730\\u53CD\\u6620\\u6383\\u63CF\\u9032\\u5EA6\\u3002",
-        show_line_numbers: "\\u5728\\u7D50\\u679C\\u8996\\u7A97\\u7684\\u6587\\u672C\\u5340\\u57DF\\u5DE6\\u5074\\u986F\\u793A\\u884C\\u865F\\u3002\\u7576\\u60A8\\u9700\\u8981\\u8207\\u4ED6\\u4EBA\\u8A0E\\u8AD6\\u6216\\u8A18\\u9304\\u7279\\u5B9A\\u67D0\\u884C\\u6587\\u672C\\u6642\\uFF0C\\u884C\\u865F\\u53EF\\u4EE5\\u63D0\\u4F9B\\u4E00\\u500B<strong>\\u7CBE\\u78BA\\u7684\\u5B9A\\u4F4D\\u6A19\\u8A18</strong>\\u3002",
-        show_statistics: "\\u5728\\u7D50\\u679C\\u8996\\u7A97\\u5E95\\u90E8\\u7684\\u72C0\\u614B\\u5217\\u986F\\u793A\\u7576\\u524D\\u5DF2\\u63D0\\u53D6\\u5167\\u5BB9\\u7684<strong>\\u5373\\u6642\\u7D71\\u8A08</strong>\\uFF0C\\u5305\\u62EC<strong>\\u7E3D\\u884C\\u6578</strong>\\u548C<strong>\\u7E3D\\u5B57\\u5143\\u6578</strong>\\u3002\\u9019\\u53EF\\u4EE5\\u5E6B\\u52A9\\u60A8\\u5FEB\\u901F\\u8A55\\u4F30\\u63D0\\u53D6\\u5167\\u5BB9\\u7684\\u898F\\u6A21\\u3002",
-        enable_word_wrap: "\\u63A7\\u5236\\u7D50\\u679C\\u8996\\u7A97\\u4E2D\\u7684\\u9577\\u6587\\u672C\\u884C\\u5982\\u4F55\\u986F\\u793A\\u3002<br><br>\\u2022 <strong>\\u555F\\u7528\\uFF1A</strong>\\u9577\\u6587\\u672C\\u5C07\\u81EA\\u52D5\\u63DB\\u884C\\u4EE5\\u9069\\u61C9\\u8996\\u7A97\\u5BEC\\u5EA6\\u3002<br>\\u2022 <strong>\\u7981\\u7528\\uFF1A</strong>\\u9577\\u6587\\u672C\\u5C07\\u4FDD\\u6301\\u5728\\u55AE\\u884C\\uFF0C\\u4E26\\u51FA\\u73FE\\u6C34\\u5E73\\u6372\\u52D5\\u689D\\u3002",
-        text_truncation_limit: "\\u9019\\u662F\\u4E00\\u500B<strong>\\u6548\\u80FD\\u4FDD\\u8B77</strong>\\u6A5F\\u5236\\u3002\\u7576\\u8173\\u672C\\u63D0\\u53D6\\u5230<strong>\\u55AE\\u884C\\u8D85\\u9577\\u6587\\u672C</strong>\\uFF08\\u4F8B\\u5982\\uFF0C\\u4E00\\u500B\\u5B8C\\u6574\\u7684 base64 \\u7DE8\\u78BC\\u5716\\u7247\\uFF09\\u6642\\uFF0C\\u82E5\\u4E0D\\u622A\\u65B7\\uFF0C\\u53EF\\u80FD\\u6703\\u5C0E\\u81F4\\u700F\\u89BD\\u5668<strong>\\u5361\\u9813\\u6216\\u7121\\u97FF\\u61C9</strong>\\u3002<br><br>\\u6B64\\u8A2D\\u5B9A\\u6703\\u622A\\u65B7\\u8D85\\u51FA\\u6307\\u5B9A\\u9577\\u5EA6\\u7684\\u55AE\\u884C\\u6587\\u672C\\uFF0C\\u4EE5\\u4FDD\\u8B49\\u4ECB\\u9762\\u6D41\\u66A2\\u3002<strong>\\u6CE8\\u610F\\uFF1A\\u6B64\\u622A\\u65B7\\u50C5\\u5F71\\u97FF\\u4ECB\\u9762\\u986F\\u793A\\uFF0C\\u532F\\u51FA\\u7684\\u6A94\\u6848\\u4ECD\\u5C07\\u5305\\u542B\\u5B8C\\u6574\\u5167\\u5BB9\\u3002</strong>"
+        show_fab: "\\u63A7\\u5236\\u662F\\u5426\\u5728\\u7DB2\\u9801\\u53F3\\u4E0B\\u89D2\\u986F\\u793A<strong>\\u61F8\\u6D6E\\u64CD\\u4F5C\\u6309\\u9215(FAB)</strong>\\u3002\\u9019\\u662F\\u9032\\u884C\\u975C\\u614B\\u548C\\u52D5\\u614B\\u6587\\u672C\\u63D0\\u53D6\\u7684\\u4E3B\\u8981\\u5165\\u53E3\\u3002<br><br>\\u5982\\u679C\\u60A8\\u7981\\u7528\\u4E86\\u6B64\\u6309\\u9215\\uFF0C\\u53EF\\u4EE5\\u900F\\u904E\\u6CB9\\u7334\\u64F4\\u5145\\u5957\\u4EF6\\u9078\\u55AE\\u4E2D\\u7684\\u8A2D\\u5B9A\\u9762\\u677F\\u91CD\\u65B0\\u555F\\u7528\\u5B83\\u3002",
+        show_scan_count: "\\u555F\\u7528\\u5F8C\\uFF0C\\u7D50\\u679C\\u8996\\u7A97\\u7684\\u6A19\\u984C\\u5217\\u5C07<strong>\\u5373\\u6642\\u986F\\u793A</strong>\\u76EE\\u524D\\u6383\\u63CF\\u4E2D\\u627E\\u5230\\u7684\\u7E3D\\u6587\\u672C\\u9805\\u76EE\\u6578\\u3002\\u9019\\u5C0D\\u65BC\\u76E3\\u63A7\\u9577\\u6642\\u9593\\u57F7\\u884C\\u7684<strong>\\u52D5\\u614B\\u6383\\u63CF</strong>\\u7684\\u9032\\u5EA6\\u7279\\u5225\\u6709\\u7528\\u3002",
+        show_line_numbers: "\\u5728\\u7D50\\u679C\\u8996\\u7A97\\u7684\\u6587\\u672C\\u5340\\u57DF\\u5DE6\\u5074\\u986F\\u793A\\u884C\\u865F\\u3002\\u7576\\u60A8\\u9700\\u8981\\u8A0E\\u8AD6\\u6216\\u8A18\\u9304\\u7279\\u5B9A\\u6587\\u672C\\u884C\\u6642\\uFF0C\\u9019\\u63D0\\u4F9B\\u4E86\\u4E00\\u500B<strong>\\u7CBE\\u78BA\\u7684\\u53C3\\u8003\\u9EDE</strong>\\u3002",
+        show_statistics: "\\u5728\\u7D50\\u679C\\u8996\\u7A97\\u5E95\\u90E8\\u7684\\u72C0\\u614B\\u5217\\u4E2D\\u986F\\u793A\\u6709\\u95DC\\u63D0\\u53D6\\u5167\\u5BB9\\u7684<strong>\\u5373\\u6642\\u7D71\\u8A08\\u6578\\u64DA</strong>\\uFF0C\\u5305\\u62EC<strong>\\u7E3D\\u884C\\u6578</strong>\\u548C<strong>\\u7E3D\\u5B57\\u5143\\u6578</strong>\\u3002\\u9019\\u6709\\u52A9\\u65BC\\u60A8\\u5FEB\\u901F\\u8A55\\u4F30\\u5167\\u5BB9\\u7684\\u9AD4\\u91CF\\u3002",
+        enable_word_wrap: "\\u63A7\\u5236\\u7D50\\u679C\\u8996\\u7A97\\u4E2D\\u9577\\u6587\\u672C\\u884C\\u7684\\u986F\\u793A\\u65B9\\u5F0F\\u3002<br><br>\\u2022 <strong>\\u555F\\u7528:</strong> \\u9577\\u884C\\u5C07\\u81EA\\u52D5\\u63DB\\u884C\\u4EE5\\u9069\\u61C9\\u8996\\u7A97\\u5BEC\\u5EA6\\u3002<br>\\u2022 <strong>\\u7981\\u7528:</strong> \\u9577\\u884C\\u5C07\\u4FDD\\u6301\\u5728\\u55AE\\u884C\\uFF0C\\u4E26\\u51FA\\u73FE\\u6C34\\u5E73\\u6372\\u8EF8\\u3002",
+        text_truncation_limit: "\\u9019\\u662F\\u4E00\\u500B<strong>\\u6548\\u80FD\\u512A\\u5316</strong>\\u529F\\u80FD\\u3002\\u5982\\u679C\\u8173\\u672C\\u63D0\\u53D6\\u5230<strong>\\u6975\\u9577\\u7684\\u55AE\\u884C\\u6587\\u672C</strong>\\uFF08\\u4F8B\\u5982\\uFF0Cbase64\\u7DE8\\u78BC\\u7684\\u5716\\u7247\\uFF09\\uFF0C\\u53EF\\u80FD\\u6703\\u5C0E\\u81F4\\u700F\\u89BD\\u5668<strong>\\u5361\\u9813\\u6216\\u7121\\u56DE\\u61C9</strong>\\u3002<br><br>\\u6B64\\u8A2D\\u5B9A\\u6703\\u622A\\u65B7\\u4EFB\\u4F55\\u8D85\\u904E\\u6307\\u5B9A\\u9577\\u5EA6\\u7684\\u55AE\\u884C\\u6587\\u672C\\uFF0C\\u4EE5\\u78BA\\u4FDDUI\\u4FDD\\u6301\\u6D41\\u66A2\\u3002<strong>\\u6CE8\\u610F\\uFF1A\\u9019\\u50C5\\u5F71\\u97FF\\u986F\\u793A\\uFF1B\\u532F\\u51FA\\u7684\\u6A94\\u6848\\u4ECD\\u5C07\\u5305\\u542B\\u5B8C\\u6574\\u7684\\u3001\\u672A\\u622A\\u65B7\\u7684\\u5167\\u5BB9\\u3002</strong>"
       },
       advanced: {
         title: "\\u9032\\u968E\\u8A2D\\u5B9A\\u8AAA\\u660E",
-        enable_debug_logging: "\\u555F\\u7528\\u5F8C\\uFF0C\\u8173\\u672C\\u6703\\u5C07\\u8A73\\u7D30\\u7684\\u5167\\u90E8\\u904B\\u884C\\u72C0\\u614B\\u3001\\u57F7\\u884C\\u6B65\\u9A5F\\u3001\\u932F\\u8AA4\\u8CC7\\u8A0A\\u7B49\\u8F38\\u51FA\\u5230\\u700F\\u89BD\\u5668\\u7684<strong>\\u958B\\u767C\\u8005\\u5DE5\\u5177\\u63A7\\u5236\\u53F0</strong>\\uFF08\\u901A\\u5E38\\u6309 F12 \\u958B\\u555F\\uFF09\\u3002\\u6B64\\u529F\\u80FD\\u4E3B\\u8981\\u9762\\u5411\\u958B\\u767C\\u8005\\u6216\\u9700\\u8981\\u63D0\\u4EA4\\u8A73\\u7D30\\u932F\\u8AA4\\u5831\\u544A\\u7684\\u4F7F\\u7528\\u8005\\u3002"
+        enable_debug_logging: "\\u555F\\u7528\\u5F8C\\uFF0C\\u8173\\u672C\\u6703\\u5C07\\u8A73\\u7D30\\u7684\\u5167\\u90E8\\u72C0\\u614B\\u3001\\u57F7\\u884C\\u6B65\\u9A5F\\u548C\\u932F\\u8AA4\\u8A0A\\u606F\\u8F38\\u51FA\\u5230\\u700F\\u89BD\\u5668\\u7684<strong>\\u958B\\u767C\\u8005\\u5DE5\\u5177\\u63A7\\u5236\\u53F0</strong>\\uFF08\\u901A\\u5E38\\u7528F12\\u958B\\u555F\\uFF09\\u3002\\u9019\\u4E3B\\u8981\\u4F9B\\u958B\\u767C\\u8005\\u6216\\u9700\\u8981\\u63D0\\u4EA4\\u8A73\\u7D30\\u932F\\u8AA4\\u5831\\u544A\\u7684\\u4F7F\\u7528\\u8005\\u4F7F\\u7528\\u3002"
       }
     },
     log: {
-      prefix: "[\\u6587\\u672C\\u63D0\\u53D6\\u8173\\u672C-Debug]",
+      prefix: "[\\u6587\\u672C\\u63D0\\u53D6\\u8173\\u672C-\\u5075\\u932F]",
       language: {
         switched: "\\u8A9E\\u8A00\\u5DF2\\u5207\\u63DB\\u81F3\\uFF1A{{lang}}",
-        notFound: "\\u8A9E\\u8A00 '{{lang}}' \\u4E0D\\u5B58\\u5728\\uFF0C\\u9000\\u56DE\\u81F3 'en'\\u3002"
+        notFound: "\\u672A\\u627E\\u5230\\u8A9E\\u8A00 '{{lang}}'\\uFF0C\\u5DF2\\u56DE\\u9000\\u81F3 'en'\\u3002"
       },
       settings: {
         changed: "\\u8A2D\\u5B9A '{{key}}' \\u5DF2\\u5F9E '{{oldValue}}' \\u8B8A\\u66F4\\u70BA '{{newValue}}'",
         filterRuleChanged: {
-          enabled: "\\u904E\\u6FFE\\u898F\\u5247 '{{key}}' \\u5DF2\\u88AB\\u555F\\u7528",
-          disabled: "\\u904E\\u6FFE\\u898F\\u5247 '{{key}}' \\u5DF2\\u88AB\\u7981\\u7528"
+          enabled: "\\u904E\\u6FFE\\u898F\\u5247 '{{key}}' \\u5DF2\\u555F\\u7528",
+          disabled: "\\u904E\\u6FFE\\u898F\\u5247 '{{key}}' \\u5DF2\\u7981\\u7528"
         },
         panel: {
           opening: "\\u6B63\\u5728\\u958B\\u555F\\u8A2D\\u5B9A\\u9762\\u677F...",
@@ -2661,111 +2701,113 @@ ${result.join(",\n")}
           saving: "\\u6B63\\u5728\\u5132\\u5B58\\u8A2D\\u5B9A..."
         },
         parseError: "\\u89E3\\u6790\\u5DF2\\u5132\\u5B58\\u7684\\u8A2D\\u5B9A\\u6642\\u51FA\\u932F\\uFF1A",
-        invalidObject: "\\u8A66\\u5716\\u5132\\u5B58\\u4E00\\u500B\\u7121\\u6548\\u7684\\u7269\\u4EF6\\u4F5C\\u70BA\\u8A2D\\u5B9A\\uFF1A"
+        invalidObject: "\\u8A66\\u5716\\u70BA\\u8A2D\\u5B9A\\u5132\\u5B58\\u4E00\\u500B\\u7121\\u6548\\u7269\\u4EF6\\uFF1A"
       },
       textProcessor: {
-        filtered: '\\u6587\\u672C\\u5DF2\\u904E\\u6FFE\\uFF1A"{{text}}" (\\u539F\\u56E0\\uFF1A{{reason}})'
+        filtered: '\\u6587\\u672C\\u5DF2\\u904E\\u6FFE: "{{text}}" (\\u539F\\u56E0: {{reason}})'
       },
       quickScan: {
-        switchToFallback: "[\\u975C\\u614B\\u6383\\u63CF] \\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
-        fallbackFailed: "[\\u975C\\u614B\\u6383\\u63CF] \\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u5931\\u6557\\uFF1A{{error}}",
+        switchToFallback: "[\\u5FEB\\u901F\\u6383\\u63CF] \\u6B63\\u5728\\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
+        fallbackFailed: "[\\u5FEB\\u901F\\u6383\\u63CF] \\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u57F7\\u884C\\u5931\\u6557: {{error}}",
         fallback: {
-          starting: "[\\u975C\\u614B\\u6383\\u63CF - \\u5099\\u9078\\u65B9\\u6848] \\u958B\\u59CB\\u5728\\u4E3B\\u7DDA\\u7A0B\\u4E2D\\u8655\\u7406...",
-          completed: "[\\u975C\\u614B\\u6383\\u63CF - \\u5099\\u9078\\u65B9\\u6848] \\u8655\\u7406\\u5B8C\\u6210\\uFF0C\\u5171 {{count}} \\u689D\\u6709\\u6548\\u6587\\u672C\\u3002"
+          starting: "[\\u5FEB\\u901F\\u6383\\u63CF - \\u5099\\u9078] \\u6B63\\u5728\\u4E3B\\u7DDA\\u7A0B\\u4E2D\\u958B\\u59CB\\u8655\\u7406...",
+          completed: "[\\u5FEB\\u901F\\u6383\\u63CF - \\u5099\\u9078] \\u8655\\u7406\\u5B8C\\u6210\\uFF0C\\u627E\\u5230 {{count}} \\u689D\\u4E0D\\u91CD\\u8907\\u6587\\u672C\\u3002"
         },
         worker: {
-          logPrefix: "[\\u975C\\u614B\\u6383\\u63CF Worker]",
-          starting: "[\\u975C\\u614B\\u6383\\u63CF] \\u958B\\u59CB\\u57F7\\u884C\\uFF0C\\u5617\\u8A66\\u4F7F\\u7528 Web Worker...",
-          completed: "[\\u975C\\u614B\\u6383\\u63CF] Worker \\u8655\\u7406\\u6210\\u529F\\uFF0C\\u6536\\u5230 {{count}} \\u689D\\u6587\\u672C\\u3002",
-          scanComplete: "[\\u975C\\u614B\\u6383\\u63CF Worker] \\u8655\\u7406\\u5B8C\\u6210\\uFF0C\\u5171 {{count}} \\u689D\\u6709\\u6548\\u6587\\u672C\\u3002\\u6B63\\u5728\\u767C\\u56DE\\u4E3B\\u7DDA\\u7A0B...",
-          initFailed: "[\\u975C\\u614B\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u6557\\u3002\\u9019\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u65BC\\u7DB2\\u7AD9\\u7684\\u5167\\u5BB9\\u5B89\\u5168\\u7B56\\u7565\\uFF08CSP\\uFF09\\u963B\\u6B62\\u4E86\\u8173\\u672C\\u3002",
-          originalError: "[\\u975C\\u614B\\u6383\\u63CF] \\u539F\\u59CB\\u932F\\u8AA4\\uFF1A{{error}}",
-          sendingData: "[\\u975C\\u614B\\u6383\\u63CF] Web Worker \\u5DF2\\u5EFA\\u7ACB\\uFF0C\\u6B63\\u5728\\u767C\\u9001 {{count}} \\u689D\\u6587\\u672C\\u9032\\u884C\\u8655\\u7406...",
-          initSyncError: "[\\u975C\\u614B\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u6642\\u767C\\u751F\\u540C\\u6B65\\u932F\\u8AA4\\uFF1A{{error}}"
+          logPrefix: "[\\u5FEB\\u901F\\u6383\\u63CF Worker]",
+          starting: "[\\u5FEB\\u901F\\u6383\\u63CF] \\u958B\\u59CB\\u57F7\\u884C\\uFF0C\\u5617\\u8A66\\u4F7F\\u7528 Web Worker...",
+          completed: "[\\u5FEB\\u901F\\u6383\\u63CF] Worker \\u8655\\u7406\\u6210\\u529F\\uFF0C\\u6536\\u5230 {{count}} \\u689D\\u6587\\u672C\\u3002",
+          scanComplete: "[\\u5FEB\\u901F\\u6383\\u63CF Worker] \\u8655\\u7406\\u5B8C\\u6210\\uFF0C\\u627E\\u5230 {{count}} \\u689D\\u4E0D\\u91CD\\u8907\\u6587\\u672C\\u3002\\u6B63\\u5728\\u767C\\u56DE\\u4E3B\\u7DDA\\u7A0B...",
+          initFailed: "[\\u5FEB\\u901F\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u6557\\u3002\\u9019\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u65BC\\u7DB2\\u7AD9\\u7684\\u5167\\u5BB9\\u5B89\\u5168\\u7B56\\u7565 (CSP) \\u5C0E\\u81F4\\u7684\\u3002",
+          originalError: "[\\u5FEB\\u901F\\u6383\\u63CF] \\u539F\\u59CB\\u932F\\u8AA4: {{error}}",
+          sendingData: "[\\u5FEB\\u901F\\u6383\\u63CF] Web Worker \\u5DF2\\u5EFA\\u7ACB\\uFF0C\\u6B63\\u5728\\u767C\\u9001 {{count}} \\u689D\\u6587\\u672C\\u9032\\u884C\\u8655\\u7406...",
+          initSyncError: "[\\u5FEB\\u901F\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u671F\\u9593\\u767C\\u751F\\u540C\\u6B65\\u932F\\u8AA4: {{error}}"
         }
       },
       sessionScan: {
-        switchToFallback: "[\\u6703\\u8A71\\u6383\\u63CF] \\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
+        switchToFallback: "[\\u6703\\u8A71\\u6383\\u63CF] \\u6B63\\u5728\\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
         domObserver: {
           stopped: "[\\u6703\\u8A71\\u6383\\u63CF] \\u5DF2\\u505C\\u6B62\\u76E3\\u807D DOM \\u8B8A\\u5316\\u3002"
         },
         fallback: {
-          initialized: "[\\u6703\\u8A71\\u6383\\u63CF - \\u5099\\u9078\\u65B9\\u6848] \\u521D\\u59CB\\u5316\\u5B8C\\u6210\\u3002",
-          cleared: "[\\u6703\\u8A71\\u6383\\u63CF - \\u5099\\u9078\\u65B9\\u6848] \\u8CC7\\u6599\\u5DF2\\u6E05\\u7A7A\\u3002"
+          initialized: "[\\u6703\\u8A71\\u6383\\u63CF - \\u5099\\u9078] \\u5DF2\\u521D\\u59CB\\u5316\\u3002",
+          cleared: "[\\u6703\\u8A71\\u6383\\u63CF - \\u5099\\u9078] \\u8CC7\\u6599\\u5DF2\\u6E05\\u9664\\u3002"
         },
         worker: {
           logPrefix: "[\\u6703\\u8A71\\u6383\\u63CF Worker]",
-          starting: "\\u6703\\u8A71\\u6383\\u63CF\\uFF1A\\u5617\\u8A66\\u555F\\u52D5 Web Worker...",
-          initFailed: "[\\u6703\\u8A71\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u6557\\u3002\\u9019\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u65BC\\u7DB2\\u7AD9\\u7684\\u5167\\u5BB9\\u5B89\\u5168\\u7B56\\u7565\\uFF08CSP\\uFF09\\u963B\\u6B62\\u4E86\\u8173\\u672C\\u3002",
-          originalError: "[\\u6703\\u8A71\\u6383\\u63CF] \\u539F\\u59CB\\u932F\\u8AA4\\uFF1A{{error}}",
+          starting: "\\u6703\\u8A71\\u6383\\u63CF\\uFF1A\\u6B63\\u5728\\u5617\\u8A66\\u555F\\u52D5 Web Worker...",
+          initFailed: "[\\u6703\\u8A71\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u6557\\u3002\\u9019\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u65BC\\u7DB2\\u7AD9\\u7684\\u5167\\u5BB9\\u5B89\\u5168\\u7B56\\u7565 (CSP) \\u5C0E\\u81F4\\u7684\\u3002",
+          originalError: "[\\u6703\\u8A71\\u6383\\u63CF] \\u539F\\u59CB\\u932F\\u8AA4: {{error}}",
           initialized: "[\\u6703\\u8A71\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u6210\\u529F\\uFF0C\\u5DF2\\u767C\\u9001 {{count}} \\u689D\\u521D\\u59CB\\u6587\\u672C\\u4EE5\\u958B\\u59CB\\u6703\\u8A71\\u3002",
-          initSyncError: "[\\u6703\\u8A71\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u6642\\u767C\\u751F\\u540C\\u6B65\\u932F\\u8AA4\\uFF1A{{error}}",
-          clearCommandSent: "[\\u6703\\u8A71\\u6383\\u63CF] \\u5DF2\\u5411 Worker \\u767C\\u9001\\u6E05\\u7A7A\\u6307\\u4EE4\\u3002"
+          initSyncError: "[\\u6703\\u8A71\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u671F\\u9593\\u767C\\u751F\\u540C\\u6B65\\u932F\\u8AA4: {{error}}",
+          clearCommandSent: "[\\u6703\\u8A71\\u6383\\u63CF] \\u6E05\\u9664\\u547D\\u4EE4\\u5DF2\\u767C\\u9001\\u81F3 worker\\u3002"
         }
       },
       ui: {
         copyButton: {
-          copied: "\\u8907\\u88FD\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\uFF0C\\u8907\\u88FD\\u4E86 {{count}} \\u500B\\u5B57\\u5143\\u3002",
-          nothingToCopy: "\\u8907\\u88FD\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\uFF0C\\u4F46\\u6C92\\u6709\\u5167\\u5BB9\\u53EF\\u8907\\u88FD\\u6216\\u6309\\u9215\\u88AB\\u7981\\u7528\\u3002"
+          copied: "\\u8907\\u88FD\\u6309\\u9215\\u5DF2\\u9EDE\\u64CA\\uFF0C\\u8907\\u88FD\\u4E86 {{count}} \\u500B\\u5B57\\u5143\\u3002",
+          nothingToCopy: "\\u8907\\u88FD\\u6309\\u9215\\u5DF2\\u9EDE\\u64CA\\uFF0C\\u4F46\\u6C92\\u6709\\u5167\\u5BB9\\u53EF\\u8907\\u88FD\\u6216\\u6309\\u9215\\u88AB\\u7981\\u7528\\u3002"
         },
         confirmationModal: {
           sessionScan: {
-            confirmed: "\\u4F7F\\u7528\\u8005\\u78BA\\u8A8D\\u6E05\\u7A7A\\u6703\\u8A71\\u6383\\u63CF\\u6587\\u672C\\uFF0C\\u6B63\\u5728\\u547C\\u53EB\\u56DE\\u8ABF..."
+            confirmed: "\\u4F7F\\u7528\\u8005\\u5DF2\\u78BA\\u8A8D\\u6E05\\u9664\\u6703\\u8A71\\u6383\\u63CF\\u6587\\u672C\\uFF0C\\u6B63\\u5728\\u8ABF\\u7528\\u56DE\\u547C..."
           },
           quickScan: {
-            confirmed: "\\u4F7F\\u7528\\u8005\\u78BA\\u8A8D\\u6E05\\u7A7A\\u5FEB\\u901F\\u6383\\u63CF\\u6587\\u672C\\u3002"
+            confirmed: "\\u4F7F\\u7528\\u8005\\u5DF2\\u78BA\\u8A8D\\u6E05\\u9664\\u5FEB\\u901F\\u6383\\u63CF\\u6587\\u672C\\u3002"
           },
-          cancelled: "\\u4F7F\\u7528\\u8005\\u53D6\\u6D88\\u4E86\\u6E05\\u7A7A\\u64CD\\u4F5C\\u3002"
+          cancelled: "\\u4F7F\\u7528\\u8005\\u5DF2\\u53D6\\u6D88\\u6E05\\u9664\\u64CD\\u4F5C\\u3002"
         },
         modal: {
-          opening: "\\u6B63\\u5728\\u6253\\u958B\\u4E3B\\u8996\\u7A97...",
-          closing: "\\u6B63\\u5728\\u95DC\\u9589\\u4E3B\\u8996\\u7A97...",
-          scanFailed: "\\u975C\\u614B\\u6383\\u63CF\\u5931\\u6557\\uFF1A{{error}}",
-          clearContent: "\\u300C\\u6E05\\u7A7A\\u5167\\u5BB9\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002"
+          opening: "\\u6B63\\u5728\\u958B\\u555F\\u4E3B\\u6A21\\u614B\\u6846...",
+          closing: "\\u6B63\\u5728\\u95DC\\u9589\\u4E3B\\u6A21\\u614B\\u6846...",
+          scanFailed: "\\u975C\\u614B\\u6383\\u63CF\\u5931\\u6557: {{error}}",
+          clearContent: "\\u6E05\\u7A7A\\u5167\\u5BB9\\u6309\\u9215\\u5DF2\\u9EDE\\u64CA\\u3002"
         }
       },
       exporter: {
-        buttonClicked: "\\u532F\\u51FA\\u6309\\u9215\\u88AB\\u9EDE\\u64CA, \\u532F\\u51FA\\u683C\\u5F0F: {{format}}\\u3002",
-        csvError: "\\u5728\\u89E3\\u6790\\u6587\\u672C\\u4E26\\u751F\\u6210 CSV \\u6642\\u767C\\u751F\\u932F\\u8AA4\\uFF1A{{error}}",
-        fileExported: "\\u6A94\\u6848\\u5DF2\\u532F\\u51FA\\uFF1A{{filename}}",
-        noContent: "\\u6C92\\u6709\\u5167\\u5BB9\\u53EF\\u532F\\u51FA\\u3002",
-        unknownFormat: "\\u672A\\u77E5\\u7684\\u532F\\u51FA\\u683C\\u5F0F\\uFF1A{{format}}"
+        buttonClicked: "\\u532F\\u51FA\\u6309\\u9215\\u5DF2\\u9EDE\\u64CA\\uFF0C\\u683C\\u5F0F: {{format}}\\u3002",
+        csvError: "\\u89E3\\u6790\\u6587\\u672C\\u4E26\\u7522\\u751FCSV\\u6642\\u51FA\\u932F: {{error}}",
+        fileExported: "\\u6A94\\u6848\\u5DF2\\u532F\\u51FA: {{filename}}",
+        noContent: "\\u7121\\u5167\\u5BB9\\u53EF\\u532F\\u51FA\\u3002",
+        unknownFormat: "\\u672A\\u77E5\\u7684\\u532F\\u51FA\\u683C\\u5F0F: {{format}}"
       },
       main: {
-        requestingSessionScanData: "\\u5F9E session-scan \\u6A21\\u5F0F\\u8ACB\\u6C42\\u5B8C\\u6574\\u8CC7\\u6599...",
-        exportingQuickScanData: "\\u5F9E quick-scan \\u6A21\\u5F0F\\u7684\\u8A18\\u61B6\\u9AD4\\u4E2D\\u532F\\u51FA\\u5B8C\\u6574\\u8CC7\\u6599...",
+        requestingSessionScanData: "\\u6B63\\u5728\\u8ACB\\u6C42\\u6703\\u8A71\\u6383\\u63CF\\u6A21\\u5F0F\\u7684\\u5B8C\\u6574\\u8CC7\\u6599...",
+        exportingQuickScanData: "\\u6B63\\u5728\\u532F\\u51FA\\u5FEB\\u901F\\u6383\\u63CF\\u6A21\\u5F0F\\u8A18\\u61B6\\u9AD4\\u4E2D\\u7684\\u5B8C\\u6574\\u8CC7\\u6599...",
         inIframe: "\\u8173\\u672C\\u5728 iframe \\u4E2D\\uFF0C\\u5DF2\\u8DF3\\u904E\\u521D\\u59CB\\u5316\\u3002",
-        initializing: "\\u8173\\u672C\\u958B\\u59CB\\u521D\\u59CB\\u5316...",
+        initializing: "\\u8173\\u672C\\u521D\\u59CB\\u5316\\u958B\\u59CB...",
         initialSettingsLoaded: "\\u521D\\u59CB\\u8A2D\\u5B9A\\u5DF2\\u8F09\\u5165:"
       },
       dom: {
-        ttpCreationError: "\\u5EFA\\u7ACB Trusted Type \\u7B56\\u7565\\u5931\\u6557\\uFF1A",
-        svgParseError: "\\u7121\\u6548\\u6216\\u89E3\\u6790\\u5931\\u6557\\u7684 SVG \\u5B57\\u4E32\\uFF1A"
+        ttpCreationError: "\\u5EFA\\u7ACB Trusted Type \\u7B56\\u7565\\u5931\\u6557:",
+        svgParseError: "SVG \\u5B57\\u4E32\\u7121\\u6548\\u6216\\u89E3\\u6790\\u5931\\u6557:"
       },
       elementScan: {
-        starting: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5DF2\\u555F\\u52D5\\u3002",
+        starting: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5DF2\\u958B\\u59CB\\u3002",
         stopping: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5DF2\\u505C\\u6B62\\u3002",
-        listenersAdded: "\\u5DF2\\u65B0\\u589E\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u7684\\u5168\\u57DF\\u4E8B\\u4EF6\\u76E3\\u807D\\u5668\\u3002",
-        listenersRemoved: "\\u5DF2\\u79FB\\u9664\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u7684\\u5168\\u57DF\\u4E8B\\u4EF6\\u76E3\\u807D\\u5668\\u3002",
+        listenersAdded: "\\u5DF2\\u70BA\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u65B0\\u589E\\u5168\\u57DF\\u4E8B\\u4EF6\\u76E3\\u807D\\u5668\\u3002",
+        listenersRemoved: "\\u5DF2\\u70BA\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u79FB\\u9664\\u5168\\u57DF\\u4E8B\\u4EF6\\u76E3\\u807D\\u5668\\u3002",
         stateReset: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u72C0\\u614B\\u5DF2\\u91CD\\u8A2D\\u3002",
         reselecting: "\\u6B63\\u5728\\u8FD4\\u56DE\\u5143\\u7D20\\u91CD\\u65B0\\u9078\\u64C7\\u6A21\\u5F0F\\u3002",
-        hovering: "\\u7576\\u524D\\u61F8\\u505C\\u65BC <{{tagName}}>\\u3002",
-        escapePressed: "\\u4F7F\\u7528\\u8005\\u6309\\u4E0B Escape \\u9375\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u3002",
-        clickedEnteringAdjust: "\\u5DF2\\u9EDE\\u64CA\\u5143\\u7D20 <{{tagName}}>\\uFF0C\\u9032\\u5165\\u5C64\\u7D1A\\u8ABF\\u6574\\u6A21\\u5F0F\\u3002",
+        hovering: "\\u6B63\\u5728\\u61F8\\u505C\\u65BC <{{tagName}}>\\u3002",
+        escapePressed: "\\u6309\\u4E0B Escape \\u9375\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u3002",
+        clickedEnteringAdjust: "\\u5143\\u7D20 <{{tagName}}> \\u5DF2\\u88AB\\u9EDE\\u64CA\\uFF0C\\u6B63\\u5728\\u9032\\u5165\\u8ABF\\u6574\\u6A21\\u5F0F\\u3002",
         pathBuilt: "\\u5143\\u7D20\\u5C64\\u7D1A\\u8DEF\\u5F91\\u5DF2\\u69CB\\u5EFA\\uFF0C\\u6DF1\\u5EA6\\u70BA\\uFF1A{{depth}}\\u3002",
         adjustingLevel: "\\u6B63\\u5728\\u8ABF\\u6574\\u9078\\u64C7\\u5C64\\u7D1A\\u81F3 {{level}} ({{tagName}})\\u3002",
         confirmExtracting: "\\u9078\\u64C7\\u5DF2\\u78BA\\u8A8D\\uFF0C\\u6B63\\u5728\\u5F9E <{{tagName}}> \\u63D0\\u53D6\\u6587\\u672C\\u3002",
+        staged: "\\u5143\\u7D20\\u5DF2\\u66AB\\u5B58\\u3002\\u7E3D\\u6578\\uFF1A{{count}}\\u3002",
+        confirmingStaged: "\\u78BA\\u8A8D\\u9078\\u64C7\\u3002\\u6B63\\u5728\\u8655\\u7406 {{count}} \\u500B\\u5DF2\\u66AB\\u5B58\\u7684\\u5143\\u7D20\\u3002",
         extractedCount: "\\u5DF2\\u5F9E\\u5143\\u7D20\\u4E2D\\u63D0\\u53D6 {{count}} \\u689D\\u539F\\u59CB\\u6587\\u672C\\u3002",
         confirmFailedNoTarget: "\\u78BA\\u8A8D\\u5931\\u6557\\uFF1A\\u672A\\u9078\\u64C7\\u4EFB\\u4F55\\u76EE\\u6A19\\u5143\\u7D20\\u3002",
         rightClickExit: "\\u5075\\u6E2C\\u5230\\u53F3\\u9375\\u9EDE\\u64CA\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u3002",
         processingError: "\\u6587\\u672C\\u8655\\u7406\\u904E\\u7A0B\\u4E2D\\u767C\\u751F\\u932F\\u8AA4: {{error}}",
         worker: {
-          logPrefix: "[\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker]",
+          logPrefix: "[ES Worker]",
           starting: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u6B63\\u5728\\u555F\\u52D5...",
-          sendingData: "\\u6B63\\u5728\\u767C\\u9001 {{count}} \\u689D\\u6587\\u672C\\u81F3\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker\\u3002",
-          completed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u8655\\u7406\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {{count}} \\u689D\\u6709\\u6548\\u6587\\u672C\\u3002",
-          initFailed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u521D\\u59CB\\u5316\\u5931\\u6557\\u3002\\u53EF\\u80FD\\u662F\\u7DB2\\u7AD9\\u7684 CSP \\u7B56\\u7565\\u963B\\u6B62\\u4E86 data: URL\\u3002",
-          initSyncError: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u521D\\u59CB\\u5316\\u6642\\u767C\\u751F\\u540C\\u6B65\\u932F\\u8AA4: {{error}}",
+          sendingData: "\\u6B63\\u5728\\u5411\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u767C\\u9001 {{count}} \\u689D\\u6587\\u672C\\u7247\\u6BB5\\u3002",
+          completed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u5DF2\\u5B8C\\u6210\\uFF0C\\u627E\\u5230 {{count}} \\u689D\\u4E0D\\u91CD\\u8907\\u6587\\u672C\\u3002",
+          initFailed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u521D\\u59CB\\u5316\\u5931\\u6557\\u3002\\u700F\\u89BD\\u5668\\u7684CSP\\u53EF\\u80FD\\u963B\\u6B62\\u4E86 data: URL\\u3002",
+          initSyncError: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u521D\\u59CB\\u5316\\u671F\\u9593\\u767C\\u751F\\u540C\\u6B65\\u932F\\u8AA4: {{error}}",
           originalError: "\\u539F\\u59CB Worker \\u932F\\u8AA4: {{error}}"
         },
         switchToFallback: "\\u6B63\\u5728\\u70BA\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
@@ -2778,7 +2820,8 @@ ${result.join(",\n")}
         toolbarPositioned: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u5DE5\\u5177\\u5217\\u5DF2\\u5B9A\\u4F4D\\u3002",
         sliderChanged: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u6ED1\\u687F\\u5C64\\u7D1A\\u8B8A\\u70BA {{level}}",
         reselectClicked: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u300C\\u91CD\\u65B0\\u9078\\u64C7\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002",
-        cancelClicked: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u300C\\u53D6\\u6D88\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002",
+        stageClicked: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u300C\\u66AB\\u5B58\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002",
+        cancelClicked: "\\u5143\\u7D20\\u6383\\u89C0UI\\uFF1A\\u300C\\u53D6\\u6D88\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002",
         confirmClicked: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u300C\\u78BA\\u8A8D\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002",
         dragStarted: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u62D6\\u52D5\\u958B\\u59CB\\u3002",
         dragEnded: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u62D6\\u52D5\\u7D50\\u675F\\u3002",
@@ -2786,13 +2829,13 @@ ${result.join(",\n")}
         cleaningToolbar: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u6B63\\u5728\\u6E05\\u7406\\u5DE5\\u5177\\u5217\\u3002"
       },
       eventBus: {
-        callbackError: "\\u5728 '{{eventName}}' \\u4E8B\\u4EF6\\u7684\\u56DE\\u547C\\u4E2D\\u767C\\u751F\\u932F\\u8AA4\\uFF1A"
+        callbackError: "\\u4E8B\\u4EF6 '{{eventName}}' \\u7684\\u56DE\\u547C\\u51FD\\u6578\\u51FA\\u932F:"
       },
       trustedTypes: {
-        workerPolicyError: "\\u5EFA\\u7ACB Trusted Types worker \\u7B56\\u7565\\u5931\\u6557\\uFF1A",
-        htmlPolicyError: "\\u5EFA\\u7ACB Trusted Types HTML \\u7B56\\u7565\\u5931\\u6557\\uFF1A",
-        defaultWorkerPolicyWarning: "Trusted Types \\u9810\\u8A2D\\u7B56\\u7565\\u8655\\u7406 worker URL \\u5931\\u6557\\uFF0C\\u9000\\u56DE\\u81F3\\u539F\\u59CB URL\\u3002",
-        defaultHtmlPolicyWarning: "Trusted Types \\u9810\\u8A2D\\u7B56\\u7565\\u8655\\u7406 HTML \\u5931\\u6557\\uFF0C\\u9000\\u56DE\\u81F3\\u539F\\u59CB\\u5B57\\u4E32\\u3002"
+        workerPolicyError: "\\u5EFA\\u7ACB Trusted Types worker \\u7B56\\u7565\\u5931\\u6557:",
+        htmlPolicyError: "\\u5EFA\\u7ACB Trusted Types HTML \\u7B56\\u7565\\u5931\\u6557:",
+        defaultWorkerPolicyWarning: "\\u7528\\u65BC worker URL \\u7684 Trusted Types \\u9810\\u8A2D\\u7B56\\u7565\\u5931\\u6557\\uFF0C\\u56DE\\u9000\\u5230\\u539F\\u59CB URL\\u3002",
+        defaultHtmlPolicyWarning: "\\u7528\\u65BC HTML \\u7684 Trusted Types \\u9810\\u8A2D\\u7B56\\u7565\\u5931\\u6557\\uFF0C\\u56DE\\u9000\\u5230\\u539F\\u59CB\\u5B57\\u4E32\\u3002"
       }
     }
   };
@@ -3200,6 +3243,10 @@ ${result.join(",\n")}
   var useFallback = false;
   var onSummaryCallback = null;
   var onUpdateCallback = null;
+  var currentCount = 0;
+  on("clearSessionScan", () => {
+    clearSessionData();
+  });
   var handleMutations = (mutations) => {
     const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(", ");
     const textsBatch = [];
@@ -3230,9 +3277,22 @@ ${result.join(",\n")}
       }
     }
   };
+  function clearSessionData() {
+    currentCount = 0;
+    if (useFallback) {
+      clearInFallback();
+      if (onUpdateCallback) onUpdateCallback(0);
+      updateScanCount(0, "session");
+      fire("sessionCleared");
+    } else if (worker) {
+      worker.postMessage({ type: "clear" });
+      log(t("log.sessionScan.worker.clearCommandSent"));
+    }
+  }
   var start = (onUpdate) => {
     if (isRecording) return;
     if (worker) worker.terminate();
+    currentCount = 0;
     onUpdateCallback = onUpdate;
     useFallback = false;
     isRecording = true;
@@ -3268,7 +3328,8 @@ ${result.join(",\n")}
       confirm: "Confirm",
       cancel: "Cancel",
       export: "Export",
-      reselect: "Reselect"
+      reselect: "Reselect",
+      stage: "Stage"
     },
     export: {
       exportAsTxt: "Export as TXT",
@@ -3341,6 +3402,7 @@ ${result.join(",\n")}
     scan: {
       quick: "Quick Scan",
       session: "Session Scan",
+      stagedCount: "Staged:",
       elementFinished: "Element scan finished, found {{count}} items.",
       startSession: "Start Dynamic Scan Session",
       stopSession: "Stop Dynamic Scan Session",
@@ -3530,6 +3592,8 @@ ${result.join(",\n")}
         pathBuilt: "Element path built, depth: {{depth}}.",
         adjustingLevel: "Adjusting selection level to {{level}} ({{tagName}}).",
         confirmExtracting: "Selection confirmed, extracting text from <{{tagName}}>.",
+        staged: "Element staged. Total staged: {{count}}.",
+        confirmingStaged: "Confirming selection. Processing {{count}} staged elements.",
         extractedCount: "Extracted {{count}} raw text fragments from element.",
         confirmFailedNoTarget: "Confirmation failed: no target element selected.",
         rightClickExit: "Right-click detected, stopping element scan.",
@@ -3553,6 +3617,7 @@ ${result.join(",\n")}
         toolbarPositioned: "Element Scan UI: Toolbar positioned.",
         sliderChanged: "Element Scan UI: Slider changed to level {{level}}",
         reselectClicked: "Element Scan UI: 'Reselect' button clicked.",
+        stageClicked: "Element Scan UI: 'Stage' button clicked.",
         cancelClicked: "Element Scan UI: 'Cancel' button clicked.",
         confirmClicked: "Element Scan UI: 'Confirm' button clicked.",
         dragStarted: "Element Scan UI: Drag started.",
@@ -3576,15 +3641,16 @@ ${result.join(",\n")}
     common: {
       scan: "\\u626B\\u63CF",
       stop: "\\u505C\\u6B62",
-      resume: "\\u7EE7\\u7EED",
+      resume: "\\u6062\\u590D",
       clear: "\\u6E05\\u7A7A",
       copy: "\\u590D\\u5236",
       save: "\\u4FDD\\u5B58",
-      discovered: "\\u5DF2\\u53D1\\u73B0\\uFF1A",
+      discovered: "\\u5DF2\\u53D1\\u73B0:",
       confirm: "\\u786E\\u8BA4",
       cancel: "\\u53D6\\u6D88",
       export: "\\u5BFC\\u51FA",
-      reselect: "\\u91CD\\u65B0\\u9009\\u62E9"
+      reselect: "\\u91CD\\u65B0\\u9009\\u62E9",
+      stage: "\\u6682\\u5B58"
     },
     export: {
       exportAsTxt: "\\u5BFC\\u51FA\\u4E3A TXT",
@@ -3598,28 +3664,28 @@ ${result.join(",\n")}
     },
     settings: {
       title: "\\u8BBE\\u7F6E",
-      theme: "\\u754C\\u9762\\u4E3B\\u9898",
-      language: "\\u8BED\\u8A00\\u8BBE\\u7F6E",
+      theme: "\\u4E3B\\u9898",
+      language: "\\u8BED\\u8A00",
       relatedSettings: "\\u76F8\\u5173\\u8BBE\\u7F6E",
       filterRules: "\\u5185\\u5BB9\\u8FC7\\u6EE4\\u89C4\\u5219",
       filters: {
-        numbers: "\\u8FC7\\u6EE4\\u7EAF\\u6570\\u5B57/\\u8D27\\u5E01",
-        chinese: "\\u8FC7\\u6EE4\\u7EAF\\u4E2D\\u6587",
-        contains_chinese: "\\u8FC7\\u6EE4\\u5305\\u542B\\u4E2D\\u6587\\u7684\\u6587\\u672C",
-        emoji_only: "\\u8FC7\\u6EE4\\u7EAF\\u8868\\u60C5\\u7B26\\u53F7",
-        symbols: "\\u8FC7\\u6EE4\\u7EAF\\u7B26\\u53F7",
+        numbers: "\\u8FC7\\u6EE4\\u6570\\u5B57/\\u8D27\\u5E01",
+        chinese: "\\u8FC7\\u6EE4\\u7EAF\\u4E2D\\u6587\\u6587\\u672C",
+        contains_chinese: "\\u8FC7\\u6EE4\\u542B\\u4E2D\\u6587\\u7684\\u6587\\u672C",
+        emoji_only: "\\u8FC7\\u6EE4\\u7EAF\\u8868\\u60C5\\u7B26\\u53F7\\u6587\\u672C",
+        symbols: "\\u8FC7\\u6EE4\\u7EAF\\u7B26\\u53F7\\u6587\\u672C",
         term: "\\u8FC7\\u6EE4\\u7279\\u5B9A\\u672F\\u8BED",
-        single_letter: "\\u8FC7\\u6EE4\\u7EAF\\u5355\\u4E2A\\u82F1\\u6587\\u5B57\\u6BCD",
-        repeating_chars: "\\u8FC7\\u6EE4\\u5355\\u4E00\\u91CD\\u590D\\u5B57\\u7B26",
+        single_letter: "\\u8FC7\\u6EE4\\u5355\\u4E2A\\u82F1\\u6587\\u5B57\\u6BCD",
+        repeating_chars: "\\u8FC7\\u6EE4\\u91CD\\u590D\\u5B57\\u7B26",
         file_paths: "\\u8FC7\\u6EE4\\u6587\\u4EF6\\u8DEF\\u5F84",
-        hex_color_codes: "\\u8FC7\\u6EE4\\u5341\\u516D\\u8FDB\\u5236\\u989C\\u8272",
-        email_addresses: "\\u8FC7\\u6EE4\\u90AE\\u4EF6\\u5730\\u5740",
+        hex_color_codes: "\\u8FC7\\u6EE4\\u5341\\u516D\\u8FDB\\u5236\\u989C\\u8272\\u4EE3\\u7801",
+        email_addresses: "\\u8FC7\\u6EE4\\u7535\\u5B50\\u90AE\\u4EF6\\u5730\\u5740",
         uuids: "\\u8FC7\\u6EE4 UUID",
         git_commit_hashes: "\\u8FC7\\u6EE4 Git \\u63D0\\u4EA4\\u54C8\\u5E0C\\u503C",
-        website_urls: "\\u8FC7\\u6EE4\\u7F51\\u5740",
-        website_urls_title: "\\u8FC7\\u6EE4\\u7F51\\u5740 (URL)",
-        shorthand_numbers: "\\u8FC7\\u6EE4\\u7B80\\u5199\\u6570\\u5B57",
-        shorthand_numbers_title: "\\u8FC7\\u6EE4\\u5E26\\u5355\\u4F4D\\u7684\\u7B80\\u5199\\u6570\\u5B57"
+        website_urls: "\\u8FC7\\u6EE4\\u7F51\\u7AD9\\u94FE\\u63A5",
+        website_urls_title: "\\u8FC7\\u6EE4\\u7F51\\u7AD9\\u94FE\\u63A5",
+        shorthand_numbers: "\\u8FC7\\u6EE4\\u901F\\u8BB0\\u6570\\u5B57",
+        shorthand_numbers_title: "\\u8FC7\\u6EE4\\u901F\\u8BB0\\u6570\\u5B57"
       },
       display: {
         show_fab: "\\u663E\\u793A\\u60AC\\u6D6E\\u6309\\u94AE",
@@ -3632,13 +3698,13 @@ ${result.join(",\n")}
         },
         show_line_numbers: "\\u663E\\u793A\\u884C\\u53F7",
         show_statistics: "\\u663E\\u793A\\u7EDF\\u8BA1\\u4FE1\\u606F",
-        enable_word_wrap: "\\u542F\\u7528\\u6587\\u672C\\u81EA\\u52A8\\u6362\\u884C",
-        text_truncation_limit: "\\u542F\\u7528\\u6587\\u672C\\u6846\\u5B57\\u7B26\\u9650\\u5236",
-        character_limit: "\\u5B57\\u7B26\\u6570",
-        show_scan_count: "\\u542F\\u7528\\u6807\\u9898\\u680F\\u663E\\u793A\\u626B\\u63CF\\u8BA1\\u6570"
+        enable_word_wrap: "\\u542F\\u7528\\u81EA\\u52A8\\u6362\\u884C",
+        text_truncation_limit: "\\u542F\\u7528\\u6587\\u672C\\u622A\\u65AD\\u9650\\u5236",
+        character_limit: "\\u5B57\\u7B26\\u9650\\u5236",
+        show_scan_count: "\\u5728\\u6807\\u9898\\u4E2D\\u542F\\u7528\\u626B\\u63CF\\u8BA1\\u6570"
       },
       advanced: {
-        enable_debug_logging: "\\u542F\\u7528\\u8C03\\u8BD5\\u65E5\\u5FD7"
+        enable_debug_logging: "\\u542F\\u7528\\u8C03\\u8BD5\\u65E5\\u5FD7\\u8BB0\\u5F55"
       },
       panel: {
         title: "\\u8BBE\\u7F6E\\u9762\\u677F"
@@ -3657,94 +3723,95 @@ ${result.join(",\n")}
     scan: {
       quick: "\\u5FEB\\u901F\\u626B\\u63CF",
       session: "\\u4F1A\\u8BDD\\u626B\\u63CF",
+      stagedCount: "\\u5DF2\\u6682\\u5B58:",
       elementFinished: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {{count}} \\u6761\\u6587\\u672C\\u3002",
       startSession: "\\u5F00\\u59CB\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD",
       stopSession: "\\u505C\\u6B62\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD",
-      finished: "\\u626B\\u63CF\\u7ED3\\u675F\\uFF0C\\u5171\\u53D1\\u73B0 {{count}} \\u6761\\u6587\\u672C",
-      quickFinished: "\\u5FEB\\u6377\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {{count}} \\u6761\\u6587\\u672C",
-      sessionStarted: "\\u4F1A\\u8BDD\\u626B\\u63CF\\u5DF2\\u5F00\\u59CB",
-      sessionInProgress: "\\u626B\\u63CF\\u6B63\\u5728\\u8FDB\\u884C\\u4E2D...",
-      truncationWarning: "\\u4E3A\\u4FDD\\u6301\\u754C\\u9762\\u6D41\\u7545\\uFF0C\\u6B64\\u5904\\u4EC5\\u663E\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u5B8C\\u6574\\u5185\\u5BB9\\u5C06\\u5728\\u5BFC\\u51FA\\u65F6\\u63D0\\u4F9B\\u3002"
+      finished: "\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {{count}} \\u6761\\u6587\\u672C\\u3002",
+      quickFinished: "\\u5FEB\\u901F\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {{count}} \\u6761\\u6587\\u672C\\u3002",
+      sessionStarted: "\\u4F1A\\u8BDD\\u626B\\u63CF\\u5DF2\\u5F00\\u59CB\\u3002",
+      sessionInProgress: "\\u626B\\u63CF\\u8FDB\\u884C\\u4E2D...",
+      truncationWarning: "\\u4E3A\\u4FDD\\u6301\\u754C\\u9762\\u6D41\\u7545\\uFF0C\\u6B64\\u5904\\u4EC5\\u663E\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u5BFC\\u51FA\\u540E\\u5C06\\u5305\\u542B\\u5B8C\\u6574\\u5185\\u5BB9\\u3002"
     },
     results: {
       title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",
-      scanCountSession: "\\u5DF2\\u626B\\u63CF {{count}} \\u6761\\u6587\\u672C",
-      scanCountStatic: "\\u5171\\u626B\\u63CF {{count}} \\u6761\\u6587\\u672C",
-      totalCharacters: "\\u603B\\u5B57\\u6570",
+      scanCountSession: "\\u5DF2\\u626B\\u63CF {{count}} \\u4E2A\\u9879\\u76EE",
+      scanCountStatic: "\\u5171\\u626B\\u63CF {{count}} \\u4E2A\\u9879\\u76EE",
+      totalCharacters: "\\u603B\\u5B57\\u7B26\\u6570",
       totalLines: "\\u603B\\u884C\\u6570",
-      noSummary: "\\u5F53\\u524D\\u6CA1\\u6709\\u603B\\u7ED3\\u6587\\u672C",
+      noSummary: "\\u65E0\\u53EF\\u7528\\u6458\\u8981",
       stats: {
         lines: "\\u884C",
-        chars: "\\u5B57\\u7B26\\u6570"
+        chars: "\\u5B57\\u7B26"
       }
     },
     notifications: {
-      copiedToClipboard: "\\u5DF2\\u590D\\u5236\\u5230\\u526A\\u8D34\\u677F!",
+      copiedToClipboard: "\\u5DF2\\u590D\\u5236\\u5230\\u526A\\u8D34\\u677F\\uFF01",
       settingsSaved: "\\u8BBE\\u7F6E\\u5DF2\\u4FDD\\u5B58\\uFF01",
-      modalInitError: "\\u6A21\\u6001\\u6846\\u5C1A\\u672A\\u521D\\u59CB\\u5316\\u3002",
-      nothingToCopy: "\\u6C92\\u6709\\u5167\\u5BB9\\u53EF\\u8907\\u88FD",
-      contentCleared: "\\u5185\\u5BB9\\u5DF2\\u6E05\\u7A7A",
-      noTextSelected: "\\u672A\\u9009\\u62E9\\u6587\\u672C",
-      cspWorkerWarning: "\\u7531\\u4E8E\\u7F51\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u6362\\u5230\\u517C\\u5BB9\\u626B\\u63CF\\u6A21\\u5F0F\\u3002"
+      modalInitError: "\\u6A21\\u6001\\u6846\\u672A\\u521D\\u59CB\\u5316\\u3002",
+      nothingToCopy: "\\u6CA1\\u6709\\u53EF\\u590D\\u5236\\u7684\\u5185\\u5BB9\\u3002",
+      contentCleared: "\\u5185\\u5BB9\\u5DF2\\u6E05\\u9664\\u3002",
+      noTextSelected: "\\u672A\\u9009\\u62E9\\u4EFB\\u4F55\\u6587\\u672C\\u3002",
+      cspWorkerWarning: "\\u56E0\\u7F51\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u6362\\u81F3\\u517C\\u5BB9\\u626B\\u63CF\\u6A21\\u5F0F\\u3002"
     },
     placeholders: {
       click: "\\u70B9\\u51FB ",
       dynamicScan: "[\\u52A8\\u6001\\u626B\\u63CF]",
-      startNewScanSession: " \\u6309\\u94AE\\u5F00\\u59CB\\u4E00\\u4E2A\\u65B0\\u7684\\u626B\\u63CF\\u4F1A\\u8BDD",
+      startNewScanSession: " \\u5F00\\u59CB\\u65B0\\u7684\\u626B\\u63CF\\u4F1A\\u8BDD",
       staticScan: "[\\u9759\\u6001\\u626B\\u63CF]",
-      performOneTimeScan: " \\u6309\\u94AE\\u53EF\\u8FDB\\u884C\\u4E00\\u6B21\\u6027\\u7684\\u5FEB\\u6377\\u63D0\\u53D6"
+      performOneTimeScan: " \\u6267\\u884C\\u4E00\\u6B21\\u6027\\u5FEB\\u901F\\u63D0\\u53D6"
     },
     confirmation: {
-      clear: "\\u4F60\\u786E\\u8BA4\\u8981\\u6E05\\u7A7A\\u5417\\uFF1F\\u6B64\\u64CD\\u4F5C\\u4E0D\\u53EF\\u64A4\\u9500\\u3002"
+      clear: "\\u60A8\\u786E\\u5B9A\\u8981\\u6E05\\u9664\\u5185\\u5BB9\\u5417\\uFF1F\\u6B64\\u64CD\\u4F5C\\u65E0\\u6CD5\\u64A4\\u9500\\u3002"
     },
     tooltip: {
-      summary: "\\u67E5\\u770B\\u603B\\u7ED3",
+      summary: "\\u67E5\\u770B\\u6458\\u8981",
       dynamic_scan: "\\u52A8\\u6001\\u626B\\u63CF",
       static_scan: "\\u9759\\u6001\\u626B\\u63CF",
       element_scan: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF",
       filters: {
         title: "\\u5185\\u5BB9\\u8FC7\\u6EE4\\u5668\\u8BF4\\u660E",
-        numbers: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u6570\\u5B57\\u3001\\u7A7A\\u683C\\u3001\\u5343\\u4F4D\\u5206\\u9694\\u7B26 (.)\\u3001\\u5C0F\\u6570\\u70B9 (,) \\u4EE5\\u53CA\\u90E8\\u5206\\u8D27\\u5E01\\u7B26\\u53F7 ($, \\u20AC, \\xA3, \\xA5) \\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "1,234.56"<br>\\u2022 "\\xA5999"<br>\\u2022 "\\u20AC200"<br>\\u2022 "$ 100"',
-        chinese: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u4E2D\\u6587\\u5B57\\u7B26\\u548C\\u7A7A\\u683C\\u7EC4\\u6210\\u7684\\u6587\\u672C\\uFF0C\\u4E0D\\u5305\\u62EC\\u4EFB\\u4F55\\u6807\\u70B9\\u7B26\\u53F7\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "\\u4F60\\u597D \\u4E16\\u754C" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "\\u4F60\\u597D\\uFF0C\\u4E16\\u754C" (\\u4E0D\\u4F1A\\u88AB\\u8FC7\\u6EE4)',
-        contains_chinese: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389<strong>\\u4EFB\\u4F55\\u5305\\u542B</strong>\\u81F3\\u5C11\\u4E00\\u4E2A\\u4E2D\\u6587\\u5B57\\u7B26\\u7684\\u6587\\u672C\\uFF0C\\u65E0\\u8BBA\\u662F\\u5426\\u5305\\u542B\\u5176\\u4ED6\\u5B57\\u7B26\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "\\u4F60\\u597D World" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "\\u7B2C 1 \\u7AE0" (\\u5C06\\u88AB\\u8FC7\\u6EE4)',
-        emoji_only: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u4E00\\u4E2A\\u6216\\u591A\\u4E2A\\u8868\\u60C5\\u7B26\\u53F7\\u53CA\\u7A7A\\u683C\\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "\\u{1F44D}"<br>\\u2022 "\\u{1F60A} \\u{1F389} \\u{1F680}"',
-        symbols: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u5404\\u7C7B\\u6807\\u70B9\\u548C\\u7B26\\u53F7\\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "@#*&^%"<br>\\u2022 "()[]{}"<br>\\u2022 "---...---"',
-        term: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u5E38\\u89C1\\u7684\\u3001\\u901A\\u5E38\\u65E0\\u9700\\u7FFB\\u8BD1\\u7684 UI \\u672F\\u8BED\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "OK", "Cancel", "Submit"<br>\\u2022 "Login", "Settings", "Help"',
-        single_letter: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u7531<strong>\\u5355\\u4E2A</strong>\\u82F1\\u6587\\u5B57\\u6BCD\\u7EC4\\u6210\\u7684\\u6587\\u672C\\uFF0C\\u5FFD\\u7565\\u5927\\u5C0F\\u5199\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "A" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "b" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "AB" (\\u4E0D\\u4F1A\\u88AB\\u8FC7\\u6EE4)',
-        repeating_chars: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u7531<strong>\\u540C\\u4E00\\u4E2A\\u5B57\\u7B26</strong>\\u8FDE\\u7EED\\u91CD\\u590D 2 \\u6B21\\u6216\\u4EE5\\u4E0A\\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "aa"<br>\\u2022 "======"<br>\\u2022 "bbbbb"',
-        file_paths: '\\u6B64\\u89C4\\u5219\\u4F1A\\u5C1D\\u8BD5\\u8BC6\\u522B\\u5E76\\u8FC7\\u6EE4\\u6389\\u7C7B\\u4F3C\\u64CD\\u4F5C\\u7CFB\\u7EDF\\u7684\\u3001\\u4E14<strong>\\u5305\\u542B\\u6587\\u4EF6\\u6269\\u5C55\\u540D</strong>\\u7684\\u6587\\u4EF6\\u8DEF\\u5F84\\uFF0C\\u4F46\\u5B83\\u4E0D\\u4F1A\\u5339\\u914D URL\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "/path/to/file.js"<br>\\u2022 "C:\\\\Users\\\\Test\\\\document.docx"<br>\\u2022 "./config.json"',
-        hex_color_codes: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u6807\\u51C6\\u7684 CSS \\u5341\\u516D\\u8FDB\\u5236\\u989C\\u8272\\u4EE3\\u7801\\uFF083\\u30014\\u30016 \\u6216 8 \\u4F4D\\uFF0C\\u540E\\u8005\\u53EF\\u5305\\u542B Alpha \\u901A\\u9053\\uFF09\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "#FFFFFF"<br>\\u2022 "#ff0000"<br>\\u2022 "#f0c"<br>\\u2022 "#f0c8" (4\\u4F4D)<br>\\u2022 "#ff000080" (8\\u4F4D)',
-        email_addresses: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u7B26\\u5408\\u6807\\u51C6\\u683C\\u5F0F\\u7684\\u7535\\u5B50\\u90AE\\u4EF6\\u5730\\u5740\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "example@domain.com"<br>\\u2022 "user.name@sub.domain.org"',
-        uuids: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u901A\\u7528\\u552F\\u4E00\\u6807\\u8BC6\\u7B26 (UUID)\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "123e4567-e89b-12d3-a456-426614174000"',
-        git_commit_hashes: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u6807\\u51C6\\u7684 Git \\u63D0\\u4EA4\\u54C8\\u5E0C\\u503C\\uFF08\\u957F\\u54C8\\u5E0C\\u6216\\u77ED\\u54C8\\u5E0C\\uFF09\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\\u2022 "a1b2c3d"',
-        website_urls: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389<strong>\\u72EC\\u7ACB\\u7684 URL</strong> \\u6587\\u672C\\u3002\\u5B83\\u7684\\u5339\\u914D\\u89C4\\u5219\\u88AB\\u8BBE\\u8BA1\\u5F97\\u975E\\u5E38\\u4E25\\u683C\\uFF0C\\u4EE5\\u907F\\u514D\\u610F\\u5916\\u79FB\\u9664\\u4E0D\\u662F\\u94FE\\u63A5\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "https://www.example.com"<br>\\u2022 "http://test.co.uk"<br>\\u2022 "www.google.com"<br>\\u2022 "example.org"',
-        shorthand_numbers: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u4F7F\\u7528<strong>\\u5E38\\u89C1\\u7B80\\u5199\\u540E\\u7F00</strong>\\u7684\\u6570\\u5B57\\uFF0C\\u4F8B\\u5982 k (\\u5343)\\u3001m (\\u767E\\u4E07) \\u6216 b (\\u5341\\u4EBF)\\uFF0C\\u4E0D\\u533A\\u5206\\u5927\\u5C0F\\u5199\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "1.2k"<br>\\u2022 "15M"<br>\\u2022 "2.5b"<br>\\u2022 "100K"'
+        numbers: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168</strong>\\u7531\\u6570\\u5B57\\u3001\\u7A7A\\u683C\\u3001\\u5343\\u4F4D\\u5206\\u9694\\u7B26(,)\\u3001\\u5C0F\\u6570\\u70B9(.)\\u4EE5\\u53CA\\u90E8\\u5206\\u8D27\\u5E01\\u7B26\\u53F7($, \\u20AC, \\xA3, \\xA5)\\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B:</strong><br>\\u2022 "1,234.56"<br>\\u2022 "\\xA5999"<br>\\u2022 "\\u20AC200"<br>\\u2022 "$ 100"',
+        chinese: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168</strong>\\u7531\\u6C49\\u5B57\\u548C\\u7A7A\\u683C\\u7EC4\\u6210\\uFF0C\\u4E14\\u4E0D\\u542B\\u4EFB\\u4F55\\u6807\\u70B9\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u793A\\u4F8B:</strong><br>\\u2022 "\\u4F60\\u597D \\u4E16\\u754C" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "\\u4F60\\u597D\\uFF0C\\u4E16\\u754C" (\\u4E0D\\u4F1A\\u88AB\\u8FC7\\u6EE4)',
+        contains_chinese: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389\\u4EFB\\u4F55\\u542B\\u6709\\u81F3\\u5C11\\u4E00\\u4E2A\\u6C49\\u5B57\\u7684\\u6587\\u672C\\uFF0C\\u65E0\\u8BBA\\u5176\\u4ED6\\u5B57\\u7B26\\u662F\\u4EC0\\u4E48\\u3002<br><br><strong>\\u793A\\u4F8B:</strong><br>\\u2022 "\\u4F60\\u597D World" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "\\u7B2C\\u4E00\\u7AE0" (\\u5C06\\u88AB\\u8FC7\\u6EE4)',
+        emoji_only: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168</strong>\\u7531\\u4E00\\u4E2A\\u6216\\u591A\\u4E2A\\u8868\\u60C5\\u7B26\\u53F7\\u53CA\\u7A7A\\u683C\\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u793A\\u4F8B:</strong><br>\\u2022 "\\u{1F44D}"<br>\\u2022 "\\u{1F60A} \\u{1F389} \\u{1F680}"',
+        symbols: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168</strong>\\u7531\\u5404\\u79CD\\u6807\\u70B9\\u548C\\u7B26\\u53F7\\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B:</strong><br>\\u2022 "@#*&^%"<br>\\u2022 "()[]{}"<br>\\u2022 "---...---"',
+        term: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389\\u901A\\u5E38\\u4E0D\\u9700\\u8981\\u7FFB\\u8BD1\\u7684\\u5E38\\u89C1UI\\u672F\\u8BED\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B:</strong><br>\\u2022 "OK", "Cancel", "Submit"<br>\\u2022 "Login", "Settings", "Help"',
+        single_letter: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389\\u7531<strong>\\u5355\\u4E2A</strong>\\u82F1\\u6587\\u5B57\\u6BCD\\u7EC4\\u6210\\u7684\\u6587\\u672C\\uFF08\\u4E0D\\u533A\\u5206\\u5927\\u5C0F\\u5199\\uFF09\\u3002<br><br><strong>\\u793A\\u4F8B:</strong><br>\\u2022 "A" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "b" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "AB" (\\u4E0D\\u4F1A\\u88AB\\u8FC7\\u6EE4)',
+        repeating_chars: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389\\u7531<strong>\\u540C\\u4E00\\u4E2A\\u5B57\\u7B26</strong>\\u8FDE\\u7EED\\u91CD\\u590D2\\u6B21\\u6216\\u4EE5\\u4E0A\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u793A\\u4F8B:</strong><br>\\u2022 "aa"<br>\\u2022 "======"<br>\\u2022 "bbbbb"',
+        file_paths: '\\u6B64\\u89C4\\u5219\\u5C1D\\u8BD5\\u8BC6\\u522B\\u5E76\\u8FC7\\u6EE4\\u6389\\u7C7B\\u4F3C\\u64CD\\u4F5C\\u7CFB\\u7EDF\\u6587\\u4EF6\\u8DEF\\u5F84\\u4E14<strong>\\u5305\\u542B\\u6587\\u4EF6\\u6269\\u5C55\\u540D</strong>\\u7684\\u6587\\u672C\\u3002\\u5B83\\u4E0D\\u5339\\u914D\\u7F51\\u5740\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B:</strong><br>\\u2022 "/path/to/file.js"<br>\\u2022 "C:\\\\Users\\\\Test\\\\document.docx"<br>\\u2022 "./config.json"',
+        hex_color_codes: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389\\u6807\\u51C6\\u7684CSS\\u5341\\u516D\\u8FDB\\u5236\\u989C\\u8272\\u4EE3\\u7801\\uFF083\\u30014\\u30016\\u62168\\u4F4D\\uFF0C\\u540E\\u8005\\u5305\\u542B\\u900F\\u660E\\u5EA6\\u901A\\u9053\\uFF09\\u3002<br><br><strong>\\u793A\\u4F8B:</strong><br>\\u2022 "#FFFFFF"<br>\\u2022 "#ff0000"<br>\\u2022 "#f0c"<br>\\u2022 "#f0c8" (4\\u4F4D)<br>\\u2022 "#ff000080" (8\\u4F4D)',
+        email_addresses: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389\\u7B26\\u5408\\u6807\\u51C6\\u7535\\u5B50\\u90AE\\u4EF6\\u5730\\u5740\\u683C\\u5F0F\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u793A\\u4F8B:</strong><br>\\u2022 "example@domain.com"<br>\\u2022 "user.name@sub.domain.org"',
+        uuids: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389\\u901A\\u7528\\u552F\\u4E00\\u6807\\u8BC6\\u7B26 (UUID)\\u3002<br><br><strong>\\u793A\\u4F8B:</strong><br>\\u2022 "123e4567-e89b-12d3-a456-426614174000"',
+        git_commit_hashes: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389\\u6807\\u51C6\\u7684Git\\u63D0\\u4EA4\\u54C8\\u5E0C\\u503C\\uFF08\\u957F\\u6216\\u77ED\\uFF09\\u3002<br><br><strong>\\u793A\\u4F8B:</strong><br>\\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\\u2022 "a1b2c3d"',
+        website_urls: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389<strong>\\u72EC\\u7ACB\\u7684\\u7F51\\u5740</strong>\\u3002\\u5B83\\u8BBE\\u8BA1\\u5F97\\u6BD4\\u8F83\\u4E25\\u683C\\uFF0C\\u4EE5\\u907F\\u514D\\u610F\\u5916\\u79FB\\u9664\\u4E0D\\u662F\\u94FE\\u63A5\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B:</strong><br>\\u2022 "https://www.example.com"<br>\\u2022 "http://test.co.uk"<br>\\u2022 "www.google.com"<br>\\u2022 "example.org"',
+        shorthand_numbers: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389\\u4F7F\\u7528<strong>\\u5E38\\u89C1\\u901F\\u8BB0\\u540E\\u7F00</strong>\\u8868\\u793A\\u5343(k)\\u3001\\u767E\\u4E07(m)\\u6216\\u5341\\u4EBF(b)\\u7684\\u6570\\u5B57\\uFF08\\u4E0D\\u533A\\u5206\\u5927\\u5C0F\\u5199\\uFF09\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B:</strong><br>\\u2022 "1.2k"<br>\\u2022 "15M"<br>\\u2022 "2.5b"<br>\\u2022 "100K"'
       },
       display: {
         title: "\\u663E\\u793A\\u8BBE\\u7F6E\\u8BF4\\u660E",
-        show_fab: "\\u63A7\\u5236\\u662F\\u5426\\u5728\\u7F51\\u9875\\u53F3\\u4E0B\\u89D2\\u663E\\u793A<strong>\\u60AC\\u6D6E\\u52A8\\u4F5C\\u6309\\u94AE (FAB)</strong>\\u3002\\u8FD9\\u662F\\u9759\\u6001\\u6587\\u672C\\u63D0\\u53D6\\u3001\\u52A8\\u6001\\u6587\\u672C\\u63D0\\u53D6\\u7684\\u6838\\u5FC3\\u5165\\u53E3\\u3002<br><br>\\u5982\\u679C\\u60A8\\u7981\\u7528\\u4E86\\u6B64\\u6309\\u94AE\\uFF0C\\u53EF\\u4EE5\\u901A\\u8FC7\\u6CB9\\u7334\\u6269\\u5C55\\u83DC\\u5355\\u7684\\u8BBE\\u7F6E\\u9762\\u677F\\u91CD\\u65B0\\u6253\\u5F00\\u3002",
-        show_scan_count: "\\u542F\\u7528\\u540E\\uFF0C\\u5728\\u7ED3\\u679C\\u7A97\\u53E3\\u7684\\u6807\\u9898\\u680F\\u4F1A<strong>\\u5B9E\\u65F6\\u66F4\\u65B0</strong>\\u672C\\u6B21\\u626B\\u63CF\\u53D1\\u73B0\\u7684\\u6587\\u672C\\u6761\\u76EE\\u603B\\u6570\\u3002\\u5728\\u8FDB\\u884C\\u957F\\u65F6\\u95F4\\u7684<strong>\\u52A8\\u6001\\u626B\\u63CF</strong>\\u65F6\\uFF0C\\u8FD9\\u4E2A\\u8BA1\\u6570\\u5668\\u53EF\\u4EE5\\u5F88\\u76F4\\u89C2\\u5730\\u53CD\\u6620\\u626B\\u63CF\\u8FDB\\u5EA6\\u3002",
-        show_line_numbers: "\\u5728\\u7ED3\\u679C\\u7A97\\u53E3\\u7684\\u6587\\u672C\\u533A\\u57DF\\u5DE6\\u4FA7\\u663E\\u793A\\u884C\\u53F7\\u3002\\u5F53\\u60A8\\u9700\\u8981\\u4E0E\\u4ED6\\u4EBA\\u8BA8\\u8BBA\\u6216\\u8BB0\\u5F55\\u7279\\u5B9A\\u67D0\\u884C\\u6587\\u672C\\u65F6\\uFF0C\\u884C\\u53F7\\u53EF\\u4EE5\\u63D0\\u4F9B\\u4E00\\u4E2A<strong>\\u7CBE\\u786E\\u7684\\u5B9A\\u4F4D\\u6807\\u8BB0</strong>\\u3002",
-        show_statistics: "\\u5728\\u7ED3\\u679C\\u7A97\\u53E3\\u5E95\\u90E8\\u7684\\u72B6\\u6001\\u680F\\u663E\\u793A\\u5F53\\u524D\\u5DF2\\u63D0\\u53D6\\u5185\\u5BB9\\u7684<strong>\\u5B9E\\u65F6\\u7EDF\\u8BA1</strong>\\uFF0C\\u5305\\u62EC<strong>\\u603B\\u884C\\u6570</strong>\\u548C<strong>\\u603B\\u5B57\\u7B26\\u6570</strong>\\u3002\\u8FD9\\u53EF\\u4EE5\\u5E2E\\u52A9\\u60A8\\u5FEB\\u901F\\u8BC4\\u4F30\\u63D0\\u53D6\\u5185\\u5BB9\\u7684\\u89C4\\u6A21\\u3002",
-        enable_word_wrap: "\\u63A7\\u5236\\u7ED3\\u679C\\u7A97\\u53E3\\u4E2D\\u7684\\u957F\\u6587\\u672C\\u884C\\u5982\\u4F55\\u663E\\u793A\\u3002<br><br>\\u2022 <strong>\\u542F\\u7528\\uFF1A</strong>\\u957F\\u6587\\u672C\\u5C06\\u81EA\\u52A8\\u6362\\u884C\\u4EE5\\u9002\\u5E94\\u7A97\\u53E3\\u5BBD\\u5EA6\\u3002<br>\\u2022 <strong>\\u7981\\u7528\\uFF1A</strong>\\u957F\\u6587\\u672C\\u5C06\\u4FDD\\u6301\\u5728\\u5355\\u884C\\uFF0C\\u5E76\\u51FA\\u73B0\\u6C34\\u5E73\\u6EDA\\u52A8\\u6761\\u3002",
-        text_truncation_limit: "\\u8FD9\\u662F\\u4E00\\u4E2A<strong>\\u6027\\u80FD\\u4FDD\\u62A4</strong>\\u673A\\u5236\\u3002\\u5F53\\u811A\\u672C\\u63D0\\u53D6\\u5230<strong>\\u5355\\u884C\\u8D85\\u957F\\u6587\\u672C</strong>\\uFF08\\u4F8B\\u5982\\uFF0C\\u4E00\\u4E2A\\u5B8C\\u6574\\u7684 base64 \\u7F16\\u7801\\u56FE\\u7247\\uFF09\\u65F6\\uFF0C\\u82E5\\u4E0D\\u622A\\u65AD\\uFF0C\\u53EF\\u80FD\\u4F1A\\u5BFC\\u81F4\\u6D4F\\u89C8\\u5668<strong>\\u5361\\u987F\\u6216\\u65E0\\u54CD\\u5E94</strong>\\u3002<br><br>\\u6B64\\u8BBE\\u7F6E\\u4F1A\\u622A\\u65AD\\u8D85\\u51FA\\u6307\\u5B9A\\u957F\\u5EA6\\u7684\\u5355\\u884C\\u6587\\u672C\\uFF0C\\u4EE5\\u4FDD\\u8BC1\\u754C\\u9762\\u6D41\\u7545\\u3002<strong>\\u6CE8\\u610F\\uFF1A\\u6B64\\u622A\\u65AD\\u4EC5\\u5F71\\u54CD\\u754C\\u9762\\u663E\\u793A\\uFF0C\\u5BFC\\u51FA\\u7684\\u6587\\u4EF6\\u4ECD\\u5C06\\u5305\\u542B\\u5B8C\\u6574\\u5185\\u5BB9\\u3002</strong>"
+        show_fab: "\\u63A7\\u5236\\u662F\\u5426\\u5728\\u7F51\\u9875\\u53F3\\u4E0B\\u89D2\\u663E\\u793A<strong>\\u60AC\\u6D6E\\u64CD\\u4F5C\\u6309\\u94AE(FAB)</strong>\\u3002\\u8FD9\\u662F\\u8FDB\\u884C\\u9759\\u6001\\u548C\\u52A8\\u6001\\u6587\\u672C\\u63D0\\u53D6\\u7684\\u4E3B\\u8981\\u5165\\u53E3\\u3002<br><br>\\u5982\\u679C\\u60A8\\u7981\\u7528\\u4E86\\u6B64\\u6309\\u94AE\\uFF0C\\u53EF\\u4EE5\\u901A\\u8FC7\\u6CB9\\u7334\\u6269\\u5C55\\u83DC\\u5355\\u4E2D\\u7684\\u8BBE\\u7F6E\\u9762\\u677F\\u91CD\\u65B0\\u542F\\u7528\\u5B83\\u3002",
+        show_scan_count: "\\u542F\\u7528\\u540E\\uFF0C\\u7ED3\\u679C\\u7A97\\u53E3\\u7684\\u6807\\u9898\\u680F\\u5C06<strong>\\u5B9E\\u65F6\\u663E\\u793A</strong>\\u5F53\\u524D\\u626B\\u63CF\\u4E2D\\u627E\\u5230\\u7684\\u603B\\u6587\\u672C\\u9879\\u76EE\\u6570\\u3002\\u8FD9\\u5BF9\\u4E8E\\u76D1\\u63A7\\u957F\\u65F6\\u95F4\\u8FD0\\u884C\\u7684<strong>\\u52A8\\u6001\\u626B\\u63CF</strong>\\u7684\\u8FDB\\u5EA6\\u7279\\u522B\\u6709\\u7528\\u3002",
+        show_line_numbers: "\\u5728\\u7ED3\\u679C\\u7A97\\u53E3\\u7684\\u6587\\u672C\\u533A\\u57DF\\u5DE6\\u4FA7\\u663E\\u793A\\u884C\\u53F7\\u3002\\u5F53\\u60A8\\u9700\\u8981\\u8BA8\\u8BBA\\u6216\\u8BB0\\u5F55\\u7279\\u5B9A\\u6587\\u672C\\u884C\\u65F6\\uFF0C\\u8FD9\\u63D0\\u4F9B\\u4E86\\u4E00\\u4E2A<strong>\\u7CBE\\u786E\\u7684\\u53C2\\u8003\\u70B9</strong>\\u3002",
+        show_statistics: "\\u5728\\u7ED3\\u679C\\u7A97\\u53E3\\u5E95\\u90E8\\u7684\\u72B6\\u6001\\u680F\\u4E2D\\u663E\\u793A\\u6709\\u5173\\u63D0\\u53D6\\u5185\\u5BB9\\u7684<strong>\\u5B9E\\u65F6\\u7EDF\\u8BA1\\u6570\\u636E</strong>\\uFF0C\\u5305\\u62EC<strong>\\u603B\\u884C\\u6570</strong>\\u548C<strong>\\u603B\\u5B57\\u7B26\\u6570</strong>\\u3002\\u8FD9\\u6709\\u52A9\\u4E8E\\u60A8\\u5FEB\\u901F\\u8BC4\\u4F30\\u5185\\u5BB9\\u7684\\u4F53\\u91CF\\u3002",
+        enable_word_wrap: "\\u63A7\\u5236\\u7ED3\\u679C\\u7A97\\u53E3\\u4E2D\\u957F\\u6587\\u672C\\u884C\\u7684\\u663E\\u793A\\u65B9\\u5F0F\\u3002<br><br>\\u2022 <strong>\\u542F\\u7528:</strong> \\u957F\\u884C\\u5C06\\u81EA\\u52A8\\u6362\\u884C\\u4EE5\\u9002\\u5E94\\u7A97\\u53E3\\u5BBD\\u5EA6\\u3002<br>\\u2022 <strong>\\u7981\\u7528:</strong> \\u957F\\u884C\\u5C06\\u4FDD\\u6301\\u5728\\u5355\\u884C\\uFF0C\\u5E76\\u51FA\\u73B0\\u6C34\\u5E73\\u6EDA\\u52A8\\u6761\\u3002",
+        text_truncation_limit: "\\u8FD9\\u662F\\u4E00\\u4E2A<strong>\\u6027\\u80FD\\u4F18\\u5316</strong>\\u529F\\u80FD\\u3002\\u5982\\u679C\\u811A\\u672C\\u63D0\\u53D6\\u5230<strong>\\u6781\\u957F\\u7684\\u5355\\u884C\\u6587\\u672C</strong>\\uFF08\\u4F8B\\u5982\\uFF0Cbase64\\u7F16\\u7801\\u7684\\u56FE\\u7247\\uFF09\\uFF0C\\u53EF\\u80FD\\u4F1A\\u5BFC\\u81F4\\u6D4F\\u89C8\\u5668<strong>\\u5361\\u987F\\u6216\\u65E0\\u54CD\\u5E94</strong>\\u3002<br><br>\\u6B64\\u8BBE\\u7F6E\\u4F1A\\u622A\\u65AD\\u4EFB\\u4F55\\u8D85\\u8FC7\\u6307\\u5B9A\\u957F\\u5EA6\\u7684\\u5355\\u884C\\u6587\\u672C\\uFF0C\\u4EE5\\u786E\\u4FDDUI\\u4FDD\\u6301\\u6D41\\u7545\\u3002<strong>\\u6CE8\\u610F\\uFF1A\\u8FD9\\u4EC5\\u5F71\\u54CD\\u663E\\u793A\\uFF1B\\u5BFC\\u51FA\\u7684\\u6587\\u4EF6\\u4ECD\\u5C06\\u5305\\u542B\\u5B8C\\u6574\\u7684\\u3001\\u672A\\u622A\\u65AD\\u7684\\u5185\\u5BB9\\u3002</strong>"
       },
       advanced: {
         title: "\\u9AD8\\u7EA7\\u8BBE\\u7F6E\\u8BF4\\u660E",
-        enable_debug_logging: "\\u542F\\u7528\\u540E\\uFF0C\\u811A\\u672C\\u4F1A\\u5C06\\u8BE6\\u7EC6\\u7684\\u5185\\u90E8\\u8FD0\\u884C\\u72B6\\u6001\\u3001\\u6267\\u884C\\u6B65\\u9AA4\\u3001\\u9519\\u8BEF\\u4FE1\\u606F\\u7B49\\u8F93\\u51FA\\u5230\\u6D4F\\u89C8\\u5668\\u7684<strong>\\u5F00\\u53D1\\u8005\\u5DE5\\u5177\\u63A7\\u5236\\u53F0</strong>\\uFF08\\u901A\\u5E38\\u6309 F12 \\u6253\\u5F00\\uFF09\\u3002\\u6B64\\u529F\\u80FD\\u4E3B\\u8981\\u9762\\u5411\\u5F00\\u53D1\\u8005\\u6216\\u9700\\u8981\\u63D0\\u4EA4\\u8BE6\\u7EC6\\u9519\\u8BEF\\u62A5\\u544A\\u7684\\u7528\\u6237\\u3002"
+        enable_debug_logging: "\\u542F\\u7528\\u540E\\uFF0C\\u811A\\u672C\\u4F1A\\u5C06\\u8BE6\\u7EC6\\u7684\\u5185\\u90E8\\u72B6\\u6001\\u3001\\u6267\\u884C\\u6B65\\u9AA4\\u548C\\u9519\\u8BEF\\u4FE1\\u606F\\u8F93\\u51FA\\u5230\\u6D4F\\u89C8\\u5668\\u7684<strong>\\u5F00\\u53D1\\u8005\\u5DE5\\u5177\\u63A7\\u5236\\u53F0</strong>\\uFF08\\u901A\\u5E38\\u7528F12\\u6253\\u5F00\\uFF09\\u3002\\u8FD9\\u4E3B\\u8981\\u4F9B\\u5F00\\u53D1\\u8005\\u6216\\u9700\\u8981\\u63D0\\u4EA4\\u8BE6\\u7EC6\\u9519\\u8BEF\\u62A5\\u544A\\u7684\\u7528\\u6237\\u4F7F\\u7528\\u3002"
       }
     },
     log: {
-      prefix: "[\\u6587\\u672C\\u63D0\\u53D6\\u811A\\u672C-Debug]",
+      prefix: "[\\u6587\\u672C\\u63D0\\u53D6\\u811A\\u672C-\\u8C03\\u8BD5]",
       language: {
-        switched: "\\u8BED\\u8A00\\u5DF2\\u5207\\u6362\\u81F3: {{lang}}",
-        notFound: "\\u8BED\\u8A00 '{{lang}}' \\u4E0D\\u5B58\\u5728\\uFF0C\\u56DE\\u9000\\u5230 'en'\\u3002"
+        switched: "\\u8BED\\u8A00\\u5DF2\\u5207\\u6362\\u81F3\\uFF1A{{lang}}",
+        notFound: "\\u672A\\u627E\\u5230\\u8BED\\u8A00 '{{lang}}'\\uFF0C\\u5DF2\\u56DE\\u9000\\u81F3 'en'\\u3002"
       },
       settings: {
         changed: "\\u8BBE\\u7F6E '{{key}}' \\u5DF2\\u4ECE '{{oldValue}}' \\u66F4\\u6539\\u4E3A '{{newValue}}'",
         filterRuleChanged: {
-          enabled: "\\u8FC7\\u6EE4\\u89C4\\u5219 '{{key}}' \\u5DF2\\u88AB\\u542F\\u7528",
-          disabled: "\\u8FC7\\u6EE4\\u89C4\\u5219 '{{key}}' \\u5DF2\\u88AB\\u7981\\u7528"
+          enabled: "\\u8FC7\\u6EE4\\u89C4\\u5219 '{{key}}' \\u5DF2\\u542F\\u7528",
+          disabled: "\\u8FC7\\u6EE4\\u89C4\\u5219 '{{key}}' \\u5DF2\\u7981\\u7528"
         },
         panel: {
           opening: "\\u6B63\\u5728\\u6253\\u5F00\\u8BBE\\u7F6E\\u9762\\u677F...",
@@ -3752,111 +3819,113 @@ ${result.join(",\n")}
           saving: "\\u6B63\\u5728\\u4FDD\\u5B58\\u8BBE\\u7F6E..."
         },
         parseError: "\\u89E3\\u6790\\u5DF2\\u4FDD\\u5B58\\u7684\\u8BBE\\u7F6E\\u65F6\\u51FA\\u9519\\uFF1A",
-        invalidObject: "\\u5C1D\\u8BD5\\u4FDD\\u5B58\\u4E00\\u4E2A\\u65E0\\u6548\\u7684\\u5BF9\\u8C61\\u4F5C\\u4E3A\\u8BBE\\u7F6E\\uFF1A"
+        invalidObject: "\\u8BD5\\u56FE\\u4E3A\\u8BBE\\u7F6E\\u4FDD\\u5B58\\u4E00\\u4E2A\\u65E0\\u6548\\u5BF9\\u8C61\\uFF1A"
       },
       textProcessor: {
         filtered: '\\u6587\\u672C\\u5DF2\\u8FC7\\u6EE4: "{{text}}" (\\u539F\\u56E0: {{reason}})'
       },
       quickScan: {
-        switchToFallback: "[\\u9759\\u6001\\u626B\\u63CF] \\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
-        fallbackFailed: "[\\u9759\\u6001\\u626B\\u63CF] \\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u5931\\u8D25: {{error}}",
+        switchToFallback: "[\\u5FEB\\u901F\\u626B\\u63CF] \\u6B63\\u5728\\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
+        fallbackFailed: "[\\u5FEB\\u901F\\u626B\\u63CF] \\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u6267\\u884C\\u5931\\u8D25: {{error}}",
         fallback: {
-          starting: "[\\u9759\\u6001\\u626B\\u63CF - \\u5907\\u9009\\u65B9\\u6848] \\u5F00\\u59CB\\u5728\\u4E3B\\u7EBF\\u7A0B\\u4E2D\\u5904\\u7406...",
-          completed: "[\\u9759\\u6001\\u626B\\u63CF - \\u5907\\u9009\\u65B9\\u6848] \\u5904\\u7406\\u5B8C\\u6210\\uFF0C\\u5171 {{count}} \\u6761\\u6709\\u6548\\u6587\\u672C\\u3002"
+          starting: "[\\u5FEB\\u901F\\u626B\\u63CF - \\u5907\\u9009] \\u6B63\\u5728\\u4E3B\\u7EBF\\u7A0B\\u4E2D\\u5F00\\u59CB\\u5904\\u7406...",
+          completed: "[\\u5FEB\\u901F\\u626B\\u63CF - \\u5907\\u9009] \\u5904\\u7406\\u5B8C\\u6210\\uFF0C\\u627E\\u5230 {{count}} \\u6761\\u4E0D\\u91CD\\u590D\\u6587\\u672C\\u3002"
         },
         worker: {
-          logPrefix: "[\\u9759\\u6001\\u626B\\u63CF Worker]",
-          starting: "[\\u9759\\u6001\\u626B\\u63CF] \\u5F00\\u59CB\\u6267\\u884C\\uFF0C\\u5C1D\\u8BD5\\u4F7F\\u7528 Web Worker...",
-          completed: "[\\u9759\\u6001\\u626B\\u63CF] Worker \\u5904\\u7406\\u6210\\u529F\\uFF0C\\u6536\\u5230 {{count}} \\u6761\\u6587\\u672C\\u3002",
-          scanComplete: "[\\u9759\\u6001\\u626B\\u63CF Worker] \\u5904\\u7406\\u5B8C\\u6210\\uFF0C\\u5171 {{count}} \\u6761\\u6709\\u6548\\u6587\\u672C\\u3002\\u6B63\\u5728\\u53D1\\u56DE\\u4E3B\\u7EBF\\u7A0B...",
-          initFailed: "[\\u9759\\u6001\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u8D25\\u3002\\u8FD9\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u4E8E\\u7F51\\u7AD9\\u7684\\u5185\\u5BB9\\u5B89\\u5168\\u7B56\\u7565\\uFF08CSP\\uFF09\\u963B\\u6B62\\u4E86\\u811A\\u672C\\u3002",
-          originalError: "[\\u9759\\u6001\\u626B\\u63CF] \\u539F\\u59CB\\u9519\\u8BEF: {{error}}",
-          sendingData: "[\\u9759\\u6001\\u626B\\u63CF] Web Worker \\u5DF2\\u521B\\u5EFA\\uFF0C\\u6B63\\u5728\\u53D1\\u9001 {{count}} \\u6761\\u6587\\u672C\\u8FDB\\u884C\\u5904\\u7406...",
-          initSyncError: "[\\u9759\\u6001\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u65F6\\u53D1\\u751F\\u540C\\u6B65\\u9519\\u8BEF: {{error}}"
+          logPrefix: "[\\u5FEB\\u901F\\u626B\\u63CF Worker]",
+          starting: "[\\u5FEB\\u901F\\u626B\\u63CF] \\u5F00\\u59CB\\u6267\\u884C\\uFF0C\\u5C1D\\u8BD5\\u4F7F\\u7528 Web Worker...",
+          completed: "[\\u5FEB\\u901F\\u626B\\u63CF] Worker \\u5904\\u7406\\u6210\\u529F\\uFF0C\\u6536\\u5230 {{count}} \\u6761\\u6587\\u672C\\u3002",
+          scanComplete: "[\\u5FEB\\u901F\\u626B\\u63CF Worker] \\u5904\\u7406\\u5B8C\\u6210\\uFF0C\\u627E\\u5230 {{count}} \\u6761\\u4E0D\\u91CD\\u590D\\u6587\\u672C\\u3002\\u6B63\\u5728\\u53D1\\u56DE\\u4E3B\\u7EBF\\u7A0B...",
+          initFailed: "[\\u5FEB\\u901F\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u8D25\\u3002\\u8FD9\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u4E8E\\u7F51\\u7AD9\\u7684\\u5185\\u5BB9\\u5B89\\u5168\\u7B56\\u7565 (CSP) \\u5BFC\\u81F4\\u7684\\u3002",
+          originalError: "[\\u5FEB\\u901F\\u626B\\u63CF] \\u539F\\u59CB\\u9519\\u8BEF: {{error}}",
+          sendingData: "[\\u5FEB\\u901F\\u626B\\u63CF] Web Worker \\u5DF2\\u521B\\u5EFA\\uFF0C\\u6B63\\u5728\\u53D1\\u9001 {{count}} \\u6761\\u6587\\u672C\\u8FDB\\u884C\\u5904\\u7406...",
+          initSyncError: "[\\u5FEB\\u901F\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u671F\\u95F4\\u53D1\\u751F\\u540C\\u6B65\\u9519\\u8BEF: {{error}}"
         }
       },
       sessionScan: {
-        switchToFallback: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
+        switchToFallback: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u6B63\\u5728\\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
         domObserver: {
           stopped: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u5DF2\\u505C\\u6B62\\u76D1\\u542C DOM \\u53D8\\u5316\\u3002"
         },
         fallback: {
-          initialized: "[\\u4F1A\\u8BDD\\u626B\\u63CF - \\u5907\\u9009\\u65B9\\u6848] \\u521D\\u59CB\\u5316\\u5B8C\\u6210\\u3002",
-          cleared: "[\\u4F1A\\u8BDD\\u626B\\u63CF - \\u5907\\u9009\\u65B9\\u6848] \\u6570\\u636E\\u5DF2\\u6E05\\u7A7A\\u3002"
+          initialized: "[\\u4F1A\\u8BDD\\u626B\\u63CF - \\u5907\\u9009] \\u5DF2\\u521D\\u59CB\\u5316\\u3002",
+          cleared: "[\\u4F1A\\u8BDD\\u626B\\u63CF - \\u5907\\u9009] \\u6570\\u636E\\u5DF2\\u6E05\\u9664\\u3002"
         },
         worker: {
           logPrefix: "[\\u4F1A\\u8BDD\\u626B\\u63CF Worker]",
-          starting: "\\u4F1A\\u8BDD\\u626B\\u63CF\\uFF1A\\u5C1D\\u8BD5\\u542F\\u52A8 Web Worker...",
-          initFailed: "[\\u4F1A\\u8BDD\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u8D25\\u3002\\u8FD9\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u4E8E\\u7F51\\u7AD9\\u7684\\u5185\\u5BB9\\u5B89\\u5168\\u7B56\\u7565\\uFF08CSP\\uFF09\\u963B\\u6B62\\u4E86\\u811A\\u672C\\u3002",
+          starting: "\\u4F1A\\u8BDD\\u626B\\u63CF\\uFF1A\\u6B63\\u5728\\u5C1D\\u8BD5\\u542F\\u52A8 Web Worker...",
+          initFailed: "[\\u4F1A\\u8BDD\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u8D25\\u3002\\u8FD9\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u4E8E\\u7F51\\u7AD9\\u7684\\u5185\\u5BB9\\u5B89\\u5168\\u7B56\\u7565 (CSP) \\u5BFC\\u81F4\\u7684\\u3002",
           originalError: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u539F\\u59CB\\u9519\\u8BEF: {{error}}",
           initialized: "[\\u4F1A\\u8BDD\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u6210\\u529F\\uFF0C\\u5DF2\\u53D1\\u9001 {{count}} \\u6761\\u521D\\u59CB\\u6587\\u672C\\u4EE5\\u5F00\\u59CB\\u4F1A\\u8BDD\\u3002",
-          initSyncError: "[\\u4F1A\\u8BDD\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u65F6\\u53D1\\u751F\\u540C\\u6B65\\u9519\\u8BEF: {{error}}",
-          clearCommandSent: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u5DF2\\u5411 Worker \\u53D1\\u9001\\u6E05\\u7A7A\\u6307\\u4EE4\\u3002"
+          initSyncError: "[\\u4F1A\\u8BDD\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u671F\\u95F4\\u53D1\\u751F\\u540C\\u6B65\\u9519\\u8BEF: {{error}}",
+          clearCommandSent: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u6E05\\u9664\\u547D\\u4EE4\\u5DF2\\u53D1\\u9001\\u81F3 worker\\u3002"
         }
       },
       ui: {
         copyButton: {
-          copied: "\\u590D\\u5236\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\uFF0C\\u590D\\u5236\\u4E86 {{count}} \\u4E2A\\u5B57\\u7B26\\u3002",
-          nothingToCopy: "\\u590D\\u5236\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\uFF0C\\u4F46\\u6CA1\\u6709\\u5185\\u5BB9\\u53EF\\u590D\\u5236\\u6216\\u6309\\u94AE\\u88AB\\u7981\\u7528\\u3002"
+          copied: "\\u590D\\u5236\\u6309\\u94AE\\u5DF2\\u70B9\\u51FB\\uFF0C\\u590D\\u5236\\u4E86 {{count}} \\u4E2A\\u5B57\\u7B26\\u3002",
+          nothingToCopy: "\\u590D\\u5236\\u6309\\u94AE\\u5DF2\\u70B9\\u51FB\\uFF0C\\u4F46\\u6CA1\\u6709\\u5185\\u5BB9\\u53EF\\u590D\\u5236\\u6216\\u6309\\u94AE\\u88AB\\u7981\\u7528\\u3002"
         },
         confirmationModal: {
           sessionScan: {
-            confirmed: "\\u7528\\u6237\\u786E\\u8BA4\\u6E05\\u7A7A\\u4F1A\\u8BDD\\u626B\\u63CF\\u6587\\u672C\\uFF0C\\u6B63\\u5728\\u8C03\\u7528\\u56DE\\u8C03..."
+            confirmed: "\\u7528\\u6237\\u5DF2\\u786E\\u8BA4\\u6E05\\u9664\\u4F1A\\u8BDD\\u626B\\u63CF\\u6587\\u672C\\uFF0C\\u6B63\\u5728\\u8C03\\u7528\\u56DE\\u8C03..."
           },
           quickScan: {
-            confirmed: "\\u7528\\u6237\\u786E\\u8BA4\\u6E05\\u7A7A\\u5FEB\\u901F\\u626B\\u63CF\\u6587\\u672C\\u3002"
+            confirmed: "\\u7528\\u6237\\u5DF2\\u786E\\u8BA4\\u6E05\\u9664\\u5FEB\\u901F\\u626B\\u63CF\\u6587\\u672C\\u3002"
           },
-          cancelled: "\\u7528\\u6237\\u53D6\\u6D88\\u4E86\\u6E05\\u7A7A\\u64CD\\u4F5C\\u3002"
+          cancelled: "\\u7528\\u6237\\u5DF2\\u53D6\\u6D88\\u6E05\\u9664\\u64CD\\u4F5C\\u3002"
         },
         modal: {
-          opening: "\\u6B63\\u5728\\u6253\\u5F00\\u4E3B\\u7A97\\u53E3...",
-          closing: "\\u6B63\\u5728\\u5173\\u95ED\\u4E3B\\u7A97\\u53E3...",
+          opening: "\\u6B63\\u5728\\u6253\\u5F00\\u4E3B\\u6A21\\u6001\\u6846...",
+          closing: "\\u6B63\\u5728\\u5173\\u95ED\\u4E3B\\u6A21\\u6001\\u6846...",
           scanFailed: "\\u9759\\u6001\\u626B\\u63CF\\u5931\\u8D25: {{error}}",
-          clearContent: "\\u201C\\u6E05\\u7A7A\\u5185\\u5BB9\\u201D\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\u3002"
+          clearContent: "\\u6E05\\u7A7A\\u5185\\u5BB9\\u6309\\u94AE\\u5DF2\\u70B9\\u51FB\\u3002"
         }
       },
       exporter: {
-        buttonClicked: "\\u5BFC\\u51FA\\u6309\\u94AE\\u88AB\\u70B9\\u51FB, \\u5BFC\\u51FA\\u683C\\u5F0F: {{format}}\\u3002",
-        csvError: "\\u5728\\u89E3\\u6790\\u6587\\u672C\\u5E76\\u751F\\u6210 CSV \\u65F6\\u53D1\\u751F\\u9519\\u8BEF: {{error}}",
+        buttonClicked: "\\u5BFC\\u51FA\\u6309\\u94AE\\u5DF2\\u70B9\\u51FB\\uFF0C\\u683C\\u5F0F: {{format}}\\u3002",
+        csvError: "\\u89E3\\u6790\\u6587\\u672C\\u5E76\\u751F\\u6210CSV\\u65F6\\u51FA\\u9519: {{error}}",
         fileExported: "\\u6587\\u4EF6\\u5DF2\\u5BFC\\u51FA: {{filename}}",
-        noContent: "\\u6CA1\\u6709\\u5185\\u5BB9\\u53EF\\u5BFC\\u51FA\\u3002",
+        noContent: "\\u65E0\\u5185\\u5BB9\\u53EF\\u5BFC\\u51FA\\u3002",
         unknownFormat: "\\u672A\\u77E5\\u7684\\u5BFC\\u51FA\\u683C\\u5F0F: {{format}}"
       },
       main: {
-        requestingSessionScanData: "\\u4ECE session-scan \\u6A21\\u5F0F\\u8BF7\\u6C42\\u5B8C\\u6574\\u6570\\u636E...",
-        exportingQuickScanData: "\\u4ECE quick-scan \\u6A21\\u5F0F\\u7684\\u5185\\u5B58\\u4E2D\\u5BFC\\u51FA\\u5B8C\\u6574\\u6570\\u636E...",
+        requestingSessionScanData: "\\u6B63\\u5728\\u8BF7\\u6C42\\u4F1A\\u8BDD\\u626B\\u63CF\\u6A21\\u5F0F\\u7684\\u5B8C\\u6574\\u6570\\u636E...",
+        exportingQuickScanData: "\\u6B63\\u5728\\u5BFC\\u51FA\\u5FEB\\u901F\\u626B\\u63CF\\u6A21\\u5F0F\\u5185\\u5B58\\u4E2D\\u7684\\u5B8C\\u6574\\u6570\\u636E...",
         inIframe: "\\u811A\\u672C\\u5728 iframe \\u4E2D\\uFF0C\\u5DF2\\u8DF3\\u8FC7\\u521D\\u59CB\\u5316\\u3002",
-        initializing: "\\u811A\\u672C\\u5F00\\u59CB\\u521D\\u59CB\\u5316...",
+        initializing: "\\u811A\\u672C\\u521D\\u59CB\\u5316\\u5F00\\u59CB...",
         initialSettingsLoaded: "\\u521D\\u59CB\\u8BBE\\u7F6E\\u5DF2\\u52A0\\u8F7D:"
       },
       dom: {
-        ttpCreationError: "\\u521B\\u5EFA Trusted Type \\u7B56\\u7565\\u5931\\u8D25\\uFF1A",
-        svgParseError: "\\u65E0\\u6548\\u6216\\u89E3\\u6790\\u5931\\u8D25\\u7684 SVG \\u5B57\\u7B26\\u4E32\\uFF1A"
+        ttpCreationError: "\\u521B\\u5EFA Trusted Type \\u7B56\\u7565\\u5931\\u8D25:",
+        svgParseError: "SVG \\u5B57\\u7B26\\u4E32\\u65E0\\u6548\\u6216\\u89E3\\u6790\\u5931\\u8D25:"
       },
       elementScan: {
-        starting: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5DF2\\u542F\\u52A8\\u3002",
+        starting: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5DF2\\u5F00\\u59CB\\u3002",
         stopping: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5DF2\\u505C\\u6B62\\u3002",
-        listenersAdded: "\\u5DF2\\u6DFB\\u52A0\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u7684\\u5168\\u5C40\\u4E8B\\u4EF6\\u76D1\\u542C\\u5668\\u3002",
-        listenersRemoved: "\\u5DF2\\u79FB\\u9664\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u7684\\u5168\\u5C40\\u4E8B\\u4EF6\\u76D1\\u542C\\u5668\\u3002",
+        listenersAdded: "\\u5DF2\\u4E3A\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u6DFB\\u52A0\\u5168\\u5C40\\u4E8B\\u4EF6\\u76D1\\u542C\\u5668\\u3002",
+        listenersRemoved: "\\u5DF2\\u4E3A\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u79FB\\u9664\\u5168\\u5C40\\u4E8B\\u4EF6\\u76D1\\u542C\\u5668\\u3002",
         stateReset: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u72B6\\u6001\\u5DF2\\u91CD\\u7F6E\\u3002",
         reselecting: "\\u6B63\\u5728\\u8FD4\\u56DE\\u5143\\u7D20\\u91CD\\u65B0\\u9009\\u62E9\\u6A21\\u5F0F\\u3002",
-        hovering: "\\u5F53\\u524D\\u60AC\\u505C\\u4E8E <{{tagName}}>\\u3002",
-        escapePressed: "\\u7528\\u6237\\u6309\\u4E0B Escape \\u952E\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u3002",
-        clickedEnteringAdjust: "\\u5DF2\\u70B9\\u51FB\\u5143\\u7D20 <{{tagName}}>\\uFF0C\\u8FDB\\u5165\\u5C42\\u7EA7\\u8C03\\u6574\\u6A21\\u5F0F\\u3002",
+        hovering: "\\u6B63\\u5728\\u60AC\\u505C\\u4E8E <{{tagName}}>\\u3002",
+        escapePressed: "\\u6309\\u4E0B Escape \\u952E\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u3002",
+        clickedEnteringAdjust: "\\u5143\\u7D20 <{{tagName}}> \\u5DF2\\u88AB\\u70B9\\u51FB\\uFF0C\\u6B63\\u5728\\u8FDB\\u5165\\u8C03\\u6574\\u6A21\\u5F0F\\u3002",
         pathBuilt: "\\u5143\\u7D20\\u5C42\\u7EA7\\u8DEF\\u5F84\\u5DF2\\u6784\\u5EFA\\uFF0C\\u6DF1\\u5EA6\\u4E3A\\uFF1A{{depth}}\\u3002",
         adjustingLevel: "\\u6B63\\u5728\\u8C03\\u6574\\u9009\\u62E9\\u5C42\\u7EA7\\u81F3 {{level}} ({{tagName}})\\u3002",
         confirmExtracting: "\\u9009\\u62E9\\u5DF2\\u786E\\u8BA4\\uFF0C\\u6B63\\u5728\\u4ECE <{{tagName}}> \\u63D0\\u53D6\\u6587\\u672C\\u3002",
+        staged: "\\u5143\\u7D20\\u5DF2\\u6682\\u5B58\\u3002\\u603B\\u6570\\uFF1A{{count}}\\u3002",
+        confirmingStaged: "\\u786E\\u8BA4\\u9009\\u62E9\\u3002\\u6B63\\u5728\\u5904\\u7406 {{count}} \\u4E2A\\u5DF2\\u6682\\u5B58\\u7684\\u5143\\u7D20\\u3002",
         extractedCount: "\\u5DF2\\u4ECE\\u5143\\u7D20\\u4E2D\\u63D0\\u53D6 {{count}} \\u6761\\u539F\\u59CB\\u6587\\u672C\\u3002",
         confirmFailedNoTarget: "\\u786E\\u8BA4\\u5931\\u8D25\\uFF1A\\u672A\\u9009\\u62E9\\u4EFB\\u4F55\\u76EE\\u6807\\u5143\\u7D20\\u3002",
         rightClickExit: "\\u68C0\\u6D4B\\u5230\\u53F3\\u952E\\u70B9\\u51FB\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u3002",
         processingError: "\\u6587\\u672C\\u5904\\u7406\\u8FC7\\u7A0B\\u4E2D\\u53D1\\u751F\\u9519\\u8BEF: {{error}}",
         worker: {
-          logPrefix: "[\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker]",
+          logPrefix: "[ES Worker]",
           starting: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u6B63\\u5728\\u542F\\u52A8...",
-          sendingData: "\\u6B63\\u5728\\u53D1\\u9001 {{count}} \\u6761\\u6587\\u672C\\u81F3\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker\\u3002",
-          completed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u5904\\u7406\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {{count}} \\u6761\\u6709\\u6548\\u6587\\u672C\\u3002",
-          initFailed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u521D\\u59CB\\u5316\\u5931\\u8D25\\u3002\\u53EF\\u80FD\\u662F\\u7F51\\u7AD9\\u7684 CSP \\u7B56\\u7565\\u963B\\u6B62\\u4E86 data: URL\\u3002",
-          initSyncError: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u521D\\u59CB\\u5316\\u65F6\\u53D1\\u751F\\u540C\\u6B65\\u9519\\u8BEF: {{error}}",
+          sendingData: "\\u6B63\\u5728\\u5411\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u53D1\\u9001 {{count}} \\u6761\\u6587\\u672C\\u7247\\u6BB5\\u3002",
+          completed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u5DF2\\u5B8C\\u6210\\uFF0C\\u627E\\u5230 {{count}} \\u6761\\u4E0D\\u91CD\\u590D\\u6587\\u672C\\u3002",
+          initFailed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u521D\\u59CB\\u5316\\u5931\\u8D25\\u3002\\u6D4F\\u89C8\\u5668\\u7684CSP\\u53EF\\u80FD\\u963B\\u6B62\\u4E86 data: URL\\u3002",
+          initSyncError: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u521D\\u59CB\\u5316\\u671F\\u95F4\\u53D1\\u751F\\u540C\\u6B65\\u9519\\u8BEF: {{error}}",
           originalError: "\\u539F\\u59CB Worker \\u9519\\u8BEF: {{error}}"
         },
         switchToFallback: "\\u6B63\\u5728\\u4E3A\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
@@ -3869,6 +3938,7 @@ ${result.join(",\n")}
         toolbarPositioned: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u5DE5\\u5177\\u680F\\u5DF2\\u5B9A\\u4F4D\\u3002",
         sliderChanged: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u6ED1\\u5757\\u5C42\\u7EA7\\u53D8\\u4E3A {{level}}",
         reselectClicked: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u201C\\u91CD\\u65B0\\u9009\\u62E9\\u201D\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\u3002",
+        stageClicked: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u201C\\u6682\\u5B58\\u201D\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\u3002",
         cancelClicked: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u201C\\u53D6\\u6D88\\u201D\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\u3002",
         confirmClicked: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u201C\\u786E\\u8BA4\\u201D\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\u3002",
         dragStarted: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u62D6\\u52A8\\u5F00\\u59CB\\u3002",
@@ -3877,13 +3947,13 @@ ${result.join(",\n")}
         cleaningToolbar: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u6B63\\u5728\\u6E05\\u7406\\u5DE5\\u5177\\u680F\\u3002"
       },
       eventBus: {
-        callbackError: "\\u5728 '{{eventName}}' \\u4E8B\\u4EF6\\u7684\\u56DE\\u8C03\\u4E2D\\u53D1\\u751F\\u9519\\u8BEF\\uFF1A"
+        callbackError: "\\u4E8B\\u4EF6 '{{eventName}}' \\u7684\\u56DE\\u8C03\\u51FD\\u6570\\u51FA\\u9519:"
       },
       trustedTypes: {
-        workerPolicyError: "\\u521B\\u5EFA Trusted Types worker \\u7B56\\u7565\\u5931\\u8D25\\uFF1A",
-        htmlPolicyError: "\\u521B\\u5EFA Trusted Types HTML \\u7B56\\u7565\\u5931\\u8D25\\uFF1A",
-        defaultWorkerPolicyWarning: "Trusted Types \\u9ED8\\u8BA4\\u7B56\\u7565\\u5904\\u7406 worker URL \\u5931\\u8D25\\uFF0C\\u56DE\\u9000\\u5230\\u539F\\u59CB URL\\u3002",
-        defaultHtmlPolicyWarning: "Trusted Types \\u9ED8\\u8BA4\\u7B56\\u7565\\u5904\\u7406 HTML \\u5931\\u8D25\\uFF0C\\u56DE\\u9000\\u5230\\u539F\\u59CB\\u5B57\\u7B26\\u4E32\\u3002"
+        workerPolicyError: "\\u521B\\u5EFA Trusted Types worker \\u7B56\\u7565\\u5931\\u8D25:",
+        htmlPolicyError: "\\u521B\\u5EFA Trusted Types HTML \\u7B56\\u7565\\u5931\\u8D25:",
+        defaultWorkerPolicyWarning: "\\u7528\\u4E8E worker URL \\u7684 Trusted Types \\u9ED8\\u8BA4\\u7B56\\u7565\\u5931\\u8D25\\uFF0C\\u56DE\\u9000\\u5230\\u539F\\u59CB URL\\u3002",
+        defaultHtmlPolicyWarning: "\\u7528\\u4E8E HTML \\u7684 Trusted Types \\u9ED8\\u8BA4\\u7B56\\u7565\\u5931\\u8D25\\uFF0C\\u56DE\\u9000\\u5230\\u539F\\u59CB\\u5B57\\u7B26\\u4E32\\u3002"
       }
     }
   };
@@ -3892,15 +3962,16 @@ ${result.join(",\n")}
     common: {
       scan: "\\u6383\\u63CF",
       stop: "\\u505C\\u6B62",
-      resume: "\\u7E7C\\u7E8C",
+      resume: "\\u6062\\u5FA9",
       clear: "\\u6E05\\u7A7A",
       copy: "\\u8907\\u88FD",
       save: "\\u5132\\u5B58",
-      discovered: "\\u5DF2\\u767C\\u73FE\\uFF1A",
+      discovered: "\\u5DF2\\u767C\\u73FE:",
       confirm: "\\u78BA\\u8A8D",
       cancel: "\\u53D6\\u6D88",
       export: "\\u532F\\u51FA",
-      reselect: "\\u91CD\\u65B0\\u9078\\u64C7"
+      reselect: "\\u91CD\\u65B0\\u9078\\u64C7",
+      stage: "\\u66AB\\u5B58"
     },
     export: {
       exportAsTxt: "\\u532F\\u51FA\\u70BA TXT",
@@ -3914,28 +3985,28 @@ ${result.join(",\n")}
     },
     settings: {
       title: "\\u8A2D\\u5B9A",
-      theme: "\\u4ECB\\u9762\\u4E3B\\u984C",
-      language: "\\u8A9E\\u8A00\\u8A2D\\u5B9A",
+      theme: "\\u4E3B\\u984C",
+      language: "\\u8A9E\\u8A00",
       relatedSettings: "\\u76F8\\u95DC\\u8A2D\\u5B9A",
       filterRules: "\\u5167\\u5BB9\\u904E\\u6FFE\\u898F\\u5247",
       filters: {
-        numbers: "\\u904E\\u6FFE\\u7D14\\u6578\\u5B57/\\u8CA8\\u5E63",
-        chinese: "\\u904E\\u6FFE\\u7D14\\u4E2D\\u6587",
-        contains_chinese: "\\u904E\\u6FFE\\u5305\\u542B\\u4E2D\\u6587\\u7684\\u6587\\u672C",
-        emoji_only: "\\u904E\\u6FFE\\u7D14\\u8868\\u60C5\\u7B26\\u865F",
-        symbols: "\\u904E\\u6FFE\\u7D14\\u7B26\\u865F",
+        numbers: "\\u904E\\u6FFE\\u6578\\u5B57/\\u8CA8\\u5E63",
+        chinese: "\\u904E\\u6FFE\\u7D14\\u4E2D\\u6587\\u6587\\u672C",
+        contains_chinese: "\\u904E\\u6FFE\\u542B\\u4E2D\\u6587\\u7684\\u6587\\u672C",
+        emoji_only: "\\u904E\\u6FFE\\u7D14\\u8868\\u60C5\\u7B26\\u865F\\u6587\\u672C",
+        symbols: "\\u904E\\u6FFE\\u7D14\\u7B26\\u865F\\u6587\\u672C",
         term: "\\u904E\\u6FFE\\u7279\\u5B9A\\u8853\\u8A9E",
-        single_letter: "\\u904E\\u6FFE\\u7D14\\u55AE\\u500B\\u82F1\\u6587\\u5B57\\u6BCD",
-        repeating_chars: "\\u904E\\u6FFE\\u55AE\\u4E00\\u91CD\\u8907\\u5B57\\u5143",
+        single_letter: "\\u904E\\u6FFE\\u55AE\\u500B\\u82F1\\u6587\\u5B57\\u6BCD",
+        repeating_chars: "\\u904E\\u6FFE\\u91CD\\u8907\\u5B57\\u5143",
         file_paths: "\\u904E\\u6FFE\\u6A94\\u6848\\u8DEF\\u5F91",
-        hex_color_codes: "\\u904E\\u6FFE\\u5341\\u516D\\u9032\\u4F4D\\u984F\\u8272",
-        email_addresses: "\\u904E\\u6FFE\\u90F5\\u4EF6\\u5730\\u5740",
+        hex_color_codes: "\\u904E\\u6FFE\\u5341\\u516D\\u9032\\u4F4D\\u984F\\u8272\\u4EE3\\u78BC",
+        email_addresses: "\\u904E\\u6FFE\\u96FB\\u5B50\\u90F5\\u4EF6\\u5730\\u5740",
         uuids: "\\u904E\\u6FFE UUID",
         git_commit_hashes: "\\u904E\\u6FFE Git \\u63D0\\u4EA4\\u96DC\\u6E4A\\u503C",
-        website_urls: "\\u904E\\u6FFE\\u7DB2\\u5740",
-        website_urls_title: "\\u904E\\u6FFE\\u7DB2\\u5740 (URL)",
-        shorthand_numbers: "\\u904E\\u6FFE\\u7C21\\u5BEB\\u6578\\u5B57",
-        shorthand_numbers_title: "\\u904E\\u6FFE\\u5E36\\u6709\\u55AE\\u4F4D\\u7684\\u7C21\\u5BEB\\u6578\\u5B57"
+        website_urls: "\\u904E\\u6FFE\\u7DB2\\u7AD9\\u9023\\u7D50",
+        website_urls_title: "\\u904E\\u6FFE\\u7DB2\\u7AD9\\u9023\\u7D50",
+        shorthand_numbers: "\\u904E\\u6FFE\\u901F\\u8A18\\u6578\\u5B57",
+        shorthand_numbers_title: "\\u904E\\u6FFE\\u901F\\u8A18\\u6578\\u5B57"
       },
       display: {
         show_fab: "\\u986F\\u793A\\u61F8\\u6D6E\\u6309\\u9215",
@@ -3948,13 +4019,13 @@ ${result.join(",\n")}
         },
         show_line_numbers: "\\u986F\\u793A\\u884C\\u865F",
         show_statistics: "\\u986F\\u793A\\u7D71\\u8A08\\u8CC7\\u8A0A",
-        enable_word_wrap: "\\u555F\\u7528\\u6587\\u5B57\\u81EA\\u52D5\\u63DB\\u884C",
-        text_truncation_limit: "\\u555F\\u7528\\u6587\\u5B57\\u6846\\u5B57\\u5143\\u9650\\u5236",
-        character_limit: "\\u5B57\\u5143\\u6578",
-        show_scan_count: "\\u555F\\u7528\\u6A19\\u984C\\u5217\\u986F\\u793A\\u6383\\u63CF\\u8A08\\u6578"
+        enable_word_wrap: "\\u555F\\u7528\\u81EA\\u52D5\\u63DB\\u884C",
+        text_truncation_limit: "\\u555F\\u7528\\u6587\\u672C\\u622A\\u65B7\\u9650\\u5236",
+        character_limit: "\\u5B57\\u5143\\u9650\\u5236",
+        show_scan_count: "\\u5728\\u6A19\\u984C\\u4E2D\\u555F\\u7528\\u6383\\u63CF\\u8A08\\u6578"
       },
       advanced: {
-        enable_debug_logging: "\\u555F\\u7528\\u5075\\u932F\\u65E5\\u8A8C"
+        enable_debug_logging: "\\u555F\\u7528\\u5075\\u932F\\u65E5\\u8A8C\\u8A18\\u9304"
       },
       panel: {
         title: "\\u8A2D\\u5B9A\\u9762\\u677F"
@@ -3973,45 +4044,46 @@ ${result.join(",\n")}
     scan: {
       quick: "\\u5FEB\\u901F\\u6383\\u63CF",
       session: "\\u6703\\u8A71\\u6383\\u63CF",
+      stagedCount: "\\u5DF2\\u66AB\\u5B58:",
       elementFinished: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {{count}} \\u689D\\u6587\\u672C\\u3002",
       startSession: "\\u958B\\u59CB\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71",
       stopSession: "\\u505C\\u6B62\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71",
-      finished: "\\u6383\\u63CF\\u7D50\\u675F\\uFF0C\\u5171\\u767C\\u73FE {{count}} \\u689D\\u6587\\u672C",
-      quickFinished: "\\u5FEB\\u6377\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {{count}} \\u689D\\u6587\\u672C",
-      sessionStarted: "\\u6703\\u8A71\\u6383\\u63CF\\u5DF2\\u958B\\u59CB",
-      sessionInProgress: "\\u6383\\u63CF\\u6B63\\u5728\\u9032\\u884C\\u4E2D...",
-      truncationWarning: "\\u70BA\\u4FDD\\u6301\\u4ECB\\u9762\\u6D41\\u66A2\\uFF0C\\u6B64\\u8655\\u50C5\\u986F\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u5B8C\\u6574\\u5167\\u5BB9\\u5C07\\u5728\\u532F\\u51FA\\u6642\\u63D0\\u4F9B\\u3002"
+      finished: "\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {{count}} \\u689D\\u6587\\u672C\\u3002",
+      quickFinished: "\\u5FEB\\u901F\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {{count}} \\u689D\\u6587\\u672C\\u3002",
+      sessionStarted: "\\u6703\\u8A71\\u6383\\u63CF\\u5DF2\\u958B\\u59CB\\u3002",
+      sessionInProgress: "\\u6383\\u63CF\\u9032\\u884C\\u4E2D...",
+      truncationWarning: "\\u70BA\\u4FDD\\u6301\\u4ECB\\u9762\\u6D41\\u66A2\\uFF0C\\u6B64\\u8655\\u50C5\\u986F\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u532F\\u51FA\\u5F8C\\u5C07\\u5305\\u542B\\u5B8C\\u6574\\u5167\\u5BB9\\u3002"
     },
     results: {
       title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",
-      scanCountSession: "\\u5DF2\\u6383\\u63CF {{count}} \\u689D\\u6587\\u672C",
-      scanCountStatic: "\\u5171\\u6383\\u63CF {{count}} \\u689D\\u6587\\u672C",
-      totalCharacters: "\\u7E3D\\u5B57\\u6578",
+      scanCountSession: "\\u5DF2\\u6383\\u63CF {{count}} \\u500B\\u9805\\u76EE",
+      scanCountStatic: "\\u5171\\u6383\\u63CF {{count}} \\u500B\\u9805\\u76EE",
+      totalCharacters: "\\u7E3D\\u5B57\\u5143\\u6578",
       totalLines: "\\u7E3D\\u884C\\u6578",
-      noSummary: "\\u7576\\u524D\\u6C92\\u6709\\u6458\\u8981\\u6587\\u672C",
+      noSummary: "\\u7121\\u53EF\\u7528\\u6458\\u8981",
       stats: {
         lines: "\\u884C",
-        chars: "\\u5B57\\u5143\\u6578"
+        chars: "\\u5B57\\u5143"
       }
     },
     notifications: {
       copiedToClipboard: "\\u5DF2\\u8907\\u88FD\\u5230\\u526A\\u8CBC\\u7C3F\\uFF01",
       settingsSaved: "\\u8A2D\\u5B9A\\u5DF2\\u5132\\u5B58\\uFF01",
-      modalInitError: "\\u6A21\\u614B\\u6846\\u5C1A\\u672A\\u521D\\u59CB\\u5316\\u3002",
-      nothingToCopy: "\\u6C92\\u6709\\u5167\\u5BB9\\u53EF\\u8907\\u88FD",
-      contentCleared: "\\u5167\\u5BB9\\u5DF2\\u6E05\\u7A7A",
-      noTextSelected: "\\u672A\\u9078\\u64C7\\u6587\\u672C",
-      cspWorkerWarning: "\\u7531\\u65BC\\u7DB2\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u63DB\\u5230\\u76F8\\u5BB9\\u6383\\u63CF\\u6A21\\u5F0F\\u3002"
+      modalInitError: "\\u6A21\\u614B\\u6846\\u672A\\u521D\\u59CB\\u5316\\u3002",
+      nothingToCopy: "\\u6C92\\u6709\\u53EF\\u8907\\u88FD\\u7684\\u5167\\u5BB9\\u3002",
+      contentCleared: "\\u5167\\u5BB9\\u5DF2\\u6E05\\u9664\\u3002",
+      noTextSelected: "\\u672A\\u9078\\u64C7\\u4EFB\\u4F55\\u6587\\u672C\\u3002",
+      cspWorkerWarning: "\\u56E0\\u7DB2\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u63DB\\u81F3\\u76F8\\u5BB9\\u6383\\u63CF\\u6A21\\u5F0F\\u3002"
     },
     placeholders: {
       click: "\\u9EDE\\u64CA ",
       dynamicScan: "[\\u52D5\\u614B\\u6383\\u63CF]",
-      startNewScanSession: " \\u6309\\u9215\\u958B\\u59CB\\u4E00\\u500B\\u65B0\\u7684\\u6383\\u63CF\\u6703\\u8A71",
+      startNewScanSession: " \\u958B\\u59CB\\u65B0\\u7684\\u6383\\u63CF\\u6703\\u8A71",
       staticScan: "[\\u975C\\u614B\\u6383\\u63CF]",
-      performOneTimeScan: " \\u6309\\u9215\\u53EF\\u9032\\u884C\\u4E00\\u6B21\\u6027\\u7684\\u5FEB\\u6377\\u63D0\\u53D6"
+      performOneTimeScan: " \\u57F7\\u884C\\u4E00\\u6B21\\u6027\\u5FEB\\u901F\\u63D0\\u53D6"
     },
     confirmation: {
-      clear: "\\u4F60\\u78BA\\u8A8D\\u8981\\u6E05\\u7A7A\\u55CE\\uFF1F\\u6B64\\u64CD\\u4F5C\\u4E0D\\u53EF\\u64A4\\u92B7\\u3002"
+      clear: "\\u60A8\\u78BA\\u5B9A\\u8981\\u6E05\\u9664\\u5167\\u5BB9\\u55CE\\uFF1F\\u6B64\\u64CD\\u4F5C\\u7121\\u6CD5\\u64A4\\u92B7\\u3002"
     },
     tooltip: {
       summary: "\\u67E5\\u770B\\u6458\\u8981",
@@ -4020,47 +4092,47 @@ ${result.join(",\n")}
       element_scan: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF",
       filters: {
         title: "\\u5167\\u5BB9\\u904E\\u6FFE\\u5668\\u8AAA\\u660E",
-        numbers: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u6578\\u5B57\\u3001\\u7A7A\\u683C\\u3001\\u5343\\u4F4D\\u5206\\u9694\\u7B26 (.)\\u3001\\u5C0F\\u6578\\u9EDE (,) \\u4EE5\\u53CA\\u90E8\\u5206\\u8CA8\\u5E63\\u7B26\\u865F ($, \\u20AC, \\xA3, \\xA5) \\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "1,234.56"<br>\\u2022 "\\xA5999"<br>\\u2022 "\\u20AC200"<br>\\u2022 "$ 100"',
-        chinese: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u4E2D\\u6587\\u5B57\\u5143\\u548C\\u7A7A\\u683C\\u7D44\\u6210\\u7684\\u6587\\u672C\\uFF0C\\u4E0D\\u5305\\u62EC\\u4EFB\\u4F55\\u6A19\\u9EDE\\u7B26\\u865F\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "\\u4F60\\u597D \\u4E16\\u754C" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "\\u4F60\\u597D\\uFF0C\\u4E16\\u754C" (\\u4E0D\\u6703\\u88AB\\u904E\\u6FFE)',
-        contains_chinese: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389<strong>\\u4EFB\\u4F55\\u5305\\u542B</strong>\\u81F3\\u5C11\\u4E00\\u500B\\u4E2D\\u6587\\u5B57\\u5143\\u7684\\u6587\\u672C\\uFF0C\\u7121\\u8AD6\\u662F\\u5426\\u5305\\u542B\\u5176\\u4ED6\\u5B57\\u5143\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "\\u4F60\\u597D World" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "\\u7B2C 1 \\u7AE0" (\\u5C07\\u88AB\\u904E\\u6FFE)',
-        emoji_only: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u4E00\\u500B\\u6216\\u591A\\u500B\\u8868\\u60C5\\u7B26\\u865F\\u53CA\\u7A7A\\u683C\\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "\\u{1F44D}"<br>\\u2022 "\\u{1F60A} \\u{1F389} \\u{1F680}"',
-        symbols: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u5404\\u985E\\u6A19\\u9EDE\\u548C\\u7B26\\u865F\\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "@#*&^%"<br>\\u2022 "()[]{}"<br>\\u2022 "---...---"',
-        term: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u5E38\\u898B\\u7684\\u3001\\u901A\\u5E38\\u7121\\u9700\\u7FFB\\u8B6F\\u7684 UI \\u8853\\u8A9E\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "OK", "Cancel", "Submit"<br>\\u2022 "Login", "Settings", "Help"',
-        single_letter: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u7531<strong>\\u55AE\\u500B</strong>\\u82F1\\u6587\\u5B57\\u6BCD\\u7D44\\u6210\\u7684\\u6587\\u672C\\uFF0C\\u5FFD\\u7565\\u5927\\u5C0F\\u5BEB\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "A" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "b" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "AB" (\\u4E0D\\u6703\\u88AB\\u904E\\u6FFE)',
-        repeating_chars: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u7531<strong>\\u540C\\u4E00\\u500B\\u5B57\\u5143</strong>\\u9023\\u7E8C\\u91CD\\u8907 2 \\u6B21\\u6216\\u4EE5\\u4E0A\\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "aa"<br>\\u2022 "======"<br>\\u2022 "bbbbb"',
-        file_paths: '\\u6B64\\u898F\\u5247\\u6703\\u5617\\u8A66\\u8B58\\u5225\\u4E26\\u904E\\u6FFE\\u6389\\u985E\\u4F3C\\u4F5C\\u696D\\u7CFB\\u7D71\\u7684\\u3001\\u4E14<strong>\\u5305\\u542B\\u526F\\u6A94\\u540D</strong>\\u7684\\u6A94\\u6848\\u8DEF\\u5F91\\uFF0C\\u4F46\\u5B83\\u4E0D\\u6703\\u5339\\u914D URL\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "/path/to/file.js"<br>\\u2022 "C:\\\\Users\\\\Test\\\\document.docx"<br>\\u2022 "./config.json"',
-        hex_color_codes: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u6A19\\u6E96\\u7684 CSS \\u5341\\u516D\\u9032\\u4F4D\\u984F\\u8272\\u4EE3\\u78BC\\uFF083\\u30014\\u30016 \\u6216 8 \\u4F4D\\uFF0C\\u5F8C\\u8005\\u53EF\\u5305\\u542B Alpha \\u901A\\u9053\\uFF09\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "#FFFFFF"<br>\\u2022 "#ff0000"<br>\\u2022 "#f0c"<br>\\u2022 "#f0c8" (4\\u4F4D)<br>\\u2022 "#ff000080" (8\\u4F4D)',
-        email_addresses: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u7B26\\u5408\\u6A19\\u6E96\\u683C\\u5F0F\\u7684\\u96FB\\u5B50\\u90F5\\u4EF6\\u5730\\u5740\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "example@domain.com"<br>\\u2022 "user.name@sub.domain.org"',
-        uuids: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u901A\\u7528\\u552F\\u4E00\\u8B58\\u5225\\u78BC (UUID)\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "123e4567-e89b-12d3-a456-426614174000"',
-        git_commit_hashes: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u6A19\\u6E96\\u7684 Git \\u63D0\\u4EA4\\u96DC\\u6E4A\\u503C\\uFF08\\u9577\\u96DC\\u6E4A\\u6216\\u77ED\\u96DC\\u6E4A\\uFF09\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\\u2022 "a1b2c3d"',
-        website_urls: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389<strong>\\u7368\\u7ACB\\u7684 URL</strong> \\u6587\\u5B57\\u3002\\u5B83\\u7684\\u6BD4\\u5C0D\\u898F\\u5247\\u88AB\\u8A2D\\u8A08\\u5F97\\u975E\\u5E38\\u56B4\\u683C\\uFF0C\\u4EE5\\u907F\\u514D\\u610F\\u5916\\u79FB\\u9664\\u4E0D\\u662F\\u9023\\u7D50\\u7684\\u6587\\u5B57\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "https://www.example.com"<br>\\u2022 "http://test.co.uk"<br>\\u2022 "www.google.com"<br>\\u2022 "example.org"',
-        shorthand_numbers: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u4F7F\\u7528<strong>\\u5E38\\u898B\\u7C21\\u5BEB\\u5F8C\\u7DB4</strong>\\u7684\\u6578\\u5B57\\uFF0C\\u4F8B\\u5982 k (\\u5343)\\u3001m (\\u767E\\u842C) \\u6216 b (\\u5341\\u5104)\\uFF0C\\u4E0D\\u5340\\u5206\\u5927\\u5C0F\\u5BEB\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "1.2k"<br>\\u2022 "15M"<br>\\u2022 "2.5b"<br>\\u2022 "100K"'
+        numbers: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168</strong>\\u7531\\u6578\\u5B57\\u3001\\u7A7A\\u683C\\u3001\\u5343\\u4F4D\\u5206\\u9694\\u7B26(,)\\u3001\\u5C0F\\u6578\\u9EDE(.)\\u4EE5\\u53CA\\u90E8\\u5206\\u8CA8\\u5E63\\u7B26\\u865F($, \\u20AC, \\xA3, \\xA5)\\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B:</strong><br>\\u2022 "1,234.56"<br>\\u2022 "\\xA5999"<br>\\u2022 "\\u20AC200"<br>\\u2022 "$ 100"',
+        chinese: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168</strong>\\u7531\\u6F22\\u5B57\\u548C\\u7A7A\\u683C\\u7D44\\u6210\\uFF0C\\u4E14\\u4E0D\\u542B\\u4EFB\\u4F55\\u6A19\\u9EDE\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u7BC4\\u4F8B:</strong><br>\\u2022 "\\u4F60\\u597D \\u4E16\\u754C" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "\\u4F60\\u597D\\uFF0C\\u4E16\\u754C" (\\u4E0D\\u6703\\u88AB\\u904E\\u6FFE)',
+        contains_chinese: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389\\u4EFB\\u4F55\\u542B\\u6709\\u81F3\\u5C11\\u4E00\\u500B\\u6F22\\u5B57\\u7684\\u6587\\u672C\\uFF0C\\u7121\\u8AD6\\u5176\\u4ED6\\u5B57\\u5143\\u662F\\u4EC0\\u9EBC\\u3002<br><br><strong>\\u7BC4\\u4F8B:</strong><br>\\u2022 "\\u4F60\\u597D World" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "\\u7B2C\\u4E00\\u7AE0" (\\u5C07\\u88AB\\u904E\\u6FFE)',
+        emoji_only: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168</strong>\\u7531\\u4E00\\u500B\\u6216\\u591A\\u500B\\u8868\\u60C5\\u7B26\\u865F\\u53CA\\u7A7A\\u683C\\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u7BC4\\u4F8B:</strong><br>\\u2022 "\\u{1F44D}"<br>\\u2022 "\\u{1F60A} \\u{1F389} \\u{1F680}"',
+        symbols: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168</strong>\\u7531\\u5404\\u7A2E\\u6A19\\u9EDE\\u548C\\u7B26\\u865F\\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B:</strong><br>\\u2022 "@#*&^%"<br>\\u2022 "()[]{}"<br>\\u2022 "---...---"',
+        term: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389\\u901A\\u5E38\\u4E0D\\u9700\\u8981\\u7FFB\\u8B6F\\u7684\\u5E38\\u898BUI\\u8853\\u8A9E\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B:</strong><br>\\u2022 "OK", "Cancel", "Submit"<br>\\u2022 "Login", "Settings", "Help"',
+        single_letter: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389\\u7531<strong>\\u55AE\\u500B</strong>\\u82F1\\u6587\\u5B57\\u6BCD\\u7D44\\u6210\\u7684\\u6587\\u672C\\uFF08\\u4E0D\\u5340\\u5206\\u5927\\u5C0F\\u5BEB\\uFF09\\u3002<br><br><strong>\\u7BC4\\u4F8B:</strong><br>\\u2022 "A" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "b" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "AB" (\\u4E0D\\u6703\\u88AB\\u904E\\u6FFE)',
+        repeating_chars: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389\\u7531<strong>\\u540C\\u4E00\\u500B\\u5B57\\u5143</strong>\\u9023\\u7E8C\\u91CD\\u89072\\u6B21\\u6216\\u4EE5\\u4E0A\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u7BC4\\u4F8B:</strong><br>\\u2022 "aa"<br>\\u2022 "======"<br>\\u2022 "bbbbb"',
+        file_paths: '\\u6B64\\u898F\\u5247\\u5617\\u8A66\\u8B58\\u5225\\u4E26\\u904E\\u6FFE\\u6389\\u985E\\u4F3C\\u4F5C\\u696D\\u7CFB\\u7D71\\u6A94\\u6848\\u8DEF\\u5F91\\u4E14<strong>\\u5305\\u542B\\u6A94\\u6848\\u526F\\u6A94\\u540D</strong>\\u7684\\u6587\\u672C\\u3002\\u5B83\\u4E0D\\u5339\\u914D\\u7DB2\\u5740\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B:</strong><br>\\u2022 "/path/to/file.js"<br>\\u2022 "C:\\\\Users\\\\Test\\\\document.docx"<br>\\u2022 "./config.json"',
+        hex_color_codes: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389\\u6A19\\u6E96\\u7684CSS\\u5341\\u516D\\u9032\\u4F4D\\u984F\\u8272\\u4EE3\\u78BC\\uFF083\\u30014\\u30016\\u62168\\u4F4D\\uFF0C\\u5F8C\\u8005\\u5305\\u542B\\u900F\\u660E\\u5EA6\\u901A\\u9053\\uFF09\\u3002<br><br><strong>\\u7BC4\\u4F8B:</strong><br>\\u2022 "#FFFFFF"<br>\\u2022 "#ff0000"<br>\\u2022 "#f0c"<br>\\u2022 "#f0c8" (4\\u4F4D)<br>\\u2022 "#ff000080" (8\\u4F4D)',
+        email_addresses: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389\\u7B26\\u5408\\u6A19\\u6E96\\u96FB\\u5B50\\u90F5\\u4EF6\\u5730\\u5740\\u683C\\u5F0F\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u7BC4\\u4F8B:</strong><br>\\u2022 "example@domain.com"<br>\\u2022 "user.name@sub.domain.org"',
+        uuids: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389\\u901A\\u7528\\u552F\\u4E00\\u8B58\\u5225\\u78BC (UUID)\\u3002<br><br><strong>\\u7BC4\\u4F8B:</strong><br>\\u2022 "123e4567-e89b-12d3-a456-426614174000"',
+        git_commit_hashes: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389\\u6A19\\u6E96\\u7684Git\\u63D0\\u4EA4\\u96DC\\u6E4A\\u503C\\uFF08\\u9577\\u6216\\u77ED\\uFF09\\u3002<br><br><strong>\\u7BC4\\u4F8B:</strong><br>\\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\\u2022 "a1b2c3d"',
+        website_urls: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389<strong>\\u7368\\u7ACB\\u7684\\u7DB2\\u5740</strong>\\u3002\\u5B83\\u8A2D\\u8A08\\u5F97\\u6BD4\\u8F03\\u56B4\\u683C\\uFF0C\\u4EE5\\u907F\\u514D\\u610F\\u5916\\u79FB\\u9664\\u4E0D\\u662F\\u9023\\u7D50\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B:</strong><br>\\u2022 "https://www.example.com"<br>\\u2022 "http://test.co.uk"<br>\\u2022 "www.google.com"<br>\\u2022 "example.org"',
+        shorthand_numbers: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389\\u4F7F\\u7528<strong>\\u5E38\\u898B\\u901F\\u8A18\\u5F8C\\u7DB4</strong>\\u8868\\u793A\\u5343(k)\\u3001\\u767E\\u842C(m)\\u6216\\u5341\\u5104(b)\\u7684\\u6578\\u5B57\\uFF08\\u4E0D\\u5340\\u5206\\u5927\\u5C0F\\u5BEB\\uFF09\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B:</strong><br>\\u2022 "1.2k"<br>\\u2022 "15M"<br>\\u2022 "2.5b"<br>\\u2022 "100K"'
       },
       display: {
         title: "\\u986F\\u793A\\u8A2D\\u5B9A\\u8AAA\\u660E",
-        show_fab: "\\u63A7\\u5236\\u662F\\u5426\\u5728\\u7DB2\\u9801\\u53F3\\u4E0B\\u89D2\\u986F\\u793A <strong>\\u6D6E\\u52D5\\u52D5\\u4F5C\\u6309\\u9215 (FAB)</strong>\\u3002\\u9019\\u662F\\u975C\\u614B\\u6587\\u5B57\\u8403\\u53D6\\u3001\\u52D5\\u614B\\u6587\\u5B57\\u8403\\u53D6\\u7684\\u6838\\u5FC3\\u5165\\u53E3\\u3002<br><br>\\u5982\\u679C\\u60A8\\u7981\\u7528\\u4E86\\u6B64\\u6309\\u9215\\uFF0C\\u53EF\\u4EE5\\u900F\\u904E\\u6CB9\\u7334\\u64F4\\u5145\\u529F\\u80FD\\u9078\\u55AE\\u7684\\u8A2D\\u5B9A\\u9762\\u677F\\u91CD\\u65B0\\u958B\\u555F\\u3002",
-        show_scan_count: "\\u555F\\u7528\\u5F8C\\uFF0C\\u5728\\u7D50\\u679C\\u8996\\u7A97\\u7684\\u6A19\\u984C\\u5217\\u6703<strong>\\u5373\\u6642\\u66F4\\u65B0</strong>\\u672C\\u6B21\\u6383\\u63CF\\u767C\\u73FE\\u7684\\u6587\\u672C\\u689D\\u76EE\\u7E3D\\u6578\\u3002\\u5728\\u9032\\u884C\\u9577\\u6642\\u9593\\u7684<strong>\\u52D5\\u614B\\u6383\\u63CF</strong>\\u6642\\uFF0C\\u9019\\u500B\\u8A08\\u6578\\u5668\\u53EF\\u4EE5\\u5F88\\u76F4\\u89C0\\u5730\\u53CD\\u6620\\u6383\\u63CF\\u9032\\u5EA6\\u3002",
-        show_line_numbers: "\\u5728\\u7D50\\u679C\\u8996\\u7A97\\u7684\\u6587\\u672C\\u5340\\u57DF\\u5DE6\\u5074\\u986F\\u793A\\u884C\\u865F\\u3002\\u7576\\u60A8\\u9700\\u8981\\u8207\\u4ED6\\u4EBA\\u8A0E\\u8AD6\\u6216\\u8A18\\u9304\\u7279\\u5B9A\\u67D0\\u884C\\u6587\\u672C\\u6642\\uFF0C\\u884C\\u865F\\u53EF\\u4EE5\\u63D0\\u4F9B\\u4E00\\u500B<strong>\\u7CBE\\u78BA\\u7684\\u5B9A\\u4F4D\\u6A19\\u8A18</strong>\\u3002",
-        show_statistics: "\\u5728\\u7D50\\u679C\\u8996\\u7A97\\u5E95\\u90E8\\u7684\\u72C0\\u614B\\u5217\\u986F\\u793A\\u7576\\u524D\\u5DF2\\u63D0\\u53D6\\u5167\\u5BB9\\u7684<strong>\\u5373\\u6642\\u7D71\\u8A08</strong>\\uFF0C\\u5305\\u62EC<strong>\\u7E3D\\u884C\\u6578</strong>\\u548C<strong>\\u7E3D\\u5B57\\u5143\\u6578</strong>\\u3002\\u9019\\u53EF\\u4EE5\\u5E6B\\u52A9\\u60A8\\u5FEB\\u901F\\u8A55\\u4F30\\u63D0\\u53D6\\u5167\\u5BB9\\u7684\\u898F\\u6A21\\u3002",
-        enable_word_wrap: "\\u63A7\\u5236\\u7D50\\u679C\\u8996\\u7A97\\u4E2D\\u7684\\u9577\\u6587\\u672C\\u884C\\u5982\\u4F55\\u986F\\u793A\\u3002<br><br>\\u2022 <strong>\\u555F\\u7528\\uFF1A</strong>\\u9577\\u6587\\u672C\\u5C07\\u81EA\\u52D5\\u63DB\\u884C\\u4EE5\\u9069\\u61C9\\u8996\\u7A97\\u5BEC\\u5EA6\\u3002<br>\\u2022 <strong>\\u7981\\u7528\\uFF1A</strong>\\u9577\\u6587\\u672C\\u5C07\\u4FDD\\u6301\\u5728\\u55AE\\u884C\\uFF0C\\u4E26\\u51FA\\u73FE\\u6C34\\u5E73\\u6372\\u52D5\\u689D\\u3002",
-        text_truncation_limit: "\\u9019\\u662F\\u4E00\\u500B<strong>\\u6548\\u80FD\\u4FDD\\u8B77</strong>\\u6A5F\\u5236\\u3002\\u7576\\u8173\\u672C\\u63D0\\u53D6\\u5230<strong>\\u55AE\\u884C\\u8D85\\u9577\\u6587\\u672C</strong>\\uFF08\\u4F8B\\u5982\\uFF0C\\u4E00\\u500B\\u5B8C\\u6574\\u7684 base64 \\u7DE8\\u78BC\\u5716\\u7247\\uFF09\\u6642\\uFF0C\\u82E5\\u4E0D\\u622A\\u65B7\\uFF0C\\u53EF\\u80FD\\u6703\\u5C0E\\u81F4\\u700F\\u89BD\\u5668<strong>\\u5361\\u9813\\u6216\\u7121\\u97FF\\u61C9</strong>\\u3002<br><br>\\u6B64\\u8A2D\\u5B9A\\u6703\\u622A\\u65B7\\u8D85\\u51FA\\u6307\\u5B9A\\u9577\\u5EA6\\u7684\\u55AE\\u884C\\u6587\\u672C\\uFF0C\\u4EE5\\u4FDD\\u8B49\\u4ECB\\u9762\\u6D41\\u66A2\\u3002<strong>\\u6CE8\\u610F\\uFF1A\\u6B64\\u622A\\u65B7\\u50C5\\u5F71\\u97FF\\u4ECB\\u9762\\u986F\\u793A\\uFF0C\\u532F\\u51FA\\u7684\\u6A94\\u6848\\u4ECD\\u5C07\\u5305\\u542B\\u5B8C\\u6574\\u5167\\u5BB9\\u3002</strong>"
+        show_fab: "\\u63A7\\u5236\\u662F\\u5426\\u5728\\u7DB2\\u9801\\u53F3\\u4E0B\\u89D2\\u986F\\u793A<strong>\\u61F8\\u6D6E\\u64CD\\u4F5C\\u6309\\u9215(FAB)</strong>\\u3002\\u9019\\u662F\\u9032\\u884C\\u975C\\u614B\\u548C\\u52D5\\u614B\\u6587\\u672C\\u63D0\\u53D6\\u7684\\u4E3B\\u8981\\u5165\\u53E3\\u3002<br><br>\\u5982\\u679C\\u60A8\\u7981\\u7528\\u4E86\\u6B64\\u6309\\u9215\\uFF0C\\u53EF\\u4EE5\\u900F\\u904E\\u6CB9\\u7334\\u64F4\\u5145\\u5957\\u4EF6\\u9078\\u55AE\\u4E2D\\u7684\\u8A2D\\u5B9A\\u9762\\u677F\\u91CD\\u65B0\\u555F\\u7528\\u5B83\\u3002",
+        show_scan_count: "\\u555F\\u7528\\u5F8C\\uFF0C\\u7D50\\u679C\\u8996\\u7A97\\u7684\\u6A19\\u984C\\u5217\\u5C07<strong>\\u5373\\u6642\\u986F\\u793A</strong>\\u76EE\\u524D\\u6383\\u63CF\\u4E2D\\u627E\\u5230\\u7684\\u7E3D\\u6587\\u672C\\u9805\\u76EE\\u6578\\u3002\\u9019\\u5C0D\\u65BC\\u76E3\\u63A7\\u9577\\u6642\\u9593\\u57F7\\u884C\\u7684<strong>\\u52D5\\u614B\\u6383\\u63CF</strong>\\u7684\\u9032\\u5EA6\\u7279\\u5225\\u6709\\u7528\\u3002",
+        show_line_numbers: "\\u5728\\u7D50\\u679C\\u8996\\u7A97\\u7684\\u6587\\u672C\\u5340\\u57DF\\u5DE6\\u5074\\u986F\\u793A\\u884C\\u865F\\u3002\\u7576\\u60A8\\u9700\\u8981\\u8A0E\\u8AD6\\u6216\\u8A18\\u9304\\u7279\\u5B9A\\u6587\\u672C\\u884C\\u6642\\uFF0C\\u9019\\u63D0\\u4F9B\\u4E86\\u4E00\\u500B<strong>\\u7CBE\\u78BA\\u7684\\u53C3\\u8003\\u9EDE</strong>\\u3002",
+        show_statistics: "\\u5728\\u7D50\\u679C\\u8996\\u7A97\\u5E95\\u90E8\\u7684\\u72C0\\u614B\\u5217\\u4E2D\\u986F\\u793A\\u6709\\u95DC\\u63D0\\u53D6\\u5167\\u5BB9\\u7684<strong>\\u5373\\u6642\\u7D71\\u8A08\\u6578\\u64DA</strong>\\uFF0C\\u5305\\u62EC<strong>\\u7E3D\\u884C\\u6578</strong>\\u548C<strong>\\u7E3D\\u5B57\\u5143\\u6578</strong>\\u3002\\u9019\\u6709\\u52A9\\u65BC\\u60A8\\u5FEB\\u901F\\u8A55\\u4F30\\u5167\\u5BB9\\u7684\\u9AD4\\u91CF\\u3002",
+        enable_word_wrap: "\\u63A7\\u5236\\u7D50\\u679C\\u8996\\u7A97\\u4E2D\\u9577\\u6587\\u672C\\u884C\\u7684\\u986F\\u793A\\u65B9\\u5F0F\\u3002<br><br>\\u2022 <strong>\\u555F\\u7528:</strong> \\u9577\\u884C\\u5C07\\u81EA\\u52D5\\u63DB\\u884C\\u4EE5\\u9069\\u61C9\\u8996\\u7A97\\u5BEC\\u5EA6\\u3002<br>\\u2022 <strong>\\u7981\\u7528:</strong> \\u9577\\u884C\\u5C07\\u4FDD\\u6301\\u5728\\u55AE\\u884C\\uFF0C\\u4E26\\u51FA\\u73FE\\u6C34\\u5E73\\u6372\\u8EF8\\u3002",
+        text_truncation_limit: "\\u9019\\u662F\\u4E00\\u500B<strong>\\u6548\\u80FD\\u512A\\u5316</strong>\\u529F\\u80FD\\u3002\\u5982\\u679C\\u8173\\u672C\\u63D0\\u53D6\\u5230<strong>\\u6975\\u9577\\u7684\\u55AE\\u884C\\u6587\\u672C</strong>\\uFF08\\u4F8B\\u5982\\uFF0Cbase64\\u7DE8\\u78BC\\u7684\\u5716\\u7247\\uFF09\\uFF0C\\u53EF\\u80FD\\u6703\\u5C0E\\u81F4\\u700F\\u89BD\\u5668<strong>\\u5361\\u9813\\u6216\\u7121\\u56DE\\u61C9</strong>\\u3002<br><br>\\u6B64\\u8A2D\\u5B9A\\u6703\\u622A\\u65B7\\u4EFB\\u4F55\\u8D85\\u904E\\u6307\\u5B9A\\u9577\\u5EA6\\u7684\\u55AE\\u884C\\u6587\\u672C\\uFF0C\\u4EE5\\u78BA\\u4FDDUI\\u4FDD\\u6301\\u6D41\\u66A2\\u3002<strong>\\u6CE8\\u610F\\uFF1A\\u9019\\u50C5\\u5F71\\u97FF\\u986F\\u793A\\uFF1B\\u532F\\u51FA\\u7684\\u6A94\\u6848\\u4ECD\\u5C07\\u5305\\u542B\\u5B8C\\u6574\\u7684\\u3001\\u672A\\u622A\\u65B7\\u7684\\u5167\\u5BB9\\u3002</strong>"
       },
       advanced: {
         title: "\\u9032\\u968E\\u8A2D\\u5B9A\\u8AAA\\u660E",
-        enable_debug_logging: "\\u555F\\u7528\\u5F8C\\uFF0C\\u8173\\u672C\\u6703\\u5C07\\u8A73\\u7D30\\u7684\\u5167\\u90E8\\u904B\\u884C\\u72C0\\u614B\\u3001\\u57F7\\u884C\\u6B65\\u9A5F\\u3001\\u932F\\u8AA4\\u8CC7\\u8A0A\\u7B49\\u8F38\\u51FA\\u5230\\u700F\\u89BD\\u5668\\u7684<strong>\\u958B\\u767C\\u8005\\u5DE5\\u5177\\u63A7\\u5236\\u53F0</strong>\\uFF08\\u901A\\u5E38\\u6309 F12 \\u958B\\u555F\\uFF09\\u3002\\u6B64\\u529F\\u80FD\\u4E3B\\u8981\\u9762\\u5411\\u958B\\u767C\\u8005\\u6216\\u9700\\u8981\\u63D0\\u4EA4\\u8A73\\u7D30\\u932F\\u8AA4\\u5831\\u544A\\u7684\\u4F7F\\u7528\\u8005\\u3002"
+        enable_debug_logging: "\\u555F\\u7528\\u5F8C\\uFF0C\\u8173\\u672C\\u6703\\u5C07\\u8A73\\u7D30\\u7684\\u5167\\u90E8\\u72C0\\u614B\\u3001\\u57F7\\u884C\\u6B65\\u9A5F\\u548C\\u932F\\u8AA4\\u8A0A\\u606F\\u8F38\\u51FA\\u5230\\u700F\\u89BD\\u5668\\u7684<strong>\\u958B\\u767C\\u8005\\u5DE5\\u5177\\u63A7\\u5236\\u53F0</strong>\\uFF08\\u901A\\u5E38\\u7528F12\\u958B\\u555F\\uFF09\\u3002\\u9019\\u4E3B\\u8981\\u4F9B\\u958B\\u767C\\u8005\\u6216\\u9700\\u8981\\u63D0\\u4EA4\\u8A73\\u7D30\\u932F\\u8AA4\\u5831\\u544A\\u7684\\u4F7F\\u7528\\u8005\\u4F7F\\u7528\\u3002"
       }
     },
     log: {
-      prefix: "[\\u6587\\u672C\\u63D0\\u53D6\\u8173\\u672C-Debug]",
+      prefix: "[\\u6587\\u672C\\u63D0\\u53D6\\u8173\\u672C-\\u5075\\u932F]",
       language: {
         switched: "\\u8A9E\\u8A00\\u5DF2\\u5207\\u63DB\\u81F3\\uFF1A{{lang}}",
-        notFound: "\\u8A9E\\u8A00 '{{lang}}' \\u4E0D\\u5B58\\u5728\\uFF0C\\u9000\\u56DE\\u81F3 'en'\\u3002"
+        notFound: "\\u672A\\u627E\\u5230\\u8A9E\\u8A00 '{{lang}}'\\uFF0C\\u5DF2\\u56DE\\u9000\\u81F3 'en'\\u3002"
       },
       settings: {
         changed: "\\u8A2D\\u5B9A '{{key}}' \\u5DF2\\u5F9E '{{oldValue}}' \\u8B8A\\u66F4\\u70BA '{{newValue}}'",
         filterRuleChanged: {
-          enabled: "\\u904E\\u6FFE\\u898F\\u5247 '{{key}}' \\u5DF2\\u88AB\\u555F\\u7528",
-          disabled: "\\u904E\\u6FFE\\u898F\\u5247 '{{key}}' \\u5DF2\\u88AB\\u7981\\u7528"
+          enabled: "\\u904E\\u6FFE\\u898F\\u5247 '{{key}}' \\u5DF2\\u555F\\u7528",
+          disabled: "\\u904E\\u6FFE\\u898F\\u5247 '{{key}}' \\u5DF2\\u7981\\u7528"
         },
         panel: {
           opening: "\\u6B63\\u5728\\u958B\\u555F\\u8A2D\\u5B9A\\u9762\\u677F...",
@@ -4068,111 +4140,113 @@ ${result.join(",\n")}
           saving: "\\u6B63\\u5728\\u5132\\u5B58\\u8A2D\\u5B9A..."
         },
         parseError: "\\u89E3\\u6790\\u5DF2\\u5132\\u5B58\\u7684\\u8A2D\\u5B9A\\u6642\\u51FA\\u932F\\uFF1A",
-        invalidObject: "\\u8A66\\u5716\\u5132\\u5B58\\u4E00\\u500B\\u7121\\u6548\\u7684\\u7269\\u4EF6\\u4F5C\\u70BA\\u8A2D\\u5B9A\\uFF1A"
+        invalidObject: "\\u8A66\\u5716\\u70BA\\u8A2D\\u5B9A\\u5132\\u5B58\\u4E00\\u500B\\u7121\\u6548\\u7269\\u4EF6\\uFF1A"
       },
       textProcessor: {
-        filtered: '\\u6587\\u672C\\u5DF2\\u904E\\u6FFE\\uFF1A"{{text}}" (\\u539F\\u56E0\\uFF1A{{reason}})'
+        filtered: '\\u6587\\u672C\\u5DF2\\u904E\\u6FFE: "{{text}}" (\\u539F\\u56E0: {{reason}})'
       },
       quickScan: {
-        switchToFallback: "[\\u975C\\u614B\\u6383\\u63CF] \\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
-        fallbackFailed: "[\\u975C\\u614B\\u6383\\u63CF] \\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u5931\\u6557\\uFF1A{{error}}",
+        switchToFallback: "[\\u5FEB\\u901F\\u6383\\u63CF] \\u6B63\\u5728\\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
+        fallbackFailed: "[\\u5FEB\\u901F\\u6383\\u63CF] \\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u57F7\\u884C\\u5931\\u6557: {{error}}",
         fallback: {
-          starting: "[\\u975C\\u614B\\u6383\\u63CF - \\u5099\\u9078\\u65B9\\u6848] \\u958B\\u59CB\\u5728\\u4E3B\\u7DDA\\u7A0B\\u4E2D\\u8655\\u7406...",
-          completed: "[\\u975C\\u614B\\u6383\\u63CF - \\u5099\\u9078\\u65B9\\u6848] \\u8655\\u7406\\u5B8C\\u6210\\uFF0C\\u5171 {{count}} \\u689D\\u6709\\u6548\\u6587\\u672C\\u3002"
+          starting: "[\\u5FEB\\u901F\\u6383\\u63CF - \\u5099\\u9078] \\u6B63\\u5728\\u4E3B\\u7DDA\\u7A0B\\u4E2D\\u958B\\u59CB\\u8655\\u7406...",
+          completed: "[\\u5FEB\\u901F\\u6383\\u63CF - \\u5099\\u9078] \\u8655\\u7406\\u5B8C\\u6210\\uFF0C\\u627E\\u5230 {{count}} \\u689D\\u4E0D\\u91CD\\u8907\\u6587\\u672C\\u3002"
         },
         worker: {
-          logPrefix: "[\\u975C\\u614B\\u6383\\u63CF Worker]",
-          starting: "[\\u975C\\u614B\\u6383\\u63CF] \\u958B\\u59CB\\u57F7\\u884C\\uFF0C\\u5617\\u8A66\\u4F7F\\u7528 Web Worker...",
-          completed: "[\\u975C\\u614B\\u6383\\u63CF] Worker \\u8655\\u7406\\u6210\\u529F\\uFF0C\\u6536\\u5230 {{count}} \\u689D\\u6587\\u672C\\u3002",
-          scanComplete: "[\\u975C\\u614B\\u6383\\u63CF Worker] \\u8655\\u7406\\u5B8C\\u6210\\uFF0C\\u5171 {{count}} \\u689D\\u6709\\u6548\\u6587\\u672C\\u3002\\u6B63\\u5728\\u767C\\u56DE\\u4E3B\\u7DDA\\u7A0B...",
-          initFailed: "[\\u975C\\u614B\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u6557\\u3002\\u9019\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u65BC\\u7DB2\\u7AD9\\u7684\\u5167\\u5BB9\\u5B89\\u5168\\u7B56\\u7565\\uFF08CSP\\uFF09\\u963B\\u6B62\\u4E86\\u8173\\u672C\\u3002",
-          originalError: "[\\u975C\\u614B\\u6383\\u63CF] \\u539F\\u59CB\\u932F\\u8AA4\\uFF1A{{error}}",
-          sendingData: "[\\u975C\\u614B\\u6383\\u63CF] Web Worker \\u5DF2\\u5EFA\\u7ACB\\uFF0C\\u6B63\\u5728\\u767C\\u9001 {{count}} \\u689D\\u6587\\u672C\\u9032\\u884C\\u8655\\u7406...",
-          initSyncError: "[\\u975C\\u614B\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u6642\\u767C\\u751F\\u540C\\u6B65\\u932F\\u8AA4\\uFF1A{{error}}"
+          logPrefix: "[\\u5FEB\\u901F\\u6383\\u63CF Worker]",
+          starting: "[\\u5FEB\\u901F\\u6383\\u63CF] \\u958B\\u59CB\\u57F7\\u884C\\uFF0C\\u5617\\u8A66\\u4F7F\\u7528 Web Worker...",
+          completed: "[\\u5FEB\\u901F\\u6383\\u63CF] Worker \\u8655\\u7406\\u6210\\u529F\\uFF0C\\u6536\\u5230 {{count}} \\u689D\\u6587\\u672C\\u3002",
+          scanComplete: "[\\u5FEB\\u901F\\u6383\\u63CF Worker] \\u8655\\u7406\\u5B8C\\u6210\\uFF0C\\u627E\\u5230 {{count}} \\u689D\\u4E0D\\u91CD\\u8907\\u6587\\u672C\\u3002\\u6B63\\u5728\\u767C\\u56DE\\u4E3B\\u7DDA\\u7A0B...",
+          initFailed: "[\\u5FEB\\u901F\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u6557\\u3002\\u9019\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u65BC\\u7DB2\\u7AD9\\u7684\\u5167\\u5BB9\\u5B89\\u5168\\u7B56\\u7565 (CSP) \\u5C0E\\u81F4\\u7684\\u3002",
+          originalError: "[\\u5FEB\\u901F\\u6383\\u63CF] \\u539F\\u59CB\\u932F\\u8AA4: {{error}}",
+          sendingData: "[\\u5FEB\\u901F\\u6383\\u63CF] Web Worker \\u5DF2\\u5EFA\\u7ACB\\uFF0C\\u6B63\\u5728\\u767C\\u9001 {{count}} \\u689D\\u6587\\u672C\\u9032\\u884C\\u8655\\u7406...",
+          initSyncError: "[\\u5FEB\\u901F\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u671F\\u9593\\u767C\\u751F\\u540C\\u6B65\\u932F\\u8AA4: {{error}}"
         }
       },
       sessionScan: {
-        switchToFallback: "[\\u6703\\u8A71\\u6383\\u63CF] \\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
+        switchToFallback: "[\\u6703\\u8A71\\u6383\\u63CF] \\u6B63\\u5728\\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
         domObserver: {
           stopped: "[\\u6703\\u8A71\\u6383\\u63CF] \\u5DF2\\u505C\\u6B62\\u76E3\\u807D DOM \\u8B8A\\u5316\\u3002"
         },
         fallback: {
-          initialized: "[\\u6703\\u8A71\\u6383\\u63CF - \\u5099\\u9078\\u65B9\\u6848] \\u521D\\u59CB\\u5316\\u5B8C\\u6210\\u3002",
-          cleared: "[\\u6703\\u8A71\\u6383\\u63CF - \\u5099\\u9078\\u65B9\\u6848] \\u8CC7\\u6599\\u5DF2\\u6E05\\u7A7A\\u3002"
+          initialized: "[\\u6703\\u8A71\\u6383\\u63CF - \\u5099\\u9078] \\u5DF2\\u521D\\u59CB\\u5316\\u3002",
+          cleared: "[\\u6703\\u8A71\\u6383\\u63CF - \\u5099\\u9078] \\u8CC7\\u6599\\u5DF2\\u6E05\\u9664\\u3002"
         },
         worker: {
           logPrefix: "[\\u6703\\u8A71\\u6383\\u63CF Worker]",
-          starting: "\\u6703\\u8A71\\u6383\\u63CF\\uFF1A\\u5617\\u8A66\\u555F\\u52D5 Web Worker...",
-          initFailed: "[\\u6703\\u8A71\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u6557\\u3002\\u9019\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u65BC\\u7DB2\\u7AD9\\u7684\\u5167\\u5BB9\\u5B89\\u5168\\u7B56\\u7565\\uFF08CSP\\uFF09\\u963B\\u6B62\\u4E86\\u8173\\u672C\\u3002",
-          originalError: "[\\u6703\\u8A71\\u6383\\u63CF] \\u539F\\u59CB\\u932F\\u8AA4\\uFF1A{{error}}",
+          starting: "\\u6703\\u8A71\\u6383\\u63CF\\uFF1A\\u6B63\\u5728\\u5617\\u8A66\\u555F\\u52D5 Web Worker...",
+          initFailed: "[\\u6703\\u8A71\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u6557\\u3002\\u9019\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u65BC\\u7DB2\\u7AD9\\u7684\\u5167\\u5BB9\\u5B89\\u5168\\u7B56\\u7565 (CSP) \\u5C0E\\u81F4\\u7684\\u3002",
+          originalError: "[\\u6703\\u8A71\\u6383\\u63CF] \\u539F\\u59CB\\u932F\\u8AA4: {{error}}",
           initialized: "[\\u6703\\u8A71\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u6210\\u529F\\uFF0C\\u5DF2\\u767C\\u9001 {{count}} \\u689D\\u521D\\u59CB\\u6587\\u672C\\u4EE5\\u958B\\u59CB\\u6703\\u8A71\\u3002",
-          initSyncError: "[\\u6703\\u8A71\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u6642\\u767C\\u751F\\u540C\\u6B65\\u932F\\u8AA4\\uFF1A{{error}}",
-          clearCommandSent: "[\\u6703\\u8A71\\u6383\\u63CF] \\u5DF2\\u5411 Worker \\u767C\\u9001\\u6E05\\u7A7A\\u6307\\u4EE4\\u3002"
+          initSyncError: "[\\u6703\\u8A71\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u671F\\u9593\\u767C\\u751F\\u540C\\u6B65\\u932F\\u8AA4: {{error}}",
+          clearCommandSent: "[\\u6703\\u8A71\\u6383\\u63CF] \\u6E05\\u9664\\u547D\\u4EE4\\u5DF2\\u767C\\u9001\\u81F3 worker\\u3002"
         }
       },
       ui: {
         copyButton: {
-          copied: "\\u8907\\u88FD\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\uFF0C\\u8907\\u88FD\\u4E86 {{count}} \\u500B\\u5B57\\u5143\\u3002",
-          nothingToCopy: "\\u8907\\u88FD\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\uFF0C\\u4F46\\u6C92\\u6709\\u5167\\u5BB9\\u53EF\\u8907\\u88FD\\u6216\\u6309\\u9215\\u88AB\\u7981\\u7528\\u3002"
+          copied: "\\u8907\\u88FD\\u6309\\u9215\\u5DF2\\u9EDE\\u64CA\\uFF0C\\u8907\\u88FD\\u4E86 {{count}} \\u500B\\u5B57\\u5143\\u3002",
+          nothingToCopy: "\\u8907\\u88FD\\u6309\\u9215\\u5DF2\\u9EDE\\u64CA\\uFF0C\\u4F46\\u6C92\\u6709\\u5167\\u5BB9\\u53EF\\u8907\\u88FD\\u6216\\u6309\\u9215\\u88AB\\u7981\\u7528\\u3002"
         },
         confirmationModal: {
           sessionScan: {
-            confirmed: "\\u4F7F\\u7528\\u8005\\u78BA\\u8A8D\\u6E05\\u7A7A\\u6703\\u8A71\\u6383\\u63CF\\u6587\\u672C\\uFF0C\\u6B63\\u5728\\u547C\\u53EB\\u56DE\\u8ABF..."
+            confirmed: "\\u4F7F\\u7528\\u8005\\u5DF2\\u78BA\\u8A8D\\u6E05\\u9664\\u6703\\u8A71\\u6383\\u63CF\\u6587\\u672C\\uFF0C\\u6B63\\u5728\\u8ABF\\u7528\\u56DE\\u547C..."
           },
           quickScan: {
-            confirmed: "\\u4F7F\\u7528\\u8005\\u78BA\\u8A8D\\u6E05\\u7A7A\\u5FEB\\u901F\\u6383\\u63CF\\u6587\\u672C\\u3002"
+            confirmed: "\\u4F7F\\u7528\\u8005\\u5DF2\\u78BA\\u8A8D\\u6E05\\u9664\\u5FEB\\u901F\\u6383\\u63CF\\u6587\\u672C\\u3002"
           },
-          cancelled: "\\u4F7F\\u7528\\u8005\\u53D6\\u6D88\\u4E86\\u6E05\\u7A7A\\u64CD\\u4F5C\\u3002"
+          cancelled: "\\u4F7F\\u7528\\u8005\\u5DF2\\u53D6\\u6D88\\u6E05\\u9664\\u64CD\\u4F5C\\u3002"
         },
         modal: {
-          opening: "\\u6B63\\u5728\\u6253\\u958B\\u4E3B\\u8996\\u7A97...",
-          closing: "\\u6B63\\u5728\\u95DC\\u9589\\u4E3B\\u8996\\u7A97...",
-          scanFailed: "\\u975C\\u614B\\u6383\\u63CF\\u5931\\u6557\\uFF1A{{error}}",
-          clearContent: "\\u300C\\u6E05\\u7A7A\\u5167\\u5BB9\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002"
+          opening: "\\u6B63\\u5728\\u958B\\u555F\\u4E3B\\u6A21\\u614B\\u6846...",
+          closing: "\\u6B63\\u5728\\u95DC\\u9589\\u4E3B\\u6A21\\u614B\\u6846...",
+          scanFailed: "\\u975C\\u614B\\u6383\\u63CF\\u5931\\u6557: {{error}}",
+          clearContent: "\\u6E05\\u7A7A\\u5167\\u5BB9\\u6309\\u9215\\u5DF2\\u9EDE\\u64CA\\u3002"
         }
       },
       exporter: {
-        buttonClicked: "\\u532F\\u51FA\\u6309\\u9215\\u88AB\\u9EDE\\u64CA, \\u532F\\u51FA\\u683C\\u5F0F: {{format}}\\u3002",
-        csvError: "\\u5728\\u89E3\\u6790\\u6587\\u672C\\u4E26\\u751F\\u6210 CSV \\u6642\\u767C\\u751F\\u932F\\u8AA4\\uFF1A{{error}}",
-        fileExported: "\\u6A94\\u6848\\u5DF2\\u532F\\u51FA\\uFF1A{{filename}}",
-        noContent: "\\u6C92\\u6709\\u5167\\u5BB9\\u53EF\\u532F\\u51FA\\u3002",
-        unknownFormat: "\\u672A\\u77E5\\u7684\\u532F\\u51FA\\u683C\\u5F0F\\uFF1A{{format}}"
+        buttonClicked: "\\u532F\\u51FA\\u6309\\u9215\\u5DF2\\u9EDE\\u64CA\\uFF0C\\u683C\\u5F0F: {{format}}\\u3002",
+        csvError: "\\u89E3\\u6790\\u6587\\u672C\\u4E26\\u7522\\u751FCSV\\u6642\\u51FA\\u932F: {{error}}",
+        fileExported: "\\u6A94\\u6848\\u5DF2\\u532F\\u51FA: {{filename}}",
+        noContent: "\\u7121\\u5167\\u5BB9\\u53EF\\u532F\\u51FA\\u3002",
+        unknownFormat: "\\u672A\\u77E5\\u7684\\u532F\\u51FA\\u683C\\u5F0F: {{format}}"
       },
       main: {
-        requestingSessionScanData: "\\u5F9E session-scan \\u6A21\\u5F0F\\u8ACB\\u6C42\\u5B8C\\u6574\\u8CC7\\u6599...",
-        exportingQuickScanData: "\\u5F9E quick-scan \\u6A21\\u5F0F\\u7684\\u8A18\\u61B6\\u9AD4\\u4E2D\\u532F\\u51FA\\u5B8C\\u6574\\u8CC7\\u6599...",
+        requestingSessionScanData: "\\u6B63\\u5728\\u8ACB\\u6C42\\u6703\\u8A71\\u6383\\u63CF\\u6A21\\u5F0F\\u7684\\u5B8C\\u6574\\u8CC7\\u6599...",
+        exportingQuickScanData: "\\u6B63\\u5728\\u532F\\u51FA\\u5FEB\\u901F\\u6383\\u63CF\\u6A21\\u5F0F\\u8A18\\u61B6\\u9AD4\\u4E2D\\u7684\\u5B8C\\u6574\\u8CC7\\u6599...",
         inIframe: "\\u8173\\u672C\\u5728 iframe \\u4E2D\\uFF0C\\u5DF2\\u8DF3\\u904E\\u521D\\u59CB\\u5316\\u3002",
-        initializing: "\\u8173\\u672C\\u958B\\u59CB\\u521D\\u59CB\\u5316...",
+        initializing: "\\u8173\\u672C\\u521D\\u59CB\\u5316\\u958B\\u59CB...",
         initialSettingsLoaded: "\\u521D\\u59CB\\u8A2D\\u5B9A\\u5DF2\\u8F09\\u5165:"
       },
       dom: {
-        ttpCreationError: "\\u5EFA\\u7ACB Trusted Type \\u7B56\\u7565\\u5931\\u6557\\uFF1A",
-        svgParseError: "\\u7121\\u6548\\u6216\\u89E3\\u6790\\u5931\\u6557\\u7684 SVG \\u5B57\\u4E32\\uFF1A"
+        ttpCreationError: "\\u5EFA\\u7ACB Trusted Type \\u7B56\\u7565\\u5931\\u6557:",
+        svgParseError: "SVG \\u5B57\\u4E32\\u7121\\u6548\\u6216\\u89E3\\u6790\\u5931\\u6557:"
       },
       elementScan: {
-        starting: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5DF2\\u555F\\u52D5\\u3002",
+        starting: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5DF2\\u958B\\u59CB\\u3002",
         stopping: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5DF2\\u505C\\u6B62\\u3002",
-        listenersAdded: "\\u5DF2\\u65B0\\u589E\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u7684\\u5168\\u57DF\\u4E8B\\u4EF6\\u76E3\\u807D\\u5668\\u3002",
-        listenersRemoved: "\\u5DF2\\u79FB\\u9664\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u7684\\u5168\\u57DF\\u4E8B\\u4EF6\\u76E3\\u807D\\u5668\\u3002",
+        listenersAdded: "\\u5DF2\\u70BA\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u65B0\\u589E\\u5168\\u57DF\\u4E8B\\u4EF6\\u76E3\\u807D\\u5668\\u3002",
+        listenersRemoved: "\\u5DF2\\u70BA\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u79FB\\u9664\\u5168\\u57DF\\u4E8B\\u4EF6\\u76E3\\u807D\\u5668\\u3002",
         stateReset: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u72C0\\u614B\\u5DF2\\u91CD\\u8A2D\\u3002",
         reselecting: "\\u6B63\\u5728\\u8FD4\\u56DE\\u5143\\u7D20\\u91CD\\u65B0\\u9078\\u64C7\\u6A21\\u5F0F\\u3002",
-        hovering: "\\u7576\\u524D\\u61F8\\u505C\\u65BC <{{tagName}}>\\u3002",
-        escapePressed: "\\u4F7F\\u7528\\u8005\\u6309\\u4E0B Escape \\u9375\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u3002",
-        clickedEnteringAdjust: "\\u5DF2\\u9EDE\\u64CA\\u5143\\u7D20 <{{tagName}}>\\uFF0C\\u9032\\u5165\\u5C64\\u7D1A\\u8ABF\\u6574\\u6A21\\u5F0F\\u3002",
+        hovering: "\\u6B63\\u5728\\u61F8\\u505C\\u65BC <{{tagName}}>\\u3002",
+        escapePressed: "\\u6309\\u4E0B Escape \\u9375\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u3002",
+        clickedEnteringAdjust: "\\u5143\\u7D20 <{{tagName}}> \\u5DF2\\u88AB\\u9EDE\\u64CA\\uFF0C\\u6B63\\u5728\\u9032\\u5165\\u8ABF\\u6574\\u6A21\\u5F0F\\u3002",
         pathBuilt: "\\u5143\\u7D20\\u5C64\\u7D1A\\u8DEF\\u5F91\\u5DF2\\u69CB\\u5EFA\\uFF0C\\u6DF1\\u5EA6\\u70BA\\uFF1A{{depth}}\\u3002",
         adjustingLevel: "\\u6B63\\u5728\\u8ABF\\u6574\\u9078\\u64C7\\u5C64\\u7D1A\\u81F3 {{level}} ({{tagName}})\\u3002",
         confirmExtracting: "\\u9078\\u64C7\\u5DF2\\u78BA\\u8A8D\\uFF0C\\u6B63\\u5728\\u5F9E <{{tagName}}> \\u63D0\\u53D6\\u6587\\u672C\\u3002",
+        staged: "\\u5143\\u7D20\\u5DF2\\u66AB\\u5B58\\u3002\\u7E3D\\u6578\\uFF1A{{count}}\\u3002",
+        confirmingStaged: "\\u78BA\\u8A8D\\u9078\\u64C7\\u3002\\u6B63\\u5728\\u8655\\u7406 {{count}} \\u500B\\u5DF2\\u66AB\\u5B58\\u7684\\u5143\\u7D20\\u3002",
         extractedCount: "\\u5DF2\\u5F9E\\u5143\\u7D20\\u4E2D\\u63D0\\u53D6 {{count}} \\u689D\\u539F\\u59CB\\u6587\\u672C\\u3002",
         confirmFailedNoTarget: "\\u78BA\\u8A8D\\u5931\\u6557\\uFF1A\\u672A\\u9078\\u64C7\\u4EFB\\u4F55\\u76EE\\u6A19\\u5143\\u7D20\\u3002",
         rightClickExit: "\\u5075\\u6E2C\\u5230\\u53F3\\u9375\\u9EDE\\u64CA\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u3002",
         processingError: "\\u6587\\u672C\\u8655\\u7406\\u904E\\u7A0B\\u4E2D\\u767C\\u751F\\u932F\\u8AA4: {{error}}",
         worker: {
-          logPrefix: "[\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker]",
+          logPrefix: "[ES Worker]",
           starting: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u6B63\\u5728\\u555F\\u52D5...",
-          sendingData: "\\u6B63\\u5728\\u767C\\u9001 {{count}} \\u689D\\u6587\\u672C\\u81F3\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker\\u3002",
-          completed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u8655\\u7406\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {{count}} \\u689D\\u6709\\u6548\\u6587\\u672C\\u3002",
-          initFailed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u521D\\u59CB\\u5316\\u5931\\u6557\\u3002\\u53EF\\u80FD\\u662F\\u7DB2\\u7AD9\\u7684 CSP \\u7B56\\u7565\\u963B\\u6B62\\u4E86 data: URL\\u3002",
-          initSyncError: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u521D\\u59CB\\u5316\\u6642\\u767C\\u751F\\u540C\\u6B65\\u932F\\u8AA4: {{error}}",
+          sendingData: "\\u6B63\\u5728\\u5411\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u767C\\u9001 {{count}} \\u689D\\u6587\\u672C\\u7247\\u6BB5\\u3002",
+          completed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u5DF2\\u5B8C\\u6210\\uFF0C\\u627E\\u5230 {{count}} \\u689D\\u4E0D\\u91CD\\u8907\\u6587\\u672C\\u3002",
+          initFailed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u521D\\u59CB\\u5316\\u5931\\u6557\\u3002\\u700F\\u89BD\\u5668\\u7684CSP\\u53EF\\u80FD\\u963B\\u6B62\\u4E86 data: URL\\u3002",
+          initSyncError: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u521D\\u59CB\\u5316\\u671F\\u9593\\u767C\\u751F\\u540C\\u6B65\\u932F\\u8AA4: {{error}}",
           originalError: "\\u539F\\u59CB Worker \\u932F\\u8AA4: {{error}}"
         },
         switchToFallback: "\\u6B63\\u5728\\u70BA\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
@@ -4185,7 +4259,8 @@ ${result.join(",\n")}
         toolbarPositioned: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u5DE5\\u5177\\u5217\\u5DF2\\u5B9A\\u4F4D\\u3002",
         sliderChanged: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u6ED1\\u687F\\u5C64\\u7D1A\\u8B8A\\u70BA {{level}}",
         reselectClicked: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u300C\\u91CD\\u65B0\\u9078\\u64C7\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002",
-        cancelClicked: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u300C\\u53D6\\u6D88\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002",
+        stageClicked: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u300C\\u66AB\\u5B58\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002",
+        cancelClicked: "\\u5143\\u7D20\\u6383\\u89C0UI\\uFF1A\\u300C\\u53D6\\u6D88\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002",
         confirmClicked: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u300C\\u78BA\\u8A8D\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002",
         dragStarted: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u62D6\\u52D5\\u958B\\u59CB\\u3002",
         dragEnded: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u62D6\\u52D5\\u7D50\\u675F\\u3002",
@@ -4193,13 +4268,13 @@ ${result.join(",\n")}
         cleaningToolbar: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u6B63\\u5728\\u6E05\\u7406\\u5DE5\\u5177\\u5217\\u3002"
       },
       eventBus: {
-        callbackError: "\\u5728 '{{eventName}}' \\u4E8B\\u4EF6\\u7684\\u56DE\\u547C\\u4E2D\\u767C\\u751F\\u932F\\u8AA4\\uFF1A"
+        callbackError: "\\u4E8B\\u4EF6 '{{eventName}}' \\u7684\\u56DE\\u547C\\u51FD\\u6578\\u51FA\\u932F:"
       },
       trustedTypes: {
-        workerPolicyError: "\\u5EFA\\u7ACB Trusted Types worker \\u7B56\\u7565\\u5931\\u6557\\uFF1A",
-        htmlPolicyError: "\\u5EFA\\u7ACB Trusted Types HTML \\u7B56\\u7565\\u5931\\u6557\\uFF1A",
-        defaultWorkerPolicyWarning: "Trusted Types \\u9810\\u8A2D\\u7B56\\u7565\\u8655\\u7406 worker URL \\u5931\\u6557\\uFF0C\\u9000\\u56DE\\u81F3\\u539F\\u59CB URL\\u3002",
-        defaultHtmlPolicyWarning: "Trusted Types \\u9810\\u8A2D\\u7B56\\u7565\\u8655\\u7406 HTML \\u5931\\u6557\\uFF0C\\u9000\\u56DE\\u81F3\\u539F\\u59CB\\u5B57\\u4E32\\u3002"
+        workerPolicyError: "\\u5EFA\\u7ACB Trusted Types worker \\u7B56\\u7565\\u5931\\u6557:",
+        htmlPolicyError: "\\u5EFA\\u7ACB Trusted Types HTML \\u7B56\\u7565\\u5931\\u6557:",
+        defaultWorkerPolicyWarning: "\\u7528\\u65BC worker URL \\u7684 Trusted Types \\u9810\\u8A2D\\u7B56\\u7565\\u5931\\u6557\\uFF0C\\u56DE\\u9000\\u5230\\u539F\\u59CB URL\\u3002",
+        defaultHtmlPolicyWarning: "\\u7528\\u65BC HTML \\u7684 Trusted Types \\u9810\\u8A2D\\u7B56\\u7565\\u5931\\u6557\\uFF0C\\u56DE\\u9000\\u5230\\u539F\\u59CB\\u5B57\\u4E32\\u3002"
       }
     }
   };
@@ -4504,10 +4579,11 @@ ${result.join(",\n")}
       worker.onmessage = (event) => {
         const { type, payload } = event.data;
         if (type === "countUpdated") {
+          currentCount = payload;
           if (onUpdateCallback) onUpdateCallback(payload);
           updateScanCount(payload, "session");
         } else if (type === "summaryReady" && onSummaryCallback) {
-          onSummaryCallback(payload);
+          onSummaryCallback(payload, currentCount);
           onSummaryCallback = null;
         }
       };
@@ -4570,26 +4646,16 @@ ${result.join(",\n")}
   var requestSummary = (onReady) => {
     if (!onReady) return;
     if (useFallback) {
-      onReady(getSummaryInFallback());
+      const summary = getSummaryInFallback();
+      onReady(summary.formattedText, summary.count);
     } else if (worker) {
       onSummaryCallback = onReady;
       worker.postMessage({ type: "getSummary" });
     } else {
-      onReady("[]");
+      onReady("[]", 0);
     }
   };
   var isSessionRecording = () => isRecording;
-  function clearSessionTexts() {
-    if (useFallback) {
-      clearInFallback();
-      if (onUpdateCallback) onUpdateCallback(0);
-      updateScanCount(0, "session");
-      fire("sessionCleared");
-    } else if (worker) {
-      worker.postMessage({ type: "clear" });
-      log(t("log.sessionScan.worker.clearCommandSent"));
-    }
-  }
   function createModalLayout() {
     const modalOverlay2 = document.createElement("div");
     modalOverlay2.className = "text-extractor-modal-overlay";
@@ -4871,7 +4937,7 @@ ${result.join(",\n")}
     }
     updateStatistics();
   }
-  function populateModalFooter(modalFooter, updateContentCallback, clearSessionCallback) {
+  function populateModalFooter(modalFooter, updateContentCallback) {
     const statsContainer2 = document.createElement("div");
     statsContainer2.className = "tc-stats-container";
     setStatsContainer(statsContainer2);
@@ -4909,15 +4975,14 @@ ${result.join(",\n")}
         warningIcon_default
       );
       if (confirmed) {
-        if (currentMode === "session-scan" && clearSessionCallback) {
-          log(t("log.ui.confirmationModal.sessionScan.confirmed"));
-          clearSessionCallback();
-          updateContentCallback(SHOW_PLACEHOLDER, true, "session-scan");
-        } else {
-          log(t("log.ui.confirmationModal.quickScan.confirmed"));
-          updateContentCallback(SHOW_PLACEHOLDER, false, "quick-scan");
-          updateScanCount(0, "quick-scan");
+        const currentMode2 = currentMode;
+        log(`Clearing content for mode: ${currentMode2}`);
+        if (currentMode2 === "session-scan") {
+          fire("clearSessionScan");
+        } else if (currentMode2 === "element-scan") {
+          fire("clearElementScan");
         }
+        updateContentCallback(SHOW_PLACEHOLDER, true, currentMode2);
         showNotification(t("notifications.contentCleared"), { type: "success" });
       } else {
         log(t("log.ui.confirmationModal.cancelled"));
@@ -5087,12 +5152,12 @@ ${result.join(",\n")}
       closeModal();
     }
   };
-  function createMainModal({ clearSessionCallback }) {
+  function createMainModal() {
     if (modalOverlay) return;
     const { modalHeader, modalContent, modalFooter } = createModalLayout();
     populateModalHeader(modalHeader, closeModal);
     populateModalContent(modalContent);
-    populateModalFooter(modalFooter, updateModalContent, clearSessionCallback);
+    populateModalFooter(modalFooter, updateModalContent);
     initializeLineNumbers();
     const handleTextareaUpdate = () => {
       updateLineNumbers();
@@ -5407,8 +5472,8 @@ ${result.join(",\n")}
       const elapsedTime = currentTime - startTime;
       const progress = Math.min(elapsedTime / duration, 1);
       const easedProgress = easing(progress);
-      const currentCount2 = Math.round(start2 + (end - start2) * easedProgress);
-      element.textContent = currentCount2;
+      const currentCount3 = Math.round(start2 + (end - start2) * easedProgress);
+      element.textContent = currentCount3;
       if (progress < 1) {
         requestAnimationFrame(frame);
       }
@@ -5419,17 +5484,19 @@ ${result.join(",\n")}
   var counterElement = null;
   var countSpan = null;
   var textNode = null;
-  var currentCount = 0;
+  var currentCount2 = 0;
+  var currentLabelKey = "";
   function updateCounterText() {
-    if (textNode) {
-      textNode.textContent = t("common.discovered");
+    if (textNode && currentLabelKey) {
+      textNode.textContent = t(currentLabelKey);
     }
   }
-  function createCounterElement() {
+  function createCounterElement(labelKey) {
     if (counterElement) return;
     counterElement = document.createElement("div");
-    counterElement.className = "tc-live-counter";
-    textNode = document.createTextNode(t("common.discovered"));
+    counterElement.className = "tc-top-center-counter";
+    currentLabelKey = labelKey;
+    textNode = document.createTextNode(t(labelKey));
     countSpan = document.createElement("span");
     countSpan.textContent = "0";
     counterElement.appendChild(textNode);
@@ -5437,25 +5504,29 @@ ${result.join(",\n")}
     uiContainer.appendChild(counterElement);
     on("languageChanged", updateCounterText);
   }
-  function showLiveCounter() {
-    createCounterElement();
-    currentCount = 0;
+  function showTopCenterCounter(labelKey) {
+    createCounterElement(labelKey);
+    if (currentLabelKey !== labelKey) {
+      currentLabelKey = labelKey;
+      updateCounterText();
+    }
+    currentCount2 = 0;
     if (countSpan) {
       countSpan.textContent = "0";
     }
     requestAnimationFrame(() => {
-      counterElement.classList.add("tc-live-counter-visible");
+      counterElement.classList.add("is-visible");
     });
   }
-  function hideLiveCounter() {
+  function hideTopCenterCounter() {
     if (!counterElement) return;
-    counterElement.classList.remove("tc-live-counter-visible");
+    counterElement.classList.remove("is-visible");
   }
-  function updateLiveCounter(newCount) {
+  function updateTopCenterCounter(newCount) {
     if (!counterElement || !countSpan) return;
-    const start2 = currentCount;
+    const start2 = currentCount2;
     const end = newCount;
-    currentCount = newCount;
+    currentCount2 = newCount;
     if (start2 === end) {
       countSpan.textContent = end;
       return;
@@ -5468,7 +5539,7 @@ ${result.join(",\n")}
   on("sessionCleared", () => {
     currentSessionCount = 0;
   });
-  function handleSummaryClick() {
+  function showSessionSummary() {
     log(t("tooltip.summary"));
     if (isSessionRecording()) {
       showNotification(t("scan.sessionInProgress"), { type: "info" });
@@ -5476,11 +5547,12 @@ ${result.join(",\n")}
     updateScanCount(currentSessionCount, "session");
     updateModalContent(SHOW_LOADING, true, "session-scan");
     setTimeout(() => {
-      requestSummary((formattedText) => {
+      requestSummary((formattedText, count) => {
+        updateScanCount(count, "session");
         if (!formattedText || formattedText.trim() === "[]") {
           updateModalContent(SHOW_PLACEHOLDER, true, "session-scan");
         } else {
-          updateModalContent(formattedText, false, "session-scan");
+          updateModalContent(formattedText, true, "session-scan");
         }
       });
     }, 50);
@@ -5496,17 +5568,17 @@ ${result.join(",\n")}
       setFabIcon(dynamicFab2, dynamicIcon);
       dynamicFab2.classList.remove("is-recording");
       dynamicFab2.title = t("scan.startSession");
-      hideLiveCounter();
+      hideTopCenterCounter();
     } else {
       log(t("scan.startSession"));
       setFabIcon(dynamicFab2, stopIcon);
       dynamicFab2.classList.add("is-recording");
       dynamicFab2.title = t("scan.stopSession");
       showNotification(t("scan.sessionStarted"), { type: "info" });
-      showLiveCounter();
+      showTopCenterCounter("common.discovered");
       setTimeout(() => {
         start((count) => {
-          updateLiveCounter(count);
+          updateTopCenterCounter(count);
           currentSessionCount = count;
         });
       }, 50);
@@ -5568,6 +5640,7 @@ ${result.join(",\n")}
         <input type="range" id="element-scan-level-slider" min="0" max="${elementPath2.length - 1}" value="0" />
         <div id="element-scan-toolbar-actions">
             <button id="element-scan-toolbar-reselect">${t("common.reselect")}</button>
+            <button id="element-scan-toolbar-stage">${t("common.stage")}</button>
             <button id="element-scan-toolbar-cancel">${t("common.cancel")}</button>
             <button id="element-scan-toolbar-confirm">${t("common.confirm")}</button>
         </div>
@@ -5613,6 +5686,7 @@ ${result.join(",\n")}
   function addToolbarEventListeners() {
     const slider = uiContainer.querySelector("#element-scan-level-slider");
     const reselectBtn = uiContainer.querySelector("#element-scan-toolbar-reselect");
+    const stageBtn = uiContainer.querySelector("#element-scan-toolbar-stage");
     const cancelBtn = uiContainer.querySelector("#element-scan-toolbar-cancel");
     const confirmBtn = uiContainer.querySelector("#element-scan-toolbar-confirm");
     slider.addEventListener("input", () => {
@@ -5622,6 +5696,10 @@ ${result.join(",\n")}
     reselectBtn.addEventListener("click", () => {
       log(t("log.elementScanUI.reselectClicked"));
       reselectElement();
+    });
+    stageBtn.addEventListener("click", () => {
+      log(t("log.elementScanUI.stageClicked"));
+      stageCurrentElement();
     });
     cancelBtn.addEventListener("click", () => {
       log(t("log.elementScanUI.cancelClicked"));
@@ -5714,7 +5792,18 @@ ${result.join(",\n")}
   var isAdjusting = false;
   var currentTarget = null;
   var elementPath = [];
+  var stagedTexts =  new Set();
   var shouldResumeAfterModalClose = false;
+  on("clearElementScan", () => {
+    stagedTexts.clear();
+    updateStagedCount();
+  });
+  function isElementScanActive() {
+    return isActive;
+  }
+  function getStagedTexts() {
+    return stagedTexts;
+  }
   function getShouldResumeAfterModalClose() {
     return shouldResumeAfterModalClose;
   }
@@ -5733,6 +5822,7 @@ ${result.join(",\n")}
     isActive = true;
     isAdjusting = false;
     fabElement.classList.add("is-recording");
+    showTopCenterCounter("scan.stagedCount");
     document.addEventListener("mouseover", handleMouseOver);
     document.addEventListener("mouseout", handleMouseOut);
     document.addEventListener("click", handleElementClick, true);
@@ -5756,8 +5846,11 @@ ${result.join(",\n")}
     log(t("log.elementScan.listenersRemoved"));
     cleanupUI();
     cleanupToolbar();
+    hideTopCenterCounter();
     elementPath = [];
     currentTarget = null;
+    stagedTexts.clear();
+    updateStagedCount();
     log(t("log.elementScan.stateReset"));
   }
   function reselectElement() {
@@ -5768,6 +5861,18 @@ ${result.join(",\n")}
     document.addEventListener("mouseover", handleMouseOver);
     document.addEventListener("mouseout", handleMouseOut);
     document.addEventListener("click", handleElementClick, true);
+  }
+  function stageCurrentElement() {
+    if (currentTarget) {
+      const newTexts = extractAndProcessTextFromElement(currentTarget);
+      newTexts.forEach((text) => stagedTexts.add(text));
+      log(simpleTemplate(t("log.elementScan.staged"), { count: stagedTexts.size }));
+      updateStagedCount();
+    }
+    reselectElement();
+  }
+  function updateStagedCount() {
+    updateTopCenterCounter(stagedTexts.size);
   }
   function handleMouseOver(event) {
     if (!isActive || isAdjusting) return;
@@ -5859,7 +5964,8 @@ ${result.join(",\n")}
       confirm: "Confirm",
       cancel: "Cancel",
       export: "Export",
-      reselect: "Reselect"
+      reselect: "Reselect",
+      stage: "Stage"
     },
     export: {
       exportAsTxt: "Export as TXT",
@@ -5932,6 +6038,7 @@ ${result.join(",\n")}
     scan: {
       quick: "Quick Scan",
       session: "Session Scan",
+      stagedCount: "Staged:",
       elementFinished: "Element scan finished, found {{count}} items.",
       startSession: "Start Dynamic Scan Session",
       stopSession: "Stop Dynamic Scan Session",
@@ -6121,6 +6228,8 @@ ${result.join(",\n")}
         pathBuilt: "Element path built, depth: {{depth}}.",
         adjustingLevel: "Adjusting selection level to {{level}} ({{tagName}}).",
         confirmExtracting: "Selection confirmed, extracting text from <{{tagName}}>.",
+        staged: "Element staged. Total staged: {{count}}.",
+        confirmingStaged: "Confirming selection. Processing {{count}} staged elements.",
         extractedCount: "Extracted {{count}} raw text fragments from element.",
         confirmFailedNoTarget: "Confirmation failed: no target element selected.",
         rightClickExit: "Right-click detected, stopping element scan.",
@@ -6144,6 +6253,7 @@ ${result.join(",\n")}
         toolbarPositioned: "Element Scan UI: Toolbar positioned.",
         sliderChanged: "Element Scan UI: Slider changed to level {{level}}",
         reselectClicked: "Element Scan UI: 'Reselect' button clicked.",
+        stageClicked: "Element Scan UI: 'Stage' button clicked.",
         cancelClicked: "Element Scan UI: 'Cancel' button clicked.",
         confirmClicked: "Element Scan UI: 'Confirm' button clicked.",
         dragStarted: "Element Scan UI: Drag started.",
@@ -6167,15 +6277,16 @@ ${result.join(",\n")}
     common: {
       scan: "\\u626B\\u63CF",
       stop: "\\u505C\\u6B62",
-      resume: "\\u7EE7\\u7EED",
+      resume: "\\u6062\\u590D",
       clear: "\\u6E05\\u7A7A",
       copy: "\\u590D\\u5236",
       save: "\\u4FDD\\u5B58",
-      discovered: "\\u5DF2\\u53D1\\u73B0\\uFF1A",
+      discovered: "\\u5DF2\\u53D1\\u73B0:",
       confirm: "\\u786E\\u8BA4",
       cancel: "\\u53D6\\u6D88",
       export: "\\u5BFC\\u51FA",
-      reselect: "\\u91CD\\u65B0\\u9009\\u62E9"
+      reselect: "\\u91CD\\u65B0\\u9009\\u62E9",
+      stage: "\\u6682\\u5B58"
     },
     export: {
       exportAsTxt: "\\u5BFC\\u51FA\\u4E3A TXT",
@@ -6189,28 +6300,28 @@ ${result.join(",\n")}
     },
     settings: {
       title: "\\u8BBE\\u7F6E",
-      theme: "\\u754C\\u9762\\u4E3B\\u9898",
-      language: "\\u8BED\\u8A00\\u8BBE\\u7F6E",
+      theme: "\\u4E3B\\u9898",
+      language: "\\u8BED\\u8A00",
       relatedSettings: "\\u76F8\\u5173\\u8BBE\\u7F6E",
       filterRules: "\\u5185\\u5BB9\\u8FC7\\u6EE4\\u89C4\\u5219",
       filters: {
-        numbers: "\\u8FC7\\u6EE4\\u7EAF\\u6570\\u5B57/\\u8D27\\u5E01",
-        chinese: "\\u8FC7\\u6EE4\\u7EAF\\u4E2D\\u6587",
-        contains_chinese: "\\u8FC7\\u6EE4\\u5305\\u542B\\u4E2D\\u6587\\u7684\\u6587\\u672C",
-        emoji_only: "\\u8FC7\\u6EE4\\u7EAF\\u8868\\u60C5\\u7B26\\u53F7",
-        symbols: "\\u8FC7\\u6EE4\\u7EAF\\u7B26\\u53F7",
+        numbers: "\\u8FC7\\u6EE4\\u6570\\u5B57/\\u8D27\\u5E01",
+        chinese: "\\u8FC7\\u6EE4\\u7EAF\\u4E2D\\u6587\\u6587\\u672C",
+        contains_chinese: "\\u8FC7\\u6EE4\\u542B\\u4E2D\\u6587\\u7684\\u6587\\u672C",
+        emoji_only: "\\u8FC7\\u6EE4\\u7EAF\\u8868\\u60C5\\u7B26\\u53F7\\u6587\\u672C",
+        symbols: "\\u8FC7\\u6EE4\\u7EAF\\u7B26\\u53F7\\u6587\\u672C",
         term: "\\u8FC7\\u6EE4\\u7279\\u5B9A\\u672F\\u8BED",
-        single_letter: "\\u8FC7\\u6EE4\\u7EAF\\u5355\\u4E2A\\u82F1\\u6587\\u5B57\\u6BCD",
-        repeating_chars: "\\u8FC7\\u6EE4\\u5355\\u4E00\\u91CD\\u590D\\u5B57\\u7B26",
+        single_letter: "\\u8FC7\\u6EE4\\u5355\\u4E2A\\u82F1\\u6587\\u5B57\\u6BCD",
+        repeating_chars: "\\u8FC7\\u6EE4\\u91CD\\u590D\\u5B57\\u7B26",
         file_paths: "\\u8FC7\\u6EE4\\u6587\\u4EF6\\u8DEF\\u5F84",
-        hex_color_codes: "\\u8FC7\\u6EE4\\u5341\\u516D\\u8FDB\\u5236\\u989C\\u8272",
-        email_addresses: "\\u8FC7\\u6EE4\\u90AE\\u4EF6\\u5730\\u5740",
+        hex_color_codes: "\\u8FC7\\u6EE4\\u5341\\u516D\\u8FDB\\u5236\\u989C\\u8272\\u4EE3\\u7801",
+        email_addresses: "\\u8FC7\\u6EE4\\u7535\\u5B50\\u90AE\\u4EF6\\u5730\\u5740",
         uuids: "\\u8FC7\\u6EE4 UUID",
         git_commit_hashes: "\\u8FC7\\u6EE4 Git \\u63D0\\u4EA4\\u54C8\\u5E0C\\u503C",
-        website_urls: "\\u8FC7\\u6EE4\\u7F51\\u5740",
-        website_urls_title: "\\u8FC7\\u6EE4\\u7F51\\u5740 (URL)",
-        shorthand_numbers: "\\u8FC7\\u6EE4\\u7B80\\u5199\\u6570\\u5B57",
-        shorthand_numbers_title: "\\u8FC7\\u6EE4\\u5E26\\u5355\\u4F4D\\u7684\\u7B80\\u5199\\u6570\\u5B57"
+        website_urls: "\\u8FC7\\u6EE4\\u7F51\\u7AD9\\u94FE\\u63A5",
+        website_urls_title: "\\u8FC7\\u6EE4\\u7F51\\u7AD9\\u94FE\\u63A5",
+        shorthand_numbers: "\\u8FC7\\u6EE4\\u901F\\u8BB0\\u6570\\u5B57",
+        shorthand_numbers_title: "\\u8FC7\\u6EE4\\u901F\\u8BB0\\u6570\\u5B57"
       },
       display: {
         show_fab: "\\u663E\\u793A\\u60AC\\u6D6E\\u6309\\u94AE",
@@ -6223,13 +6334,13 @@ ${result.join(",\n")}
         },
         show_line_numbers: "\\u663E\\u793A\\u884C\\u53F7",
         show_statistics: "\\u663E\\u793A\\u7EDF\\u8BA1\\u4FE1\\u606F",
-        enable_word_wrap: "\\u542F\\u7528\\u6587\\u672C\\u81EA\\u52A8\\u6362\\u884C",
-        text_truncation_limit: "\\u542F\\u7528\\u6587\\u672C\\u6846\\u5B57\\u7B26\\u9650\\u5236",
-        character_limit: "\\u5B57\\u7B26\\u6570",
-        show_scan_count: "\\u542F\\u7528\\u6807\\u9898\\u680F\\u663E\\u793A\\u626B\\u63CF\\u8BA1\\u6570"
+        enable_word_wrap: "\\u542F\\u7528\\u81EA\\u52A8\\u6362\\u884C",
+        text_truncation_limit: "\\u542F\\u7528\\u6587\\u672C\\u622A\\u65AD\\u9650\\u5236",
+        character_limit: "\\u5B57\\u7B26\\u9650\\u5236",
+        show_scan_count: "\\u5728\\u6807\\u9898\\u4E2D\\u542F\\u7528\\u626B\\u63CF\\u8BA1\\u6570"
       },
       advanced: {
-        enable_debug_logging: "\\u542F\\u7528\\u8C03\\u8BD5\\u65E5\\u5FD7"
+        enable_debug_logging: "\\u542F\\u7528\\u8C03\\u8BD5\\u65E5\\u5FD7\\u8BB0\\u5F55"
       },
       panel: {
         title: "\\u8BBE\\u7F6E\\u9762\\u677F"
@@ -6248,94 +6359,95 @@ ${result.join(",\n")}
     scan: {
       quick: "\\u5FEB\\u901F\\u626B\\u63CF",
       session: "\\u4F1A\\u8BDD\\u626B\\u63CF",
+      stagedCount: "\\u5DF2\\u6682\\u5B58:",
       elementFinished: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {{count}} \\u6761\\u6587\\u672C\\u3002",
       startSession: "\\u5F00\\u59CB\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD",
       stopSession: "\\u505C\\u6B62\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD",
-      finished: "\\u626B\\u63CF\\u7ED3\\u675F\\uFF0C\\u5171\\u53D1\\u73B0 {{count}} \\u6761\\u6587\\u672C",
-      quickFinished: "\\u5FEB\\u6377\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {{count}} \\u6761\\u6587\\u672C",
-      sessionStarted: "\\u4F1A\\u8BDD\\u626B\\u63CF\\u5DF2\\u5F00\\u59CB",
-      sessionInProgress: "\\u626B\\u63CF\\u6B63\\u5728\\u8FDB\\u884C\\u4E2D...",
-      truncationWarning: "\\u4E3A\\u4FDD\\u6301\\u754C\\u9762\\u6D41\\u7545\\uFF0C\\u6B64\\u5904\\u4EC5\\u663E\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u5B8C\\u6574\\u5185\\u5BB9\\u5C06\\u5728\\u5BFC\\u51FA\\u65F6\\u63D0\\u4F9B\\u3002"
+      finished: "\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {{count}} \\u6761\\u6587\\u672C\\u3002",
+      quickFinished: "\\u5FEB\\u901F\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {{count}} \\u6761\\u6587\\u672C\\u3002",
+      sessionStarted: "\\u4F1A\\u8BDD\\u626B\\u63CF\\u5DF2\\u5F00\\u59CB\\u3002",
+      sessionInProgress: "\\u626B\\u63CF\\u8FDB\\u884C\\u4E2D...",
+      truncationWarning: "\\u4E3A\\u4FDD\\u6301\\u754C\\u9762\\u6D41\\u7545\\uFF0C\\u6B64\\u5904\\u4EC5\\u663E\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u5BFC\\u51FA\\u540E\\u5C06\\u5305\\u542B\\u5B8C\\u6574\\u5185\\u5BB9\\u3002"
     },
     results: {
       title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",
-      scanCountSession: "\\u5DF2\\u626B\\u63CF {{count}} \\u6761\\u6587\\u672C",
-      scanCountStatic: "\\u5171\\u626B\\u63CF {{count}} \\u6761\\u6587\\u672C",
-      totalCharacters: "\\u603B\\u5B57\\u6570",
+      scanCountSession: "\\u5DF2\\u626B\\u63CF {{count}} \\u4E2A\\u9879\\u76EE",
+      scanCountStatic: "\\u5171\\u626B\\u63CF {{count}} \\u4E2A\\u9879\\u76EE",
+      totalCharacters: "\\u603B\\u5B57\\u7B26\\u6570",
       totalLines: "\\u603B\\u884C\\u6570",
-      noSummary: "\\u5F53\\u524D\\u6CA1\\u6709\\u603B\\u7ED3\\u6587\\u672C",
+      noSummary: "\\u65E0\\u53EF\\u7528\\u6458\\u8981",
       stats: {
         lines: "\\u884C",
-        chars: "\\u5B57\\u7B26\\u6570"
+        chars: "\\u5B57\\u7B26"
       }
     },
     notifications: {
-      copiedToClipboard: "\\u5DF2\\u590D\\u5236\\u5230\\u526A\\u8D34\\u677F!",
+      copiedToClipboard: "\\u5DF2\\u590D\\u5236\\u5230\\u526A\\u8D34\\u677F\\uFF01",
       settingsSaved: "\\u8BBE\\u7F6E\\u5DF2\\u4FDD\\u5B58\\uFF01",
-      modalInitError: "\\u6A21\\u6001\\u6846\\u5C1A\\u672A\\u521D\\u59CB\\u5316\\u3002",
-      nothingToCopy: "\\u6C92\\u6709\\u5167\\u5BB9\\u53EF\\u8907\\u88FD",
-      contentCleared: "\\u5185\\u5BB9\\u5DF2\\u6E05\\u7A7A",
-      noTextSelected: "\\u672A\\u9009\\u62E9\\u6587\\u672C",
-      cspWorkerWarning: "\\u7531\\u4E8E\\u7F51\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u6362\\u5230\\u517C\\u5BB9\\u626B\\u63CF\\u6A21\\u5F0F\\u3002"
+      modalInitError: "\\u6A21\\u6001\\u6846\\u672A\\u521D\\u59CB\\u5316\\u3002",
+      nothingToCopy: "\\u6CA1\\u6709\\u53EF\\u590D\\u5236\\u7684\\u5185\\u5BB9\\u3002",
+      contentCleared: "\\u5185\\u5BB9\\u5DF2\\u6E05\\u9664\\u3002",
+      noTextSelected: "\\u672A\\u9009\\u62E9\\u4EFB\\u4F55\\u6587\\u672C\\u3002",
+      cspWorkerWarning: "\\u56E0\\u7F51\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u6362\\u81F3\\u517C\\u5BB9\\u626B\\u63CF\\u6A21\\u5F0F\\u3002"
     },
     placeholders: {
       click: "\\u70B9\\u51FB ",
       dynamicScan: "[\\u52A8\\u6001\\u626B\\u63CF]",
-      startNewScanSession: " \\u6309\\u94AE\\u5F00\\u59CB\\u4E00\\u4E2A\\u65B0\\u7684\\u626B\\u63CF\\u4F1A\\u8BDD",
+      startNewScanSession: " \\u5F00\\u59CB\\u65B0\\u7684\\u626B\\u63CF\\u4F1A\\u8BDD",
       staticScan: "[\\u9759\\u6001\\u626B\\u63CF]",
-      performOneTimeScan: " \\u6309\\u94AE\\u53EF\\u8FDB\\u884C\\u4E00\\u6B21\\u6027\\u7684\\u5FEB\\u6377\\u63D0\\u53D6"
+      performOneTimeScan: " \\u6267\\u884C\\u4E00\\u6B21\\u6027\\u5FEB\\u901F\\u63D0\\u53D6"
     },
     confirmation: {
-      clear: "\\u4F60\\u786E\\u8BA4\\u8981\\u6E05\\u7A7A\\u5417\\uFF1F\\u6B64\\u64CD\\u4F5C\\u4E0D\\u53EF\\u64A4\\u9500\\u3002"
+      clear: "\\u60A8\\u786E\\u5B9A\\u8981\\u6E05\\u9664\\u5185\\u5BB9\\u5417\\uFF1F\\u6B64\\u64CD\\u4F5C\\u65E0\\u6CD5\\u64A4\\u9500\\u3002"
     },
     tooltip: {
-      summary: "\\u67E5\\u770B\\u603B\\u7ED3",
+      summary: "\\u67E5\\u770B\\u6458\\u8981",
       dynamic_scan: "\\u52A8\\u6001\\u626B\\u63CF",
       static_scan: "\\u9759\\u6001\\u626B\\u63CF",
       element_scan: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF",
       filters: {
         title: "\\u5185\\u5BB9\\u8FC7\\u6EE4\\u5668\\u8BF4\\u660E",
-        numbers: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u6570\\u5B57\\u3001\\u7A7A\\u683C\\u3001\\u5343\\u4F4D\\u5206\\u9694\\u7B26 (.)\\u3001\\u5C0F\\u6570\\u70B9 (,) \\u4EE5\\u53CA\\u90E8\\u5206\\u8D27\\u5E01\\u7B26\\u53F7 ($, \\u20AC, \\xA3, \\xA5) \\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "1,234.56"<br>\\u2022 "\\xA5999"<br>\\u2022 "\\u20AC200"<br>\\u2022 "$ 100"',
-        chinese: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u4E2D\\u6587\\u5B57\\u7B26\\u548C\\u7A7A\\u683C\\u7EC4\\u6210\\u7684\\u6587\\u672C\\uFF0C\\u4E0D\\u5305\\u62EC\\u4EFB\\u4F55\\u6807\\u70B9\\u7B26\\u53F7\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "\\u4F60\\u597D \\u4E16\\u754C" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "\\u4F60\\u597D\\uFF0C\\u4E16\\u754C" (\\u4E0D\\u4F1A\\u88AB\\u8FC7\\u6EE4)',
-        contains_chinese: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389<strong>\\u4EFB\\u4F55\\u5305\\u542B</strong>\\u81F3\\u5C11\\u4E00\\u4E2A\\u4E2D\\u6587\\u5B57\\u7B26\\u7684\\u6587\\u672C\\uFF0C\\u65E0\\u8BBA\\u662F\\u5426\\u5305\\u542B\\u5176\\u4ED6\\u5B57\\u7B26\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "\\u4F60\\u597D World" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "\\u7B2C 1 \\u7AE0" (\\u5C06\\u88AB\\u8FC7\\u6EE4)',
-        emoji_only: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u4E00\\u4E2A\\u6216\\u591A\\u4E2A\\u8868\\u60C5\\u7B26\\u53F7\\u53CA\\u7A7A\\u683C\\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "\\u{1F44D}"<br>\\u2022 "\\u{1F60A} \\u{1F389} \\u{1F680}"',
-        symbols: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u5404\\u7C7B\\u6807\\u70B9\\u548C\\u7B26\\u53F7\\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "@#*&^%"<br>\\u2022 "()[]{}"<br>\\u2022 "---...---"',
-        term: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u5E38\\u89C1\\u7684\\u3001\\u901A\\u5E38\\u65E0\\u9700\\u7FFB\\u8BD1\\u7684 UI \\u672F\\u8BED\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "OK", "Cancel", "Submit"<br>\\u2022 "Login", "Settings", "Help"',
-        single_letter: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u7531<strong>\\u5355\\u4E2A</strong>\\u82F1\\u6587\\u5B57\\u6BCD\\u7EC4\\u6210\\u7684\\u6587\\u672C\\uFF0C\\u5FFD\\u7565\\u5927\\u5C0F\\u5199\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "A" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "b" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "AB" (\\u4E0D\\u4F1A\\u88AB\\u8FC7\\u6EE4)',
-        repeating_chars: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u7531<strong>\\u540C\\u4E00\\u4E2A\\u5B57\\u7B26</strong>\\u8FDE\\u7EED\\u91CD\\u590D 2 \\u6B21\\u6216\\u4EE5\\u4E0A\\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "aa"<br>\\u2022 "======"<br>\\u2022 "bbbbb"',
-        file_paths: '\\u6B64\\u89C4\\u5219\\u4F1A\\u5C1D\\u8BD5\\u8BC6\\u522B\\u5E76\\u8FC7\\u6EE4\\u6389\\u7C7B\\u4F3C\\u64CD\\u4F5C\\u7CFB\\u7EDF\\u7684\\u3001\\u4E14<strong>\\u5305\\u542B\\u6587\\u4EF6\\u6269\\u5C55\\u540D</strong>\\u7684\\u6587\\u4EF6\\u8DEF\\u5F84\\uFF0C\\u4F46\\u5B83\\u4E0D\\u4F1A\\u5339\\u914D URL\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "/path/to/file.js"<br>\\u2022 "C:\\\\Users\\\\Test\\\\document.docx"<br>\\u2022 "./config.json"',
-        hex_color_codes: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u6807\\u51C6\\u7684 CSS \\u5341\\u516D\\u8FDB\\u5236\\u989C\\u8272\\u4EE3\\u7801\\uFF083\\u30014\\u30016 \\u6216 8 \\u4F4D\\uFF0C\\u540E\\u8005\\u53EF\\u5305\\u542B Alpha \\u901A\\u9053\\uFF09\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "#FFFFFF"<br>\\u2022 "#ff0000"<br>\\u2022 "#f0c"<br>\\u2022 "#f0c8" (4\\u4F4D)<br>\\u2022 "#ff000080" (8\\u4F4D)',
-        email_addresses: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u7B26\\u5408\\u6807\\u51C6\\u683C\\u5F0F\\u7684\\u7535\\u5B50\\u90AE\\u4EF6\\u5730\\u5740\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "example@domain.com"<br>\\u2022 "user.name@sub.domain.org"',
-        uuids: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u901A\\u7528\\u552F\\u4E00\\u6807\\u8BC6\\u7B26 (UUID)\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "123e4567-e89b-12d3-a456-426614174000"',
-        git_commit_hashes: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u6807\\u51C6\\u7684 Git \\u63D0\\u4EA4\\u54C8\\u5E0C\\u503C\\uFF08\\u957F\\u54C8\\u5E0C\\u6216\\u77ED\\u54C8\\u5E0C\\uFF09\\u3002<br><br><strong>\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\\u2022 "a1b2c3d"',
-        website_urls: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389<strong>\\u72EC\\u7ACB\\u7684 URL</strong> \\u6587\\u672C\\u3002\\u5B83\\u7684\\u5339\\u914D\\u89C4\\u5219\\u88AB\\u8BBE\\u8BA1\\u5F97\\u975E\\u5E38\\u4E25\\u683C\\uFF0C\\u4EE5\\u907F\\u514D\\u610F\\u5916\\u79FB\\u9664\\u4E0D\\u662F\\u94FE\\u63A5\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "https://www.example.com"<br>\\u2022 "http://test.co.uk"<br>\\u2022 "www.google.com"<br>\\u2022 "example.org"',
-        shorthand_numbers: '\\u6B64\\u89C4\\u5219\\u4F1A\\u8FC7\\u6EE4\\u6389\\u4F7F\\u7528<strong>\\u5E38\\u89C1\\u7B80\\u5199\\u540E\\u7F00</strong>\\u7684\\u6570\\u5B57\\uFF0C\\u4F8B\\u5982 k (\\u5343)\\u3001m (\\u767E\\u4E07) \\u6216 b (\\u5341\\u4EBF)\\uFF0C\\u4E0D\\u533A\\u5206\\u5927\\u5C0F\\u5199\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B\\uFF1A</strong><br>\\u2022 "1.2k"<br>\\u2022 "15M"<br>\\u2022 "2.5b"<br>\\u2022 "100K"'
+        numbers: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168</strong>\\u7531\\u6570\\u5B57\\u3001\\u7A7A\\u683C\\u3001\\u5343\\u4F4D\\u5206\\u9694\\u7B26(,)\\u3001\\u5C0F\\u6570\\u70B9(.)\\u4EE5\\u53CA\\u90E8\\u5206\\u8D27\\u5E01\\u7B26\\u53F7($, \\u20AC, \\xA3, \\xA5)\\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B:</strong><br>\\u2022 "1,234.56"<br>\\u2022 "\\xA5999"<br>\\u2022 "\\u20AC200"<br>\\u2022 "$ 100"',
+        chinese: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168</strong>\\u7531\\u6C49\\u5B57\\u548C\\u7A7A\\u683C\\u7EC4\\u6210\\uFF0C\\u4E14\\u4E0D\\u542B\\u4EFB\\u4F55\\u6807\\u70B9\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u793A\\u4F8B:</strong><br>\\u2022 "\\u4F60\\u597D \\u4E16\\u754C" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "\\u4F60\\u597D\\uFF0C\\u4E16\\u754C" (\\u4E0D\\u4F1A\\u88AB\\u8FC7\\u6EE4)',
+        contains_chinese: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389\\u4EFB\\u4F55\\u542B\\u6709\\u81F3\\u5C11\\u4E00\\u4E2A\\u6C49\\u5B57\\u7684\\u6587\\u672C\\uFF0C\\u65E0\\u8BBA\\u5176\\u4ED6\\u5B57\\u7B26\\u662F\\u4EC0\\u4E48\\u3002<br><br><strong>\\u793A\\u4F8B:</strong><br>\\u2022 "\\u4F60\\u597D World" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "\\u7B2C\\u4E00\\u7AE0" (\\u5C06\\u88AB\\u8FC7\\u6EE4)',
+        emoji_only: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168</strong>\\u7531\\u4E00\\u4E2A\\u6216\\u591A\\u4E2A\\u8868\\u60C5\\u7B26\\u53F7\\u53CA\\u7A7A\\u683C\\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u793A\\u4F8B:</strong><br>\\u2022 "\\u{1F44D}"<br>\\u2022 "\\u{1F60A} \\u{1F389} \\u{1F680}"',
+        symbols: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389<strong>\\u5B8C\\u5168</strong>\\u7531\\u5404\\u79CD\\u6807\\u70B9\\u548C\\u7B26\\u53F7\\u7EC4\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B:</strong><br>\\u2022 "@#*&^%"<br>\\u2022 "()[]{}"<br>\\u2022 "---...---"',
+        term: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389\\u901A\\u5E38\\u4E0D\\u9700\\u8981\\u7FFB\\u8BD1\\u7684\\u5E38\\u89C1UI\\u672F\\u8BED\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B:</strong><br>\\u2022 "OK", "Cancel", "Submit"<br>\\u2022 "Login", "Settings", "Help"',
+        single_letter: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389\\u7531<strong>\\u5355\\u4E2A</strong>\\u82F1\\u6587\\u5B57\\u6BCD\\u7EC4\\u6210\\u7684\\u6587\\u672C\\uFF08\\u4E0D\\u533A\\u5206\\u5927\\u5C0F\\u5199\\uFF09\\u3002<br><br><strong>\\u793A\\u4F8B:</strong><br>\\u2022 "A" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "b" (\\u5C06\\u88AB\\u8FC7\\u6EE4)<br>\\u2022 "AB" (\\u4E0D\\u4F1A\\u88AB\\u8FC7\\u6EE4)',
+        repeating_chars: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389\\u7531<strong>\\u540C\\u4E00\\u4E2A\\u5B57\\u7B26</strong>\\u8FDE\\u7EED\\u91CD\\u590D2\\u6B21\\u6216\\u4EE5\\u4E0A\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u793A\\u4F8B:</strong><br>\\u2022 "aa"<br>\\u2022 "======"<br>\\u2022 "bbbbb"',
+        file_paths: '\\u6B64\\u89C4\\u5219\\u5C1D\\u8BD5\\u8BC6\\u522B\\u5E76\\u8FC7\\u6EE4\\u6389\\u7C7B\\u4F3C\\u64CD\\u4F5C\\u7CFB\\u7EDF\\u6587\\u4EF6\\u8DEF\\u5F84\\u4E14<strong>\\u5305\\u542B\\u6587\\u4EF6\\u6269\\u5C55\\u540D</strong>\\u7684\\u6587\\u672C\\u3002\\u5B83\\u4E0D\\u5339\\u914D\\u7F51\\u5740\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B:</strong><br>\\u2022 "/path/to/file.js"<br>\\u2022 "C:\\\\Users\\\\Test\\\\document.docx"<br>\\u2022 "./config.json"',
+        hex_color_codes: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389\\u6807\\u51C6\\u7684CSS\\u5341\\u516D\\u8FDB\\u5236\\u989C\\u8272\\u4EE3\\u7801\\uFF083\\u30014\\u30016\\u62168\\u4F4D\\uFF0C\\u540E\\u8005\\u5305\\u542B\\u900F\\u660E\\u5EA6\\u901A\\u9053\\uFF09\\u3002<br><br><strong>\\u793A\\u4F8B:</strong><br>\\u2022 "#FFFFFF"<br>\\u2022 "#ff0000"<br>\\u2022 "#f0c"<br>\\u2022 "#f0c8" (4\\u4F4D)<br>\\u2022 "#ff000080" (8\\u4F4D)',
+        email_addresses: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389\\u7B26\\u5408\\u6807\\u51C6\\u7535\\u5B50\\u90AE\\u4EF6\\u5730\\u5740\\u683C\\u5F0F\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u793A\\u4F8B:</strong><br>\\u2022 "example@domain.com"<br>\\u2022 "user.name@sub.domain.org"',
+        uuids: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389\\u901A\\u7528\\u552F\\u4E00\\u6807\\u8BC6\\u7B26 (UUID)\\u3002<br><br><strong>\\u793A\\u4F8B:</strong><br>\\u2022 "123e4567-e89b-12d3-a456-426614174000"',
+        git_commit_hashes: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389\\u6807\\u51C6\\u7684Git\\u63D0\\u4EA4\\u54C8\\u5E0C\\u503C\\uFF08\\u957F\\u6216\\u77ED\\uFF09\\u3002<br><br><strong>\\u793A\\u4F8B:</strong><br>\\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\\u2022 "a1b2c3d"',
+        website_urls: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389<strong>\\u72EC\\u7ACB\\u7684\\u7F51\\u5740</strong>\\u3002\\u5B83\\u8BBE\\u8BA1\\u5F97\\u6BD4\\u8F83\\u4E25\\u683C\\uFF0C\\u4EE5\\u907F\\u514D\\u610F\\u5916\\u79FB\\u9664\\u4E0D\\u662F\\u94FE\\u63A5\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B:</strong><br>\\u2022 "https://www.example.com"<br>\\u2022 "http://test.co.uk"<br>\\u2022 "www.google.com"<br>\\u2022 "example.org"',
+        shorthand_numbers: '\\u6B64\\u89C4\\u5219\\u8FC7\\u6EE4\\u6389\\u4F7F\\u7528<strong>\\u5E38\\u89C1\\u901F\\u8BB0\\u540E\\u7F00</strong>\\u8868\\u793A\\u5343(k)\\u3001\\u767E\\u4E07(m)\\u6216\\u5341\\u4EBF(b)\\u7684\\u6570\\u5B57\\uFF08\\u4E0D\\u533A\\u5206\\u5927\\u5C0F\\u5199\\uFF09\\u3002<br><br><strong>\\u66F4\\u591A\\u793A\\u4F8B:</strong><br>\\u2022 "1.2k"<br>\\u2022 "15M"<br>\\u2022 "2.5b"<br>\\u2022 "100K"'
       },
       display: {
         title: "\\u663E\\u793A\\u8BBE\\u7F6E\\u8BF4\\u660E",
-        show_fab: "\\u63A7\\u5236\\u662F\\u5426\\u5728\\u7F51\\u9875\\u53F3\\u4E0B\\u89D2\\u663E\\u793A<strong>\\u60AC\\u6D6E\\u52A8\\u4F5C\\u6309\\u94AE (FAB)</strong>\\u3002\\u8FD9\\u662F\\u9759\\u6001\\u6587\\u672C\\u63D0\\u53D6\\u3001\\u52A8\\u6001\\u6587\\u672C\\u63D0\\u53D6\\u7684\\u6838\\u5FC3\\u5165\\u53E3\\u3002<br><br>\\u5982\\u679C\\u60A8\\u7981\\u7528\\u4E86\\u6B64\\u6309\\u94AE\\uFF0C\\u53EF\\u4EE5\\u901A\\u8FC7\\u6CB9\\u7334\\u6269\\u5C55\\u83DC\\u5355\\u7684\\u8BBE\\u7F6E\\u9762\\u677F\\u91CD\\u65B0\\u6253\\u5F00\\u3002",
-        show_scan_count: "\\u542F\\u7528\\u540E\\uFF0C\\u5728\\u7ED3\\u679C\\u7A97\\u53E3\\u7684\\u6807\\u9898\\u680F\\u4F1A<strong>\\u5B9E\\u65F6\\u66F4\\u65B0</strong>\\u672C\\u6B21\\u626B\\u63CF\\u53D1\\u73B0\\u7684\\u6587\\u672C\\u6761\\u76EE\\u603B\\u6570\\u3002\\u5728\\u8FDB\\u884C\\u957F\\u65F6\\u95F4\\u7684<strong>\\u52A8\\u6001\\u626B\\u63CF</strong>\\u65F6\\uFF0C\\u8FD9\\u4E2A\\u8BA1\\u6570\\u5668\\u53EF\\u4EE5\\u5F88\\u76F4\\u89C2\\u5730\\u53CD\\u6620\\u626B\\u63CF\\u8FDB\\u5EA6\\u3002",
-        show_line_numbers: "\\u5728\\u7ED3\\u679C\\u7A97\\u53E3\\u7684\\u6587\\u672C\\u533A\\u57DF\\u5DE6\\u4FA7\\u663E\\u793A\\u884C\\u53F7\\u3002\\u5F53\\u60A8\\u9700\\u8981\\u4E0E\\u4ED6\\u4EBA\\u8BA8\\u8BBA\\u6216\\u8BB0\\u5F55\\u7279\\u5B9A\\u67D0\\u884C\\u6587\\u672C\\u65F6\\uFF0C\\u884C\\u53F7\\u53EF\\u4EE5\\u63D0\\u4F9B\\u4E00\\u4E2A<strong>\\u7CBE\\u786E\\u7684\\u5B9A\\u4F4D\\u6807\\u8BB0</strong>\\u3002",
-        show_statistics: "\\u5728\\u7ED3\\u679C\\u7A97\\u53E3\\u5E95\\u90E8\\u7684\\u72B6\\u6001\\u680F\\u663E\\u793A\\u5F53\\u524D\\u5DF2\\u63D0\\u53D6\\u5185\\u5BB9\\u7684<strong>\\u5B9E\\u65F6\\u7EDF\\u8BA1</strong>\\uFF0C\\u5305\\u62EC<strong>\\u603B\\u884C\\u6570</strong>\\u548C<strong>\\u603B\\u5B57\\u7B26\\u6570</strong>\\u3002\\u8FD9\\u53EF\\u4EE5\\u5E2E\\u52A9\\u60A8\\u5FEB\\u901F\\u8BC4\\u4F30\\u63D0\\u53D6\\u5185\\u5BB9\\u7684\\u89C4\\u6A21\\u3002",
-        enable_word_wrap: "\\u63A7\\u5236\\u7ED3\\u679C\\u7A97\\u53E3\\u4E2D\\u7684\\u957F\\u6587\\u672C\\u884C\\u5982\\u4F55\\u663E\\u793A\\u3002<br><br>\\u2022 <strong>\\u542F\\u7528\\uFF1A</strong>\\u957F\\u6587\\u672C\\u5C06\\u81EA\\u52A8\\u6362\\u884C\\u4EE5\\u9002\\u5E94\\u7A97\\u53E3\\u5BBD\\u5EA6\\u3002<br>\\u2022 <strong>\\u7981\\u7528\\uFF1A</strong>\\u957F\\u6587\\u672C\\u5C06\\u4FDD\\u6301\\u5728\\u5355\\u884C\\uFF0C\\u5E76\\u51FA\\u73B0\\u6C34\\u5E73\\u6EDA\\u52A8\\u6761\\u3002",
-        text_truncation_limit: "\\u8FD9\\u662F\\u4E00\\u4E2A<strong>\\u6027\\u80FD\\u4FDD\\u62A4</strong>\\u673A\\u5236\\u3002\\u5F53\\u811A\\u672C\\u63D0\\u53D6\\u5230<strong>\\u5355\\u884C\\u8D85\\u957F\\u6587\\u672C</strong>\\uFF08\\u4F8B\\u5982\\uFF0C\\u4E00\\u4E2A\\u5B8C\\u6574\\u7684 base64 \\u7F16\\u7801\\u56FE\\u7247\\uFF09\\u65F6\\uFF0C\\u82E5\\u4E0D\\u622A\\u65AD\\uFF0C\\u53EF\\u80FD\\u4F1A\\u5BFC\\u81F4\\u6D4F\\u89C8\\u5668<strong>\\u5361\\u987F\\u6216\\u65E0\\u54CD\\u5E94</strong>\\u3002<br><br>\\u6B64\\u8BBE\\u7F6E\\u4F1A\\u622A\\u65AD\\u8D85\\u51FA\\u6307\\u5B9A\\u957F\\u5EA6\\u7684\\u5355\\u884C\\u6587\\u672C\\uFF0C\\u4EE5\\u4FDD\\u8BC1\\u754C\\u9762\\u6D41\\u7545\\u3002<strong>\\u6CE8\\u610F\\uFF1A\\u6B64\\u622A\\u65AD\\u4EC5\\u5F71\\u54CD\\u754C\\u9762\\u663E\\u793A\\uFF0C\\u5BFC\\u51FA\\u7684\\u6587\\u4EF6\\u4ECD\\u5C06\\u5305\\u542B\\u5B8C\\u6574\\u5185\\u5BB9\\u3002</strong>"
+        show_fab: "\\u63A7\\u5236\\u662F\\u5426\\u5728\\u7F51\\u9875\\u53F3\\u4E0B\\u89D2\\u663E\\u793A<strong>\\u60AC\\u6D6E\\u64CD\\u4F5C\\u6309\\u94AE(FAB)</strong>\\u3002\\u8FD9\\u662F\\u8FDB\\u884C\\u9759\\u6001\\u548C\\u52A8\\u6001\\u6587\\u672C\\u63D0\\u53D6\\u7684\\u4E3B\\u8981\\u5165\\u53E3\\u3002<br><br>\\u5982\\u679C\\u60A8\\u7981\\u7528\\u4E86\\u6B64\\u6309\\u94AE\\uFF0C\\u53EF\\u4EE5\\u901A\\u8FC7\\u6CB9\\u7334\\u6269\\u5C55\\u83DC\\u5355\\u4E2D\\u7684\\u8BBE\\u7F6E\\u9762\\u677F\\u91CD\\u65B0\\u542F\\u7528\\u5B83\\u3002",
+        show_scan_count: "\\u542F\\u7528\\u540E\\uFF0C\\u7ED3\\u679C\\u7A97\\u53E3\\u7684\\u6807\\u9898\\u680F\\u5C06<strong>\\u5B9E\\u65F6\\u663E\\u793A</strong>\\u5F53\\u524D\\u626B\\u63CF\\u4E2D\\u627E\\u5230\\u7684\\u603B\\u6587\\u672C\\u9879\\u76EE\\u6570\\u3002\\u8FD9\\u5BF9\\u4E8E\\u76D1\\u63A7\\u957F\\u65F6\\u95F4\\u8FD0\\u884C\\u7684<strong>\\u52A8\\u6001\\u626B\\u63CF</strong>\\u7684\\u8FDB\\u5EA6\\u7279\\u522B\\u6709\\u7528\\u3002",
+        show_line_numbers: "\\u5728\\u7ED3\\u679C\\u7A97\\u53E3\\u7684\\u6587\\u672C\\u533A\\u57DF\\u5DE6\\u4FA7\\u663E\\u793A\\u884C\\u53F7\\u3002\\u5F53\\u60A8\\u9700\\u8981\\u8BA8\\u8BBA\\u6216\\u8BB0\\u5F55\\u7279\\u5B9A\\u6587\\u672C\\u884C\\u65F6\\uFF0C\\u8FD9\\u63D0\\u4F9B\\u4E86\\u4E00\\u4E2A<strong>\\u7CBE\\u786E\\u7684\\u53C2\\u8003\\u70B9</strong>\\u3002",
+        show_statistics: "\\u5728\\u7ED3\\u679C\\u7A97\\u53E3\\u5E95\\u90E8\\u7684\\u72B6\\u6001\\u680F\\u4E2D\\u663E\\u793A\\u6709\\u5173\\u63D0\\u53D6\\u5185\\u5BB9\\u7684<strong>\\u5B9E\\u65F6\\u7EDF\\u8BA1\\u6570\\u636E</strong>\\uFF0C\\u5305\\u62EC<strong>\\u603B\\u884C\\u6570</strong>\\u548C<strong>\\u603B\\u5B57\\u7B26\\u6570</strong>\\u3002\\u8FD9\\u6709\\u52A9\\u4E8E\\u60A8\\u5FEB\\u901F\\u8BC4\\u4F30\\u5185\\u5BB9\\u7684\\u4F53\\u91CF\\u3002",
+        enable_word_wrap: "\\u63A7\\u5236\\u7ED3\\u679C\\u7A97\\u53E3\\u4E2D\\u957F\\u6587\\u672C\\u884C\\u7684\\u663E\\u793A\\u65B9\\u5F0F\\u3002<br><br>\\u2022 <strong>\\u542F\\u7528:</strong> \\u957F\\u884C\\u5C06\\u81EA\\u52A8\\u6362\\u884C\\u4EE5\\u9002\\u5E94\\u7A97\\u53E3\\u5BBD\\u5EA6\\u3002<br>\\u2022 <strong>\\u7981\\u7528:</strong> \\u957F\\u884C\\u5C06\\u4FDD\\u6301\\u5728\\u5355\\u884C\\uFF0C\\u5E76\\u51FA\\u73B0\\u6C34\\u5E73\\u6EDA\\u52A8\\u6761\\u3002",
+        text_truncation_limit: "\\u8FD9\\u662F\\u4E00\\u4E2A<strong>\\u6027\\u80FD\\u4F18\\u5316</strong>\\u529F\\u80FD\\u3002\\u5982\\u679C\\u811A\\u672C\\u63D0\\u53D6\\u5230<strong>\\u6781\\u957F\\u7684\\u5355\\u884C\\u6587\\u672C</strong>\\uFF08\\u4F8B\\u5982\\uFF0Cbase64\\u7F16\\u7801\\u7684\\u56FE\\u7247\\uFF09\\uFF0C\\u53EF\\u80FD\\u4F1A\\u5BFC\\u81F4\\u6D4F\\u89C8\\u5668<strong>\\u5361\\u987F\\u6216\\u65E0\\u54CD\\u5E94</strong>\\u3002<br><br>\\u6B64\\u8BBE\\u7F6E\\u4F1A\\u622A\\u65AD\\u4EFB\\u4F55\\u8D85\\u8FC7\\u6307\\u5B9A\\u957F\\u5EA6\\u7684\\u5355\\u884C\\u6587\\u672C\\uFF0C\\u4EE5\\u786E\\u4FDDUI\\u4FDD\\u6301\\u6D41\\u7545\\u3002<strong>\\u6CE8\\u610F\\uFF1A\\u8FD9\\u4EC5\\u5F71\\u54CD\\u663E\\u793A\\uFF1B\\u5BFC\\u51FA\\u7684\\u6587\\u4EF6\\u4ECD\\u5C06\\u5305\\u542B\\u5B8C\\u6574\\u7684\\u3001\\u672A\\u622A\\u65AD\\u7684\\u5185\\u5BB9\\u3002</strong>"
       },
       advanced: {
         title: "\\u9AD8\\u7EA7\\u8BBE\\u7F6E\\u8BF4\\u660E",
-        enable_debug_logging: "\\u542F\\u7528\\u540E\\uFF0C\\u811A\\u672C\\u4F1A\\u5C06\\u8BE6\\u7EC6\\u7684\\u5185\\u90E8\\u8FD0\\u884C\\u72B6\\u6001\\u3001\\u6267\\u884C\\u6B65\\u9AA4\\u3001\\u9519\\u8BEF\\u4FE1\\u606F\\u7B49\\u8F93\\u51FA\\u5230\\u6D4F\\u89C8\\u5668\\u7684<strong>\\u5F00\\u53D1\\u8005\\u5DE5\\u5177\\u63A7\\u5236\\u53F0</strong>\\uFF08\\u901A\\u5E38\\u6309 F12 \\u6253\\u5F00\\uFF09\\u3002\\u6B64\\u529F\\u80FD\\u4E3B\\u8981\\u9762\\u5411\\u5F00\\u53D1\\u8005\\u6216\\u9700\\u8981\\u63D0\\u4EA4\\u8BE6\\u7EC6\\u9519\\u8BEF\\u62A5\\u544A\\u7684\\u7528\\u6237\\u3002"
+        enable_debug_logging: "\\u542F\\u7528\\u540E\\uFF0C\\u811A\\u672C\\u4F1A\\u5C06\\u8BE6\\u7EC6\\u7684\\u5185\\u90E8\\u72B6\\u6001\\u3001\\u6267\\u884C\\u6B65\\u9AA4\\u548C\\u9519\\u8BEF\\u4FE1\\u606F\\u8F93\\u51FA\\u5230\\u6D4F\\u89C8\\u5668\\u7684<strong>\\u5F00\\u53D1\\u8005\\u5DE5\\u5177\\u63A7\\u5236\\u53F0</strong>\\uFF08\\u901A\\u5E38\\u7528F12\\u6253\\u5F00\\uFF09\\u3002\\u8FD9\\u4E3B\\u8981\\u4F9B\\u5F00\\u53D1\\u8005\\u6216\\u9700\\u8981\\u63D0\\u4EA4\\u8BE6\\u7EC6\\u9519\\u8BEF\\u62A5\\u544A\\u7684\\u7528\\u6237\\u4F7F\\u7528\\u3002"
       }
     },
     log: {
-      prefix: "[\\u6587\\u672C\\u63D0\\u53D6\\u811A\\u672C-Debug]",
+      prefix: "[\\u6587\\u672C\\u63D0\\u53D6\\u811A\\u672C-\\u8C03\\u8BD5]",
       language: {
-        switched: "\\u8BED\\u8A00\\u5DF2\\u5207\\u6362\\u81F3: {{lang}}",
-        notFound: "\\u8BED\\u8A00 '{{lang}}' \\u4E0D\\u5B58\\u5728\\uFF0C\\u56DE\\u9000\\u5230 'en'\\u3002"
+        switched: "\\u8BED\\u8A00\\u5DF2\\u5207\\u6362\\u81F3\\uFF1A{{lang}}",
+        notFound: "\\u672A\\u627E\\u5230\\u8BED\\u8A00 '{{lang}}'\\uFF0C\\u5DF2\\u56DE\\u9000\\u81F3 'en'\\u3002"
       },
       settings: {
         changed: "\\u8BBE\\u7F6E '{{key}}' \\u5DF2\\u4ECE '{{oldValue}}' \\u66F4\\u6539\\u4E3A '{{newValue}}'",
         filterRuleChanged: {
-          enabled: "\\u8FC7\\u6EE4\\u89C4\\u5219 '{{key}}' \\u5DF2\\u88AB\\u542F\\u7528",
-          disabled: "\\u8FC7\\u6EE4\\u89C4\\u5219 '{{key}}' \\u5DF2\\u88AB\\u7981\\u7528"
+          enabled: "\\u8FC7\\u6EE4\\u89C4\\u5219 '{{key}}' \\u5DF2\\u542F\\u7528",
+          disabled: "\\u8FC7\\u6EE4\\u89C4\\u5219 '{{key}}' \\u5DF2\\u7981\\u7528"
         },
         panel: {
           opening: "\\u6B63\\u5728\\u6253\\u5F00\\u8BBE\\u7F6E\\u9762\\u677F...",
@@ -6343,111 +6455,113 @@ ${result.join(",\n")}
           saving: "\\u6B63\\u5728\\u4FDD\\u5B58\\u8BBE\\u7F6E..."
         },
         parseError: "\\u89E3\\u6790\\u5DF2\\u4FDD\\u5B58\\u7684\\u8BBE\\u7F6E\\u65F6\\u51FA\\u9519\\uFF1A",
-        invalidObject: "\\u5C1D\\u8BD5\\u4FDD\\u5B58\\u4E00\\u4E2A\\u65E0\\u6548\\u7684\\u5BF9\\u8C61\\u4F5C\\u4E3A\\u8BBE\\u7F6E\\uFF1A"
+        invalidObject: "\\u8BD5\\u56FE\\u4E3A\\u8BBE\\u7F6E\\u4FDD\\u5B58\\u4E00\\u4E2A\\u65E0\\u6548\\u5BF9\\u8C61\\uFF1A"
       },
       textProcessor: {
         filtered: '\\u6587\\u672C\\u5DF2\\u8FC7\\u6EE4: "{{text}}" (\\u539F\\u56E0: {{reason}})'
       },
       quickScan: {
-        switchToFallback: "[\\u9759\\u6001\\u626B\\u63CF] \\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
-        fallbackFailed: "[\\u9759\\u6001\\u626B\\u63CF] \\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u5931\\u8D25: {{error}}",
+        switchToFallback: "[\\u5FEB\\u901F\\u626B\\u63CF] \\u6B63\\u5728\\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
+        fallbackFailed: "[\\u5FEB\\u901F\\u626B\\u63CF] \\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u6267\\u884C\\u5931\\u8D25: {{error}}",
         fallback: {
-          starting: "[\\u9759\\u6001\\u626B\\u63CF - \\u5907\\u9009\\u65B9\\u6848] \\u5F00\\u59CB\\u5728\\u4E3B\\u7EBF\\u7A0B\\u4E2D\\u5904\\u7406...",
-          completed: "[\\u9759\\u6001\\u626B\\u63CF - \\u5907\\u9009\\u65B9\\u6848] \\u5904\\u7406\\u5B8C\\u6210\\uFF0C\\u5171 {{count}} \\u6761\\u6709\\u6548\\u6587\\u672C\\u3002"
+          starting: "[\\u5FEB\\u901F\\u626B\\u63CF - \\u5907\\u9009] \\u6B63\\u5728\\u4E3B\\u7EBF\\u7A0B\\u4E2D\\u5F00\\u59CB\\u5904\\u7406...",
+          completed: "[\\u5FEB\\u901F\\u626B\\u63CF - \\u5907\\u9009] \\u5904\\u7406\\u5B8C\\u6210\\uFF0C\\u627E\\u5230 {{count}} \\u6761\\u4E0D\\u91CD\\u590D\\u6587\\u672C\\u3002"
         },
         worker: {
-          logPrefix: "[\\u9759\\u6001\\u626B\\u63CF Worker]",
-          starting: "[\\u9759\\u6001\\u626B\\u63CF] \\u5F00\\u59CB\\u6267\\u884C\\uFF0C\\u5C1D\\u8BD5\\u4F7F\\u7528 Web Worker...",
-          completed: "[\\u9759\\u6001\\u626B\\u63CF] Worker \\u5904\\u7406\\u6210\\u529F\\uFF0C\\u6536\\u5230 {{count}} \\u6761\\u6587\\u672C\\u3002",
-          scanComplete: "[\\u9759\\u6001\\u626B\\u63CF Worker] \\u5904\\u7406\\u5B8C\\u6210\\uFF0C\\u5171 {{count}} \\u6761\\u6709\\u6548\\u6587\\u672C\\u3002\\u6B63\\u5728\\u53D1\\u56DE\\u4E3B\\u7EBF\\u7A0B...",
-          initFailed: "[\\u9759\\u6001\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u8D25\\u3002\\u8FD9\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u4E8E\\u7F51\\u7AD9\\u7684\\u5185\\u5BB9\\u5B89\\u5168\\u7B56\\u7565\\uFF08CSP\\uFF09\\u963B\\u6B62\\u4E86\\u811A\\u672C\\u3002",
-          originalError: "[\\u9759\\u6001\\u626B\\u63CF] \\u539F\\u59CB\\u9519\\u8BEF: {{error}}",
-          sendingData: "[\\u9759\\u6001\\u626B\\u63CF] Web Worker \\u5DF2\\u521B\\u5EFA\\uFF0C\\u6B63\\u5728\\u53D1\\u9001 {{count}} \\u6761\\u6587\\u672C\\u8FDB\\u884C\\u5904\\u7406...",
-          initSyncError: "[\\u9759\\u6001\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u65F6\\u53D1\\u751F\\u540C\\u6B65\\u9519\\u8BEF: {{error}}"
+          logPrefix: "[\\u5FEB\\u901F\\u626B\\u63CF Worker]",
+          starting: "[\\u5FEB\\u901F\\u626B\\u63CF] \\u5F00\\u59CB\\u6267\\u884C\\uFF0C\\u5C1D\\u8BD5\\u4F7F\\u7528 Web Worker...",
+          completed: "[\\u5FEB\\u901F\\u626B\\u63CF] Worker \\u5904\\u7406\\u6210\\u529F\\uFF0C\\u6536\\u5230 {{count}} \\u6761\\u6587\\u672C\\u3002",
+          scanComplete: "[\\u5FEB\\u901F\\u626B\\u63CF Worker] \\u5904\\u7406\\u5B8C\\u6210\\uFF0C\\u627E\\u5230 {{count}} \\u6761\\u4E0D\\u91CD\\u590D\\u6587\\u672C\\u3002\\u6B63\\u5728\\u53D1\\u56DE\\u4E3B\\u7EBF\\u7A0B...",
+          initFailed: "[\\u5FEB\\u901F\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u8D25\\u3002\\u8FD9\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u4E8E\\u7F51\\u7AD9\\u7684\\u5185\\u5BB9\\u5B89\\u5168\\u7B56\\u7565 (CSP) \\u5BFC\\u81F4\\u7684\\u3002",
+          originalError: "[\\u5FEB\\u901F\\u626B\\u63CF] \\u539F\\u59CB\\u9519\\u8BEF: {{error}}",
+          sendingData: "[\\u5FEB\\u901F\\u626B\\u63CF] Web Worker \\u5DF2\\u521B\\u5EFA\\uFF0C\\u6B63\\u5728\\u53D1\\u9001 {{count}} \\u6761\\u6587\\u672C\\u8FDB\\u884C\\u5904\\u7406...",
+          initSyncError: "[\\u5FEB\\u901F\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u671F\\u95F4\\u53D1\\u751F\\u540C\\u6B65\\u9519\\u8BEF: {{error}}"
         }
       },
       sessionScan: {
-        switchToFallback: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
+        switchToFallback: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u6B63\\u5728\\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
         domObserver: {
           stopped: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u5DF2\\u505C\\u6B62\\u76D1\\u542C DOM \\u53D8\\u5316\\u3002"
         },
         fallback: {
-          initialized: "[\\u4F1A\\u8BDD\\u626B\\u63CF - \\u5907\\u9009\\u65B9\\u6848] \\u521D\\u59CB\\u5316\\u5B8C\\u6210\\u3002",
-          cleared: "[\\u4F1A\\u8BDD\\u626B\\u63CF - \\u5907\\u9009\\u65B9\\u6848] \\u6570\\u636E\\u5DF2\\u6E05\\u7A7A\\u3002"
+          initialized: "[\\u4F1A\\u8BDD\\u626B\\u63CF - \\u5907\\u9009] \\u5DF2\\u521D\\u59CB\\u5316\\u3002",
+          cleared: "[\\u4F1A\\u8BDD\\u626B\\u63CF - \\u5907\\u9009] \\u6570\\u636E\\u5DF2\\u6E05\\u9664\\u3002"
         },
         worker: {
           logPrefix: "[\\u4F1A\\u8BDD\\u626B\\u63CF Worker]",
-          starting: "\\u4F1A\\u8BDD\\u626B\\u63CF\\uFF1A\\u5C1D\\u8BD5\\u542F\\u52A8 Web Worker...",
-          initFailed: "[\\u4F1A\\u8BDD\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u8D25\\u3002\\u8FD9\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u4E8E\\u7F51\\u7AD9\\u7684\\u5185\\u5BB9\\u5B89\\u5168\\u7B56\\u7565\\uFF08CSP\\uFF09\\u963B\\u6B62\\u4E86\\u811A\\u672C\\u3002",
+          starting: "\\u4F1A\\u8BDD\\u626B\\u63CF\\uFF1A\\u6B63\\u5728\\u5C1D\\u8BD5\\u542F\\u52A8 Web Worker...",
+          initFailed: "[\\u4F1A\\u8BDD\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u8D25\\u3002\\u8FD9\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u4E8E\\u7F51\\u7AD9\\u7684\\u5185\\u5BB9\\u5B89\\u5168\\u7B56\\u7565 (CSP) \\u5BFC\\u81F4\\u7684\\u3002",
           originalError: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u539F\\u59CB\\u9519\\u8BEF: {{error}}",
           initialized: "[\\u4F1A\\u8BDD\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u6210\\u529F\\uFF0C\\u5DF2\\u53D1\\u9001 {{count}} \\u6761\\u521D\\u59CB\\u6587\\u672C\\u4EE5\\u5F00\\u59CB\\u4F1A\\u8BDD\\u3002",
-          initSyncError: "[\\u4F1A\\u8BDD\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u65F6\\u53D1\\u751F\\u540C\\u6B65\\u9519\\u8BEF: {{error}}",
-          clearCommandSent: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u5DF2\\u5411 Worker \\u53D1\\u9001\\u6E05\\u7A7A\\u6307\\u4EE4\\u3002"
+          initSyncError: "[\\u4F1A\\u8BDD\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u671F\\u95F4\\u53D1\\u751F\\u540C\\u6B65\\u9519\\u8BEF: {{error}}",
+          clearCommandSent: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u6E05\\u9664\\u547D\\u4EE4\\u5DF2\\u53D1\\u9001\\u81F3 worker\\u3002"
         }
       },
       ui: {
         copyButton: {
-          copied: "\\u590D\\u5236\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\uFF0C\\u590D\\u5236\\u4E86 {{count}} \\u4E2A\\u5B57\\u7B26\\u3002",
-          nothingToCopy: "\\u590D\\u5236\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\uFF0C\\u4F46\\u6CA1\\u6709\\u5185\\u5BB9\\u53EF\\u590D\\u5236\\u6216\\u6309\\u94AE\\u88AB\\u7981\\u7528\\u3002"
+          copied: "\\u590D\\u5236\\u6309\\u94AE\\u5DF2\\u70B9\\u51FB\\uFF0C\\u590D\\u5236\\u4E86 {{count}} \\u4E2A\\u5B57\\u7B26\\u3002",
+          nothingToCopy: "\\u590D\\u5236\\u6309\\u94AE\\u5DF2\\u70B9\\u51FB\\uFF0C\\u4F46\\u6CA1\\u6709\\u5185\\u5BB9\\u53EF\\u590D\\u5236\\u6216\\u6309\\u94AE\\u88AB\\u7981\\u7528\\u3002"
         },
         confirmationModal: {
           sessionScan: {
-            confirmed: "\\u7528\\u6237\\u786E\\u8BA4\\u6E05\\u7A7A\\u4F1A\\u8BDD\\u626B\\u63CF\\u6587\\u672C\\uFF0C\\u6B63\\u5728\\u8C03\\u7528\\u56DE\\u8C03..."
+            confirmed: "\\u7528\\u6237\\u5DF2\\u786E\\u8BA4\\u6E05\\u9664\\u4F1A\\u8BDD\\u626B\\u63CF\\u6587\\u672C\\uFF0C\\u6B63\\u5728\\u8C03\\u7528\\u56DE\\u8C03..."
           },
           quickScan: {
-            confirmed: "\\u7528\\u6237\\u786E\\u8BA4\\u6E05\\u7A7A\\u5FEB\\u901F\\u626B\\u63CF\\u6587\\u672C\\u3002"
+            confirmed: "\\u7528\\u6237\\u5DF2\\u786E\\u8BA4\\u6E05\\u9664\\u5FEB\\u901F\\u626B\\u63CF\\u6587\\u672C\\u3002"
           },
-          cancelled: "\\u7528\\u6237\\u53D6\\u6D88\\u4E86\\u6E05\\u7A7A\\u64CD\\u4F5C\\u3002"
+          cancelled: "\\u7528\\u6237\\u5DF2\\u53D6\\u6D88\\u6E05\\u9664\\u64CD\\u4F5C\\u3002"
         },
         modal: {
-          opening: "\\u6B63\\u5728\\u6253\\u5F00\\u4E3B\\u7A97\\u53E3...",
-          closing: "\\u6B63\\u5728\\u5173\\u95ED\\u4E3B\\u7A97\\u53E3...",
+          opening: "\\u6B63\\u5728\\u6253\\u5F00\\u4E3B\\u6A21\\u6001\\u6846...",
+          closing: "\\u6B63\\u5728\\u5173\\u95ED\\u4E3B\\u6A21\\u6001\\u6846...",
           scanFailed: "\\u9759\\u6001\\u626B\\u63CF\\u5931\\u8D25: {{error}}",
-          clearContent: "\\u201C\\u6E05\\u7A7A\\u5185\\u5BB9\\u201D\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\u3002"
+          clearContent: "\\u6E05\\u7A7A\\u5185\\u5BB9\\u6309\\u94AE\\u5DF2\\u70B9\\u51FB\\u3002"
         }
       },
       exporter: {
-        buttonClicked: "\\u5BFC\\u51FA\\u6309\\u94AE\\u88AB\\u70B9\\u51FB, \\u5BFC\\u51FA\\u683C\\u5F0F: {{format}}\\u3002",
-        csvError: "\\u5728\\u89E3\\u6790\\u6587\\u672C\\u5E76\\u751F\\u6210 CSV \\u65F6\\u53D1\\u751F\\u9519\\u8BEF: {{error}}",
+        buttonClicked: "\\u5BFC\\u51FA\\u6309\\u94AE\\u5DF2\\u70B9\\u51FB\\uFF0C\\u683C\\u5F0F: {{format}}\\u3002",
+        csvError: "\\u89E3\\u6790\\u6587\\u672C\\u5E76\\u751F\\u6210CSV\\u65F6\\u51FA\\u9519: {{error}}",
         fileExported: "\\u6587\\u4EF6\\u5DF2\\u5BFC\\u51FA: {{filename}}",
-        noContent: "\\u6CA1\\u6709\\u5185\\u5BB9\\u53EF\\u5BFC\\u51FA\\u3002",
+        noContent: "\\u65E0\\u5185\\u5BB9\\u53EF\\u5BFC\\u51FA\\u3002",
         unknownFormat: "\\u672A\\u77E5\\u7684\\u5BFC\\u51FA\\u683C\\u5F0F: {{format}}"
       },
       main: {
-        requestingSessionScanData: "\\u4ECE session-scan \\u6A21\\u5F0F\\u8BF7\\u6C42\\u5B8C\\u6574\\u6570\\u636E...",
-        exportingQuickScanData: "\\u4ECE quick-scan \\u6A21\\u5F0F\\u7684\\u5185\\u5B58\\u4E2D\\u5BFC\\u51FA\\u5B8C\\u6574\\u6570\\u636E...",
+        requestingSessionScanData: "\\u6B63\\u5728\\u8BF7\\u6C42\\u4F1A\\u8BDD\\u626B\\u63CF\\u6A21\\u5F0F\\u7684\\u5B8C\\u6574\\u6570\\u636E...",
+        exportingQuickScanData: "\\u6B63\\u5728\\u5BFC\\u51FA\\u5FEB\\u901F\\u626B\\u63CF\\u6A21\\u5F0F\\u5185\\u5B58\\u4E2D\\u7684\\u5B8C\\u6574\\u6570\\u636E...",
         inIframe: "\\u811A\\u672C\\u5728 iframe \\u4E2D\\uFF0C\\u5DF2\\u8DF3\\u8FC7\\u521D\\u59CB\\u5316\\u3002",
-        initializing: "\\u811A\\u672C\\u5F00\\u59CB\\u521D\\u59CB\\u5316...",
+        initializing: "\\u811A\\u672C\\u521D\\u59CB\\u5316\\u5F00\\u59CB...",
         initialSettingsLoaded: "\\u521D\\u59CB\\u8BBE\\u7F6E\\u5DF2\\u52A0\\u8F7D:"
       },
       dom: {
-        ttpCreationError: "\\u521B\\u5EFA Trusted Type \\u7B56\\u7565\\u5931\\u8D25\\uFF1A",
-        svgParseError: "\\u65E0\\u6548\\u6216\\u89E3\\u6790\\u5931\\u8D25\\u7684 SVG \\u5B57\\u7B26\\u4E32\\uFF1A"
+        ttpCreationError: "\\u521B\\u5EFA Trusted Type \\u7B56\\u7565\\u5931\\u8D25:",
+        svgParseError: "SVG \\u5B57\\u7B26\\u4E32\\u65E0\\u6548\\u6216\\u89E3\\u6790\\u5931\\u8D25:"
       },
       elementScan: {
-        starting: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5DF2\\u542F\\u52A8\\u3002",
+        starting: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5DF2\\u5F00\\u59CB\\u3002",
         stopping: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5DF2\\u505C\\u6B62\\u3002",
-        listenersAdded: "\\u5DF2\\u6DFB\\u52A0\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u7684\\u5168\\u5C40\\u4E8B\\u4EF6\\u76D1\\u542C\\u5668\\u3002",
-        listenersRemoved: "\\u5DF2\\u79FB\\u9664\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u7684\\u5168\\u5C40\\u4E8B\\u4EF6\\u76D1\\u542C\\u5668\\u3002",
+        listenersAdded: "\\u5DF2\\u4E3A\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u6DFB\\u52A0\\u5168\\u5C40\\u4E8B\\u4EF6\\u76D1\\u542C\\u5668\\u3002",
+        listenersRemoved: "\\u5DF2\\u4E3A\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u79FB\\u9664\\u5168\\u5C40\\u4E8B\\u4EF6\\u76D1\\u542C\\u5668\\u3002",
         stateReset: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u72B6\\u6001\\u5DF2\\u91CD\\u7F6E\\u3002",
         reselecting: "\\u6B63\\u5728\\u8FD4\\u56DE\\u5143\\u7D20\\u91CD\\u65B0\\u9009\\u62E9\\u6A21\\u5F0F\\u3002",
-        hovering: "\\u5F53\\u524D\\u60AC\\u505C\\u4E8E <{{tagName}}>\\u3002",
-        escapePressed: "\\u7528\\u6237\\u6309\\u4E0B Escape \\u952E\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u3002",
-        clickedEnteringAdjust: "\\u5DF2\\u70B9\\u51FB\\u5143\\u7D20 <{{tagName}}>\\uFF0C\\u8FDB\\u5165\\u5C42\\u7EA7\\u8C03\\u6574\\u6A21\\u5F0F\\u3002",
+        hovering: "\\u6B63\\u5728\\u60AC\\u505C\\u4E8E <{{tagName}}>\\u3002",
+        escapePressed: "\\u6309\\u4E0B Escape \\u952E\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u3002",
+        clickedEnteringAdjust: "\\u5143\\u7D20 <{{tagName}}> \\u5DF2\\u88AB\\u70B9\\u51FB\\uFF0C\\u6B63\\u5728\\u8FDB\\u5165\\u8C03\\u6574\\u6A21\\u5F0F\\u3002",
         pathBuilt: "\\u5143\\u7D20\\u5C42\\u7EA7\\u8DEF\\u5F84\\u5DF2\\u6784\\u5EFA\\uFF0C\\u6DF1\\u5EA6\\u4E3A\\uFF1A{{depth}}\\u3002",
         adjustingLevel: "\\u6B63\\u5728\\u8C03\\u6574\\u9009\\u62E9\\u5C42\\u7EA7\\u81F3 {{level}} ({{tagName}})\\u3002",
         confirmExtracting: "\\u9009\\u62E9\\u5DF2\\u786E\\u8BA4\\uFF0C\\u6B63\\u5728\\u4ECE <{{tagName}}> \\u63D0\\u53D6\\u6587\\u672C\\u3002",
+        staged: "\\u5143\\u7D20\\u5DF2\\u6682\\u5B58\\u3002\\u603B\\u6570\\uFF1A{{count}}\\u3002",
+        confirmingStaged: "\\u786E\\u8BA4\\u9009\\u62E9\\u3002\\u6B63\\u5728\\u5904\\u7406 {{count}} \\u4E2A\\u5DF2\\u6682\\u5B58\\u7684\\u5143\\u7D20\\u3002",
         extractedCount: "\\u5DF2\\u4ECE\\u5143\\u7D20\\u4E2D\\u63D0\\u53D6 {{count}} \\u6761\\u539F\\u59CB\\u6587\\u672C\\u3002",
         confirmFailedNoTarget: "\\u786E\\u8BA4\\u5931\\u8D25\\uFF1A\\u672A\\u9009\\u62E9\\u4EFB\\u4F55\\u76EE\\u6807\\u5143\\u7D20\\u3002",
         rightClickExit: "\\u68C0\\u6D4B\\u5230\\u53F3\\u952E\\u70B9\\u51FB\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u3002",
         processingError: "\\u6587\\u672C\\u5904\\u7406\\u8FC7\\u7A0B\\u4E2D\\u53D1\\u751F\\u9519\\u8BEF: {{error}}",
         worker: {
-          logPrefix: "[\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker]",
+          logPrefix: "[ES Worker]",
           starting: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u6B63\\u5728\\u542F\\u52A8...",
-          sendingData: "\\u6B63\\u5728\\u53D1\\u9001 {{count}} \\u6761\\u6587\\u672C\\u81F3\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker\\u3002",
-          completed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u5904\\u7406\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {{count}} \\u6761\\u6709\\u6548\\u6587\\u672C\\u3002",
-          initFailed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u521D\\u59CB\\u5316\\u5931\\u8D25\\u3002\\u53EF\\u80FD\\u662F\\u7F51\\u7AD9\\u7684 CSP \\u7B56\\u7565\\u963B\\u6B62\\u4E86 data: URL\\u3002",
-          initSyncError: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u521D\\u59CB\\u5316\\u65F6\\u53D1\\u751F\\u540C\\u6B65\\u9519\\u8BEF: {{error}}",
+          sendingData: "\\u6B63\\u5728\\u5411\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u53D1\\u9001 {{count}} \\u6761\\u6587\\u672C\\u7247\\u6BB5\\u3002",
+          completed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u5DF2\\u5B8C\\u6210\\uFF0C\\u627E\\u5230 {{count}} \\u6761\\u4E0D\\u91CD\\u590D\\u6587\\u672C\\u3002",
+          initFailed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u521D\\u59CB\\u5316\\u5931\\u8D25\\u3002\\u6D4F\\u89C8\\u5668\\u7684CSP\\u53EF\\u80FD\\u963B\\u6B62\\u4E86 data: URL\\u3002",
+          initSyncError: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u521D\\u59CB\\u5316\\u671F\\u95F4\\u53D1\\u751F\\u540C\\u6B65\\u9519\\u8BEF: {{error}}",
           originalError: "\\u539F\\u59CB Worker \\u9519\\u8BEF: {{error}}"
         },
         switchToFallback: "\\u6B63\\u5728\\u4E3A\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
@@ -6460,6 +6574,7 @@ ${result.join(",\n")}
         toolbarPositioned: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u5DE5\\u5177\\u680F\\u5DF2\\u5B9A\\u4F4D\\u3002",
         sliderChanged: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u6ED1\\u5757\\u5C42\\u7EA7\\u53D8\\u4E3A {{level}}",
         reselectClicked: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u201C\\u91CD\\u65B0\\u9009\\u62E9\\u201D\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\u3002",
+        stageClicked: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u201C\\u6682\\u5B58\\u201D\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\u3002",
         cancelClicked: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u201C\\u53D6\\u6D88\\u201D\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\u3002",
         confirmClicked: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u201C\\u786E\\u8BA4\\u201D\\u6309\\u94AE\\u88AB\\u70B9\\u51FB\\u3002",
         dragStarted: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u62D6\\u52A8\\u5F00\\u59CB\\u3002",
@@ -6468,13 +6583,13 @@ ${result.join(",\n")}
         cleaningToolbar: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u6B63\\u5728\\u6E05\\u7406\\u5DE5\\u5177\\u680F\\u3002"
       },
       eventBus: {
-        callbackError: "\\u5728 '{{eventName}}' \\u4E8B\\u4EF6\\u7684\\u56DE\\u8C03\\u4E2D\\u53D1\\u751F\\u9519\\u8BEF\\uFF1A"
+        callbackError: "\\u4E8B\\u4EF6 '{{eventName}}' \\u7684\\u56DE\\u8C03\\u51FD\\u6570\\u51FA\\u9519:"
       },
       trustedTypes: {
-        workerPolicyError: "\\u521B\\u5EFA Trusted Types worker \\u7B56\\u7565\\u5931\\u8D25\\uFF1A",
-        htmlPolicyError: "\\u521B\\u5EFA Trusted Types HTML \\u7B56\\u7565\\u5931\\u8D25\\uFF1A",
-        defaultWorkerPolicyWarning: "Trusted Types \\u9ED8\\u8BA4\\u7B56\\u7565\\u5904\\u7406 worker URL \\u5931\\u8D25\\uFF0C\\u56DE\\u9000\\u5230\\u539F\\u59CB URL\\u3002",
-        defaultHtmlPolicyWarning: "Trusted Types \\u9ED8\\u8BA4\\u7B56\\u7565\\u5904\\u7406 HTML \\u5931\\u8D25\\uFF0C\\u56DE\\u9000\\u5230\\u539F\\u59CB\\u5B57\\u7B26\\u4E32\\u3002"
+        workerPolicyError: "\\u521B\\u5EFA Trusted Types worker \\u7B56\\u7565\\u5931\\u8D25:",
+        htmlPolicyError: "\\u521B\\u5EFA Trusted Types HTML \\u7B56\\u7565\\u5931\\u8D25:",
+        defaultWorkerPolicyWarning: "\\u7528\\u4E8E worker URL \\u7684 Trusted Types \\u9ED8\\u8BA4\\u7B56\\u7565\\u5931\\u8D25\\uFF0C\\u56DE\\u9000\\u5230\\u539F\\u59CB URL\\u3002",
+        defaultHtmlPolicyWarning: "\\u7528\\u4E8E HTML \\u7684 Trusted Types \\u9ED8\\u8BA4\\u7B56\\u7565\\u5931\\u8D25\\uFF0C\\u56DE\\u9000\\u5230\\u539F\\u59CB\\u5B57\\u7B26\\u4E32\\u3002"
       }
     }
   };
@@ -6483,15 +6598,16 @@ ${result.join(",\n")}
     common: {
       scan: "\\u6383\\u63CF",
       stop: "\\u505C\\u6B62",
-      resume: "\\u7E7C\\u7E8C",
+      resume: "\\u6062\\u5FA9",
       clear: "\\u6E05\\u7A7A",
       copy: "\\u8907\\u88FD",
       save: "\\u5132\\u5B58",
-      discovered: "\\u5DF2\\u767C\\u73FE\\uFF1A",
+      discovered: "\\u5DF2\\u767C\\u73FE:",
       confirm: "\\u78BA\\u8A8D",
       cancel: "\\u53D6\\u6D88",
       export: "\\u532F\\u51FA",
-      reselect: "\\u91CD\\u65B0\\u9078\\u64C7"
+      reselect: "\\u91CD\\u65B0\\u9078\\u64C7",
+      stage: "\\u66AB\\u5B58"
     },
     export: {
       exportAsTxt: "\\u532F\\u51FA\\u70BA TXT",
@@ -6505,28 +6621,28 @@ ${result.join(",\n")}
     },
     settings: {
       title: "\\u8A2D\\u5B9A",
-      theme: "\\u4ECB\\u9762\\u4E3B\\u984C",
-      language: "\\u8A9E\\u8A00\\u8A2D\\u5B9A",
+      theme: "\\u4E3B\\u984C",
+      language: "\\u8A9E\\u8A00",
       relatedSettings: "\\u76F8\\u95DC\\u8A2D\\u5B9A",
       filterRules: "\\u5167\\u5BB9\\u904E\\u6FFE\\u898F\\u5247",
       filters: {
-        numbers: "\\u904E\\u6FFE\\u7D14\\u6578\\u5B57/\\u8CA8\\u5E63",
-        chinese: "\\u904E\\u6FFE\\u7D14\\u4E2D\\u6587",
-        contains_chinese: "\\u904E\\u6FFE\\u5305\\u542B\\u4E2D\\u6587\\u7684\\u6587\\u672C",
-        emoji_only: "\\u904E\\u6FFE\\u7D14\\u8868\\u60C5\\u7B26\\u865F",
-        symbols: "\\u904E\\u6FFE\\u7D14\\u7B26\\u865F",
+        numbers: "\\u904E\\u6FFE\\u6578\\u5B57/\\u8CA8\\u5E63",
+        chinese: "\\u904E\\u6FFE\\u7D14\\u4E2D\\u6587\\u6587\\u672C",
+        contains_chinese: "\\u904E\\u6FFE\\u542B\\u4E2D\\u6587\\u7684\\u6587\\u672C",
+        emoji_only: "\\u904E\\u6FFE\\u7D14\\u8868\\u60C5\\u7B26\\u865F\\u6587\\u672C",
+        symbols: "\\u904E\\u6FFE\\u7D14\\u7B26\\u865F\\u6587\\u672C",
         term: "\\u904E\\u6FFE\\u7279\\u5B9A\\u8853\\u8A9E",
-        single_letter: "\\u904E\\u6FFE\\u7D14\\u55AE\\u500B\\u82F1\\u6587\\u5B57\\u6BCD",
-        repeating_chars: "\\u904E\\u6FFE\\u55AE\\u4E00\\u91CD\\u8907\\u5B57\\u5143",
+        single_letter: "\\u904E\\u6FFE\\u55AE\\u500B\\u82F1\\u6587\\u5B57\\u6BCD",
+        repeating_chars: "\\u904E\\u6FFE\\u91CD\\u8907\\u5B57\\u5143",
         file_paths: "\\u904E\\u6FFE\\u6A94\\u6848\\u8DEF\\u5F91",
-        hex_color_codes: "\\u904E\\u6FFE\\u5341\\u516D\\u9032\\u4F4D\\u984F\\u8272",
-        email_addresses: "\\u904E\\u6FFE\\u90F5\\u4EF6\\u5730\\u5740",
+        hex_color_codes: "\\u904E\\u6FFE\\u5341\\u516D\\u9032\\u4F4D\\u984F\\u8272\\u4EE3\\u78BC",
+        email_addresses: "\\u904E\\u6FFE\\u96FB\\u5B50\\u90F5\\u4EF6\\u5730\\u5740",
         uuids: "\\u904E\\u6FFE UUID",
         git_commit_hashes: "\\u904E\\u6FFE Git \\u63D0\\u4EA4\\u96DC\\u6E4A\\u503C",
-        website_urls: "\\u904E\\u6FFE\\u7DB2\\u5740",
-        website_urls_title: "\\u904E\\u6FFE\\u7DB2\\u5740 (URL)",
-        shorthand_numbers: "\\u904E\\u6FFE\\u7C21\\u5BEB\\u6578\\u5B57",
-        shorthand_numbers_title: "\\u904E\\u6FFE\\u5E36\\u6709\\u55AE\\u4F4D\\u7684\\u7C21\\u5BEB\\u6578\\u5B57"
+        website_urls: "\\u904E\\u6FFE\\u7DB2\\u7AD9\\u9023\\u7D50",
+        website_urls_title: "\\u904E\\u6FFE\\u7DB2\\u7AD9\\u9023\\u7D50",
+        shorthand_numbers: "\\u904E\\u6FFE\\u901F\\u8A18\\u6578\\u5B57",
+        shorthand_numbers_title: "\\u904E\\u6FFE\\u901F\\u8A18\\u6578\\u5B57"
       },
       display: {
         show_fab: "\\u986F\\u793A\\u61F8\\u6D6E\\u6309\\u9215",
@@ -6539,13 +6655,13 @@ ${result.join(",\n")}
         },
         show_line_numbers: "\\u986F\\u793A\\u884C\\u865F",
         show_statistics: "\\u986F\\u793A\\u7D71\\u8A08\\u8CC7\\u8A0A",
-        enable_word_wrap: "\\u555F\\u7528\\u6587\\u5B57\\u81EA\\u52D5\\u63DB\\u884C",
-        text_truncation_limit: "\\u555F\\u7528\\u6587\\u5B57\\u6846\\u5B57\\u5143\\u9650\\u5236",
-        character_limit: "\\u5B57\\u5143\\u6578",
-        show_scan_count: "\\u555F\\u7528\\u6A19\\u984C\\u5217\\u986F\\u793A\\u6383\\u63CF\\u8A08\\u6578"
+        enable_word_wrap: "\\u555F\\u7528\\u81EA\\u52D5\\u63DB\\u884C",
+        text_truncation_limit: "\\u555F\\u7528\\u6587\\u672C\\u622A\\u65B7\\u9650\\u5236",
+        character_limit: "\\u5B57\\u5143\\u9650\\u5236",
+        show_scan_count: "\\u5728\\u6A19\\u984C\\u4E2D\\u555F\\u7528\\u6383\\u63CF\\u8A08\\u6578"
       },
       advanced: {
-        enable_debug_logging: "\\u555F\\u7528\\u5075\\u932F\\u65E5\\u8A8C"
+        enable_debug_logging: "\\u555F\\u7528\\u5075\\u932F\\u65E5\\u8A8C\\u8A18\\u9304"
       },
       panel: {
         title: "\\u8A2D\\u5B9A\\u9762\\u677F"
@@ -6564,45 +6680,46 @@ ${result.join(",\n")}
     scan: {
       quick: "\\u5FEB\\u901F\\u6383\\u63CF",
       session: "\\u6703\\u8A71\\u6383\\u63CF",
+      stagedCount: "\\u5DF2\\u66AB\\u5B58:",
       elementFinished: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {{count}} \\u689D\\u6587\\u672C\\u3002",
       startSession: "\\u958B\\u59CB\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71",
       stopSession: "\\u505C\\u6B62\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71",
-      finished: "\\u6383\\u63CF\\u7D50\\u675F\\uFF0C\\u5171\\u767C\\u73FE {{count}} \\u689D\\u6587\\u672C",
-      quickFinished: "\\u5FEB\\u6377\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {{count}} \\u689D\\u6587\\u672C",
-      sessionStarted: "\\u6703\\u8A71\\u6383\\u63CF\\u5DF2\\u958B\\u59CB",
-      sessionInProgress: "\\u6383\\u63CF\\u6B63\\u5728\\u9032\\u884C\\u4E2D...",
-      truncationWarning: "\\u70BA\\u4FDD\\u6301\\u4ECB\\u9762\\u6D41\\u66A2\\uFF0C\\u6B64\\u8655\\u50C5\\u986F\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u5B8C\\u6574\\u5167\\u5BB9\\u5C07\\u5728\\u532F\\u51FA\\u6642\\u63D0\\u4F9B\\u3002"
+      finished: "\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {{count}} \\u689D\\u6587\\u672C\\u3002",
+      quickFinished: "\\u5FEB\\u901F\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {{count}} \\u689D\\u6587\\u672C\\u3002",
+      sessionStarted: "\\u6703\\u8A71\\u6383\\u63CF\\u5DF2\\u958B\\u59CB\\u3002",
+      sessionInProgress: "\\u6383\\u63CF\\u9032\\u884C\\u4E2D...",
+      truncationWarning: "\\u70BA\\u4FDD\\u6301\\u4ECB\\u9762\\u6D41\\u66A2\\uFF0C\\u6B64\\u8655\\u50C5\\u986F\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u532F\\u51FA\\u5F8C\\u5C07\\u5305\\u542B\\u5B8C\\u6574\\u5167\\u5BB9\\u3002"
     },
     results: {
       title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",
-      scanCountSession: "\\u5DF2\\u6383\\u63CF {{count}} \\u689D\\u6587\\u672C",
-      scanCountStatic: "\\u5171\\u6383\\u63CF {{count}} \\u689D\\u6587\\u672C",
-      totalCharacters: "\\u7E3D\\u5B57\\u6578",
+      scanCountSession: "\\u5DF2\\u6383\\u63CF {{count}} \\u500B\\u9805\\u76EE",
+      scanCountStatic: "\\u5171\\u6383\\u63CF {{count}} \\u500B\\u9805\\u76EE",
+      totalCharacters: "\\u7E3D\\u5B57\\u5143\\u6578",
       totalLines: "\\u7E3D\\u884C\\u6578",
-      noSummary: "\\u7576\\u524D\\u6C92\\u6709\\u6458\\u8981\\u6587\\u672C",
+      noSummary: "\\u7121\\u53EF\\u7528\\u6458\\u8981",
       stats: {
         lines: "\\u884C",
-        chars: "\\u5B57\\u5143\\u6578"
+        chars: "\\u5B57\\u5143"
       }
     },
     notifications: {
       copiedToClipboard: "\\u5DF2\\u8907\\u88FD\\u5230\\u526A\\u8CBC\\u7C3F\\uFF01",
       settingsSaved: "\\u8A2D\\u5B9A\\u5DF2\\u5132\\u5B58\\uFF01",
-      modalInitError: "\\u6A21\\u614B\\u6846\\u5C1A\\u672A\\u521D\\u59CB\\u5316\\u3002",
-      nothingToCopy: "\\u6C92\\u6709\\u5167\\u5BB9\\u53EF\\u8907\\u88FD",
-      contentCleared: "\\u5167\\u5BB9\\u5DF2\\u6E05\\u7A7A",
-      noTextSelected: "\\u672A\\u9078\\u64C7\\u6587\\u672C",
-      cspWorkerWarning: "\\u7531\\u65BC\\u7DB2\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u63DB\\u5230\\u76F8\\u5BB9\\u6383\\u63CF\\u6A21\\u5F0F\\u3002"
+      modalInitError: "\\u6A21\\u614B\\u6846\\u672A\\u521D\\u59CB\\u5316\\u3002",
+      nothingToCopy: "\\u6C92\\u6709\\u53EF\\u8907\\u88FD\\u7684\\u5167\\u5BB9\\u3002",
+      contentCleared: "\\u5167\\u5BB9\\u5DF2\\u6E05\\u9664\\u3002",
+      noTextSelected: "\\u672A\\u9078\\u64C7\\u4EFB\\u4F55\\u6587\\u672C\\u3002",
+      cspWorkerWarning: "\\u56E0\\u7DB2\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u63DB\\u81F3\\u76F8\\u5BB9\\u6383\\u63CF\\u6A21\\u5F0F\\u3002"
     },
     placeholders: {
       click: "\\u9EDE\\u64CA ",
       dynamicScan: "[\\u52D5\\u614B\\u6383\\u63CF]",
-      startNewScanSession: " \\u6309\\u9215\\u958B\\u59CB\\u4E00\\u500B\\u65B0\\u7684\\u6383\\u63CF\\u6703\\u8A71",
+      startNewScanSession: " \\u958B\\u59CB\\u65B0\\u7684\\u6383\\u63CF\\u6703\\u8A71",
       staticScan: "[\\u975C\\u614B\\u6383\\u63CF]",
-      performOneTimeScan: " \\u6309\\u9215\\u53EF\\u9032\\u884C\\u4E00\\u6B21\\u6027\\u7684\\u5FEB\\u6377\\u63D0\\u53D6"
+      performOneTimeScan: " \\u57F7\\u884C\\u4E00\\u6B21\\u6027\\u5FEB\\u901F\\u63D0\\u53D6"
     },
     confirmation: {
-      clear: "\\u4F60\\u78BA\\u8A8D\\u8981\\u6E05\\u7A7A\\u55CE\\uFF1F\\u6B64\\u64CD\\u4F5C\\u4E0D\\u53EF\\u64A4\\u92B7\\u3002"
+      clear: "\\u60A8\\u78BA\\u5B9A\\u8981\\u6E05\\u9664\\u5167\\u5BB9\\u55CE\\uFF1F\\u6B64\\u64CD\\u4F5C\\u7121\\u6CD5\\u64A4\\u92B7\\u3002"
     },
     tooltip: {
       summary: "\\u67E5\\u770B\\u6458\\u8981",
@@ -6611,47 +6728,47 @@ ${result.join(",\n")}
       element_scan: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF",
       filters: {
         title: "\\u5167\\u5BB9\\u904E\\u6FFE\\u5668\\u8AAA\\u660E",
-        numbers: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u6578\\u5B57\\u3001\\u7A7A\\u683C\\u3001\\u5343\\u4F4D\\u5206\\u9694\\u7B26 (.)\\u3001\\u5C0F\\u6578\\u9EDE (,) \\u4EE5\\u53CA\\u90E8\\u5206\\u8CA8\\u5E63\\u7B26\\u865F ($, \\u20AC, \\xA3, \\xA5) \\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "1,234.56"<br>\\u2022 "\\xA5999"<br>\\u2022 "\\u20AC200"<br>\\u2022 "$ 100"',
-        chinese: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u4E2D\\u6587\\u5B57\\u5143\\u548C\\u7A7A\\u683C\\u7D44\\u6210\\u7684\\u6587\\u672C\\uFF0C\\u4E0D\\u5305\\u62EC\\u4EFB\\u4F55\\u6A19\\u9EDE\\u7B26\\u865F\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "\\u4F60\\u597D \\u4E16\\u754C" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "\\u4F60\\u597D\\uFF0C\\u4E16\\u754C" (\\u4E0D\\u6703\\u88AB\\u904E\\u6FFE)',
-        contains_chinese: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389<strong>\\u4EFB\\u4F55\\u5305\\u542B</strong>\\u81F3\\u5C11\\u4E00\\u500B\\u4E2D\\u6587\\u5B57\\u5143\\u7684\\u6587\\u672C\\uFF0C\\u7121\\u8AD6\\u662F\\u5426\\u5305\\u542B\\u5176\\u4ED6\\u5B57\\u5143\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "\\u4F60\\u597D World" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "\\u7B2C 1 \\u7AE0" (\\u5C07\\u88AB\\u904E\\u6FFE)',
-        emoji_only: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u4E00\\u500B\\u6216\\u591A\\u500B\\u8868\\u60C5\\u7B26\\u865F\\u53CA\\u7A7A\\u683C\\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "\\u{1F44D}"<br>\\u2022 "\\u{1F60A} \\u{1F389} \\u{1F680}"',
-        symbols: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168\\u7531</strong>\\u5404\\u985E\\u6A19\\u9EDE\\u548C\\u7B26\\u865F\\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "@#*&^%"<br>\\u2022 "()[]{}"<br>\\u2022 "---...---"',
-        term: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u5E38\\u898B\\u7684\\u3001\\u901A\\u5E38\\u7121\\u9700\\u7FFB\\u8B6F\\u7684 UI \\u8853\\u8A9E\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "OK", "Cancel", "Submit"<br>\\u2022 "Login", "Settings", "Help"',
-        single_letter: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u7531<strong>\\u55AE\\u500B</strong>\\u82F1\\u6587\\u5B57\\u6BCD\\u7D44\\u6210\\u7684\\u6587\\u672C\\uFF0C\\u5FFD\\u7565\\u5927\\u5C0F\\u5BEB\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "A" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "b" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "AB" (\\u4E0D\\u6703\\u88AB\\u904E\\u6FFE)',
-        repeating_chars: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u7531<strong>\\u540C\\u4E00\\u500B\\u5B57\\u5143</strong>\\u9023\\u7E8C\\u91CD\\u8907 2 \\u6B21\\u6216\\u4EE5\\u4E0A\\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "aa"<br>\\u2022 "======"<br>\\u2022 "bbbbb"',
-        file_paths: '\\u6B64\\u898F\\u5247\\u6703\\u5617\\u8A66\\u8B58\\u5225\\u4E26\\u904E\\u6FFE\\u6389\\u985E\\u4F3C\\u4F5C\\u696D\\u7CFB\\u7D71\\u7684\\u3001\\u4E14<strong>\\u5305\\u542B\\u526F\\u6A94\\u540D</strong>\\u7684\\u6A94\\u6848\\u8DEF\\u5F91\\uFF0C\\u4F46\\u5B83\\u4E0D\\u6703\\u5339\\u914D URL\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "/path/to/file.js"<br>\\u2022 "C:\\\\Users\\\\Test\\\\document.docx"<br>\\u2022 "./config.json"',
-        hex_color_codes: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u6A19\\u6E96\\u7684 CSS \\u5341\\u516D\\u9032\\u4F4D\\u984F\\u8272\\u4EE3\\u78BC\\uFF083\\u30014\\u30016 \\u6216 8 \\u4F4D\\uFF0C\\u5F8C\\u8005\\u53EF\\u5305\\u542B Alpha \\u901A\\u9053\\uFF09\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "#FFFFFF"<br>\\u2022 "#ff0000"<br>\\u2022 "#f0c"<br>\\u2022 "#f0c8" (4\\u4F4D)<br>\\u2022 "#ff000080" (8\\u4F4D)',
-        email_addresses: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u7B26\\u5408\\u6A19\\u6E96\\u683C\\u5F0F\\u7684\\u96FB\\u5B50\\u90F5\\u4EF6\\u5730\\u5740\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "example@domain.com"<br>\\u2022 "user.name@sub.domain.org"',
-        uuids: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u901A\\u7528\\u552F\\u4E00\\u8B58\\u5225\\u78BC (UUID)\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "123e4567-e89b-12d3-a456-426614174000"',
-        git_commit_hashes: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u6A19\\u6E96\\u7684 Git \\u63D0\\u4EA4\\u96DC\\u6E4A\\u503C\\uFF08\\u9577\\u96DC\\u6E4A\\u6216\\u77ED\\u96DC\\u6E4A\\uFF09\\u3002<br><br><strong>\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\\u2022 "a1b2c3d"',
-        website_urls: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389<strong>\\u7368\\u7ACB\\u7684 URL</strong> \\u6587\\u5B57\\u3002\\u5B83\\u7684\\u6BD4\\u5C0D\\u898F\\u5247\\u88AB\\u8A2D\\u8A08\\u5F97\\u975E\\u5E38\\u56B4\\u683C\\uFF0C\\u4EE5\\u907F\\u514D\\u610F\\u5916\\u79FB\\u9664\\u4E0D\\u662F\\u9023\\u7D50\\u7684\\u6587\\u5B57\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "https://www.example.com"<br>\\u2022 "http://test.co.uk"<br>\\u2022 "www.google.com"<br>\\u2022 "example.org"',
-        shorthand_numbers: '\\u6B64\\u898F\\u5247\\u6703\\u904E\\u6FFE\\u6389\\u4F7F\\u7528<strong>\\u5E38\\u898B\\u7C21\\u5BEB\\u5F8C\\u7DB4</strong>\\u7684\\u6578\\u5B57\\uFF0C\\u4F8B\\u5982 k (\\u5343)\\u3001m (\\u767E\\u842C) \\u6216 b (\\u5341\\u5104)\\uFF0C\\u4E0D\\u5340\\u5206\\u5927\\u5C0F\\u5BEB\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B\\uFF1A</strong><br>\\u2022 "1.2k"<br>\\u2022 "15M"<br>\\u2022 "2.5b"<br>\\u2022 "100K"'
+        numbers: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168</strong>\\u7531\\u6578\\u5B57\\u3001\\u7A7A\\u683C\\u3001\\u5343\\u4F4D\\u5206\\u9694\\u7B26(,)\\u3001\\u5C0F\\u6578\\u9EDE(.)\\u4EE5\\u53CA\\u90E8\\u5206\\u8CA8\\u5E63\\u7B26\\u865F($, \\u20AC, \\xA3, \\xA5)\\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B:</strong><br>\\u2022 "1,234.56"<br>\\u2022 "\\xA5999"<br>\\u2022 "\\u20AC200"<br>\\u2022 "$ 100"',
+        chinese: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168</strong>\\u7531\\u6F22\\u5B57\\u548C\\u7A7A\\u683C\\u7D44\\u6210\\uFF0C\\u4E14\\u4E0D\\u542B\\u4EFB\\u4F55\\u6A19\\u9EDE\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u7BC4\\u4F8B:</strong><br>\\u2022 "\\u4F60\\u597D \\u4E16\\u754C" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "\\u4F60\\u597D\\uFF0C\\u4E16\\u754C" (\\u4E0D\\u6703\\u88AB\\u904E\\u6FFE)',
+        contains_chinese: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389\\u4EFB\\u4F55\\u542B\\u6709\\u81F3\\u5C11\\u4E00\\u500B\\u6F22\\u5B57\\u7684\\u6587\\u672C\\uFF0C\\u7121\\u8AD6\\u5176\\u4ED6\\u5B57\\u5143\\u662F\\u4EC0\\u9EBC\\u3002<br><br><strong>\\u7BC4\\u4F8B:</strong><br>\\u2022 "\\u4F60\\u597D World" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "\\u7B2C\\u4E00\\u7AE0" (\\u5C07\\u88AB\\u904E\\u6FFE)',
+        emoji_only: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168</strong>\\u7531\\u4E00\\u500B\\u6216\\u591A\\u500B\\u8868\\u60C5\\u7B26\\u865F\\u53CA\\u7A7A\\u683C\\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u7BC4\\u4F8B:</strong><br>\\u2022 "\\u{1F44D}"<br>\\u2022 "\\u{1F60A} \\u{1F389} \\u{1F680}"',
+        symbols: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389<strong>\\u5B8C\\u5168</strong>\\u7531\\u5404\\u7A2E\\u6A19\\u9EDE\\u548C\\u7B26\\u865F\\u7D44\\u6210\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B:</strong><br>\\u2022 "@#*&^%"<br>\\u2022 "()[]{}"<br>\\u2022 "---...---"',
+        term: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389\\u901A\\u5E38\\u4E0D\\u9700\\u8981\\u7FFB\\u8B6F\\u7684\\u5E38\\u898BUI\\u8853\\u8A9E\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B:</strong><br>\\u2022 "OK", "Cancel", "Submit"<br>\\u2022 "Login", "Settings", "Help"',
+        single_letter: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389\\u7531<strong>\\u55AE\\u500B</strong>\\u82F1\\u6587\\u5B57\\u6BCD\\u7D44\\u6210\\u7684\\u6587\\u672C\\uFF08\\u4E0D\\u5340\\u5206\\u5927\\u5C0F\\u5BEB\\uFF09\\u3002<br><br><strong>\\u7BC4\\u4F8B:</strong><br>\\u2022 "A" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "b" (\\u5C07\\u88AB\\u904E\\u6FFE)<br>\\u2022 "AB" (\\u4E0D\\u6703\\u88AB\\u904E\\u6FFE)',
+        repeating_chars: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389\\u7531<strong>\\u540C\\u4E00\\u500B\\u5B57\\u5143</strong>\\u9023\\u7E8C\\u91CD\\u89072\\u6B21\\u6216\\u4EE5\\u4E0A\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u7BC4\\u4F8B:</strong><br>\\u2022 "aa"<br>\\u2022 "======"<br>\\u2022 "bbbbb"',
+        file_paths: '\\u6B64\\u898F\\u5247\\u5617\\u8A66\\u8B58\\u5225\\u4E26\\u904E\\u6FFE\\u6389\\u985E\\u4F3C\\u4F5C\\u696D\\u7CFB\\u7D71\\u6A94\\u6848\\u8DEF\\u5F91\\u4E14<strong>\\u5305\\u542B\\u6A94\\u6848\\u526F\\u6A94\\u540D</strong>\\u7684\\u6587\\u672C\\u3002\\u5B83\\u4E0D\\u5339\\u914D\\u7DB2\\u5740\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B:</strong><br>\\u2022 "/path/to/file.js"<br>\\u2022 "C:\\\\Users\\\\Test\\\\document.docx"<br>\\u2022 "./config.json"',
+        hex_color_codes: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389\\u6A19\\u6E96\\u7684CSS\\u5341\\u516D\\u9032\\u4F4D\\u984F\\u8272\\u4EE3\\u78BC\\uFF083\\u30014\\u30016\\u62168\\u4F4D\\uFF0C\\u5F8C\\u8005\\u5305\\u542B\\u900F\\u660E\\u5EA6\\u901A\\u9053\\uFF09\\u3002<br><br><strong>\\u7BC4\\u4F8B:</strong><br>\\u2022 "#FFFFFF"<br>\\u2022 "#ff0000"<br>\\u2022 "#f0c"<br>\\u2022 "#f0c8" (4\\u4F4D)<br>\\u2022 "#ff000080" (8\\u4F4D)',
+        email_addresses: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389\\u7B26\\u5408\\u6A19\\u6E96\\u96FB\\u5B50\\u90F5\\u4EF6\\u5730\\u5740\\u683C\\u5F0F\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u7BC4\\u4F8B:</strong><br>\\u2022 "example@domain.com"<br>\\u2022 "user.name@sub.domain.org"',
+        uuids: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389\\u901A\\u7528\\u552F\\u4E00\\u8B58\\u5225\\u78BC (UUID)\\u3002<br><br><strong>\\u7BC4\\u4F8B:</strong><br>\\u2022 "123e4567-e89b-12d3-a456-426614174000"',
+        git_commit_hashes: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389\\u6A19\\u6E96\\u7684Git\\u63D0\\u4EA4\\u96DC\\u6E4A\\u503C\\uFF08\\u9577\\u6216\\u77ED\\uFF09\\u3002<br><br><strong>\\u7BC4\\u4F8B:</strong><br>\\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\\u2022 "a1b2c3d"',
+        website_urls: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389<strong>\\u7368\\u7ACB\\u7684\\u7DB2\\u5740</strong>\\u3002\\u5B83\\u8A2D\\u8A08\\u5F97\\u6BD4\\u8F03\\u56B4\\u683C\\uFF0C\\u4EE5\\u907F\\u514D\\u610F\\u5916\\u79FB\\u9664\\u4E0D\\u662F\\u9023\\u7D50\\u7684\\u6587\\u672C\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B:</strong><br>\\u2022 "https://www.example.com"<br>\\u2022 "http://test.co.uk"<br>\\u2022 "www.google.com"<br>\\u2022 "example.org"',
+        shorthand_numbers: '\\u6B64\\u898F\\u5247\\u904E\\u6FFE\\u6389\\u4F7F\\u7528<strong>\\u5E38\\u898B\\u901F\\u8A18\\u5F8C\\u7DB4</strong>\\u8868\\u793A\\u5343(k)\\u3001\\u767E\\u842C(m)\\u6216\\u5341\\u5104(b)\\u7684\\u6578\\u5B57\\uFF08\\u4E0D\\u5340\\u5206\\u5927\\u5C0F\\u5BEB\\uFF09\\u3002<br><br><strong>\\u66F4\\u591A\\u7BC4\\u4F8B:</strong><br>\\u2022 "1.2k"<br>\\u2022 "15M"<br>\\u2022 "2.5b"<br>\\u2022 "100K"'
       },
       display: {
         title: "\\u986F\\u793A\\u8A2D\\u5B9A\\u8AAA\\u660E",
-        show_fab: "\\u63A7\\u5236\\u662F\\u5426\\u5728\\u7DB2\\u9801\\u53F3\\u4E0B\\u89D2\\u986F\\u793A <strong>\\u6D6E\\u52D5\\u52D5\\u4F5C\\u6309\\u9215 (FAB)</strong>\\u3002\\u9019\\u662F\\u975C\\u614B\\u6587\\u5B57\\u8403\\u53D6\\u3001\\u52D5\\u614B\\u6587\\u5B57\\u8403\\u53D6\\u7684\\u6838\\u5FC3\\u5165\\u53E3\\u3002<br><br>\\u5982\\u679C\\u60A8\\u7981\\u7528\\u4E86\\u6B64\\u6309\\u9215\\uFF0C\\u53EF\\u4EE5\\u900F\\u904E\\u6CB9\\u7334\\u64F4\\u5145\\u529F\\u80FD\\u9078\\u55AE\\u7684\\u8A2D\\u5B9A\\u9762\\u677F\\u91CD\\u65B0\\u958B\\u555F\\u3002",
-        show_scan_count: "\\u555F\\u7528\\u5F8C\\uFF0C\\u5728\\u7D50\\u679C\\u8996\\u7A97\\u7684\\u6A19\\u984C\\u5217\\u6703<strong>\\u5373\\u6642\\u66F4\\u65B0</strong>\\u672C\\u6B21\\u6383\\u63CF\\u767C\\u73FE\\u7684\\u6587\\u672C\\u689D\\u76EE\\u7E3D\\u6578\\u3002\\u5728\\u9032\\u884C\\u9577\\u6642\\u9593\\u7684<strong>\\u52D5\\u614B\\u6383\\u63CF</strong>\\u6642\\uFF0C\\u9019\\u500B\\u8A08\\u6578\\u5668\\u53EF\\u4EE5\\u5F88\\u76F4\\u89C0\\u5730\\u53CD\\u6620\\u6383\\u63CF\\u9032\\u5EA6\\u3002",
-        show_line_numbers: "\\u5728\\u7D50\\u679C\\u8996\\u7A97\\u7684\\u6587\\u672C\\u5340\\u57DF\\u5DE6\\u5074\\u986F\\u793A\\u884C\\u865F\\u3002\\u7576\\u60A8\\u9700\\u8981\\u8207\\u4ED6\\u4EBA\\u8A0E\\u8AD6\\u6216\\u8A18\\u9304\\u7279\\u5B9A\\u67D0\\u884C\\u6587\\u672C\\u6642\\uFF0C\\u884C\\u865F\\u53EF\\u4EE5\\u63D0\\u4F9B\\u4E00\\u500B<strong>\\u7CBE\\u78BA\\u7684\\u5B9A\\u4F4D\\u6A19\\u8A18</strong>\\u3002",
-        show_statistics: "\\u5728\\u7D50\\u679C\\u8996\\u7A97\\u5E95\\u90E8\\u7684\\u72C0\\u614B\\u5217\\u986F\\u793A\\u7576\\u524D\\u5DF2\\u63D0\\u53D6\\u5167\\u5BB9\\u7684<strong>\\u5373\\u6642\\u7D71\\u8A08</strong>\\uFF0C\\u5305\\u62EC<strong>\\u7E3D\\u884C\\u6578</strong>\\u548C<strong>\\u7E3D\\u5B57\\u5143\\u6578</strong>\\u3002\\u9019\\u53EF\\u4EE5\\u5E6B\\u52A9\\u60A8\\u5FEB\\u901F\\u8A55\\u4F30\\u63D0\\u53D6\\u5167\\u5BB9\\u7684\\u898F\\u6A21\\u3002",
-        enable_word_wrap: "\\u63A7\\u5236\\u7D50\\u679C\\u8996\\u7A97\\u4E2D\\u7684\\u9577\\u6587\\u672C\\u884C\\u5982\\u4F55\\u986F\\u793A\\u3002<br><br>\\u2022 <strong>\\u555F\\u7528\\uFF1A</strong>\\u9577\\u6587\\u672C\\u5C07\\u81EA\\u52D5\\u63DB\\u884C\\u4EE5\\u9069\\u61C9\\u8996\\u7A97\\u5BEC\\u5EA6\\u3002<br>\\u2022 <strong>\\u7981\\u7528\\uFF1A</strong>\\u9577\\u6587\\u672C\\u5C07\\u4FDD\\u6301\\u5728\\u55AE\\u884C\\uFF0C\\u4E26\\u51FA\\u73FE\\u6C34\\u5E73\\u6372\\u52D5\\u689D\\u3002",
-        text_truncation_limit: "\\u9019\\u662F\\u4E00\\u500B<strong>\\u6548\\u80FD\\u4FDD\\u8B77</strong>\\u6A5F\\u5236\\u3002\\u7576\\u8173\\u672C\\u63D0\\u53D6\\u5230<strong>\\u55AE\\u884C\\u8D85\\u9577\\u6587\\u672C</strong>\\uFF08\\u4F8B\\u5982\\uFF0C\\u4E00\\u500B\\u5B8C\\u6574\\u7684 base64 \\u7DE8\\u78BC\\u5716\\u7247\\uFF09\\u6642\\uFF0C\\u82E5\\u4E0D\\u622A\\u65B7\\uFF0C\\u53EF\\u80FD\\u6703\\u5C0E\\u81F4\\u700F\\u89BD\\u5668<strong>\\u5361\\u9813\\u6216\\u7121\\u97FF\\u61C9</strong>\\u3002<br><br>\\u6B64\\u8A2D\\u5B9A\\u6703\\u622A\\u65B7\\u8D85\\u51FA\\u6307\\u5B9A\\u9577\\u5EA6\\u7684\\u55AE\\u884C\\u6587\\u672C\\uFF0C\\u4EE5\\u4FDD\\u8B49\\u4ECB\\u9762\\u6D41\\u66A2\\u3002<strong>\\u6CE8\\u610F\\uFF1A\\u6B64\\u622A\\u65B7\\u50C5\\u5F71\\u97FF\\u4ECB\\u9762\\u986F\\u793A\\uFF0C\\u532F\\u51FA\\u7684\\u6A94\\u6848\\u4ECD\\u5C07\\u5305\\u542B\\u5B8C\\u6574\\u5167\\u5BB9\\u3002</strong>"
+        show_fab: "\\u63A7\\u5236\\u662F\\u5426\\u5728\\u7DB2\\u9801\\u53F3\\u4E0B\\u89D2\\u986F\\u793A<strong>\\u61F8\\u6D6E\\u64CD\\u4F5C\\u6309\\u9215(FAB)</strong>\\u3002\\u9019\\u662F\\u9032\\u884C\\u975C\\u614B\\u548C\\u52D5\\u614B\\u6587\\u672C\\u63D0\\u53D6\\u7684\\u4E3B\\u8981\\u5165\\u53E3\\u3002<br><br>\\u5982\\u679C\\u60A8\\u7981\\u7528\\u4E86\\u6B64\\u6309\\u9215\\uFF0C\\u53EF\\u4EE5\\u900F\\u904E\\u6CB9\\u7334\\u64F4\\u5145\\u5957\\u4EF6\\u9078\\u55AE\\u4E2D\\u7684\\u8A2D\\u5B9A\\u9762\\u677F\\u91CD\\u65B0\\u555F\\u7528\\u5B83\\u3002",
+        show_scan_count: "\\u555F\\u7528\\u5F8C\\uFF0C\\u7D50\\u679C\\u8996\\u7A97\\u7684\\u6A19\\u984C\\u5217\\u5C07<strong>\\u5373\\u6642\\u986F\\u793A</strong>\\u76EE\\u524D\\u6383\\u63CF\\u4E2D\\u627E\\u5230\\u7684\\u7E3D\\u6587\\u672C\\u9805\\u76EE\\u6578\\u3002\\u9019\\u5C0D\\u65BC\\u76E3\\u63A7\\u9577\\u6642\\u9593\\u57F7\\u884C\\u7684<strong>\\u52D5\\u614B\\u6383\\u63CF</strong>\\u7684\\u9032\\u5EA6\\u7279\\u5225\\u6709\\u7528\\u3002",
+        show_line_numbers: "\\u5728\\u7D50\\u679C\\u8996\\u7A97\\u7684\\u6587\\u672C\\u5340\\u57DF\\u5DE6\\u5074\\u986F\\u793A\\u884C\\u865F\\u3002\\u7576\\u60A8\\u9700\\u8981\\u8A0E\\u8AD6\\u6216\\u8A18\\u9304\\u7279\\u5B9A\\u6587\\u672C\\u884C\\u6642\\uFF0C\\u9019\\u63D0\\u4F9B\\u4E86\\u4E00\\u500B<strong>\\u7CBE\\u78BA\\u7684\\u53C3\\u8003\\u9EDE</strong>\\u3002",
+        show_statistics: "\\u5728\\u7D50\\u679C\\u8996\\u7A97\\u5E95\\u90E8\\u7684\\u72C0\\u614B\\u5217\\u4E2D\\u986F\\u793A\\u6709\\u95DC\\u63D0\\u53D6\\u5167\\u5BB9\\u7684<strong>\\u5373\\u6642\\u7D71\\u8A08\\u6578\\u64DA</strong>\\uFF0C\\u5305\\u62EC<strong>\\u7E3D\\u884C\\u6578</strong>\\u548C<strong>\\u7E3D\\u5B57\\u5143\\u6578</strong>\\u3002\\u9019\\u6709\\u52A9\\u65BC\\u60A8\\u5FEB\\u901F\\u8A55\\u4F30\\u5167\\u5BB9\\u7684\\u9AD4\\u91CF\\u3002",
+        enable_word_wrap: "\\u63A7\\u5236\\u7D50\\u679C\\u8996\\u7A97\\u4E2D\\u9577\\u6587\\u672C\\u884C\\u7684\\u986F\\u793A\\u65B9\\u5F0F\\u3002<br><br>\\u2022 <strong>\\u555F\\u7528:</strong> \\u9577\\u884C\\u5C07\\u81EA\\u52D5\\u63DB\\u884C\\u4EE5\\u9069\\u61C9\\u8996\\u7A97\\u5BEC\\u5EA6\\u3002<br>\\u2022 <strong>\\u7981\\u7528:</strong> \\u9577\\u884C\\u5C07\\u4FDD\\u6301\\u5728\\u55AE\\u884C\\uFF0C\\u4E26\\u51FA\\u73FE\\u6C34\\u5E73\\u6372\\u8EF8\\u3002",
+        text_truncation_limit: "\\u9019\\u662F\\u4E00\\u500B<strong>\\u6548\\u80FD\\u512A\\u5316</strong>\\u529F\\u80FD\\u3002\\u5982\\u679C\\u8173\\u672C\\u63D0\\u53D6\\u5230<strong>\\u6975\\u9577\\u7684\\u55AE\\u884C\\u6587\\u672C</strong>\\uFF08\\u4F8B\\u5982\\uFF0Cbase64\\u7DE8\\u78BC\\u7684\\u5716\\u7247\\uFF09\\uFF0C\\u53EF\\u80FD\\u6703\\u5C0E\\u81F4\\u700F\\u89BD\\u5668<strong>\\u5361\\u9813\\u6216\\u7121\\u56DE\\u61C9</strong>\\u3002<br><br>\\u6B64\\u8A2D\\u5B9A\\u6703\\u622A\\u65B7\\u4EFB\\u4F55\\u8D85\\u904E\\u6307\\u5B9A\\u9577\\u5EA6\\u7684\\u55AE\\u884C\\u6587\\u672C\\uFF0C\\u4EE5\\u78BA\\u4FDDUI\\u4FDD\\u6301\\u6D41\\u66A2\\u3002<strong>\\u6CE8\\u610F\\uFF1A\\u9019\\u50C5\\u5F71\\u97FF\\u986F\\u793A\\uFF1B\\u532F\\u51FA\\u7684\\u6A94\\u6848\\u4ECD\\u5C07\\u5305\\u542B\\u5B8C\\u6574\\u7684\\u3001\\u672A\\u622A\\u65B7\\u7684\\u5167\\u5BB9\\u3002</strong>"
       },
       advanced: {
         title: "\\u9032\\u968E\\u8A2D\\u5B9A\\u8AAA\\u660E",
-        enable_debug_logging: "\\u555F\\u7528\\u5F8C\\uFF0C\\u8173\\u672C\\u6703\\u5C07\\u8A73\\u7D30\\u7684\\u5167\\u90E8\\u904B\\u884C\\u72C0\\u614B\\u3001\\u57F7\\u884C\\u6B65\\u9A5F\\u3001\\u932F\\u8AA4\\u8CC7\\u8A0A\\u7B49\\u8F38\\u51FA\\u5230\\u700F\\u89BD\\u5668\\u7684<strong>\\u958B\\u767C\\u8005\\u5DE5\\u5177\\u63A7\\u5236\\u53F0</strong>\\uFF08\\u901A\\u5E38\\u6309 F12 \\u958B\\u555F\\uFF09\\u3002\\u6B64\\u529F\\u80FD\\u4E3B\\u8981\\u9762\\u5411\\u958B\\u767C\\u8005\\u6216\\u9700\\u8981\\u63D0\\u4EA4\\u8A73\\u7D30\\u932F\\u8AA4\\u5831\\u544A\\u7684\\u4F7F\\u7528\\u8005\\u3002"
+        enable_debug_logging: "\\u555F\\u7528\\u5F8C\\uFF0C\\u8173\\u672C\\u6703\\u5C07\\u8A73\\u7D30\\u7684\\u5167\\u90E8\\u72C0\\u614B\\u3001\\u57F7\\u884C\\u6B65\\u9A5F\\u548C\\u932F\\u8AA4\\u8A0A\\u606F\\u8F38\\u51FA\\u5230\\u700F\\u89BD\\u5668\\u7684<strong>\\u958B\\u767C\\u8005\\u5DE5\\u5177\\u63A7\\u5236\\u53F0</strong>\\uFF08\\u901A\\u5E38\\u7528F12\\u958B\\u555F\\uFF09\\u3002\\u9019\\u4E3B\\u8981\\u4F9B\\u958B\\u767C\\u8005\\u6216\\u9700\\u8981\\u63D0\\u4EA4\\u8A73\\u7D30\\u932F\\u8AA4\\u5831\\u544A\\u7684\\u4F7F\\u7528\\u8005\\u4F7F\\u7528\\u3002"
       }
     },
     log: {
-      prefix: "[\\u6587\\u672C\\u63D0\\u53D6\\u8173\\u672C-Debug]",
+      prefix: "[\\u6587\\u672C\\u63D0\\u53D6\\u8173\\u672C-\\u5075\\u932F]",
       language: {
         switched: "\\u8A9E\\u8A00\\u5DF2\\u5207\\u63DB\\u81F3\\uFF1A{{lang}}",
-        notFound: "\\u8A9E\\u8A00 '{{lang}}' \\u4E0D\\u5B58\\u5728\\uFF0C\\u9000\\u56DE\\u81F3 'en'\\u3002"
+        notFound: "\\u672A\\u627E\\u5230\\u8A9E\\u8A00 '{{lang}}'\\uFF0C\\u5DF2\\u56DE\\u9000\\u81F3 'en'\\u3002"
       },
       settings: {
         changed: "\\u8A2D\\u5B9A '{{key}}' \\u5DF2\\u5F9E '{{oldValue}}' \\u8B8A\\u66F4\\u70BA '{{newValue}}'",
         filterRuleChanged: {
-          enabled: "\\u904E\\u6FFE\\u898F\\u5247 '{{key}}' \\u5DF2\\u88AB\\u555F\\u7528",
-          disabled: "\\u904E\\u6FFE\\u898F\\u5247 '{{key}}' \\u5DF2\\u88AB\\u7981\\u7528"
+          enabled: "\\u904E\\u6FFE\\u898F\\u5247 '{{key}}' \\u5DF2\\u555F\\u7528",
+          disabled: "\\u904E\\u6FFE\\u898F\\u5247 '{{key}}' \\u5DF2\\u7981\\u7528"
         },
         panel: {
           opening: "\\u6B63\\u5728\\u958B\\u555F\\u8A2D\\u5B9A\\u9762\\u677F...",
@@ -6659,111 +6776,113 @@ ${result.join(",\n")}
           saving: "\\u6B63\\u5728\\u5132\\u5B58\\u8A2D\\u5B9A..."
         },
         parseError: "\\u89E3\\u6790\\u5DF2\\u5132\\u5B58\\u7684\\u8A2D\\u5B9A\\u6642\\u51FA\\u932F\\uFF1A",
-        invalidObject: "\\u8A66\\u5716\\u5132\\u5B58\\u4E00\\u500B\\u7121\\u6548\\u7684\\u7269\\u4EF6\\u4F5C\\u70BA\\u8A2D\\u5B9A\\uFF1A"
+        invalidObject: "\\u8A66\\u5716\\u70BA\\u8A2D\\u5B9A\\u5132\\u5B58\\u4E00\\u500B\\u7121\\u6548\\u7269\\u4EF6\\uFF1A"
       },
       textProcessor: {
-        filtered: '\\u6587\\u672C\\u5DF2\\u904E\\u6FFE\\uFF1A"{{text}}" (\\u539F\\u56E0\\uFF1A{{reason}})'
+        filtered: '\\u6587\\u672C\\u5DF2\\u904E\\u6FFE: "{{text}}" (\\u539F\\u56E0: {{reason}})'
       },
       quickScan: {
-        switchToFallback: "[\\u975C\\u614B\\u6383\\u63CF] \\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
-        fallbackFailed: "[\\u975C\\u614B\\u6383\\u63CF] \\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u5931\\u6557\\uFF1A{{error}}",
+        switchToFallback: "[\\u5FEB\\u901F\\u6383\\u63CF] \\u6B63\\u5728\\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
+        fallbackFailed: "[\\u5FEB\\u901F\\u6383\\u63CF] \\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u57F7\\u884C\\u5931\\u6557: {{error}}",
         fallback: {
-          starting: "[\\u975C\\u614B\\u6383\\u63CF - \\u5099\\u9078\\u65B9\\u6848] \\u958B\\u59CB\\u5728\\u4E3B\\u7DDA\\u7A0B\\u4E2D\\u8655\\u7406...",
-          completed: "[\\u975C\\u614B\\u6383\\u63CF - \\u5099\\u9078\\u65B9\\u6848] \\u8655\\u7406\\u5B8C\\u6210\\uFF0C\\u5171 {{count}} \\u689D\\u6709\\u6548\\u6587\\u672C\\u3002"
+          starting: "[\\u5FEB\\u901F\\u6383\\u63CF - \\u5099\\u9078] \\u6B63\\u5728\\u4E3B\\u7DDA\\u7A0B\\u4E2D\\u958B\\u59CB\\u8655\\u7406...",
+          completed: "[\\u5FEB\\u901F\\u6383\\u63CF - \\u5099\\u9078] \\u8655\\u7406\\u5B8C\\u6210\\uFF0C\\u627E\\u5230 {{count}} \\u689D\\u4E0D\\u91CD\\u8907\\u6587\\u672C\\u3002"
         },
         worker: {
-          logPrefix: "[\\u975C\\u614B\\u6383\\u63CF Worker]",
-          starting: "[\\u975C\\u614B\\u6383\\u63CF] \\u958B\\u59CB\\u57F7\\u884C\\uFF0C\\u5617\\u8A66\\u4F7F\\u7528 Web Worker...",
-          completed: "[\\u975C\\u614B\\u6383\\u63CF] Worker \\u8655\\u7406\\u6210\\u529F\\uFF0C\\u6536\\u5230 {{count}} \\u689D\\u6587\\u672C\\u3002",
-          scanComplete: "[\\u975C\\u614B\\u6383\\u63CF Worker] \\u8655\\u7406\\u5B8C\\u6210\\uFF0C\\u5171 {{count}} \\u689D\\u6709\\u6548\\u6587\\u672C\\u3002\\u6B63\\u5728\\u767C\\u56DE\\u4E3B\\u7DDA\\u7A0B...",
-          initFailed: "[\\u975C\\u614B\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u6557\\u3002\\u9019\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u65BC\\u7DB2\\u7AD9\\u7684\\u5167\\u5BB9\\u5B89\\u5168\\u7B56\\u7565\\uFF08CSP\\uFF09\\u963B\\u6B62\\u4E86\\u8173\\u672C\\u3002",
-          originalError: "[\\u975C\\u614B\\u6383\\u63CF] \\u539F\\u59CB\\u932F\\u8AA4\\uFF1A{{error}}",
-          sendingData: "[\\u975C\\u614B\\u6383\\u63CF] Web Worker \\u5DF2\\u5EFA\\u7ACB\\uFF0C\\u6B63\\u5728\\u767C\\u9001 {{count}} \\u689D\\u6587\\u672C\\u9032\\u884C\\u8655\\u7406...",
-          initSyncError: "[\\u975C\\u614B\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u6642\\u767C\\u751F\\u540C\\u6B65\\u932F\\u8AA4\\uFF1A{{error}}"
+          logPrefix: "[\\u5FEB\\u901F\\u6383\\u63CF Worker]",
+          starting: "[\\u5FEB\\u901F\\u6383\\u63CF] \\u958B\\u59CB\\u57F7\\u884C\\uFF0C\\u5617\\u8A66\\u4F7F\\u7528 Web Worker...",
+          completed: "[\\u5FEB\\u901F\\u6383\\u63CF] Worker \\u8655\\u7406\\u6210\\u529F\\uFF0C\\u6536\\u5230 {{count}} \\u689D\\u6587\\u672C\\u3002",
+          scanComplete: "[\\u5FEB\\u901F\\u6383\\u63CF Worker] \\u8655\\u7406\\u5B8C\\u6210\\uFF0C\\u627E\\u5230 {{count}} \\u689D\\u4E0D\\u91CD\\u8907\\u6587\\u672C\\u3002\\u6B63\\u5728\\u767C\\u56DE\\u4E3B\\u7DDA\\u7A0B...",
+          initFailed: "[\\u5FEB\\u901F\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u6557\\u3002\\u9019\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u65BC\\u7DB2\\u7AD9\\u7684\\u5167\\u5BB9\\u5B89\\u5168\\u7B56\\u7565 (CSP) \\u5C0E\\u81F4\\u7684\\u3002",
+          originalError: "[\\u5FEB\\u901F\\u6383\\u63CF] \\u539F\\u59CB\\u932F\\u8AA4: {{error}}",
+          sendingData: "[\\u5FEB\\u901F\\u6383\\u63CF] Web Worker \\u5DF2\\u5EFA\\u7ACB\\uFF0C\\u6B63\\u5728\\u767C\\u9001 {{count}} \\u689D\\u6587\\u672C\\u9032\\u884C\\u8655\\u7406...",
+          initSyncError: "[\\u5FEB\\u901F\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u671F\\u9593\\u767C\\u751F\\u540C\\u6B65\\u932F\\u8AA4: {{error}}"
         }
       },
       sessionScan: {
-        switchToFallback: "[\\u6703\\u8A71\\u6383\\u63CF] \\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
+        switchToFallback: "[\\u6703\\u8A71\\u6383\\u63CF] \\u6B63\\u5728\\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
         domObserver: {
           stopped: "[\\u6703\\u8A71\\u6383\\u63CF] \\u5DF2\\u505C\\u6B62\\u76E3\\u807D DOM \\u8B8A\\u5316\\u3002"
         },
         fallback: {
-          initialized: "[\\u6703\\u8A71\\u6383\\u63CF - \\u5099\\u9078\\u65B9\\u6848] \\u521D\\u59CB\\u5316\\u5B8C\\u6210\\u3002",
-          cleared: "[\\u6703\\u8A71\\u6383\\u63CF - \\u5099\\u9078\\u65B9\\u6848] \\u8CC7\\u6599\\u5DF2\\u6E05\\u7A7A\\u3002"
+          initialized: "[\\u6703\\u8A71\\u6383\\u63CF - \\u5099\\u9078] \\u5DF2\\u521D\\u59CB\\u5316\\u3002",
+          cleared: "[\\u6703\\u8A71\\u6383\\u63CF - \\u5099\\u9078] \\u8CC7\\u6599\\u5DF2\\u6E05\\u9664\\u3002"
         },
         worker: {
           logPrefix: "[\\u6703\\u8A71\\u6383\\u63CF Worker]",
-          starting: "\\u6703\\u8A71\\u6383\\u63CF\\uFF1A\\u5617\\u8A66\\u555F\\u52D5 Web Worker...",
-          initFailed: "[\\u6703\\u8A71\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u6557\\u3002\\u9019\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u65BC\\u7DB2\\u7AD9\\u7684\\u5167\\u5BB9\\u5B89\\u5168\\u7B56\\u7565\\uFF08CSP\\uFF09\\u963B\\u6B62\\u4E86\\u8173\\u672C\\u3002",
-          originalError: "[\\u6703\\u8A71\\u6383\\u63CF] \\u539F\\u59CB\\u932F\\u8AA4\\uFF1A{{error}}",
+          starting: "\\u6703\\u8A71\\u6383\\u63CF\\uFF1A\\u6B63\\u5728\\u5617\\u8A66\\u555F\\u52D5 Web Worker...",
+          initFailed: "[\\u6703\\u8A71\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u6557\\u3002\\u9019\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u65BC\\u7DB2\\u7AD9\\u7684\\u5167\\u5BB9\\u5B89\\u5168\\u7B56\\u7565 (CSP) \\u5C0E\\u81F4\\u7684\\u3002",
+          originalError: "[\\u6703\\u8A71\\u6383\\u63CF] \\u539F\\u59CB\\u932F\\u8AA4: {{error}}",
           initialized: "[\\u6703\\u8A71\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u6210\\u529F\\uFF0C\\u5DF2\\u767C\\u9001 {{count}} \\u689D\\u521D\\u59CB\\u6587\\u672C\\u4EE5\\u958B\\u59CB\\u6703\\u8A71\\u3002",
-          initSyncError: "[\\u6703\\u8A71\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u6642\\u767C\\u751F\\u540C\\u6B65\\u932F\\u8AA4\\uFF1A{{error}}",
-          clearCommandSent: "[\\u6703\\u8A71\\u6383\\u63CF] \\u5DF2\\u5411 Worker \\u767C\\u9001\\u6E05\\u7A7A\\u6307\\u4EE4\\u3002"
+          initSyncError: "[\\u6703\\u8A71\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u671F\\u9593\\u767C\\u751F\\u540C\\u6B65\\u932F\\u8AA4: {{error}}",
+          clearCommandSent: "[\\u6703\\u8A71\\u6383\\u63CF] \\u6E05\\u9664\\u547D\\u4EE4\\u5DF2\\u767C\\u9001\\u81F3 worker\\u3002"
         }
       },
       ui: {
         copyButton: {
-          copied: "\\u8907\\u88FD\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\uFF0C\\u8907\\u88FD\\u4E86 {{count}} \\u500B\\u5B57\\u5143\\u3002",
-          nothingToCopy: "\\u8907\\u88FD\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\uFF0C\\u4F46\\u6C92\\u6709\\u5167\\u5BB9\\u53EF\\u8907\\u88FD\\u6216\\u6309\\u9215\\u88AB\\u7981\\u7528\\u3002"
+          copied: "\\u8907\\u88FD\\u6309\\u9215\\u5DF2\\u9EDE\\u64CA\\uFF0C\\u8907\\u88FD\\u4E86 {{count}} \\u500B\\u5B57\\u5143\\u3002",
+          nothingToCopy: "\\u8907\\u88FD\\u6309\\u9215\\u5DF2\\u9EDE\\u64CA\\uFF0C\\u4F46\\u6C92\\u6709\\u5167\\u5BB9\\u53EF\\u8907\\u88FD\\u6216\\u6309\\u9215\\u88AB\\u7981\\u7528\\u3002"
         },
         confirmationModal: {
           sessionScan: {
-            confirmed: "\\u4F7F\\u7528\\u8005\\u78BA\\u8A8D\\u6E05\\u7A7A\\u6703\\u8A71\\u6383\\u63CF\\u6587\\u672C\\uFF0C\\u6B63\\u5728\\u547C\\u53EB\\u56DE\\u8ABF..."
+            confirmed: "\\u4F7F\\u7528\\u8005\\u5DF2\\u78BA\\u8A8D\\u6E05\\u9664\\u6703\\u8A71\\u6383\\u63CF\\u6587\\u672C\\uFF0C\\u6B63\\u5728\\u8ABF\\u7528\\u56DE\\u547C..."
           },
           quickScan: {
-            confirmed: "\\u4F7F\\u7528\\u8005\\u78BA\\u8A8D\\u6E05\\u7A7A\\u5FEB\\u901F\\u6383\\u63CF\\u6587\\u672C\\u3002"
+            confirmed: "\\u4F7F\\u7528\\u8005\\u5DF2\\u78BA\\u8A8D\\u6E05\\u9664\\u5FEB\\u901F\\u6383\\u63CF\\u6587\\u672C\\u3002"
           },
-          cancelled: "\\u4F7F\\u7528\\u8005\\u53D6\\u6D88\\u4E86\\u6E05\\u7A7A\\u64CD\\u4F5C\\u3002"
+          cancelled: "\\u4F7F\\u7528\\u8005\\u5DF2\\u53D6\\u6D88\\u6E05\\u9664\\u64CD\\u4F5C\\u3002"
         },
         modal: {
-          opening: "\\u6B63\\u5728\\u6253\\u958B\\u4E3B\\u8996\\u7A97...",
-          closing: "\\u6B63\\u5728\\u95DC\\u9589\\u4E3B\\u8996\\u7A97...",
-          scanFailed: "\\u975C\\u614B\\u6383\\u63CF\\u5931\\u6557\\uFF1A{{error}}",
-          clearContent: "\\u300C\\u6E05\\u7A7A\\u5167\\u5BB9\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002"
+          opening: "\\u6B63\\u5728\\u958B\\u555F\\u4E3B\\u6A21\\u614B\\u6846...",
+          closing: "\\u6B63\\u5728\\u95DC\\u9589\\u4E3B\\u6A21\\u614B\\u6846...",
+          scanFailed: "\\u975C\\u614B\\u6383\\u63CF\\u5931\\u6557: {{error}}",
+          clearContent: "\\u6E05\\u7A7A\\u5167\\u5BB9\\u6309\\u9215\\u5DF2\\u9EDE\\u64CA\\u3002"
         }
       },
       exporter: {
-        buttonClicked: "\\u532F\\u51FA\\u6309\\u9215\\u88AB\\u9EDE\\u64CA, \\u532F\\u51FA\\u683C\\u5F0F: {{format}}\\u3002",
-        csvError: "\\u5728\\u89E3\\u6790\\u6587\\u672C\\u4E26\\u751F\\u6210 CSV \\u6642\\u767C\\u751F\\u932F\\u8AA4\\uFF1A{{error}}",
-        fileExported: "\\u6A94\\u6848\\u5DF2\\u532F\\u51FA\\uFF1A{{filename}}",
-        noContent: "\\u6C92\\u6709\\u5167\\u5BB9\\u53EF\\u532F\\u51FA\\u3002",
-        unknownFormat: "\\u672A\\u77E5\\u7684\\u532F\\u51FA\\u683C\\u5F0F\\uFF1A{{format}}"
+        buttonClicked: "\\u532F\\u51FA\\u6309\\u9215\\u5DF2\\u9EDE\\u64CA\\uFF0C\\u683C\\u5F0F: {{format}}\\u3002",
+        csvError: "\\u89E3\\u6790\\u6587\\u672C\\u4E26\\u7522\\u751FCSV\\u6642\\u51FA\\u932F: {{error}}",
+        fileExported: "\\u6A94\\u6848\\u5DF2\\u532F\\u51FA: {{filename}}",
+        noContent: "\\u7121\\u5167\\u5BB9\\u53EF\\u532F\\u51FA\\u3002",
+        unknownFormat: "\\u672A\\u77E5\\u7684\\u532F\\u51FA\\u683C\\u5F0F: {{format}}"
       },
       main: {
-        requestingSessionScanData: "\\u5F9E session-scan \\u6A21\\u5F0F\\u8ACB\\u6C42\\u5B8C\\u6574\\u8CC7\\u6599...",
-        exportingQuickScanData: "\\u5F9E quick-scan \\u6A21\\u5F0F\\u7684\\u8A18\\u61B6\\u9AD4\\u4E2D\\u532F\\u51FA\\u5B8C\\u6574\\u8CC7\\u6599...",
+        requestingSessionScanData: "\\u6B63\\u5728\\u8ACB\\u6C42\\u6703\\u8A71\\u6383\\u63CF\\u6A21\\u5F0F\\u7684\\u5B8C\\u6574\\u8CC7\\u6599...",
+        exportingQuickScanData: "\\u6B63\\u5728\\u532F\\u51FA\\u5FEB\\u901F\\u6383\\u63CF\\u6A21\\u5F0F\\u8A18\\u61B6\\u9AD4\\u4E2D\\u7684\\u5B8C\\u6574\\u8CC7\\u6599...",
         inIframe: "\\u8173\\u672C\\u5728 iframe \\u4E2D\\uFF0C\\u5DF2\\u8DF3\\u904E\\u521D\\u59CB\\u5316\\u3002",
-        initializing: "\\u8173\\u672C\\u958B\\u59CB\\u521D\\u59CB\\u5316...",
+        initializing: "\\u8173\\u672C\\u521D\\u59CB\\u5316\\u958B\\u59CB...",
         initialSettingsLoaded: "\\u521D\\u59CB\\u8A2D\\u5B9A\\u5DF2\\u8F09\\u5165:"
       },
       dom: {
-        ttpCreationError: "\\u5EFA\\u7ACB Trusted Type \\u7B56\\u7565\\u5931\\u6557\\uFF1A",
-        svgParseError: "\\u7121\\u6548\\u6216\\u89E3\\u6790\\u5931\\u6557\\u7684 SVG \\u5B57\\u4E32\\uFF1A"
+        ttpCreationError: "\\u5EFA\\u7ACB Trusted Type \\u7B56\\u7565\\u5931\\u6557:",
+        svgParseError: "SVG \\u5B57\\u4E32\\u7121\\u6548\\u6216\\u89E3\\u6790\\u5931\\u6557:"
       },
       elementScan: {
-        starting: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5DF2\\u555F\\u52D5\\u3002",
+        starting: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5DF2\\u958B\\u59CB\\u3002",
         stopping: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5DF2\\u505C\\u6B62\\u3002",
-        listenersAdded: "\\u5DF2\\u65B0\\u589E\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u7684\\u5168\\u57DF\\u4E8B\\u4EF6\\u76E3\\u807D\\u5668\\u3002",
-        listenersRemoved: "\\u5DF2\\u79FB\\u9664\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u7684\\u5168\\u57DF\\u4E8B\\u4EF6\\u76E3\\u807D\\u5668\\u3002",
+        listenersAdded: "\\u5DF2\\u70BA\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u65B0\\u589E\\u5168\\u57DF\\u4E8B\\u4EF6\\u76E3\\u807D\\u5668\\u3002",
+        listenersRemoved: "\\u5DF2\\u70BA\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u79FB\\u9664\\u5168\\u57DF\\u4E8B\\u4EF6\\u76E3\\u807D\\u5668\\u3002",
         stateReset: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u72C0\\u614B\\u5DF2\\u91CD\\u8A2D\\u3002",
         reselecting: "\\u6B63\\u5728\\u8FD4\\u56DE\\u5143\\u7D20\\u91CD\\u65B0\\u9078\\u64C7\\u6A21\\u5F0F\\u3002",
-        hovering: "\\u7576\\u524D\\u61F8\\u505C\\u65BC <{{tagName}}>\\u3002",
-        escapePressed: "\\u4F7F\\u7528\\u8005\\u6309\\u4E0B Escape \\u9375\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u3002",
-        clickedEnteringAdjust: "\\u5DF2\\u9EDE\\u64CA\\u5143\\u7D20 <{{tagName}}>\\uFF0C\\u9032\\u5165\\u5C64\\u7D1A\\u8ABF\\u6574\\u6A21\\u5F0F\\u3002",
+        hovering: "\\u6B63\\u5728\\u61F8\\u505C\\u65BC <{{tagName}}>\\u3002",
+        escapePressed: "\\u6309\\u4E0B Escape \\u9375\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u3002",
+        clickedEnteringAdjust: "\\u5143\\u7D20 <{{tagName}}> \\u5DF2\\u88AB\\u9EDE\\u64CA\\uFF0C\\u6B63\\u5728\\u9032\\u5165\\u8ABF\\u6574\\u6A21\\u5F0F\\u3002",
         pathBuilt: "\\u5143\\u7D20\\u5C64\\u7D1A\\u8DEF\\u5F91\\u5DF2\\u69CB\\u5EFA\\uFF0C\\u6DF1\\u5EA6\\u70BA\\uFF1A{{depth}}\\u3002",
         adjustingLevel: "\\u6B63\\u5728\\u8ABF\\u6574\\u9078\\u64C7\\u5C64\\u7D1A\\u81F3 {{level}} ({{tagName}})\\u3002",
         confirmExtracting: "\\u9078\\u64C7\\u5DF2\\u78BA\\u8A8D\\uFF0C\\u6B63\\u5728\\u5F9E <{{tagName}}> \\u63D0\\u53D6\\u6587\\u672C\\u3002",
+        staged: "\\u5143\\u7D20\\u5DF2\\u66AB\\u5B58\\u3002\\u7E3D\\u6578\\uFF1A{{count}}\\u3002",
+        confirmingStaged: "\\u78BA\\u8A8D\\u9078\\u64C7\\u3002\\u6B63\\u5728\\u8655\\u7406 {{count}} \\u500B\\u5DF2\\u66AB\\u5B58\\u7684\\u5143\\u7D20\\u3002",
         extractedCount: "\\u5DF2\\u5F9E\\u5143\\u7D20\\u4E2D\\u63D0\\u53D6 {{count}} \\u689D\\u539F\\u59CB\\u6587\\u672C\\u3002",
         confirmFailedNoTarget: "\\u78BA\\u8A8D\\u5931\\u6557\\uFF1A\\u672A\\u9078\\u64C7\\u4EFB\\u4F55\\u76EE\\u6A19\\u5143\\u7D20\\u3002",
         rightClickExit: "\\u5075\\u6E2C\\u5230\\u53F3\\u9375\\u9EDE\\u64CA\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u3002",
         processingError: "\\u6587\\u672C\\u8655\\u7406\\u904E\\u7A0B\\u4E2D\\u767C\\u751F\\u932F\\u8AA4: {{error}}",
         worker: {
-          logPrefix: "[\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker]",
+          logPrefix: "[ES Worker]",
           starting: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u6B63\\u5728\\u555F\\u52D5...",
-          sendingData: "\\u6B63\\u5728\\u767C\\u9001 {{count}} \\u689D\\u6587\\u672C\\u81F3\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker\\u3002",
-          completed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u8655\\u7406\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {{count}} \\u689D\\u6709\\u6548\\u6587\\u672C\\u3002",
-          initFailed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u521D\\u59CB\\u5316\\u5931\\u6557\\u3002\\u53EF\\u80FD\\u662F\\u7DB2\\u7AD9\\u7684 CSP \\u7B56\\u7565\\u963B\\u6B62\\u4E86 data: URL\\u3002",
-          initSyncError: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u521D\\u59CB\\u5316\\u6642\\u767C\\u751F\\u540C\\u6B65\\u932F\\u8AA4: {{error}}",
+          sendingData: "\\u6B63\\u5728\\u5411\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u767C\\u9001 {{count}} \\u689D\\u6587\\u672C\\u7247\\u6BB5\\u3002",
+          completed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u5DF2\\u5B8C\\u6210\\uFF0C\\u627E\\u5230 {{count}} \\u689D\\u4E0D\\u91CD\\u8907\\u6587\\u672C\\u3002",
+          initFailed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u521D\\u59CB\\u5316\\u5931\\u6557\\u3002\\u700F\\u89BD\\u5668\\u7684CSP\\u53EF\\u80FD\\u963B\\u6B62\\u4E86 data: URL\\u3002",
+          initSyncError: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u521D\\u59CB\\u5316\\u671F\\u9593\\u767C\\u751F\\u540C\\u6B65\\u932F\\u8AA4: {{error}}",
           originalError: "\\u539F\\u59CB Worker \\u932F\\u8AA4: {{error}}"
         },
         switchToFallback: "\\u6B63\\u5728\\u70BA\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
@@ -6776,7 +6895,8 @@ ${result.join(",\n")}
         toolbarPositioned: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u5DE5\\u5177\\u5217\\u5DF2\\u5B9A\\u4F4D\\u3002",
         sliderChanged: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u6ED1\\u687F\\u5C64\\u7D1A\\u8B8A\\u70BA {{level}}",
         reselectClicked: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u300C\\u91CD\\u65B0\\u9078\\u64C7\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002",
-        cancelClicked: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u300C\\u53D6\\u6D88\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002",
+        stageClicked: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u300C\\u66AB\\u5B58\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002",
+        cancelClicked: "\\u5143\\u7D20\\u6383\\u89C0UI\\uFF1A\\u300C\\u53D6\\u6D88\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002",
         confirmClicked: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u300C\\u78BA\\u8A8D\\u300D\\u6309\\u9215\\u88AB\\u9EDE\\u64CA\\u3002",
         dragStarted: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u62D6\\u52D5\\u958B\\u59CB\\u3002",
         dragEnded: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u62D6\\u52D5\\u7D50\\u675F\\u3002",
@@ -6784,13 +6904,13 @@ ${result.join(",\n")}
         cleaningToolbar: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u6B63\\u5728\\u6E05\\u7406\\u5DE5\\u5177\\u5217\\u3002"
       },
       eventBus: {
-        callbackError: "\\u5728 '{{eventName}}' \\u4E8B\\u4EF6\\u7684\\u56DE\\u547C\\u4E2D\\u767C\\u751F\\u932F\\u8AA4\\uFF1A"
+        callbackError: "\\u4E8B\\u4EF6 '{{eventName}}' \\u7684\\u56DE\\u547C\\u51FD\\u6578\\u51FA\\u932F:"
       },
       trustedTypes: {
-        workerPolicyError: "\\u5EFA\\u7ACB Trusted Types worker \\u7B56\\u7565\\u5931\\u6557\\uFF1A",
-        htmlPolicyError: "\\u5EFA\\u7ACB Trusted Types HTML \\u7B56\\u7565\\u5931\\u6557\\uFF1A",
-        defaultWorkerPolicyWarning: "Trusted Types \\u9810\\u8A2D\\u7B56\\u7565\\u8655\\u7406 worker URL \\u5931\\u6557\\uFF0C\\u9000\\u56DE\\u81F3\\u539F\\u59CB URL\\u3002",
-        defaultHtmlPolicyWarning: "Trusted Types \\u9810\\u8A2D\\u7B56\\u7565\\u8655\\u7406 HTML \\u5931\\u6557\\uFF0C\\u9000\\u56DE\\u81F3\\u539F\\u59CB\\u5B57\\u4E32\\u3002"
+        workerPolicyError: "\\u5EFA\\u7ACB Trusted Types worker \\u7B56\\u7565\\u5931\\u6557:",
+        htmlPolicyError: "\\u5EFA\\u7ACB Trusted Types HTML \\u7B56\\u7565\\u5931\\u6557:",
+        defaultWorkerPolicyWarning: "\\u7528\\u65BC worker URL \\u7684 Trusted Types \\u9810\\u8A2D\\u7B56\\u7565\\u5931\\u6557\\uFF0C\\u56DE\\u9000\\u5230\\u539F\\u59CB URL\\u3002",
+        defaultHtmlPolicyWarning: "\\u7528\\u65BC HTML \\u7684 Trusted Types \\u9810\\u8A2D\\u7B56\\u7565\\u5931\\u6557\\uFF0C\\u56DE\\u9000\\u5230\\u539F\\u59CB\\u5B57\\u4E32\\u3002"
       }
     }
   };
@@ -7118,18 +7238,21 @@ ${result.join(",\n")}
       log(t("log.elementScan.confirmFailedNoTarget"));
       return;
     }
-    const tagName = currentTarget.tagName.toLowerCase();
-    log(simpleTemplate(t("log.elementScan.confirmExtracting"), { tagName }));
+    const newTexts = extractAndProcessTextFromElement(currentTarget);
+    newTexts.forEach((text) => stagedTexts.add(text));
+    updateStagedCount();
+    const totalToProcess = stagedTexts.size;
+    log(simpleTemplate(t("log.elementScan.confirmingStaged"), { count: totalToProcess }));
     isAdjusting = true;
     document.removeEventListener("mouseover", handleMouseOver);
     document.removeEventListener("mouseout", handleMouseOut);
     cleanupUI();
     cleanupToolbar();
-    shouldResumeAfterModalClose = true;
+    setShouldResumeAfterModalClose(true);
     try {
-      const rawTexts = extractRawTextFromElement(currentTarget);
-      log(simpleTemplate(t("log.elementScan.extractedCount"), { count: rawTexts.length }));
-      const { formattedText, count } = await processTextsWithWorker(rawTexts);
+      const allCleanTexts = Array.from(stagedTexts);
+      log(simpleTemplate(t("log.elementScan.extractedCount"), { count: allCleanTexts.length }));
+      const { formattedText, count } = await processTextsWithWorker(allCleanTexts);
       updateModalContent(formattedText, true, "element-scan");
       const notificationText = simpleTemplate(t("scan.elementFinished"), { count });
       showNotification(notificationText, { type: "success" });
@@ -7139,11 +7262,24 @@ ${result.join(",\n")}
       stopElementScan();
     }
   }
+  function handleSummaryClick() {
+    log(t("tooltip.summary"));
+    if (isElementScanActive()) {
+      const stagedTexts2 = getStagedTexts();
+      const formattedText = formatTextsForTranslation(Array.from(stagedTexts2));
+      updateScanCount(stagedTexts2.size, "element-scan");
+      if (stagedTexts2.size === 0) {
+        updateModalContent(SHOW_PLACEHOLDER, true, "element-scan");
+      } else {
+        updateModalContent(formattedText, true, "element-scan");
+      }
+    } else {
+      showSessionSummary();
+    }
+  }
   function initUI() {
     const settings = loadSettings();
-    createMainModal({
-      clearSessionCallback: clearSessionTexts
-    });
+    createMainModal();
     createFab({
       callbacks: {
         onStaticExtract: handleQuickScanClick,
@@ -7154,7 +7290,7 @@ ${result.join(",\n")}
       isVisible: settings.showFab
     });
     on("modalClosed", () => {
-      if (getShouldResumeAfterModalClose()) {
+      if (isElementScanActive() && getShouldResumeAfterModalClose()) {
         setShouldResumeAfterModalClose(false);
         reselectElement();
       }
@@ -8405,41 +8541,6 @@ ${result.join(",\n")}
     width:16px;
     height:16px;
 }
-.tc-live-counter{
-    position:fixed;
-    top:20px;
-    left:50%;
-    transform:translate(-50%, -150%);
-    z-index:2147483646;
-    display:flex;
-    align-items:center;
-    padding:8px 16px;
-    border-radius:20px;
-    background-color:rgba(0, 0, 0, 0.7);
-    color:#fff;
-    font-size:14px;
-    font-weight:bold;
-    box-shadow:0 2px 8px var(--main-shadow, rgba(0, 0, 0, 0.2));
-    border:1px solid var(--main-border, rgba(255, 255, 255, 0.2));
-    transition:transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.4s ease;
-    backdrop-filter:blur(5px);
-    -webkit-backdrop-filter:blur(5px);
-    opacity:0;
-    pointer-events:none;
-}
-.tc-live-counter.tc-live-counter-visible{
-    transform:translate(-50%, 0);
-    opacity:1;
-    pointer-events:auto;
-}
-.tc-live-counter span{
-    min-width:20px;
-    text-align:center;
-    margin-left:8px;
-    padding:2px 6px;
-    background-color:var(--main-overlay-bg, rgba(255, 255, 255, 0.2));
-    border-radius:10px;
-}
 .gm-loading-overlay{
   position:absolute;
   top:0;
@@ -9062,6 +9163,38 @@ ${result.join(",\n")}
 .text-extractor-tooltip.is-visible{
     opacity:1;
     visibility:visible;
+}
+.tc-top-center-counter{
+    position:fixed;
+    top:20px;
+    left:50%;
+    transform:translate(-50%, -150%);
+    background-color:var(--main-bg-a, rgba(255, 255, 255, 0.8));
+    color:var(--main-text);
+    padding:8px 16px;
+    border-radius:20px;
+    font-size:14px;
+    font-weight:500;
+    box-shadow:var(--shadow-2, 0 4px 6px rgba(0,0,0,0.1));
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    z-index:9999999;
+    opacity:0;
+    transition:transform 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1)), opacity 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1));
+    display:flex;
+    align-items:center;
+    gap:8px;
+    border:1px solid var(--main-border);
+    pointer-events:none;
+}
+.tc-top-center-counter.is-visible{
+    transform:translate(-50%, 0);
+    opacity:1;
+}
+.tc-top-center-counter span{
+    font-weight:bold;
+    font-size:16px;
+    color:var(--accent-color, #1e90ff);
 }
 `;
     uiContainer.appendChild(styleElement);

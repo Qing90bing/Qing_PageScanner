@@ -2,15 +2,16 @@
   "common": {
     "scan": "掃描",
     "stop": "停止",
-    "resume": "繼續",
+    "resume": "恢復",
     "clear": "清空",
     "copy": "複製",
     "save": "儲存",
-    "discovered": "已發現：",
+    "discovered": "已發現:",
     "confirm": "確認",
     "cancel": "取消",
     "export": "匯出",
-    "reselect": "重新選擇"
+    "reselect": "重新選擇",
+    "stage": "暫存"
   },
   "export": {
     "exportAsTxt": "匯出為 TXT",
@@ -24,28 +25,28 @@
   },
   "settings": {
     "title": "設定",
-    "theme": "介面主題",
-    "language": "語言設定",
+    "theme": "主題",
+    "language": "語言",
     "relatedSettings": "相關設定",
     "filterRules": "內容過濾規則",
     "filters": {
-      "numbers": "過濾純數字/貨幣",
-      "chinese": "過濾純中文",
-      "contains_chinese": "過濾包含中文的文本",
-      "emoji_only": "過濾純表情符號",
-      "symbols": "過濾純符號",
+      "numbers": "過濾數字/貨幣",
+      "chinese": "過濾純中文文本",
+      "contains_chinese": "過濾含中文的文本",
+      "emoji_only": "過濾純表情符號文本",
+      "symbols": "過濾純符號文本",
       "term": "過濾特定術語",
-      "single_letter": "過濾純單個英文字母",
-      "repeating_chars": "過濾單一重複字元",
+      "single_letter": "過濾單個英文字母",
+      "repeating_chars": "過濾重複字元",
       "file_paths": "過濾檔案路徑",
-      "hex_color_codes": "過濾十六進位顏色",
-      "email_addresses": "過濾郵件地址",
+      "hex_color_codes": "過濾十六進位顏色代碼",
+      "email_addresses": "過濾電子郵件地址",
       "uuids": "過濾 UUID",
       "git_commit_hashes": "過濾 Git 提交雜湊值",
-      "website_urls": "過濾網址",
-      "website_urls_title": "過濾網址 (URL)",
-      "shorthand_numbers": "過濾簡寫數字",
-      "shorthand_numbers_title": "過濾帶有單位的簡寫數字"
+      "website_urls": "過濾網站連結",
+      "website_urls_title": "過濾網站連結",
+      "shorthand_numbers": "過濾速記數字",
+      "shorthand_numbers_title": "過濾速記數字"
     },
     "display": {
       "show_fab": "顯示懸浮按鈕",
@@ -58,13 +59,13 @@
       },
       "show_line_numbers": "顯示行號",
       "show_statistics": "顯示統計資訊",
-      "enable_word_wrap": "啟用文字自動換行",
-      "text_truncation_limit": "啟用文字框字元限制",
-      "character_limit": "字元數",
-      "show_scan_count": "啟用標題列顯示掃描計數"
+      "enable_word_wrap": "啟用自動換行",
+      "text_truncation_limit": "啟用文本截斷限制",
+      "character_limit": "字元限制",
+      "show_scan_count": "在標題中啟用掃描計數"
     },
     "advanced": {
-      "enable_debug_logging": "啟用偵錯日誌"
+      "enable_debug_logging": "啟用偵錯日誌記錄"
     },
     "panel": {
       "title": "設定面板"
@@ -83,45 +84,46 @@
   "scan": {
     "quick": "快速掃描",
     "session": "會話掃描",
+    "stagedCount": "已暫存:",
     "elementFinished": "選取元素掃描完成，發現 {{count}} 條文本。",
     "startSession": "開始動態掃描會話",
     "stopSession": "停止動態掃描會話",
-    "finished": "掃描結束，共發現 {{count}} 條文本",
-    "quickFinished": "快捷掃描完成，發現 {{count}} 條文本",
-    "sessionStarted": "會話掃描已開始",
-    "sessionInProgress": "掃描正在進行中...",
-    "truncationWarning": "為保持介面流暢，此處僅顯示部分文本。完整內容將在匯出時提供。"
+    "finished": "掃描完成，發現 {{count}} 條文本。",
+    "quickFinished": "快速掃描完成，發現 {{count}} 條文本。",
+    "sessionStarted": "會話掃描已開始。",
+    "sessionInProgress": "掃描進行中...",
+    "truncationWarning": "為保持介面流暢，此處僅顯示部分文本。匯出後將包含完整內容。"
   },
   "results": {
     "title": "提取的文本",
-    "scanCountSession": "已掃描 {{count}} 條文本",
-    "scanCountStatic": "共掃描 {{count}} 條文本",
-    "totalCharacters": "總字數",
+    "scanCountSession": "已掃描 {{count}} 個項目",
+    "scanCountStatic": "共掃描 {{count}} 個項目",
+    "totalCharacters": "總字元數",
     "totalLines": "總行數",
-    "noSummary": "當前沒有摘要文本",
+    "noSummary": "無可用摘要",
     "stats": {
       "lines": "行",
-      "chars": "字元數"
+      "chars": "字元"
     }
   },
   "notifications": {
     "copiedToClipboard": "已複製到剪貼簿！",
     "settingsSaved": "設定已儲存！",
-    "modalInitError": "模態框尚未初始化。",
-    "nothingToCopy": "沒有內容可複製",
-    "contentCleared": "內容已清空",
-    "noTextSelected": "未選擇文本",
-    "cspWorkerWarning": "由於網站安全限制，已切換到相容掃描模式。"
+    "modalInitError": "模態框未初始化。",
+    "nothingToCopy": "沒有可複製的內容。",
+    "contentCleared": "內容已清除。",
+    "noTextSelected": "未選擇任何文本。",
+    "cspWorkerWarning": "因網站安全限制，已切換至相容掃描模式。"
   },
   "placeholders": {
     "click": "點擊 ",
     "dynamicScan": "[動態掃描]",
-    "startNewScanSession": " 按鈕開始一個新的掃描會話",
+    "startNewScanSession": " 開始新的掃描會話",
     "staticScan": "[靜態掃描]",
-    "performOneTimeScan": " 按鈕可進行一次性的快捷提取"
+    "performOneTimeScan": " 執行一次性快速提取"
   },
   "confirmation": {
-    "clear": "你確認要清空嗎？此操作不可撤銷。"
+    "clear": "您確定要清除內容嗎？此操作無法撤銷。"
   },
   "tooltip": {
     "summary": "查看摘要",
@@ -130,47 +132,47 @@
     "element_scan": "選取元素掃描",
     "filters": {
       "title": "內容過濾器說明",
-      "numbers": "此規則會過濾掉<strong>完全由</strong>數字、空格、千位分隔符 (.)、小數點 (,) 以及部分貨幣符號 ($, €, £, ¥) 組成的文本。<br><br><strong>更多範例：</strong><br>• \"1,234.56\"<br>• \"¥999\"<br>• \"€200\"<br>• \"$ 100\"",
-      "chinese": "此規則會過濾掉<strong>完全由</strong>中文字元和空格組成的文本，不包括任何標點符號。<br><br><strong>範例：</strong><br>• \"你好 世界\" (將被過濾)<br>• \"你好，世界\" (不會被過濾)",
-      "contains_chinese": "此規則會過濾掉<strong>任何包含</strong>至少一個中文字元的文本，無論是否包含其他字元。<br><br><strong>範例：</strong><br>• \"你好 World\" (將被過濾)<br>• \"第 1 章\" (將被過濾)",
-      "emoji_only": "此規則會過濾掉<strong>完全由</strong>一個或多個表情符號及空格組成的文本。<br><br><strong>範例：</strong><br>• \"👍\"<br>• \"😊 🎉 🚀\"",
-      "symbols": "此規則會過濾掉<strong>完全由</strong>各類標點和符號組成的文本。<br><br><strong>更多範例：</strong><br>• \"@#*&^%\"<br>• \"()[]{}\"<br>• \"---...---\"",
-      "term": "此規則會過濾掉常見的、通常無需翻譯的 UI 術語。<br><br><strong>更多範例：</strong><br>• \"OK\", \"Cancel\", \"Submit\"<br>• \"Login\", \"Settings\", \"Help\"",
-      "single_letter": "此規則會過濾掉由<strong>單個</strong>英文字母組成的文本，忽略大小寫。<br><br><strong>範例：</strong><br>• \"A\" (將被過濾)<br>• \"b\" (將被過濾)<br>• \"AB\" (不會被過濾)",
-      "repeating_chars": "此規則會過濾掉由<strong>同一個字元</strong>連續重複 2 次或以上組成的文本。<br><br><strong>範例：</strong><br>• \"aa\"<br>• \"======\"<br>• \"bbbbb\"",
-      "file_paths": "此規則會嘗試識別並過濾掉類似作業系統的、且<strong>包含副檔名</strong>的檔案路徑，但它不會匹配 URL。<br><br><strong>更多範例：</strong><br>• \"/path/to/file.js\"<br>• \"C:\\Users\\Test\\document.docx\"<br>• \"./config.json\"",
-      "hex_color_codes": "此規則會過濾掉標準的 CSS 十六進位顏色代碼（3、4、6 或 8 位，後者可包含 Alpha 通道）。<br><br><strong>範例：</strong><br>• \"#FFFFFF\"<br>• \"#ff0000\"<br>• \"#f0c\"<br>• \"#f0c8\" (4位)<br>• \"#ff000080\" (8位)",
-      "email_addresses": "此規則會過濾掉符合標準格式的電子郵件地址。<br><br><strong>範例：</strong><br>• \"example@domain.com\"<br>• \"user.name@sub.domain.org\"",
-      "uuids": "此規則會過濾掉通用唯一識別碼 (UUID)。<br><br><strong>範例：</strong><br>• \"123e4567-e89b-12d3-a456-426614174000\"",
-      "git_commit_hashes": "此規則會過濾掉標準的 Git 提交雜湊值（長雜湊或短雜湊）。<br><br><strong>範例：</strong><br>• \"a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2\"<br>• \"a1b2c3d\"",
-      "website_urls": "此規則會過濾掉<strong>獨立的 URL</strong> 文字。它的比對規則被設計得非常嚴格，以避免意外移除不是連結的文字。<br><br><strong>更多範例：</strong><br>• \"https://www.example.com\"<br>• \"http://test.co.uk\"<br>• \"www.google.com\"<br>• \"example.org\"",
-      "shorthand_numbers": "此規則會過濾掉使用<strong>常見簡寫後綴</strong>的數字，例如 k (千)、m (百萬) 或 b (十億)，不區分大小寫。<br><br><strong>更多範例：</strong><br>• \"1.2k\"<br>• \"15M\"<br>• \"2.5b\"<br>• \"100K\""
+      "numbers": "此規則過濾掉<strong>完全</strong>由數字、空格、千位分隔符(,)、小數點(.)以及部分貨幣符號($, €, £, ¥)組成的文本。<br><br><strong>更多範例:</strong><br>• \"1,234.56\"<br>• \"¥999\"<br>• \"€200\"<br>• \"$ 100\"",
+      "chinese": "此規則過濾掉<strong>完全</strong>由漢字和空格組成，且不含任何標點的文本。<br><br><strong>範例:</strong><br>• \"你好 世界\" (將被過濾)<br>• \"你好，世界\" (不會被過濾)",
+      "contains_chinese": "此規則過濾掉任何含有至少一個漢字的文本，無論其他字元是什麼。<br><br><strong>範例:</strong><br>• \"你好 World\" (將被過濾)<br>• \"第一章\" (將被過濾)",
+      "emoji_only": "此規則過濾掉<strong>完全</strong>由一個或多個表情符號及空格組成的文本。<br><br><strong>範例:</strong><br>• \"👍\"<br>• \"😊 🎉 🚀\"",
+      "symbols": "此規則過濾掉<strong>完全</strong>由各種標點和符號組成的文本。<br><br><strong>更多範例:</strong><br>• \"@#*&^%\"<br>• \"()[]{}\"<br>• \"---...---\"",
+      "term": "此規則過濾掉通常不需要翻譯的常見UI術語。<br><br><strong>更多範例:</strong><br>• \"OK\", \"Cancel\", \"Submit\"<br>• \"Login\", \"Settings\", \"Help\"",
+      "single_letter": "此規則過濾掉由<strong>單個</strong>英文字母組成的文本（不區分大小寫）。<br><br><strong>範例:</strong><br>• \"A\" (將被過濾)<br>• \"b\" (將被過濾)<br>• \"AB\" (不會被過濾)",
+      "repeating_chars": "此規則過濾掉由<strong>同一個字元</strong>連續重複2次或以上的文本。<br><br><strong>範例:</strong><br>• \"aa\"<br>• \"======\"<br>• \"bbbbb\"",
+      "file_paths": "此規則嘗試識別並過濾掉類似作業系統檔案路徑且<strong>包含檔案副檔名</strong>的文本。它不匹配網址。<br><br><strong>更多範例:</strong><br>• \"/path/to/file.js\"<br>• \"C:\\Users\\Test\\document.docx\"<br>• \"./config.json\"",
+      "hex_color_codes": "此規則過濾掉標準的CSS十六進位顏色代碼（3、4、6或8位，後者包含透明度通道）。<br><br><strong>範例:</strong><br>• \"#FFFFFF\"<br>• \"#ff0000\"<br>• \"#f0c\"<br>• \"#f0c8\" (4位)<br>• \"#ff000080\" (8位)",
+      "email_addresses": "此規則過濾掉符合標準電子郵件地址格式的文本。<br><br><strong>範例:</strong><br>• \"example@domain.com\"<br>• \"user.name@sub.domain.org\"",
+      "uuids": "此規則過濾掉通用唯一識別碼 (UUID)。<br><br><strong>範例:</strong><br>• \"123e4567-e89b-12d3-a456-426614174000\"",
+      "git_commit_hashes": "此規則過濾掉標準的Git提交雜湊值（長或短）。<br><br><strong>範例:</strong><br>• \"a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2\"<br>• \"a1b2c3d\"",
+      "website_urls": "此規則過濾掉<strong>獨立的網址</strong>。它設計得比較嚴格，以避免意外移除不是連結的文本。<br><br><strong>更多範例:</strong><br>• \"https://www.example.com\"<br>• \"http://test.co.uk\"<br>• \"www.google.com\"<br>• \"example.org\"",
+      "shorthand_numbers": "此規則過濾掉使用<strong>常見速記後綴</strong>表示千(k)、百萬(m)或十億(b)的數字（不區分大小寫）。<br><br><strong>更多範例:</strong><br>• \"1.2k\"<br>• \"15M\"<br>• \"2.5b\"<br>• \"100K\""
     },
     "display": {
       "title": "顯示設定說明",
-      "show_fab": "控制是否在網頁右下角顯示 <strong>浮動動作按鈕 (FAB)</strong>。這是靜態文字萃取、動態文字萃取的核心入口。<br><br>如果您禁用了此按鈕，可以透過油猴擴充功能選單的設定面板重新開啟。",
-      "show_scan_count": "啟用後，在結果視窗的標題列會<strong>即時更新</strong>本次掃描發現的文本條目總數。在進行長時間的<strong>動態掃描</strong>時，這個計數器可以很直觀地反映掃描進度。",
-      "show_line_numbers": "在結果視窗的文本區域左側顯示行號。當您需要與他人討論或記錄特定某行文本時，行號可以提供一個<strong>精確的定位標記</strong>。",
-      "show_statistics": "在結果視窗底部的狀態列顯示當前已提取內容的<strong>即時統計</strong>，包括<strong>總行數</strong>和<strong>總字元數</strong>。這可以幫助您快速評估提取內容的規模。",
-      "enable_word_wrap": "控制結果視窗中的長文本行如何顯示。<br><br>• <strong>啟用：</strong>長文本將自動換行以適應視窗寬度。<br>• <strong>禁用：</strong>長文本將保持在單行，並出現水平捲動條。",
-      "text_truncation_limit": "這是一個<strong>效能保護</strong>機制。當腳本提取到<strong>單行超長文本</strong>（例如，一個完整的 base64 編碼圖片）時，若不截斷，可能會導致瀏覽器<strong>卡頓或無響應</strong>。<br><br>此設定會截斷超出指定長度的單行文本，以保證介面流暢。<strong>注意：此截斷僅影響介面顯示，匯出的檔案仍將包含完整內容。</strong>"
+      "show_fab": "控制是否在網頁右下角顯示<strong>懸浮操作按鈕(FAB)</strong>。這是進行靜態和動態文本提取的主要入口。<br><br>如果您禁用了此按鈕，可以透過油猴擴充套件選單中的設定面板重新啟用它。",
+      "show_scan_count": "啟用後，結果視窗的標題列將<strong>即時顯示</strong>目前掃描中找到的總文本項目數。這對於監控長時間執行的<strong>動態掃描</strong>的進度特別有用。",
+      "show_line_numbers": "在結果視窗的文本區域左側顯示行號。當您需要討論或記錄特定文本行時，這提供了一個<strong>精確的參考點</strong>。",
+      "show_statistics": "在結果視窗底部的狀態列中顯示有關提取內容的<strong>即時統計數據</strong>，包括<strong>總行數</strong>和<strong>總字元數</strong>。這有助於您快速評估內容的體量。",
+      "enable_word_wrap": "控制結果視窗中長文本行的顯示方式。<br><br>• <strong>啟用:</strong> 長行將自動換行以適應視窗寬度。<br>• <strong>禁用:</strong> 長行將保持在單行，並出現水平捲軸。",
+      "text_truncation_limit": "這是一個<strong>效能優化</strong>功能。如果腳本提取到<strong>極長的單行文本</strong>（例如，base64編碼的圖片），可能會導致瀏覽器<strong>卡頓或無回應</strong>。<br><br>此設定會截斷任何超過指定長度的單行文本，以確保UI保持流暢。<strong>注意：這僅影響顯示；匯出的檔案仍將包含完整的、未截斷的內容。</strong>"
     },
     "advanced": {
         "title": "進階設定說明",
-        "enable_debug_logging": "啟用後，腳本會將詳細的內部運行狀態、執行步驟、錯誤資訊等輸出到瀏覽器的<strong>開發者工具控制台</strong>（通常按 F12 開啟）。此功能主要面向開發者或需要提交詳細錯誤報告的使用者。"
+        "enable_debug_logging": "啟用後，腳本會將詳細的內部狀態、執行步驟和錯誤訊息輸出到瀏覽器的<strong>開發者工具控制台</strong>（通常用F12開啟）。這主要供開發者或需要提交詳細錯誤報告的使用者使用。"
     }
   },
   "log": {
-    "prefix": "[文本提取腳本-Debug]",
+    "prefix": "[文本提取腳本-偵錯]",
     "language": {
       "switched": "語言已切換至：{{lang}}",
-      "notFound": "語言 '{{lang}}' 不存在，退回至 'en'。"
+      "notFound": "未找到語言 '{{lang}}'，已回退至 'en'。"
     },
     "settings": {
       "changed": "設定 '{{key}}' 已從 '{{oldValue}}' 變更為 '{{newValue}}'",
       "filterRuleChanged": {
-        "enabled": "過濾規則 '{{key}}' 已被啟用",
-        "disabled": "過濾規則 '{{key}}' 已被禁用"
+        "enabled": "過濾規則 '{{key}}' 已啟用",
+        "disabled": "過濾規則 '{{key}}' 已禁用"
       },
       "panel": {
         "opening": "正在開啟設定面板...",
@@ -178,112 +180,114 @@
         "saving": "正在儲存設定..."
       },
       "parseError": "解析已儲存的設定時出錯：",
-      "invalidObject": "試圖儲存一個無效的物件作為設定："
+      "invalidObject": "試圖為設定儲存一個無效物件："
     },
     "textProcessor": {
-      "filtered": "文本已過濾：\"{{text}}\" (原因：{{reason}})"
+      "filtered": "文本已過濾: \"{{text}}\" (原因: {{reason}})"
     },
     "quickScan": {
-      "switchToFallback": "[靜態掃描] 切換到主線程備選方案。",
-      "fallbackFailed": "[靜態掃描] 主線程備選方案失敗：{{error}}",
+      "switchToFallback": "[快速掃描] 正在切換到主線程備選方案。",
+      "fallbackFailed": "[快速掃描] 主線程備選方案執行失敗: {{error}}",
       "fallback": {
-        "starting": "[靜態掃描 - 備選方案] 開始在主線程中處理...",
-        "completed": "[靜態掃描 - 備選方案] 處理完成，共 {{count}} 條有效文本。"
+        "starting": "[快速掃描 - 備選] 正在主線程中開始處理...",
+        "completed": "[快速掃描 - 備選] 處理完成，找到 {{count}} 條不重複文本。"
       },
       "worker": {
-        "logPrefix": "[靜態掃描 Worker]",
-        "starting": "[靜態掃描] 開始執行，嘗試使用 Web Worker...",
-        "completed": "[靜態掃描] Worker 處理成功，收到 {{count}} 條文本。",
-        "scanComplete": "[靜態掃描 Worker] 處理完成，共 {{count}} 條有效文本。正在發回主線程...",
-        "initFailed": "[靜態掃描] Worker 初始化失敗。這很可能是由於網站的內容安全策略（CSP）阻止了腳本。",
-        "originalError": "[靜態掃描] 原始錯誤：{{error}}",
-        "sendingData": "[靜態掃描] Web Worker 已建立，正在發送 {{count}} 條文本進行處理...",
-        "initSyncError": "[靜態掃描] Worker 初始化時發生同步錯誤：{{error}}"
+        "logPrefix": "[快速掃描 Worker]",
+        "starting": "[快速掃描] 開始執行，嘗試使用 Web Worker...",
+        "completed": "[快速掃描] Worker 處理成功，收到 {{count}} 條文本。",
+        "scanComplete": "[快速掃描 Worker] 處理完成，找到 {{count}} 條不重複文本。正在發回主線程...",
+        "initFailed": "[快速掃描] Worker 初始化失敗。這很可能是由於網站的內容安全策略 (CSP) 導致的。",
+        "originalError": "[快速掃描] 原始錯誤: {{error}}",
+        "sendingData": "[快速掃描] Web Worker 已建立，正在發送 {{count}} 條文本進行處理...",
+        "initSyncError": "[快速掃描] Worker 初始化期間發生同步錯誤: {{error}}"
       }
     },
     "sessionScan": {
-      "switchToFallback": "[會話掃描] 切換到主線程備選方案。",
+      "switchToFallback": "[會話掃描] 正在切換到主線程備選方案。",
       "domObserver": {
         "stopped": "[會話掃描] 已停止監聽 DOM 變化。"
       },
       "fallback": {
-        "initialized": "[會話掃描 - 備選方案] 初始化完成。",
-        "cleared": "[會話掃描 - 備選方案] 資料已清空。"
+        "initialized": "[會話掃描 - 備選] 已初始化。",
+        "cleared": "[會話掃描 - 備選] 資料已清除。"
       },
       "worker": {
         "logPrefix": "[會話掃描 Worker]",
-        "starting": "會話掃描：嘗試啟動 Web Worker...",
-        "initFailed": "[會話掃描] Worker 初始化失敗。這很可能是由於網站的內容安全策略（CSP）阻止了腳本。",
-        "originalError": "[會話掃描] 原始錯誤：{{error}}",
+        "starting": "會話掃描：正在嘗試啟動 Web Worker...",
+        "initFailed": "[會話掃描] Worker 初始化失敗。這很可能是由於網站的內容安全策略 (CSP) 導致的。",
+        "originalError": "[會話掃描] 原始錯誤: {{error}}",
         "initialized": "[會話掃描] Worker 初始化成功，已發送 {{count}} 條初始文本以開始會話。",
-        "initSyncError": "[會話掃描] Worker 初始化時發生同步錯誤：{{error}}",
-        "clearCommandSent": "[會話掃描] 已向 Worker 發送清空指令。"
+        "initSyncError": "[會話掃描] Worker 初始化期間發生同步錯誤: {{error}}",
+        "clearCommandSent": "[會話掃描] 清除命令已發送至 worker。"
       }
     },
     "ui": {
       "copyButton": {
-        "copied": "複製按鈕被點擊，複製了 {{count}} 個字元。",
-        "nothingToCopy": "複製按鈕被點擊，但沒有內容可複製或按鈕被禁用。"
+        "copied": "複製按鈕已點擊，複製了 {{count}} 個字元。",
+        "nothingToCopy": "複製按鈕已點擊，但沒有內容可複製或按鈕被禁用。"
       },
       "confirmationModal": {
         "sessionScan": {
-          "confirmed": "使用者確認清空會話掃描文本，正在呼叫回調..."
+          "confirmed": "使用者已確認清除會話掃描文本，正在調用回呼..."
         },
         "quickScan": {
-          "confirmed": "使用者確認清空快速掃描文本。"
+          "confirmed": "使用者已確認清除快速掃描文本。"
         },
-        "cancelled": "使用者取消了清空操作。"
+        "cancelled": "使用者已取消清除操作。"
       },
       "modal": {
-        "opening": "正在打開主視窗...",
-        "closing": "正在關閉主視窗...",
-        "scanFailed": "靜態掃描失敗：{{error}}",
-        "clearContent": "「清空內容」按鈕被點擊。"
+      "opening": "正在開啟主模態框...",
+      "closing": "正在關閉主模態框...",
+        "scanFailed": "靜態掃描失敗: {{error}}",
+      "clearContent": "清空內容按鈕已點擊。"
       }
     },
     "exporter": {
-      "buttonClicked": "匯出按鈕被點擊, 匯出格式: {{format}}。",
-      "csvError": "在解析文本並生成 CSV 時發生錯誤：{{error}}",
-      "fileExported": "檔案已匯出：{{filename}}",
-      "noContent": "沒有內容可匯出。",
-      "unknownFormat": "未知的匯出格式：{{format}}"
+    "buttonClicked": "匯出按鈕已點擊，格式: {{format}}。",
+      "csvError": "解析文本並產生CSV時出錯: {{error}}",
+      "fileExported": "檔案已匯出: {{filename}}",
+      "noContent": "無內容可匯出。",
+      "unknownFormat": "未知的匯出格式: {{format}}"
     },
     "main": {
-      "requestingSessionScanData": "從 session-scan 模式請求完整資料...",
-      "exportingQuickScanData": "從 quick-scan 模式的記憶體中匯出完整資料...",
+      "requestingSessionScanData": "正在請求會話掃描模式的完整資料...",
+      "exportingQuickScanData": "正在匯出快速掃描模式記憶體中的完整資料...",
       "inIframe": "腳本在 iframe 中，已跳過初始化。",
-      "initializing": "腳本開始初始化...",
+      "initializing": "腳本初始化開始...",
       "initialSettingsLoaded": "初始設定已載入:"
     },
     "dom": {
-      "ttpCreationError": "建立 Trusted Type 策略失敗：",
-      "svgParseError": "無效或解析失敗的 SVG 字串："
+      "ttpCreationError": "建立 Trusted Type 策略失敗:",
+      "svgParseError": "SVG 字串無效或解析失敗:"
     },
     "elementScan": {
-      "starting": "選取元素掃描已啟動。",
+      "starting": "選取元素掃描已開始。",
       "stopping": "選取元素掃描已停止。",
-      "listenersAdded": "已新增選取元素掃描的全域事件監聽器。",
-      "listenersRemoved": "已移除選取元素掃描的全域事件監聽器。",
+      "listenersAdded": "已為選取元素掃描新增全域事件監聽器。",
+      "listenersRemoved": "已為選取元素掃描移除全域事件監聽器。",
       "stateReset": "選取元素掃描狀態已重設。",
       "reselecting": "正在返回元素重新選擇模式。",
-      "hovering": "當前懸停於 <{{tagName}}>。",
-      "escapePressed": "使用者按下 Escape 鍵，正在停止選取元素掃描。",
-      "clickedEnteringAdjust": "已點擊元素 <{{tagName}}>，進入層級調整模式。",
+      "hovering": "正在懸停於 <{{tagName}}>。",
+      "escapePressed": "按下 Escape 鍵，正在停止選取元素掃描。",
+      "clickedEnteringAdjust": "元素 <{{tagName}}> 已被點擊，正在進入調整模式。",
       "pathBuilt": "元素層級路徑已構建，深度為：{{depth}}。",
       "adjustingLevel": "正在調整選擇層級至 {{level}} ({{tagName}})。",
       "confirmExtracting": "選擇已確認，正在從 <{{tagName}}> 提取文本。",
+      "staged": "元素已暫存。總數：{{count}}。",
+      "confirmingStaged": "確認選擇。正在處理 {{count}} 個已暫存的元素。",
       "extractedCount": "已從元素中提取 {{count}} 條原始文本。",
       "confirmFailedNoTarget": "確認失敗：未選擇任何目標元素。",
       "rightClickExit": "偵測到右鍵點擊，正在停止選取元素掃描。",
       "processingError": "文本處理過程中發生錯誤: {{error}}",
       "worker": {
-          "logPrefix": "[選取元素掃描 Worker]",
-          "starting": "選取元素掃描 Worker 正在啟動...",
-          "sendingData": "正在發送 {{count}} 條文本至選取元素掃描 Worker。",
-          "completed": "選取元素掃描 Worker 處理完成，發現 {{count}} 條有效文本。",
-          "initFailed": "選取元素掃描 Worker 初始化失敗。可能是網站的 CSP 策略阻止了 data: URL。",
-          "initSyncError": "選取元素掃描 Worker 初始化時發生同步錯誤: {{error}}",
-          "originalError": "原始 Worker 錯誤: {{error}}"
+        "logPrefix": "[ES Worker]",
+        "starting": "選取元素掃描 Worker 正在啟動...",
+        "sendingData": "正在向選取元素掃描 Worker 發送 {{count}} 條文本片段。",
+        "completed": "選取元素掃描 Worker 已完成，找到 {{count}} 條不重複文本。",
+        "initFailed": "選取元素掃描 Worker 初始化失敗。瀏覽器的CSP可能阻止了 data: URL。",
+        "initSyncError": "選取元素掃描 Worker 初始化期間發生同步錯誤: {{error}}",
+        "originalError": "原始 Worker 錯誤: {{error}}"
       },
       "switchToFallback": "正在為選取元素掃描切換到主線程備選方案。",
       "fallbackFailed": "選取元素掃描備選方案執行失敗: {{error}}"
@@ -295,7 +299,8 @@
       "toolbarPositioned": "元素掃描UI：工具列已定位。",
       "sliderChanged": "元素掃描UI：滑桿層級變為 {{level}}",
       "reselectClicked": "元素掃描UI：「重新選擇」按鈕被點擊。",
-      "cancelClicked": "元素掃描UI：「取消」按鈕被點擊。",
+      "stageClicked": "元素掃描UI：「暫存」按鈕被點擊。",
+      "cancelClicked": "元素掃觀UI：「取消」按鈕被點擊。",
       "confirmClicked": "元素掃描UI：「確認」按鈕被點擊。",
       "dragStarted": "元素掃描UI：拖動開始。",
       "dragEnded": "元素掃描UI：拖動結束。",
@@ -303,13 +308,13 @@
       "cleaningToolbar": "元素掃描UI：正在清理工具列。"
     },
     "eventBus": {
-      "callbackError": "在 '{{eventName}}' 事件的回呼中發生錯誤："
+      "callbackError": "事件 '{{eventName}}' 的回呼函數出錯:"
     },
     "trustedTypes": {
-      "workerPolicyError": "建立 Trusted Types worker 策略失敗：",
-      "htmlPolicyError": "建立 Trusted Types HTML 策略失敗：",
-      "defaultWorkerPolicyWarning": "Trusted Types 預設策略處理 worker URL 失敗，退回至原始 URL。",
-      "defaultHtmlPolicyWarning": "Trusted Types 預設策略處理 HTML 失敗，退回至原始字串。"
+      "workerPolicyError": "建立 Trusted Types worker 策略失敗:",
+      "htmlPolicyError": "建立 Trusted Types HTML 策略失敗:",
+      "defaultWorkerPolicyWarning": "用於 worker URL 的 Trusted Types 預設策略失敗，回退到原始 URL。",
+      "defaultHtmlPolicyWarning": "用於 HTML 的 Trusted Types 預設策略失敗，回退到原始字串。"
     }
   }
 }

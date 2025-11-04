@@ -10,7 +10,8 @@
     "confirm": "Confirm",
     "cancel": "Cancel",
     "export": "Export",
-    "reselect": "Reselect"
+    "reselect": "Reselect",
+    "stage": "Stage"
   },
   "export": {
     "exportAsTxt": "Export as TXT",
@@ -83,6 +84,7 @@
   "scan": {
     "quick": "Quick Scan",
     "session": "Session Scan",
+    "stagedCount": "Staged:",
     "elementFinished": "Element scan finished, found {{count}} items.",
     "startSession": "Start Dynamic Scan Session",
     "stopSession": "Stop Dynamic Scan Session",
@@ -272,6 +274,8 @@
       "pathBuilt": "Element path built, depth: {{depth}}.",
       "adjustingLevel": "Adjusting selection level to {{level}} ({{tagName}}).",
       "confirmExtracting": "Selection confirmed, extracting text from <{{tagName}}>.",
+      "staged": "Element staged. Total staged: {{count}}.",
+      "confirmingStaged": "Confirming selection. Processing {{count}} staged elements.",
       "extractedCount": "Extracted {{count}} raw text fragments from element.",
       "confirmFailedNoTarget": "Confirmation failed: no target element selected.",
       "rightClickExit": "Right-click detected, stopping element scan.",
@@ -295,6 +299,7 @@
       "toolbarPositioned": "Element Scan UI: Toolbar positioned.",
       "sliderChanged": "Element Scan UI: Slider changed to level {{level}}",
       "reselectClicked": "Element Scan UI: 'Reselect' button clicked.",
+      "stageClicked": "Element Scan UI: 'Stage' button clicked.",
       "cancelClicked": "Element Scan UI: 'Cancel' button clicked.",
       "confirmClicked": "Element Scan UI: 'Confirm' button clicked.",
       "dragStarted": "Element Scan UI: Drag started.",

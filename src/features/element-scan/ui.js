@@ -1,7 +1,7 @@
 // src/features/element-scan/ui.js
 
 import { uiContainer } from '../../shared/ui/uiContainer.js';
-import { updateSelectionLevel, reselectElement, stopElementScan, confirmSelectionAndExtract } from './logic.js';
+import { updateSelectionLevel, reselectElement, stopElementScan, confirmSelectionAndExtract, stageCurrentElement } from './logic.js';
 import { t } from '../../shared/i18n/index.js';
 import { createTrustedHTML } from '../../shared/utils/trustedTypes.js';
 import { log } from '../../shared/utils/logger.js';
@@ -112,6 +112,7 @@ export function createAdjustmentToolbar(elementPath) {
         <input type="range" id="element-scan-level-slider" min="0" max="${elementPath.length - 1}" value="0" />
         <div id="element-scan-toolbar-actions">
             <button id="element-scan-toolbar-reselect">${t('common.reselect')}</button>
+            <button id="element-scan-toolbar-stage">${t('common.stage')}</button>
             <button id="element-scan-toolbar-cancel">${t('common.cancel')}</button>
             <button id="element-scan-toolbar-confirm">${t('common.confirm')}</button>
         </div>
@@ -177,6 +178,7 @@ export function createAdjustmentToolbar(elementPath) {
 function addToolbarEventListeners() {
     const slider = uiContainer.querySelector('#element-scan-level-slider');
     const reselectBtn = uiContainer.querySelector('#element-scan-toolbar-reselect');
+    const stageBtn = uiContainer.querySelector('#element-scan-toolbar-stage');
     const cancelBtn = uiContainer.querySelector('#element-scan-toolbar-cancel');
     const confirmBtn = uiContainer.querySelector('#element-scan-toolbar-confirm');
 
@@ -188,6 +190,11 @@ function addToolbarEventListeners() {
     reselectBtn.addEventListener('click', () => {
         log(t('log.elementScanUI.reselectClicked'));
         reselectElement();
+    });
+
+    stageBtn.addEventListener('click', () => {
+        log(t('log.elementScanUI.stageClicked'));
+        stageCurrentElement();
     });
 
     cancelBtn.addEventListener('click', () => {

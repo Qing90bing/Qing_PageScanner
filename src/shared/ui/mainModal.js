@@ -45,9 +45,9 @@ const handleKeyDown = (event) => {
  * @public
  * @description 创建并初始化主模态框。只在第一次调用时创建 DOM。
  * @param {object} callbacks - 包含回调函数的对象。
- * @param {Function} callbacks.clearSessionCallback - 用于清空会话扫描数据的回调。
+ * @param {object} callbacks - 包含回调函数的对象。
  */
-export function createMainModal({ clearSessionCallback }) {
+export function createMainModal() {
     if (state.modalOverlay) return; // 防止重复创建
 
     // 1. 创建基础布局
@@ -56,7 +56,7 @@ export function createMainModal({ clearSessionCallback }) {
     // 2. 填充各个部分，并传入回调函数
     populateModalHeader(modalHeader, closeModal);
     populateModalContent(modalContent);
-    populateModalFooter(modalFooter, updateModalContent, clearSessionCallback);
+    populateModalFooter(modalFooter, updateModalContent);
 
     // 3. 初始化行号功能
     initializeLineNumbers();

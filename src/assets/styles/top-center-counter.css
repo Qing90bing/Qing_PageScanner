@@ -1,0 +1,36 @@
+/* src/assets/styles/top-center-counter.css */
+
+.tc-top-center-counter {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translate(-50%, -150%); /* Start off-screen */
+    background-color: var(--main-bg-a, rgba(255, 255, 255, 0.8)); /* Added fallback */
+    color: var(--main-text);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: var(--shadow-2, 0 4px 6px rgba(0,0,0,0.1)); /* Added fallback */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 9999999;
+    opacity: 0;
+    transition: transform 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1)), opacity 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1)); /* Added fallback */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid var(--main-border); /* Corrected variable */
+    pointer-events: none; /* Fix mouse passthrough */
+}
+
+.tc-top-center-counter.is-visible {
+    transform: translate(-50%, 0);
+    opacity: 1;
+}
+
+.tc-top-center-counter span {
+    font-weight: bold;
+    font-size: 16px;
+    color: var(--accent-color, #1e90ff); /* Added fallback */
+}

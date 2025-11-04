@@ -12,7 +12,7 @@ import { log } from '../../shared/utils/logger.js';
 import { createTrustedWorkerUrl } from '../../shared/utils/trustedTypes.js';
 import { showNotification } from '../../shared/ui/components/notification.js';
 import { t } from '../../shared/i18n/index.js';
-import { fire } from '../../shared/utils/eventBus.js';
+import { fire, on } from '../../shared/utils/eventBus.js';
 import * as fallback from './fallback.js';
 import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
 
@@ -20,12 +20,17 @@ import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
 let isRecording = false;
 let observer = null;
 let worker = null;
-let useFallback = false; // 新增：用于标记是否使用备选方案
-let onSummaryCallback = null; // 存储用于总结的回调
-let onUpdateCallback = null; // 新增：存储UI更新回调
+let useFallback = false;
+let onSummaryCallback = null;
+let onUpdateCallback = null;
+let currentCount = 0; // 新增：在模块级别跟踪计数值
+
+// --- 事件监听 ---
+on('clearSessionScan', () => {
+    clearSessionData();
+});
 
 // --- MutationObserver 回调 ---
-// 根据模式（Worker 或备选方案）处理 DOM 变动的回调
 const handleMutations = (mutations) => {
     const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(', ');
     const textsBatch = [];
@@ -60,23 +65,36 @@ const handleMutations = (mutations) => {
     }
 };
 
+/**
+ * @private
+ * @description 清空会话期间收集的所有文本。
+ */
+function clearSessionData() {
+    currentCount = 0; // 重置计数值
+    if (useFallback) {
+        fallback.clearInFallback();
+        if (onUpdateCallback) onUpdateCallback(0);
+        updateScanCount(0, 'session');
+        fire('sessionCleared'); // 触发事件
+    } else if (worker) {
+        worker.postMessage({ type: 'clear' });
+        log(t('log.sessionScan.worker.clearCommandSent'));
+    }
+}
+
 // --- 公开函数 ---
 
-/**
- * 启动会话扫描。
- * @param {Function} onUpdate - 当文本计数更新时调用的UI回调函数。
- */
 export const start = (onUpdate) => {
     if (isRecording) return;
 
     if (worker) worker.terminate();
+    currentCount = 0; // 开始新会话时重置计数值
     onUpdateCallback = onUpdate;
     useFallback = false;
     isRecording = true;
 
     const { filterRules } = loadSettings();
 
-    // 备选模式激活逻辑
     const activateFallbackMode = (initialTexts) => {
         log(t('log.sessionScan.switchToFallback'), 'warn');
         worker = null;
@@ -90,7 +108,6 @@ export const start = (onUpdate) => {
             updateScanCount(count, 'session');
         }
 
-        // 在备选模式初始化后启动观察者
         observer = new MutationObserver(handleMutations);
         observer.observe(document.body, { childList: true, subtree: true });
     };
@@ -107,10 +124,12 @@ export const start = (onUpdate) => {
         worker.onmessage = (event) => {
             const { type, payload } = event.data;
             if (type === 'countUpdated') {
+                currentCount = payload; // 更新模块内的计数值
                 if (onUpdateCallback) onUpdateCallback(payload);
                 updateScanCount(payload, 'session');
             } else if (type === 'summaryReady' && onSummaryCallback) {
-                onSummaryCallback(payload);
+                // Worker只返回文本(payload)，我们使用模块内跟踪的计数值
+                onSummaryCallback(payload, currentCount);
                 onSummaryCallback = null;
             }
         };
@@ -132,27 +151,20 @@ export const start = (onUpdate) => {
                 },
             },
         });
-        // 初始扫描不带 logPrefix
         worker.postMessage({ type: 'data', payload: { texts: initialTexts } });
         log(t('log.sessionScan.worker.initialized', { count: initialTexts.length }));
 
     } catch (e) {
-        // 同步错误（如浏览器不支持 Worker）
         log(t('log.sessionScan.worker.initSyncError', { error: e.message }), 'error');
         activateFallbackMode(initialTexts);
     }
 
-    // 只有在 Worker 模式成功初始化时，才在这里启动观察者
     if (!useFallback) {
         observer = new MutationObserver(handleMutations);
         observer.observe(document.body, { childList: true, subtree: true });
     }
 };
 
-/**
- * 停止会话扫描的监听，但保留 Worker 和数据以供总结。
- * @param {Function} onStopped - 停止后执行的回调，用于获取最终计数值。
- */
 export const stop = (onStopped) => {
     if (!isRecording) {
         if (onStopped) onStopped(0);
@@ -165,7 +177,7 @@ export const stop = (onStopped) => {
         observer = null;
     }
     isRecording = false;
-    onUpdateCallback = null; // 清除回调
+    onUpdateCallback = null;
 
     if (onStopped) {
         if (useFallback) {
@@ -185,38 +197,18 @@ export const stop = (onStopped) => {
     }
 };
 
-/**
- * 请求文本总结。
- * @param {Function} onReady - 当总结文本准备好时调用的回调函数。
- */
 export const requestSummary = (onReady) => {
     if (!onReady) return;
 
     if (useFallback) {
-        onReady(fallback.getSummaryInFallback());
+        const summary = fallback.getSummaryInFallback();
+        onReady(summary.formattedText, summary.count);
     } else if (worker) {
         onSummaryCallback = onReady;
         worker.postMessage({ type: 'getSummary' });
     } else {
-        onReady("[]");
+        onReady("[]", 0);
     }
 };
 
 export const isSessionRecording = () => isRecording;
-
-/**
- * @description 清空会话期间收集的所有文本。
- */
-export function clearSessionTexts() {
-    if (useFallback) {
-        fallback.clearInFallback();
-        if (onUpdateCallback) onUpdateCallback(0);
-        updateScanCount(0, 'session');
-        fire('sessionCleared'); // 触发事件
-    } else if (worker) {
-        worker.postMessage({ type: 'clear' });
-        // Worker 在清空后会发送一个 countUpdated 消息，其中 payload 为 0
-        // 这会触发 onUpdateCallback 和 updateScanCount，所以我们不需要在这里重复
-        log(t('log.sessionScan.worker.clearCommandSent'));
-    }
-}
