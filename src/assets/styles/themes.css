@@ -74,6 +74,7 @@
   --tc-scrollbar-thumb-color: var(--color-scrollbar-thumb);
   --tc-scrollbar-thumb-hover-color: var(--color-scrollbar-thumb-hover);
   --tc-scrollbar-border-color: var(--color-scrollbar-border);
+  --main-bg-a: rgba(255, 255, 255, 0.6);
 }
 
 /* 根据 data-theme 属性应用深色主题 */
@@ -101,4 +102,5 @@
   --tc-scrollbar-thumb-color: var(--dark-color-scrollbar-thumb);
   --tc-scrollbar-thumb-hover-color: var(--dark-color-scrollbar-thumb-hover);
   --tc-scrollbar-border-color: var(--dark-color-scrollbar-border);
+  --main-bg-a: rgba(45, 45, 45, 0.6);
 }
