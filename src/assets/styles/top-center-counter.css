@@ -4,6 +4,7 @@
     position: fixed;
     top: 20px;
     left: 50%;
+    font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
     transform: translate(-50%, -150%); /* Start off-screen */
     background-color: var(--main-bg-a, rgba(255, 255, 255, 0.8)); /* Added fallback */
     color: var(--main-text);

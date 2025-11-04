@@ -3303,11 +3303,10 @@ ${result.join(",\n")}
       useFallback = true;
       showNotification(t("notifications.cspWorkerWarning"), { type: "info", duration: 5e3 });
       initFallback(filterRules2);
-      if (processTextsInFallback(initialTexts2)) {
-        const count = getCountInFallback();
-        if (onUpdateCallback) onUpdateCallback(count);
-        updateScanCount(count, "session");
-      }
+      processTextsInFallback(initialTexts2);
+      const count = getCountInFallback();
+      if (onUpdateCallback) onUpdateCallback(count);
+      updateScanCount(count, "session");
       observer = new MutationObserver(handleMutations);
       observer.observe(document.body, { childList: true, subtree: true });
     };
@@ -4646,8 +4645,9 @@ ${result.join(",\n")}
   var requestSummary = (onReady) => {
     if (!onReady) return;
     if (useFallback) {
-      const summary = getSummaryInFallback();
-      onReady(summary.formattedText, summary.count);
+      const summaryText = getSummaryInFallback();
+      const summaryCount = getCountInFallback();
+      onReady(summaryText, summaryCount);
     } else if (worker) {
       onSummaryCallback = onReady;
       worker.postMessage({ type: "getSummary" });
@@ -9168,6 +9168,7 @@ ${result.join(",\n")}
     position:fixed;
     top:20px;
     left:50%;
+    font-family:'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
     transform:translate(-50%, -150%);
     background-color:var(--main-bg-a, rgba(255, 255, 255, 0.8));
     color:var(--main-text);

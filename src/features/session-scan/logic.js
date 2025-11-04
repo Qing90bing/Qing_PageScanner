@@ -102,11 +102,10 @@ export const start = (onUpdate) => {
         showNotification(t('notifications.cspWorkerWarning'), { type: 'info', duration: 5000 });
 
         fallback.initFallback(filterRules);
-        if (fallback.processTextsInFallback(initialTexts)) {
-            const count = fallback.getCountInFallback();
-            if (onUpdateCallback) onUpdateCallback(count);
-            updateScanCount(count, 'session');
-        }
+        fallback.processTextsInFallback(initialTexts); // 处理文本
+        const count = fallback.getCountInFallback();   // 立即获取当前计数
+        if (onUpdateCallback) onUpdateCallback(count); // 强制更新UI
+        updateScanCount(count, 'session');             // 同时更新模态框内的计数
 
         observer = new MutationObserver(handleMutations);
         observer.observe(document.body, { childList: true, subtree: true });
@@ -201,8 +200,9 @@ export const requestSummary = (onReady) => {
     if (!onReady) return;
 
     if (useFallback) {
-        const summary = fallback.getSummaryInFallback();
-        onReady(summary.formattedText, summary.count);
+        const summaryText = fallback.getSummaryInFallback();
+        const summaryCount = fallback.getCountInFallback();
+        onReady(summaryText, summaryCount);
     } else if (worker) {
         onSummaryCallback = onReady;
         worker.postMessage({ type: 'getSummary' });
