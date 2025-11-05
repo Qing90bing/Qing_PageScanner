@@ -285,6 +285,8 @@
       "confirmFailedNoTarget": "Confirmation failed: no target element selected.",
       "rightClickExit": "Right-click detected, stopping element scan.",
       "processingError": "An error occurred during text processing: {{error}}",
+      "scrollListenersAdded": "Added {{count}} scroll listeners to parent elements.",
+      "scrollListenersRemoved": "Removed all scroll listeners.",
       "worker": {
         "logPrefix": "[ES Worker]",
         "starting": "Element Scan Worker is starting...",

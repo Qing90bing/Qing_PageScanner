@@ -285,6 +285,8 @@
       "confirmFailedNoTarget": "確認失敗：未選擇任何目標元素。",
       "rightClickExit": "偵測到右鍵點擊，正在停止選取元素掃描。",
       "processingError": "文本處理過程中發生錯誤: {{error}}",
+      "scrollListenersAdded": "已為 {{count}} 個父元素新增滾動監聽器。",
+      "scrollListenersRemoved": "已移除所有滾動監聽器。",
       "worker": {
         "logPrefix": "[ES Worker]",
         "starting": "選取元素掃描 Worker 正在啟動...",

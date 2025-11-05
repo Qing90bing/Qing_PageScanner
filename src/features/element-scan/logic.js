@@ -25,11 +25,60 @@ let elementPath = [];
 let stagedTexts = new Set();
 let shouldResumeAfterModalClose = false;
 
+// 用于跟踪滚动监听
+let scrollableParents = [];
+let scrollUpdateQueued = false;
+
+
 // --- 事件监听 ---
 on('clearElementScan', () => {
     stagedTexts.clear();
     updateStagedCount();
 });
+
+/**
+ * 滚动事件处理函数。
+ * 使用 requestAnimationFrame 优化性能，避免在高频滚动时重复渲染。
+ */
+function handleScroll() {
+    if (!scrollUpdateQueued) {
+        scrollUpdateQueued = true;
+        requestAnimationFrame(() => {
+            if (currentTarget && isAdjusting) {
+                updateHighlight(currentTarget);
+            }
+            scrollUpdateQueued = false;
+        });
+    }
+}
+
+/**
+ * 为当前选中元素的所有可滚动父级元素和 window 添加滚动监听。
+ */
+function addScrollListeners() {
+    let parent = currentTarget.parentElement;
+    while (parent) {
+        if (parent.scrollHeight > parent.clientHeight || parent.scrollWidth > parent.clientWidth) {
+            scrollableParents.push(parent);
+            parent.addEventListener('scroll', handleScroll, { passive: true });
+        }
+        parent = parent.parentElement;
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    log(simpleTemplate(t('log.elementScan.scrollListenersAdded'), { count: scrollableParents.length }));
+}
+
+/**
+ * 移除所有添加的滚动监听器。
+ */
+function removeScrollListeners() {
+    scrollableParents.forEach(parent => {
+        parent.removeEventListener('scroll', handleScroll);
+    });
+    window.removeEventListener('scroll', handleScroll);
+    scrollableParents = []; // 清空数组
+    log(t('log.elementScan.scrollListenersRemoved'));
+}
 
 
 export function isElementScanActive() {
@@ -111,6 +160,7 @@ export function stopElementScan(fabElement) {
     cleanupUI();
     cleanupToolbar();
     hideTopCenterCounter();
+    removeScrollListeners();
 
     elementPath = [];
     currentTarget = null;
@@ -124,6 +174,7 @@ export function reselectElement() {
     isAdjusting = false;
     cleanupUI();
     cleanupToolbar();
+    removeScrollListeners();
 
     document.addEventListener('mouseover', handleMouseOver);
     document.addEventListener('mouseout', handleMouseOut);
@@ -201,6 +252,7 @@ function handleElementClick(event) {
     log(simpleTemplate(t('log.elementScan.pathBuilt'), { depth: elementPath.length }));
 
     createAdjustmentToolbar(elementPath);
+    addScrollListeners();
 }
 
 export function updateSelectionLevel(level) {
@@ -299,6 +351,7 @@ export async function confirmSelectionAndExtract() {
     document.removeEventListener('mouseout', handleMouseOut);
     cleanupUI();
     cleanupToolbar();
+    removeScrollListeners();
 
     setShouldResumeAfterModalClose(true);
 

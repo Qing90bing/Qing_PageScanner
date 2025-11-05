@@ -35,6 +35,11 @@ function createHighlightElements() {
         // 内部的边框和标签元素则只负责外观，并且它们的相对位置是固定的。
         scanContainer = document.createElement('div');
         scanContainer.id = 'element-scan-container';
+        // 设置绝对定位和初始位置，以便 transform 生效
+        scanContainer.style.position = 'absolute';
+        scanContainer.style.top = '0';
+        scanContainer.style.left = '0';
+        scanContainer.style.willChange = 'transform'; // 性能优化提示
 
         highlightBorder = document.createElement('div');
         highlightBorder.id = 'element-scan-highlight-border';
@@ -81,10 +86,14 @@ export function updateHighlight(targetElement) {
     log(simpleTemplate(t('log.elementScanUI.updatingHighlight'), { tagName }), coordinates);
 
     // 所有的定位和尺寸变化都只应用于容器，内部元素相对静态，以实现同步动画
-    scanContainer.style.width = `${rect.width + padding * 2}px`;
-    scanContainer.style.height = `${rect.height + padding * 2}px`;
-    scanContainer.style.top = `${rect.top + scrollY - padding}px`;
-    scanContainer.style.left = `${rect.left + scrollX - padding}px`;
+    const newWidth = rect.width + padding * 2;
+    const newHeight = rect.height + padding * 2;
+    const newX = rect.left + scrollX - padding;
+    const newY = rect.top + scrollY - padding;
+
+    scanContainer.style.width = `${newWidth}px`;
+    scanContainer.style.height = `${newHeight}px`;
+    scanContainer.style.transform = `translate(${newX}px, ${newY}px)`;
     
     tagNameTooltip.textContent = tagName;
 

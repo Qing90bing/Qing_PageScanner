@@ -431,6 +431,8 @@ var TextExtractor = (() => {
         confirmFailedNoTarget: "Confirmation failed: no target element selected.",
         rightClickExit: "Right-click detected, stopping element scan.",
         processingError: "An error occurred during text processing: {{error}}",
+        scrollListenersAdded: "Added {{count}} scroll listeners to parent elements.",
+        scrollListenersRemoved: "Removed all scroll listeners.",
         worker: {
           logPrefix: "[ES Worker]",
           starting: "Element Scan Worker is starting...",
@@ -756,6 +758,8 @@ var TextExtractor = (() => {
         confirmFailedNoTarget: "\u786E\u8BA4\u5931\u8D25\uFF1A\u672A\u9009\u62E9\u4EFB\u4F55\u76EE\u6807\u5143\u7D20\u3002",
         rightClickExit: "\u68C0\u6D4B\u5230\u53F3\u952E\u70B9\u51FB\uFF0C\u6B63\u5728\u505C\u6B62\u9009\u53D6\u5143\u7D20\u626B\u63CF\u3002",
         processingError: "\u6587\u672C\u5904\u7406\u8FC7\u7A0B\u4E2D\u53D1\u751F\u9519\u8BEF: {{error}}",
+        scrollListenersAdded: "\u5DF2\u4E3A {{count}} \u4E2A\u7236\u5143\u7D20\u6DFB\u52A0\u6EDA\u52A8\u76D1\u542C\u5668\u3002",
+        scrollListenersRemoved: "\u5DF2\u79FB\u9664\u6240\u6709\u6EDA\u52A8\u76D1\u542C\u5668\u3002",
         worker: {
           logPrefix: "[ES Worker]",
           starting: "\u9009\u53D6\u5143\u7D20\u626B\u63CF Worker \u6B63\u5728\u542F\u52A8...",
@@ -1081,6 +1085,8 @@ var TextExtractor = (() => {
         confirmFailedNoTarget: "\u78BA\u8A8D\u5931\u6557\uFF1A\u672A\u9078\u64C7\u4EFB\u4F55\u76EE\u6A19\u5143\u7D20\u3002",
         rightClickExit: "\u5075\u6E2C\u5230\u53F3\u9375\u9EDE\u64CA\uFF0C\u6B63\u5728\u505C\u6B62\u9078\u53D6\u5143\u7D20\u6383\u63CF\u3002",
         processingError: "\u6587\u672C\u8655\u7406\u904E\u7A0B\u4E2D\u767C\u751F\u932F\u8AA4: {{error}}",
+        scrollListenersAdded: "\u5DF2\u70BA {{count}} \u500B\u7236\u5143\u7D20\u65B0\u589E\u6EFE\u52D5\u76E3\u807D\u5668\u3002",
+        scrollListenersRemoved: "\u5DF2\u79FB\u9664\u6240\u6709\u6EFE\u52D5\u76E3\u807D\u5668\u3002",
         worker: {
           logPrefix: "[ES Worker]",
           starting: "\u9078\u53D6\u5143\u7D20\u6383\u63CF Worker \u6B63\u5728\u555F\u52D5...",
@@ -2179,6 +2185,8 @@ ${result.join(",\n")}
         confirmFailedNoTarget: "Confirmation failed: no target element selected.",
         rightClickExit: "Right-click detected, stopping element scan.",
         processingError: "An error occurred during text processing: {{error}}",
+        scrollListenersAdded: "Added {{count}} scroll listeners to parent elements.",
+        scrollListenersRemoved: "Removed all scroll listeners.",
         worker: {
           logPrefix: "[ES Worker]",
           starting: "Element Scan Worker is starting...",
@@ -2505,6 +2513,8 @@ ${result.join(",\n")}
         confirmFailedNoTarget: "\\u786E\\u8BA4\\u5931\\u8D25\\uFF1A\\u672A\\u9009\\u62E9\\u4EFB\\u4F55\\u76EE\\u6807\\u5143\\u7D20\\u3002",
         rightClickExit: "\\u68C0\\u6D4B\\u5230\\u53F3\\u952E\\u70B9\\u51FB\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u3002",
         processingError: "\\u6587\\u672C\\u5904\\u7406\\u8FC7\\u7A0B\\u4E2D\\u53D1\\u751F\\u9519\\u8BEF: {{error}}",
+        scrollListenersAdded: "\\u5DF2\\u4E3A {{count}} \\u4E2A\\u7236\\u5143\\u7D20\\u6DFB\\u52A0\\u6EDA\\u52A8\\u76D1\\u542C\\u5668\\u3002",
+        scrollListenersRemoved: "\\u5DF2\\u79FB\\u9664\\u6240\\u6709\\u6EDA\\u52A8\\u76D1\\u542C\\u5668\\u3002",
         worker: {
           logPrefix: "[ES Worker]",
           starting: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u6B63\\u5728\\u542F\\u52A8...",
@@ -2831,6 +2841,8 @@ ${result.join(",\n")}
         confirmFailedNoTarget: "\\u78BA\\u8A8D\\u5931\\u6557\\uFF1A\\u672A\\u9078\\u64C7\\u4EFB\\u4F55\\u76EE\\u6A19\\u5143\\u7D20\\u3002",
         rightClickExit: "\\u5075\\u6E2C\\u5230\\u53F3\\u9375\\u9EDE\\u64CA\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u3002",
         processingError: "\\u6587\\u672C\\u8655\\u7406\\u904E\\u7A0B\\u4E2D\\u767C\\u751F\\u932F\\u8AA4: {{error}}",
+        scrollListenersAdded: "\\u5DF2\\u70BA {{count}} \\u500B\\u7236\\u5143\\u7D20\\u65B0\\u589E\\u6EFE\\u52D5\\u76E3\\u807D\\u5668\\u3002",
+        scrollListenersRemoved: "\\u5DF2\\u79FB\\u9664\\u6240\\u6709\\u6EFE\\u52D5\\u76E3\\u807D\\u5668\\u3002",
         worker: {
           logPrefix: "[ES Worker]",
           starting: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u6B63\\u5728\\u555F\\u52D5...",
@@ -3632,6 +3644,8 @@ ${result.join(",\n")}
         confirmFailedNoTarget: "Confirmation failed: no target element selected.",
         rightClickExit: "Right-click detected, stopping element scan.",
         processingError: "An error occurred during text processing: {{error}}",
+        scrollListenersAdded: "Added {{count}} scroll listeners to parent elements.",
+        scrollListenersRemoved: "Removed all scroll listeners.",
         worker: {
           logPrefix: "[ES Worker]",
           starting: "Element Scan Worker is starting...",
@@ -3958,6 +3972,8 @@ ${result.join(",\n")}
         confirmFailedNoTarget: "\\u786E\\u8BA4\\u5931\\u8D25\\uFF1A\\u672A\\u9009\\u62E9\\u4EFB\\u4F55\\u76EE\\u6807\\u5143\\u7D20\\u3002",
         rightClickExit: "\\u68C0\\u6D4B\\u5230\\u53F3\\u952E\\u70B9\\u51FB\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u3002",
         processingError: "\\u6587\\u672C\\u5904\\u7406\\u8FC7\\u7A0B\\u4E2D\\u53D1\\u751F\\u9519\\u8BEF: {{error}}",
+        scrollListenersAdded: "\\u5DF2\\u4E3A {{count}} \\u4E2A\\u7236\\u5143\\u7D20\\u6DFB\\u52A0\\u6EDA\\u52A8\\u76D1\\u542C\\u5668\\u3002",
+        scrollListenersRemoved: "\\u5DF2\\u79FB\\u9664\\u6240\\u6709\\u6EDA\\u52A8\\u76D1\\u542C\\u5668\\u3002",
         worker: {
           logPrefix: "[ES Worker]",
           starting: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u6B63\\u5728\\u542F\\u52A8...",
@@ -4284,6 +4300,8 @@ ${result.join(",\n")}
         confirmFailedNoTarget: "\\u78BA\\u8A8D\\u5931\\u6557\\uFF1A\\u672A\\u9078\\u64C7\\u4EFB\\u4F55\\u76EE\\u6A19\\u5143\\u7D20\\u3002",
         rightClickExit: "\\u5075\\u6E2C\\u5230\\u53F3\\u9375\\u9EDE\\u64CA\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u3002",
         processingError: "\\u6587\\u672C\\u8655\\u7406\\u904E\\u7A0B\\u4E2D\\u767C\\u751F\\u932F\\u8AA4: {{error}}",
+        scrollListenersAdded: "\\u5DF2\\u70BA {{count}} \\u500B\\u7236\\u5143\\u7D20\\u65B0\\u589E\\u6EFE\\u52D5\\u76E3\\u807D\\u5668\\u3002",
+        scrollListenersRemoved: "\\u5DF2\\u79FB\\u9664\\u6240\\u6709\\u6EFE\\u52D5\\u76E3\\u807D\\u5668\\u3002",
         worker: {
           logPrefix: "[ES Worker]",
           starting: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u6B63\\u5728\\u555F\\u52D5...",
@@ -5667,6 +5685,10 @@ ${result.join(",\n")}
       log(t("log.elementScanUI.creatingHighlights"));
       scanContainer = document.createElement("div");
       scanContainer.id = "element-scan-container";
+      scanContainer.style.position = "absolute";
+      scanContainer.style.top = "0";
+      scanContainer.style.left = "0";
+      scanContainer.style.willChange = "transform";
       highlightBorder = document.createElement("div");
       highlightBorder.id = "element-scan-highlight-border";
       scanContainer.appendChild(highlightBorder);
@@ -5694,10 +5716,13 @@ ${result.join(",\n")}
       height: rect.height.toFixed(2)
     };
     log(simpleTemplate(t("log.elementScanUI.updatingHighlight"), { tagName }), coordinates);
-    scanContainer.style.width = `${rect.width + padding * 2}px`;
-    scanContainer.style.height = `${rect.height + padding * 2}px`;
-    scanContainer.style.top = `${rect.top + scrollY - padding}px`;
-    scanContainer.style.left = `${rect.left + scrollX - padding}px`;
+    const newWidth = rect.width + padding * 2;
+    const newHeight = rect.height + padding * 2;
+    const newX = rect.left + scrollX - padding;
+    const newY = rect.top + scrollY - padding;
+    scanContainer.style.width = `${newWidth}px`;
+    scanContainer.style.height = `${newHeight}px`;
+    scanContainer.style.transform = `translate(${newX}px, ${newY}px)`;
     tagNameTooltip.textContent = tagName;
     const toolbarTag = uiContainer.querySelector("#element-scan-toolbar-tag");
     if (toolbarTag) {
@@ -5868,10 +5893,43 @@ ${result.join(",\n")}
   var elementPath = [];
   var stagedTexts =  new Set();
   var shouldResumeAfterModalClose = false;
+  var scrollableParents = [];
+  var scrollUpdateQueued = false;
   on("clearElementScan", () => {
     stagedTexts.clear();
     updateStagedCount();
   });
+  function handleScroll() {
+    if (!scrollUpdateQueued) {
+      scrollUpdateQueued = true;
+      requestAnimationFrame(() => {
+        if (currentTarget && isAdjusting) {
+          updateHighlight(currentTarget);
+        }
+        scrollUpdateQueued = false;
+      });
+    }
+  }
+  function addScrollListeners() {
+    let parent = currentTarget.parentElement;
+    while (parent) {
+      if (parent.scrollHeight > parent.clientHeight || parent.scrollWidth > parent.clientWidth) {
+        scrollableParents.push(parent);
+        parent.addEventListener("scroll", handleScroll, { passive: true });
+      }
+      parent = parent.parentElement;
+    }
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    log(simpleTemplate(t("log.elementScan.scrollListenersAdded"), { count: scrollableParents.length }));
+  }
+  function removeScrollListeners() {
+    scrollableParents.forEach((parent) => {
+      parent.removeEventListener("scroll", handleScroll);
+    });
+    window.removeEventListener("scroll", handleScroll);
+    scrollableParents = [];
+    log(t("log.elementScan.scrollListenersRemoved"));
+  }
   function isElementScanActive() {
     return isActive;
   }
@@ -5937,6 +5995,7 @@ ${result.join(",\n")}
     cleanupUI();
     cleanupToolbar();
     hideTopCenterCounter();
+    removeScrollListeners();
     elementPath = [];
     currentTarget = null;
     stagedTexts.clear();
@@ -5948,6 +6007,7 @@ ${result.join(",\n")}
     isAdjusting = false;
     cleanupUI();
     cleanupToolbar();
+    removeScrollListeners();
     document.addEventListener("mouseover", handleMouseOver);
     document.addEventListener("mouseout", handleMouseOut);
     document.addEventListener("click", handleElementClick, true);
@@ -6013,6 +6073,7 @@ ${result.join(",\n")}
     elementPath.push(document.body);
     log(simpleTemplate(t("log.elementScan.pathBuilt"), { depth: elementPath.length }));
     createAdjustmentToolbar(elementPath);
+    addScrollListeners();
   }
   function updateSelectionLevel(level) {
     const targetElement = elementPath[level];
@@ -6329,6 +6390,8 @@ ${result.join(",\n")}
         confirmFailedNoTarget: "Confirmation failed: no target element selected.",
         rightClickExit: "Right-click detected, stopping element scan.",
         processingError: "An error occurred during text processing: {{error}}",
+        scrollListenersAdded: "Added {{count}} scroll listeners to parent elements.",
+        scrollListenersRemoved: "Removed all scroll listeners.",
         worker: {
           logPrefix: "[ES Worker]",
           starting: "Element Scan Worker is starting...",
@@ -6655,6 +6718,8 @@ ${result.join(",\n")}
         confirmFailedNoTarget: "\\u786E\\u8BA4\\u5931\\u8D25\\uFF1A\\u672A\\u9009\\u62E9\\u4EFB\\u4F55\\u76EE\\u6807\\u5143\\u7D20\\u3002",
         rightClickExit: "\\u68C0\\u6D4B\\u5230\\u53F3\\u952E\\u70B9\\u51FB\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u3002",
         processingError: "\\u6587\\u672C\\u5904\\u7406\\u8FC7\\u7A0B\\u4E2D\\u53D1\\u751F\\u9519\\u8BEF: {{error}}",
+        scrollListenersAdded: "\\u5DF2\\u4E3A {{count}} \\u4E2A\\u7236\\u5143\\u7D20\\u6DFB\\u52A0\\u6EDA\\u52A8\\u76D1\\u542C\\u5668\\u3002",
+        scrollListenersRemoved: "\\u5DF2\\u79FB\\u9664\\u6240\\u6709\\u6EDA\\u52A8\\u76D1\\u542C\\u5668\\u3002",
         worker: {
           logPrefix: "[ES Worker]",
           starting: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u6B63\\u5728\\u542F\\u52A8...",
@@ -6981,6 +7046,8 @@ ${result.join(",\n")}
         confirmFailedNoTarget: "\\u78BA\\u8A8D\\u5931\\u6557\\uFF1A\\u672A\\u9078\\u64C7\\u4EFB\\u4F55\\u76EE\\u6A19\\u5143\\u7D20\\u3002",
         rightClickExit: "\\u5075\\u6E2C\\u5230\\u53F3\\u9375\\u9EDE\\u64CA\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u3002",
         processingError: "\\u6587\\u672C\\u8655\\u7406\\u904E\\u7A0B\\u4E2D\\u767C\\u751F\\u932F\\u8AA4: {{error}}",
+        scrollListenersAdded: "\\u5DF2\\u70BA {{count}} \\u500B\\u7236\\u5143\\u7D20\\u65B0\\u589E\\u6EFE\\u52D5\\u76E3\\u807D\\u5668\\u3002",
+        scrollListenersRemoved: "\\u5DF2\\u79FB\\u9664\\u6240\\u6709\\u6EFE\\u52D5\\u76E3\\u807D\\u5668\\u3002",
         worker: {
           logPrefix: "[ES Worker]",
           starting: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u6B63\\u5728\\u555F\\u52D5...",
@@ -7353,6 +7420,7 @@ ${result.join(",\n")}
     document.removeEventListener("mouseout", handleMouseOut);
     cleanupUI();
     cleanupToolbar();
+    removeScrollListeners();
     setShouldResumeAfterModalClose(true);
     try {
       const allCleanTexts = Array.from(stagedTexts);
