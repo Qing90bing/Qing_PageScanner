@@ -8533,6 +8533,14 @@ ${result.join(",\n")}
     transform:scale(1.1);
     background-color:var(--main-border);
 }
+.top-center-ui-container .tc-top-center-counter{
+    position:relative;
+    top:auto;
+    left:auto;
+    transform:none;
+    opacity:1;
+    transition:none;
+}
 #element-scan-container{
     position:absolute;
     z-index:9999998;

@@ -44,3 +44,16 @@
     transform: scale(1.1); /* 放大效果 */
     background-color: var(--main-border);
 }
+
+/*
+  关键修复：覆盖计数器的默认 fixed 定位。
+  当计数器是 flex 容器的子元素时，我们希望它遵循 flex 布局，而不是自己定位。
+*/
+.top-center-ui-container .tc-top-center-counter {
+    position: relative; /* 覆盖 position: fixed */
+    top: auto;
+    left: auto;
+    transform: none; /* 移除其自身的 transform 动画 */
+    opacity: 1; /* 确保它在容器内始终可见 */
+    transition: none; /* 移除其自身的 transition 动画 */
+}
