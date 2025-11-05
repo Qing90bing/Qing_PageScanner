@@ -131,51 +131,6 @@
   background-color: var(--main-border);
 }
 
-/* --- 元素扫描教程图标 --- */
-.tc-element-scan-tutorial {
-    position: fixed;
-    top: -50px; /* 初始位置在屏幕上方，实现从上到下的进入动画 */
-    left: 50%;
-    /* 动态计算位置，确保在计数器右侧8px处 */
-    transform: translateX(calc(var(--tc-counter-width, 100px) / 2 + 8px));
-    width: 36px; /* 确保为正圆形 */
-    height: 36px;
-    background-color: var(--main-bg);
-    color: var(--main-text);
-    border-radius: 50%; /* 正圆形 */
-    box-shadow: 0 2px 8px var(--main-shadow);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10001;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, top 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* 动画效果 */
-    cursor: pointer;
-}
-
-.tc-element-scan-tutorial.is-visible {
-    opacity: 1;
-    visibility: visible;
-    top: 20px; /* 最终位置 */
-}
-
-.tc-element-scan-tutorial svg {
-    width: 22px; /* 调整图标大小 */
-    height: 22px;
-    fill: currentColor;
-}
-
-.tc-element-scan-tutorial:hover {
-    background-color: var(--main-border);
-    transform: translateX(calc(var(--tc-counter-width, 100px) / 2 + 8px)) scale(1.1); /* 悬浮放大效果 */
-}
-
-.tc-element-scan-tutorial:active {
-    transform: translateX(calc(var(--tc-counter-width, 100px) / 2 + 8px)) scale(0.95); /* 点击缩小效果 */
-}
-
-
 .text-extractor-modal-content {
   padding: 18px;
   overflow-y: auto;
@@ -259,4 +214,30 @@
     cursor: not-allowed;
     box-shadow: none;
     transform: none;
+}
+
+/* --- 可复用的帮助图标按钮 --- */
+.tc-help-icon-button {
+    background: none;
+    border: none;
+    padding: 0;
+    margin-left: 8px; /* 与计数器文本的间距 */
+    cursor: pointer;
+    color: var(--main-text); /* 继承当前主题的文本颜色 */
+    opacity: 0.7;
+    transition: opacity 0.2s, transform 0.2s;
+    display: inline-flex; /* 确保SVG尺寸正确 */
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle; /* 与旁边的文本垂直对齐 */
+}
+
+.tc-help-icon-button:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.tc-help-icon-button svg {
+    width: 20px; /* 比FAB图标小一些 */
+    height: 20px;
 }

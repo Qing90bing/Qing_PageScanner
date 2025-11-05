@@ -297,11 +297,7 @@
         "originalError": "原始 Worker 错误: {{error}}"
       },
       "switchToFallback": "正在为选取元素扫描切换到主线程备选方案。",
-      "fallbackFailed": "选取元素扫描备选方案执行失败: {{error}}",
-      "tutorial": {
-          "title": "如何使用选取元素扫描",
-          "content": "<b>主要操作：</b>将鼠标悬停在页面元素上即可预览，单击可将其选中并打开调整工具栏。<br><br><b>微调与确认：</b>在工具栏中，您可以使用滑块精确调整选择的层级。然后，点击“暂存”按钮将其加入待提取列表，或点击“确认”立即提取。<br><br><b>退出扫描：</b>您可以随时按 `Esc` 键，或点击工具栏上的“取消”按钮来退出扫描模式。"
-      }
+      "fallbackFailed": "选取元素扫描备选方案执行失败: {{error}}"
     },
     "elementScanUI": {
       "creatingHighlights": "元素扫描UI：首次创建高亮元素。",
@@ -327,5 +323,9 @@
       "defaultWorkerPolicyWarning": "用于 worker URL 的 Trusted Types 默认策略失败，回退到原始 URL。",
       "defaultHtmlPolicyWarning": "用于 HTML 的 Trusted Types 默认策略失败，回退到原始字符串。"
     }
+  },
+  "tutorial": {
+    "elementScanTitle": "选取元素扫描教程",
+    "elementScan": "<p class=\"tutorial-content\">这是一个用于选取元素扫描教程的占位符。支持富文本格式。</p>"
   }
 }

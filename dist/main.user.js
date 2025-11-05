@@ -41,7 +41,8 @@ var TextExtractor = (() => {
   var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
   var main_exports = {};
   __export(main_exports, {
-    main: () => main
+    initUI: () => initUI,
+    initialize: () => initialize2
   });
   var translateIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="m476-80 182-480h84L924-80h-84l-43-122H603L560-80h-84ZM160-200l-56-56 202-202q-35-35-63.5-80T190-640h84q20 39 40 68t48 58q33-33 68.5-92.5T484-720H40v-80h280v-80h80v80h280v80H564q-21 72-63 148t-83 116l96 98-30 82-122-125-202 201Zm468-72h144l-72-204-72 204Z"/></svg>`;
   var dynamicIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M200-766v572q-17-17-32-36t-28-39v-422q13-20 28-39t32-36Zm160-96v764q-21-7-41-15.5T280-133v-694q19-11 39-19.5t41-15.5Zm280 749v-734q106 47 173 145t67 222q0 124-67 222T640-113ZM480-80q-10 0-20-.5T440-82v-796q10-1 20-1.5t20-.5q20 0 40 2t40 6v784q-20 4-40 6t-40 2Z"/></svg>`;
@@ -443,11 +444,7 @@ var TextExtractor = (() => {
           originalError: "Original worker error: {{error}}"
         },
         switchToFallback: "Switching to main thread fallback for Element Scan.",
-        fallbackFailed: "Element Scan fallback mode failed: {{error}}",
-        tutorial: {
-          title: "How to Use Element Scan",
-          content: "<b>Main Operation:</b> Hover over elements to preview, and click to select and open the adjustment toolbar.<br><br><b>Fine-tuning & Confirmation:</b> In the toolbar, use the slider to precisely adjust the selection level. Then, click 'Stage' to add it to the extraction list or 'Confirm' to extract immediately.<br><br><b>Exiting Scan:</b> You can press the `Esc` key at any time or click the 'Cancel' button on the toolbar to exit scan mode."
-        }
+        fallbackFailed: "Element Scan fallback mode failed: {{error}}"
       },
       elementScanUI: {
         creatingHighlights: "Element Scan UI: Creating highlight elements for the first time.",
@@ -473,6 +470,10 @@ var TextExtractor = (() => {
         defaultWorkerPolicyWarning: "Trusted Types default policy failed for worker URL, falling back to raw URL.",
         defaultHtmlPolicyWarning: "Trusted Types default policy failed for HTML, falling back to raw string."
       }
+    },
+    tutorial: {
+      elementScanTitle: "Element Scan Guide",
+      elementScan: '<p class="tutorial-content">This is a placeholder for the element scan tutorial. Rich text is supported.</p>'
     }
   };
   var zh_CN_default = {
@@ -774,11 +775,7 @@ var TextExtractor = (() => {
           originalError: "\u539F\u59CB Worker \u9519\u8BEF: {{error}}"
         },
         switchToFallback: "\u6B63\u5728\u4E3A\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5207\u6362\u5230\u4E3B\u7EBF\u7A0B\u5907\u9009\u65B9\u6848\u3002",
-        fallbackFailed: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5907\u9009\u65B9\u6848\u6267\u884C\u5931\u8D25: {{error}}",
-        tutorial: {
-          title: "\u5982\u4F55\u4F7F\u7528\u9009\u53D6\u5143\u7D20\u626B\u63CF",
-          content: "<b>\u4E3B\u8981\u64CD\u4F5C\uFF1A</b>\u5C06\u9F20\u6807\u60AC\u505C\u5728\u9875\u9762\u5143\u7D20\u4E0A\u5373\u53EF\u9884\u89C8\uFF0C\u5355\u51FB\u53EF\u5C06\u5176\u9009\u4E2D\u5E76\u6253\u5F00\u8C03\u6574\u5DE5\u5177\u680F\u3002<br><br><b>\u5FAE\u8C03\u4E0E\u786E\u8BA4\uFF1A</b>\u5728\u5DE5\u5177\u680F\u4E2D\uFF0C\u60A8\u53EF\u4EE5\u4F7F\u7528\u6ED1\u5757\u7CBE\u786E\u8C03\u6574\u9009\u62E9\u7684\u5C42\u7EA7\u3002\u7136\u540E\uFF0C\u70B9\u51FB\u201C\u6682\u5B58\u201D\u6309\u94AE\u5C06\u5176\u52A0\u5165\u5F85\u63D0\u53D6\u5217\u8868\uFF0C\u6216\u70B9\u51FB\u201C\u786E\u8BA4\u201D\u7ACB\u5373\u63D0\u53D6\u3002<br><br><b>\u9000\u51FA\u626B\u63CF\uFF1A</b>\u60A8\u53EF\u4EE5\u968F\u65F6\u6309 `Esc` \u952E\uFF0C\u6216\u70B9\u51FB\u5DE5\u5177\u680F\u4E0A\u7684\u201C\u53D6\u6D88\u201D\u6309\u94AE\u6765\u9000\u51FA\u626B\u63CF\u6A21\u5F0F\u3002"
-        }
+        fallbackFailed: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5907\u9009\u65B9\u6848\u6267\u884C\u5931\u8D25: {{error}}"
       },
       elementScanUI: {
         creatingHighlights: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u9996\u6B21\u521B\u5EFA\u9AD8\u4EAE\u5143\u7D20\u3002",
@@ -804,6 +801,10 @@ var TextExtractor = (() => {
         defaultWorkerPolicyWarning: "\u7528\u4E8E worker URL \u7684 Trusted Types \u9ED8\u8BA4\u7B56\u7565\u5931\u8D25\uFF0C\u56DE\u9000\u5230\u539F\u59CB URL\u3002",
         defaultHtmlPolicyWarning: "\u7528\u4E8E HTML \u7684 Trusted Types \u9ED8\u8BA4\u7B56\u7565\u5931\u8D25\uFF0C\u56DE\u9000\u5230\u539F\u59CB\u5B57\u7B26\u4E32\u3002"
       }
+    },
+    tutorial: {
+      elementScanTitle: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u6559\u7A0B",
+      elementScan: '<p class="tutorial-content">\u8FD9\u662F\u4E00\u4E2A\u7528\u4E8E\u9009\u53D6\u5143\u7D20\u626B\u63CF\u6559\u7A0B\u7684\u5360\u4F4D\u7B26\u3002\u652F\u6301\u5BCC\u6587\u672C\u683C\u5F0F\u3002</p>'
     }
   };
   var zh_TW_default = {
@@ -1105,11 +1106,7 @@ var TextExtractor = (() => {
           originalError: "\u539F\u59CB Worker \u932F\u8AA4: {{error}}"
         },
         switchToFallback: "\u6B63\u5728\u70BA\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5207\u63DB\u5230\u4E3B\u7DDA\u7A0B\u5099\u9078\u65B9\u6848\u3002",
-        fallbackFailed: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5099\u9078\u65B9\u6848\u57F7\u884C\u5931\u6557: {{error}}",
-        tutorial: {
-          title: "\u5982\u4F55\u4F7F\u7528\u9078\u53D6\u5143\u7D20\u6383\u63CF",
-          content: "<b>\u4E3B\u8981\u64CD\u4F5C\uFF1A</b>\u5C07\u6ED1\u9F20\u61F8\u505C\u5728\u9801\u9762\u5143\u7D20\u4E0A\u5373\u53EF\u9810\u89BD\uFF0C\u9EDE\u64CA\u53EF\u5C07\u5176\u9078\u4E2D\u4E26\u958B\u555F\u8ABF\u6574\u5DE5\u5177\u5217\u3002<br><br><b>\u5FAE\u8ABF\u8207\u78BA\u8A8D\uFF1A</b>\u5728\u5DE5\u5177\u5217\u4E2D\uFF0C\u60A8\u53EF\u4EE5\u4F7F\u7528\u6ED1\u687F\u7CBE\u78BA\u8ABF\u6574\u9078\u64C7\u7684\u5C64\u7D1A\u3002\u7136\u5F8C\uFF0C\u9EDE\u64CA\u300C\u66AB\u5B58\u300D\u6309\u9215\u5C07\u5176\u52A0\u5165\u5F85\u63D0\u53D6\u5217\u8868\uFF0C\u6216\u9EDE\u64CA\u300C\u78BA\u8A8D\u300D\u7ACB\u5373\u63D0\u53D6\u3002<br><br><b>\u9000\u51FA\u6383\u63CF\uFF1A</b>\u60A8\u53EF\u4EE5\u96A8\u6642\u6309 `Esc` \u9375\uFF0C\u6216\u9EDE\u64CA\u5DE5\u5177\u5217\u4E0A\u7684\u300C\u53D6\u6D88\u300D\u6309\u9215\u4F86\u9000\u51FA\u6383\u63CF\u6A21\u5F0F\u3002"
-        }
+        fallbackFailed: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5099\u9078\u65B9\u6848\u57F7\u884C\u5931\u6557: {{error}}"
       },
       elementScanUI: {
         creatingHighlights: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u9996\u6B21\u5EFA\u7ACB\u9AD8\u4EAE\u5143\u7D20\u3002",
@@ -1135,6 +1132,10 @@ var TextExtractor = (() => {
         defaultWorkerPolicyWarning: "\u7528\u65BC worker URL \u7684 Trusted Types \u9810\u8A2D\u7B56\u7565\u5931\u6557\uFF0C\u56DE\u9000\u5230\u539F\u59CB URL\u3002",
         defaultHtmlPolicyWarning: "\u7528\u65BC HTML \u7684 Trusted Types \u9810\u8A2D\u7B56\u7565\u5931\u6557\uFF0C\u56DE\u9000\u5230\u539F\u59CB\u5B57\u4E32\u3002"
       }
+    },
+    tutorial: {
+      elementScanTitle: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u6559\u5B78",
+      elementScan: '<p class="tutorial-content">\u9019\u662F\u4E00\u500B\u7528\u65BC\u9078\u53D6\u5143\u7D20\u6383\u63CF\u6559\u5B78\u7684\u4F54\u4F4D\u7B26\u3002\u652F\u63F4\u5BCC\u6587\u672C\u683C\u5F0F\u3002</p>'
     }
   };
   var isDebugEnabled = false;
@@ -2209,11 +2210,7 @@ ${result.join(",\n")}
           originalError: "Original worker error: {{error}}"
         },
         switchToFallback: "Switching to main thread fallback for Element Scan.",
-        fallbackFailed: "Element Scan fallback mode failed: {{error}}",
-        tutorial: {
-          title: "How to Use Element Scan",
-          content: "<b>Main Operation:</b> Hover over elements to preview, and click to select and open the adjustment toolbar.<br><br><b>Fine-tuning & Confirmation:</b> In the toolbar, use the slider to precisely adjust the selection level. Then, click 'Stage' to add it to the extraction list or 'Confirm' to extract immediately.<br><br><b>Exiting Scan:</b> You can press the \`Esc\` key at any time or click the 'Cancel' button on the toolbar to exit scan mode."
-        }
+        fallbackFailed: "Element Scan fallback mode failed: {{error}}"
       },
       elementScanUI: {
         creatingHighlights: "Element Scan UI: Creating highlight elements for the first time.",
@@ -2239,6 +2236,10 @@ ${result.join(",\n")}
         defaultWorkerPolicyWarning: "Trusted Types default policy failed for worker URL, falling back to raw URL.",
         defaultHtmlPolicyWarning: "Trusted Types default policy failed for HTML, falling back to raw string."
       }
+    },
+    tutorial: {
+      elementScanTitle: "Element Scan Guide",
+      elementScan: '<p class="tutorial-content">This is a placeholder for the element scan tutorial. Rich text is supported.</p>'
     }
   };
   // src/shared/i18n/zh-CN.json
@@ -2541,11 +2542,7 @@ ${result.join(",\n")}
           originalError: "\\u539F\\u59CB Worker \\u9519\\u8BEF: {{error}}"
         },
         switchToFallback: "\\u6B63\\u5728\\u4E3A\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
-        fallbackFailed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5907\\u9009\\u65B9\\u6848\\u6267\\u884C\\u5931\\u8D25: {{error}}",
-        tutorial: {
-          title: "\\u5982\\u4F55\\u4F7F\\u7528\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF",
-          content: "<b>\\u4E3B\\u8981\\u64CD\\u4F5C\\uFF1A</b>\\u5C06\\u9F20\\u6807\\u60AC\\u505C\\u5728\\u9875\\u9762\\u5143\\u7D20\\u4E0A\\u5373\\u53EF\\u9884\\u89C8\\uFF0C\\u5355\\u51FB\\u53EF\\u5C06\\u5176\\u9009\\u4E2D\\u5E76\\u6253\\u5F00\\u8C03\\u6574\\u5DE5\\u5177\\u680F\\u3002<br><br><b>\\u5FAE\\u8C03\\u4E0E\\u786E\\u8BA4\\uFF1A</b>\\u5728\\u5DE5\\u5177\\u680F\\u4E2D\\uFF0C\\u60A8\\u53EF\\u4EE5\\u4F7F\\u7528\\u6ED1\\u5757\\u7CBE\\u786E\\u8C03\\u6574\\u9009\\u62E9\\u7684\\u5C42\\u7EA7\\u3002\\u7136\\u540E\\uFF0C\\u70B9\\u51FB\\u201C\\u6682\\u5B58\\u201D\\u6309\\u94AE\\u5C06\\u5176\\u52A0\\u5165\\u5F85\\u63D0\\u53D6\\u5217\\u8868\\uFF0C\\u6216\\u70B9\\u51FB\\u201C\\u786E\\u8BA4\\u201D\\u7ACB\\u5373\\u63D0\\u53D6\\u3002<br><br><b>\\u9000\\u51FA\\u626B\\u63CF\\uFF1A</b>\\u60A8\\u53EF\\u4EE5\\u968F\\u65F6\\u6309 \`Esc\` \\u952E\\uFF0C\\u6216\\u70B9\\u51FB\\u5DE5\\u5177\\u680F\\u4E0A\\u7684\\u201C\\u53D6\\u6D88\\u201D\\u6309\\u94AE\\u6765\\u9000\\u51FA\\u626B\\u63CF\\u6A21\\u5F0F\\u3002"
-        }
+        fallbackFailed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5907\\u9009\\u65B9\\u6848\\u6267\\u884C\\u5931\\u8D25: {{error}}"
       },
       elementScanUI: {
         creatingHighlights: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u9996\\u6B21\\u521B\\u5EFA\\u9AD8\\u4EAE\\u5143\\u7D20\\u3002",
@@ -2571,6 +2568,10 @@ ${result.join(",\n")}
         defaultWorkerPolicyWarning: "\\u7528\\u4E8E worker URL \\u7684 Trusted Types \\u9ED8\\u8BA4\\u7B56\\u7565\\u5931\\u8D25\\uFF0C\\u56DE\\u9000\\u5230\\u539F\\u59CB URL\\u3002",
         defaultHtmlPolicyWarning: "\\u7528\\u4E8E HTML \\u7684 Trusted Types \\u9ED8\\u8BA4\\u7B56\\u7565\\u5931\\u8D25\\uFF0C\\u56DE\\u9000\\u5230\\u539F\\u59CB\\u5B57\\u7B26\\u4E32\\u3002"
       }
+    },
+    tutorial: {
+      elementScanTitle: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u6559\\u7A0B",
+      elementScan: '<p class="tutorial-content">\\u8FD9\\u662F\\u4E00\\u4E2A\\u7528\\u4E8E\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u6559\\u7A0B\\u7684\\u5360\\u4F4D\\u7B26\\u3002\\u652F\\u6301\\u5BCC\\u6587\\u672C\\u683C\\u5F0F\\u3002</p>'
     }
   };
   // src/shared/i18n/zh-TW.json
@@ -2873,11 +2874,7 @@ ${result.join(",\n")}
           originalError: "\\u539F\\u59CB Worker \\u932F\\u8AA4: {{error}}"
         },
         switchToFallback: "\\u6B63\\u5728\\u70BA\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
-        fallbackFailed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5099\\u9078\\u65B9\\u6848\\u57F7\\u884C\\u5931\\u6557: {{error}}",
-        tutorial: {
-          title: "\\u5982\\u4F55\\u4F7F\\u7528\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF",
-          content: "<b>\\u4E3B\\u8981\\u64CD\\u4F5C\\uFF1A</b>\\u5C07\\u6ED1\\u9F20\\u61F8\\u505C\\u5728\\u9801\\u9762\\u5143\\u7D20\\u4E0A\\u5373\\u53EF\\u9810\\u89BD\\uFF0C\\u9EDE\\u64CA\\u53EF\\u5C07\\u5176\\u9078\\u4E2D\\u4E26\\u958B\\u555F\\u8ABF\\u6574\\u5DE5\\u5177\\u5217\\u3002<br><br><b>\\u5FAE\\u8ABF\\u8207\\u78BA\\u8A8D\\uFF1A</b>\\u5728\\u5DE5\\u5177\\u5217\\u4E2D\\uFF0C\\u60A8\\u53EF\\u4EE5\\u4F7F\\u7528\\u6ED1\\u687F\\u7CBE\\u78BA\\u8ABF\\u6574\\u9078\\u64C7\\u7684\\u5C64\\u7D1A\\u3002\\u7136\\u5F8C\\uFF0C\\u9EDE\\u64CA\\u300C\\u66AB\\u5B58\\u300D\\u6309\\u9215\\u5C07\\u5176\\u52A0\\u5165\\u5F85\\u63D0\\u53D6\\u5217\\u8868\\uFF0C\\u6216\\u9EDE\\u64CA\\u300C\\u78BA\\u8A8D\\u300D\\u7ACB\\u5373\\u63D0\\u53D6\\u3002<br><br><b>\\u9000\\u51FA\\u6383\\u63CF\\uFF1A</b>\\u60A8\\u53EF\\u4EE5\\u96A8\\u6642\\u6309 \`Esc\` \\u9375\\uFF0C\\u6216\\u9EDE\\u64CA\\u5DE5\\u5177\\u5217\\u4E0A\\u7684\\u300C\\u53D6\\u6D88\\u300D\\u6309\\u9215\\u4F86\\u9000\\u51FA\\u6383\\u63CF\\u6A21\\u5F0F\\u3002"
-        }
+        fallbackFailed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5099\\u9078\\u65B9\\u6848\\u57F7\\u884C\\u5931\\u6557: {{error}}"
       },
       elementScanUI: {
         creatingHighlights: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u9996\\u6B21\\u5EFA\\u7ACB\\u9AD8\\u4EAE\\u5143\\u7D20\\u3002",
@@ -2903,6 +2900,10 @@ ${result.join(",\n")}
         defaultWorkerPolicyWarning: "\\u7528\\u65BC worker URL \\u7684 Trusted Types \\u9810\\u8A2D\\u7B56\\u7565\\u5931\\u6557\\uFF0C\\u56DE\\u9000\\u5230\\u539F\\u59CB URL\\u3002",
         defaultHtmlPolicyWarning: "\\u7528\\u65BC HTML \\u7684 Trusted Types \\u9810\\u8A2D\\u7B56\\u7565\\u5931\\u6557\\uFF0C\\u56DE\\u9000\\u5230\\u539F\\u59CB\\u5B57\\u4E32\\u3002"
       }
+    },
+    tutorial: {
+      elementScanTitle: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u6559\\u5B78",
+      elementScan: '<p class="tutorial-content">\\u9019\\u662F\\u4E00\\u500B\\u7528\\u65BC\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u6559\\u5B78\\u7684\\u4F54\\u4F4D\\u7B26\\u3002\\u652F\\u63F4\\u5BCC\\u6587\\u672C\\u683C\\u5F0F\\u3002</p>'
     }
   };
   // src/shared/i18n/management/languages.js
@@ -3680,11 +3681,7 @@ ${result.join(",\n")}
           originalError: "Original worker error: {{error}}"
         },
         switchToFallback: "Switching to main thread fallback for Element Scan.",
-        fallbackFailed: "Element Scan fallback mode failed: {{error}}",
-        tutorial: {
-          title: "How to Use Element Scan",
-          content: "<b>Main Operation:</b> Hover over elements to preview, and click to select and open the adjustment toolbar.<br><br><b>Fine-tuning & Confirmation:</b> In the toolbar, use the slider to precisely adjust the selection level. Then, click 'Stage' to add it to the extraction list or 'Confirm' to extract immediately.<br><br><b>Exiting Scan:</b> You can press the \`Esc\` key at any time or click the 'Cancel' button on the toolbar to exit scan mode."
-        }
+        fallbackFailed: "Element Scan fallback mode failed: {{error}}"
       },
       elementScanUI: {
         creatingHighlights: "Element Scan UI: Creating highlight elements for the first time.",
@@ -3710,6 +3707,10 @@ ${result.join(",\n")}
         defaultWorkerPolicyWarning: "Trusted Types default policy failed for worker URL, falling back to raw URL.",
         defaultHtmlPolicyWarning: "Trusted Types default policy failed for HTML, falling back to raw string."
       }
+    },
+    tutorial: {
+      elementScanTitle: "Element Scan Guide",
+      elementScan: '<p class="tutorial-content">This is a placeholder for the element scan tutorial. Rich text is supported.</p>'
     }
   };
   // src/shared/i18n/zh-CN.json
@@ -4012,11 +4013,7 @@ ${result.join(",\n")}
           originalError: "\\u539F\\u59CB Worker \\u9519\\u8BEF: {{error}}"
         },
         switchToFallback: "\\u6B63\\u5728\\u4E3A\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
-        fallbackFailed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5907\\u9009\\u65B9\\u6848\\u6267\\u884C\\u5931\\u8D25: {{error}}",
-        tutorial: {
-          title: "\\u5982\\u4F55\\u4F7F\\u7528\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF",
-          content: "<b>\\u4E3B\\u8981\\u64CD\\u4F5C\\uFF1A</b>\\u5C06\\u9F20\\u6807\\u60AC\\u505C\\u5728\\u9875\\u9762\\u5143\\u7D20\\u4E0A\\u5373\\u53EF\\u9884\\u89C8\\uFF0C\\u5355\\u51FB\\u53EF\\u5C06\\u5176\\u9009\\u4E2D\\u5E76\\u6253\\u5F00\\u8C03\\u6574\\u5DE5\\u5177\\u680F\\u3002<br><br><b>\\u5FAE\\u8C03\\u4E0E\\u786E\\u8BA4\\uFF1A</b>\\u5728\\u5DE5\\u5177\\u680F\\u4E2D\\uFF0C\\u60A8\\u53EF\\u4EE5\\u4F7F\\u7528\\u6ED1\\u5757\\u7CBE\\u786E\\u8C03\\u6574\\u9009\\u62E9\\u7684\\u5C42\\u7EA7\\u3002\\u7136\\u540E\\uFF0C\\u70B9\\u51FB\\u201C\\u6682\\u5B58\\u201D\\u6309\\u94AE\\u5C06\\u5176\\u52A0\\u5165\\u5F85\\u63D0\\u53D6\\u5217\\u8868\\uFF0C\\u6216\\u70B9\\u51FB\\u201C\\u786E\\u8BA4\\u201D\\u7ACB\\u5373\\u63D0\\u53D6\\u3002<br><br><b>\\u9000\\u51FA\\u626B\\u63CF\\uFF1A</b>\\u60A8\\u53EF\\u4EE5\\u968F\\u65F6\\u6309 \`Esc\` \\u952E\\uFF0C\\u6216\\u70B9\\u51FB\\u5DE5\\u5177\\u680F\\u4E0A\\u7684\\u201C\\u53D6\\u6D88\\u201D\\u6309\\u94AE\\u6765\\u9000\\u51FA\\u626B\\u63CF\\u6A21\\u5F0F\\u3002"
-        }
+        fallbackFailed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5907\\u9009\\u65B9\\u6848\\u6267\\u884C\\u5931\\u8D25: {{error}}"
       },
       elementScanUI: {
         creatingHighlights: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u9996\\u6B21\\u521B\\u5EFA\\u9AD8\\u4EAE\\u5143\\u7D20\\u3002",
@@ -4042,6 +4039,10 @@ ${result.join(",\n")}
         defaultWorkerPolicyWarning: "\\u7528\\u4E8E worker URL \\u7684 Trusted Types \\u9ED8\\u8BA4\\u7B56\\u7565\\u5931\\u8D25\\uFF0C\\u56DE\\u9000\\u5230\\u539F\\u59CB URL\\u3002",
         defaultHtmlPolicyWarning: "\\u7528\\u4E8E HTML \\u7684 Trusted Types \\u9ED8\\u8BA4\\u7B56\\u7565\\u5931\\u8D25\\uFF0C\\u56DE\\u9000\\u5230\\u539F\\u59CB\\u5B57\\u7B26\\u4E32\\u3002"
       }
+    },
+    tutorial: {
+      elementScanTitle: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u6559\\u7A0B",
+      elementScan: '<p class="tutorial-content">\\u8FD9\\u662F\\u4E00\\u4E2A\\u7528\\u4E8E\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u6559\\u7A0B\\u7684\\u5360\\u4F4D\\u7B26\\u3002\\u652F\\u6301\\u5BCC\\u6587\\u672C\\u683C\\u5F0F\\u3002</p>'
     }
   };
   // src/shared/i18n/zh-TW.json
@@ -4344,11 +4345,7 @@ ${result.join(",\n")}
           originalError: "\\u539F\\u59CB Worker \\u932F\\u8AA4: {{error}}"
         },
         switchToFallback: "\\u6B63\\u5728\\u70BA\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
-        fallbackFailed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5099\\u9078\\u65B9\\u6848\\u57F7\\u884C\\u5931\\u6557: {{error}}",
-        tutorial: {
-          title: "\\u5982\\u4F55\\u4F7F\\u7528\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF",
-          content: "<b>\\u4E3B\\u8981\\u64CD\\u4F5C\\uFF1A</b>\\u5C07\\u6ED1\\u9F20\\u61F8\\u505C\\u5728\\u9801\\u9762\\u5143\\u7D20\\u4E0A\\u5373\\u53EF\\u9810\\u89BD\\uFF0C\\u9EDE\\u64CA\\u53EF\\u5C07\\u5176\\u9078\\u4E2D\\u4E26\\u958B\\u555F\\u8ABF\\u6574\\u5DE5\\u5177\\u5217\\u3002<br><br><b>\\u5FAE\\u8ABF\\u8207\\u78BA\\u8A8D\\uFF1A</b>\\u5728\\u5DE5\\u5177\\u5217\\u4E2D\\uFF0C\\u60A8\\u53EF\\u4EE5\\u4F7F\\u7528\\u6ED1\\u687F\\u7CBE\\u78BA\\u8ABF\\u6574\\u9078\\u64C7\\u7684\\u5C64\\u7D1A\\u3002\\u7136\\u5F8C\\uFF0C\\u9EDE\\u64CA\\u300C\\u66AB\\u5B58\\u300D\\u6309\\u9215\\u5C07\\u5176\\u52A0\\u5165\\u5F85\\u63D0\\u53D6\\u5217\\u8868\\uFF0C\\u6216\\u9EDE\\u64CA\\u300C\\u78BA\\u8A8D\\u300D\\u7ACB\\u5373\\u63D0\\u53D6\\u3002<br><br><b>\\u9000\\u51FA\\u6383\\u63CF\\uFF1A</b>\\u60A8\\u53EF\\u4EE5\\u96A8\\u6642\\u6309 \`Esc\` \\u9375\\uFF0C\\u6216\\u9EDE\\u64CA\\u5DE5\\u5177\\u5217\\u4E0A\\u7684\\u300C\\u53D6\\u6D88\\u300D\\u6309\\u9215\\u4F86\\u9000\\u51FA\\u6383\\u63CF\\u6A21\\u5F0F\\u3002"
-        }
+        fallbackFailed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5099\\u9078\\u65B9\\u6848\\u57F7\\u884C\\u5931\\u6557: {{error}}"
       },
       elementScanUI: {
         creatingHighlights: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u9996\\u6B21\\u5EFA\\u7ACB\\u9AD8\\u4EAE\\u5143\\u7D20\\u3002",
@@ -4374,6 +4371,10 @@ ${result.join(",\n")}
         defaultWorkerPolicyWarning: "\\u7528\\u65BC worker URL \\u7684 Trusted Types \\u9810\\u8A2D\\u7B56\\u7565\\u5931\\u6557\\uFF0C\\u56DE\\u9000\\u5230\\u539F\\u59CB URL\\u3002",
         defaultHtmlPolicyWarning: "\\u7528\\u65BC HTML \\u7684 Trusted Types \\u9810\\u8A2D\\u7B56\\u7565\\u5931\\u6557\\uFF0C\\u56DE\\u9000\\u5230\\u539F\\u59CB\\u5B57\\u4E32\\u3002"
       }
+    },
+    tutorial: {
+      elementScanTitle: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u6559\\u5B78",
+      elementScan: '<p class="tutorial-content">\\u9019\\u662F\\u4E00\\u500B\\u7528\\u65BC\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u6559\\u5B78\\u7684\\u4F54\\u4F4D\\u7B26\\u3002\\u652F\\u63F4\\u5BCC\\u6587\\u672C\\u683C\\u5F0F\\u3002</p>'
     }
   };
   // src/shared/i18n/management/languages.js
@@ -5597,9 +5598,115 @@ ${result.join(",\n")}
     requestAnimationFrame(frame);
   }
   var easeOutQuad = (t2) => t2 * (2 - t2);
+  var questionMarkIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M478-240q21 0 35.5-14.5T528-290q0-21-14.5-35.5T478-340q-21 0-35.5 14.5T428-290q0 21 14.5 35.5T478-240Zm-36-154h74q0-33 7.5-52t42.5-52q26-26 41-49.5t15-56.5q0-56-41-86t-97-30q-57 0-92.5 30T342-618l66 26q5-18 22.5-39t53.5-21q32 0 48 17.5t16 38.5q0 20-12 37.5T506-526q-44 39-54 59t-10 73Zm38 314q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>`;
+  var Tooltip = class {
+    constructor() {
+      this.tooltipElement = null;
+      this.handleEscKey = this.handleEscKey.bind(this);
+    }
+        _createDOM(config) {
+      const overlay = document.createElement("div");
+      overlay.className = "info-tooltip-overlay";
+      overlay.tabIndex = -1;
+      const tooltip = document.createElement("div");
+      tooltip.className = "info-tooltip-modal";
+      if (config.width) tooltip.style.width = config.width;
+      if (config.height) tooltip.style.height = config.height;
+      const header = document.createElement("div");
+      header.className = "info-tooltip-header";
+      const titleContainer2 = document.createElement("div");
+      titleContainer2.className = "info-tooltip-title-container";
+      if (config.titleIcon) {
+        const iconElement = createSVGFromString(config.titleIcon);
+        iconElement.classList.add("info-tooltip-title-icon");
+        titleContainer2.appendChild(iconElement);
+      }
+      const titleElement = document.createElement("h3");
+      titleElement.className = "info-tooltip-title";
+      titleElement.textContent = config.title;
+      titleContainer2.appendChild(titleElement);
+      const closeButton = document.createElement("span");
+      closeButton.className = "info-tooltip-close";
+      closeButton.appendChild(createSVGFromString(closeIcon));
+      closeButton.addEventListener("click", () => this.hide());
+      header.appendChild(titleContainer2);
+      header.appendChild(closeButton);
+      const content = document.createElement("div");
+      content.className = "info-tooltip-content";
+      const textElement = document.createElement("p");
+      textElement.innerHTML = createTrustedHTML(config.text || "");
+      content.appendChild(textElement);
+      tooltip.appendChild(header);
+      tooltip.appendChild(content);
+      overlay.appendChild(tooltip);
+      this.tooltipElement = overlay;
+      uiContainer.appendChild(this.tooltipElement);
+    }
+    /**
+     * @public
+     * @description 显示并填充提示窗口。
+     * @param {object} config - 提示窗口的配置对象。
+     */
+    show(config) {
+      if (!this.tooltipElement) {
+        this._createDOM(config);
+      }
+      fire("infoTooltipWillShow");
+      setTimeout(() => {
+        if (this.tooltipElement) {
+          const onTransitionEnd = () => {
+            this.tooltipElement.focus();
+            this.tooltipElement.addEventListener("keydown", this.handleEscKey);
+            this.tooltipElement.removeEventListener("transitionend", onTransitionEnd);
+          };
+          this.tooltipElement.addEventListener("transitionend", onTransitionEnd);
+          this.tooltipElement.classList.add("is-visible");
+        }
+      }, 10);
+    }
+        hide() {
+      if (this.tooltipElement && this.tooltipElement.classList.contains("is-visible")) {
+        this.tooltipElement.classList.remove("is-visible");
+        this.tooltipElement.removeEventListener("keydown", this.handleEscKey);
+        const onTransitionEnd = () => {
+          if (this.tooltipElement && this.tooltipElement.parentNode) {
+            this.tooltipElement.removeEventListener("transitionend", onTransitionEnd);
+            this.tooltipElement.parentNode.removeChild(this.tooltipElement);
+            this.tooltipElement = null;
+            fire("infoTooltipDidHide");
+          }
+        };
+        this.tooltipElement.addEventListener("transitionend", onTransitionEnd);
+      }
+    }
+        handleEscKey(event) {
+      if (event.key === "Escape") {
+        event.stopImmediatePropagation();
+        this.hide();
+      }
+    }
+  };
+  var infoTooltip = new Tooltip();
+  function createHelpIcon(contentKey) {
+    const helpButton = document.createElement("button");
+    helpButton.className = "tc-help-icon-button";
+    helpButton.innerHTML = createTrustedHTML(questionMarkIcon);
+    helpButton.addEventListener("click", (event) => {
+      event.stopPropagation();
+      log(`Help icon clicked, showing content for key: ${contentKey}`);
+      const helpContent = t(contentKey);
+      infoTooltip.show({
+        title: t(`${contentKey}Title`),
+        text: helpContent,
+        titleIcon: questionMarkIcon
+      });
+    });
+    return helpButton;
+  }
   var counterElement = null;
   var countSpan = null;
   var textNode = null;
+  var helpIcon = null;
   var currentCount2 = 0;
   var currentLabelKey = "";
   function updateCounterText() {
@@ -5607,7 +5714,7 @@ ${result.join(",\n")}
       textNode.textContent = t(currentLabelKey);
     }
   }
-  function createCounterElement(labelKey) {
+  function createCounterElement(labelKey, helpKey) {
     if (counterElement) return;
     counterElement = document.createElement("div");
     counterElement.className = "tc-top-center-counter";
@@ -5617,14 +5724,31 @@ ${result.join(",\n")}
     countSpan.textContent = "0";
     counterElement.appendChild(textNode);
     counterElement.appendChild(countSpan);
+    if (helpKey) {
+      helpIcon = createHelpIcon(helpKey);
+      counterElement.appendChild(helpIcon);
+    }
     uiContainer.appendChild(counterElement);
     on("languageChanged", updateCounterText);
   }
-  function showTopCenterCounter(labelKey) {
-    createCounterElement(labelKey);
+  function showTopCenterCounter(options) {
+    const { labelKey, helpKey = null } = typeof options === "string" ? { labelKey: options } : options;
+    if (helpIcon) {
+      helpIcon.remove();
+      helpIcon = null;
+    }
+    createCounterElement(labelKey, helpKey);
     if (currentLabelKey !== labelKey) {
       currentLabelKey = labelKey;
       updateCounterText();
+    }
+    if (!helpKey && helpIcon) {
+      helpIcon.remove();
+      helpIcon = null;
+    }
+    if (helpKey && !helpIcon) {
+      helpIcon = createHelpIcon(helpKey);
+      counterElement.appendChild(helpIcon);
     }
     currentCount2 = 0;
     if (countSpan) {
@@ -5632,8 +5756,6 @@ ${result.join(",\n")}
     }
     requestAnimationFrame(() => {
       counterElement.classList.add("is-visible");
-      const width = counterElement.offsetWidth;
-      uiContainer.style.setProperty("--tc-counter-width", `${width}px`);
     });
   }
   function hideTopCenterCounter() {
@@ -5705,7 +5827,7 @@ ${result.join(",\n")}
         elementScanFab2.classList.add("fab-disabled");
       }
       showNotification(t("scan.sessionStarted"), { type: "info" });
-      showTopCenterCounter("common.discovered");
+      showTopCenterCounter({ labelKey: "common.discovered" });
       setTimeout(() => {
         start((count) => {
           updateTopCenterCounter(count);
@@ -5935,121 +6057,6 @@ ${result.join(",\n")}
       count: textsArray.length
     };
   };
-  var Tooltip = class {
-    constructor() {
-      this.tooltipElement = null;
-      this.handleEscKey = this.handleEscKey.bind(this);
-    }
-        _createDOM(config) {
-      const overlay = document.createElement("div");
-      overlay.className = "info-tooltip-overlay";
-      overlay.tabIndex = -1;
-      const tooltip = document.createElement("div");
-      tooltip.className = "info-tooltip-modal";
-      if (config.width) tooltip.style.width = config.width;
-      if (config.height) tooltip.style.height = config.height;
-      const header = document.createElement("div");
-      header.className = "info-tooltip-header";
-      const titleContainer2 = document.createElement("div");
-      titleContainer2.className = "info-tooltip-title-container";
-      if (config.titleIcon) {
-        const iconElement = createSVGFromString(config.titleIcon);
-        iconElement.classList.add("info-tooltip-title-icon");
-        titleContainer2.appendChild(iconElement);
-      }
-      const titleElement = document.createElement("h3");
-      titleElement.className = "info-tooltip-title";
-      titleElement.textContent = config.title;
-      titleContainer2.appendChild(titleElement);
-      const closeButton = document.createElement("span");
-      closeButton.className = "info-tooltip-close";
-      closeButton.appendChild(createSVGFromString(closeIcon));
-      closeButton.addEventListener("click", () => this.hide());
-      header.appendChild(titleContainer2);
-      header.appendChild(closeButton);
-      const content = document.createElement("div");
-      content.className = "info-tooltip-content";
-      const textElement = document.createElement("p");
-      textElement.innerHTML = createTrustedHTML(config.text || "");
-      content.appendChild(textElement);
-      tooltip.appendChild(header);
-      tooltip.appendChild(content);
-      overlay.appendChild(tooltip);
-      this.tooltipElement = overlay;
-      uiContainer.appendChild(this.tooltipElement);
-    }
-    /**
-     * @public
-     * @description 显示并填充提示窗口。
-     * @param {object} config - 提示窗口的配置对象。
-     */
-    show(config) {
-      if (!this.tooltipElement) {
-        this._createDOM(config);
-      }
-      fire("infoTooltipWillShow");
-      setTimeout(() => {
-        if (this.tooltipElement) {
-          const onTransitionEnd = () => {
-            this.tooltipElement.focus();
-            this.tooltipElement.addEventListener("keydown", this.handleEscKey);
-            this.tooltipElement.removeEventListener("transitionend", onTransitionEnd);
-          };
-          this.tooltipElement.addEventListener("transitionend", onTransitionEnd);
-          this.tooltipElement.classList.add("is-visible");
-        }
-      }, 10);
-    }
-        hide() {
-      if (this.tooltipElement && this.tooltipElement.classList.contains("is-visible")) {
-        this.tooltipElement.classList.remove("is-visible");
-        this.tooltipElement.removeEventListener("keydown", this.handleEscKey);
-        const onTransitionEnd = () => {
-          if (this.tooltipElement && this.tooltipElement.parentNode) {
-            this.tooltipElement.removeEventListener("transitionend", onTransitionEnd);
-            this.tooltipElement.parentNode.removeChild(this.tooltipElement);
-            this.tooltipElement = null;
-            fire("infoTooltipDidHide");
-          }
-        };
-        this.tooltipElement.addEventListener("transitionend", onTransitionEnd);
-      }
-    }
-        handleEscKey(event) {
-      if (event.key === "Escape") {
-        event.stopImmediatePropagation();
-        this.hide();
-      }
-    }
-  };
-  var infoTooltip = new Tooltip();
-  var questionMarkIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M478-240q21 0 35.5-14.5T528-290q0-21-14.5-35.5T478-340q-21 0-35.5 14.5T428-290q0 21 14.5 35.5T478-240Zm-36-154h74q0-33 7.5-52t42.5-52q26-26 41-49.5t15-56.5q0-56-41-86t-97-30q-57 0-92.5 30T342-618l66 26q5-18 22.5-39t53.5-21q32 0 48 17.5t16 38.5q0 20-12 37.5T506-526q-44 39-54 59t-10 73Zm38 314q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>`;
-  var tutorialElement = null;
-  function handleTutorialClick() {
-    infoTooltip.show({
-      title: t("log.elementScan.tutorial.title"),
-      text: createTrustedHTML(t("log.elementScan.tutorial.content")),
-      width: "450px"
-    });
-  }
-  function createTutorialElement() {
-    if (tutorialElement) return;
-    tutorialElement = document.createElement("div");
-    tutorialElement.className = "tc-element-scan-tutorial";
-    tutorialElement.innerHTML = createTrustedHTML(questionMarkIcon);
-    tutorialElement.addEventListener("click", handleTutorialClick);
-    uiContainer.appendChild(tutorialElement);
-  }
-  function showTutorialIcon() {
-    createTutorialElement();
-    requestAnimationFrame(() => {
-      tutorialElement.classList.add("is-visible");
-    });
-  }
-  function hideTutorialIcon() {
-    if (!tutorialElement) return;
-    tutorialElement.classList.remove("is-visible");
-  }
   var isActive = false;
   var isAdjusting = false;
   var currentTarget = null;
@@ -6119,8 +6126,7 @@ ${result.join(",\n")}
     isAdjusting = false;
     fabElement.classList.add("is-recording");
     updateFabTooltip(fabElement, "scan.stopSession");
-    showTopCenterCounter("scan.stagedCount");
-    showTutorialIcon();
+    showTopCenterCounter({ labelKey: "scan.stagedCount", helpKey: "tutorial.elementScan" });
     const dynamicFab2 = getDynamicFab();
     if (dynamicFab2) {
       dynamicFab2.dataset.originalTooltipKey = dynamicFab2.dataset.tooltipKey;
@@ -6159,7 +6165,6 @@ ${result.join(",\n")}
     cleanupUI();
     cleanupToolbar();
     hideTopCenterCounter();
-    hideTutorialIcon();
     removeScrollListeners();
     elementPath = [];
     currentTarget = null;
@@ -6567,11 +6572,7 @@ ${result.join(",\n")}
           originalError: "Original worker error: {{error}}"
         },
         switchToFallback: "Switching to main thread fallback for Element Scan.",
-        fallbackFailed: "Element Scan fallback mode failed: {{error}}",
-        tutorial: {
-          title: "How to Use Element Scan",
-          content: "<b>Main Operation:</b> Hover over elements to preview, and click to select and open the adjustment toolbar.<br><br><b>Fine-tuning & Confirmation:</b> In the toolbar, use the slider to precisely adjust the selection level. Then, click 'Stage' to add it to the extraction list or 'Confirm' to extract immediately.<br><br><b>Exiting Scan:</b> You can press the \`Esc\` key at any time or click the 'Cancel' button on the toolbar to exit scan mode."
-        }
+        fallbackFailed: "Element Scan fallback mode failed: {{error}}"
       },
       elementScanUI: {
         creatingHighlights: "Element Scan UI: Creating highlight elements for the first time.",
@@ -6597,6 +6598,10 @@ ${result.join(",\n")}
         defaultWorkerPolicyWarning: "Trusted Types default policy failed for worker URL, falling back to raw URL.",
         defaultHtmlPolicyWarning: "Trusted Types default policy failed for HTML, falling back to raw string."
       }
+    },
+    tutorial: {
+      elementScanTitle: "Element Scan Guide",
+      elementScan: '<p class="tutorial-content">This is a placeholder for the element scan tutorial. Rich text is supported.</p>'
     }
   };
   // src/shared/i18n/zh-CN.json
@@ -6899,11 +6904,7 @@ ${result.join(",\n")}
           originalError: "\\u539F\\u59CB Worker \\u9519\\u8BEF: {{error}}"
         },
         switchToFallback: "\\u6B63\\u5728\\u4E3A\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
-        fallbackFailed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5907\\u9009\\u65B9\\u6848\\u6267\\u884C\\u5931\\u8D25: {{error}}",
-        tutorial: {
-          title: "\\u5982\\u4F55\\u4F7F\\u7528\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF",
-          content: "<b>\\u4E3B\\u8981\\u64CD\\u4F5C\\uFF1A</b>\\u5C06\\u9F20\\u6807\\u60AC\\u505C\\u5728\\u9875\\u9762\\u5143\\u7D20\\u4E0A\\u5373\\u53EF\\u9884\\u89C8\\uFF0C\\u5355\\u51FB\\u53EF\\u5C06\\u5176\\u9009\\u4E2D\\u5E76\\u6253\\u5F00\\u8C03\\u6574\\u5DE5\\u5177\\u680F\\u3002<br><br><b>\\u5FAE\\u8C03\\u4E0E\\u786E\\u8BA4\\uFF1A</b>\\u5728\\u5DE5\\u5177\\u680F\\u4E2D\\uFF0C\\u60A8\\u53EF\\u4EE5\\u4F7F\\u7528\\u6ED1\\u5757\\u7CBE\\u786E\\u8C03\\u6574\\u9009\\u62E9\\u7684\\u5C42\\u7EA7\\u3002\\u7136\\u540E\\uFF0C\\u70B9\\u51FB\\u201C\\u6682\\u5B58\\u201D\\u6309\\u94AE\\u5C06\\u5176\\u52A0\\u5165\\u5F85\\u63D0\\u53D6\\u5217\\u8868\\uFF0C\\u6216\\u70B9\\u51FB\\u201C\\u786E\\u8BA4\\u201D\\u7ACB\\u5373\\u63D0\\u53D6\\u3002<br><br><b>\\u9000\\u51FA\\u626B\\u63CF\\uFF1A</b>\\u60A8\\u53EF\\u4EE5\\u968F\\u65F6\\u6309 \`Esc\` \\u952E\\uFF0C\\u6216\\u70B9\\u51FB\\u5DE5\\u5177\\u680F\\u4E0A\\u7684\\u201C\\u53D6\\u6D88\\u201D\\u6309\\u94AE\\u6765\\u9000\\u51FA\\u626B\\u63CF\\u6A21\\u5F0F\\u3002"
-        }
+        fallbackFailed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5907\\u9009\\u65B9\\u6848\\u6267\\u884C\\u5931\\u8D25: {{error}}"
       },
       elementScanUI: {
         creatingHighlights: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u9996\\u6B21\\u521B\\u5EFA\\u9AD8\\u4EAE\\u5143\\u7D20\\u3002",
@@ -6929,6 +6930,10 @@ ${result.join(",\n")}
         defaultWorkerPolicyWarning: "\\u7528\\u4E8E worker URL \\u7684 Trusted Types \\u9ED8\\u8BA4\\u7B56\\u7565\\u5931\\u8D25\\uFF0C\\u56DE\\u9000\\u5230\\u539F\\u59CB URL\\u3002",
         defaultHtmlPolicyWarning: "\\u7528\\u4E8E HTML \\u7684 Trusted Types \\u9ED8\\u8BA4\\u7B56\\u7565\\u5931\\u8D25\\uFF0C\\u56DE\\u9000\\u5230\\u539F\\u59CB\\u5B57\\u7B26\\u4E32\\u3002"
       }
+    },
+    tutorial: {
+      elementScanTitle: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u6559\\u7A0B",
+      elementScan: '<p class="tutorial-content">\\u8FD9\\u662F\\u4E00\\u4E2A\\u7528\\u4E8E\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u6559\\u7A0B\\u7684\\u5360\\u4F4D\\u7B26\\u3002\\u652F\\u6301\\u5BCC\\u6587\\u672C\\u683C\\u5F0F\\u3002</p>'
     }
   };
   // src/shared/i18n/zh-TW.json
@@ -7231,11 +7236,7 @@ ${result.join(",\n")}
           originalError: "\\u539F\\u59CB Worker \\u932F\\u8AA4: {{error}}"
         },
         switchToFallback: "\\u6B63\\u5728\\u70BA\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
-        fallbackFailed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5099\\u9078\\u65B9\\u6848\\u57F7\\u884C\\u5931\\u6557: {{error}}",
-        tutorial: {
-          title: "\\u5982\\u4F55\\u4F7F\\u7528\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF",
-          content: "<b>\\u4E3B\\u8981\\u64CD\\u4F5C\\uFF1A</b>\\u5C07\\u6ED1\\u9F20\\u61F8\\u505C\\u5728\\u9801\\u9762\\u5143\\u7D20\\u4E0A\\u5373\\u53EF\\u9810\\u89BD\\uFF0C\\u9EDE\\u64CA\\u53EF\\u5C07\\u5176\\u9078\\u4E2D\\u4E26\\u958B\\u555F\\u8ABF\\u6574\\u5DE5\\u5177\\u5217\\u3002<br><br><b>\\u5FAE\\u8ABF\\u8207\\u78BA\\u8A8D\\uFF1A</b>\\u5728\\u5DE5\\u5177\\u5217\\u4E2D\\uFF0C\\u60A8\\u53EF\\u4EE5\\u4F7F\\u7528\\u6ED1\\u687F\\u7CBE\\u78BA\\u8ABF\\u6574\\u9078\\u64C7\\u7684\\u5C64\\u7D1A\\u3002\\u7136\\u5F8C\\uFF0C\\u9EDE\\u64CA\\u300C\\u66AB\\u5B58\\u300D\\u6309\\u9215\\u5C07\\u5176\\u52A0\\u5165\\u5F85\\u63D0\\u53D6\\u5217\\u8868\\uFF0C\\u6216\\u9EDE\\u64CA\\u300C\\u78BA\\u8A8D\\u300D\\u7ACB\\u5373\\u63D0\\u53D6\\u3002<br><br><b>\\u9000\\u51FA\\u6383\\u63CF\\uFF1A</b>\\u60A8\\u53EF\\u4EE5\\u96A8\\u6642\\u6309 \`Esc\` \\u9375\\uFF0C\\u6216\\u9EDE\\u64CA\\u5DE5\\u5177\\u5217\\u4E0A\\u7684\\u300C\\u53D6\\u6D88\\u300D\\u6309\\u9215\\u4F86\\u9000\\u51FA\\u6383\\u63CF\\u6A21\\u5F0F\\u3002"
-        }
+        fallbackFailed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5099\\u9078\\u65B9\\u6848\\u57F7\\u884C\\u5931\\u6557: {{error}}"
       },
       elementScanUI: {
         creatingHighlights: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u9996\\u6B21\\u5EFA\\u7ACB\\u9AD8\\u4EAE\\u5143\\u7D20\\u3002",
@@ -7261,6 +7262,10 @@ ${result.join(",\n")}
         defaultWorkerPolicyWarning: "\\u7528\\u65BC worker URL \\u7684 Trusted Types \\u9810\\u8A2D\\u7B56\\u7565\\u5931\\u6557\\uFF0C\\u56DE\\u9000\\u5230\\u539F\\u59CB URL\\u3002",
         defaultHtmlPolicyWarning: "\\u7528\\u65BC HTML \\u7684 Trusted Types \\u9810\\u8A2D\\u7B56\\u7565\\u5931\\u6557\\uFF0C\\u56DE\\u9000\\u5230\\u539F\\u59CB\\u5B57\\u4E32\\u3002"
       }
+    },
+    tutorial: {
+      elementScanTitle: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u6559\\u5B78",
+      elementScan: '<p class="tutorial-content">\\u9019\\u662F\\u4E00\\u500B\\u7528\\u65BC\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u6559\\u5B78\\u7684\\u4F54\\u4F4D\\u7B26\\u3002\\u652F\\u63F4\\u5BCC\\u6587\\u672C\\u683C\\u5F0F\\u3002</p>'
     }
   };
   // src/shared/i18n/management/languages.js
@@ -8159,7 +8164,7 @@ ${result.join(",\n")}
   function initializeExporter() {
     on("exportToFile", exportToFile);
   }
-  function main() {
+  function initialize2() {
     if (window.top !== window.self) {
       log(t("log.main.inIframe"));
       return;
@@ -8670,22 +8675,141 @@ ${result.join(",\n")}
   box-shadow:0 0 0 2px var(--main-primary-hover-bg, rgba(30, 144, 255, 0.1));
 }
 .info-tooltip-overlay{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background-color:var(--main-overlay-bg);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:10002;
     opacity:0;
     visibility:hidden;
     transition:opacity 0.3s ease, visibility 0.3s;
-    pointer-events:none;
+    font-family:'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
 }
 .info-tooltip-overlay.is-visible{
     opacity:1;
     visibility:visible;
-    pointer-events:auto;
 }
 .info-tooltip-modal{
+    background-color:var(--main-bg);
+    color:var(--main-text);
+    border:1px solid var(--main-border);
+    border-radius:16px;
+    box-shadow:0 5px 15px var(--main-shadow);
+    padding:0;
+    position:relative;
+    width:400px;
+    max-width:90vw;
+    max-height:90vh;
+    display:flex;
+    flex-direction:column;
     transform:scale(0.95);
     transition:transform 0.3s ease;
+    overflow:hidden;
 }
 .info-tooltip-overlay.is-visible .info-tooltip-modal{
     transform:scale(1);
+}
+.info-tooltip-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:20px;
+    border-bottom:1px solid var(--main-border);
+}
+.info-tooltip-title-container{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+.info-tooltip-title-icon{
+    width:20px;
+    height:20px;
+    color:var(--secondary-text);
+}
+.info-tooltip-title{
+    font-size:18px;
+    font-weight:bold;
+    margin:0;
+}
+.info-tooltip-close{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:32px;
+    height:32px;
+    border-radius:50%;
+    cursor:pointer;
+    color:var(--main-text);
+    background-color:transparent;
+    transition:background-color 0.2s, transform 0.15s;
+}
+.info-tooltip-close:hover{
+    background-color:var(--main-border);
+}
+.info-tooltip-close:active{
+    transform:scale(0.9);
+}
+.info-tooltip-close svg{
+    width:18px;
+    height:18px;
+}
+.info-tooltip-content{
+    padding:20px;
+    overflow-y:auto;
+}
+.info-tooltip-content p{
+    margin:0 0 15px 0;
+    line-height:1.7;
+    font-size:16px;
+}
+.info-tooltip-content p:last-child{
+    margin-bottom:0;
+}
+.info-tooltip-content strong{
+    color:var(--primary-accent);
+    font-weight:600;
+}
+.info-tooltip-image{
+    max-width:100%;
+    height:auto;
+    border-radius:8px;
+    margin-top:10px;
+    display:block;
+    margin-left:auto;
+    margin-right:auto;
+    opacity:0;
+    animation:fadeIn 0.3s forwards;
+}
+@keyframes fadeIn{
+    to{
+        opacity:1;
+    }
+}
+.info-icon{
+    margin-left:8px;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    vertical-align:text-bottom;
+    color:var(--secondary-text);
+    width:20px;
+    height:20px;
+    border-radius:50%;
+    transition:background-color 0.2s, color 0.2s;
+}
+.info-icon:hover{
+    color:var(--primary-accent);
+    background-color:var(--main-border);
+}
+.info-icon svg{
+    width:16px;
+    height:16px;
 }
 .gm-loading-overlay{
   position:absolute;
@@ -8819,43 +8943,6 @@ ${result.join(",\n")}
   transform:scale(0.9);
   background-color:var(--main-border);
 }
-.tc-element-scan-tutorial{
-    position:fixed;
-    top:-50px;
-    left:50%;
-    transform:translateX(calc(var(--tc-counter-width, 100px) / 2 + 8px));
-    width:36px;
-    height:36px;
-    background-color:var(--main-bg);
-    color:var(--main-text);
-    border-radius:50%;
-    box-shadow:0 2px 8px var(--main-shadow);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    z-index:10001;
-    opacity:0;
-    visibility:hidden;
-    transition:opacity 0.3s ease, top 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    cursor:pointer;
-}
-.tc-element-scan-tutorial.is-visible{
-    opacity:1;
-    visibility:visible;
-    top:20px;
-}
-.tc-element-scan-tutorial svg{
-    width:22px;
-    height:22px;
-    fill:currentColor;
-}
-.tc-element-scan-tutorial:hover{
-    background-color:var(--main-border);
-    transform:translateX(calc(var(--tc-counter-width, 100px) / 2 + 8px)) scale(1.1);
-}
-.tc-element-scan-tutorial:active{
-    transform:translateX(calc(var(--tc-counter-width, 100px) / 2 + 8px)) scale(0.95);
-}
 .text-extractor-modal-content{
   padding:18px;
   overflow-y:auto;
@@ -8922,6 +9009,28 @@ ${result.join(",\n")}
     cursor:not-allowed;
     box-shadow:none;
     transform:none;
+}
+.tc-help-icon-button{
+    background:none;
+    border:none;
+    padding:0;
+    margin-left:8px;
+    cursor:pointer;
+    color:var(--main-text);
+    opacity:0.7;
+    transition:opacity 0.2s, transform 0.2s;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    vertical-align:middle;
+}
+.tc-help-icon-button:hover{
+    opacity:1;
+    transform:scale(1.1);
+}
+.tc-help-icon-button svg{
+    width:20px;
+    height:20px;
 }
 .tc-textarea-container{
     display:flex;
@@ -9376,7 +9485,6 @@ ${result.join(",\n")}
     align-items:center;
     gap:8px;
     border:1px solid var(--main-border);
-    pointer-events:none;
 }
 .tc-top-center-counter.is-visible{
     transform:translate(-50%, 0);
@@ -9395,9 +9503,9 @@ ${result.join(",\n")}
     initializeExporter();
   }
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", main);
+    document.addEventListener("DOMContentLoaded", initialize2);
   } else {
-    main();
+    initialize2();
   }
   return __toCommonJS(main_exports);
 })();

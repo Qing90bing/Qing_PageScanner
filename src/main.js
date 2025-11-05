@@ -13,11 +13,13 @@ import './features/quick-scan/index.js'; // 导入以备将来初始化
 import './features/session-scan/index.js'; // 导入以备将来初始化
 import './features/element-scan/index.js'; // 导入以备将来初始化
 
+export { initUI };
+
 /**
  * 应用程序的主入口点。
  */
 // 导出 main 函数以供测试和全局访问
-export function main() {
+export function initialize() {
   // 将顶层窗口检查移入函数内部
   if (window.top !== window.self) {
     log(t('log.main.inIframe'));
@@ -59,8 +61,8 @@ export function main() {
 // --- 初始化脚本 ---
 // 确保 DOM 加载完成后再执行脚本
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', main);
+    document.addEventListener('DOMContentLoaded', initialize);
 } else {
     // DOMContentLoaded 已经触发
-    main();
+    initialize();
 }

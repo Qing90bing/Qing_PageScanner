@@ -14,7 +14,6 @@ import { createTrustedWorkerUrl } from '../../shared/utils/trustedTypes.js';
 import { performScanInMainThread } from './fallback.js';
 import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
 import { showTopCenterCounter, hideTopCenterCounter, updateTopCenterCounter } from '../../shared/ui/components/topCenterCounter.js';
-import { showTutorialIcon, hideTutorialIcon } from './tutorial.js';
 import { on } from '../../shared/utils/eventBus.js';
 
 // --- 模块级状态变量 ---
@@ -113,8 +112,7 @@ function startElementScan(fabElement) {
     isAdjusting = false;
     fabElement.classList.add('is-recording');
     updateFabTooltip(fabElement, 'scan.stopSession'); // 更新自己的工具提示
-    showTopCenterCounter('scan.stagedCount');
-    showTutorialIcon();
+    showTopCenterCounter({ labelKey: 'scan.stagedCount', helpKey: 'tutorial.elementScan' });
 
     // 禁用“动态扫描”按钮并更新其工具提示
     const dynamicFab = getDynamicFab();
@@ -162,7 +160,6 @@ export function stopElementScan(fabElement) {
     cleanupUI();
     cleanupToolbar();
     hideTopCenterCounter();
-    hideTutorialIcon();
     removeScrollListeners();
 
     elementPath = [];
