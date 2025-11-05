@@ -5638,6 +5638,13 @@ ${result.join(",\n")}
   function hideTopCenterCounter() {
     if (!counterElement) return;
     counterElement.classList.remove("is-visible");
+    const transitionDuration = 400;
+    setTimeout(() => {
+      if (counterElement) {
+        counterElement.remove();
+        counterElement = null;
+      }
+    }, transitionDuration);
   }
   function updateTopCenterCounter(newCount) {
     if (!counterElement || !countSpan) return;
@@ -5818,7 +5825,7 @@ ${result.join(",\n")}
     });
     return helpButton;
   }
-  var topCenterContainer = null;
+  var helpIcon = null;
   var scanContainer = null;
   var highlightBorder = null;
   var tagNameTooltip = null;
@@ -6013,28 +6020,24 @@ ${result.join(",\n")}
     }
   }
   function showTopCenterUI() {
-    if (topCenterContainer) return;
-    topCenterContainer = document.createElement("div");
-    topCenterContainer.className = "element-scan-top-ui-container";
     showTopCenterCounter("scan.stagedCount");
-    const counterElement2 = uiContainer.querySelector(".tc-top-center-counter");
-    const helpIcon = createHelpIcon("tutorial.elementScan");
-    if (counterElement2) {
-      topCenterContainer.appendChild(counterElement2);
+    if (!helpIcon) {
+      helpIcon = createHelpIcon("tutorial.elementScan");
+      uiContainer.appendChild(helpIcon);
+      helpIcon.classList.add("element-scan-help-icon");
+      requestAnimationFrame(() => {
+        helpIcon.classList.add("is-visible");
+      });
     }
-    topCenterContainer.appendChild(helpIcon);
-    uiContainer.appendChild(topCenterContainer);
-    requestAnimationFrame(() => {
-      topCenterContainer.classList.add("is-visible");
-    });
   }
   function hideTopCenterUI() {
     hideTopCenterCounter();
-    if (topCenterContainer) {
-      topCenterContainer.classList.remove("is-visible");
+    if (helpIcon) {
+      helpIcon.classList.remove("is-visible");
+      const iconToRemove = helpIcon;
+      helpIcon = null;
       setTimeout(() => {
-        topCenterContainer.remove();
-        topCenterContainer = null;
+        iconToRemove.remove();
       }, 300);
     }
   }
@@ -8501,32 +8504,18 @@ ${result.join(",\n")}
 .tc-dropdown-menu.is-hiding{
     animation:slide-down-fade-out 0.3s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
 }
-.element-scan-top-ui-container{
+.element-scan-help-icon{
     position:fixed;
     top:20px;
-    left:50%;
+    left:calc(50% + 100px);
     transform:translate(-50%, -150%);
     z-index:9999998;
-    display:flex;
-    align-items:center;
-    gap:12px;
     opacity:0;
-    transition:transform 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1)), opacity 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1));
+    transition:transform 0.4s var(--easing-standard), opacity 0.4s var(--easing-standard);
 }
-.element-scan-top-ui-container.is-visible{
+.element-scan-help-icon.is-visible{
     transform:translate(-50%, 0);
     opacity:1;
-}
-.element-scan-top-ui-container .tc-top-center-counter{
-    position:static;
-    transform:none;
-    opacity:1;
-    transition:none;
-    box-shadow:none;
-    backdrop-filter:none;
-    -webkit-backdrop-filter:none;
-    border:none;
-    pointer-events:auto;
 }
 #element-scan-container{
     position:absolute;
@@ -9047,18 +9036,25 @@ ${result.join(",\n")}
     transform:none;
 }
 .tc-help-icon-button{
-    background:none;
-    border:none;
+    background-color:var(--main-bg-a);
+    border:1px solid var(--main-border);
+    border-radius:50%;
+    width:32px;
+    height:32px;
     padding:0;
     cursor:pointer;
     color:var(--main-text-secondary);
-    transition:color 0.2s, transform 0.2s;
-    display:inline-flex;
+    transition:color 0.2s, transform 0.2s, background-color 0.2s;
+    display:flex;
     align-items:center;
     justify-content:center;
+    box-shadow:var(--main-shadow);
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
 }
 .tc-help-icon-button:hover{
     color:var(--main-text);
+    background-color:var(--main-border);
     transform:scale(1.1);
 }
 .tc-help-icon-button svg{

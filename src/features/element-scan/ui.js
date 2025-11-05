@@ -10,7 +10,7 @@ import { showTopCenterCounter, hideTopCenterCounter } from '../../shared/ui/comp
 import { createHelpIcon } from '../../shared/ui/components/helpIcon.js';
 
 
-let topCenterContainer = null;
+let helpIcon = null;
 
 // --- 模块级变量，用于缓存UI元素的引用 ---
 
@@ -324,36 +324,32 @@ export function cleanupToolbar() {
 }
 
 export function showTopCenterUI() {
-    if (topCenterContainer) return;
-
-    topCenterContainer = document.createElement('div');
-    topCenterContainer.className = 'element-scan-top-ui-container';
-
-    // This will create and show the counter, which we can then move
+    // Show the counter, managed by its own module
     showTopCenterCounter('scan.stagedCount');
-    const counterElement = uiContainer.querySelector('.tc-top-center-counter');
 
-    const helpIcon = createHelpIcon('tutorial.elementScan');
-
-    if (counterElement) {
-        topCenterContainer.appendChild(counterElement);
+    // Create and show the help icon, managed here
+    if (!helpIcon) {
+        helpIcon = createHelpIcon('tutorial.elementScan');
+        uiContainer.appendChild(helpIcon);
+        // Add a class for specific positioning
+        helpIcon.classList.add('element-scan-help-icon');
+        requestAnimationFrame(() => {
+            helpIcon.classList.add('is-visible');
+        });
     }
-    topCenterContainer.appendChild(helpIcon);
-
-    uiContainer.appendChild(topCenterContainer);
-
-    requestAnimationFrame(() => {
-        topCenterContainer.classList.add('is-visible');
-    });
 }
 
 export function hideTopCenterUI() {
+    // Hide the counter, managed by its own module
     hideTopCenterCounter();
-    if (topCenterContainer) {
-        topCenterContainer.classList.remove('is-visible');
+
+    // Hide and remove the help icon, managed here
+    if (helpIcon) {
+        helpIcon.classList.remove('is-visible');
+        const iconToRemove = helpIcon;
+        helpIcon = null;
         setTimeout(() => {
-            topCenterContainer.remove();
-            topCenterContainer = null;
-        }, 300);
+            iconToRemove.remove();
+        }, 300); // Wait for fade out animation
     }
 }

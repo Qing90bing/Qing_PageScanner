@@ -69,7 +69,17 @@ export function showTopCenterCounter(labelKey) {
  */
 export function hideTopCenterCounter() {
     if (!counterElement) return;
+
     counterElement.classList.remove('is-visible');
+
+    // After the transition, remove the element from the DOM
+    const transitionDuration = 400; // Should match the CSS transition duration
+    setTimeout(() => {
+        if (counterElement) {
+            counterElement.remove();
+            counterElement = null;
+        }
+    }, transitionDuration);
 }
 
 /**
