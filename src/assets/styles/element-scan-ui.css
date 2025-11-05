@@ -1,0 +1,32 @@
+/* src/assets/styles/element-scan-ui.css */
+
+.element-scan-top-ui-container {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translate(-50%, -150%); /* Start off-screen */
+    z-index: 9999998; /* Just below the main modal */
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Space between counter and help icon */
+    opacity: 0;
+    transition: transform 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1)), opacity 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1));
+}
+
+.element-scan-top-ui-container.is-visible {
+    transform: translate(-50%, 0);
+    opacity: 1;
+}
+
+/* Ensure the counter inside the container doesn't have its own positioning */
+.element-scan-top-ui-container .tc-top-center-counter {
+    position: static;
+    transform: none;
+    opacity: 1;
+    transition: none;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: none;
+    pointer-events: auto; /* Ensure it's clickable if needed */
+}

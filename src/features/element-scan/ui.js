@@ -6,6 +6,11 @@ import { t } from '../../shared/i18n/index.js';
 import { createTrustedHTML } from '../../shared/utils/trustedTypes.js';
 import { log } from '../../shared/utils/logger.js';
 import { simpleTemplate } from '../../shared/utils/templating.js';
+import { showTopCenterCounter, hideTopCenterCounter } from '../../shared/ui/components/topCenterCounter.js';
+import { createHelpIcon } from '../../shared/ui/components/helpIcon.js';
+
+
+let topCenterContainer = null;
 
 // --- 模块级变量，用于缓存UI元素的引用 ---
 
@@ -314,6 +319,41 @@ export function cleanupToolbar() {
         // 等待CSS过渡动画（300ms）结束后再彻底移除DOM节点
         setTimeout(() => {
             toolbarToRemove.remove();
+        }, 300);
+    }
+}
+
+export function showTopCenterUI() {
+    if (topCenterContainer) return;
+
+    topCenterContainer = document.createElement('div');
+    topCenterContainer.className = 'element-scan-top-ui-container';
+
+    // This will create and show the counter, which we can then move
+    showTopCenterCounter('scan.stagedCount');
+    const counterElement = uiContainer.querySelector('.tc-top-center-counter');
+
+    const helpIcon = createHelpIcon('tutorial.elementScan');
+
+    if (counterElement) {
+        topCenterContainer.appendChild(counterElement);
+    }
+    topCenterContainer.appendChild(helpIcon);
+
+    uiContainer.appendChild(topCenterContainer);
+
+    requestAnimationFrame(() => {
+        topCenterContainer.classList.add('is-visible');
+    });
+}
+
+export function hideTopCenterUI() {
+    hideTopCenterCounter();
+    if (topCenterContainer) {
+        topCenterContainer.classList.remove('is-visible');
+        setTimeout(() => {
+            topCenterContainer.remove();
+            topCenterContainer = null;
         }, 300);
     }
 }

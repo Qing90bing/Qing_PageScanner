@@ -90,7 +90,7 @@ export function handleDynamicExtractClick(dynamicFab) {
         }
 
         showNotification(t('scan.sessionStarted'), { type: 'info' });
-        showTopCenterCounter({ labelKey: 'common.discovered' });
+        showTopCenterCounter('common.discovered');
 
         // 稍微延迟以确保UI更新完成
         setTimeout(() => {

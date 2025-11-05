@@ -1,6 +1,6 @@
 // src/features/element-scan/logic.js
 
-import { updateHighlight, cleanupUI, createAdjustmentToolbar, cleanupToolbar } from './ui.js';
+import { updateHighlight, cleanupUI, createAdjustmentToolbar, cleanupToolbar, showTopCenterUI, hideTopCenterUI } from './ui.js';
 import { extractAndProcessTextFromElement } from '../../shared/utils/textProcessor.js';
 import { updateModalContent } from '../../shared/ui/mainModal.js';
 import { uiContainer } from '../../shared/ui/uiContainer.js';
@@ -13,7 +13,7 @@ import { loadSettings } from '../settings/logic.js';
 import { createTrustedWorkerUrl } from '../../shared/utils/trustedTypes.js';
 import { performScanInMainThread } from './fallback.js';
 import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
-import { showTopCenterCounter, hideTopCenterCounter, updateTopCenterCounter } from '../../shared/ui/components/topCenterCounter.js';
+import { updateTopCenterCounter } from '../../shared/ui/components/topCenterCounter.js';
 import { on } from '../../shared/utils/eventBus.js';
 
 // --- 模块级状态变量 ---
@@ -112,7 +112,7 @@ function startElementScan(fabElement) {
     isAdjusting = false;
     fabElement.classList.add('is-recording');
     updateFabTooltip(fabElement, 'scan.stopSession'); // 更新自己的工具提示
-    showTopCenterCounter({ labelKey: 'scan.stagedCount', helpKey: 'tutorial.elementScan' });
+    showTopCenterUI();
 
     // 禁用“动态扫描”按钮并更新其工具提示
     const dynamicFab = getDynamicFab();
@@ -159,7 +159,7 @@ export function stopElementScan(fabElement) {
 
     cleanupUI();
     cleanupToolbar();
-    hideTopCenterCounter();
+    hideTopCenterUI();
     removeScrollListeners();
 
     elementPath = [];
