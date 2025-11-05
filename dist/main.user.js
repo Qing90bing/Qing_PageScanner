@@ -5680,6 +5680,16 @@ ${result.join(",\n")}
   var highlightBorder = null;
   var tagNameTooltip = null;
   var toolbar = null;
+  function getElementSelector(element) {
+    if (!element) return "";
+    const currentTag = element.tagName.toLowerCase();
+    const parent = element.parentElement;
+    if (!parent || parent.tagName.toLowerCase() === "body") {
+      return currentTag;
+    }
+    const parentTag = parent.tagName.toLowerCase();
+    return `${parentTag} ${currentTag}`;
+  }
   function createHighlightElements() {
     if (!scanContainer) {
       log(t("log.elementScanUI.creatingHighlights"));
@@ -5708,14 +5718,14 @@ ${result.join(",\n")}
     const scrollX = window.scrollX;
     const scrollY = window.scrollY;
     const padding = 6;
-    const tagName = targetElement.tagName.toLowerCase();
+    const elementSelector = getElementSelector(targetElement);
     const coordinates = {
       top: rect.top.toFixed(2),
       left: rect.left.toFixed(2),
       width: rect.width.toFixed(2),
       height: rect.height.toFixed(2)
     };
-    log(simpleTemplate(t("log.elementScanUI.updatingHighlight"), { tagName }), coordinates);
+    log(simpleTemplate(t("log.elementScanUI.updatingHighlight"), { tagName: elementSelector }), coordinates);
     const newWidth = rect.width + padding * 2;
     const newHeight = rect.height + padding * 2;
     const newX = rect.left + scrollX - padding;
@@ -5723,10 +5733,10 @@ ${result.join(",\n")}
     scanContainer.style.width = `${newWidth}px`;
     scanContainer.style.height = `${newHeight}px`;
     scanContainer.style.transform = `translate(${newX}px, ${newY}px)`;
-    tagNameTooltip.textContent = tagName;
+    tagNameTooltip.textContent = elementSelector;
     const toolbarTag = uiContainer.querySelector("#element-scan-toolbar-tag");
     if (toolbarTag) {
-      toolbarTag.textContent = `<${tagName}>`;
+      toolbarTag.textContent = getElementSelector(targetElement);
     }
   }
   function createAdjustmentToolbar(elementPath2) {
@@ -5735,7 +5745,7 @@ ${result.join(",\n")}
     toolbar = document.createElement("div");
     toolbar.id = "element-scan-toolbar";
     toolbar.innerHTML = createTrustedHTML(`
-        <div id="element-scan-toolbar-tag" title="${t("tooltip.dragHint")}">&lt;${elementPath2[0].tagName.toLowerCase()}&gt;</div>
+        <div id="element-scan-toolbar-tag" title="${t("tooltip.dragHint")}">${getElementSelector(elementPath2[0])}</div>
         <input type="range" id="element-scan-level-slider" min="0" max="${elementPath2.length - 1}" value="0" />
         <div id="element-scan-toolbar-actions">
             <button id="element-scan-toolbar-reselect">${t("common.reselect")}</button>
@@ -8425,6 +8435,7 @@ ${result.join(",\n")}
     z-index:1;
     font-family:'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
     white-space:nowrap;
+    transition:all 0.1s ease-in-out;
 }
 #element-scan-toolbar{
     position:fixed;

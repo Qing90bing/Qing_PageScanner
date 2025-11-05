@@ -32,6 +32,7 @@
     z-index: 1; /* 在容器内部，层级高于边框即可 */
     font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
     white-space: nowrap; /* 防止标签换行 */
+    transition: all 0.1s ease-in-out; /* 为尺寸和内容变化添加动画 */
 }
 
 /* 调整工具栏容器 */

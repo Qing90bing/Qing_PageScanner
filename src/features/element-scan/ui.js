@@ -23,6 +23,28 @@ let toolbar = null;
 
 /**
  * @private
+ * @function getElementSelector
+ * @description 生成一个简洁的字符串来描述元素及其直接父元素。
+ * @param {HTMLElement} element - 目标元素。
+ * @returns {string} - 格式为 `父标签 > 子标签` 或 `子标签` 的字符串。
+ */
+function getElementSelector(element) {
+    if (!element) return '';
+
+    const currentTag = element.tagName.toLowerCase();
+    const parent = element.parentElement;
+
+    // 如果没有父元素，或者父元素是 body，则只显示当前元素的标签
+    if (!parent || parent.tagName.toLowerCase() === 'body') {
+        return currentTag;
+    }
+
+    const parentTag = parent.tagName.toLowerCase();
+    return `${parentTag} ${currentTag}`;
+}
+
+/**
+ * @private
  * @function createHighlightElements
  * @description 创建并初始化用于元素扫描的UI组件（扫描容器、高亮边框、标签工具提示）。
  *              这些元素只在首次需要时创建一次，之后会重用。
@@ -75,7 +97,7 @@ export function updateHighlight(targetElement) {
     const scrollX = window.scrollX;
     const scrollY = window.scrollY;
     const padding = 6; // 为内容添加内边距，使边框看起来更舒适
-    const tagName = targetElement.tagName.toLowerCase();
+    const elementSelector = getElementSelector(targetElement);
 
     const coordinates = {
         top: rect.top.toFixed(2),
@@ -83,7 +105,7 @@ export function updateHighlight(targetElement) {
         width: rect.width.toFixed(2),
         height: rect.height.toFixed(2)
     };
-    log(simpleTemplate(t('log.elementScanUI.updatingHighlight'), { tagName }), coordinates);
+    log(simpleTemplate(t('log.elementScanUI.updatingHighlight'), { tagName: elementSelector }), coordinates);
 
     // 所有的定位和尺寸变化都只应用于容器，内部元素相对静态，以实现同步动画
     const newWidth = rect.width + padding * 2;
@@ -95,12 +117,12 @@ export function updateHighlight(targetElement) {
     scanContainer.style.height = `${newHeight}px`;
     scanContainer.style.transform = `translate(${newX}px, ${newY}px)`;
     
-    tagNameTooltip.textContent = tagName;
+    tagNameTooltip.textContent = elementSelector;
 
     // 如果工具栏已存在，同时更新工具栏上显示的标签名
     const toolbarTag = uiContainer.querySelector('#element-scan-toolbar-tag');
     if (toolbarTag) {
-        toolbarTag.textContent = `<${tagName}>`;
+        toolbarTag.textContent = getElementSelector(targetElement);
     }
 }
 
@@ -117,7 +139,7 @@ export function createAdjustmentToolbar(elementPath) {
     toolbar = document.createElement('div');
     toolbar.id = 'element-scan-toolbar';
     toolbar.innerHTML = createTrustedHTML(`
-        <div id="element-scan-toolbar-tag" title="${t('tooltip.dragHint')}">&lt;${elementPath[0].tagName.toLowerCase()}&gt;</div>
+        <div id="element-scan-toolbar-tag" title="${t('tooltip.dragHint')}">${getElementSelector(elementPath[0])}</div>
         <input type="range" id="element-scan-level-slider" min="0" max="${elementPath.length - 1}" value="0" />
         <div id="element-scan-toolbar-actions">
             <button id="element-scan-toolbar-reselect">${t('common.reselect')}</button>
