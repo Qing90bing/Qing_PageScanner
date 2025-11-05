@@ -1,94 +1,54 @@
 // src/shared/ui/components/topCenterCounter.js
-import { uiContainer } from '../uiContainer.js';
 import { t } from '../../i18n/index.js';
 import { animateCount, easeOutQuad } from '../animations.js';
 import { on } from '../../utils/eventBus.js';
 
-let counterElement = null;
-let countSpan = null;
-let textNode = null;
-let currentCount = 0;
-let currentLabelKey = '';
+let currentCount = 0; // 模块级变量，用于动画的起始值
 
 /**
- * 更新计数器的文本标签以匹配当前语言
+ * 创建并返回一个新的计数器DOM元素，但不附加到DOM中。
+ * @param {string} labelKey - 用于标签的i18n键。
+ * @returns {HTMLElement} - 创建的计数器元素。
  */
-function updateCounterText() {
-    if (textNode && currentLabelKey) {
-        textNode.textContent = t(currentLabelKey);
-    }
-}
-
-/**
- * 创建计数器的DOM元素（如果尚不存在）
- * @param {string} labelKey - 用于标签的i18n键
- */
-function createCounterElement(labelKey) {
-    if (counterElement) return;
-
-    counterElement = document.createElement('div');
+export function createTopCenterCounter(labelKey) {
+    const counterElement = document.createElement('div');
     counterElement.className = 'tc-top-center-counter';
 
-    currentLabelKey = labelKey;
-    textNode = document.createTextNode(t(labelKey));
-    countSpan = document.createElement('span');
+    const textNode = document.createTextNode(t(labelKey));
+    const countSpan = document.createElement('span');
     countSpan.textContent = '0';
 
+    // 将关键节点附加到元素上，以便以后可以轻松找到它们
     counterElement.appendChild(textNode);
     counterElement.appendChild(countSpan);
-    uiContainer.appendChild(counterElement);
+    counterElement._countSpan = countSpan; // 附加引用以便 update 函数可以找到它
+    counterElement._textNode = textNode; // 附加引用以便语言更改可以更新它
+    counterElement._labelKey = labelKey; // 存储 i18n 键
 
-    on('languageChanged', updateCounterText);
+    const languageChangeHandler = () => {
+        textNode.textContent = t(labelKey);
+    };
+
+    // on() 函数返回一个取消订阅的函数，我们将其存储起来
+    const unsubscribe = on('languageChanged', languageChangeHandler);
+
+    // 附加一个销毁方法，用于在元素被移除时清理事件监听器
+    counterElement.destroy = () => {
+        unsubscribe();
+    };
+
+    return counterElement;
 }
 
 /**
- * 显示并初始化顶部中央计数器
- * @param {string} labelKey - 用于标签的i18n键
+ * 更新指定计数器元素的数值。
+ * @param {HTMLElement} element - 目标计数器元素。
+ * @param {number} newCount - 新的计数值。
  */
-export function showTopCenterCounter(labelKey) {
-    createCounterElement(labelKey);
+export function updateTopCenterCounter(element, newCount) {
+    if (!element || !element._countSpan) return;
 
-    // 如果标签键发生变化，则更新它
-    if (currentLabelKey !== labelKey) {
-        currentLabelKey = labelKey;
-        updateCounterText();
-    }
-
-    currentCount = 0;
-    if (countSpan) {
-        countSpan.textContent = '0';
-    }
-
-    requestAnimationFrame(() => {
-        counterElement.classList.add('is-visible');
-    });
-}
-
-/**
- * 隐藏并移除顶部中央计数器
- */
-export function hideTopCenterCounter() {
-    if (!counterElement) return;
-
-    counterElement.classList.remove('is-visible');
-
-    // After the transition, remove the element from the DOM
-    const transitionDuration = 400; // Should match the CSS transition duration
-    setTimeout(() => {
-        if (counterElement) {
-            counterElement.remove();
-            counterElement = null;
-        }
-    }, transitionDuration);
-}
-
-/**
- * 更新顶部中央计数器的数值
- * @param {number} newCount - 新的计数值
- */
-export function updateTopCenterCounter(newCount) {
-    if (!counterElement || !countSpan) return;
-
+    const countSpan = element._countSpan;
     const start = currentCount;
     const end = newCount;
     currentCount = newCount;

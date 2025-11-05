@@ -238,7 +238,7 @@
 .tc-help-icon-button:hover {
     color: var(--main-text);
     background-color: var(--main-border);
-    transform: scale(1.1);
+    /* 移除可能导致位移的 transform 属性，具体的悬停效果将由 .element-scan-help-icon 控制 */
 }
 
 .tc-help-icon-button svg {

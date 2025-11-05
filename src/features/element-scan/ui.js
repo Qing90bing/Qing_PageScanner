@@ -6,10 +6,12 @@ import { t } from '../../shared/i18n/index.js';
 import { createTrustedHTML } from '../../shared/utils/trustedTypes.js';
 import { log } from '../../shared/utils/logger.js';
 import { simpleTemplate } from '../../shared/utils/templating.js';
-import { showTopCenterCounter, hideTopCenterCounter } from '../../shared/ui/components/topCenterCounter.js';
+import { createTopCenterCounter } from '../../shared/ui/components/topCenterCounter.js';
 import { createHelpIcon } from '../../shared/ui/components/helpIcon.js';
 
-
+// --- 模块级变量 ---
+let topCenterContainer = null;
+let counterElement = null;
 let helpIcon = null;
 
 // --- 模块级变量，用于缓存UI元素的引用 ---
@@ -324,32 +326,46 @@ export function cleanupToolbar() {
 }
 
 export function showTopCenterUI() {
-    // Show the counter, managed by its own module
-    showTopCenterCounter('scan.stagedCount');
+    if (topCenterContainer) return;
 
-    // Create and show the help icon, managed here
-    if (!helpIcon) {
-        helpIcon = createHelpIcon('tutorial.elementScan');
-        uiContainer.appendChild(helpIcon);
-        // Add a class for specific positioning
-        helpIcon.classList.add('element-scan-help-icon');
-        requestAnimationFrame(() => {
-            helpIcon.classList.add('is-visible');
-        });
-    }
+    // 1. 创建 Flexbox 容器
+    topCenterContainer = document.createElement('div');
+    topCenterContainer.className = 'top-center-ui-container';
+
+    // 2. 创建并附加子元素
+    counterElement = createTopCenterCounter('scan.stagedCount');
+    helpIcon = createHelpIcon('tutorial.elementScan');
+    helpIcon.classList.add('element-scan-help-icon');
+
+    topCenterContainer.appendChild(counterElement);
+    topCenterContainer.appendChild(helpIcon);
+    uiContainer.appendChild(topCenterContainer);
+
+    // 3. 触发统一的入场动画
+    requestAnimationFrame(() => {
+        topCenterContainer.classList.add('is-visible');
+    });
 }
 
 export function hideTopCenterUI() {
-    // Hide the counter, managed by its own module
-    hideTopCenterCounter();
+    if (!topCenterContainer) return;
 
-    // Hide and remove the help icon, managed here
-    if (helpIcon) {
-        helpIcon.classList.remove('is-visible');
-        const iconToRemove = helpIcon;
-        helpIcon = null;
-        setTimeout(() => {
-            iconToRemove.remove();
-        }, 300); // Wait for fade out animation
-    }
+    const containerToRemove = topCenterContainer;
+
+    // 1. 触发统一的退场动画
+    containerToRemove.classList.remove('is-visible');
+
+    // 2. 动画结束后清理所有内容
+    setTimeout(() => {
+        // 在移除元素之前，调用销毁方法来清理事件监听器
+        if (counterElement && typeof counterElement.destroy === 'function') {
+            counterElement.destroy();
+        }
+        containerToRemove.remove();
+    }, 400);
+
+    // 3. 立即清理引用
+    topCenterContainer = null;
+    counterElement = null;
+    helpIcon = null;
 }

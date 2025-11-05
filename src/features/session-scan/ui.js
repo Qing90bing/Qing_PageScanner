@@ -4,7 +4,7 @@ import { updateModalContent, SHOW_PLACEHOLDER, SHOW_LOADING } from '../../shared
 import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
 import * as sessionExtractor from './logic.js';
 import { showNotification } from '../../shared/ui/components/notification.js';
-import { showTopCenterCounter, hideTopCenterCounter, updateTopCenterCounter } from '../../shared/ui/components/topCenterCounter.js';
+import { createTopCenterCounter, updateTopCenterCounter } from '../../shared/ui/components/topCenterCounter.js';
 import { t } from '../../shared/i18n/index.js';
 import { setFabIcon, getElementScanFab, updateFabTooltip } from '../../shared/ui/components/fab.js';
 import { dynamicIcon } from '../../assets/icons/dynamicIcon.js';
@@ -12,8 +12,10 @@ import { stopIcon } from '../../assets/icons/stopIcon.js';
 import { simpleTemplate } from '../../shared/utils/templating.js';
 import { on } from '../../shared/utils/eventBus.js';
 import { log } from '../../shared/utils/logger.js';
+import { uiContainer } from '../../shared/ui/uiContainer.js';
 
 let currentSessionCount = 0;
+let counterElement = null;
 
 // 监听会话清空事件，以重置本地计数器
 on('sessionCleared', () => {
@@ -67,7 +69,17 @@ export function handleDynamicExtractClick(dynamicFab) {
         setFabIcon(dynamicFab, dynamicIcon);
         dynamicFab.classList.remove('is-recording');
         updateFabTooltip(dynamicFab, 'tooltip.dynamic_scan');
-        hideTopCenterCounter();
+
+        if (counterElement) {
+            counterElement.classList.remove('is-visible');
+            setTimeout(() => {
+                if (counterElement && typeof counterElement.destroy === 'function') {
+                    counterElement.destroy();
+                }
+                counterElement.remove();
+                counterElement = null;
+            }, 400);
+        }
 
         // 启用“选取元素扫描”按钮并恢复其工具提示
         if (elementScanFab) {
@@ -90,12 +102,17 @@ export function handleDynamicExtractClick(dynamicFab) {
         }
 
         showNotification(t('scan.sessionStarted'), { type: 'info' });
-        showTopCenterCounter('common.discovered');
+
+        counterElement = createTopCenterCounter('common.discovered');
+        uiContainer.appendChild(counterElement);
+        requestAnimationFrame(() => {
+            counterElement.classList.add('is-visible');
+        });
 
         // 稍微延迟以确保UI更新完成
         setTimeout(() => {
             sessionExtractor.start((count) => {
-                updateTopCenterCounter(count);
+                updateTopCenterCounter(counterElement, count);
                 currentSessionCount = count;
             });
         }, 50);

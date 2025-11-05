@@ -1826,10 +1826,10 @@ ${result.join(",\n")}
         container.appendChild(iconWrapper);
       }
     }
-    const textNode2 = document.createElement("span");
-    textNode2.className = "icon-title-text";
-    textNode2.textContent = text;
-    container.appendChild(textNode2);
+    const textNode = document.createElement("span");
+    textNode.className = "icon-title-text";
+    textNode.textContent = text;
+    container.appendChild(textNode);
     return container;
   }
   var simpleTemplate = (template, values) => {
@@ -5598,56 +5598,30 @@ ${result.join(",\n")}
     requestAnimationFrame(frame);
   }
   var easeOutQuad = (t2) => t2 * (2 - t2);
-  var counterElement = null;
-  var countSpan = null;
-  var textNode = null;
   var currentCount2 = 0;
-  var currentLabelKey = "";
-  function updateCounterText() {
-    if (textNode && currentLabelKey) {
-      textNode.textContent = t(currentLabelKey);
-    }
-  }
-  function createCounterElement(labelKey) {
-    if (counterElement) return;
-    counterElement = document.createElement("div");
-    counterElement.className = "tc-top-center-counter";
-    currentLabelKey = labelKey;
-    textNode = document.createTextNode(t(labelKey));
-    countSpan = document.createElement("span");
+  function createTopCenterCounter(labelKey) {
+    const counterElement3 = document.createElement("div");
+    counterElement3.className = "tc-top-center-counter";
+    const textNode = document.createTextNode(t(labelKey));
+    const countSpan = document.createElement("span");
     countSpan.textContent = "0";
-    counterElement.appendChild(textNode);
-    counterElement.appendChild(countSpan);
-    uiContainer.appendChild(counterElement);
-    on("languageChanged", updateCounterText);
+    counterElement3.appendChild(textNode);
+    counterElement3.appendChild(countSpan);
+    counterElement3._countSpan = countSpan;
+    counterElement3._textNode = textNode;
+    counterElement3._labelKey = labelKey;
+    const languageChangeHandler = () => {
+      textNode.textContent = t(labelKey);
+    };
+    const unsubscribe = on("languageChanged", languageChangeHandler);
+    counterElement3.destroy = () => {
+      unsubscribe();
+    };
+    return counterElement3;
   }
-  function showTopCenterCounter(labelKey) {
-    createCounterElement(labelKey);
-    if (currentLabelKey !== labelKey) {
-      currentLabelKey = labelKey;
-      updateCounterText();
-    }
-    currentCount2 = 0;
-    if (countSpan) {
-      countSpan.textContent = "0";
-    }
-    requestAnimationFrame(() => {
-      counterElement.classList.add("is-visible");
-    });
-  }
-  function hideTopCenterCounter() {
-    if (!counterElement) return;
-    counterElement.classList.remove("is-visible");
-    const transitionDuration = 400;
-    setTimeout(() => {
-      if (counterElement) {
-        counterElement.remove();
-        counterElement = null;
-      }
-    }, transitionDuration);
-  }
-  function updateTopCenterCounter(newCount) {
-    if (!counterElement || !countSpan) return;
+  function updateTopCenterCounter(element, newCount) {
+    if (!element || !element._countSpan) return;
+    const countSpan = element._countSpan;
     const start2 = currentCount2;
     const end = newCount;
     currentCount2 = newCount;
@@ -5660,6 +5634,7 @@ ${result.join(",\n")}
   }
   var stopIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M280-280v-400h400v400H280Z"/></svg>`;
   var currentSessionCount = 0;
+  var counterElement = null;
   on("sessionCleared", () => {
     currentSessionCount = 0;
   });
@@ -5693,7 +5668,16 @@ ${result.join(",\n")}
       setFabIcon(dynamicFab2, dynamicIcon);
       dynamicFab2.classList.remove("is-recording");
       updateFabTooltip(dynamicFab2, "tooltip.dynamic_scan");
-      hideTopCenterCounter();
+      if (counterElement) {
+        counterElement.classList.remove("is-visible");
+        setTimeout(() => {
+          if (counterElement && typeof counterElement.destroy === "function") {
+            counterElement.destroy();
+          }
+          counterElement.remove();
+          counterElement = null;
+        }, 400);
+      }
       if (elementScanFab2) {
         elementScanFab2.classList.remove("fab-disabled");
         if (elementScanFab2.dataset.originalTooltipKey) {
@@ -5711,10 +5695,14 @@ ${result.join(",\n")}
         elementScanFab2.classList.add("fab-disabled");
       }
       showNotification(t("scan.sessionStarted"), { type: "info" });
-      showTopCenterCounter("common.discovered");
+      counterElement = createTopCenterCounter("common.discovered");
+      uiContainer.appendChild(counterElement);
+      requestAnimationFrame(() => {
+        counterElement.classList.add("is-visible");
+      });
       setTimeout(() => {
         start((count) => {
-          updateTopCenterCounter(count);
+          updateTopCenterCounter(counterElement, count);
           currentSessionCount = count;
         });
       }, 50);
@@ -5825,6 +5813,8 @@ ${result.join(",\n")}
     });
     return helpButton;
   }
+  var topCenterContainer = null;
+  var counterElement2 = null;
   var helpIcon = null;
   var scanContainer = null;
   var highlightBorder = null;
@@ -6020,26 +6010,32 @@ ${result.join(",\n")}
     }
   }
   function showTopCenterUI() {
-    showTopCenterCounter("scan.stagedCount");
-    if (!helpIcon) {
-      helpIcon = createHelpIcon("tutorial.elementScan");
-      uiContainer.appendChild(helpIcon);
-      helpIcon.classList.add("element-scan-help-icon");
-      requestAnimationFrame(() => {
-        helpIcon.classList.add("is-visible");
-      });
-    }
+    if (topCenterContainer) return;
+    topCenterContainer = document.createElement("div");
+    topCenterContainer.className = "top-center-ui-container";
+    counterElement2 = createTopCenterCounter("scan.stagedCount");
+    helpIcon = createHelpIcon("tutorial.elementScan");
+    helpIcon.classList.add("element-scan-help-icon");
+    topCenterContainer.appendChild(counterElement2);
+    topCenterContainer.appendChild(helpIcon);
+    uiContainer.appendChild(topCenterContainer);
+    requestAnimationFrame(() => {
+      topCenterContainer.classList.add("is-visible");
+    });
   }
   function hideTopCenterUI() {
-    hideTopCenterCounter();
-    if (helpIcon) {
-      helpIcon.classList.remove("is-visible");
-      const iconToRemove = helpIcon;
-      helpIcon = null;
-      setTimeout(() => {
-        iconToRemove.remove();
-      }, 300);
-    }
+    if (!topCenterContainer) return;
+    const containerToRemove = topCenterContainer;
+    containerToRemove.classList.remove("is-visible");
+    setTimeout(() => {
+      if (counterElement2 && typeof counterElement2.destroy === "function") {
+        counterElement2.destroy();
+      }
+      containerToRemove.remove();
+    }, 400);
+    topCenterContainer = null;
+    counterElement2 = null;
+    helpIcon = null;
   }
   var performScanInMainThread2 = (texts, filterRules2, enableDebugLogging) => {
     const uniqueTexts =  new Set();
@@ -8504,18 +8500,38 @@ ${result.join(",\n")}
 .tc-dropdown-menu.is-hiding{
     animation:slide-down-fade-out 0.3s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
 }
-.element-scan-help-icon{
+.top-center-ui-container{
     position:fixed;
     top:20px;
-    left:calc(50% + 100px);
+    left:50%;
     transform:translate(-50%, -150%);
+    display:flex;
+    align-items:center;
+    gap:10px;
     z-index:9999998;
     opacity:0;
-    transition:transform 0.4s var(--easing-standard), opacity 0.4s var(--easing-standard);
+    transition:transform 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1)), opacity 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1));
 }
-.element-scan-help-icon.is-visible{
+.top-center-ui-container.is-visible{
     transform:translate(-50%, 0);
     opacity:1;
+}
+.element-scan-help-icon{
+    position:relative;
+    top:auto;
+    left:auto;
+    width:36px;
+    height:36px;
+    box-shadow:none;
+    backdrop-filter:none;
+    -webkit-backdrop-filter:none;
+    border:1px solid var(--main-border);
+    background-color:var(--main-bg-a);
+    transition:transform 0.2s ease, background-color 0.2s ease;
+}
+.element-scan-help-icon:hover{
+    transform:scale(1.1);
+    background-color:var(--main-border);
 }
 #element-scan-container{
     position:absolute;
@@ -9055,7 +9071,6 @@ ${result.join(",\n")}
 .tc-help-icon-button:hover{
     color:var(--main-text);
     background-color:var(--main-border);
-    transform:scale(1.1);
 }
 .tc-help-icon-button svg{
     width:20px;
