@@ -167,11 +167,6 @@
         "enable_debug_logging": "啟用後，腳本會將詳細的內部狀態、執行步驟和錯誤訊息輸出到瀏覽器的<strong>開發者工具控制台</strong>（通常用F12開啟）。這主要供開發者或需要提交詳細錯誤報告的使用者使用。"
     }
   },
-  "elementScan": {
-    "tutorialBanner": "點擊頁面上的任何元素進行選擇",
-    "tutorialTooltipTitle": "如何使用「選取元素掃描」",
-    "tutorialTooltipBody": "<h4>如何使用「選取元素掃描」</h4><ol><li><strong>移動 & 反白</strong><br>將滑鼠游標移動到您希望提取文本的網頁區域，目標元素將會被自動反白顯示。</li><li><strong>點擊 & 選擇</strong><br>在元素反白時，點擊滑鼠左鍵即可確認選擇。</li><li><strong>退出掃描</strong><br>您可以隨時透過以下任一方式退出掃描模式：<ul><li>按下鍵盤上的 <kbd>ESC</kbd> 鍵。</li><li>在元素反白時，點擊滑鼠右鍵。</li><li>再次點擊「選取元素掃描」按鈕。</li></ul></li></ol>"
-  },
   "log": {
     "prefix": "[文本提取腳本-偵錯]",
     "language": {
@@ -302,7 +297,11 @@
         "originalError": "原始 Worker 錯誤: {{error}}"
       },
       "switchToFallback": "正在為選取元素掃描切換到主線程備選方案。",
-      "fallbackFailed": "選取元素掃描備選方案執行失敗: {{error}}"
+      "fallbackFailed": "選取元素掃描備選方案執行失敗: {{error}}",
+      "tutorial": {
+          "title": "如何使用選取元素掃描",
+          "content": "<b>主要操作：</b>將滑鼠懸停在頁面元素上即可預覽，點擊可將其選中並開啟調整工具列。<br><br><b>微調與確認：</b>在工具列中，您可以使用滑桿精確調整選擇的層級。然後，點擊「暫存」按鈕將其加入待提取列表，或點擊「確認」立即提取。<br><br><b>退出掃描：</b>您可以隨時按 `Esc` 鍵，或點擊工具列上的「取消」按鈕來退出掃描模式。"
+      }
     },
     "elementScanUI": {
       "creatingHighlights": "元素掃描UI：首次建立高亮元素。",

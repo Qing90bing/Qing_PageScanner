@@ -131,6 +131,45 @@
   background-color: var(--main-border);
 }
 
+/* --- 元素扫描教程图标 --- */
+.tc-element-scan-tutorial {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(calc(-50% + 100px)); /* 初始位置偏右，以便与计数器并排 */
+    background-color: var(--main-bg);
+    color: var(--main-text);
+    padding: 8px 12px;
+    border-radius: 20px;
+    box-shadow: 0 2px 8px var(--main-shadow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 14px;
+    z-index: 10001; /* 比模态框更高 */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s, transform 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.tc-element-scan-tutorial.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(calc(-50% + 60px)); /* 最终移到计数器右侧 */
+}
+
+.tc-element-scan-tutorial svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+}
+
+.tc-element-scan-tutorial:hover {
+    background-color: var(--main-border);
+}
+
 .text-extractor-modal-content {
   padding: 18px;
   overflow-y: auto;
@@ -214,50 +253,4 @@
     cursor: not-allowed;
     box-shadow: none;
     transform: none;
-}
-
-/* --- KBD (Keyboard Key) Element Styling --- */
-kbd {
-    display: inline-block;
-    padding: 3px 6px;
-    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
-    font-size: 0.85em;
-    color: var(--main-text);
-    background-color: var(--main-bg);
-    border: 1px solid var(--main-border-heavy);
-    border-radius: 4px;
-    box-shadow: 0 2px 0 var(--main-border-heavy);
-    margin: 0 2px;
-    position: relative;
-    top: -1px;
-}
-
-/* --- Element Scan Tutorial Banner --- */
-.element-scan-tutorial-banner {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-left: 16px;
-    font-size: 14px;
-    color: var(--main-text);
-    opacity: 0;
-    transform: translateY(-10px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.element-scan-tutorial-banner.is-visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.element-scan-tutorial-banner svg {
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-    fill: var(--main-text-secondary);
-    transition: fill 0.2s;
-}
-
-.element-scan-tutorial-banner svg:hover {
-    fill: var(--main-text);
 }

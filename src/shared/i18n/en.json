@@ -167,11 +167,6 @@
         "enable_debug_logging": "When enabled, the script will output detailed internal status, execution steps, and error messages to the browser's <strong>Developer Tools Console</strong> (usually opened with F12). This is primarily for developers or users who need to submit detailed bug reports."
     }
   },
-  "elementScan": {
-    "tutorialBanner": "Click any element on the page to select it",
-    "tutorialTooltipTitle": "How to use Element Scan",
-    "tutorialTooltipBody": "<h4>How to use Element Scan</h4><ol><li><strong>Move & Highlight</strong><br>Move your mouse cursor over the web page. The target element will be highlighted automatically.</li><li><strong>Click & Select</strong><br>When an element is highlighted, left-click to confirm your selection.</li><li><strong>Exit Scanning</strong><br>You can exit scan mode at any time in one of the following ways:<ul><li>Press the <kbd>ESC</kbd> key.</li><li>Right-click while an element is highlighted.</li><li>Click the 'Element Scan' button again.</li></ul></li></ol>"
-  },
   "log": {
     "prefix": "[Text Extractor Script-Debug]",
     "language": {
@@ -302,7 +297,11 @@
         "originalError": "Original worker error: {{error}}"
       },
       "switchToFallback": "Switching to main thread fallback for Element Scan.",
-      "fallbackFailed": "Element Scan fallback mode failed: {{error}}"
+      "fallbackFailed": "Element Scan fallback mode failed: {{error}}",
+      "tutorial": {
+        "title": "How to Use Element Scan",
+        "content": "<b>Main Operation:</b> Hover over elements to preview, and click to select and open the adjustment toolbar.<br><br><b>Fine-tuning & Confirmation:</b> In the toolbar, use the slider to precisely adjust the selection level. Then, click 'Stage' to add it to the extraction list or 'Confirm' to extract immediately.<br><br><b>Exiting Scan:</b> You can press the `Esc` key at any time or click the 'Cancel' button on the toolbar to exit scan mode."
+      }
     },
     "elementScanUI": {
       "creatingHighlights": "Element Scan UI: Creating highlight elements for the first time.",

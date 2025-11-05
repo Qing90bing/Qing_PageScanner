@@ -313,11 +313,6 @@ var TextExtractor = (() => {
         enable_debug_logging: "When enabled, the script will output detailed internal status, execution steps, and error messages to the browser's <strong>Developer Tools Console</strong> (usually opened with F12). This is primarily for developers or users who need to submit detailed bug reports."
       }
     },
-    elementScan: {
-      tutorialBanner: "Click any element on the page to select it",
-      tutorialTooltipTitle: "How to use Element Scan",
-      tutorialTooltipBody: "<h4>How to use Element Scan</h4><ol><li><strong>Move & Highlight</strong><br>Move your mouse cursor over the web page. The target element will be highlighted automatically.</li><li><strong>Click & Select</strong><br>When an element is highlighted, left-click to confirm your selection.</li><li><strong>Exit Scanning</strong><br>You can exit scan mode at any time in one of the following ways:<ul><li>Press the <kbd>ESC</kbd> key.</li><li>Right-click while an element is highlighted.</li><li>Click the 'Element Scan' button again.</li></ul></li></ol>"
-    },
     log: {
       prefix: "[Text Extractor Script-Debug]",
       language: {
@@ -448,7 +443,11 @@ var TextExtractor = (() => {
           originalError: "Original worker error: {{error}}"
         },
         switchToFallback: "Switching to main thread fallback for Element Scan.",
-        fallbackFailed: "Element Scan fallback mode failed: {{error}}"
+        fallbackFailed: "Element Scan fallback mode failed: {{error}}",
+        tutorial: {
+          title: "How to Use Element Scan",
+          content: "<b>Main Operation:</b> Hover over elements to preview, and click to select and open the adjustment toolbar.<br><br><b>Fine-tuning & Confirmation:</b> In the toolbar, use the slider to precisely adjust the selection level. Then, click 'Stage' to add it to the extraction list or 'Confirm' to extract immediately.<br><br><b>Exiting Scan:</b> You can press the `Esc` key at any time or click the 'Cancel' button on the toolbar to exit scan mode."
+        }
       },
       elementScanUI: {
         creatingHighlights: "Element Scan UI: Creating highlight elements for the first time.",
@@ -645,11 +644,6 @@ var TextExtractor = (() => {
         enable_debug_logging: "\u542F\u7528\u540E\uFF0C\u811A\u672C\u4F1A\u5C06\u8BE6\u7EC6\u7684\u5185\u90E8\u72B6\u6001\u3001\u6267\u884C\u6B65\u9AA4\u548C\u9519\u8BEF\u4FE1\u606F\u8F93\u51FA\u5230\u6D4F\u89C8\u5668\u7684<strong>\u5F00\u53D1\u8005\u5DE5\u5177\u63A7\u5236\u53F0</strong>\uFF08\u901A\u5E38\u7528F12\u6253\u5F00\uFF09\u3002\u8FD9\u4E3B\u8981\u4F9B\u5F00\u53D1\u8005\u6216\u9700\u8981\u63D0\u4EA4\u8BE6\u7EC6\u9519\u8BEF\u62A5\u544A\u7684\u7528\u6237\u4F7F\u7528\u3002"
       }
     },
-    elementScan: {
-      tutorialBanner: "\u70B9\u51FB\u9875\u9762\u4E0A\u7684\u4EFB\u4F55\u5143\u7D20\u8FDB\u884C\u9009\u62E9",
-      tutorialTooltipTitle: "\u5982\u4F55\u4F7F\u7528\u201C\u9009\u53D6\u5143\u7D20\u626B\u63CF\u201D",
-      tutorialTooltipBody: "<h4>\u5982\u4F55\u4F7F\u7528\u201C\u9009\u53D6\u5143\u7D20\u626B\u63CF\u201D</h4><ol><li><strong>\u79FB\u52A8 & \u9AD8\u4EAE</strong><br>\u5C06\u9F20\u6807\u5149\u6807\u79FB\u52A8\u5230\u60A8\u5E0C\u671B\u63D0\u53D6\u6587\u672C\u7684\u7F51\u9875\u533A\u57DF\uFF0C\u76EE\u6807\u5143\u7D20\u5C06\u4F1A\u88AB\u81EA\u52A8\u9AD8\u4EAE\u663E\u793A\u3002</li><li><strong>\u70B9\u51FB & \u9009\u62E9</strong><br>\u5728\u5143\u7D20\u9AD8\u4EAE\u65F6\uFF0C\u5355\u51FB\u9F20\u6807\u5DE6\u952E\u5373\u53EF\u786E\u8BA4\u9009\u62E9\u3002</li><li><strong>\u9000\u51FA\u626B\u63CF</strong><br>\u60A8\u53EF\u4EE5\u968F\u65F6\u901A\u8FC7\u4EE5\u4E0B\u4EFB\u4E00\u65B9\u5F0F\u9000\u51FA\u626B\u63CF\u6A21\u5F0F\uFF1A<ul><li>\u6309\u4E0B\u952E\u76D8\u4E0A\u7684 <kbd>ESC</kbd> \u952E\u3002</li><li>\u5728\u5143\u7D20\u9AD8\u4EAE\u65F6\uFF0C\u5355\u51FB\u9F20\u6807\u53F3\u952E\u3002</li><li>\u518D\u6B21\u70B9\u51FB\u201C\u9009\u53D6\u5143\u7D20\u626B\u63CF\u201D\u6309\u94AE\u3002</li></ul></li></ol>"
-    },
     log: {
       prefix: "[\u6587\u672C\u63D0\u53D6\u811A\u672C-\u8C03\u8BD5]",
       language: {
@@ -780,7 +774,11 @@ var TextExtractor = (() => {
           originalError: "\u539F\u59CB Worker \u9519\u8BEF: {{error}}"
         },
         switchToFallback: "\u6B63\u5728\u4E3A\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5207\u6362\u5230\u4E3B\u7EBF\u7A0B\u5907\u9009\u65B9\u6848\u3002",
-        fallbackFailed: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5907\u9009\u65B9\u6848\u6267\u884C\u5931\u8D25: {{error}}"
+        fallbackFailed: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5907\u9009\u65B9\u6848\u6267\u884C\u5931\u8D25: {{error}}",
+        tutorial: {
+          title: "\u5982\u4F55\u4F7F\u7528\u9009\u53D6\u5143\u7D20\u626B\u63CF",
+          content: "<b>\u4E3B\u8981\u64CD\u4F5C\uFF1A</b>\u5C06\u9F20\u6807\u60AC\u505C\u5728\u9875\u9762\u5143\u7D20\u4E0A\u5373\u53EF\u9884\u89C8\uFF0C\u5355\u51FB\u53EF\u5C06\u5176\u9009\u4E2D\u5E76\u6253\u5F00\u8C03\u6574\u5DE5\u5177\u680F\u3002<br><br><b>\u5FAE\u8C03\u4E0E\u786E\u8BA4\uFF1A</b>\u5728\u5DE5\u5177\u680F\u4E2D\uFF0C\u60A8\u53EF\u4EE5\u4F7F\u7528\u6ED1\u5757\u7CBE\u786E\u8C03\u6574\u9009\u62E9\u7684\u5C42\u7EA7\u3002\u7136\u540E\uFF0C\u70B9\u51FB\u201C\u6682\u5B58\u201D\u6309\u94AE\u5C06\u5176\u52A0\u5165\u5F85\u63D0\u53D6\u5217\u8868\uFF0C\u6216\u70B9\u51FB\u201C\u786E\u8BA4\u201D\u7ACB\u5373\u63D0\u53D6\u3002<br><br><b>\u9000\u51FA\u626B\u63CF\uFF1A</b>\u60A8\u53EF\u4EE5\u968F\u65F6\u6309 `Esc` \u952E\uFF0C\u6216\u70B9\u51FB\u5DE5\u5177\u680F\u4E0A\u7684\u201C\u53D6\u6D88\u201D\u6309\u94AE\u6765\u9000\u51FA\u626B\u63CF\u6A21\u5F0F\u3002"
+        }
       },
       elementScanUI: {
         creatingHighlights: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u9996\u6B21\u521B\u5EFA\u9AD8\u4EAE\u5143\u7D20\u3002",
@@ -977,11 +975,6 @@ var TextExtractor = (() => {
         enable_debug_logging: "\u555F\u7528\u5F8C\uFF0C\u8173\u672C\u6703\u5C07\u8A73\u7D30\u7684\u5167\u90E8\u72C0\u614B\u3001\u57F7\u884C\u6B65\u9A5F\u548C\u932F\u8AA4\u8A0A\u606F\u8F38\u51FA\u5230\u700F\u89BD\u5668\u7684<strong>\u958B\u767C\u8005\u5DE5\u5177\u63A7\u5236\u53F0</strong>\uFF08\u901A\u5E38\u7528F12\u958B\u555F\uFF09\u3002\u9019\u4E3B\u8981\u4F9B\u958B\u767C\u8005\u6216\u9700\u8981\u63D0\u4EA4\u8A73\u7D30\u932F\u8AA4\u5831\u544A\u7684\u4F7F\u7528\u8005\u4F7F\u7528\u3002"
       }
     },
-    elementScan: {
-      tutorialBanner: "\u9EDE\u64CA\u9801\u9762\u4E0A\u7684\u4EFB\u4F55\u5143\u7D20\u9032\u884C\u9078\u64C7",
-      tutorialTooltipTitle: "\u5982\u4F55\u4F7F\u7528\u300C\u9078\u53D6\u5143\u7D20\u6383\u63CF\u300D",
-      tutorialTooltipBody: "<h4>\u5982\u4F55\u4F7F\u7528\u300C\u9078\u53D6\u5143\u7D20\u6383\u63CF\u300D</h4><ol><li><strong>\u79FB\u52D5 & \u53CD\u767D</strong><br>\u5C07\u6ED1\u9F20\u6E38\u6A19\u79FB\u52D5\u5230\u60A8\u5E0C\u671B\u63D0\u53D6\u6587\u672C\u7684\u7DB2\u9801\u5340\u57DF\uFF0C\u76EE\u6A19\u5143\u7D20\u5C07\u6703\u88AB\u81EA\u52D5\u53CD\u767D\u986F\u793A\u3002</li><li><strong>\u9EDE\u64CA & \u9078\u64C7</strong><br>\u5728\u5143\u7D20\u53CD\u767D\u6642\uFF0C\u9EDE\u64CA\u6ED1\u9F20\u5DE6\u9375\u5373\u53EF\u78BA\u8A8D\u9078\u64C7\u3002</li><li><strong>\u9000\u51FA\u6383\u63CF</strong><br>\u60A8\u53EF\u4EE5\u96A8\u6642\u900F\u904E\u4EE5\u4E0B\u4EFB\u4E00\u65B9\u5F0F\u9000\u51FA\u6383\u63CF\u6A21\u5F0F\uFF1A<ul><li>\u6309\u4E0B\u9375\u76E4\u4E0A\u7684 <kbd>ESC</kbd> \u9375\u3002</li><li>\u5728\u5143\u7D20\u53CD\u767D\u6642\uFF0C\u9EDE\u64CA\u6ED1\u9F20\u53F3\u9375\u3002</li><li>\u518D\u6B21\u9EDE\u64CA\u300C\u9078\u53D6\u5143\u7D20\u6383\u63CF\u300D\u6309\u9215\u3002</li></ul></li></ol>"
-    },
     log: {
       prefix: "[\u6587\u672C\u63D0\u53D6\u8173\u672C-\u5075\u932F]",
       language: {
@@ -1112,7 +1105,11 @@ var TextExtractor = (() => {
           originalError: "\u539F\u59CB Worker \u932F\u8AA4: {{error}}"
         },
         switchToFallback: "\u6B63\u5728\u70BA\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5207\u63DB\u5230\u4E3B\u7DDA\u7A0B\u5099\u9078\u65B9\u6848\u3002",
-        fallbackFailed: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5099\u9078\u65B9\u6848\u57F7\u884C\u5931\u6557: {{error}}"
+        fallbackFailed: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5099\u9078\u65B9\u6848\u57F7\u884C\u5931\u6557: {{error}}",
+        tutorial: {
+          title: "\u5982\u4F55\u4F7F\u7528\u9078\u53D6\u5143\u7D20\u6383\u63CF",
+          content: "<b>\u4E3B\u8981\u64CD\u4F5C\uFF1A</b>\u5C07\u6ED1\u9F20\u61F8\u505C\u5728\u9801\u9762\u5143\u7D20\u4E0A\u5373\u53EF\u9810\u89BD\uFF0C\u9EDE\u64CA\u53EF\u5C07\u5176\u9078\u4E2D\u4E26\u958B\u555F\u8ABF\u6574\u5DE5\u5177\u5217\u3002<br><br><b>\u5FAE\u8ABF\u8207\u78BA\u8A8D\uFF1A</b>\u5728\u5DE5\u5177\u5217\u4E2D\uFF0C\u60A8\u53EF\u4EE5\u4F7F\u7528\u6ED1\u687F\u7CBE\u78BA\u8ABF\u6574\u9078\u64C7\u7684\u5C64\u7D1A\u3002\u7136\u5F8C\uFF0C\u9EDE\u64CA\u300C\u66AB\u5B58\u300D\u6309\u9215\u5C07\u5176\u52A0\u5165\u5F85\u63D0\u53D6\u5217\u8868\uFF0C\u6216\u9EDE\u64CA\u300C\u78BA\u8A8D\u300D\u7ACB\u5373\u63D0\u53D6\u3002<br><br><b>\u9000\u51FA\u6383\u63CF\uFF1A</b>\u60A8\u53EF\u4EE5\u96A8\u6642\u6309 `Esc` \u9375\uFF0C\u6216\u9EDE\u64CA\u5DE5\u5177\u5217\u4E0A\u7684\u300C\u53D6\u6D88\u300D\u6309\u9215\u4F86\u9000\u51FA\u6383\u63CF\u6A21\u5F0F\u3002"
+        }
       },
       elementScanUI: {
         creatingHighlights: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u9996\u6B21\u5EFA\u7ACB\u9AD8\u4EAE\u5143\u7D20\u3002",
@@ -2082,11 +2079,6 @@ ${result.join(",\n")}
         enable_debug_logging: "When enabled, the script will output detailed internal status, execution steps, and error messages to the browser's <strong>Developer Tools Console</strong> (usually opened with F12). This is primarily for developers or users who need to submit detailed bug reports."
       }
     },
-    elementScan: {
-      tutorialBanner: "Click any element on the page to select it",
-      tutorialTooltipTitle: "How to use Element Scan",
-      tutorialTooltipBody: "<h4>How to use Element Scan</h4><ol><li><strong>Move & Highlight</strong><br>Move your mouse cursor over the web page. The target element will be highlighted automatically.</li><li><strong>Click & Select</strong><br>When an element is highlighted, left-click to confirm your selection.</li><li><strong>Exit Scanning</strong><br>You can exit scan mode at any time in one of the following ways:<ul><li>Press the <kbd>ESC</kbd> key.</li><li>Right-click while an element is highlighted.</li><li>Click the 'Element Scan' button again.</li></ul></li></ol>"
-    },
     log: {
       prefix: "[Text Extractor Script-Debug]",
       language: {
@@ -2217,7 +2209,11 @@ ${result.join(",\n")}
           originalError: "Original worker error: {{error}}"
         },
         switchToFallback: "Switching to main thread fallback for Element Scan.",
-        fallbackFailed: "Element Scan fallback mode failed: {{error}}"
+        fallbackFailed: "Element Scan fallback mode failed: {{error}}",
+        tutorial: {
+          title: "How to Use Element Scan",
+          content: "<b>Main Operation:</b> Hover over elements to preview, and click to select and open the adjustment toolbar.<br><br><b>Fine-tuning & Confirmation:</b> In the toolbar, use the slider to precisely adjust the selection level. Then, click 'Stage' to add it to the extraction list or 'Confirm' to extract immediately.<br><br><b>Exiting Scan:</b> You can press the \`Esc\` key at any time or click the 'Cancel' button on the toolbar to exit scan mode."
+        }
       },
       elementScanUI: {
         creatingHighlights: "Element Scan UI: Creating highlight elements for the first time.",
@@ -2415,11 +2411,6 @@ ${result.join(",\n")}
         enable_debug_logging: "\\u542F\\u7528\\u540E\\uFF0C\\u811A\\u672C\\u4F1A\\u5C06\\u8BE6\\u7EC6\\u7684\\u5185\\u90E8\\u72B6\\u6001\\u3001\\u6267\\u884C\\u6B65\\u9AA4\\u548C\\u9519\\u8BEF\\u4FE1\\u606F\\u8F93\\u51FA\\u5230\\u6D4F\\u89C8\\u5668\\u7684<strong>\\u5F00\\u53D1\\u8005\\u5DE5\\u5177\\u63A7\\u5236\\u53F0</strong>\\uFF08\\u901A\\u5E38\\u7528F12\\u6253\\u5F00\\uFF09\\u3002\\u8FD9\\u4E3B\\u8981\\u4F9B\\u5F00\\u53D1\\u8005\\u6216\\u9700\\u8981\\u63D0\\u4EA4\\u8BE6\\u7EC6\\u9519\\u8BEF\\u62A5\\u544A\\u7684\\u7528\\u6237\\u4F7F\\u7528\\u3002"
       }
     },
-    elementScan: {
-      tutorialBanner: "\\u70B9\\u51FB\\u9875\\u9762\\u4E0A\\u7684\\u4EFB\\u4F55\\u5143\\u7D20\\u8FDB\\u884C\\u9009\\u62E9",
-      tutorialTooltipTitle: "\\u5982\\u4F55\\u4F7F\\u7528\\u201C\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u201D",
-      tutorialTooltipBody: "<h4>\\u5982\\u4F55\\u4F7F\\u7528\\u201C\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u201D</h4><ol><li><strong>\\u79FB\\u52A8 & \\u9AD8\\u4EAE</strong><br>\\u5C06\\u9F20\\u6807\\u5149\\u6807\\u79FB\\u52A8\\u5230\\u60A8\\u5E0C\\u671B\\u63D0\\u53D6\\u6587\\u672C\\u7684\\u7F51\\u9875\\u533A\\u57DF\\uFF0C\\u76EE\\u6807\\u5143\\u7D20\\u5C06\\u4F1A\\u88AB\\u81EA\\u52A8\\u9AD8\\u4EAE\\u663E\\u793A\\u3002</li><li><strong>\\u70B9\\u51FB & \\u9009\\u62E9</strong><br>\\u5728\\u5143\\u7D20\\u9AD8\\u4EAE\\u65F6\\uFF0C\\u5355\\u51FB\\u9F20\\u6807\\u5DE6\\u952E\\u5373\\u53EF\\u786E\\u8BA4\\u9009\\u62E9\\u3002</li><li><strong>\\u9000\\u51FA\\u626B\\u63CF</strong><br>\\u60A8\\u53EF\\u4EE5\\u968F\\u65F6\\u901A\\u8FC7\\u4EE5\\u4E0B\\u4EFB\\u4E00\\u65B9\\u5F0F\\u9000\\u51FA\\u626B\\u63CF\\u6A21\\u5F0F\\uFF1A<ul><li>\\u6309\\u4E0B\\u952E\\u76D8\\u4E0A\\u7684 <kbd>ESC</kbd> \\u952E\\u3002</li><li>\\u5728\\u5143\\u7D20\\u9AD8\\u4EAE\\u65F6\\uFF0C\\u5355\\u51FB\\u9F20\\u6807\\u53F3\\u952E\\u3002</li><li>\\u518D\\u6B21\\u70B9\\u51FB\\u201C\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u201D\\u6309\\u94AE\\u3002</li></ul></li></ol>"
-    },
     log: {
       prefix: "[\\u6587\\u672C\\u63D0\\u53D6\\u811A\\u672C-\\u8C03\\u8BD5]",
       language: {
@@ -2550,7 +2541,11 @@ ${result.join(",\n")}
           originalError: "\\u539F\\u59CB Worker \\u9519\\u8BEF: {{error}}"
         },
         switchToFallback: "\\u6B63\\u5728\\u4E3A\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
-        fallbackFailed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5907\\u9009\\u65B9\\u6848\\u6267\\u884C\\u5931\\u8D25: {{error}}"
+        fallbackFailed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5907\\u9009\\u65B9\\u6848\\u6267\\u884C\\u5931\\u8D25: {{error}}",
+        tutorial: {
+          title: "\\u5982\\u4F55\\u4F7F\\u7528\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF",
+          content: "<b>\\u4E3B\\u8981\\u64CD\\u4F5C\\uFF1A</b>\\u5C06\\u9F20\\u6807\\u60AC\\u505C\\u5728\\u9875\\u9762\\u5143\\u7D20\\u4E0A\\u5373\\u53EF\\u9884\\u89C8\\uFF0C\\u5355\\u51FB\\u53EF\\u5C06\\u5176\\u9009\\u4E2D\\u5E76\\u6253\\u5F00\\u8C03\\u6574\\u5DE5\\u5177\\u680F\\u3002<br><br><b>\\u5FAE\\u8C03\\u4E0E\\u786E\\u8BA4\\uFF1A</b>\\u5728\\u5DE5\\u5177\\u680F\\u4E2D\\uFF0C\\u60A8\\u53EF\\u4EE5\\u4F7F\\u7528\\u6ED1\\u5757\\u7CBE\\u786E\\u8C03\\u6574\\u9009\\u62E9\\u7684\\u5C42\\u7EA7\\u3002\\u7136\\u540E\\uFF0C\\u70B9\\u51FB\\u201C\\u6682\\u5B58\\u201D\\u6309\\u94AE\\u5C06\\u5176\\u52A0\\u5165\\u5F85\\u63D0\\u53D6\\u5217\\u8868\\uFF0C\\u6216\\u70B9\\u51FB\\u201C\\u786E\\u8BA4\\u201D\\u7ACB\\u5373\\u63D0\\u53D6\\u3002<br><br><b>\\u9000\\u51FA\\u626B\\u63CF\\uFF1A</b>\\u60A8\\u53EF\\u4EE5\\u968F\\u65F6\\u6309 \`Esc\` \\u952E\\uFF0C\\u6216\\u70B9\\u51FB\\u5DE5\\u5177\\u680F\\u4E0A\\u7684\\u201C\\u53D6\\u6D88\\u201D\\u6309\\u94AE\\u6765\\u9000\\u51FA\\u626B\\u63CF\\u6A21\\u5F0F\\u3002"
+        }
       },
       elementScanUI: {
         creatingHighlights: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u9996\\u6B21\\u521B\\u5EFA\\u9AD8\\u4EAE\\u5143\\u7D20\\u3002",
@@ -2748,11 +2743,6 @@ ${result.join(",\n")}
         enable_debug_logging: "\\u555F\\u7528\\u5F8C\\uFF0C\\u8173\\u672C\\u6703\\u5C07\\u8A73\\u7D30\\u7684\\u5167\\u90E8\\u72C0\\u614B\\u3001\\u57F7\\u884C\\u6B65\\u9A5F\\u548C\\u932F\\u8AA4\\u8A0A\\u606F\\u8F38\\u51FA\\u5230\\u700F\\u89BD\\u5668\\u7684<strong>\\u958B\\u767C\\u8005\\u5DE5\\u5177\\u63A7\\u5236\\u53F0</strong>\\uFF08\\u901A\\u5E38\\u7528F12\\u958B\\u555F\\uFF09\\u3002\\u9019\\u4E3B\\u8981\\u4F9B\\u958B\\u767C\\u8005\\u6216\\u9700\\u8981\\u63D0\\u4EA4\\u8A73\\u7D30\\u932F\\u8AA4\\u5831\\u544A\\u7684\\u4F7F\\u7528\\u8005\\u4F7F\\u7528\\u3002"
       }
     },
-    elementScan: {
-      tutorialBanner: "\\u9EDE\\u64CA\\u9801\\u9762\\u4E0A\\u7684\\u4EFB\\u4F55\\u5143\\u7D20\\u9032\\u884C\\u9078\\u64C7",
-      tutorialTooltipTitle: "\\u5982\\u4F55\\u4F7F\\u7528\\u300C\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u300D",
-      tutorialTooltipBody: "<h4>\\u5982\\u4F55\\u4F7F\\u7528\\u300C\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u300D</h4><ol><li><strong>\\u79FB\\u52D5 & \\u53CD\\u767D</strong><br>\\u5C07\\u6ED1\\u9F20\\u6E38\\u6A19\\u79FB\\u52D5\\u5230\\u60A8\\u5E0C\\u671B\\u63D0\\u53D6\\u6587\\u672C\\u7684\\u7DB2\\u9801\\u5340\\u57DF\\uFF0C\\u76EE\\u6A19\\u5143\\u7D20\\u5C07\\u6703\\u88AB\\u81EA\\u52D5\\u53CD\\u767D\\u986F\\u793A\\u3002</li><li><strong>\\u9EDE\\u64CA & \\u9078\\u64C7</strong><br>\\u5728\\u5143\\u7D20\\u53CD\\u767D\\u6642\\uFF0C\\u9EDE\\u64CA\\u6ED1\\u9F20\\u5DE6\\u9375\\u5373\\u53EF\\u78BA\\u8A8D\\u9078\\u64C7\\u3002</li><li><strong>\\u9000\\u51FA\\u6383\\u63CF</strong><br>\\u60A8\\u53EF\\u4EE5\\u96A8\\u6642\\u900F\\u904E\\u4EE5\\u4E0B\\u4EFB\\u4E00\\u65B9\\u5F0F\\u9000\\u51FA\\u6383\\u63CF\\u6A21\\u5F0F\\uFF1A<ul><li>\\u6309\\u4E0B\\u9375\\u76E4\\u4E0A\\u7684 <kbd>ESC</kbd> \\u9375\\u3002</li><li>\\u5728\\u5143\\u7D20\\u53CD\\u767D\\u6642\\uFF0C\\u9EDE\\u64CA\\u6ED1\\u9F20\\u53F3\\u9375\\u3002</li><li>\\u518D\\u6B21\\u9EDE\\u64CA\\u300C\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u300D\\u6309\\u9215\\u3002</li></ul></li></ol>"
-    },
     log: {
       prefix: "[\\u6587\\u672C\\u63D0\\u53D6\\u8173\\u672C-\\u5075\\u932F]",
       language: {
@@ -2883,7 +2873,11 @@ ${result.join(",\n")}
           originalError: "\\u539F\\u59CB Worker \\u932F\\u8AA4: {{error}}"
         },
         switchToFallback: "\\u6B63\\u5728\\u70BA\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
-        fallbackFailed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5099\\u9078\\u65B9\\u6848\\u57F7\\u884C\\u5931\\u6557: {{error}}"
+        fallbackFailed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5099\\u9078\\u65B9\\u6848\\u57F7\\u884C\\u5931\\u6557: {{error}}",
+        tutorial: {
+          title: "\\u5982\\u4F55\\u4F7F\\u7528\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF",
+          content: "<b>\\u4E3B\\u8981\\u64CD\\u4F5C\\uFF1A</b>\\u5C07\\u6ED1\\u9F20\\u61F8\\u505C\\u5728\\u9801\\u9762\\u5143\\u7D20\\u4E0A\\u5373\\u53EF\\u9810\\u89BD\\uFF0C\\u9EDE\\u64CA\\u53EF\\u5C07\\u5176\\u9078\\u4E2D\\u4E26\\u958B\\u555F\\u8ABF\\u6574\\u5DE5\\u5177\\u5217\\u3002<br><br><b>\\u5FAE\\u8ABF\\u8207\\u78BA\\u8A8D\\uFF1A</b>\\u5728\\u5DE5\\u5177\\u5217\\u4E2D\\uFF0C\\u60A8\\u53EF\\u4EE5\\u4F7F\\u7528\\u6ED1\\u687F\\u7CBE\\u78BA\\u8ABF\\u6574\\u9078\\u64C7\\u7684\\u5C64\\u7D1A\\u3002\\u7136\\u5F8C\\uFF0C\\u9EDE\\u64CA\\u300C\\u66AB\\u5B58\\u300D\\u6309\\u9215\\u5C07\\u5176\\u52A0\\u5165\\u5F85\\u63D0\\u53D6\\u5217\\u8868\\uFF0C\\u6216\\u9EDE\\u64CA\\u300C\\u78BA\\u8A8D\\u300D\\u7ACB\\u5373\\u63D0\\u53D6\\u3002<br><br><b>\\u9000\\u51FA\\u6383\\u63CF\\uFF1A</b>\\u60A8\\u53EF\\u4EE5\\u96A8\\u6642\\u6309 \`Esc\` \\u9375\\uFF0C\\u6216\\u9EDE\\u64CA\\u5DE5\\u5177\\u5217\\u4E0A\\u7684\\u300C\\u53D6\\u6D88\\u300D\\u6309\\u9215\\u4F86\\u9000\\u51FA\\u6383\\u63CF\\u6A21\\u5F0F\\u3002"
+        }
       },
       elementScanUI: {
         creatingHighlights: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u9996\\u6B21\\u5EFA\\u7ACB\\u9AD8\\u4EAE\\u5143\\u7D20\\u3002",
@@ -3556,11 +3550,6 @@ ${result.join(",\n")}
         enable_debug_logging: "When enabled, the script will output detailed internal status, execution steps, and error messages to the browser's <strong>Developer Tools Console</strong> (usually opened with F12). This is primarily for developers or users who need to submit detailed bug reports."
       }
     },
-    elementScan: {
-      tutorialBanner: "Click any element on the page to select it",
-      tutorialTooltipTitle: "How to use Element Scan",
-      tutorialTooltipBody: "<h4>How to use Element Scan</h4><ol><li><strong>Move & Highlight</strong><br>Move your mouse cursor over the web page. The target element will be highlighted automatically.</li><li><strong>Click & Select</strong><br>When an element is highlighted, left-click to confirm your selection.</li><li><strong>Exit Scanning</strong><br>You can exit scan mode at any time in one of the following ways:<ul><li>Press the <kbd>ESC</kbd> key.</li><li>Right-click while an element is highlighted.</li><li>Click the 'Element Scan' button again.</li></ul></li></ol>"
-    },
     log: {
       prefix: "[Text Extractor Script-Debug]",
       language: {
@@ -3691,7 +3680,11 @@ ${result.join(",\n")}
           originalError: "Original worker error: {{error}}"
         },
         switchToFallback: "Switching to main thread fallback for Element Scan.",
-        fallbackFailed: "Element Scan fallback mode failed: {{error}}"
+        fallbackFailed: "Element Scan fallback mode failed: {{error}}",
+        tutorial: {
+          title: "How to Use Element Scan",
+          content: "<b>Main Operation:</b> Hover over elements to preview, and click to select and open the adjustment toolbar.<br><br><b>Fine-tuning & Confirmation:</b> In the toolbar, use the slider to precisely adjust the selection level. Then, click 'Stage' to add it to the extraction list or 'Confirm' to extract immediately.<br><br><b>Exiting Scan:</b> You can press the \`Esc\` key at any time or click the 'Cancel' button on the toolbar to exit scan mode."
+        }
       },
       elementScanUI: {
         creatingHighlights: "Element Scan UI: Creating highlight elements for the first time.",
@@ -3889,11 +3882,6 @@ ${result.join(",\n")}
         enable_debug_logging: "\\u542F\\u7528\\u540E\\uFF0C\\u811A\\u672C\\u4F1A\\u5C06\\u8BE6\\u7EC6\\u7684\\u5185\\u90E8\\u72B6\\u6001\\u3001\\u6267\\u884C\\u6B65\\u9AA4\\u548C\\u9519\\u8BEF\\u4FE1\\u606F\\u8F93\\u51FA\\u5230\\u6D4F\\u89C8\\u5668\\u7684<strong>\\u5F00\\u53D1\\u8005\\u5DE5\\u5177\\u63A7\\u5236\\u53F0</strong>\\uFF08\\u901A\\u5E38\\u7528F12\\u6253\\u5F00\\uFF09\\u3002\\u8FD9\\u4E3B\\u8981\\u4F9B\\u5F00\\u53D1\\u8005\\u6216\\u9700\\u8981\\u63D0\\u4EA4\\u8BE6\\u7EC6\\u9519\\u8BEF\\u62A5\\u544A\\u7684\\u7528\\u6237\\u4F7F\\u7528\\u3002"
       }
     },
-    elementScan: {
-      tutorialBanner: "\\u70B9\\u51FB\\u9875\\u9762\\u4E0A\\u7684\\u4EFB\\u4F55\\u5143\\u7D20\\u8FDB\\u884C\\u9009\\u62E9",
-      tutorialTooltipTitle: "\\u5982\\u4F55\\u4F7F\\u7528\\u201C\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u201D",
-      tutorialTooltipBody: "<h4>\\u5982\\u4F55\\u4F7F\\u7528\\u201C\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u201D</h4><ol><li><strong>\\u79FB\\u52A8 & \\u9AD8\\u4EAE</strong><br>\\u5C06\\u9F20\\u6807\\u5149\\u6807\\u79FB\\u52A8\\u5230\\u60A8\\u5E0C\\u671B\\u63D0\\u53D6\\u6587\\u672C\\u7684\\u7F51\\u9875\\u533A\\u57DF\\uFF0C\\u76EE\\u6807\\u5143\\u7D20\\u5C06\\u4F1A\\u88AB\\u81EA\\u52A8\\u9AD8\\u4EAE\\u663E\\u793A\\u3002</li><li><strong>\\u70B9\\u51FB & \\u9009\\u62E9</strong><br>\\u5728\\u5143\\u7D20\\u9AD8\\u4EAE\\u65F6\\uFF0C\\u5355\\u51FB\\u9F20\\u6807\\u5DE6\\u952E\\u5373\\u53EF\\u786E\\u8BA4\\u9009\\u62E9\\u3002</li><li><strong>\\u9000\\u51FA\\u626B\\u63CF</strong><br>\\u60A8\\u53EF\\u4EE5\\u968F\\u65F6\\u901A\\u8FC7\\u4EE5\\u4E0B\\u4EFB\\u4E00\\u65B9\\u5F0F\\u9000\\u51FA\\u626B\\u63CF\\u6A21\\u5F0F\\uFF1A<ul><li>\\u6309\\u4E0B\\u952E\\u76D8\\u4E0A\\u7684 <kbd>ESC</kbd> \\u952E\\u3002</li><li>\\u5728\\u5143\\u7D20\\u9AD8\\u4EAE\\u65F6\\uFF0C\\u5355\\u51FB\\u9F20\\u6807\\u53F3\\u952E\\u3002</li><li>\\u518D\\u6B21\\u70B9\\u51FB\\u201C\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u201D\\u6309\\u94AE\\u3002</li></ul></li></ol>"
-    },
     log: {
       prefix: "[\\u6587\\u672C\\u63D0\\u53D6\\u811A\\u672C-\\u8C03\\u8BD5]",
       language: {
@@ -4024,7 +4012,11 @@ ${result.join(",\n")}
           originalError: "\\u539F\\u59CB Worker \\u9519\\u8BEF: {{error}}"
         },
         switchToFallback: "\\u6B63\\u5728\\u4E3A\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
-        fallbackFailed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5907\\u9009\\u65B9\\u6848\\u6267\\u884C\\u5931\\u8D25: {{error}}"
+        fallbackFailed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5907\\u9009\\u65B9\\u6848\\u6267\\u884C\\u5931\\u8D25: {{error}}",
+        tutorial: {
+          title: "\\u5982\\u4F55\\u4F7F\\u7528\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF",
+          content: "<b>\\u4E3B\\u8981\\u64CD\\u4F5C\\uFF1A</b>\\u5C06\\u9F20\\u6807\\u60AC\\u505C\\u5728\\u9875\\u9762\\u5143\\u7D20\\u4E0A\\u5373\\u53EF\\u9884\\u89C8\\uFF0C\\u5355\\u51FB\\u53EF\\u5C06\\u5176\\u9009\\u4E2D\\u5E76\\u6253\\u5F00\\u8C03\\u6574\\u5DE5\\u5177\\u680F\\u3002<br><br><b>\\u5FAE\\u8C03\\u4E0E\\u786E\\u8BA4\\uFF1A</b>\\u5728\\u5DE5\\u5177\\u680F\\u4E2D\\uFF0C\\u60A8\\u53EF\\u4EE5\\u4F7F\\u7528\\u6ED1\\u5757\\u7CBE\\u786E\\u8C03\\u6574\\u9009\\u62E9\\u7684\\u5C42\\u7EA7\\u3002\\u7136\\u540E\\uFF0C\\u70B9\\u51FB\\u201C\\u6682\\u5B58\\u201D\\u6309\\u94AE\\u5C06\\u5176\\u52A0\\u5165\\u5F85\\u63D0\\u53D6\\u5217\\u8868\\uFF0C\\u6216\\u70B9\\u51FB\\u201C\\u786E\\u8BA4\\u201D\\u7ACB\\u5373\\u63D0\\u53D6\\u3002<br><br><b>\\u9000\\u51FA\\u626B\\u63CF\\uFF1A</b>\\u60A8\\u53EF\\u4EE5\\u968F\\u65F6\\u6309 \`Esc\` \\u952E\\uFF0C\\u6216\\u70B9\\u51FB\\u5DE5\\u5177\\u680F\\u4E0A\\u7684\\u201C\\u53D6\\u6D88\\u201D\\u6309\\u94AE\\u6765\\u9000\\u51FA\\u626B\\u63CF\\u6A21\\u5F0F\\u3002"
+        }
       },
       elementScanUI: {
         creatingHighlights: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u9996\\u6B21\\u521B\\u5EFA\\u9AD8\\u4EAE\\u5143\\u7D20\\u3002",
@@ -4222,11 +4214,6 @@ ${result.join(",\n")}
         enable_debug_logging: "\\u555F\\u7528\\u5F8C\\uFF0C\\u8173\\u672C\\u6703\\u5C07\\u8A73\\u7D30\\u7684\\u5167\\u90E8\\u72C0\\u614B\\u3001\\u57F7\\u884C\\u6B65\\u9A5F\\u548C\\u932F\\u8AA4\\u8A0A\\u606F\\u8F38\\u51FA\\u5230\\u700F\\u89BD\\u5668\\u7684<strong>\\u958B\\u767C\\u8005\\u5DE5\\u5177\\u63A7\\u5236\\u53F0</strong>\\uFF08\\u901A\\u5E38\\u7528F12\\u958B\\u555F\\uFF09\\u3002\\u9019\\u4E3B\\u8981\\u4F9B\\u958B\\u767C\\u8005\\u6216\\u9700\\u8981\\u63D0\\u4EA4\\u8A73\\u7D30\\u932F\\u8AA4\\u5831\\u544A\\u7684\\u4F7F\\u7528\\u8005\\u4F7F\\u7528\\u3002"
       }
     },
-    elementScan: {
-      tutorialBanner: "\\u9EDE\\u64CA\\u9801\\u9762\\u4E0A\\u7684\\u4EFB\\u4F55\\u5143\\u7D20\\u9032\\u884C\\u9078\\u64C7",
-      tutorialTooltipTitle: "\\u5982\\u4F55\\u4F7F\\u7528\\u300C\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u300D",
-      tutorialTooltipBody: "<h4>\\u5982\\u4F55\\u4F7F\\u7528\\u300C\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u300D</h4><ol><li><strong>\\u79FB\\u52D5 & \\u53CD\\u767D</strong><br>\\u5C07\\u6ED1\\u9F20\\u6E38\\u6A19\\u79FB\\u52D5\\u5230\\u60A8\\u5E0C\\u671B\\u63D0\\u53D6\\u6587\\u672C\\u7684\\u7DB2\\u9801\\u5340\\u57DF\\uFF0C\\u76EE\\u6A19\\u5143\\u7D20\\u5C07\\u6703\\u88AB\\u81EA\\u52D5\\u53CD\\u767D\\u986F\\u793A\\u3002</li><li><strong>\\u9EDE\\u64CA & \\u9078\\u64C7</strong><br>\\u5728\\u5143\\u7D20\\u53CD\\u767D\\u6642\\uFF0C\\u9EDE\\u64CA\\u6ED1\\u9F20\\u5DE6\\u9375\\u5373\\u53EF\\u78BA\\u8A8D\\u9078\\u64C7\\u3002</li><li><strong>\\u9000\\u51FA\\u6383\\u63CF</strong><br>\\u60A8\\u53EF\\u4EE5\\u96A8\\u6642\\u900F\\u904E\\u4EE5\\u4E0B\\u4EFB\\u4E00\\u65B9\\u5F0F\\u9000\\u51FA\\u6383\\u63CF\\u6A21\\u5F0F\\uFF1A<ul><li>\\u6309\\u4E0B\\u9375\\u76E4\\u4E0A\\u7684 <kbd>ESC</kbd> \\u9375\\u3002</li><li>\\u5728\\u5143\\u7D20\\u53CD\\u767D\\u6642\\uFF0C\\u9EDE\\u64CA\\u6ED1\\u9F20\\u53F3\\u9375\\u3002</li><li>\\u518D\\u6B21\\u9EDE\\u64CA\\u300C\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u300D\\u6309\\u9215\\u3002</li></ul></li></ol>"
-    },
     log: {
       prefix: "[\\u6587\\u672C\\u63D0\\u53D6\\u8173\\u672C-\\u5075\\u932F]",
       language: {
@@ -4357,7 +4344,11 @@ ${result.join(",\n")}
           originalError: "\\u539F\\u59CB Worker \\u932F\\u8AA4: {{error}}"
         },
         switchToFallback: "\\u6B63\\u5728\\u70BA\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
-        fallbackFailed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5099\\u9078\\u65B9\\u6848\\u57F7\\u884C\\u5931\\u6557: {{error}}"
+        fallbackFailed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5099\\u9078\\u65B9\\u6848\\u57F7\\u884C\\u5931\\u6557: {{error}}",
+        tutorial: {
+          title: "\\u5982\\u4F55\\u4F7F\\u7528\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF",
+          content: "<b>\\u4E3B\\u8981\\u64CD\\u4F5C\\uFF1A</b>\\u5C07\\u6ED1\\u9F20\\u61F8\\u505C\\u5728\\u9801\\u9762\\u5143\\u7D20\\u4E0A\\u5373\\u53EF\\u9810\\u89BD\\uFF0C\\u9EDE\\u64CA\\u53EF\\u5C07\\u5176\\u9078\\u4E2D\\u4E26\\u958B\\u555F\\u8ABF\\u6574\\u5DE5\\u5177\\u5217\\u3002<br><br><b>\\u5FAE\\u8ABF\\u8207\\u78BA\\u8A8D\\uFF1A</b>\\u5728\\u5DE5\\u5177\\u5217\\u4E2D\\uFF0C\\u60A8\\u53EF\\u4EE5\\u4F7F\\u7528\\u6ED1\\u687F\\u7CBE\\u78BA\\u8ABF\\u6574\\u9078\\u64C7\\u7684\\u5C64\\u7D1A\\u3002\\u7136\\u5F8C\\uFF0C\\u9EDE\\u64CA\\u300C\\u66AB\\u5B58\\u300D\\u6309\\u9215\\u5C07\\u5176\\u52A0\\u5165\\u5F85\\u63D0\\u53D6\\u5217\\u8868\\uFF0C\\u6216\\u9EDE\\u64CA\\u300C\\u78BA\\u8A8D\\u300D\\u7ACB\\u5373\\u63D0\\u53D6\\u3002<br><br><b>\\u9000\\u51FA\\u6383\\u63CF\\uFF1A</b>\\u60A8\\u53EF\\u4EE5\\u96A8\\u6642\\u6309 \`Esc\` \\u9375\\uFF0C\\u6216\\u9EDE\\u64CA\\u5DE5\\u5177\\u5217\\u4E0A\\u7684\\u300C\\u53D6\\u6D88\\u300D\\u6309\\u9215\\u4F86\\u9000\\u51FA\\u6383\\u63CF\\u6A21\\u5F0F\\u3002"
+        }
       },
       elementScanUI: {
         creatingHighlights: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u9996\\u6B21\\u5EFA\\u7ACB\\u9AD8\\u4EAE\\u5143\\u7D20\\u3002",
@@ -5721,6 +5712,227 @@ ${result.join(",\n")}
       }, 50);
     }
   }
+  var scanContainer = null;
+  var highlightBorder = null;
+  var tagNameTooltip = null;
+  var toolbar = null;
+  function getElementSelector(element) {
+    if (!element) return "";
+    const currentTag = element.tagName.toLowerCase();
+    const parent = element.parentElement;
+    if (!parent || parent.tagName.toLowerCase() === "body") {
+      return currentTag;
+    }
+    const parentTag = parent.tagName.toLowerCase();
+    return `${parentTag} ${currentTag}`;
+  }
+  function createHighlightElements() {
+    if (!scanContainer) {
+      log(t("log.elementScanUI.creatingHighlights"));
+      scanContainer = document.createElement("div");
+      scanContainer.id = "element-scan-container";
+      scanContainer.style.position = "absolute";
+      scanContainer.style.top = "0";
+      scanContainer.style.left = "0";
+      scanContainer.style.willChange = "transform";
+      highlightBorder = document.createElement("div");
+      highlightBorder.id = "element-scan-highlight-border";
+      scanContainer.appendChild(highlightBorder);
+      tagNameTooltip = document.createElement("div");
+      tagNameTooltip.id = "element-scan-tag-name";
+      scanContainer.appendChild(tagNameTooltip);
+      uiContainer.appendChild(scanContainer);
+    }
+    requestAnimationFrame(() => {
+      scanContainer.classList.add("is-visible");
+    });
+  }
+  function updateHighlight(targetElement) {
+    if (!targetElement) return;
+    createHighlightElements();
+    const rect = targetElement.getBoundingClientRect();
+    const scrollX = window.scrollX;
+    const scrollY = window.scrollY;
+    const padding = 6;
+    const elementSelector = getElementSelector(targetElement);
+    const coordinates = {
+      top: rect.top.toFixed(2),
+      left: rect.left.toFixed(2),
+      width: rect.width.toFixed(2),
+      height: rect.height.toFixed(2)
+    };
+    log(simpleTemplate(t("log.elementScanUI.updatingHighlight"), { tagName: elementSelector }), coordinates);
+    const newWidth = rect.width + padding * 2;
+    const newHeight = rect.height + padding * 2;
+    const newX = rect.left + scrollX - padding;
+    const newY = rect.top + scrollY - padding;
+    scanContainer.style.width = `${newWidth}px`;
+    scanContainer.style.height = `${newHeight}px`;
+    scanContainer.style.transform = `translate(${newX}px, ${newY}px)`;
+    tagNameTooltip.textContent = elementSelector;
+    const toolbarTag = uiContainer.querySelector("#element-scan-toolbar-tag");
+    if (toolbarTag) {
+      toolbarTag.textContent = getElementSelector(targetElement);
+    }
+  }
+  function createAdjustmentToolbar(elementPath2) {
+    if (toolbar) cleanupToolbar();
+    log(t("log.elementScanUI.creatingToolbar"));
+    toolbar = document.createElement("div");
+    toolbar.id = "element-scan-toolbar";
+    toolbar.innerHTML = createTrustedHTML(`
+        <div id="element-scan-toolbar-tag" title="${t("tooltip.dragHint")}">${getElementSelector(elementPath2[0])}</div>
+        <input type="range" id="element-scan-level-slider" min="0" max="${elementPath2.length - 1}" value="0" />
+        <div id="element-scan-toolbar-actions">
+            <button id="element-scan-toolbar-reselect">${t("common.reselect")}</button>
+            <button id="element-scan-toolbar-stage">${t("common.stage")}</button>
+            <button id="element-scan-toolbar-cancel">${t("common.cancel")}</button>
+            <button id="element-scan-toolbar-confirm">${t("common.confirm")}</button>
+        </div>
+    `);
+    uiContainer.appendChild(toolbar);
+    const initialRect = elementPath2[0].getBoundingClientRect();
+    const toolbarRect = toolbar.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const margin = 10;
+    let top, left;
+    const alignRight = () => {
+      let l = initialRect.right - toolbarRect.width;
+      if (l < margin) l = margin;
+      if (l + toolbarRect.width > viewportWidth - margin) {
+        l = viewportWidth - toolbarRect.width - margin;
+      }
+      return l;
+    };
+    const topAbove = initialRect.top - toolbarRect.height - margin;
+    const topBelow = initialRect.bottom + margin;
+    const canPlaceAbove = topAbove > margin;
+    const canPlaceBelow = topBelow + toolbarRect.height < viewportHeight - margin;
+    if (canPlaceAbove) {
+      top = topAbove;
+      left = alignRight();
+    } else if (canPlaceBelow) {
+      top = topBelow;
+      left = alignRight();
+    } else {
+      top = (viewportHeight - toolbarRect.height) / 2;
+      left = (viewportWidth - toolbarRect.width) / 2;
+    }
+    toolbar.style.top = `${top}px`;
+    toolbar.style.left = `${left}px`;
+    log(t("log.elementScanUI.toolbarPositioned"));
+    addToolbarEventListeners();
+    makeDraggable(toolbar);
+    requestAnimationFrame(() => {
+      toolbar.classList.add("is-visible");
+    });
+  }
+  function addToolbarEventListeners() {
+    const slider = uiContainer.querySelector("#element-scan-level-slider");
+    const reselectBtn = uiContainer.querySelector("#element-scan-toolbar-reselect");
+    const stageBtn = uiContainer.querySelector("#element-scan-toolbar-stage");
+    const cancelBtn = uiContainer.querySelector("#element-scan-toolbar-cancel");
+    const confirmBtn = uiContainer.querySelector("#element-scan-toolbar-confirm");
+    slider.addEventListener("input", () => {
+      log(simpleTemplate(t("log.elementScanUI.sliderChanged"), { level: slider.value }));
+      updateSelectionLevel(slider.value);
+    });
+    reselectBtn.addEventListener("click", () => {
+      log(t("log.elementScanUI.reselectClicked"));
+      reselectElement();
+    });
+    stageBtn.addEventListener("click", () => {
+      log(t("log.elementScanUI.stageClicked"));
+      stageCurrentElement();
+    });
+    cancelBtn.addEventListener("click", () => {
+      log(t("log.elementScanUI.cancelClicked"));
+      const fabElement = uiContainer.querySelector(".fab-element-scan");
+      stopElementScan(fabElement);
+    });
+    confirmBtn.addEventListener("click", () => {
+      log(t("log.elementScanUI.confirmClicked"));
+      confirmSelectionAndExtract();
+    });
+  }
+  function makeDraggable(element) {
+    let offsetX, offsetY;
+    const onMouseDown = (e) => {
+      if (e.target.id !== "element-scan-toolbar" && e.target.id !== "element-scan-toolbar-tag") return;
+      e.preventDefault();
+      const rect = element.getBoundingClientRect();
+      offsetX = e.clientX - rect.left;
+      offsetY = e.clientY - rect.top;
+      document.addEventListener("mousemove", onMouseMove);
+      document.addEventListener("mouseup", onMouseUp);
+      log(t("log.elementScanUI.dragStarted"));
+    };
+    const onMouseMove = (e) => {
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      const rect = element.getBoundingClientRect();
+      let newLeft = e.clientX - offsetX;
+      let newTop = e.clientY - offsetY;
+      if (newLeft < 0) newLeft = 0;
+      if (newTop < 0) newTop = 0;
+      if (newLeft + rect.width > viewportWidth) newLeft = viewportWidth - rect.width;
+      if (newTop + rect.height > viewportHeight) newTop = viewportHeight - rect.height;
+      element.style.left = `${newLeft}px`;
+      element.style.top = `${newTop}px`;
+    };
+    const onMouseUp = () => {
+      document.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("mouseup", onMouseUp);
+      log(t("log.elementScanUI.dragEnded"));
+    };
+    element.addEventListener("mousedown", onMouseDown);
+  }
+  function cleanupUI() {
+    if (scanContainer) {
+      log(t("log.elementScanUI.cleaningHighlights"));
+      scanContainer.classList.remove("is-visible");
+    }
+  }
+  function cleanupToolbar() {
+    if (toolbar) {
+      log(t("log.elementScanUI.cleaningToolbar"));
+      const toolbarToRemove = toolbar;
+      toolbar = null;
+      toolbarToRemove.classList.remove("is-visible");
+      setTimeout(() => {
+        toolbarToRemove.remove();
+      }, 300);
+    }
+  }
+  var performScanInMainThread2 = (texts, filterRules2, enableDebugLogging) => {
+    const uniqueTexts =  new Set();
+    const mainThreadLog = (message, ...args) => {
+      if (enableDebugLogging) {
+        log(message, ...args);
+      }
+    };
+    if (Array.isArray(texts)) {
+      texts.forEach((rawText) => {
+        if (!rawText || typeof rawText !== "string") return;
+        const normalizedText = rawText.normalize("NFC");
+        const textForFiltering = normalizedText.replace(/(\r\n|\n|\r)+/g, "\n").trim();
+        if (textForFiltering === "") return;
+        const filterResult = shouldFilter(textForFiltering, filterRules2);
+        if (filterResult) {
+          mainThreadLog(t("log.textProcessor.filtered", { text: textForFiltering, reason: filterResult }));
+          return;
+        }
+        uniqueTexts.add(normalizedText.replace(/(\r\n|\n|\r)+/g, "\n"));
+      });
+    }
+    const textsArray = Array.from(uniqueTexts);
+    const formattedText = formatTextsForTranslation(textsArray);
+    return {
+      formattedText,
+      count: textsArray.length
+    };
+  };
   var Tooltip = class {
     constructor() {
       this.tooltipElement = null;
@@ -5809,263 +6021,36 @@ ${result.join(",\n")}
     }
   };
   var infoTooltip = new Tooltip();
-  var tutorialBanner = null;
-  var scanContainer = null;
-  var highlightBorder = null;
-  var tagNameTooltip = null;
-  var toolbar = null;
-  function getElementSelector(element) {
-    if (!element) return "";
-    const currentTag = element.tagName.toLowerCase();
-    const parent = element.parentElement;
-    if (!parent || parent.tagName.toLowerCase() === "body") {
-      return currentTag;
-    }
-    const parentTag = parent.tagName.toLowerCase();
-    return `${parentTag} ${currentTag}`;
-  }
-  function createHighlightElements() {
-    if (!scanContainer) {
-      log(t("log.elementScanUI.creatingHighlights"));
-      scanContainer = document.createElement("div");
-      scanContainer.id = "element-scan-container";
-      scanContainer.style.position = "absolute";
-      scanContainer.style.top = "0";
-      scanContainer.style.left = "0";
-      scanContainer.style.willChange = "transform";
-      highlightBorder = document.createElement("div");
-      highlightBorder.id = "element-scan-highlight-border";
-      scanContainer.appendChild(highlightBorder);
-      tagNameTooltip = document.createElement("div");
-      tagNameTooltip.id = "element-scan-tag-name";
-      scanContainer.appendChild(tagNameTooltip);
-      uiContainer.appendChild(scanContainer);
-    }
-    requestAnimationFrame(() => {
-      scanContainer.classList.add("is-visible");
+  var tutorialElement = null;
+  function handleTutorialClick() {
+    infoTooltip.show({
+      title: t("elementScan.tutorial.title"),
+      text: createTrustedHTML(t("elementScan.tutorial.content")),
+      width: "450px"
     });
-    if (!tutorialBanner) {
-      showTopCenterCounter(t("scan.stagedCount"));
-      updateTopCenterCounter(0);
-      createTutorialBanner();
-    }
   }
-  function updateHighlight(targetElement) {
-    if (!targetElement) return;
-    createHighlightElements();
-    const rect = targetElement.getBoundingClientRect();
-    const scrollX = window.scrollX;
-    const scrollY = window.scrollY;
-    const padding = 6;
-    const elementSelector = getElementSelector(targetElement);
-    const coordinates = {
-      top: rect.top.toFixed(2),
-      left: rect.left.toFixed(2),
-      width: rect.width.toFixed(2),
-      height: rect.height.toFixed(2)
-    };
-    log(simpleTemplate(t("log.elementScanUI.updatingHighlight"), { tagName: elementSelector }), coordinates);
-    const newWidth = rect.width + padding * 2;
-    const newHeight = rect.height + padding * 2;
-    const newX = rect.left + scrollX - padding;
-    const newY = rect.top + scrollY - padding;
-    scanContainer.style.width = `${newWidth}px`;
-    scanContainer.style.height = `${newHeight}px`;
-    scanContainer.style.transform = `translate(${newX}px, ${newY}px)`;
-    tagNameTooltip.textContent = elementSelector;
-    const toolbarTag = uiContainer.querySelector("#element-scan-toolbar-tag");
-    if (toolbarTag) {
-      toolbarTag.textContent = getElementSelector(targetElement);
-    }
-  }
-  function createAdjustmentToolbar(elementPath2) {
-    if (toolbar) cleanupToolbar();
-    log(t("log.elementScanUI.creatingToolbar"));
-    toolbar = document.createElement("div");
-    toolbar.id = "element-scan-toolbar";
-    toolbar.innerHTML = createTrustedHTML(`
-        <div id="element-scan-toolbar-tag" title="${t("tooltip.dragHint")}">${getElementSelector(elementPath2[0])}</div>
-        <input type="range" id="element-scan-level-slider" min="0" max="${elementPath2.length - 1}" value="0" />
-        <div id="element-scan-toolbar-actions">
-            <button id="element-scan-toolbar-reselect">${t("common.reselect")}</button>
-            <button id="element-scan-toolbar-stage">${t("common.stage")}</button>
-            <button id="element-scan-toolbar-cancel">${t("common.cancel")}</button>
-            <button id="element-scan-toolbar-confirm">${t("common.confirm")}</button>
-        </div>
+  function createTutorialElement() {
+    if (tutorialElement) return;
+    tutorialElement = document.createElement("div");
+    tutorialElement.className = "tc-element-scan-tutorial";
+    tutorialElement.innerHTML = createTrustedHTML(`
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
+            <path d="M478-240q21 0 35.5-14.5T528-290q0-21-14.5-35.5T478-340q-21 0-35.5 14.5T428-290q0 21 14.5 35.5T478-240Zm-36-154h74q0-33 7.5-52t42.5-52q26-26 41-49.5t15-56.5q0-56-41-86t-97-30q-57 0-92.5 30T342-618l66 26q5-18 22.5-39t53.5-21q32 0 48 17.5t16 38.5q0 20-12 37.5T506-526q-44 39-54 59t-10 73Zm38 314q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/>
+        </svg>
     `);
-    uiContainer.appendChild(toolbar);
-    const initialRect = elementPath2[0].getBoundingClientRect();
-    const toolbarRect = toolbar.getBoundingClientRect();
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-    const margin = 10;
-    let top, left;
-    const alignRight = () => {
-      let l = initialRect.right - toolbarRect.width;
-      if (l < margin) l = margin;
-      if (l + toolbarRect.width > viewportWidth - margin) {
-        l = viewportWidth - toolbarRect.width - margin;
-      }
-      return l;
-    };
-    const topAbove = initialRect.top - toolbarRect.height - margin;
-    const topBelow = initialRect.bottom + margin;
-    const canPlaceAbove = topAbove > margin;
-    const canPlaceBelow = topBelow + toolbarRect.height < viewportHeight - margin;
-    if (canPlaceAbove) {
-      top = topAbove;
-      left = alignRight();
-    } else if (canPlaceBelow) {
-      top = topBelow;
-      left = alignRight();
-    } else {
-      top = (viewportHeight - toolbarRect.height) / 2;
-      left = (viewportWidth - toolbarRect.width) / 2;
-    }
-    toolbar.style.top = `${top}px`;
-    toolbar.style.left = `${left}px`;
-    log(t("log.elementScanUI.toolbarPositioned"));
-    addToolbarEventListeners();
-    makeDraggable(toolbar);
+    tutorialElement.addEventListener("click", handleTutorialClick);
+    uiContainer.appendChild(tutorialElement);
+  }
+  function showTutorialIcon() {
+    createTutorialElement();
     requestAnimationFrame(() => {
-      toolbar.classList.add("is-visible");
+      tutorialElement.classList.add("is-visible");
     });
   }
-  function createTutorialBanner() {
-    tutorialBanner = document.createElement("div");
-    tutorialBanner.className = "element-scan-tutorial-banner";
-    const text = document.createElement("span");
-    text.textContent = t("elementScan.tutorialBanner");
-    tutorialBanner.appendChild(text);
-    const icon = createSVGFromString(infoIcon);
-    icon.addEventListener("click", (e) => {
-      e.stopPropagation();
-      infoTooltip.show({
-        title: t("elementScan.tutorialTooltipTitle"),
-        text: t("elementScan.tutorialTooltipBody")
-      });
-    });
-    tutorialBanner.appendChild(icon);
-    const counterElement2 = uiContainer.querySelector(".tc-top-center-counter");
-    if (counterElement2) {
-      counterElement2.appendChild(tutorialBanner);
-      void tutorialBanner.offsetWidth;
-      tutorialBanner.classList.add("is-visible");
-    }
+  function hideTutorialIcon() {
+    if (!tutorialElement) return;
+    tutorialElement.classList.remove("is-visible");
   }
-  function addToolbarEventListeners() {
-    const slider = uiContainer.querySelector("#element-scan-level-slider");
-    const reselectBtn = uiContainer.querySelector("#element-scan-toolbar-reselect");
-    const stageBtn = uiContainer.querySelector("#element-scan-toolbar-stage");
-    const cancelBtn = uiContainer.querySelector("#element-scan-toolbar-cancel");
-    const confirmBtn = uiContainer.querySelector("#element-scan-toolbar-confirm");
-    slider.addEventListener("input", () => {
-      log(simpleTemplate(t("log.elementScanUI.sliderChanged"), { level: slider.value }));
-      updateSelectionLevel(slider.value);
-    });
-    reselectBtn.addEventListener("click", () => {
-      log(t("log.elementScanUI.reselectClicked"));
-      reselectElement();
-    });
-    stageBtn.addEventListener("click", () => {
-      log(t("log.elementScanUI.stageClicked"));
-      stageCurrentElement();
-    });
-    cancelBtn.addEventListener("click", () => {
-      log(t("log.elementScanUI.cancelClicked"));
-      const fabElement = uiContainer.querySelector(".fab-element-scan");
-      stopElementScan(fabElement);
-    });
-    confirmBtn.addEventListener("click", () => {
-      log(t("log.elementScanUI.confirmClicked"));
-      confirmSelectionAndExtract();
-    });
-  }
-  function makeDraggable(element) {
-    let offsetX, offsetY;
-    const onMouseDown = (e) => {
-      if (e.target.id !== "element-scan-toolbar" && e.target.id !== "element-scan-toolbar-tag") return;
-      e.preventDefault();
-      const rect = element.getBoundingClientRect();
-      offsetX = e.clientX - rect.left;
-      offsetY = e.clientY - rect.top;
-      document.addEventListener("mousemove", onMouseMove);
-      document.addEventListener("mouseup", onMouseUp);
-      log(t("log.elementScanUI.dragStarted"));
-    };
-    const onMouseMove = (e) => {
-      const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
-      const rect = element.getBoundingClientRect();
-      let newLeft = e.clientX - offsetX;
-      let newTop = e.clientY - offsetY;
-      if (newLeft < 0) newLeft = 0;
-      if (newTop < 0) newTop = 0;
-      if (newLeft + rect.width > viewportWidth) newLeft = viewportWidth - rect.width;
-      if (newTop + rect.height > viewportHeight) newTop = viewportHeight - rect.height;
-      element.style.left = `${newLeft}px`;
-      element.style.top = `${newTop}px`;
-    };
-    const onMouseUp = () => {
-      document.removeEventListener("mousemove", onMouseMove);
-      document.removeEventListener("mouseup", onMouseUp);
-      log(t("log.elementScanUI.dragEnded"));
-    };
-    element.addEventListener("mousedown", onMouseDown);
-  }
-  function cleanupUI() {
-    if (scanContainer) {
-      log(t("log.elementScanUI.cleaningHighlights"));
-      scanContainer.classList.remove("is-visible");
-    }
-    cleanupTopUI();
-  }
-  function cleanupTopUI() {
-    hideTopCenterCounter();
-    if (tutorialBanner) {
-      tutorialBanner.remove();
-      tutorialBanner = null;
-    }
-  }
-  function cleanupToolbar() {
-    if (toolbar) {
-      log(t("log.elementScanUI.cleaningToolbar"));
-      const toolbarToRemove = toolbar;
-      toolbar = null;
-      toolbarToRemove.classList.remove("is-visible");
-      setTimeout(() => {
-        toolbarToRemove.remove();
-      }, 300);
-    }
-  }
-  var performScanInMainThread2 = (texts, filterRules2, enableDebugLogging) => {
-    const uniqueTexts =  new Set();
-    const mainThreadLog = (message, ...args) => {
-      if (enableDebugLogging) {
-        log(message, ...args);
-      }
-    };
-    if (Array.isArray(texts)) {
-      texts.forEach((rawText) => {
-        if (!rawText || typeof rawText !== "string") return;
-        const normalizedText = rawText.normalize("NFC");
-        const textForFiltering = normalizedText.replace(/(\r\n|\n|\r)+/g, "\n").trim();
-        if (textForFiltering === "") return;
-        const filterResult = shouldFilter(textForFiltering, filterRules2);
-        if (filterResult) {
-          mainThreadLog(t("log.textProcessor.filtered", { text: textForFiltering, reason: filterResult }));
-          return;
-        }
-        uniqueTexts.add(normalizedText.replace(/(\r\n|\n|\r)+/g, "\n"));
-      });
-    }
-    const textsArray = Array.from(uniqueTexts);
-    const formattedText = formatTextsForTranslation(textsArray);
-    return {
-      formattedText,
-      count: textsArray.length
-    };
-  };
   var isActive = false;
   var isAdjusting = false;
   var currentTarget = null;
@@ -6135,6 +6120,8 @@ ${result.join(",\n")}
     isAdjusting = false;
     fabElement.classList.add("is-recording");
     updateFabTooltip(fabElement, "scan.stopSession");
+    showTopCenterCounter("scan.stagedCount");
+    showTutorialIcon();
     const dynamicFab2 = getDynamicFab();
     if (dynamicFab2) {
       dynamicFab2.dataset.originalTooltipKey = dynamicFab2.dataset.tooltipKey;
@@ -6172,6 +6159,8 @@ ${result.join(",\n")}
     log(t("log.elementScan.listenersRemoved"));
     cleanupUI();
     cleanupToolbar();
+    hideTopCenterCounter();
+    hideTutorialIcon();
     removeScrollListeners();
     elementPath = [];
     currentTarget = null;
@@ -6449,11 +6438,6 @@ ${result.join(",\n")}
         enable_debug_logging: "When enabled, the script will output detailed internal status, execution steps, and error messages to the browser's <strong>Developer Tools Console</strong> (usually opened with F12). This is primarily for developers or users who need to submit detailed bug reports."
       }
     },
-    elementScan: {
-      tutorialBanner: "Click any element on the page to select it",
-      tutorialTooltipTitle: "How to use Element Scan",
-      tutorialTooltipBody: "<h4>How to use Element Scan</h4><ol><li><strong>Move & Highlight</strong><br>Move your mouse cursor over the web page. The target element will be highlighted automatically.</li><li><strong>Click & Select</strong><br>When an element is highlighted, left-click to confirm your selection.</li><li><strong>Exit Scanning</strong><br>You can exit scan mode at any time in one of the following ways:<ul><li>Press the <kbd>ESC</kbd> key.</li><li>Right-click while an element is highlighted.</li><li>Click the 'Element Scan' button again.</li></ul></li></ol>"
-    },
     log: {
       prefix: "[Text Extractor Script-Debug]",
       language: {
@@ -6584,7 +6568,11 @@ ${result.join(",\n")}
           originalError: "Original worker error: {{error}}"
         },
         switchToFallback: "Switching to main thread fallback for Element Scan.",
-        fallbackFailed: "Element Scan fallback mode failed: {{error}}"
+        fallbackFailed: "Element Scan fallback mode failed: {{error}}",
+        tutorial: {
+          title: "How to Use Element Scan",
+          content: "<b>Main Operation:</b> Hover over elements to preview, and click to select and open the adjustment toolbar.<br><br><b>Fine-tuning & Confirmation:</b> In the toolbar, use the slider to precisely adjust the selection level. Then, click 'Stage' to add it to the extraction list or 'Confirm' to extract immediately.<br><br><b>Exiting Scan:</b> You can press the \`Esc\` key at any time or click the 'Cancel' button on the toolbar to exit scan mode."
+        }
       },
       elementScanUI: {
         creatingHighlights: "Element Scan UI: Creating highlight elements for the first time.",
@@ -6782,11 +6770,6 @@ ${result.join(",\n")}
         enable_debug_logging: "\\u542F\\u7528\\u540E\\uFF0C\\u811A\\u672C\\u4F1A\\u5C06\\u8BE6\\u7EC6\\u7684\\u5185\\u90E8\\u72B6\\u6001\\u3001\\u6267\\u884C\\u6B65\\u9AA4\\u548C\\u9519\\u8BEF\\u4FE1\\u606F\\u8F93\\u51FA\\u5230\\u6D4F\\u89C8\\u5668\\u7684<strong>\\u5F00\\u53D1\\u8005\\u5DE5\\u5177\\u63A7\\u5236\\u53F0</strong>\\uFF08\\u901A\\u5E38\\u7528F12\\u6253\\u5F00\\uFF09\\u3002\\u8FD9\\u4E3B\\u8981\\u4F9B\\u5F00\\u53D1\\u8005\\u6216\\u9700\\u8981\\u63D0\\u4EA4\\u8BE6\\u7EC6\\u9519\\u8BEF\\u62A5\\u544A\\u7684\\u7528\\u6237\\u4F7F\\u7528\\u3002"
       }
     },
-    elementScan: {
-      tutorialBanner: "\\u70B9\\u51FB\\u9875\\u9762\\u4E0A\\u7684\\u4EFB\\u4F55\\u5143\\u7D20\\u8FDB\\u884C\\u9009\\u62E9",
-      tutorialTooltipTitle: "\\u5982\\u4F55\\u4F7F\\u7528\\u201C\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u201D",
-      tutorialTooltipBody: "<h4>\\u5982\\u4F55\\u4F7F\\u7528\\u201C\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u201D</h4><ol><li><strong>\\u79FB\\u52A8 & \\u9AD8\\u4EAE</strong><br>\\u5C06\\u9F20\\u6807\\u5149\\u6807\\u79FB\\u52A8\\u5230\\u60A8\\u5E0C\\u671B\\u63D0\\u53D6\\u6587\\u672C\\u7684\\u7F51\\u9875\\u533A\\u57DF\\uFF0C\\u76EE\\u6807\\u5143\\u7D20\\u5C06\\u4F1A\\u88AB\\u81EA\\u52A8\\u9AD8\\u4EAE\\u663E\\u793A\\u3002</li><li><strong>\\u70B9\\u51FB & \\u9009\\u62E9</strong><br>\\u5728\\u5143\\u7D20\\u9AD8\\u4EAE\\u65F6\\uFF0C\\u5355\\u51FB\\u9F20\\u6807\\u5DE6\\u952E\\u5373\\u53EF\\u786E\\u8BA4\\u9009\\u62E9\\u3002</li><li><strong>\\u9000\\u51FA\\u626B\\u63CF</strong><br>\\u60A8\\u53EF\\u4EE5\\u968F\\u65F6\\u901A\\u8FC7\\u4EE5\\u4E0B\\u4EFB\\u4E00\\u65B9\\u5F0F\\u9000\\u51FA\\u626B\\u63CF\\u6A21\\u5F0F\\uFF1A<ul><li>\\u6309\\u4E0B\\u952E\\u76D8\\u4E0A\\u7684 <kbd>ESC</kbd> \\u952E\\u3002</li><li>\\u5728\\u5143\\u7D20\\u9AD8\\u4EAE\\u65F6\\uFF0C\\u5355\\u51FB\\u9F20\\u6807\\u53F3\\u952E\\u3002</li><li>\\u518D\\u6B21\\u70B9\\u51FB\\u201C\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u201D\\u6309\\u94AE\\u3002</li></ul></li></ol>"
-    },
     log: {
       prefix: "[\\u6587\\u672C\\u63D0\\u53D6\\u811A\\u672C-\\u8C03\\u8BD5]",
       language: {
@@ -6917,7 +6900,11 @@ ${result.join(",\n")}
           originalError: "\\u539F\\u59CB Worker \\u9519\\u8BEF: {{error}}"
         },
         switchToFallback: "\\u6B63\\u5728\\u4E3A\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
-        fallbackFailed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5907\\u9009\\u65B9\\u6848\\u6267\\u884C\\u5931\\u8D25: {{error}}"
+        fallbackFailed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5907\\u9009\\u65B9\\u6848\\u6267\\u884C\\u5931\\u8D25: {{error}}",
+        tutorial: {
+          title: "\\u5982\\u4F55\\u4F7F\\u7528\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF",
+          content: "<b>\\u4E3B\\u8981\\u64CD\\u4F5C\\uFF1A</b>\\u5C06\\u9F20\\u6807\\u60AC\\u505C\\u5728\\u9875\\u9762\\u5143\\u7D20\\u4E0A\\u5373\\u53EF\\u9884\\u89C8\\uFF0C\\u5355\\u51FB\\u53EF\\u5C06\\u5176\\u9009\\u4E2D\\u5E76\\u6253\\u5F00\\u8C03\\u6574\\u5DE5\\u5177\\u680F\\u3002<br><br><b>\\u5FAE\\u8C03\\u4E0E\\u786E\\u8BA4\\uFF1A</b>\\u5728\\u5DE5\\u5177\\u680F\\u4E2D\\uFF0C\\u60A8\\u53EF\\u4EE5\\u4F7F\\u7528\\u6ED1\\u5757\\u7CBE\\u786E\\u8C03\\u6574\\u9009\\u62E9\\u7684\\u5C42\\u7EA7\\u3002\\u7136\\u540E\\uFF0C\\u70B9\\u51FB\\u201C\\u6682\\u5B58\\u201D\\u6309\\u94AE\\u5C06\\u5176\\u52A0\\u5165\\u5F85\\u63D0\\u53D6\\u5217\\u8868\\uFF0C\\u6216\\u70B9\\u51FB\\u201C\\u786E\\u8BA4\\u201D\\u7ACB\\u5373\\u63D0\\u53D6\\u3002<br><br><b>\\u9000\\u51FA\\u626B\\u63CF\\uFF1A</b>\\u60A8\\u53EF\\u4EE5\\u968F\\u65F6\\u6309 \`Esc\` \\u952E\\uFF0C\\u6216\\u70B9\\u51FB\\u5DE5\\u5177\\u680F\\u4E0A\\u7684\\u201C\\u53D6\\u6D88\\u201D\\u6309\\u94AE\\u6765\\u9000\\u51FA\\u626B\\u63CF\\u6A21\\u5F0F\\u3002"
+        }
       },
       elementScanUI: {
         creatingHighlights: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u9996\\u6B21\\u521B\\u5EFA\\u9AD8\\u4EAE\\u5143\\u7D20\\u3002",
@@ -7115,11 +7102,6 @@ ${result.join(",\n")}
         enable_debug_logging: "\\u555F\\u7528\\u5F8C\\uFF0C\\u8173\\u672C\\u6703\\u5C07\\u8A73\\u7D30\\u7684\\u5167\\u90E8\\u72C0\\u614B\\u3001\\u57F7\\u884C\\u6B65\\u9A5F\\u548C\\u932F\\u8AA4\\u8A0A\\u606F\\u8F38\\u51FA\\u5230\\u700F\\u89BD\\u5668\\u7684<strong>\\u958B\\u767C\\u8005\\u5DE5\\u5177\\u63A7\\u5236\\u53F0</strong>\\uFF08\\u901A\\u5E38\\u7528F12\\u958B\\u555F\\uFF09\\u3002\\u9019\\u4E3B\\u8981\\u4F9B\\u958B\\u767C\\u8005\\u6216\\u9700\\u8981\\u63D0\\u4EA4\\u8A73\\u7D30\\u932F\\u8AA4\\u5831\\u544A\\u7684\\u4F7F\\u7528\\u8005\\u4F7F\\u7528\\u3002"
       }
     },
-    elementScan: {
-      tutorialBanner: "\\u9EDE\\u64CA\\u9801\\u9762\\u4E0A\\u7684\\u4EFB\\u4F55\\u5143\\u7D20\\u9032\\u884C\\u9078\\u64C7",
-      tutorialTooltipTitle: "\\u5982\\u4F55\\u4F7F\\u7528\\u300C\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u300D",
-      tutorialTooltipBody: "<h4>\\u5982\\u4F55\\u4F7F\\u7528\\u300C\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u300D</h4><ol><li><strong>\\u79FB\\u52D5 & \\u53CD\\u767D</strong><br>\\u5C07\\u6ED1\\u9F20\\u6E38\\u6A19\\u79FB\\u52D5\\u5230\\u60A8\\u5E0C\\u671B\\u63D0\\u53D6\\u6587\\u672C\\u7684\\u7DB2\\u9801\\u5340\\u57DF\\uFF0C\\u76EE\\u6A19\\u5143\\u7D20\\u5C07\\u6703\\u88AB\\u81EA\\u52D5\\u53CD\\u767D\\u986F\\u793A\\u3002</li><li><strong>\\u9EDE\\u64CA & \\u9078\\u64C7</strong><br>\\u5728\\u5143\\u7D20\\u53CD\\u767D\\u6642\\uFF0C\\u9EDE\\u64CA\\u6ED1\\u9F20\\u5DE6\\u9375\\u5373\\u53EF\\u78BA\\u8A8D\\u9078\\u64C7\\u3002</li><li><strong>\\u9000\\u51FA\\u6383\\u63CF</strong><br>\\u60A8\\u53EF\\u4EE5\\u96A8\\u6642\\u900F\\u904E\\u4EE5\\u4E0B\\u4EFB\\u4E00\\u65B9\\u5F0F\\u9000\\u51FA\\u6383\\u63CF\\u6A21\\u5F0F\\uFF1A<ul><li>\\u6309\\u4E0B\\u9375\\u76E4\\u4E0A\\u7684 <kbd>ESC</kbd> \\u9375\\u3002</li><li>\\u5728\\u5143\\u7D20\\u53CD\\u767D\\u6642\\uFF0C\\u9EDE\\u64CA\\u6ED1\\u9F20\\u53F3\\u9375\\u3002</li><li>\\u518D\\u6B21\\u9EDE\\u64CA\\u300C\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u300D\\u6309\\u9215\\u3002</li></ul></li></ol>"
-    },
     log: {
       prefix: "[\\u6587\\u672C\\u63D0\\u53D6\\u8173\\u672C-\\u5075\\u932F]",
       language: {
@@ -7250,7 +7232,11 @@ ${result.join(",\n")}
           originalError: "\\u539F\\u59CB Worker \\u932F\\u8AA4: {{error}}"
         },
         switchToFallback: "\\u6B63\\u5728\\u70BA\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
-        fallbackFailed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5099\\u9078\\u65B9\\u6848\\u57F7\\u884C\\u5931\\u6557: {{error}}"
+        fallbackFailed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5099\\u9078\\u65B9\\u6848\\u57F7\\u884C\\u5931\\u6557: {{error}}",
+        tutorial: {
+          title: "\\u5982\\u4F55\\u4F7F\\u7528\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF",
+          content: "<b>\\u4E3B\\u8981\\u64CD\\u4F5C\\uFF1A</b>\\u5C07\\u6ED1\\u9F20\\u61F8\\u505C\\u5728\\u9801\\u9762\\u5143\\u7D20\\u4E0A\\u5373\\u53EF\\u9810\\u89BD\\uFF0C\\u9EDE\\u64CA\\u53EF\\u5C07\\u5176\\u9078\\u4E2D\\u4E26\\u958B\\u555F\\u8ABF\\u6574\\u5DE5\\u5177\\u5217\\u3002<br><br><b>\\u5FAE\\u8ABF\\u8207\\u78BA\\u8A8D\\uFF1A</b>\\u5728\\u5DE5\\u5177\\u5217\\u4E2D\\uFF0C\\u60A8\\u53EF\\u4EE5\\u4F7F\\u7528\\u6ED1\\u687F\\u7CBE\\u78BA\\u8ABF\\u6574\\u9078\\u64C7\\u7684\\u5C64\\u7D1A\\u3002\\u7136\\u5F8C\\uFF0C\\u9EDE\\u64CA\\u300C\\u66AB\\u5B58\\u300D\\u6309\\u9215\\u5C07\\u5176\\u52A0\\u5165\\u5F85\\u63D0\\u53D6\\u5217\\u8868\\uFF0C\\u6216\\u9EDE\\u64CA\\u300C\\u78BA\\u8A8D\\u300D\\u7ACB\\u5373\\u63D0\\u53D6\\u3002<br><br><b>\\u9000\\u51FA\\u6383\\u63CF\\uFF1A</b>\\u60A8\\u53EF\\u4EE5\\u96A8\\u6642\\u6309 \`Esc\` \\u9375\\uFF0C\\u6216\\u9EDE\\u64CA\\u5DE5\\u5177\\u5217\\u4E0A\\u7684\\u300C\\u53D6\\u6D88\\u300D\\u6309\\u9215\\u4F86\\u9000\\u51FA\\u6383\\u63CF\\u6A21\\u5F0F\\u3002"
+        }
       },
       elementScanUI: {
         creatingHighlights: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u9996\\u6B21\\u5EFA\\u7ACB\\u9AD8\\u4EAE\\u5143\\u7D20\\u3002",
@@ -8190,7 +8176,6 @@ ${result.join(",\n")}
   --color-text:#333333;
   --color-text-secondary:#666666;
   --color-border:#e0e0e0;
-  --color-border-heavy:#b0b0b0;
   --color-overlay-bg:rgba(0,0,0,0.5);
   --color-shadow:rgba(0,0,0,0.2);
   --color-primary:#1a73e8;
@@ -8208,7 +8193,6 @@ ${result.join(",\n")}
   --dark-color-text:#f0f0f0;
   --dark-color-text-secondary:#aaaaaa;
   --dark-color-border:#555555;
-  --dark-color-border-heavy:#777777;
   --dark-color-overlay-bg:rgba(0,0,0,0.7);
   --dark-color-shadow:rgba(0,0,0,0.4);
   --dark-color-primary:#1e90ff;
@@ -8235,7 +8219,6 @@ ${result.join(",\n")}
   --main-text-secondary:var(--color-text-secondary);
   --tc-secondary-text-color:var(--color-text-secondary);
   --main-border:var(--color-border);
-  --main-border-heavy:var(--color-border-heavy);
   --main-overlay-bg:var(--color-overlay-bg);
   --main-shadow:var(--color-shadow);
   --main-primary:var(--color-primary);
@@ -8262,7 +8245,6 @@ ${result.join(",\n")}
   --main-text-secondary:var(--dark-color-text-secondary);
   --tc-secondary-text-color:var(--dark-color-text-secondary);
   --main-border:var(--dark-color-border);
-  --main-border-heavy:var(--dark-color-border-heavy);
   --main-overlay-bg:var(--dark-color-overlay-bg);
   --main-shadow:var(--dark-color-shadow);
   --main-primary:var(--dark-color-primary);
@@ -8957,6 +8939,40 @@ ${result.join(",\n")}
   transform:scale(0.9);
   background-color:var(--main-border);
 }
+.tc-element-scan-tutorial{
+    position:fixed;
+    top:20px;
+    left:50%;
+    transform:translateX(calc(-50% + 100px));
+    background-color:var(--main-bg);
+    color:var(--main-text);
+    padding:8px 12px;
+    border-radius:20px;
+    box-shadow:0 2px 8px var(--main-shadow);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    font-size:14px;
+    z-index:10001;
+    opacity:0;
+    visibility:hidden;
+    transition:opacity 0.3s ease, visibility 0.3s, transform 0.3s ease-in-out;
+    cursor:pointer;
+}
+.tc-element-scan-tutorial.is-visible{
+    opacity:1;
+    visibility:visible;
+    transform:translateX(calc(-50% + 60px));
+}
+.tc-element-scan-tutorial svg{
+    width:20px;
+    height:20px;
+    fill:currentColor;
+}
+.tc-element-scan-tutorial:hover{
+    background-color:var(--main-border);
+}
 .text-extractor-modal-content{
   padding:18px;
   overflow-y:auto;
@@ -9023,45 +9039,6 @@ ${result.join(",\n")}
     cursor:not-allowed;
     box-shadow:none;
     transform:none;
-}
-kbd{
-    display:inline-block;
-    padding:3px 6px;
-    font-family:'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
-    font-size:0.85em;
-    color:var(--main-text);
-    background-color:var(--main-bg);
-    border:1px solid var(--main-border-heavy);
-    border-radius:4px;
-    box-shadow:0 2px 0 var(--main-border-heavy);
-    margin:0 2px;
-    position:relative;
-    top:-1px;
-}
-.element-scan-tutorial-banner{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    margin-left:16px;
-    font-size:14px;
-    color:var(--main-text);
-    opacity:0;
-    transform:translateY(-10px);
-    transition:opacity 0.3s ease, transform 0.3s ease;
-}
-.element-scan-tutorial-banner.is-visible{
-    opacity:1;
-    transform:translateY(0);
-}
-.element-scan-tutorial-banner svg{
-    width:20px;
-    height:20px;
-    cursor:pointer;
-    fill:var(--main-text-secondary);
-    transition:fill 0.2s;
-}
-.element-scan-tutorial-banner svg:hover{
-    fill:var(--main-text);
 }
 .tc-textarea-container{
     display:flex;

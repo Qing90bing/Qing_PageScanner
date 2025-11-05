@@ -6,15 +6,8 @@ import { t } from '../../shared/i18n/index.js';
 import { createTrustedHTML } from '../../shared/utils/trustedTypes.js';
 import { log } from '../../shared/utils/logger.js';
 import { simpleTemplate } from '../../shared/utils/templating.js';
-import { showTopCenterCounter, hideTopCenterCounter, updateTopCenterCounter } from '../../shared/ui/components/topCenterCounter.js';
-import { infoTooltip } from '../../shared/ui/components/infoTooltip.js';
-import { infoIcon } from '../../assets/icons/infoIcon.js';
-import { createSVGFromString } from '../../shared/utils/dom.js';
 
 // --- 模块级变量，用于缓存UI元素的引用 ---
-
-/** @type {HTMLElement | null} - 教学横幅元素 */
-let tutorialBanner = null;
 
 /** @type {HTMLElement | null} - 扫描容器，包含高亮边框和标签，负责定位和动画。 */
 let scanContainer = null;
@@ -86,13 +79,6 @@ function createHighlightElements() {
     requestAnimationFrame(() => {
         scanContainer.classList.add('is-visible');
     });
-
-    // 同样只在首次创建时显示计数器和横幅
-    if (!tutorialBanner) {
-        showTopCenterCounter(t('scan.stagedCount'));
-        updateTopCenterCounter(0); // 初始暂存数量为0
-        createTutorialBanner();
-    }
 }
 
 /**
@@ -217,38 +203,6 @@ export function createAdjustmentToolbar(elementPath) {
 
 /**
  * @private
- * @function createTutorialBanner
- * @description 创建并显示教学横幅。
- */
-function createTutorialBanner() {
-    tutorialBanner = document.createElement('div');
-    tutorialBanner.className = 'element-scan-tutorial-banner';
-
-    const text = document.createElement('span');
-    text.textContent = t('elementScan.tutorialBanner');
-    tutorialBanner.appendChild(text);
-
-    const icon = createSVGFromString(infoIcon);
-    icon.addEventListener('click', (e) => {
-        e.stopPropagation();
-        infoTooltip.show({
-            title: t('elementScan.tutorialTooltipTitle'),
-            text: t('elementScan.tutorialTooltipBody')
-        });
-    });
-    tutorialBanner.appendChild(icon);
-
-    const counterElement = uiContainer.querySelector('.tc-top-center-counter');
-    if (counterElement) {
-        counterElement.appendChild(tutorialBanner);
-        // 强制重绘以确保动画生效
-        void tutorialBanner.offsetWidth;
-        tutorialBanner.classList.add('is-visible');
-    }
-}
-
-/**
- * @private
  * @function addToolbarEventListeners
  * @description为工具栏内的交互元素（滑块、按钮）添加事件监听器。
  */
@@ -343,21 +297,6 @@ export function cleanupUI() {
     if (scanContainer) {
         log(t('log.elementScanUI.cleaningHighlights'));
         scanContainer.classList.remove('is-visible');
-    }
-    // 当所有UI都清理完毕时，也清理顶部的计数器和横幅
-    cleanupTopUI();
-}
-
-/**
- * @private
- * @function cleanupTopUI
- * @description 清理顶部的计数器和教学横幅。
- */
-function cleanupTopUI() {
-    hideTopCenterCounter();
-    if (tutorialBanner) {
-        tutorialBanner.remove();
-        tutorialBanner = null;
     }
 }
 

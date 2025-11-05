@@ -167,11 +167,6 @@
         "enable_debug_logging": "启用后，脚本会将详细的内部状态、执行步骤和错误信息输出到浏览器的<strong>开发者工具控制台</strong>（通常用F12打开）。这主要供开发者或需要提交详细错误报告的用户使用。"
     }
   },
-  "elementScan": {
-    "tutorialBanner": "点击页面上的任何元素进行选择",
-    "tutorialTooltipTitle": "如何使用“选取元素扫描”",
-    "tutorialTooltipBody": "<h4>如何使用“选取元素扫描”</h4><ol><li><strong>移动 & 高亮</strong><br>将鼠标光标移动到您希望提取文本的网页区域，目标元素将会被自动高亮显示。</li><li><strong>点击 & 选择</strong><br>在元素高亮时，单击鼠标左键即可确认选择。</li><li><strong>退出扫描</strong><br>您可以随时通过以下任一方式退出扫描模式：<ul><li>按下键盘上的 <kbd>ESC</kbd> 键。</li><li>在元素高亮时，单击鼠标右键。</li><li>再次点击“选取元素扫描”按钮。</li></ul></li></ol>"
-  },
   "log": {
     "prefix": "[文本提取脚本-调试]",
     "language": {
@@ -302,7 +297,11 @@
         "originalError": "原始 Worker 错误: {{error}}"
       },
       "switchToFallback": "正在为选取元素扫描切换到主线程备选方案。",
-      "fallbackFailed": "选取元素扫描备选方案执行失败: {{error}}"
+      "fallbackFailed": "选取元素扫描备选方案执行失败: {{error}}",
+      "tutorial": {
+          "title": "如何使用选取元素扫描",
+          "content": "<b>主要操作：</b>将鼠标悬停在页面元素上即可预览，单击可将其选中并打开调整工具栏。<br><br><b>微调与确认：</b>在工具栏中，您可以使用滑块精确调整选择的层级。然后，点击“暂存”按钮将其加入待提取列表，或点击“确认”立即提取。<br><br><b>退出扫描：</b>您可以随时按 `Esc` 键，或点击工具栏上的“取消”按钮来退出扫描模式。"
+      }
     },
     "elementScanUI": {
       "creatingHighlights": "元素扫描UI：首次创建高亮元素。",
