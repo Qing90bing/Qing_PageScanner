@@ -7,6 +7,7 @@
   --color-text: #333333;
   --color-text-secondary: #666666; /* 新增：次要文本颜色 */
   --color-border: #e0e0e0;
+  --color-border-heavy: #b0b0b0;
   --color-overlay-bg: rgba(0,0,0,0.5);
   --color-shadow: rgba(0,0,0,0.2);
   --color-primary: #1a73e8;
@@ -26,6 +27,7 @@
   --dark-color-text: #f0f0f0;
   --dark-color-text-secondary: #aaaaaa; /* 新增：次要文本颜色 */
   --dark-color-border: #555555;
+  --dark-color-border-heavy: #777777;
   --dark-color-overlay-bg: rgba(0,0,0,0.7);
   --dark-color-shadow: rgba(0,0,0,0.4);
   --dark-color-primary: #1e90ff;
@@ -56,6 +58,7 @@
   --main-text-secondary: var(--color-text-secondary);
   --tc-secondary-text-color: var(--color-text-secondary);
   --main-border: var(--color-border);
+  --main-border-heavy: var(--color-border-heavy);
   --main-overlay-bg: var(--color-overlay-bg);
   --main-shadow: var(--color-shadow);
   --main-primary: var(--color-primary);
@@ -84,6 +87,7 @@
   --main-text-secondary: var(--dark-color-text-secondary);
   --tc-secondary-text-color: var(--dark-color-text-secondary);
   --main-border: var(--dark-color-border);
+  --main-border-heavy: var(--dark-color-border-heavy);
   --main-overlay-bg: var(--dark-color-overlay-bg);
   --main-shadow: var(--dark-color-shadow);
   --main-primary: var(--dark-color-primary);

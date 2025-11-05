@@ -167,6 +167,11 @@
         "enable_debug_logging": "When enabled, the script will output detailed internal status, execution steps, and error messages to the browser's <strong>Developer Tools Console</strong> (usually opened with F12). This is primarily for developers or users who need to submit detailed bug reports."
     }
   },
+  "elementScan": {
+    "tutorialBanner": "Click any element on the page to select it",
+    "tutorialTooltipTitle": "How to use Element Scan",
+    "tutorialTooltipBody": "<h4>How to use Element Scan</h4><ol><li><strong>Move & Highlight</strong><br>Move your mouse cursor over the web page. The target element will be highlighted automatically.</li><li><strong>Click & Select</strong><br>When an element is highlighted, left-click to confirm your selection.</li><li><strong>Exit Scanning</strong><br>You can exit scan mode at any time in one of the following ways:<ul><li>Press the <kbd>ESC</kbd> key.</li><li>Right-click while an element is highlighted.</li><li>Click the 'Element Scan' button again.</li></ul></li></ol>"
+  },
   "log": {
     "prefix": "[Text Extractor Script-Debug]",
     "language": {

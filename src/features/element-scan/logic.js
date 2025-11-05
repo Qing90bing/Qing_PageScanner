@@ -112,7 +112,6 @@ function startElementScan(fabElement) {
     isAdjusting = false;
     fabElement.classList.add('is-recording');
     updateFabTooltip(fabElement, 'scan.stopSession'); // 更新自己的工具提示
-    showTopCenterCounter('scan.stagedCount');
 
     // 禁用“动态扫描”按钮并更新其工具提示
     const dynamicFab = getDynamicFab();
@@ -159,7 +158,6 @@ export function stopElementScan(fabElement) {
 
     cleanupUI();
     cleanupToolbar();
-    hideTopCenterCounter();
     removeScrollListeners();
 
     elementPath = [];

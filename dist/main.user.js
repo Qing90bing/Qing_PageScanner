@@ -313,6 +313,11 @@ var TextExtractor = (() => {
         enable_debug_logging: "When enabled, the script will output detailed internal status, execution steps, and error messages to the browser's <strong>Developer Tools Console</strong> (usually opened with F12). This is primarily for developers or users who need to submit detailed bug reports."
       }
     },
+    elementScan: {
+      tutorialBanner: "Click any element on the page to select it",
+      tutorialTooltipTitle: "How to use Element Scan",
+      tutorialTooltipBody: "<h4>How to use Element Scan</h4><ol><li><strong>Move & Highlight</strong><br>Move your mouse cursor over the web page. The target element will be highlighted automatically.</li><li><strong>Click & Select</strong><br>When an element is highlighted, left-click to confirm your selection.</li><li><strong>Exit Scanning</strong><br>You can exit scan mode at any time in one of the following ways:<ul><li>Press the <kbd>ESC</kbd> key.</li><li>Right-click while an element is highlighted.</li><li>Click the 'Element Scan' button again.</li></ul></li></ol>"
+    },
     log: {
       prefix: "[Text Extractor Script-Debug]",
       language: {
@@ -640,6 +645,11 @@ var TextExtractor = (() => {
         enable_debug_logging: "\u542F\u7528\u540E\uFF0C\u811A\u672C\u4F1A\u5C06\u8BE6\u7EC6\u7684\u5185\u90E8\u72B6\u6001\u3001\u6267\u884C\u6B65\u9AA4\u548C\u9519\u8BEF\u4FE1\u606F\u8F93\u51FA\u5230\u6D4F\u89C8\u5668\u7684<strong>\u5F00\u53D1\u8005\u5DE5\u5177\u63A7\u5236\u53F0</strong>\uFF08\u901A\u5E38\u7528F12\u6253\u5F00\uFF09\u3002\u8FD9\u4E3B\u8981\u4F9B\u5F00\u53D1\u8005\u6216\u9700\u8981\u63D0\u4EA4\u8BE6\u7EC6\u9519\u8BEF\u62A5\u544A\u7684\u7528\u6237\u4F7F\u7528\u3002"
       }
     },
+    elementScan: {
+      tutorialBanner: "\u70B9\u51FB\u9875\u9762\u4E0A\u7684\u4EFB\u4F55\u5143\u7D20\u8FDB\u884C\u9009\u62E9",
+      tutorialTooltipTitle: "\u5982\u4F55\u4F7F\u7528\u201C\u9009\u53D6\u5143\u7D20\u626B\u63CF\u201D",
+      tutorialTooltipBody: "<h4>\u5982\u4F55\u4F7F\u7528\u201C\u9009\u53D6\u5143\u7D20\u626B\u63CF\u201D</h4><ol><li><strong>\u79FB\u52A8 & \u9AD8\u4EAE</strong><br>\u5C06\u9F20\u6807\u5149\u6807\u79FB\u52A8\u5230\u60A8\u5E0C\u671B\u63D0\u53D6\u6587\u672C\u7684\u7F51\u9875\u533A\u57DF\uFF0C\u76EE\u6807\u5143\u7D20\u5C06\u4F1A\u88AB\u81EA\u52A8\u9AD8\u4EAE\u663E\u793A\u3002</li><li><strong>\u70B9\u51FB & \u9009\u62E9</strong><br>\u5728\u5143\u7D20\u9AD8\u4EAE\u65F6\uFF0C\u5355\u51FB\u9F20\u6807\u5DE6\u952E\u5373\u53EF\u786E\u8BA4\u9009\u62E9\u3002</li><li><strong>\u9000\u51FA\u626B\u63CF</strong><br>\u60A8\u53EF\u4EE5\u968F\u65F6\u901A\u8FC7\u4EE5\u4E0B\u4EFB\u4E00\u65B9\u5F0F\u9000\u51FA\u626B\u63CF\u6A21\u5F0F\uFF1A<ul><li>\u6309\u4E0B\u952E\u76D8\u4E0A\u7684 <kbd>ESC</kbd> \u952E\u3002</li><li>\u5728\u5143\u7D20\u9AD8\u4EAE\u65F6\uFF0C\u5355\u51FB\u9F20\u6807\u53F3\u952E\u3002</li><li>\u518D\u6B21\u70B9\u51FB\u201C\u9009\u53D6\u5143\u7D20\u626B\u63CF\u201D\u6309\u94AE\u3002</li></ul></li></ol>"
+    },
     log: {
       prefix: "[\u6587\u672C\u63D0\u53D6\u811A\u672C-\u8C03\u8BD5]",
       language: {
@@ -966,6 +976,11 @@ var TextExtractor = (() => {
         title: "\u9032\u968E\u8A2D\u5B9A\u8AAA\u660E",
         enable_debug_logging: "\u555F\u7528\u5F8C\uFF0C\u8173\u672C\u6703\u5C07\u8A73\u7D30\u7684\u5167\u90E8\u72C0\u614B\u3001\u57F7\u884C\u6B65\u9A5F\u548C\u932F\u8AA4\u8A0A\u606F\u8F38\u51FA\u5230\u700F\u89BD\u5668\u7684<strong>\u958B\u767C\u8005\u5DE5\u5177\u63A7\u5236\u53F0</strong>\uFF08\u901A\u5E38\u7528F12\u958B\u555F\uFF09\u3002\u9019\u4E3B\u8981\u4F9B\u958B\u767C\u8005\u6216\u9700\u8981\u63D0\u4EA4\u8A73\u7D30\u932F\u8AA4\u5831\u544A\u7684\u4F7F\u7528\u8005\u4F7F\u7528\u3002"
       }
+    },
+    elementScan: {
+      tutorialBanner: "\u9EDE\u64CA\u9801\u9762\u4E0A\u7684\u4EFB\u4F55\u5143\u7D20\u9032\u884C\u9078\u64C7",
+      tutorialTooltipTitle: "\u5982\u4F55\u4F7F\u7528\u300C\u9078\u53D6\u5143\u7D20\u6383\u63CF\u300D",
+      tutorialTooltipBody: "<h4>\u5982\u4F55\u4F7F\u7528\u300C\u9078\u53D6\u5143\u7D20\u6383\u63CF\u300D</h4><ol><li><strong>\u79FB\u52D5 & \u53CD\u767D</strong><br>\u5C07\u6ED1\u9F20\u6E38\u6A19\u79FB\u52D5\u5230\u60A8\u5E0C\u671B\u63D0\u53D6\u6587\u672C\u7684\u7DB2\u9801\u5340\u57DF\uFF0C\u76EE\u6A19\u5143\u7D20\u5C07\u6703\u88AB\u81EA\u52D5\u53CD\u767D\u986F\u793A\u3002</li><li><strong>\u9EDE\u64CA & \u9078\u64C7</strong><br>\u5728\u5143\u7D20\u53CD\u767D\u6642\uFF0C\u9EDE\u64CA\u6ED1\u9F20\u5DE6\u9375\u5373\u53EF\u78BA\u8A8D\u9078\u64C7\u3002</li><li><strong>\u9000\u51FA\u6383\u63CF</strong><br>\u60A8\u53EF\u4EE5\u96A8\u6642\u900F\u904E\u4EE5\u4E0B\u4EFB\u4E00\u65B9\u5F0F\u9000\u51FA\u6383\u63CF\u6A21\u5F0F\uFF1A<ul><li>\u6309\u4E0B\u9375\u76E4\u4E0A\u7684 <kbd>ESC</kbd> \u9375\u3002</li><li>\u5728\u5143\u7D20\u53CD\u767D\u6642\uFF0C\u9EDE\u64CA\u6ED1\u9F20\u53F3\u9375\u3002</li><li>\u518D\u6B21\u9EDE\u64CA\u300C\u9078\u53D6\u5143\u7D20\u6383\u63CF\u300D\u6309\u9215\u3002</li></ul></li></ol>"
     },
     log: {
       prefix: "[\u6587\u672C\u63D0\u53D6\u8173\u672C-\u5075\u932F]",
@@ -2067,6 +2082,11 @@ ${result.join(",\n")}
         enable_debug_logging: "When enabled, the script will output detailed internal status, execution steps, and error messages to the browser's <strong>Developer Tools Console</strong> (usually opened with F12). This is primarily for developers or users who need to submit detailed bug reports."
       }
     },
+    elementScan: {
+      tutorialBanner: "Click any element on the page to select it",
+      tutorialTooltipTitle: "How to use Element Scan",
+      tutorialTooltipBody: "<h4>How to use Element Scan</h4><ol><li><strong>Move & Highlight</strong><br>Move your mouse cursor over the web page. The target element will be highlighted automatically.</li><li><strong>Click & Select</strong><br>When an element is highlighted, left-click to confirm your selection.</li><li><strong>Exit Scanning</strong><br>You can exit scan mode at any time in one of the following ways:<ul><li>Press the <kbd>ESC</kbd> key.</li><li>Right-click while an element is highlighted.</li><li>Click the 'Element Scan' button again.</li></ul></li></ol>"
+    },
     log: {
       prefix: "[Text Extractor Script-Debug]",
       language: {
@@ -2395,6 +2415,11 @@ ${result.join(",\n")}
         enable_debug_logging: "\\u542F\\u7528\\u540E\\uFF0C\\u811A\\u672C\\u4F1A\\u5C06\\u8BE6\\u7EC6\\u7684\\u5185\\u90E8\\u72B6\\u6001\\u3001\\u6267\\u884C\\u6B65\\u9AA4\\u548C\\u9519\\u8BEF\\u4FE1\\u606F\\u8F93\\u51FA\\u5230\\u6D4F\\u89C8\\u5668\\u7684<strong>\\u5F00\\u53D1\\u8005\\u5DE5\\u5177\\u63A7\\u5236\\u53F0</strong>\\uFF08\\u901A\\u5E38\\u7528F12\\u6253\\u5F00\\uFF09\\u3002\\u8FD9\\u4E3B\\u8981\\u4F9B\\u5F00\\u53D1\\u8005\\u6216\\u9700\\u8981\\u63D0\\u4EA4\\u8BE6\\u7EC6\\u9519\\u8BEF\\u62A5\\u544A\\u7684\\u7528\\u6237\\u4F7F\\u7528\\u3002"
       }
     },
+    elementScan: {
+      tutorialBanner: "\\u70B9\\u51FB\\u9875\\u9762\\u4E0A\\u7684\\u4EFB\\u4F55\\u5143\\u7D20\\u8FDB\\u884C\\u9009\\u62E9",
+      tutorialTooltipTitle: "\\u5982\\u4F55\\u4F7F\\u7528\\u201C\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u201D",
+      tutorialTooltipBody: "<h4>\\u5982\\u4F55\\u4F7F\\u7528\\u201C\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u201D</h4><ol><li><strong>\\u79FB\\u52A8 & \\u9AD8\\u4EAE</strong><br>\\u5C06\\u9F20\\u6807\\u5149\\u6807\\u79FB\\u52A8\\u5230\\u60A8\\u5E0C\\u671B\\u63D0\\u53D6\\u6587\\u672C\\u7684\\u7F51\\u9875\\u533A\\u57DF\\uFF0C\\u76EE\\u6807\\u5143\\u7D20\\u5C06\\u4F1A\\u88AB\\u81EA\\u52A8\\u9AD8\\u4EAE\\u663E\\u793A\\u3002</li><li><strong>\\u70B9\\u51FB & \\u9009\\u62E9</strong><br>\\u5728\\u5143\\u7D20\\u9AD8\\u4EAE\\u65F6\\uFF0C\\u5355\\u51FB\\u9F20\\u6807\\u5DE6\\u952E\\u5373\\u53EF\\u786E\\u8BA4\\u9009\\u62E9\\u3002</li><li><strong>\\u9000\\u51FA\\u626B\\u63CF</strong><br>\\u60A8\\u53EF\\u4EE5\\u968F\\u65F6\\u901A\\u8FC7\\u4EE5\\u4E0B\\u4EFB\\u4E00\\u65B9\\u5F0F\\u9000\\u51FA\\u626B\\u63CF\\u6A21\\u5F0F\\uFF1A<ul><li>\\u6309\\u4E0B\\u952E\\u76D8\\u4E0A\\u7684 <kbd>ESC</kbd> \\u952E\\u3002</li><li>\\u5728\\u5143\\u7D20\\u9AD8\\u4EAE\\u65F6\\uFF0C\\u5355\\u51FB\\u9F20\\u6807\\u53F3\\u952E\\u3002</li><li>\\u518D\\u6B21\\u70B9\\u51FB\\u201C\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u201D\\u6309\\u94AE\\u3002</li></ul></li></ol>"
+    },
     log: {
       prefix: "[\\u6587\\u672C\\u63D0\\u53D6\\u811A\\u672C-\\u8C03\\u8BD5]",
       language: {
@@ -2722,6 +2747,11 @@ ${result.join(",\n")}
         title: "\\u9032\\u968E\\u8A2D\\u5B9A\\u8AAA\\u660E",
         enable_debug_logging: "\\u555F\\u7528\\u5F8C\\uFF0C\\u8173\\u672C\\u6703\\u5C07\\u8A73\\u7D30\\u7684\\u5167\\u90E8\\u72C0\\u614B\\u3001\\u57F7\\u884C\\u6B65\\u9A5F\\u548C\\u932F\\u8AA4\\u8A0A\\u606F\\u8F38\\u51FA\\u5230\\u700F\\u89BD\\u5668\\u7684<strong>\\u958B\\u767C\\u8005\\u5DE5\\u5177\\u63A7\\u5236\\u53F0</strong>\\uFF08\\u901A\\u5E38\\u7528F12\\u958B\\u555F\\uFF09\\u3002\\u9019\\u4E3B\\u8981\\u4F9B\\u958B\\u767C\\u8005\\u6216\\u9700\\u8981\\u63D0\\u4EA4\\u8A73\\u7D30\\u932F\\u8AA4\\u5831\\u544A\\u7684\\u4F7F\\u7528\\u8005\\u4F7F\\u7528\\u3002"
       }
+    },
+    elementScan: {
+      tutorialBanner: "\\u9EDE\\u64CA\\u9801\\u9762\\u4E0A\\u7684\\u4EFB\\u4F55\\u5143\\u7D20\\u9032\\u884C\\u9078\\u64C7",
+      tutorialTooltipTitle: "\\u5982\\u4F55\\u4F7F\\u7528\\u300C\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u300D",
+      tutorialTooltipBody: "<h4>\\u5982\\u4F55\\u4F7F\\u7528\\u300C\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u300D</h4><ol><li><strong>\\u79FB\\u52D5 & \\u53CD\\u767D</strong><br>\\u5C07\\u6ED1\\u9F20\\u6E38\\u6A19\\u79FB\\u52D5\\u5230\\u60A8\\u5E0C\\u671B\\u63D0\\u53D6\\u6587\\u672C\\u7684\\u7DB2\\u9801\\u5340\\u57DF\\uFF0C\\u76EE\\u6A19\\u5143\\u7D20\\u5C07\\u6703\\u88AB\\u81EA\\u52D5\\u53CD\\u767D\\u986F\\u793A\\u3002</li><li><strong>\\u9EDE\\u64CA & \\u9078\\u64C7</strong><br>\\u5728\\u5143\\u7D20\\u53CD\\u767D\\u6642\\uFF0C\\u9EDE\\u64CA\\u6ED1\\u9F20\\u5DE6\\u9375\\u5373\\u53EF\\u78BA\\u8A8D\\u9078\\u64C7\\u3002</li><li><strong>\\u9000\\u51FA\\u6383\\u63CF</strong><br>\\u60A8\\u53EF\\u4EE5\\u96A8\\u6642\\u900F\\u904E\\u4EE5\\u4E0B\\u4EFB\\u4E00\\u65B9\\u5F0F\\u9000\\u51FA\\u6383\\u63CF\\u6A21\\u5F0F\\uFF1A<ul><li>\\u6309\\u4E0B\\u9375\\u76E4\\u4E0A\\u7684 <kbd>ESC</kbd> \\u9375\\u3002</li><li>\\u5728\\u5143\\u7D20\\u53CD\\u767D\\u6642\\uFF0C\\u9EDE\\u64CA\\u6ED1\\u9F20\\u53F3\\u9375\\u3002</li><li>\\u518D\\u6B21\\u9EDE\\u64CA\\u300C\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u300D\\u6309\\u9215\\u3002</li></ul></li></ol>"
     },
     log: {
       prefix: "[\\u6587\\u672C\\u63D0\\u53D6\\u8173\\u672C-\\u5075\\u932F]",
@@ -3526,6 +3556,11 @@ ${result.join(",\n")}
         enable_debug_logging: "When enabled, the script will output detailed internal status, execution steps, and error messages to the browser's <strong>Developer Tools Console</strong> (usually opened with F12). This is primarily for developers or users who need to submit detailed bug reports."
       }
     },
+    elementScan: {
+      tutorialBanner: "Click any element on the page to select it",
+      tutorialTooltipTitle: "How to use Element Scan",
+      tutorialTooltipBody: "<h4>How to use Element Scan</h4><ol><li><strong>Move & Highlight</strong><br>Move your mouse cursor over the web page. The target element will be highlighted automatically.</li><li><strong>Click & Select</strong><br>When an element is highlighted, left-click to confirm your selection.</li><li><strong>Exit Scanning</strong><br>You can exit scan mode at any time in one of the following ways:<ul><li>Press the <kbd>ESC</kbd> key.</li><li>Right-click while an element is highlighted.</li><li>Click the 'Element Scan' button again.</li></ul></li></ol>"
+    },
     log: {
       prefix: "[Text Extractor Script-Debug]",
       language: {
@@ -3854,6 +3889,11 @@ ${result.join(",\n")}
         enable_debug_logging: "\\u542F\\u7528\\u540E\\uFF0C\\u811A\\u672C\\u4F1A\\u5C06\\u8BE6\\u7EC6\\u7684\\u5185\\u90E8\\u72B6\\u6001\\u3001\\u6267\\u884C\\u6B65\\u9AA4\\u548C\\u9519\\u8BEF\\u4FE1\\u606F\\u8F93\\u51FA\\u5230\\u6D4F\\u89C8\\u5668\\u7684<strong>\\u5F00\\u53D1\\u8005\\u5DE5\\u5177\\u63A7\\u5236\\u53F0</strong>\\uFF08\\u901A\\u5E38\\u7528F12\\u6253\\u5F00\\uFF09\\u3002\\u8FD9\\u4E3B\\u8981\\u4F9B\\u5F00\\u53D1\\u8005\\u6216\\u9700\\u8981\\u63D0\\u4EA4\\u8BE6\\u7EC6\\u9519\\u8BEF\\u62A5\\u544A\\u7684\\u7528\\u6237\\u4F7F\\u7528\\u3002"
       }
     },
+    elementScan: {
+      tutorialBanner: "\\u70B9\\u51FB\\u9875\\u9762\\u4E0A\\u7684\\u4EFB\\u4F55\\u5143\\u7D20\\u8FDB\\u884C\\u9009\\u62E9",
+      tutorialTooltipTitle: "\\u5982\\u4F55\\u4F7F\\u7528\\u201C\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u201D",
+      tutorialTooltipBody: "<h4>\\u5982\\u4F55\\u4F7F\\u7528\\u201C\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u201D</h4><ol><li><strong>\\u79FB\\u52A8 & \\u9AD8\\u4EAE</strong><br>\\u5C06\\u9F20\\u6807\\u5149\\u6807\\u79FB\\u52A8\\u5230\\u60A8\\u5E0C\\u671B\\u63D0\\u53D6\\u6587\\u672C\\u7684\\u7F51\\u9875\\u533A\\u57DF\\uFF0C\\u76EE\\u6807\\u5143\\u7D20\\u5C06\\u4F1A\\u88AB\\u81EA\\u52A8\\u9AD8\\u4EAE\\u663E\\u793A\\u3002</li><li><strong>\\u70B9\\u51FB & \\u9009\\u62E9</strong><br>\\u5728\\u5143\\u7D20\\u9AD8\\u4EAE\\u65F6\\uFF0C\\u5355\\u51FB\\u9F20\\u6807\\u5DE6\\u952E\\u5373\\u53EF\\u786E\\u8BA4\\u9009\\u62E9\\u3002</li><li><strong>\\u9000\\u51FA\\u626B\\u63CF</strong><br>\\u60A8\\u53EF\\u4EE5\\u968F\\u65F6\\u901A\\u8FC7\\u4EE5\\u4E0B\\u4EFB\\u4E00\\u65B9\\u5F0F\\u9000\\u51FA\\u626B\\u63CF\\u6A21\\u5F0F\\uFF1A<ul><li>\\u6309\\u4E0B\\u952E\\u76D8\\u4E0A\\u7684 <kbd>ESC</kbd> \\u952E\\u3002</li><li>\\u5728\\u5143\\u7D20\\u9AD8\\u4EAE\\u65F6\\uFF0C\\u5355\\u51FB\\u9F20\\u6807\\u53F3\\u952E\\u3002</li><li>\\u518D\\u6B21\\u70B9\\u51FB\\u201C\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u201D\\u6309\\u94AE\\u3002</li></ul></li></ol>"
+    },
     log: {
       prefix: "[\\u6587\\u672C\\u63D0\\u53D6\\u811A\\u672C-\\u8C03\\u8BD5]",
       language: {
@@ -4181,6 +4221,11 @@ ${result.join(",\n")}
         title: "\\u9032\\u968E\\u8A2D\\u5B9A\\u8AAA\\u660E",
         enable_debug_logging: "\\u555F\\u7528\\u5F8C\\uFF0C\\u8173\\u672C\\u6703\\u5C07\\u8A73\\u7D30\\u7684\\u5167\\u90E8\\u72C0\\u614B\\u3001\\u57F7\\u884C\\u6B65\\u9A5F\\u548C\\u932F\\u8AA4\\u8A0A\\u606F\\u8F38\\u51FA\\u5230\\u700F\\u89BD\\u5668\\u7684<strong>\\u958B\\u767C\\u8005\\u5DE5\\u5177\\u63A7\\u5236\\u53F0</strong>\\uFF08\\u901A\\u5E38\\u7528F12\\u958B\\u555F\\uFF09\\u3002\\u9019\\u4E3B\\u8981\\u4F9B\\u958B\\u767C\\u8005\\u6216\\u9700\\u8981\\u63D0\\u4EA4\\u8A73\\u7D30\\u932F\\u8AA4\\u5831\\u544A\\u7684\\u4F7F\\u7528\\u8005\\u4F7F\\u7528\\u3002"
       }
+    },
+    elementScan: {
+      tutorialBanner: "\\u9EDE\\u64CA\\u9801\\u9762\\u4E0A\\u7684\\u4EFB\\u4F55\\u5143\\u7D20\\u9032\\u884C\\u9078\\u64C7",
+      tutorialTooltipTitle: "\\u5982\\u4F55\\u4F7F\\u7528\\u300C\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u300D",
+      tutorialTooltipBody: "<h4>\\u5982\\u4F55\\u4F7F\\u7528\\u300C\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u300D</h4><ol><li><strong>\\u79FB\\u52D5 & \\u53CD\\u767D</strong><br>\\u5C07\\u6ED1\\u9F20\\u6E38\\u6A19\\u79FB\\u52D5\\u5230\\u60A8\\u5E0C\\u671B\\u63D0\\u53D6\\u6587\\u672C\\u7684\\u7DB2\\u9801\\u5340\\u57DF\\uFF0C\\u76EE\\u6A19\\u5143\\u7D20\\u5C07\\u6703\\u88AB\\u81EA\\u52D5\\u53CD\\u767D\\u986F\\u793A\\u3002</li><li><strong>\\u9EDE\\u64CA & \\u9078\\u64C7</strong><br>\\u5728\\u5143\\u7D20\\u53CD\\u767D\\u6642\\uFF0C\\u9EDE\\u64CA\\u6ED1\\u9F20\\u5DE6\\u9375\\u5373\\u53EF\\u78BA\\u8A8D\\u9078\\u64C7\\u3002</li><li><strong>\\u9000\\u51FA\\u6383\\u63CF</strong><br>\\u60A8\\u53EF\\u4EE5\\u96A8\\u6642\\u900F\\u904E\\u4EE5\\u4E0B\\u4EFB\\u4E00\\u65B9\\u5F0F\\u9000\\u51FA\\u6383\\u63CF\\u6A21\\u5F0F\\uFF1A<ul><li>\\u6309\\u4E0B\\u9375\\u76E4\\u4E0A\\u7684 <kbd>ESC</kbd> \\u9375\\u3002</li><li>\\u5728\\u5143\\u7D20\\u53CD\\u767D\\u6642\\uFF0C\\u9EDE\\u64CA\\u6ED1\\u9F20\\u53F3\\u9375\\u3002</li><li>\\u518D\\u6B21\\u9EDE\\u64CA\\u300C\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u300D\\u6309\\u9215\\u3002</li></ul></li></ol>"
     },
     log: {
       prefix: "[\\u6587\\u672C\\u63D0\\u53D6\\u8173\\u672C-\\u5075\\u932F]",
@@ -5676,6 +5721,95 @@ ${result.join(",\n")}
       }, 50);
     }
   }
+  var Tooltip = class {
+    constructor() {
+      this.tooltipElement = null;
+      this.handleEscKey = this.handleEscKey.bind(this);
+    }
+        _createDOM(config) {
+      const overlay = document.createElement("div");
+      overlay.className = "info-tooltip-overlay";
+      overlay.tabIndex = -1;
+      const tooltip = document.createElement("div");
+      tooltip.className = "info-tooltip-modal";
+      if (config.width) tooltip.style.width = config.width;
+      if (config.height) tooltip.style.height = config.height;
+      const header = document.createElement("div");
+      header.className = "info-tooltip-header";
+      const titleContainer2 = document.createElement("div");
+      titleContainer2.className = "info-tooltip-title-container";
+      if (config.titleIcon) {
+        const iconElement = createSVGFromString(config.titleIcon);
+        iconElement.classList.add("info-tooltip-title-icon");
+        titleContainer2.appendChild(iconElement);
+      }
+      const titleElement = document.createElement("h3");
+      titleElement.className = "info-tooltip-title";
+      titleElement.textContent = config.title;
+      titleContainer2.appendChild(titleElement);
+      const closeButton = document.createElement("span");
+      closeButton.className = "info-tooltip-close";
+      closeButton.appendChild(createSVGFromString(closeIcon));
+      closeButton.addEventListener("click", () => this.hide());
+      header.appendChild(titleContainer2);
+      header.appendChild(closeButton);
+      const content = document.createElement("div");
+      content.className = "info-tooltip-content";
+      const textElement = document.createElement("p");
+      textElement.innerHTML = createTrustedHTML(config.text || "");
+      content.appendChild(textElement);
+      tooltip.appendChild(header);
+      tooltip.appendChild(content);
+      overlay.appendChild(tooltip);
+      this.tooltipElement = overlay;
+      uiContainer.appendChild(this.tooltipElement);
+    }
+    /**
+     * @public
+     * @description 显示并填充提示窗口。
+     * @param {object} config - 提示窗口的配置对象。
+     */
+    show(config) {
+      if (!this.tooltipElement) {
+        this._createDOM(config);
+      }
+      fire("infoTooltipWillShow");
+      setTimeout(() => {
+        if (this.tooltipElement) {
+          const onTransitionEnd = () => {
+            this.tooltipElement.focus();
+            this.tooltipElement.addEventListener("keydown", this.handleEscKey);
+            this.tooltipElement.removeEventListener("transitionend", onTransitionEnd);
+          };
+          this.tooltipElement.addEventListener("transitionend", onTransitionEnd);
+          this.tooltipElement.classList.add("is-visible");
+        }
+      }, 10);
+    }
+        hide() {
+      if (this.tooltipElement && this.tooltipElement.classList.contains("is-visible")) {
+        this.tooltipElement.classList.remove("is-visible");
+        this.tooltipElement.removeEventListener("keydown", this.handleEscKey);
+        const onTransitionEnd = () => {
+          if (this.tooltipElement && this.tooltipElement.parentNode) {
+            this.tooltipElement.removeEventListener("transitionend", onTransitionEnd);
+            this.tooltipElement.parentNode.removeChild(this.tooltipElement);
+            this.tooltipElement = null;
+            fire("infoTooltipDidHide");
+          }
+        };
+        this.tooltipElement.addEventListener("transitionend", onTransitionEnd);
+      }
+    }
+        handleEscKey(event) {
+      if (event.key === "Escape") {
+        event.stopImmediatePropagation();
+        this.hide();
+      }
+    }
+  };
+  var infoTooltip = new Tooltip();
+  var tutorialBanner = null;
   var scanContainer = null;
   var highlightBorder = null;
   var tagNameTooltip = null;
@@ -5710,6 +5844,11 @@ ${result.join(",\n")}
     requestAnimationFrame(() => {
       scanContainer.classList.add("is-visible");
     });
+    if (!tutorialBanner) {
+      showTopCenterCounter(t("scan.stagedCount"));
+      updateTopCenterCounter(0);
+      createTutorialBanner();
+    }
   }
   function updateHighlight(targetElement) {
     if (!targetElement) return;
@@ -5792,6 +5931,28 @@ ${result.join(",\n")}
       toolbar.classList.add("is-visible");
     });
   }
+  function createTutorialBanner() {
+    tutorialBanner = document.createElement("div");
+    tutorialBanner.className = "element-scan-tutorial-banner";
+    const text = document.createElement("span");
+    text.textContent = t("elementScan.tutorialBanner");
+    tutorialBanner.appendChild(text);
+    const icon = createSVGFromString(infoIcon);
+    icon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      infoTooltip.show({
+        title: t("elementScan.tutorialTooltipTitle"),
+        text: t("elementScan.tutorialTooltipBody")
+      });
+    });
+    tutorialBanner.appendChild(icon);
+    const counterElement2 = uiContainer.querySelector(".tc-top-center-counter");
+    if (counterElement2) {
+      counterElement2.appendChild(tutorialBanner);
+      void tutorialBanner.offsetWidth;
+      tutorialBanner.classList.add("is-visible");
+    }
+  }
   function addToolbarEventListeners() {
     const slider = uiContainer.querySelector("#element-scan-level-slider");
     const reselectBtn = uiContainer.querySelector("#element-scan-toolbar-reselect");
@@ -5856,6 +6017,14 @@ ${result.join(",\n")}
     if (scanContainer) {
       log(t("log.elementScanUI.cleaningHighlights"));
       scanContainer.classList.remove("is-visible");
+    }
+    cleanupTopUI();
+  }
+  function cleanupTopUI() {
+    hideTopCenterCounter();
+    if (tutorialBanner) {
+      tutorialBanner.remove();
+      tutorialBanner = null;
     }
   }
   function cleanupToolbar() {
@@ -5966,7 +6135,6 @@ ${result.join(",\n")}
     isAdjusting = false;
     fabElement.classList.add("is-recording");
     updateFabTooltip(fabElement, "scan.stopSession");
-    showTopCenterCounter("scan.stagedCount");
     const dynamicFab2 = getDynamicFab();
     if (dynamicFab2) {
       dynamicFab2.dataset.originalTooltipKey = dynamicFab2.dataset.tooltipKey;
@@ -6004,7 +6172,6 @@ ${result.join(",\n")}
     log(t("log.elementScan.listenersRemoved"));
     cleanupUI();
     cleanupToolbar();
-    hideTopCenterCounter();
     removeScrollListeners();
     elementPath = [];
     currentTarget = null;
@@ -6281,6 +6448,11 @@ ${result.join(",\n")}
         title: "Advanced Settings Explanation",
         enable_debug_logging: "When enabled, the script will output detailed internal status, execution steps, and error messages to the browser's <strong>Developer Tools Console</strong> (usually opened with F12). This is primarily for developers or users who need to submit detailed bug reports."
       }
+    },
+    elementScan: {
+      tutorialBanner: "Click any element on the page to select it",
+      tutorialTooltipTitle: "How to use Element Scan",
+      tutorialTooltipBody: "<h4>How to use Element Scan</h4><ol><li><strong>Move & Highlight</strong><br>Move your mouse cursor over the web page. The target element will be highlighted automatically.</li><li><strong>Click & Select</strong><br>When an element is highlighted, left-click to confirm your selection.</li><li><strong>Exit Scanning</strong><br>You can exit scan mode at any time in one of the following ways:<ul><li>Press the <kbd>ESC</kbd> key.</li><li>Right-click while an element is highlighted.</li><li>Click the 'Element Scan' button again.</li></ul></li></ol>"
     },
     log: {
       prefix: "[Text Extractor Script-Debug]",
@@ -6610,6 +6782,11 @@ ${result.join(",\n")}
         enable_debug_logging: "\\u542F\\u7528\\u540E\\uFF0C\\u811A\\u672C\\u4F1A\\u5C06\\u8BE6\\u7EC6\\u7684\\u5185\\u90E8\\u72B6\\u6001\\u3001\\u6267\\u884C\\u6B65\\u9AA4\\u548C\\u9519\\u8BEF\\u4FE1\\u606F\\u8F93\\u51FA\\u5230\\u6D4F\\u89C8\\u5668\\u7684<strong>\\u5F00\\u53D1\\u8005\\u5DE5\\u5177\\u63A7\\u5236\\u53F0</strong>\\uFF08\\u901A\\u5E38\\u7528F12\\u6253\\u5F00\\uFF09\\u3002\\u8FD9\\u4E3B\\u8981\\u4F9B\\u5F00\\u53D1\\u8005\\u6216\\u9700\\u8981\\u63D0\\u4EA4\\u8BE6\\u7EC6\\u9519\\u8BEF\\u62A5\\u544A\\u7684\\u7528\\u6237\\u4F7F\\u7528\\u3002"
       }
     },
+    elementScan: {
+      tutorialBanner: "\\u70B9\\u51FB\\u9875\\u9762\\u4E0A\\u7684\\u4EFB\\u4F55\\u5143\\u7D20\\u8FDB\\u884C\\u9009\\u62E9",
+      tutorialTooltipTitle: "\\u5982\\u4F55\\u4F7F\\u7528\\u201C\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u201D",
+      tutorialTooltipBody: "<h4>\\u5982\\u4F55\\u4F7F\\u7528\\u201C\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u201D</h4><ol><li><strong>\\u79FB\\u52A8 & \\u9AD8\\u4EAE</strong><br>\\u5C06\\u9F20\\u6807\\u5149\\u6807\\u79FB\\u52A8\\u5230\\u60A8\\u5E0C\\u671B\\u63D0\\u53D6\\u6587\\u672C\\u7684\\u7F51\\u9875\\u533A\\u57DF\\uFF0C\\u76EE\\u6807\\u5143\\u7D20\\u5C06\\u4F1A\\u88AB\\u81EA\\u52A8\\u9AD8\\u4EAE\\u663E\\u793A\\u3002</li><li><strong>\\u70B9\\u51FB & \\u9009\\u62E9</strong><br>\\u5728\\u5143\\u7D20\\u9AD8\\u4EAE\\u65F6\\uFF0C\\u5355\\u51FB\\u9F20\\u6807\\u5DE6\\u952E\\u5373\\u53EF\\u786E\\u8BA4\\u9009\\u62E9\\u3002</li><li><strong>\\u9000\\u51FA\\u626B\\u63CF</strong><br>\\u60A8\\u53EF\\u4EE5\\u968F\\u65F6\\u901A\\u8FC7\\u4EE5\\u4E0B\\u4EFB\\u4E00\\u65B9\\u5F0F\\u9000\\u51FA\\u626B\\u63CF\\u6A21\\u5F0F\\uFF1A<ul><li>\\u6309\\u4E0B\\u952E\\u76D8\\u4E0A\\u7684 <kbd>ESC</kbd> \\u952E\\u3002</li><li>\\u5728\\u5143\\u7D20\\u9AD8\\u4EAE\\u65F6\\uFF0C\\u5355\\u51FB\\u9F20\\u6807\\u53F3\\u952E\\u3002</li><li>\\u518D\\u6B21\\u70B9\\u51FB\\u201C\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u201D\\u6309\\u94AE\\u3002</li></ul></li></ol>"
+    },
     log: {
       prefix: "[\\u6587\\u672C\\u63D0\\u53D6\\u811A\\u672C-\\u8C03\\u8BD5]",
       language: {
@@ -6937,6 +7114,11 @@ ${result.join(",\n")}
         title: "\\u9032\\u968E\\u8A2D\\u5B9A\\u8AAA\\u660E",
         enable_debug_logging: "\\u555F\\u7528\\u5F8C\\uFF0C\\u8173\\u672C\\u6703\\u5C07\\u8A73\\u7D30\\u7684\\u5167\\u90E8\\u72C0\\u614B\\u3001\\u57F7\\u884C\\u6B65\\u9A5F\\u548C\\u932F\\u8AA4\\u8A0A\\u606F\\u8F38\\u51FA\\u5230\\u700F\\u89BD\\u5668\\u7684<strong>\\u958B\\u767C\\u8005\\u5DE5\\u5177\\u63A7\\u5236\\u53F0</strong>\\uFF08\\u901A\\u5E38\\u7528F12\\u958B\\u555F\\uFF09\\u3002\\u9019\\u4E3B\\u8981\\u4F9B\\u958B\\u767C\\u8005\\u6216\\u9700\\u8981\\u63D0\\u4EA4\\u8A73\\u7D30\\u932F\\u8AA4\\u5831\\u544A\\u7684\\u4F7F\\u7528\\u8005\\u4F7F\\u7528\\u3002"
       }
+    },
+    elementScan: {
+      tutorialBanner: "\\u9EDE\\u64CA\\u9801\\u9762\\u4E0A\\u7684\\u4EFB\\u4F55\\u5143\\u7D20\\u9032\\u884C\\u9078\\u64C7",
+      tutorialTooltipTitle: "\\u5982\\u4F55\\u4F7F\\u7528\\u300C\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u300D",
+      tutorialTooltipBody: "<h4>\\u5982\\u4F55\\u4F7F\\u7528\\u300C\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u300D</h4><ol><li><strong>\\u79FB\\u52D5 & \\u53CD\\u767D</strong><br>\\u5C07\\u6ED1\\u9F20\\u6E38\\u6A19\\u79FB\\u52D5\\u5230\\u60A8\\u5E0C\\u671B\\u63D0\\u53D6\\u6587\\u672C\\u7684\\u7DB2\\u9801\\u5340\\u57DF\\uFF0C\\u76EE\\u6A19\\u5143\\u7D20\\u5C07\\u6703\\u88AB\\u81EA\\u52D5\\u53CD\\u767D\\u986F\\u793A\\u3002</li><li><strong>\\u9EDE\\u64CA & \\u9078\\u64C7</strong><br>\\u5728\\u5143\\u7D20\\u53CD\\u767D\\u6642\\uFF0C\\u9EDE\\u64CA\\u6ED1\\u9F20\\u5DE6\\u9375\\u5373\\u53EF\\u78BA\\u8A8D\\u9078\\u64C7\\u3002</li><li><strong>\\u9000\\u51FA\\u6383\\u63CF</strong><br>\\u60A8\\u53EF\\u4EE5\\u96A8\\u6642\\u900F\\u904E\\u4EE5\\u4E0B\\u4EFB\\u4E00\\u65B9\\u5F0F\\u9000\\u51FA\\u6383\\u63CF\\u6A21\\u5F0F\\uFF1A<ul><li>\\u6309\\u4E0B\\u9375\\u76E4\\u4E0A\\u7684 <kbd>ESC</kbd> \\u9375\\u3002</li><li>\\u5728\\u5143\\u7D20\\u53CD\\u767D\\u6642\\uFF0C\\u9EDE\\u64CA\\u6ED1\\u9F20\\u53F3\\u9375\\u3002</li><li>\\u518D\\u6B21\\u9EDE\\u64CA\\u300C\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u300D\\u6309\\u9215\\u3002</li></ul></li></ol>"
     },
     log: {
       prefix: "[\\u6587\\u672C\\u63D0\\u53D6\\u8173\\u672C-\\u5075\\u932F]",
@@ -7605,94 +7787,6 @@ ${result.join(",\n")}
   var systemThemeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M320-120v-80h80v-80H160q-33 0-56.5-23.5T80-360v-400q0-33 23.5-56.5T160-840h640q33 0 56.5 23.5T880-760v400q0 33-23.5 56.5T800-280H560v80h80v80H320ZM160-360h640v-400H160v400Zm0 0v-400 400Z"/></svg>`;
   var lightThemeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm0 80q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Zm326-268Z"/></svg>`;
   var darkThemeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Zm0-80q88 0 158-48.5T740-375q-20 5-40 8t-40 3q-123 0-209.5-86.5T364-660q0-20 3-40t8-40q-78 32-126.5 102T200-480q0 116 82 198t198 82Zm-10-270Z"/></svg>`;
-  var Tooltip = class {
-    constructor() {
-      this.tooltipElement = null;
-      this.handleEscKey = this.handleEscKey.bind(this);
-    }
-        _createDOM(config) {
-      const overlay = document.createElement("div");
-      overlay.className = "info-tooltip-overlay";
-      overlay.tabIndex = -1;
-      const tooltip = document.createElement("div");
-      tooltip.className = "info-tooltip-modal";
-      if (config.width) tooltip.style.width = config.width;
-      if (config.height) tooltip.style.height = config.height;
-      const header = document.createElement("div");
-      header.className = "info-tooltip-header";
-      const titleContainer2 = document.createElement("div");
-      titleContainer2.className = "info-tooltip-title-container";
-      if (config.titleIcon) {
-        const iconElement = createSVGFromString(config.titleIcon);
-        iconElement.classList.add("info-tooltip-title-icon");
-        titleContainer2.appendChild(iconElement);
-      }
-      const titleElement = document.createElement("h3");
-      titleElement.className = "info-tooltip-title";
-      titleElement.textContent = config.title;
-      titleContainer2.appendChild(titleElement);
-      const closeButton = document.createElement("span");
-      closeButton.className = "info-tooltip-close";
-      closeButton.appendChild(createSVGFromString(closeIcon));
-      closeButton.addEventListener("click", () => this.hide());
-      header.appendChild(titleContainer2);
-      header.appendChild(closeButton);
-      const content = document.createElement("div");
-      content.className = "info-tooltip-content";
-      const textElement = document.createElement("p");
-      textElement.innerHTML = createTrustedHTML(config.text || "");
-      content.appendChild(textElement);
-      tooltip.appendChild(header);
-      tooltip.appendChild(content);
-      overlay.appendChild(tooltip);
-      this.tooltipElement = overlay;
-      uiContainer.appendChild(this.tooltipElement);
-    }
-    /**
-     * @public
-     * @description 显示并填充提示窗口。
-     * @param {object} config - 提示窗口的配置对象。
-     */
-    show(config) {
-      if (!this.tooltipElement) {
-        this._createDOM(config);
-      }
-      fire("infoTooltipWillShow");
-      setTimeout(() => {
-        if (this.tooltipElement) {
-          const onTransitionEnd = () => {
-            this.tooltipElement.focus();
-            this.tooltipElement.addEventListener("keydown", this.handleEscKey);
-            this.tooltipElement.removeEventListener("transitionend", onTransitionEnd);
-          };
-          this.tooltipElement.addEventListener("transitionend", onTransitionEnd);
-          this.tooltipElement.classList.add("is-visible");
-        }
-      }, 10);
-    }
-        hide() {
-      if (this.tooltipElement && this.tooltipElement.classList.contains("is-visible")) {
-        this.tooltipElement.classList.remove("is-visible");
-        this.tooltipElement.removeEventListener("keydown", this.handleEscKey);
-        const onTransitionEnd = () => {
-          if (this.tooltipElement && this.tooltipElement.parentNode) {
-            this.tooltipElement.removeEventListener("transitionend", onTransitionEnd);
-            this.tooltipElement.parentNode.removeChild(this.tooltipElement);
-            this.tooltipElement = null;
-            fire("infoTooltipDidHide");
-          }
-        };
-        this.tooltipElement.addEventListener("transitionend", onTransitionEnd);
-      }
-    }
-        handleEscKey(event) {
-      if (event.key === "Escape") {
-        event.stopImmediatePropagation();
-        this.hide();
-      }
-    }
-  };
-  var infoTooltip = new Tooltip();
   function createCheckbox(id, labelText, isChecked, tooltipConfig) {
     const label = document.createElement("label");
     label.className = "checkbox-group";
@@ -8096,6 +8190,7 @@ ${result.join(",\n")}
   --color-text:#333333;
   --color-text-secondary:#666666;
   --color-border:#e0e0e0;
+  --color-border-heavy:#b0b0b0;
   --color-overlay-bg:rgba(0,0,0,0.5);
   --color-shadow:rgba(0,0,0,0.2);
   --color-primary:#1a73e8;
@@ -8113,6 +8208,7 @@ ${result.join(",\n")}
   --dark-color-text:#f0f0f0;
   --dark-color-text-secondary:#aaaaaa;
   --dark-color-border:#555555;
+  --dark-color-border-heavy:#777777;
   --dark-color-overlay-bg:rgba(0,0,0,0.7);
   --dark-color-shadow:rgba(0,0,0,0.4);
   --dark-color-primary:#1e90ff;
@@ -8139,6 +8235,7 @@ ${result.join(",\n")}
   --main-text-secondary:var(--color-text-secondary);
   --tc-secondary-text-color:var(--color-text-secondary);
   --main-border:var(--color-border);
+  --main-border-heavy:var(--color-border-heavy);
   --main-overlay-bg:var(--color-overlay-bg);
   --main-shadow:var(--color-shadow);
   --main-primary:var(--color-primary);
@@ -8165,6 +8262,7 @@ ${result.join(",\n")}
   --main-text-secondary:var(--dark-color-text-secondary);
   --tc-secondary-text-color:var(--dark-color-text-secondary);
   --main-border:var(--dark-color-border);
+  --main-border-heavy:var(--dark-color-border-heavy);
   --main-overlay-bg:var(--dark-color-overlay-bg);
   --main-shadow:var(--dark-color-shadow);
   --main-primary:var(--dark-color-primary);
@@ -8925,6 +9023,45 @@ ${result.join(",\n")}
     cursor:not-allowed;
     box-shadow:none;
     transform:none;
+}
+kbd{
+    display:inline-block;
+    padding:3px 6px;
+    font-family:'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+    font-size:0.85em;
+    color:var(--main-text);
+    background-color:var(--main-bg);
+    border:1px solid var(--main-border-heavy);
+    border-radius:4px;
+    box-shadow:0 2px 0 var(--main-border-heavy);
+    margin:0 2px;
+    position:relative;
+    top:-1px;
+}
+.element-scan-tutorial-banner{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-left:16px;
+    font-size:14px;
+    color:var(--main-text);
+    opacity:0;
+    transform:translateY(-10px);
+    transition:opacity 0.3s ease, transform 0.3s ease;
+}
+.element-scan-tutorial-banner.is-visible{
+    opacity:1;
+    transform:translateY(0);
+}
+.element-scan-tutorial-banner svg{
+    width:20px;
+    height:20px;
+    cursor:pointer;
+    fill:var(--main-text-secondary);
+    transition:fill 0.2s;
+}
+.element-scan-tutorial-banner svg:hover{
+    fill:var(--main-text);
 }
 .tc-textarea-container{
     display:flex;
