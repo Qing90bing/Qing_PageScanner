@@ -325,28 +325,56 @@ export function cleanupToolbar() {
     }
 }
 
-export function showTopCenterUI() {
-    if (topCenterContainer) return;
-
-    // 1. 创建 Flexbox 容器
+/**
+ * @private
+ * @function setupTopCenterUI
+ * @description 创建并组装顶部中央UI（计数器和帮助图标）的DOM结构。
+ *              该函数遵循“单一容器”模式，将两个独立的组件包裹在一个Flexbox容器中。
+ *              这样做的好处是：
+ *              1. **布局控制**: Flexbox可以轻松实现子元素的垂直居中对齐和间距。
+ *              2. **动画同步**: 只需对父容器应用动画，就能确保所有子元素同步进出场，避免视觉抖动。
+ */
+function setupTopCenterUI() {
+    // 1. 创建 Flexbox 父容器
     topCenterContainer = document.createElement('div');
     topCenterContainer.className = 'top-center-ui-container';
 
-    // 2. 创建并附加子元素
+    // 2. 使用工厂函数创建独立的计数器和帮助图标组件
     counterElement = createTopCenterCounter('scan.stagedCount');
     helpIcon = createHelpIcon('tutorial.elementScan');
+    // 为帮助图标添加一个特定的类，以便在 element-scan-ui.css 中进行样式微调
     helpIcon.classList.add('element-scan-help-icon');
 
+    // 3. 将组件作为子元素添加到容器中
     topCenterContainer.appendChild(counterElement);
     topCenterContainer.appendChild(helpIcon);
-    uiContainer.appendChild(topCenterContainer);
 
-    // 3. 触发统一的入场动画
+    // 4. 最后将完全组装好的容器附加到主UI容器中
+    uiContainer.appendChild(topCenterContainer);
+}
+
+/**
+ * @public
+ * @function showTopCenterUI
+ * @description 显示顶部中央UI，并触发其入场动画。
+ */
+export function showTopCenterUI() {
+    // 防止重复创建
+    if (topCenterContainer) return;
+
+    setupTopCenterUI();
+
+    // 在下一帧触发动画，以确保CSS transition生效
     requestAnimationFrame(() => {
         topCenterContainer.classList.add('is-visible');
     });
 }
 
+/**
+ * @public
+ * @function hideTopCenterUI
+ * @description 隐藏并销毁顶部中央UI，同时清理所有相关资源。
+ */
 export function hideTopCenterUI() {
     if (!topCenterContainer) return;
 
@@ -355,16 +383,17 @@ export function hideTopCenterUI() {
     // 1. 触发统一的退场动画
     containerToRemove.classList.remove('is-visible');
 
-    // 2. 动画结束后清理所有内容
+    // 2. 在CSS动画（400ms）结束后，执行清理工作
     setTimeout(() => {
-        // 在移除元素之前，调用销毁方法来清理事件监听器
+        // 调用计数器组件的destroy方法，以确保其内部的事件监听器被正确移除
         if (counterElement && typeof counterElement.destroy === 'function') {
             counterElement.destroy();
         }
+        // 从DOM中彻底移除容器及其所有子元素
         containerToRemove.remove();
     }, 400);
 
-    // 3. 立即清理引用
+    // 3. 立即重置模块级变量，为下一次调用做好准备
     topCenterContainer = null;
     counterElement = null;
     helpIcon = null;

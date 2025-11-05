@@ -5608,8 +5608,6 @@ ${result.join(",\n")}
     counterElement3.appendChild(textNode);
     counterElement3.appendChild(countSpan);
     counterElement3._countSpan = countSpan;
-    counterElement3._textNode = textNode;
-    counterElement3._labelKey = labelKey;
     const languageChangeHandler = () => {
       textNode.textContent = t(labelKey);
     };
@@ -5626,7 +5624,7 @@ ${result.join(",\n")}
     const end = newCount;
     currentCount2 = newCount;
     if (start2 === end) {
-      countSpan.textContent = end;
+      countSpan.textContent = String(end);
       return;
     }
     const duration = 500 + Math.min(Math.abs(end - start2) * 10, 1e3);
@@ -5669,14 +5667,15 @@ ${result.join(",\n")}
       dynamicFab2.classList.remove("is-recording");
       updateFabTooltip(dynamicFab2, "tooltip.dynamic_scan");
       if (counterElement) {
-        counterElement.classList.remove("is-visible");
+        const counterToRemove = counterElement;
+        counterToRemove.classList.remove("is-visible");
         setTimeout(() => {
-          if (counterElement && typeof counterElement.destroy === "function") {
-            counterElement.destroy();
+          if (typeof counterToRemove.destroy === "function") {
+            counterToRemove.destroy();
           }
-          counterElement.remove();
-          counterElement = null;
+          counterToRemove.remove();
         }, 400);
+        counterElement = null;
       }
       if (elementScanFab2) {
         elementScanFab2.classList.remove("fab-disabled");
@@ -5803,10 +5802,11 @@ ${result.join(",\n")}
     helpButton.innerHTML = createTrustedHTML(questionMarkIcon);
     helpButton.addEventListener("click", (event) => {
       event.stopPropagation();
-      log(`Help icon clicked, showing content for key: ${contentKey}`);
+      log(`\u70B9\u51FB\u4E86\u5E2E\u52A9\u56FE\u6807\uFF0C\u663E\u793A\u5185\u5BB9\u952E: ${contentKey}`);
       const helpContent = t(contentKey);
+      const helpTitle = t(`${contentKey}Title`);
       infoTooltip.show({
-        title: t(`${contentKey}Title`),
+        title: helpTitle,
         text: helpContent,
         titleIcon: questionMarkIcon
       });
@@ -6009,8 +6009,7 @@ ${result.join(",\n")}
       }, 300);
     }
   }
-  function showTopCenterUI() {
-    if (topCenterContainer) return;
+  function setupTopCenterUI() {
     topCenterContainer = document.createElement("div");
     topCenterContainer.className = "top-center-ui-container";
     counterElement2 = createTopCenterCounter("scan.stagedCount");
@@ -6019,6 +6018,10 @@ ${result.join(",\n")}
     topCenterContainer.appendChild(counterElement2);
     topCenterContainer.appendChild(helpIcon);
     uiContainer.appendChild(topCenterContainer);
+  }
+  function showTopCenterUI() {
+    if (topCenterContainer) return;
+    setupTopCenterUI();
     requestAnimationFrame(() => {
       topCenterContainer.classList.add("is-visible");
     });
@@ -8505,11 +8508,11 @@ ${result.join(",\n")}
     top:20px;
     left:50%;
     transform:translate(-50%, -150%);
+    opacity:0;
     display:flex;
     align-items:center;
     gap:10px;
     z-index:9999998;
-    opacity:0;
     transition:transform 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1)), opacity 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1));
 }
 .top-center-ui-container.is-visible{
@@ -8517,16 +8520,8 @@ ${result.join(",\n")}
     opacity:1;
 }
 .element-scan-help-icon{
-    position:relative;
-    top:auto;
-    left:auto;
     width:36px;
     height:36px;
-    box-shadow:none;
-    backdrop-filter:none;
-    -webkit-backdrop-filter:none;
-    border:1px solid var(--main-border);
-    background-color:var(--main-bg-a);
     transition:transform 0.2s ease, background-color 0.2s ease;
 }
 .element-scan-help-icon:hover{

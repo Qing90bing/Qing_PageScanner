@@ -1,59 +1,70 @@
-/* src/assets/styles/element-scan-ui.css */
+/*
+  src/assets/styles/element-scan-ui.css
+  该文件包含专门用于“选取元素扫描”功能的顶部中央UI的样式。
+*/
 
+/*
+  顶部UI的Flexbox父容器。
+  这个容器负责整体的定位和入场/出场动画，
+  确保其子元素（计数器和帮助图标）能够同步运动并完美对齐。
+*/
 .top-center-ui-container {
     position: fixed;
     top: 20px;
     left: 50%;
-    transform: translate(-50%, -150%); /* 初始位置在屏幕上方 */
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    z-index: 9999998;
+    /* 初始状态在屏幕视口上方，且透明，为入场动画做准备 */
+    transform: translate(-50%, -150%);
     opacity: 0;
-    transition: transform 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1)), opacity 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1));
+
+    /* 布局属性 */
+    display: flex;
+    align-items: center; /* 垂直居中对齐 */
+    gap: 10px; /* 子元素之间的间距 */
+
+    z-index: 9999998;
+
+    /* 统一的过渡动画，与 top-center-counter.css 保持一致 */
+    transition: transform 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1)),
+                opacity 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1));
 }
 
+/* 当容器可见时，将其移动到最终位置并变为不透明 */
 .top-center-ui-container.is-visible {
-    transform: translate(-50%, 0); /* 最终位置 */
+    transform: translate(-50%, 0);
     opacity: 1;
 }
 
-/* 调整帮助图标以匹配计数器的高度和样式 */
+/*
+  对帮助图标进行微调，以确保其视觉上与计数器协调一致。
+*/
 .element-scan-help-icon {
-    /* 移除独立的定位和动画，因为它现在由容器管理 */
-    position: relative;
-    top: auto;
-    left: auto;
-
-    /* 尺寸匹配 */
-    width: 36px; /* 匹配计数器的高度 */
+    /* 尺寸调整：使其直径与计数器的高度（36px）完全匹配 */
+    width: 36px;
     height: 36px;
 
-    /* 移除在上一版本中添加的、与计数器重复的样式 */
-    box-shadow: none;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    border: 1px solid var(--main-border);
-    background-color: var(--main-bg-a);
-
-    /* 悬停效果优化：使用缩放代替位移 */
+    /* 悬停效果优化：使用平滑的缩放动画，避免布局位移 */
     transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
 .element-scan-help-icon:hover {
-    transform: scale(1.1); /* 放大效果 */
+    transform: scale(1.1); /* 悬停时轻微放大 */
     background-color: var(--main-border);
 }
 
 /*
-  关键修复：覆盖计数器的默认 fixed 定位。
-  当计数器是 flex 容器的子元素时，我们希望它遵循 flex 布局，而不是自己定位。
+  关键修复：覆盖 `tc-top-center-counter` 组件的默认样式。
+  这是必需的，因为计数器组件最初被设计为一个独立的、固定定位的元素。
+  当我们将它放入Flexbox容器中时，必须禁用其自身的定位和动画，
+  让它遵循容器的布局和动画规则。
 */
 .top-center-ui-container .tc-top-center-counter {
-    position: relative; /* 覆盖 position: fixed */
+    /* 覆盖 `position: fixed`，使其成为一个正常的flex子项 */
+    position: relative;
+
+    /* 重置其原有的定位和动画属性 */
     top: auto;
     left: auto;
-    transform: none; /* 移除其自身的 transform 动画 */
-    opacity: 1; /* 确保它在容器内始终可见 */
-    transition: none; /* 移除其自身的 transition 动画 */
+    transform: none;
+    opacity: 1; /* 在容器内，它应该始终是可见的 */
+    transition: none; /* 动画完全由父容器 `.top-center-ui-container` 控制 */
 }

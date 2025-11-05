@@ -54,34 +54,48 @@ export function showSessionSummary() {
  * 处理“动态扫描”按钮的点击事件。
  * @param {HTMLElement} dynamicFab - 动态扫描按钮的DOM元素。
  */
+/**
+ * @public
+ * @function handleDynamicExtractClick
+ * @description 处理“动态扫描”按钮的点击事件，负责启动或停止会话扫描。
+ *              这是一个状态切换函数，它会管理UI的各种变化，
+ *              包括FAB按钮的图标和工具提示、顶部中央计数器的显示/隐藏，
+ *              以及在扫描期间禁用其他功能按钮。
+ * @param {HTMLElement} dynamicFab - “动态扫描”按钮的DOM元素。
+ */
 export function handleDynamicExtractClick(dynamicFab) {
     const elementScanFab = getElementScanFab();
 
     if (sessionExtractor.isSessionRecording()) {
+        // --- 停止会话扫描的逻辑 ---
         log(t('scan.stopSession'));
-        // 异步停止，并在回调中获取最终计数
+
+        // 1. 异步停止核心逻辑，并在回调中处理最终结果
         sessionExtractor.stop((finalCount) => {
             const notificationText = simpleTemplate(t('scan.finished'), { count: finalCount });
             showNotification(notificationText, { type: 'success' });
-            currentSessionCount = finalCount; // 保存最终计数
+            currentSessionCount = finalCount;
         });
 
+        // 2. 恢复FAB按钮的UI状态
         setFabIcon(dynamicFab, dynamicIcon);
         dynamicFab.classList.remove('is-recording');
         updateFabTooltip(dynamicFab, 'tooltip.dynamic_scan');
 
+        // 3. 隐藏并销毁计数器
         if (counterElement) {
-            counterElement.classList.remove('is-visible');
+            const counterToRemove = counterElement;
+            counterToRemove.classList.remove('is-visible');
             setTimeout(() => {
-                if (counterElement && typeof counterElement.destroy === 'function') {
-                    counterElement.destroy();
+                if (typeof counterToRemove.destroy === 'function') {
+                    counterToRemove.destroy(); // 清理事件监听器
                 }
-                counterElement.remove();
-                counterElement = null;
+                counterToRemove.remove();
             }, 400);
+            counterElement = null; // 立即清理引用
         }
 
-        // 启用“选取元素扫描”按钮并恢复其工具提示
+        // 4. 重新启用“选取元素扫描”按钮
         if (elementScanFab) {
             elementScanFab.classList.remove('fab-disabled');
             if (elementScanFab.dataset.originalTooltipKey) {
@@ -89,27 +103,30 @@ export function handleDynamicExtractClick(dynamicFab) {
             }
         }
     } else {
+        // --- 启动会话扫描的逻辑 ---
         log(t('scan.startSession'));
+
+        // 1. 切换FAB按钮为“停止”状态
         setFabIcon(dynamicFab, stopIcon);
         dynamicFab.classList.add('is-recording');
         updateFabTooltip(dynamicFab, 'scan.stopSession');
 
-        // 禁用“选取元素扫描”按钮并更新其工具提示
+        // 2. 禁用“选取元素扫描”按钮，防止在会话扫描期间进行其他操作
         if (elementScanFab) {
             elementScanFab.dataset.originalTooltipKey = elementScanFab.dataset.tooltipKey;
             updateFabTooltip(elementScanFab, 'tooltip.disabled.scan_in_progress');
             elementScanFab.classList.add('fab-disabled');
         }
 
+        // 3. 显示通知和顶部中央计数器
         showNotification(t('scan.sessionStarted'), { type: 'info' });
-
         counterElement = createTopCenterCounter('common.discovered');
         uiContainer.appendChild(counterElement);
         requestAnimationFrame(() => {
             counterElement.classList.add('is-visible');
         });
 
-        // 稍微延迟以确保UI更新完成
+        // 4. 延迟后启动核心扫描逻辑，并将计数更新回调传递给它
         setTimeout(() => {
             sessionExtractor.start((count) => {
                 updateTopCenterCounter(counterElement, count);

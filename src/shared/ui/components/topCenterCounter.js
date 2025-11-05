@@ -3,12 +3,30 @@ import { t } from '../../i18n/index.js';
 import { animateCount, easeOutQuad } from '../animations.js';
 import { on } from '../../utils/eventBus.js';
 
-let currentCount = 0; // 模块级变量，用于动画的起始值
+/**
+ * @file 提供了创建和管理顶部中央计数器UI组件的功能。
+ * @description
+ * 该模块遵循工厂模式，导出一个 `createTopCenterCounter` 函数。
+ * 此函数创建了一个独立的、自包含的计数器DOM元素，但不负责将其附加到页面中。
+ * 这种解耦的设计允许调用方完全控制组件的生命周期（何时何地附加、动画和销毁），
+ * 从而实现了高度的可复用性和灵活性。
+ */
 
 /**
- * 创建并返回一个新的计数器DOM元素，但不附加到DOM中。
- * @param {string} labelKey - 用于标签的i18n键。
- * @returns {HTMLElement} - 创建的计数器元素。
+ * @private
+ * @type {number}
+ * @description 模块级变量，用于跟踪当前计数的数值，主要目的是为 `animateCount` 提供动画的起始点。
+ */
+let currentCount = 0;
+
+/**
+ * @public
+ * @function createTopCenterCounter
+ * @description 创建并返回一个新的计数器DOM元素。
+ * 该元素是完全独立的，包含了所有必要的子元素和逻辑，但并未附加到DOM中。
+ * @param {string} labelKey - 用于计数器文本标签的i18n键。
+ * @returns {HTMLElement} - 返回一个配置好的 `div` 元素。
+ * 该元素附加了一个 `.destroy()` 方法，用于在元素被移除时清理其内部的事件监听器，防止内存泄漏。
  */
 export function createTopCenterCounter(labelKey) {
     const counterElement = document.createElement('div');
@@ -16,48 +34,57 @@ export function createTopCenterCounter(labelKey) {
 
     const textNode = document.createTextNode(t(labelKey));
     const countSpan = document.createElement('span');
-    countSpan.textContent = '0';
+    countSpan.textContent = '0'; // 初始值为0
 
-    // 将关键节点附加到元素上，以便以后可以轻松找到它们
+    // 将关键的子节点直接附加到元素实例上，以便 `updateTopCenterCounter` 函数可以轻松访问它们。
+    // 这是一种避免使用全局变量或闭包来维护状态的简洁方法。
     counterElement.appendChild(textNode);
     counterElement.appendChild(countSpan);
-    counterElement._countSpan = countSpan; // 附加引用以便 update 函数可以找到它
-    counterElement._textNode = textNode; // 附加引用以便语言更改可以更新它
-    counterElement._labelKey = labelKey; // 存储 i18n 键
+    counterElement._countSpan = countSpan;
 
+    // 定义并订阅语言变更事件，以便在用户切换语言时自动更新文本标签。
     const languageChangeHandler = () => {
         textNode.textContent = t(labelKey);
     };
-
-    // on() 函数返回一个取消订阅的函数，我们将其存储起来
+    // eventBus.on() 返回一个取消订阅的函数。
     const unsubscribe = on('languageChanged', languageChangeHandler);
 
-    // 附加一个销毁方法，用于在元素被移除时清理事件监听器
+    /**
+     * @memberof HTMLElement
+     * @function destroy
+     * @description 清理与此计数器实例相关的资源，主要是语言变更的事件监听器。
+     * 调用方有责任在从DOM中移除此元素之前调用此方法。
+     */
     counterElement.destroy = () => {
-        unsubscribe();
+        unsubscribe(); // 调用此函数来移除事件监听器。
     };
 
     return counterElement;
 }
 
 /**
- * 更新指定计数器元素的数值。
- * @param {HTMLElement} element - 目标计数器元素。
- * @param {number} newCount - 新的计数值。
+ * @public
+ * @function updateTopCenterCounter
+ * @description 使用平滑的动画更新指定计数器元素的数值。
+ * @param {HTMLElement} element - 由 `createTopCenterCounter` 创建的目标计数器元素。
+ * @param {number} newCount - 要显示的新计数值。
  */
 export function updateTopCenterCounter(element, newCount) {
+    // 确保传入的元素是有效的，并且包含我们需要的 `_countSpan` 子元素引用。
     if (!element || !element._countSpan) return;
 
     const countSpan = element._countSpan;
     const start = currentCount;
     const end = newCount;
-    currentCount = newCount;
+    currentCount = newCount; // 更新模块级变量以备下次调用
 
+    // 如果数值没有变化，则直接设置文本并返回，以避免不必要的动画。
     if (start === end) {
-        countSpan.textContent = end;
+        countSpan.textContent = String(end);
         return;
     }
 
+    // 动画的持续时间根据数值变化的幅度动态调整，以获得更自然的效果。
     const duration = 500 + Math.min(Math.abs(end - start) * 10, 1000);
     animateCount(countSpan, start, end, duration, easeOutQuad);
 }
