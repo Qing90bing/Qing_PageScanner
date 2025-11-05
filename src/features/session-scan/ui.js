@@ -121,6 +121,7 @@ export function handleDynamicExtractClick(dynamicFab) {
         // 3. 显示通知和顶部中央计数器
         showNotification(t('scan.sessionStarted'), { type: 'info' });
         counterElement = createTopCenterCounter('common.discovered');
+        updateTopCenterCounter(counterElement, 0); // 确保每次都从0开始
         uiContainer.appendChild(counterElement);
         requestAnimationFrame(() => {
             counterElement.classList.add('is-visible');

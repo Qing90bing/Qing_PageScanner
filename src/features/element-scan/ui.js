@@ -6,13 +6,15 @@ import { t } from '../../shared/i18n/index.js';
 import { createTrustedHTML } from '../../shared/utils/trustedTypes.js';
 import { log } from '../../shared/utils/logger.js';
 import { simpleTemplate } from '../../shared/utils/templating.js';
-import { createTopCenterCounter } from '../../shared/ui/components/topCenterCounter.js';
+import { createTopCenterCounter, updateTopCenterCounter } from '../../shared/ui/components/topCenterCounter.js';
 import { createHelpIcon } from '../../shared/ui/components/helpIcon.js';
+import { on } from '../../shared/utils/eventBus.js';
 
 // --- 模块级变量 ---
 let topCenterContainer = null;
 let counterElement = null;
 let helpIcon = null;
+let unsubscribeStagedCountChanged = null;
 
 // --- 模块级变量，用于缓存UI元素的引用 ---
 
@@ -364,9 +366,18 @@ export function showTopCenterUI() {
 
     setupTopCenterUI();
 
-    // 在下一帧触发动画，以确保CSS transition生效
+    // 订阅暂存计数值变化的事件
+    unsubscribeStagedCountChanged = on('stagedCountChanged', (newCount) => {
+        updateTopCenterCounter(counterElement, newCount);
+    });
+
+    // 初始化时，手动更新一次计数器为0
+    updateTopCenterCounter(counterElement, 0);
+
+    // 在下一帧同步触发子元素的入场动画
     requestAnimationFrame(() => {
-        topCenterContainer.classList.add('is-visible');
+        counterElement.classList.add('is-visible');
+        helpIcon.classList.add('is-visible');
     });
 }
 
@@ -379,22 +390,31 @@ export function hideTopCenterUI() {
     if (!topCenterContainer) return;
 
     const containerToRemove = topCenterContainer;
+    const counterToRemove = counterElement;
+    const iconToRemove = helpIcon;
 
-    // 1. 触发统一的退场动画
-    containerToRemove.classList.remove('is-visible');
+    // 1. 同步触发子元素的退场动画
+    if (counterToRemove) counterToRemove.classList.remove('is-visible');
+    if (iconToRemove) iconToRemove.classList.remove('is-visible');
 
     // 2. 在CSS动画（400ms）结束后，执行清理工作
     setTimeout(() => {
         // 调用计数器组件的destroy方法，以确保其内部的事件监听器被正确移除
-        if (counterElement && typeof counterElement.destroy === 'function') {
-            counterElement.destroy();
+        if (counterToRemove && typeof counterToRemove.destroy === 'function') {
+            counterToRemove.destroy();
         }
         // 从DOM中彻底移除容器及其所有子元素
         containerToRemove.remove();
     }, 400);
 
-    // 3. 立即重置模块级变量，为下一次调用做好准备
+    // 3. 立即重置模块级变量
     topCenterContainer = null;
     counterElement = null;
     helpIcon = null;
+
+    // 4. 清理事件监听器
+    if (typeof unsubscribeStagedCountChanged === 'function') {
+        unsubscribeStagedCountChanged();
+        unsubscribeStagedCountChanged = null;
+    }
 }

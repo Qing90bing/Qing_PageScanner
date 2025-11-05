@@ -12,12 +12,6 @@ import { on } from '../../utils/eventBus.js';
  * 从而实现了高度的可复用性和灵活性。
  */
 
-/**
- * @private
- * @type {number}
- * @description 模块级变量，用于跟踪当前计数的数值，主要目的是为 `animateCount` 提供动画的起始点。
- */
-let currentCount = 0;
 
 /**
  * @public
@@ -74,9 +68,10 @@ export function updateTopCenterCounter(element, newCount) {
     if (!element || !element._countSpan) return;
 
     const countSpan = element._countSpan;
-    const start = currentCount;
+    // 关键修复：直接从DOM读取当前显示的数值作为动画的起始点。
+    // 这消除了对模块级`currentCount`变量的依赖，使组件变为无状态。
+    const start = parseInt(countSpan.textContent, 10) || 0;
     const end = newCount;
-    currentCount = newCount; // 更新模块级变量以备下次调用
 
     // 如果数值没有变化，则直接设置文本并返回，以避免不必要的动画。
     if (start === end) {

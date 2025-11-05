@@ -5589,8 +5589,8 @@ ${result.join(",\n")}
       const elapsedTime = currentTime - startTime;
       const progress = Math.min(elapsedTime / duration, 1);
       const easedProgress = easing(progress);
-      const currentCount3 = Math.round(start2 + (end - start2) * easedProgress);
-      element.textContent = currentCount3;
+      const currentCount2 = Math.round(start2 + (end - start2) * easedProgress);
+      element.textContent = currentCount2;
       if (progress < 1) {
         requestAnimationFrame(frame);
       }
@@ -5598,7 +5598,6 @@ ${result.join(",\n")}
     requestAnimationFrame(frame);
   }
   var easeOutQuad = (t2) => t2 * (2 - t2);
-  var currentCount2 = 0;
   function createTopCenterCounter(labelKey) {
     const counterElement3 = document.createElement("div");
     counterElement3.className = "tc-top-center-counter";
@@ -5620,9 +5619,8 @@ ${result.join(",\n")}
   function updateTopCenterCounter(element, newCount) {
     if (!element || !element._countSpan) return;
     const countSpan = element._countSpan;
-    const start2 = currentCount2;
+    const start2 = parseInt(countSpan.textContent, 10) || 0;
     const end = newCount;
-    currentCount2 = newCount;
     if (start2 === end) {
       countSpan.textContent = String(end);
       return;
@@ -5695,6 +5693,7 @@ ${result.join(",\n")}
       }
       showNotification(t("scan.sessionStarted"), { type: "info" });
       counterElement = createTopCenterCounter("common.discovered");
+      updateTopCenterCounter(counterElement, 0);
       uiContainer.appendChild(counterElement);
       requestAnimationFrame(() => {
         counterElement.classList.add("is-visible");
@@ -5816,6 +5815,7 @@ ${result.join(",\n")}
   var topCenterContainer = null;
   var counterElement2 = null;
   var helpIcon = null;
+  var unsubscribeStagedCountChanged = null;
   var scanContainer = null;
   var highlightBorder = null;
   var tagNameTooltip = null;
@@ -6022,23 +6022,35 @@ ${result.join(",\n")}
   function showTopCenterUI() {
     if (topCenterContainer) return;
     setupTopCenterUI();
+    unsubscribeStagedCountChanged = on("stagedCountChanged", (newCount) => {
+      updateTopCenterCounter(counterElement2, newCount);
+    });
+    updateTopCenterCounter(counterElement2, 0);
     requestAnimationFrame(() => {
-      topCenterContainer.classList.add("is-visible");
+      counterElement2.classList.add("is-visible");
+      helpIcon.classList.add("is-visible");
     });
   }
   function hideTopCenterUI() {
     if (!topCenterContainer) return;
     const containerToRemove = topCenterContainer;
-    containerToRemove.classList.remove("is-visible");
+    const counterToRemove = counterElement2;
+    const iconToRemove = helpIcon;
+    if (counterToRemove) counterToRemove.classList.remove("is-visible");
+    if (iconToRemove) iconToRemove.classList.remove("is-visible");
     setTimeout(() => {
-      if (counterElement2 && typeof counterElement2.destroy === "function") {
-        counterElement2.destroy();
+      if (counterToRemove && typeof counterToRemove.destroy === "function") {
+        counterToRemove.destroy();
       }
       containerToRemove.remove();
     }, 400);
     topCenterContainer = null;
     counterElement2 = null;
     helpIcon = null;
+    if (typeof unsubscribeStagedCountChanged === "function") {
+      unsubscribeStagedCountChanged();
+      unsubscribeStagedCountChanged = null;
+    }
   }
   var performScanInMainThread2 = (texts, filterRules2, enableDebugLogging) => {
     const uniqueTexts =  new Set();
@@ -6143,6 +6155,8 @@ ${result.join(",\n")}
       dynamicFab2.dataset.originalTooltipKey = dynamicFab2.dataset.tooltipKey;
       updateFabTooltip(dynamicFab2, "tooltip.disabled.scan_in_progress");
       dynamicFab2.classList.add("fab-disabled");
+    } else {
+      log(t("log.elementScan.dynamicFabNotFound"), "warn");
     }
     document.addEventListener("mouseover", handleMouseOver);
     document.addEventListener("mouseout", handleMouseOut);
@@ -6166,6 +6180,8 @@ ${result.join(",\n")}
       if (dynamicFab2.dataset.originalTooltipKey) {
         updateFabTooltip(dynamicFab2, dynamicFab2.dataset.originalTooltipKey);
       }
+    } else {
+      log(t("log.elementScan.dynamicFabNotFound"), "warn");
     }
     document.removeEventListener("mouseover", handleMouseOver);
     document.removeEventListener("mouseout", handleMouseOut);
@@ -6203,7 +6219,7 @@ ${result.join(",\n")}
     reselectElement();
   }
   function updateStagedCount() {
-    updateTopCenterCounter(stagedTexts.size);
+    fire("stagedCountChanged", stagedTexts.size);
   }
   function handleMouseOver(event) {
     if (!isActive || isAdjusting) return;
@@ -8507,22 +8523,22 @@ ${result.join(",\n")}
     position:fixed;
     top:20px;
     left:50%;
-    transform:translate(-50%, -150%);
-    opacity:0;
+    transform:translateX(-50%);
     display:flex;
     align-items:center;
     gap:10px;
     z-index:9999998;
-    transition:transform 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1)), opacity 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1));
-}
-.top-center-ui-container.is-visible{
-    transform:translate(-50%, 0);
-    opacity:1;
 }
 .element-scan-help-icon{
     width:36px;
     height:36px;
-    transition:transform 0.2s ease, background-color 0.2s ease;
+    transform:translateY(-150%);
+    opacity:0;
+    transition:transform 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1)), opacity 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1)), background-color 0.2s ease;
+}
+.element-scan-help-icon.is-visible{
+    transform:translateY(0);
+    opacity:1;
 }
 .element-scan-help-icon:hover{
     transform:scale(1.1);
@@ -8532,9 +8548,6 @@ ${result.join(",\n")}
     position:relative;
     top:auto;
     left:auto;
-    transform:none;
-    opacity:1;
-    transition:none;
 }
 #element-scan-container{
     position:absolute;

@@ -5,16 +5,14 @@
 
 /*
   顶部UI的Flexbox父容器。
-  这个容器负责整体的定位和入场/出场动画，
-  确保其子元素（计数器和帮助图标）能够同步运动并完美对齐。
+  这个容器现在只负责布局（定位、对齐和间距），不再处理动画。
+  动画的控制权已交还给其子组件，以解决 `opacity` 和 `backdrop-filter` 的渲染冲突。
 */
 .top-center-ui-container {
     position: fixed;
     top: 20px;
     left: 50%;
-    /* 初始状态在屏幕视口上方，且透明，为入场动画做准备 */
-    transform: translate(-50%, -150%);
-    opacity: 0;
+    transform: translateX(-50%); /* 仅用于水平居中 */
 
     /* 布局属性 */
     display: flex;
@@ -22,16 +20,7 @@
     gap: 10px; /* 子元素之间的间距 */
 
     z-index: 9999998;
-
-    /* 统一的过渡动画，与 top-center-counter.css 保持一致 */
-    transition: transform 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1)),
-                opacity 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1));
-}
-
-/* 当容器可见时，将其移动到最终位置并变为不透明 */
-.top-center-ui-container.is-visible {
-    transform: translate(-50%, 0);
-    opacity: 1;
+    /* 移除 opacity 和 transition，父容器不再有动画 */
 }
 
 /*
@@ -42,8 +31,17 @@
     width: 36px;
     height: 36px;
 
-    /* 悬停效果优化：使用平滑的缩放动画，避免布局位移 */
-    transition: transform 0.2s ease, background-color 0.2s ease;
+    /* 新增：与计数器一致的入场/出场动画 */
+    transform: translateY(-150%);
+    opacity: 0;
+    transition: transform 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1)),
+                opacity 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1)),
+                background-color 0.2s ease; /* 保留原有的悬停颜色过渡 */
+}
+
+.element-scan-help-icon.is-visible {
+    transform: translateY(0);
+    opacity: 1;
 }
 
 .element-scan-help-icon:hover {
@@ -53,18 +51,15 @@
 
 /*
   关键修复：覆盖 `tc-top-center-counter` 组件的默认样式。
-  这是必需的，因为计数器组件最初被设计为一个独立的、固定定位的元素。
-  当我们将它放入Flexbox容器中时，必须禁用其自身的定位和动画，
-  让它遵循容器的布局和动画规则。
+  当我们将它放入Flexbox容器中时，我们只需要覆盖它的定位，
+  而它自己的动画（transform, opacity）现在需要被保留。
 */
 .top-center-ui-container .tc-top-center-counter {
     /* 覆盖 `position: fixed`，使其成为一个正常的flex子项 */
     position: relative;
 
-    /* 重置其原有的定位和动画属性 */
+    /* 重置其原有的定位属性 */
     top: auto;
     left: auto;
-    transform: none;
-    opacity: 1; /* 在容器内，它应该始终是可见的 */
-    transition: none; /* 动画完全由父容器 `.top-center-ui-container` 控制 */
+    /* transform 和 opacity 属性不再被覆盖，以允许其自身的动画播放 */
 }

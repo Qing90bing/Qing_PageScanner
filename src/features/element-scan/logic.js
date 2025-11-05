@@ -13,8 +13,7 @@ import { loadSettings } from '../settings/logic.js';
 import { createTrustedWorkerUrl } from '../../shared/utils/trustedTypes.js';
 import { performScanInMainThread } from './fallback.js';
 import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
-import { updateTopCenterCounter } from '../../shared/ui/components/topCenterCounter.js';
-import { on } from '../../shared/utils/eventBus.js';
+import { on, fire } from '../../shared/utils/eventBus.js';
 
 // --- 模块级状态变量 ---
 
@@ -120,6 +119,8 @@ function startElementScan(fabElement) {
         dynamicFab.dataset.originalTooltipKey = dynamicFab.dataset.tooltipKey;
         updateFabTooltip(dynamicFab, 'tooltip.disabled.scan_in_progress');
         dynamicFab.classList.add('fab-disabled');
+    } else {
+        log(t('log.elementScan.dynamicFabNotFound'), 'warn');
     }
 
     document.addEventListener('mouseover', handleMouseOver);
@@ -148,6 +149,8 @@ export function stopElementScan(fabElement) {
         if (dynamicFab.dataset.originalTooltipKey) {
             updateFabTooltip(dynamicFab, dynamicFab.dataset.originalTooltipKey);
         }
+    } else {
+        log(t('log.elementScan.dynamicFabNotFound'), 'warn');
     }
 
     document.removeEventListener('mouseover', handleMouseOver);
@@ -191,8 +194,16 @@ export function stageCurrentElement() {
     reselectElement();
 }
 
+/**
+ * @private
+ * @function updateStagedCount
+ * @description 更新暂存元素的计数值，并通过事件总线通知UI层。
+ *              这种方式将业务逻辑（`logic.js`）与UI实现（`ui.js`）解耦。
+ *              逻辑层只负责“通知”数量变化了，而UI层负责决定“如何”展示这个变化。
+ */
 function updateStagedCount() {
-    updateTopCenterCounter(stagedTexts.size);
+    // 通过全局事件总线发出事件，将新的计数值作为载荷传递出去。
+    fire('stagedCountChanged', stagedTexts.size);
 }
 
 function handleMouseOver(event) {
