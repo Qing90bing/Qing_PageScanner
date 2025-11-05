@@ -61,6 +61,9 @@ export function showTopCenterCounter(labelKey) {
 
     requestAnimationFrame(() => {
         counterElement.classList.add('is-visible');
+        // 动态设置宽度变量，供教程图标定位使用
+        const width = counterElement.offsetWidth;
+        uiContainer.style.setProperty('--tc-counter-width', `${width}px`);
     });
 }
 
