@@ -21,32 +21,35 @@ import { log } from '../../utils/logger.js';
  * 点击该按钮将触发一个信息提示框（infoTooltip），显示相应的帮助内容。
  * @param {string} contentKey - 一个i18n键。该函数会用这个键来查找帮助文本，
  * 并通过在其后附加 "Title" (例如 `contentKeyTitle`) 来查找标题文本。
- * @returns {HTMLButtonElement} - 返回一个配置好的 `button` 元素。
+ * @returns {HTMLButtonElement} - 返回一个配置好的 `button` 元素，并附带一个 `destroy` 方法用于清理。
  */
 export function createHelpIcon(contentKey) {
     const helpButton = document.createElement('button');
     helpButton.className = 'tc-help-icon-button';
-    // 使用 Trusted Types 来安全地将 SVG 字符串设置为按钮的 innerHTML。
     helpButton.innerHTML = createTrustedHTML(questionMarkIcon);
 
-    // 为按钮添加点击事件监听器，以显示信息提示框。
-    helpButton.addEventListener('click', (event) => {
-        // 阻止事件冒泡，以避免意外触发父元素的点击事件（例如，关闭模态框）。
+    const handleClick = (event) => {
         event.stopPropagation();
-
         log(`点击了帮助图标，显示内容键: ${contentKey}`);
-
-        // 从i18n资源中获取标题和正文文本。
         const helpContent = t(contentKey);
         const helpTitle = t(`${contentKey}Title`);
-
-        // 调用 infoTooltip 单例来显示帮助信息。
         infoTooltip.show({
             title: helpTitle,
             text: helpContent,
-            titleIcon: questionMarkIcon // 将同一个图标用于标题
+            titleIcon: questionMarkIcon
         });
-    });
+    };
+
+    helpButton.addEventListener('click', handleClick);
+
+    /**
+     * @memberof helpButton
+     * @function destroy
+     * @description 移除事件监听器，用于组件销毁时的资源清理。
+     */
+    helpButton.destroy = () => {
+        helpButton.removeEventListener('click', handleClick);
+    };
 
     return helpButton;
 }

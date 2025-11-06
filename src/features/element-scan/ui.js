@@ -375,11 +375,18 @@ export function showTopCenterUI() {
  * @description 隐藏并销毁顶部中央UI，确保子元素动画完成后再清理资源。
  */
 export function hideTopCenterUI() {
+    // 关键修复：将检查和状态更新移到函数开头，以防止重复触发
     if (!topCenterContainer) return;
 
+    // 保存对当前元素的引用，然后立即重置模块级变量
+    // 这可以防止在动画期间对 hideTopCenterUI 的任何后续调用干扰正在进行的退场动画。
     const containerToRemove = topCenterContainer;
     const counterToRemove = counterElement;
     const iconToRemove = helpIcon;
+
+    topCenterContainer = null;
+    counterElement = null;
+    helpIcon = null;
 
     // 1. 独立地触发子元素的退场动画
     if (counterToRemove) counterToRemove.classList.remove('is-visible');
@@ -387,19 +394,16 @@ export function hideTopCenterUI() {
 
     // 2. 在CSS动画（400ms）结束后，执行所有清理工作
     setTimeout(() => {
-        // 调用计数器组件的destroy方法
-        if (counterElement && typeof counterElement.destroy === 'function') {
-            counterElement.destroy();
+        // 在移除DOM之前，先调用所有子组件的destroy方法
+        if (counterToRemove && typeof counterToRemove.destroy === 'function') {
+            counterToRemove.destroy();
         }
+        if (iconToRemove && typeof iconToRemove.destroy === 'function') {
+            iconToRemove.destroy();
+        }
+
         // 从DOM中彻底移除容器
         containerToRemove.remove();
-
-        // 只有在DOM元素完全移除后，才重置模块级变量
-        if (containerToRemove === topCenterContainer) {
-            topCenterContainer = null;
-            counterElement = null;
-            helpIcon = null;
-        }
     }, 400);
 
     // 3. 立即清理事件监听器

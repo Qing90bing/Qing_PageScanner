@@ -5799,7 +5799,7 @@ ${result.join(",\n")}
     const helpButton = document.createElement("button");
     helpButton.className = "tc-help-icon-button";
     helpButton.innerHTML = createTrustedHTML(questionMarkIcon);
-    helpButton.addEventListener("click", (event) => {
+    const handleClick = (event) => {
       event.stopPropagation();
       log(`\u70B9\u51FB\u4E86\u5E2E\u52A9\u56FE\u6807\uFF0C\u663E\u793A\u5185\u5BB9\u952E: ${contentKey}`);
       const helpContent = t(contentKey);
@@ -5809,7 +5809,11 @@ ${result.join(",\n")}
         text: helpContent,
         titleIcon: questionMarkIcon
       });
-    });
+    };
+    helpButton.addEventListener("click", handleClick);
+    helpButton.destroy = () => {
+      helpButton.removeEventListener("click", handleClick);
+    };
     return helpButton;
   }
   var topCenterContainer = null;
@@ -6036,18 +6040,19 @@ ${result.join(",\n")}
     const containerToRemove = topCenterContainer;
     const counterToRemove = counterElement2;
     const iconToRemove = helpIcon;
+    topCenterContainer = null;
+    counterElement2 = null;
+    helpIcon = null;
     if (counterToRemove) counterToRemove.classList.remove("is-visible");
     if (iconToRemove) iconToRemove.classList.remove("is-visible");
     setTimeout(() => {
-      if (counterElement2 && typeof counterElement2.destroy === "function") {
-        counterElement2.destroy();
+      if (counterToRemove && typeof counterToRemove.destroy === "function") {
+        counterToRemove.destroy();
+      }
+      if (iconToRemove && typeof iconToRemove.destroy === "function") {
+        iconToRemove.destroy();
       }
       containerToRemove.remove();
-      if (containerToRemove === topCenterContainer) {
-        topCenterContainer = null;
-        counterElement2 = null;
-        helpIcon = null;
-      }
     }, 400);
     if (typeof unsubscribeStagedCountChanged === "function") {
       unsubscribeStagedCountChanged();
