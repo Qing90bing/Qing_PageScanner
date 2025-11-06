@@ -5,6 +5,7 @@ import { infoTooltip } from './infoTooltip.js';
 import { t } from '../../i18n/index.js';
 import { createTrustedHTML } from '../../utils/trustedTypes.js';
 import { log } from '../../utils/logger.js';
+import { simpleTemplate } from '../../utils/templating.js';
 
 /**
  * @file 提供了创建帮助图标UI组件的功能。
@@ -30,7 +31,7 @@ export function createHelpIcon(contentKey) {
 
     const handleClick = (event) => {
         event.stopPropagation();
-        log(`点击了帮助图标，显示内容键: ${contentKey}`);
+        log(simpleTemplate(t('log.ui.helpIcon.clicked'), { contentKey }));
         const helpContent = t(contentKey);
         const helpTitle = t(`${contentKey}Title`);
         infoTooltip.show({

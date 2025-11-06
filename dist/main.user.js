@@ -393,6 +393,9 @@ var TextExtractor = (() => {
           closing: "Closing main modal...",
           scanFailed: "Static scan failed: {{error}}",
           clearContent: "Clear content button clicked."
+        },
+        helpIcon: {
+          clicked: "Help icon clicked, displaying content for key: {{contentKey}}"
         }
       },
       exporter: {
@@ -726,6 +729,9 @@ var TextExtractor = (() => {
           closing: "\u6B63\u5728\u5173\u95ED\u4E3B\u6A21\u6001\u6846...",
           scanFailed: "\u9759\u6001\u626B\u63CF\u5931\u8D25: {{error}}",
           clearContent: "\u6E05\u7A7A\u5185\u5BB9\u6309\u94AE\u5DF2\u70B9\u51FB\u3002"
+        },
+        helpIcon: {
+          clicked: "\u70B9\u51FB\u4E86\u5E2E\u52A9\u56FE\u6807\uFF0C\u663E\u793A\u5185\u5BB9\u952E\uFF1A{{contentKey}}"
         }
       },
       exporter: {
@@ -1059,6 +1065,9 @@ var TextExtractor = (() => {
           closing: "\u6B63\u5728\u95DC\u9589\u4E3B\u6A21\u614B\u6846...",
           scanFailed: "\u975C\u614B\u6383\u63CF\u5931\u6557: {{error}}",
           clearContent: "\u6E05\u7A7A\u5167\u5BB9\u6309\u9215\u5DF2\u9EDE\u64CA\u3002"
+        },
+        helpIcon: {
+          clicked: "\u9EDE\u64CA\u4E86\u5E6B\u52A9\u5716\u793A\uFF0C\u986F\u793A\u5167\u5BB9\u9375\uFF1A{{contentKey}}"
         }
       },
       exporter: {
@@ -2165,6 +2174,9 @@ ${result.join(",\n")}
           closing: "Closing main modal...",
           scanFailed: "Static scan failed: {{error}}",
           clearContent: "Clear content button clicked."
+        },
+        helpIcon: {
+          clicked: "Help icon clicked, displaying content for key: {{contentKey}}"
         }
       },
       exporter: {
@@ -2499,6 +2511,9 @@ ${result.join(",\n")}
           closing: "\\u6B63\\u5728\\u5173\\u95ED\\u4E3B\\u6A21\\u6001\\u6846...",
           scanFailed: "\\u9759\\u6001\\u626B\\u63CF\\u5931\\u8D25: {{error}}",
           clearContent: "\\u6E05\\u7A7A\\u5185\\u5BB9\\u6309\\u94AE\\u5DF2\\u70B9\\u51FB\\u3002"
+        },
+        helpIcon: {
+          clicked: "\\u70B9\\u51FB\\u4E86\\u5E2E\\u52A9\\u56FE\\u6807\\uFF0C\\u663E\\u793A\\u5185\\u5BB9\\u952E\\uFF1A{{contentKey}}"
         }
       },
       exporter: {
@@ -2833,6 +2848,9 @@ ${result.join(",\n")}
           closing: "\\u6B63\\u5728\\u95DC\\u9589\\u4E3B\\u6A21\\u614B\\u6846...",
           scanFailed: "\\u975C\\u614B\\u6383\\u63CF\\u5931\\u6557: {{error}}",
           clearContent: "\\u6E05\\u7A7A\\u5167\\u5BB9\\u6309\\u9215\\u5DF2\\u9EDE\\u64CA\\u3002"
+        },
+        helpIcon: {
+          clicked: "\\u9EDE\\u64CA\\u4E86\\u5E6B\\u52A9\\u5716\\u793A\\uFF0C\\u986F\\u793A\\u5167\\u5BB9\\u9375\\uFF1A{{contentKey}}"
         }
       },
       exporter: {
@@ -3642,6 +3660,9 @@ ${result.join(",\n")}
           closing: "Closing main modal...",
           scanFailed: "Static scan failed: {{error}}",
           clearContent: "Clear content button clicked."
+        },
+        helpIcon: {
+          clicked: "Help icon clicked, displaying content for key: {{contentKey}}"
         }
       },
       exporter: {
@@ -3976,6 +3997,9 @@ ${result.join(",\n")}
           closing: "\\u6B63\\u5728\\u5173\\u95ED\\u4E3B\\u6A21\\u6001\\u6846...",
           scanFailed: "\\u9759\\u6001\\u626B\\u63CF\\u5931\\u8D25: {{error}}",
           clearContent: "\\u6E05\\u7A7A\\u5185\\u5BB9\\u6309\\u94AE\\u5DF2\\u70B9\\u51FB\\u3002"
+        },
+        helpIcon: {
+          clicked: "\\u70B9\\u51FB\\u4E86\\u5E2E\\u52A9\\u56FE\\u6807\\uFF0C\\u663E\\u793A\\u5185\\u5BB9\\u952E\\uFF1A{{contentKey}}"
         }
       },
       exporter: {
@@ -4310,6 +4334,9 @@ ${result.join(",\n")}
           closing: "\\u6B63\\u5728\\u95DC\\u9589\\u4E3B\\u6A21\\u614B\\u6846...",
           scanFailed: "\\u975C\\u614B\\u6383\\u63CF\\u5931\\u6557: {{error}}",
           clearContent: "\\u6E05\\u7A7A\\u5167\\u5BB9\\u6309\\u9215\\u5DF2\\u9EDE\\u64CA\\u3002"
+        },
+        helpIcon: {
+          clicked: "\\u9EDE\\u64CA\\u4E86\\u5E6B\\u52A9\\u5716\\u793A\\uFF0C\\u986F\\u793A\\u5167\\u5BB9\\u9375\\uFF1A{{contentKey}}"
         }
       },
       exporter: {
@@ -5741,7 +5768,7 @@ ${result.join(",\n")}
     helpButton.innerHTML = createTrustedHTML(questionMarkIcon);
     const handleClick = (event) => {
       event.stopPropagation();
-      log(`\u70B9\u51FB\u4E86\u5E2E\u52A9\u56FE\u6807\uFF0C\u663E\u793A\u5185\u5BB9\u952E: ${contentKey}`);
+      log(simpleTemplate(t("log.ui.helpIcon.clicked"), { contentKey }));
       const helpContent = t(contentKey);
       const helpTitle = t(`${contentKey}Title`);
       infoTooltip.show({
@@ -6597,6 +6624,9 @@ ${result.join(",\n")}
           closing: "Closing main modal...",
           scanFailed: "Static scan failed: {{error}}",
           clearContent: "Clear content button clicked."
+        },
+        helpIcon: {
+          clicked: "Help icon clicked, displaying content for key: {{contentKey}}"
         }
       },
       exporter: {
@@ -6931,6 +6961,9 @@ ${result.join(",\n")}
           closing: "\\u6B63\\u5728\\u5173\\u95ED\\u4E3B\\u6A21\\u6001\\u6846...",
           scanFailed: "\\u9759\\u6001\\u626B\\u63CF\\u5931\\u8D25: {{error}}",
           clearContent: "\\u6E05\\u7A7A\\u5185\\u5BB9\\u6309\\u94AE\\u5DF2\\u70B9\\u51FB\\u3002"
+        },
+        helpIcon: {
+          clicked: "\\u70B9\\u51FB\\u4E86\\u5E2E\\u52A9\\u56FE\\u6807\\uFF0C\\u663E\\u793A\\u5185\\u5BB9\\u952E\\uFF1A{{contentKey}}"
         }
       },
       exporter: {
@@ -7265,6 +7298,9 @@ ${result.join(",\n")}
           closing: "\\u6B63\\u5728\\u95DC\\u9589\\u4E3B\\u6A21\\u614B\\u6846...",
           scanFailed: "\\u975C\\u614B\\u6383\\u63CF\\u5931\\u6557: {{error}}",
           clearContent: "\\u6E05\\u7A7A\\u5167\\u5BB9\\u6309\\u9215\\u5DF2\\u9EDE\\u64CA\\u3002"
+        },
+        helpIcon: {
+          clicked: "\\u9EDE\\u64CA\\u4E86\\u5E6B\\u52A9\\u5716\\u793A\\uFF0C\\u986F\\u793A\\u5167\\u5BB9\\u9375\\uFF1A{{contentKey}}"
         }
       },
       exporter: {

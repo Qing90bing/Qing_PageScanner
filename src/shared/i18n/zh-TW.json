@@ -246,6 +246,9 @@
       "closing": "正在關閉主模態框...",
         "scanFailed": "靜態掃描失敗: {{error}}",
       "clearContent": "清空內容按鈕已點擊。"
+      },
+      "helpIcon": {
+        "clicked": "點擊了幫助圖示，顯示內容鍵：{{contentKey}}"
       }
     },
     "exporter": {

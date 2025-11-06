@@ -246,6 +246,9 @@
       "closing": "正在关闭主模态框...",
         "scanFailed": "静态扫描失败: {{error}}",
       "clearContent": "清空内容按钮已点击。"
+      },
+      "helpIcon": {
+        "clicked": "点击了帮助图标，显示内容键：{{contentKey}}"
       }
     },
     "exporter": {

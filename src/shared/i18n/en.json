@@ -246,6 +246,9 @@
       "closing": "Closing main modal...",
         "scanFailed": "Static scan failed: {{error}}",
       "clearContent": "Clear content button clicked."
+      },
+      "helpIcon": {
+        "clicked": "Help icon clicked, displaying content for key: {{contentKey}}"
       }
     },
     "exporter": {
