@@ -5,44 +5,46 @@
 
 /*
   顶部UI的Flexbox父容器。
-  现在，该容器将统一负责其所有子元素的定位、布局和动画，
-  以确保所有组件的入场和出场动画完全同步。
+  这个容器现在只负责布局（定位、对齐和间距），不再处理动画。
+  动画的控制权已交还给其子组件，以解决 `opacity` 和 `backdrop-filter` 的渲染冲突。
 */
 .top-center-ui-container {
     position: fixed;
     top: 20px;
     left: 50%;
+    transform: translateX(-50%); /* 仅用于水平居中 */
 
     /* 布局属性 */
     display: flex;
     align-items: center; /* 垂直居中对齐 */
-    gap: 8px; /* 子元素之间的间距，从10px减小以使其更紧凑 */
+    gap: 8px; /* 子元素之间的间距 */
 
     z-index: 9999998;
-
-    /* 统一的动画属性 */
-    opacity: 0;
-    transform: translate(-50%, -150%); /* 初始状态：在视口上方且不可见 */
-    transition: transform 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1)),
-                opacity 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1));
-}
-
-/* 当容器可见时，平滑地移动到最终位置并变为不透明 */
-.top-center-ui-container.is-visible {
-    opacity: 1;
-    transform: translate(-50%, 0);
+    /* 移除 opacity 和 transition，父容器不再有动画 */
 }
 
 /*
   对帮助图标进行微调，以确保其视觉上与计数器协调一致。
+  这里的动画属性必须与 `top-center-counter.css` 中的定义完全一致，以保证同步。
 */
 .element-scan-help-icon {
     /* 尺寸调整：使其直径与计数器的高度（36px）完全匹配 */
     width: 36px;
     height: 36px;
 
-    /* 移除独立的动画属性，现在由父容器控制 */
-    transition: background-color 0.2s ease, transform 0.2s ease; /* 只保留悬停效果的过渡 */
+    /* 新增：与计数器一致的入场/出场动画 */
+    transform: translateY(-150%);
+    opacity: 0;
+    /* 确保这里的 transition 与计数器的完全相同 */
+    transition: transform 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1)),
+                opacity 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1)),
+                background-color 0.2s ease,
+                transform 0.2s ease; /* 保留悬停效果的过渡 */
+}
+
+.element-scan-help-icon.is-visible {
+    transform: translateY(0);
+    opacity: 1;
 }
 
 .element-scan-help-icon:hover {
@@ -53,16 +55,24 @@
 /*
   关键修复：覆盖 `tc-top-center-counter` 组件的默认样式。
   当我们将它放入Flexbox容器中时，我们只需要覆盖它的定位，
-  动画现在由父容器处理。
+  而它自己的动画（transform, opacity）现在需要被保留。
 */
 .top-center-ui-container .tc-top-center-counter {
     /* 覆盖 `position: fixed`，使其成为一个正常的flex子项 */
     position: relative;
 
-    /* 重置其原有的定位和动画属性 */
+    /* 重置其原有的定位属性 */
     top: auto;
     left: auto;
-    transform: none;
-    opacity: 1;
-    transition: none;
+
+    /* 关键：将 translate(-50%, -150%) 调整为仅 Y 轴的移动，因为它现在是 flex item */
+    /* 初始状态 */
+    transform: translateY(-150%);
+
+    /* 移除 left: 50% 带来的 translateX(-50%) 的居中效果，因为 flex 已经处理了居中 */
+}
+
+/* 当计数器在容器中可见时，只改变 Y 轴的位置 */
+.top-center-ui-container .tc-top-center-counter.is-visible {
+    transform: translateY(0);
 }

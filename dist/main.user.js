@@ -6027,13 +6027,17 @@ ${result.join(",\n")}
     });
     updateTopCenterCounter(counterElement2, 0);
     requestAnimationFrame(() => {
-      topCenterContainer.classList.add("is-visible");
+      counterElement2.classList.add("is-visible");
+      helpIcon.classList.add("is-visible");
     });
   }
   function hideTopCenterUI() {
     if (!topCenterContainer) return;
     const containerToRemove = topCenterContainer;
-    containerToRemove.classList.remove("is-visible");
+    const counterToRemove = counterElement2;
+    const iconToRemove = helpIcon;
+    if (counterToRemove) counterToRemove.classList.remove("is-visible");
+    if (iconToRemove) iconToRemove.classList.remove("is-visible");
     setTimeout(() => {
       if (counterElement2 && typeof counterElement2.destroy === "function") {
         counterElement2.destroy();
@@ -8521,22 +8525,22 @@ ${result.join(",\n")}
     position:fixed;
     top:20px;
     left:50%;
+    transform:translateX(-50%);
     display:flex;
     align-items:center;
     gap:8px;
     z-index:9999998;
-    opacity:0;
-    transform:translate(-50%, -150%);
-    transition:transform 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1)), opacity 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1));
-}
-.top-center-ui-container.is-visible{
-    opacity:1;
-    transform:translate(-50%, 0);
 }
 .element-scan-help-icon{
     width:36px;
     height:36px;
-    transition:background-color 0.2s ease, transform 0.2s ease;
+    transform:translateY(-150%);
+    opacity:0;
+    transition:transform 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1)), opacity 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1)), background-color 0.2s ease, transform 0.2s ease;
+}
+.element-scan-help-icon.is-visible{
+    transform:translateY(0);
+    opacity:1;
 }
 .element-scan-help-icon:hover{
     transform:scale(1.1);
@@ -8546,9 +8550,10 @@ ${result.join(",\n")}
     position:relative;
     top:auto;
     left:auto;
-    transform:none;
-    opacity:1;
-    transition:none;
+    transform:translateY(-150%);
+}
+.top-center-ui-container .tc-top-center-counter.is-visible{
+    transform:translateY(0);
 }
 #element-scan-container{
     position:absolute;

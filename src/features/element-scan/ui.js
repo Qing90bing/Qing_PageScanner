@@ -331,7 +331,6 @@ export function cleanupToolbar() {
  * @private
  * @function setupTopCenterUI
  * @description 创建并组装顶部中央UI（计数器和帮助图标）的DOM结构。
- *              该函数遵循“单一容器”模式，将两个独立的组件包裹在一个Flexbox容器中。
  */
 function setupTopCenterUI() {
     topCenterContainer = document.createElement('div');
@@ -350,7 +349,7 @@ function setupTopCenterUI() {
 /**
  * @public
  * @function showTopCenterUI
- * @description 显示顶部中央UI，并触发其同步入场动画。
+ * @description 显示顶部中央UI，并分别触发其子元素的入场动画。
  */
 export function showTopCenterUI() {
     if (topCenterContainer) return;
@@ -363,24 +362,28 @@ export function showTopCenterUI() {
 
     updateTopCenterCounter(counterElement, 0);
 
-    // 在下一帧触发父容器的入场动画，确保所有子元素同步出现
+    // 在下一帧独立地触发子元素的入场动画，以确保 backdrop-filter 正常渲染
     requestAnimationFrame(() => {
-        topCenterContainer.classList.add('is-visible');
+        counterElement.classList.add('is-visible');
+        helpIcon.classList.add('is-visible');
     });
 }
 
 /**
  * @public
  * @function hideTopCenterUI
- * @description 隐藏并销毁顶部中央UI，确保同步退场动画完成后再清理资源。
+ * @description 隐藏并销毁顶部中央UI，确保子元素动画完成后再清理资源。
  */
 export function hideTopCenterUI() {
     if (!topCenterContainer) return;
 
     const containerToRemove = topCenterContainer;
+    const counterToRemove = counterElement;
+    const iconToRemove = helpIcon;
 
-    // 1. 触发父容器的退场动画
-    containerToRemove.classList.remove('is-visible');
+    // 1. 独立地触发子元素的退场动画
+    if (counterToRemove) counterToRemove.classList.remove('is-visible');
+    if (iconToRemove) iconToRemove.classList.remove('is-visible');
 
     // 2. 在CSS动画（400ms）结束后，执行所有清理工作
     setTimeout(() => {
