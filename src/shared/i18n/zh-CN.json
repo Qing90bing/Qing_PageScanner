@@ -326,6 +326,8 @@
   },
   "tutorial": {
     "elementScanTitle": "选取元素扫描教程",
-    "elementScan": "<p class=\"tutorial-content\">这是一个用于选取元素扫描教程的占位符。支持富文本格式。</p>"
+    "elementScan": "<p class=\"tutorial-content\">这是一个用于选取元素扫描教程的占位符。支持富文本格式。</p>",
+    "sessionScanTitle": "会话扫描教程",
+    "sessionScan": "<p class=\"tutorial-content\">这是一个用于会话扫描教程的占位符。支持富文本格式。</p>"
   }
 }

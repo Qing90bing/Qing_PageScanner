@@ -473,7 +473,9 @@ var TextExtractor = (() => {
     },
     tutorial: {
       elementScanTitle: "Element Scan Guide",
-      elementScan: '<p class="tutorial-content">This is a placeholder for the element scan tutorial. Rich text is supported.</p>'
+      elementScan: '<p class="tutorial-content">This is a placeholder for the element scan tutorial. Rich text is supported.</p>',
+      sessionScanTitle: "Session Scan Guide",
+      sessionScan: '<p class="tutorial-content">This is a placeholder for the session scan tutorial. Rich text is supported.</p>'
     }
   };
   var zh_CN_default = {
@@ -804,7 +806,9 @@ var TextExtractor = (() => {
     },
     tutorial: {
       elementScanTitle: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u6559\u7A0B",
-      elementScan: '<p class="tutorial-content">\u8FD9\u662F\u4E00\u4E2A\u7528\u4E8E\u9009\u53D6\u5143\u7D20\u626B\u63CF\u6559\u7A0B\u7684\u5360\u4F4D\u7B26\u3002\u652F\u6301\u5BCC\u6587\u672C\u683C\u5F0F\u3002</p>'
+      elementScan: '<p class="tutorial-content">\u8FD9\u662F\u4E00\u4E2A\u7528\u4E8E\u9009\u53D6\u5143\u7D20\u626B\u63CF\u6559\u7A0B\u7684\u5360\u4F4D\u7B26\u3002\u652F\u6301\u5BCC\u6587\u672C\u683C\u5F0F\u3002</p>',
+      sessionScanTitle: "\u4F1A\u8BDD\u626B\u63CF\u6559\u7A0B",
+      sessionScan: '<p class="tutorial-content">\u8FD9\u662F\u4E00\u4E2A\u7528\u4E8E\u4F1A\u8BDD\u626B\u63CF\u6559\u7A0B\u7684\u5360\u4F4D\u7B26\u3002\u652F\u6301\u5BCC\u6587\u672C\u683C\u5F0F\u3002</p>'
     }
   };
   var zh_TW_default = {
@@ -1135,7 +1139,9 @@ var TextExtractor = (() => {
     },
     tutorial: {
       elementScanTitle: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u6559\u5B78",
-      elementScan: '<p class="tutorial-content">\u9019\u662F\u4E00\u500B\u7528\u65BC\u9078\u53D6\u5143\u7D20\u6383\u63CF\u6559\u5B78\u7684\u4F54\u4F4D\u7B26\u3002\u652F\u63F4\u5BCC\u6587\u672C\u683C\u5F0F\u3002</p>'
+      elementScan: '<p class="tutorial-content">\u9019\u662F\u4E00\u500B\u7528\u65BC\u9078\u53D6\u5143\u7D20\u6383\u63CF\u6559\u5B78\u7684\u4F54\u4F4D\u7B26\u3002\u652F\u63F4\u5BCC\u6587\u672C\u683C\u5F0F\u3002</p>',
+      sessionScanTitle: "\u6703\u8A71\u6383\u63CF\u6559\u5B78",
+      sessionScan: '<p class="tutorial-content">\u9019\u662F\u4E00\u500B\u7528\u65BC\u6703\u8A71\u6383\u63CF\u6559\u5B78\u7684\u4F54\u4F4D\u7B26\u3002\u652F\u63F4\u5BCC\u6587\u672C\u683C\u5F0F\u3002</p>'
     }
   };
   var isDebugEnabled = false;
@@ -2239,7 +2245,9 @@ ${result.join(",\n")}
     },
     tutorial: {
       elementScanTitle: "Element Scan Guide",
-      elementScan: '<p class="tutorial-content">This is a placeholder for the element scan tutorial. Rich text is supported.</p>'
+      elementScan: '<p class="tutorial-content">This is a placeholder for the element scan tutorial. Rich text is supported.</p>',
+      sessionScanTitle: "Session Scan Guide",
+      sessionScan: '<p class="tutorial-content">This is a placeholder for the session scan tutorial. Rich text is supported.</p>'
     }
   };
   // src/shared/i18n/zh-CN.json
@@ -2571,7 +2579,9 @@ ${result.join(",\n")}
     },
     tutorial: {
       elementScanTitle: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u6559\\u7A0B",
-      elementScan: '<p class="tutorial-content">\\u8FD9\\u662F\\u4E00\\u4E2A\\u7528\\u4E8E\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u6559\\u7A0B\\u7684\\u5360\\u4F4D\\u7B26\\u3002\\u652F\\u6301\\u5BCC\\u6587\\u672C\\u683C\\u5F0F\\u3002</p>'
+      elementScan: '<p class="tutorial-content">\\u8FD9\\u662F\\u4E00\\u4E2A\\u7528\\u4E8E\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u6559\\u7A0B\\u7684\\u5360\\u4F4D\\u7B26\\u3002\\u652F\\u6301\\u5BCC\\u6587\\u672C\\u683C\\u5F0F\\u3002</p>',
+      sessionScanTitle: "\\u4F1A\\u8BDD\\u626B\\u63CF\\u6559\\u7A0B",
+      sessionScan: '<p class="tutorial-content">\\u8FD9\\u662F\\u4E00\\u4E2A\\u7528\\u4E8E\\u4F1A\\u8BDD\\u626B\\u63CF\\u6559\\u7A0B\\u7684\\u5360\\u4F4D\\u7B26\\u3002\\u652F\\u6301\\u5BCC\\u6587\\u672C\\u683C\\u5F0F\\u3002</p>'
     }
   };
   // src/shared/i18n/zh-TW.json
@@ -2903,7 +2913,9 @@ ${result.join(",\n")}
     },
     tutorial: {
       elementScanTitle: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u6559\\u5B78",
-      elementScan: '<p class="tutorial-content">\\u9019\\u662F\\u4E00\\u500B\\u7528\\u65BC\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u6559\\u5B78\\u7684\\u4F54\\u4F4D\\u7B26\\u3002\\u652F\\u63F4\\u5BCC\\u6587\\u672C\\u683C\\u5F0F\\u3002</p>'
+      elementScan: '<p class="tutorial-content">\\u9019\\u662F\\u4E00\\u500B\\u7528\\u65BC\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u6559\\u5B78\\u7684\\u4F54\\u4F4D\\u7B26\\u3002\\u652F\\u63F4\\u5BCC\\u6587\\u672C\\u683C\\u5F0F\\u3002</p>',
+      sessionScanTitle: "\\u6703\\u8A71\\u6383\\u63CF\\u6559\\u5B78",
+      sessionScan: '<p class="tutorial-content">\\u9019\\u662F\\u4E00\\u500B\\u7528\\u65BC\\u6703\\u8A71\\u6383\\u63CF\\u6559\\u5B78\\u7684\\u4F54\\u4F4D\\u7B26\\u3002\\u652F\\u63F4\\u5BCC\\u6587\\u672C\\u683C\\u5F0F\\u3002</p>'
     }
   };
   // src/shared/i18n/management/languages.js
@@ -3710,7 +3722,9 @@ ${result.join(",\n")}
     },
     tutorial: {
       elementScanTitle: "Element Scan Guide",
-      elementScan: '<p class="tutorial-content">This is a placeholder for the element scan tutorial. Rich text is supported.</p>'
+      elementScan: '<p class="tutorial-content">This is a placeholder for the element scan tutorial. Rich text is supported.</p>',
+      sessionScanTitle: "Session Scan Guide",
+      sessionScan: '<p class="tutorial-content">This is a placeholder for the session scan tutorial. Rich text is supported.</p>'
     }
   };
   // src/shared/i18n/zh-CN.json
@@ -4042,7 +4056,9 @@ ${result.join(",\n")}
     },
     tutorial: {
       elementScanTitle: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u6559\\u7A0B",
-      elementScan: '<p class="tutorial-content">\\u8FD9\\u662F\\u4E00\\u4E2A\\u7528\\u4E8E\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u6559\\u7A0B\\u7684\\u5360\\u4F4D\\u7B26\\u3002\\u652F\\u6301\\u5BCC\\u6587\\u672C\\u683C\\u5F0F\\u3002</p>'
+      elementScan: '<p class="tutorial-content">\\u8FD9\\u662F\\u4E00\\u4E2A\\u7528\\u4E8E\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u6559\\u7A0B\\u7684\\u5360\\u4F4D\\u7B26\\u3002\\u652F\\u6301\\u5BCC\\u6587\\u672C\\u683C\\u5F0F\\u3002</p>',
+      sessionScanTitle: "\\u4F1A\\u8BDD\\u626B\\u63CF\\u6559\\u7A0B",
+      sessionScan: '<p class="tutorial-content">\\u8FD9\\u662F\\u4E00\\u4E2A\\u7528\\u4E8E\\u4F1A\\u8BDD\\u626B\\u63CF\\u6559\\u7A0B\\u7684\\u5360\\u4F4D\\u7B26\\u3002\\u652F\\u6301\\u5BCC\\u6587\\u672C\\u683C\\u5F0F\\u3002</p>'
     }
   };
   // src/shared/i18n/zh-TW.json
@@ -4374,7 +4390,9 @@ ${result.join(",\n")}
     },
     tutorial: {
       elementScanTitle: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u6559\\u5B78",
-      elementScan: '<p class="tutorial-content">\\u9019\\u662F\\u4E00\\u500B\\u7528\\u65BC\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u6559\\u5B78\\u7684\\u4F54\\u4F4D\\u7B26\\u3002\\u652F\\u63F4\\u5BCC\\u6587\\u672C\\u683C\\u5F0F\\u3002</p>'
+      elementScan: '<p class="tutorial-content">\\u9019\\u662F\\u4E00\\u500B\\u7528\\u65BC\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u6559\\u5B78\\u7684\\u4F54\\u4F4D\\u7B26\\u3002\\u652F\\u63F4\\u5BCC\\u6587\\u672C\\u683C\\u5F0F\\u3002</p>',
+      sessionScanTitle: "\\u6703\\u8A71\\u6383\\u63CF\\u6559\\u5B78",
+      sessionScan: '<p class="tutorial-content">\\u9019\\u662F\\u4E00\\u500B\\u7528\\u65BC\\u6703\\u8A71\\u6383\\u63CF\\u6559\\u5B78\\u7684\\u4F54\\u4F4D\\u7B26\\u3002\\u652F\\u63F4\\u5BCC\\u6587\\u672C\\u683C\\u5F0F\\u3002</p>'
     }
   };
   // src/shared/i18n/management/languages.js
@@ -5628,84 +5646,6 @@ ${result.join(",\n")}
     const duration = 500 + Math.min(Math.abs(end - start2) * 10, 1e3);
     animateCount(countSpan, start2, end, duration, easeOutQuad);
   }
-  var stopIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M280-280v-400h400v400H280Z"/></svg>`;
-  var currentSessionCount = 0;
-  var counterElement = null;
-  on("sessionCleared", () => {
-    currentSessionCount = 0;
-  });
-  function showSessionSummary() {
-    log(t("tooltip.summary"));
-    if (isSessionRecording()) {
-      showNotification(t("scan.sessionInProgress"), { type: "info" });
-    }
-    updateScanCount(currentSessionCount, "session");
-    updateModalContent(SHOW_LOADING, true, "session-scan");
-    setTimeout(() => {
-      requestSummary((formattedText, count) => {
-        updateScanCount(count, "session");
-        if (!formattedText || formattedText.trim() === "[]") {
-          updateModalContent(SHOW_PLACEHOLDER, true, "session-scan");
-        } else {
-          updateModalContent(formattedText, true, "session-scan");
-        }
-      });
-    }, 50);
-  }
-  function handleDynamicExtractClick(dynamicFab2) {
-    const elementScanFab2 = getElementScanFab();
-    if (isSessionRecording()) {
-      log(t("scan.stopSession"));
-      stop((finalCount) => {
-        const notificationText = simpleTemplate(t("scan.finished"), { count: finalCount });
-        showNotification(notificationText, { type: "success" });
-        currentSessionCount = finalCount;
-      });
-      setFabIcon(dynamicFab2, dynamicIcon);
-      dynamicFab2.classList.remove("is-recording");
-      updateFabTooltip(dynamicFab2, "tooltip.dynamic_scan");
-      if (counterElement) {
-        const counterToRemove = counterElement;
-        counterToRemove.classList.remove("is-visible");
-        setTimeout(() => {
-          if (typeof counterToRemove.destroy === "function") {
-            counterToRemove.destroy();
-          }
-          counterToRemove.remove();
-        }, 400);
-        counterElement = null;
-      }
-      if (elementScanFab2) {
-        elementScanFab2.classList.remove("fab-disabled");
-        if (elementScanFab2.dataset.originalTooltipKey) {
-          updateFabTooltip(elementScanFab2, elementScanFab2.dataset.originalTooltipKey);
-        }
-      }
-    } else {
-      log(t("scan.startSession"));
-      setFabIcon(dynamicFab2, stopIcon);
-      dynamicFab2.classList.add("is-recording");
-      updateFabTooltip(dynamicFab2, "scan.stopSession");
-      if (elementScanFab2) {
-        elementScanFab2.dataset.originalTooltipKey = elementScanFab2.dataset.tooltipKey;
-        updateFabTooltip(elementScanFab2, "tooltip.disabled.scan_in_progress");
-        elementScanFab2.classList.add("fab-disabled");
-      }
-      showNotification(t("scan.sessionStarted"), { type: "info" });
-      counterElement = createTopCenterCounter("common.discovered");
-      updateTopCenterCounter(counterElement, 0);
-      uiContainer.appendChild(counterElement);
-      requestAnimationFrame(() => {
-        counterElement.classList.add("is-visible");
-      });
-      setTimeout(() => {
-        start((count) => {
-          updateTopCenterCounter(counterElement, count);
-          currentSessionCount = count;
-        });
-      }, 50);
-    }
-  }
   var questionMarkIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M478-240q21 0 35.5-14.5T528-290q0-21-14.5-35.5T478-340q-21 0-35.5 14.5T428-290q0 21 14.5 35.5T478-240Zm-36-154h74q0-33 7.5-52t42.5-52q26-26 41-49.5t15-56.5q0-56-41-86t-97-30q-57 0-92.5 30T342-618l66 26q5-18 22.5-39t53.5-21q32 0 48 17.5t16 38.5q0 20-12 37.5T506-526q-44 39-54 59t-10 73Zm38 314q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>`;
   var Tooltip = class {
     constructor() {
@@ -5816,9 +5756,111 @@ ${result.join(",\n")}
     };
     return helpButton;
   }
+  var stopIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M280-280v-400h400v400H280Z"/></svg>`;
+  var currentSessionCount = 0;
   var topCenterContainer = null;
-  var counterElement2 = null;
+  var counterElement = null;
   var helpIcon = null;
+  on("sessionCleared", () => {
+    currentSessionCount = 0;
+  });
+  function showTopCenterUI() {
+    if (topCenterContainer) return;
+    topCenterContainer = document.createElement("div");
+    topCenterContainer.className = "session-scan-top-center-ui-container";
+    counterElement = createTopCenterCounter("common.discovered");
+    helpIcon = createHelpIcon("tutorial.sessionScan");
+    topCenterContainer.appendChild(counterElement);
+    topCenterContainer.appendChild(helpIcon);
+    uiContainer.appendChild(topCenterContainer);
+    updateTopCenterCounter(counterElement, 0);
+    requestAnimationFrame(() => {
+      counterElement.classList.add("is-visible");
+      helpIcon.classList.add("is-visible");
+    });
+  }
+  function hideTopCenterUI() {
+    if (!topCenterContainer) return;
+    const containerToRemove = topCenterContainer;
+    const counterToRemove = counterElement;
+    const iconToRemove = helpIcon;
+    topCenterContainer = null;
+    counterElement = null;
+    helpIcon = null;
+    if (counterToRemove) counterToRemove.classList.remove("is-visible");
+    if (iconToRemove) iconToRemove.classList.remove("is-visible");
+    setTimeout(() => {
+      if (counterToRemove && typeof counterToRemove.destroy === "function") {
+        counterToRemove.destroy();
+      }
+      if (iconToRemove && typeof iconToRemove.destroy === "function") {
+        iconToRemove.destroy();
+      }
+      containerToRemove.remove();
+    }, 400);
+  }
+  function showSessionSummary() {
+    log(t("tooltip.summary"));
+    if (isSessionRecording()) {
+      showNotification(t("scan.sessionInProgress"), { type: "info" });
+    }
+    updateScanCount(currentSessionCount, "session");
+    updateModalContent(SHOW_LOADING, true, "session-scan");
+    setTimeout(() => {
+      requestSummary((formattedText, count) => {
+        updateScanCount(count, "session");
+        if (!formattedText || formattedText.trim() === "[]") {
+          updateModalContent(SHOW_PLACEHOLDER, true, "session-scan");
+        } else {
+          updateModalContent(formattedText, true, "session-scan");
+        }
+      });
+    }, 50);
+  }
+  function handleDynamicExtractClick(dynamicFab2) {
+    const elementScanFab2 = getElementScanFab();
+    if (isSessionRecording()) {
+      log(t("scan.stopSession"));
+      stop((finalCount) => {
+        const notificationText = simpleTemplate(t("scan.finished"), { count: finalCount });
+        showNotification(notificationText, { type: "success" });
+        currentSessionCount = finalCount;
+      });
+      setFabIcon(dynamicFab2, dynamicIcon);
+      dynamicFab2.classList.remove("is-recording");
+      updateFabTooltip(dynamicFab2, "tooltip.dynamic_scan");
+      hideTopCenterUI();
+      if (elementScanFab2) {
+        elementScanFab2.classList.remove("fab-disabled");
+        if (elementScanFab2.dataset.originalTooltipKey) {
+          updateFabTooltip(elementScanFab2, elementScanFab2.dataset.originalTooltipKey);
+        }
+      }
+    } else {
+      log(t("scan.startSession"));
+      setFabIcon(dynamicFab2, stopIcon);
+      dynamicFab2.classList.add("is-recording");
+      updateFabTooltip(dynamicFab2, "scan.stopSession");
+      if (elementScanFab2) {
+        elementScanFab2.dataset.originalTooltipKey = elementScanFab2.dataset.tooltipKey;
+        updateFabTooltip(elementScanFab2, "tooltip.disabled.scan_in_progress");
+        elementScanFab2.classList.add("fab-disabled");
+      }
+      showNotification(t("scan.sessionStarted"), { type: "info" });
+      showTopCenterUI();
+      setTimeout(() => {
+        start((count) => {
+          if (counterElement) {
+            updateTopCenterCounter(counterElement, count);
+          }
+          currentSessionCount = count;
+        });
+      }, 50);
+    }
+  }
+  var topCenterContainer2 = null;
+  var counterElement2 = null;
+  var helpIcon2 = null;
   var unsubscribeStagedCountChanged = null;
   var scanContainer = null;
   var highlightBorder = null;
@@ -6014,17 +6056,17 @@ ${result.join(",\n")}
     }
   }
   function setupTopCenterUI() {
-    topCenterContainer = document.createElement("div");
-    topCenterContainer.className = "top-center-ui-container";
+    topCenterContainer2 = document.createElement("div");
+    topCenterContainer2.className = "top-center-ui-container";
     counterElement2 = createTopCenterCounter("scan.stagedCount");
-    helpIcon = createHelpIcon("tutorial.elementScan");
-    helpIcon.classList.add("element-scan-help-icon");
-    topCenterContainer.appendChild(counterElement2);
-    topCenterContainer.appendChild(helpIcon);
-    uiContainer.appendChild(topCenterContainer);
+    helpIcon2 = createHelpIcon("tutorial.elementScan");
+    helpIcon2.classList.add("element-scan-help-icon");
+    topCenterContainer2.appendChild(counterElement2);
+    topCenterContainer2.appendChild(helpIcon2);
+    uiContainer.appendChild(topCenterContainer2);
   }
-  function showTopCenterUI() {
-    if (topCenterContainer) return;
+  function showTopCenterUI2() {
+    if (topCenterContainer2) return;
     setupTopCenterUI();
     unsubscribeStagedCountChanged = on("stagedCountChanged", (newCount) => {
       updateTopCenterCounter(counterElement2, newCount);
@@ -6032,17 +6074,17 @@ ${result.join(",\n")}
     updateTopCenterCounter(counterElement2, 0);
     requestAnimationFrame(() => {
       counterElement2.classList.add("is-visible");
-      helpIcon.classList.add("is-visible");
+      helpIcon2.classList.add("is-visible");
     });
   }
-  function hideTopCenterUI() {
-    if (!topCenterContainer) return;
-    const containerToRemove = topCenterContainer;
+  function hideTopCenterUI2() {
+    if (!topCenterContainer2) return;
+    const containerToRemove = topCenterContainer2;
     const counterToRemove = counterElement2;
-    const iconToRemove = helpIcon;
-    topCenterContainer = null;
+    const iconToRemove = helpIcon2;
+    topCenterContainer2 = null;
     counterElement2 = null;
-    helpIcon = null;
+    helpIcon2 = null;
     if (counterToRemove) counterToRemove.classList.remove("is-visible");
     if (iconToRemove) iconToRemove.classList.remove("is-visible");
     setTimeout(() => {
@@ -6156,7 +6198,7 @@ ${result.join(",\n")}
     isAdjusting = false;
     fabElement.classList.add("is-recording");
     updateFabTooltip(fabElement, "scan.stopSession");
-    showTopCenterUI();
+    showTopCenterUI2();
     const dynamicFab2 = getDynamicFab();
     if (dynamicFab2) {
       dynamicFab2.dataset.originalTooltipKey = dynamicFab2.dataset.tooltipKey;
@@ -6198,7 +6240,7 @@ ${result.join(",\n")}
     log(t("log.elementScan.listenersRemoved"));
     cleanupUI();
     cleanupToolbar();
-    hideTopCenterUI();
+    hideTopCenterUI2();
     removeScrollListeners();
     elementPath = [];
     currentTarget = null;
@@ -6635,7 +6677,9 @@ ${result.join(",\n")}
     },
     tutorial: {
       elementScanTitle: "Element Scan Guide",
-      elementScan: '<p class="tutorial-content">This is a placeholder for the element scan tutorial. Rich text is supported.</p>'
+      elementScan: '<p class="tutorial-content">This is a placeholder for the element scan tutorial. Rich text is supported.</p>',
+      sessionScanTitle: "Session Scan Guide",
+      sessionScan: '<p class="tutorial-content">This is a placeholder for the session scan tutorial. Rich text is supported.</p>'
     }
   };
   // src/shared/i18n/zh-CN.json
@@ -6967,7 +7011,9 @@ ${result.join(",\n")}
     },
     tutorial: {
       elementScanTitle: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u6559\\u7A0B",
-      elementScan: '<p class="tutorial-content">\\u8FD9\\u662F\\u4E00\\u4E2A\\u7528\\u4E8E\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u6559\\u7A0B\\u7684\\u5360\\u4F4D\\u7B26\\u3002\\u652F\\u6301\\u5BCC\\u6587\\u672C\\u683C\\u5F0F\\u3002</p>'
+      elementScan: '<p class="tutorial-content">\\u8FD9\\u662F\\u4E00\\u4E2A\\u7528\\u4E8E\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u6559\\u7A0B\\u7684\\u5360\\u4F4D\\u7B26\\u3002\\u652F\\u6301\\u5BCC\\u6587\\u672C\\u683C\\u5F0F\\u3002</p>',
+      sessionScanTitle: "\\u4F1A\\u8BDD\\u626B\\u63CF\\u6559\\u7A0B",
+      sessionScan: '<p class="tutorial-content">\\u8FD9\\u662F\\u4E00\\u4E2A\\u7528\\u4E8E\\u4F1A\\u8BDD\\u626B\\u63CF\\u6559\\u7A0B\\u7684\\u5360\\u4F4D\\u7B26\\u3002\\u652F\\u6301\\u5BCC\\u6587\\u672C\\u683C\\u5F0F\\u3002</p>'
     }
   };
   // src/shared/i18n/zh-TW.json
@@ -7299,7 +7345,9 @@ ${result.join(",\n")}
     },
     tutorial: {
       elementScanTitle: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u6559\\u5B78",
-      elementScan: '<p class="tutorial-content">\\u9019\\u662F\\u4E00\\u500B\\u7528\\u65BC\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u6559\\u5B78\\u7684\\u4F54\\u4F4D\\u7B26\\u3002\\u652F\\u63F4\\u5BCC\\u6587\\u672C\\u683C\\u5F0F\\u3002</p>'
+      elementScan: '<p class="tutorial-content">\\u9019\\u662F\\u4E00\\u500B\\u7528\\u65BC\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u6559\\u5B78\\u7684\\u4F54\\u4F4D\\u7B26\\u3002\\u652F\\u63F4\\u5BCC\\u6587\\u672C\\u683C\\u5F0F\\u3002</p>',
+      sessionScanTitle: "\\u6703\\u8A71\\u6383\\u63CF\\u6559\\u5B78",
+      sessionScan: '<p class="tutorial-content">\\u9019\\u662F\\u4E00\\u500B\\u7528\\u65BC\\u6703\\u8A71\\u6383\\u63CF\\u6559\\u5B78\\u7684\\u4F54\\u4F4D\\u7B26\\u3002\\u652F\\u63F4\\u5BCC\\u6587\\u672C\\u683C\\u5F0F\\u3002</p>'
     }
   };
   // src/shared/i18n/management/languages.js
@@ -9337,6 +9385,18 @@ ${result.join(",\n")}
 }
 #modal-placeholder strong{
     font-weight:600;
+}
+.session-scan-top-center-ui-container{
+    position:fixed;
+    top:20px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:2147483645;
+    display:flex;
+    gap:16px;
+    align-items:center;
+    justify-content:center;
+    pointer-events:all;
 }
 .settings-panel-overlay{
   position:fixed; top:0; left:0; width:100%; height:100%;
