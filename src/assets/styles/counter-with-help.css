@@ -1,0 +1,117 @@
+/* src/assets/styles/counter-with-help.css */
+
+/*
+ * 主容器，负责定位和动画。
+ */
+.counter-with-help-container {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    z-index: 2147483645;
+    pointer-events: all;
+
+    /* 动画初始状态: 在屏幕上方且不可见 */
+    opacity: 0;
+    transform: translate(-50%, -150%);
+
+    /* 统一的过渡效果 */
+    transition: transform 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1)),
+                opacity 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1));
+}
+
+/*
+ * 动画结束状态: 进入视图并完全可见
+ */
+.counter-with-help-container.is-visible {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+
+/*
+ * 内部包裹容器，负责“胶囊”外观和 Flexbox 布局。
+ * 关键修复：将容器本身设为透明，并将背景和模糊效果移至 ::before 伪元素，
+ * 以解决 transform 和 backdrop-filter 动画冲突导致的渲染延迟问题。
+ */
+.counter-with-help-wrapper {
+    font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
+    position: relative; /* 为伪元素定位提供上下文 */
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    z-index: 1; /* 确保内容在伪元素之上 */
+    border-radius: 24px; /* 保持圆角以便 overflow: hidden 生效 */
+    overflow: hidden; /* 裁剪伪元素的边角 */
+}
+
+.counter-with-help-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+
+    /* 将所有背景、边框和模糊效果应用到这个静态的伪元素上 */
+    background-color: var(--main-bg-a);
+    border: 1px solid var(--main-border);
+    border-radius: 24px;
+    box-shadow: var(--main-shadow);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+/*
+ * 分隔符样式
+ */
+.counter-with-help-separator {
+    width: 1px;
+    height: 16px; /* 确保分隔符有可见高度 */
+    background-color: var(--main-border);
+}
+
+/*
+ * --- 样式覆盖 ---
+ * 强制子元素（计数器和帮助图标）适应 Flexbox 布局。
+ */
+.counter-with-help-wrapper .tc-top-center-counter {
+    /* 覆盖它们自己的定位和动画样式 */
+    position: static;
+    transform: none;
+    opacity: 1;
+    transition: none;
+}
+
+.counter-with-help-wrapper .tc-help-icon-button {
+    /* 覆盖定位和动画，但保留交互式过渡 */
+    position: static;
+    transform: none;
+    opacity: 1;
+    transition: color 0.2s, background-color 0.2s; /* 恢复悬停动画 */
+}
+
+.counter-with-help-wrapper .tc-top-center-counter,
+.counter-with-help-wrapper .tc-help-icon-button {
+    /* 通用的样式覆盖 */
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* 确保计数器内的文本样式不受影响 */
+.counter-with-help-wrapper .tc-top-center-counter {
+    font-size: 14px;
+    font-weight: 500;
+    /* 修正：恢复计数器数字的特定样式 */
+}
+.counter-with-help-wrapper .tc-top-center-counter span {
+    font-weight: bold;
+    font-size: 16px;
+    color: var(--main-primary);
+    margin-left: 6px; /* 增加间距 */
+}

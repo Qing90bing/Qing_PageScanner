@@ -6,14 +6,10 @@ import { t } from '../../shared/i18n/index.js';
 import { createTrustedHTML } from '../../shared/utils/trustedTypes.js';
 import { log } from '../../shared/utils/logger.js';
 import { simpleTemplate } from '../../shared/utils/templating.js';
-import { createTopCenterCounter, updateTopCenterCounter } from '../../shared/ui/components/topCenterCounter.js';
-import { createHelpIcon } from '../../shared/ui/components/helpIcon.js';
 import { on } from '../../shared/utils/eventBus.js';
+import { createCounterWithHelp, showCounterWithHelp, hideCounterWithHelp, updateCounterValue } from '../../shared/ui/components/counterWithHelp.js';
 
 // --- 模块级变量 ---
-let topCenterContainer = null;
-let counterElement = null;
-let helpIcon = null;
 let unsubscribeStagedCountChanged = null;
 
 // --- 模块级变量，用于缓存UI元素的引用 ---
@@ -328,85 +324,31 @@ export function cleanupToolbar() {
 }
 
 /**
- * @private
- * @function setupTopCenterUI
- * @description 创建并组装顶部中央UI（计数器和帮助图标）的DOM结构。
- */
-function setupTopCenterUI() {
-    topCenterContainer = document.createElement('div');
-    topCenterContainer.className = 'top-center-ui-container';
-
-    counterElement = createTopCenterCounter('scan.stagedCount');
-    helpIcon = createHelpIcon('tutorial.elementScan');
-    helpIcon.classList.add('element-scan-help-icon');
-
-    topCenterContainer.appendChild(counterElement);
-    topCenterContainer.appendChild(helpIcon);
-
-    uiContainer.appendChild(topCenterContainer);
-}
-
-/**
  * @public
  * @function showTopCenterUI
- * @description 显示顶部中央UI，并分别触发其子元素的入场动画。
+ * @description 显示顶部中央的“计数器与帮助”组合UI。
  */
 export function showTopCenterUI() {
-    if (topCenterContainer) return;
+    createCounterWithHelp('scan.stagedCount', 'tutorial.elementScan');
+    showCounterWithHelp();
 
-    setupTopCenterUI();
-
-    unsubscribeStagedCountChanged = on('stagedCountChanged', (newCount) => {
-        updateTopCenterCounter(counterElement, newCount);
-    });
-
-    updateTopCenterCounter(counterElement, 0);
-
-    // 在下一帧独立地触发子元素的入场动画，以确保 backdrop-filter 正常渲染
-    requestAnimationFrame(() => {
-        counterElement.classList.add('is-visible');
-        helpIcon.classList.add('is-visible');
-    });
+    // 订阅计数变化事件
+    if (!unsubscribeStagedCountChanged) {
+        unsubscribeStagedCountChanged = on('stagedCountChanged', (newCount) => {
+            updateCounterValue(newCount);
+        });
+    }
 }
 
 /**
  * @public
  * @function hideTopCenterUI
- * @description 隐藏并销毁顶部中央UI，确保子元素动画完成后再清理资源。
+ * @description 隐藏并销毁顶部中央的UI，并取消事件订阅。
  */
 export function hideTopCenterUI() {
-    // 关键修复：将检查和状态更新移到函数开头，以防止重复触发
-    if (!topCenterContainer) return;
+    hideCounterWithHelp();
 
-    // 保存对当前元素的引用，然后立即重置模块级变量
-    // 这可以防止在动画期间对 hideTopCenterUI 的任何后续调用干扰正在进行的退场动画。
-    const containerToRemove = topCenterContainer;
-    const counterToRemove = counterElement;
-    const iconToRemove = helpIcon;
-
-    topCenterContainer = null;
-    counterElement = null;
-    helpIcon = null;
-
-    // 1. 独立地触发子元素的退场动画
-    if (counterToRemove) counterToRemove.classList.remove('is-visible');
-    if (iconToRemove) iconToRemove.classList.remove('is-visible');
-
-    // 2. 在CSS动画（400ms）结束后，执行所有清理工作
-    setTimeout(() => {
-        // 在移除DOM之前，先调用所有子组件的destroy方法
-        if (counterToRemove && typeof counterToRemove.destroy === 'function') {
-            counterToRemove.destroy();
-        }
-        if (iconToRemove && typeof iconToRemove.destroy === 'function') {
-            iconToRemove.destroy();
-        }
-
-        // 从DOM中彻底移除容器
-        containerToRemove.remove();
-    }, 400);
-
-    // 3. 立即清理事件监听器
+    // 取消事件订阅
     if (typeof unsubscribeStagedCountChanged === 'function') {
         unsubscribeStagedCountChanged();
         unsubscribeStagedCountChanged = null;

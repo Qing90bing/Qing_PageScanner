@@ -1,6 +1,7 @@
 /* src/assets/styles/tooltip.css */
 
 .text-extractor-tooltip {
+    font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
     position: fixed;
     z-index: 10001; /* 比悬浮按钮更高 */
     background-color: var(--main-tooltip-bg);

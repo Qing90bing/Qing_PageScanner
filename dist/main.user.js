@@ -48,17 +48,17 @@ var TextExtractor = (() => {
   var dynamicIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M200-766v572q-17-17-32-36t-28-39v-422q13-20 28-39t32-36Zm160-96v764q-21-7-41-15.5T280-133v-694q19-11 39-19.5t41-15.5Zm280 749v-734q106 47 173 145t67 222q0 124-67 222T640-113ZM480-80q-10 0-20-.5T440-82v-796q10-1 20-1.5t20-.5q20 0 40 2t40 6v784q-20 4-40 6t-40 2Z"/></svg>`;
   var summaryIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M280-280h280v-80H280v80Zm0-160h400v-80H280v80Zm0-160h400v-80H280v80Zm-80 480q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/></svg>`;
   var elementScanIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M40-480v-80h80v80H40Zm800 0v-80h80v80h-80ZM40-640v-80h80v80H40Zm800 0v-80h80v80h-80ZM40-800v-80h80v80H40Zm160 320v-80h80v80h-80Zm480 0v-80h80v80h-80Zm160-320v-80h80v80h-80Zm-640 0v-80h80v80h-80Zm160 0v-80h80v80h-80Zm160 0v-80h80v80h-80Zm160 0v-80h80v80h-80ZM473-40q-24 0-46-9t-39-26L184-280l33-34q14-14 34-19t40 0l69 20v-327q0-17 11.5-28.5T400-680q17 0 28.5 11.5T440-640v433l-98-28 103 103q6 6 13 9t15 3h167q33 0 56.5-23.5T720-200v-160q0-17 11.5-28.5T760-400q17 0 28.5 11.5T800-360v160q0 66-47 113T640-40H473Zm7-280v-160q0-17 11.5-28.5T520-520q17 0 28.5 11.5T560-480v160h-80Zm120 0v-120q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440v120h-80Zm40 200H445h195Z"/></svg>`;
-  function updateScrollbarWidth(container) {
+  function updateScrollbarWidth(container2) {
     const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-    container.style.setProperty("--scrollbar-width", `${scrollbarWidth}px`);
+    container2.style.setProperty("--scrollbar-width", `${scrollbarWidth}px`);
   }
   function createUIContainer() {
-    const container = document.createElement("div");
-    container.id = "text-extractor-container";
-    document.body.appendChild(container);
-    updateScrollbarWidth(container);
-    window.addEventListener("resize", () => updateScrollbarWidth(container));
-    const shadowRoot = container.attachShadow({ mode: "open" });
+    const container2 = document.createElement("div");
+    container2.id = "text-extractor-container";
+    document.body.appendChild(container2);
+    updateScrollbarWidth(container2);
+    window.addEventListener("resize", () => updateScrollbarWidth(container2));
+    const shadowRoot = container2.attachShadow({ mode: "open" });
     return shadowRoot;
   }
   var uiContainer = createUIContainer();
@@ -1813,9 +1813,9 @@ ${result.join(",\n")}
     return notification;
   }
   function showNotification(message, { type = "info", duration = appConfig.ui.notificationDuration } = {}) {
-    const container = getNotificationContainer();
+    const container2 = getNotificationContainer();
     const notification = createNotificationElement(message, type);
-    container.appendChild(notification);
+    container2.appendChild(notification);
     const timer = setTimeout(() => {
       closeNotification(notification);
     }, duration);
@@ -1827,10 +1827,10 @@ ${result.join(",\n")}
     }
   }
   function createIconTitle(iconSVG, text) {
-    const container = document.createElement("div");
-    container.style.display = "flex";
-    container.style.alignItems = "center";
-    container.style.gap = "8px";
+    const container2 = document.createElement("div");
+    container2.style.display = "flex";
+    container2.style.alignItems = "center";
+    container2.style.gap = "8px";
     if (iconSVG) {
       const iconWrapper = document.createElement("span");
       iconWrapper.style.display = "flex";
@@ -1838,14 +1838,14 @@ ${result.join(",\n")}
       const svgElement = createSVGFromString(iconSVG);
       if (svgElement) {
         iconWrapper.appendChild(svgElement);
-        container.appendChild(iconWrapper);
+        container2.appendChild(iconWrapper);
       }
     }
     const textNode = document.createElement("span");
     textNode.className = "icon-title-text";
     textNode.textContent = text;
-    container.appendChild(textNode);
-    return container;
+    container2.appendChild(textNode);
+    return container2;
   }
   var simpleTemplate = (template, values) => {
     if (!template) return "";
@@ -5028,8 +5028,8 @@ ${result.join(",\n")}
     }
   }
   function createExportButton() {
-    const container = document.createElement("div");
-    container.className = "tc-export-btn-container";
+    const container2 = document.createElement("div");
+    container2.className = "tc-export-btn-container";
     exportBtn = document.createElement("button");
     exportBtn.className = "text-extractor-export-btn tc-button";
     exportMenu = document.createElement("div");
@@ -5046,8 +5046,8 @@ ${result.join(",\n")}
     exportMenu.appendChild(exportTxtBtn);
     exportMenu.appendChild(exportJsonBtn);
     exportMenu.appendChild(exportCsvBtn);
-    container.appendChild(exportBtn);
-    container.appendChild(exportMenu);
+    container2.appendChild(exportBtn);
+    container2.appendChild(exportMenu);
     rerenderExportTexts();
     const dropdown = createDropdown(exportBtn, exportMenu);
     const handleExport = (event) => {
@@ -5062,7 +5062,7 @@ ${result.join(",\n")}
     exportMenu.addEventListener("click", handleExport);
     on("languageChanged", rerenderExportTexts);
     exportBtn.disabled = true;
-    return container;
+    return container2;
   }
   function updateExportButtonState(hasContent) {
     if (exportBtn) {
@@ -5628,51 +5628,6 @@ ${result.join(",\n")}
     log(t("scan.quick"));
     openModal();
   }
-  function animateCount(element, start2, end, duration, easing) {
-    const startTime = performance.now();
-    function frame(currentTime) {
-      const elapsedTime = currentTime - startTime;
-      const progress = Math.min(elapsedTime / duration, 1);
-      const easedProgress = easing(progress);
-      const currentCount2 = Math.round(start2 + (end - start2) * easedProgress);
-      element.textContent = currentCount2;
-      if (progress < 1) {
-        requestAnimationFrame(frame);
-      }
-    }
-    requestAnimationFrame(frame);
-  }
-  var easeOutQuad = (t2) => t2 * (2 - t2);
-  function createTopCenterCounter(labelKey) {
-    const counterElement3 = document.createElement("div");
-    counterElement3.className = "tc-top-center-counter";
-    const textNode = document.createTextNode(t(labelKey));
-    const countSpan = document.createElement("span");
-    countSpan.textContent = "0";
-    counterElement3.appendChild(textNode);
-    counterElement3.appendChild(countSpan);
-    counterElement3._countSpan = countSpan;
-    const languageChangeHandler = () => {
-      textNode.textContent = t(labelKey);
-    };
-    const unsubscribe = on("languageChanged", languageChangeHandler);
-    counterElement3.destroy = () => {
-      unsubscribe();
-    };
-    return counterElement3;
-  }
-  function updateTopCenterCounter(element, newCount) {
-    if (!element || !element._countSpan) return;
-    const countSpan = element._countSpan;
-    const start2 = parseInt(countSpan.textContent, 10) || 0;
-    const end = newCount;
-    if (start2 === end) {
-      countSpan.textContent = String(end);
-      return;
-    }
-    const duration = 500 + Math.min(Math.abs(end - start2) * 10, 1e3);
-    animateCount(countSpan, start2, end, duration, easeOutQuad);
-  }
   var questionMarkIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M478-240q21 0 35.5-14.5T528-290q0-21-14.5-35.5T478-340q-21 0-35.5 14.5T428-290q0 21 14.5 35.5T478-240Zm-36-154h74q0-33 7.5-52t42.5-52q26-26 41-49.5t15-56.5q0-56-41-86t-97-30q-57 0-92.5 30T342-618l66 26q5-18 22.5-39t53.5-21q32 0 48 17.5t16 38.5q0 20-12 37.5T506-526q-44 39-54 59t-10 73Zm38 314q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>`;
   var Tooltip = class {
     constructor() {
@@ -5783,39 +5738,90 @@ ${result.join(",\n")}
     };
     return helpButton;
   }
-  var stopIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M280-280v-400h400v400H280Z"/></svg>`;
-  var currentSessionCount = 0;
-  var topCenterContainer = null;
+  function animateCount(element, start2, end, duration, easing) {
+    const startTime = performance.now();
+    function frame(currentTime) {
+      const elapsedTime = currentTime - startTime;
+      const progress = Math.min(elapsedTime / duration, 1);
+      const easedProgress = easing(progress);
+      const currentCount2 = Math.round(start2 + (end - start2) * easedProgress);
+      element.textContent = currentCount2;
+      if (progress < 1) {
+        requestAnimationFrame(frame);
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+  var easeOutQuad = (t2) => t2 * (2 - t2);
+  function createTopCenterCounter(labelKey) {
+    const counterElement2 = document.createElement("div");
+    counterElement2.className = "tc-top-center-counter";
+    const textNode = document.createTextNode(t(labelKey));
+    const countSpan = document.createElement("span");
+    countSpan.textContent = "0";
+    counterElement2.appendChild(textNode);
+    counterElement2.appendChild(countSpan);
+    counterElement2._countSpan = countSpan;
+    const languageChangeHandler = () => {
+      textNode.textContent = t(labelKey);
+    };
+    const unsubscribe = on("languageChanged", languageChangeHandler);
+    counterElement2.destroy = () => {
+      unsubscribe();
+    };
+    return counterElement2;
+  }
+  function updateTopCenterCounter(element, newCount) {
+    if (!element || !element._countSpan) return;
+    const countSpan = element._countSpan;
+    const start2 = parseInt(countSpan.textContent, 10) || 0;
+    const end = newCount;
+    if (start2 === end) {
+      countSpan.textContent = String(end);
+      return;
+    }
+    const duration = 500 + Math.min(Math.abs(end - start2) * 10, 1e3);
+    animateCount(countSpan, start2, end, duration, easeOutQuad);
+  }
+  var container = null;
   var counterElement = null;
   var helpIcon = null;
-  on("sessionCleared", () => {
-    currentSessionCount = 0;
-  });
-  function showTopCenterUI() {
-    if (topCenterContainer) return;
-    topCenterContainer = document.createElement("div");
-    topCenterContainer.className = "top-center-ui-container";
-    counterElement = createTopCenterCounter("common.discovered");
-    helpIcon = createHelpIcon("tutorial.sessionScan");
-    topCenterContainer.appendChild(counterElement);
-    topCenterContainer.appendChild(helpIcon);
-    uiContainer.appendChild(topCenterContainer);
-    updateTopCenterCounter(counterElement, 0);
+  function createCounterWithHelp(counterKey, helpKey) {
+    if (container) {
+      updateCounterValue(0);
+      return container;
+    }
+    container = document.createElement("div");
+    container.className = "counter-with-help-container";
+    const wrapper = document.createElement("div");
+    wrapper.className = "counter-with-help-wrapper";
+    counterElement = createTopCenterCounter(counterKey);
+    helpIcon = createHelpIcon(helpKey);
+    const separator = document.createElement("div");
+    separator.className = "counter-with-help-separator";
+    wrapper.appendChild(counterElement);
+    wrapper.appendChild(separator);
+    wrapper.appendChild(helpIcon);
+    container.appendChild(wrapper);
+    uiContainer.appendChild(container);
+    updateCounterValue(0);
+    return container;
+  }
+  function showCounterWithHelp() {
+    if (!container) return;
     requestAnimationFrame(() => {
-      counterElement.classList.add("is-visible");
-      helpIcon.classList.add("is-visible");
+      container.classList.add("is-visible");
     });
   }
-  function hideTopCenterUI() {
-    if (!topCenterContainer) return;
-    const containerToRemove = topCenterContainer;
+  function hideCounterWithHelp() {
+    if (!container) return;
+    const containerToRemove = container;
     const counterToRemove = counterElement;
     const iconToRemove = helpIcon;
-    topCenterContainer = null;
+    container = null;
     counterElement = null;
     helpIcon = null;
-    if (counterToRemove) counterToRemove.classList.remove("is-visible");
-    if (iconToRemove) iconToRemove.classList.remove("is-visible");
+    containerToRemove.classList.remove("is-visible");
     setTimeout(() => {
       if (counterToRemove && typeof counterToRemove.destroy === "function") {
         counterToRemove.destroy();
@@ -5823,8 +5829,26 @@ ${result.join(",\n")}
       if (iconToRemove && typeof iconToRemove.destroy === "function") {
         iconToRemove.destroy();
       }
-      containerToRemove.remove();
+      if (containerToRemove) {
+        containerToRemove.remove();
+      }
     }, 400);
+  }
+  function updateCounterValue(newCount) {
+    if (!counterElement) return;
+    updateTopCenterCounter(counterElement, newCount);
+  }
+  var stopIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M280-280v-400h400v400H280Z"/></svg>`;
+  var currentSessionCount = 0;
+  on("sessionCleared", () => {
+    currentSessionCount = 0;
+  });
+  function showTopCenterUI() {
+    createCounterWithHelp("common.discovered", "tutorial.sessionScan");
+    showCounterWithHelp();
+  }
+  function hideTopCenterUI() {
+    hideCounterWithHelp();
   }
   function showSessionSummary() {
     log(t("tooltip.summary"));
@@ -5877,17 +5901,12 @@ ${result.join(",\n")}
       showTopCenterUI();
       setTimeout(() => {
         start((count) => {
-          if (counterElement) {
-            updateTopCenterCounter(counterElement, count);
-          }
+          updateCounterValue(count);
           currentSessionCount = count;
         });
       }, 50);
     }
   }
-  var topCenterContainer2 = null;
-  var counterElement2 = null;
-  var helpIcon2 = null;
   var unsubscribeStagedCountChanged = null;
   var scanContainer = null;
   var highlightBorder = null;
@@ -6082,47 +6101,17 @@ ${result.join(",\n")}
       }, 300);
     }
   }
-  function setupTopCenterUI() {
-    topCenterContainer2 = document.createElement("div");
-    topCenterContainer2.className = "top-center-ui-container";
-    counterElement2 = createTopCenterCounter("scan.stagedCount");
-    helpIcon2 = createHelpIcon("tutorial.elementScan");
-    helpIcon2.classList.add("element-scan-help-icon");
-    topCenterContainer2.appendChild(counterElement2);
-    topCenterContainer2.appendChild(helpIcon2);
-    uiContainer.appendChild(topCenterContainer2);
-  }
   function showTopCenterUI2() {
-    if (topCenterContainer2) return;
-    setupTopCenterUI();
-    unsubscribeStagedCountChanged = on("stagedCountChanged", (newCount) => {
-      updateTopCenterCounter(counterElement2, newCount);
-    });
-    updateTopCenterCounter(counterElement2, 0);
-    requestAnimationFrame(() => {
-      counterElement2.classList.add("is-visible");
-      helpIcon2.classList.add("is-visible");
-    });
+    createCounterWithHelp("scan.stagedCount", "tutorial.elementScan");
+    showCounterWithHelp();
+    if (!unsubscribeStagedCountChanged) {
+      unsubscribeStagedCountChanged = on("stagedCountChanged", (newCount) => {
+        updateCounterValue(newCount);
+      });
+    }
   }
   function hideTopCenterUI2() {
-    if (!topCenterContainer2) return;
-    const containerToRemove = topCenterContainer2;
-    const counterToRemove = counterElement2;
-    const iconToRemove = helpIcon2;
-    topCenterContainer2 = null;
-    counterElement2 = null;
-    helpIcon2 = null;
-    if (counterToRemove) counterToRemove.classList.remove("is-visible");
-    if (iconToRemove) iconToRemove.classList.remove("is-visible");
-    setTimeout(() => {
-      if (counterToRemove && typeof counterToRemove.destroy === "function") {
-        counterToRemove.destroy();
-      }
-      if (iconToRemove && typeof iconToRemove.destroy === "function") {
-        iconToRemove.destroy();
-      }
-      containerToRemove.remove();
-    }, 400);
+    hideCounterWithHelp();
     if (typeof unsubscribeStagedCountChanged === "function") {
       unsubscribeStagedCountChanged();
       unsubscribeStagedCountChanged = null;
@@ -7930,8 +7919,8 @@ ${result.join(",\n")}
   }
   function createNumericInput(id, labelText, value, options = {}) {
     const { min, max, disabled = false } = options;
-    const container = document.createElement("div");
-    container.className = "numeric-input-group";
+    const container2 = document.createElement("div");
+    container2.className = "numeric-input-group";
     const label = document.createElement("label");
     label.className = "numeric-input-label";
     label.htmlFor = id;
@@ -7952,9 +7941,9 @@ ${result.join(",\n")}
     if (disabled) {
       input.disabled = true;
     }
-    container.appendChild(label);
-    container.appendChild(input);
-    return container;
+    container2.appendChild(label);
+    container2.appendChild(input);
+    return container2;
   }
   function buildPanelDOM(settings) {
     const modal = document.createElement("div");
@@ -8464,6 +8453,83 @@ ${result.join(",\n")}
 .confirmation-modal-button.cancel:hover{
   background-color:var(--main-shadow);
 }
+.counter-with-help-container{
+    position:fixed;
+    top:20px;
+    left:50%;
+    z-index:2147483645;
+    pointer-events:all;
+    opacity:0;
+    transform:translate(-50%, -150%);
+    transition:transform 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1)), opacity 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1));
+}
+.counter-with-help-container.is-visible{
+    opacity:1;
+    transform:translate(-50%, 0);
+}
+.counter-with-help-wrapper{
+    font-family:'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
+    position:relative;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:8px 12px;
+    z-index:1;
+    border-radius:24px;
+    overflow:hidden;
+}
+.counter-with-help-wrapper::before{
+    content:'';
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    z-index:-1;
+    background-color:var(--main-bg-a);
+    border:1px solid var(--main-border);
+    border-radius:24px;
+    box-shadow:var(--main-shadow);
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+}
+.counter-with-help-separator{
+    width:1px;
+    height:16px;
+    background-color:var(--main-border);
+}
+.counter-with-help-wrapper .tc-top-center-counter{
+    position:static;
+    transform:none;
+    opacity:1;
+    transition:none;
+}
+.counter-with-help-wrapper .tc-help-icon-button{
+    position:static;
+    transform:none;
+    opacity:1;
+    transition:color 0.2s, background-color 0.2s;
+}
+.counter-with-help-wrapper .tc-top-center-counter,
+.counter-with-help-wrapper .tc-help-icon-button{
+    background-color:transparent;
+    border:none;
+    box-shadow:none;
+    backdrop-filter:none;
+    -webkit-backdrop-filter:none;
+    padding:0;
+    margin:0;
+}
+.counter-with-help-wrapper .tc-top-center-counter{
+    font-size:14px;
+    font-weight:500;
+}
+.counter-with-help-wrapper .tc-top-center-counter span{
+    font-weight:bold;
+    font-size:16px;
+    color:var(--main-primary);
+    margin-left:6px;
+}
 .custom-select-container{
   position:relative;
   width:100%;
@@ -8826,15 +8892,6 @@ ${result.join(",\n")}
   border-color:var(--main-primary);
   box-shadow:0 0 0 2px var(--main-primary-hover-bg, rgba(30, 144, 255, 0.1));
 }
-.tc-help-icon-button{
-    opacity:0;
-    transform:translateY(-20px);
-    transition:transform 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1)), opacity 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1)), color 0.2s, background-color 0.2s;
-}
-.tc-help-icon-button.is-visible{
-    opacity:1;
-    transform:translateY(0);
-}
 .info-tooltip-overlay{
     position:fixed;
     top:0;
@@ -9175,8 +9232,6 @@ ${result.join(",\n")}
     background-color:var(--main-bg-a);
     border:1px solid var(--main-border);
     border-radius:50%;
-    width:32px;
-    height:32px;
     padding:0;
     cursor:pointer;
     color:var(--main-text-secondary);
@@ -9607,6 +9662,7 @@ ${result.join(",\n")}
     margin-left:32px;
 }
 .text-extractor-tooltip{
+    font-family:'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
     position:fixed;
     z-index:10001;
     background-color:var(--main-tooltip-bg);
@@ -9626,58 +9682,6 @@ ${result.join(",\n")}
 .text-extractor-tooltip.is-visible{
     opacity:1;
     visibility:visible;
-}
-.tc-top-center-counter{
-    position:fixed;
-    top:20px;
-    left:50%;
-    font-family:'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
-    transform:translate(-50%, -150%);
-    background-color:var(--main-bg-a);
-    color:var(--main-text);
-    padding:8px 16px;
-    border-radius:20px;
-    font-size:14px;
-    font-weight:500;
-    box-shadow:var(--main-shadow);
-    backdrop-filter:blur(16px);
-    -webkit-backdrop-filter:blur(16px);
-    z-index:9999999;
-    opacity:0;
-    transition:transform 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1)), opacity 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1)), width 0.3s ease-in-out;
-    display:flex;
-    align-items:center;
-    gap:8px;
-    border:1px solid var(--main-border);
-}
-.tc-top-center-counter.is-visible{
-    transform:translate(-50%, 0);
-    opacity:1;
-}
-.tc-top-center-counter span{
-    font-weight:bold;
-    font-size:16px;
-    color:var(--main-primary);
-}
-.top-center-ui-container{
-    position:fixed;
-    top:20px;
-    left:50%;
-    transform:translateX(-50%);
-    z-index:2147483645;
-    display:flex;
-    gap:16px;
-    align-items:center;
-    justify-content:center;
-    pointer-events:all;
-    transition:none;
-}
-.top-center-ui-container .tc-top-center-counter,
-.top-center-ui-container .tc-help-icon-button{
-    position:static;
-    left:auto;
-    top:auto;
-    margin:0;
 }
 `;
     uiContainer.appendChild(styleElement);
