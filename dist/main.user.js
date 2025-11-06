@@ -8536,7 +8536,7 @@ ${result.join(",\n")}
     height:36px;
     transform:translateY(-150%);
     opacity:0;
-    transition:transform 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1)), opacity 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1)), background-color 0.2s ease, transform 0.2s ease;
+    transition:transform 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1)), opacity 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1)), background-color 0.2s ease;
 }
 .element-scan-help-icon.is-visible{
     transform:translateY(0);

@@ -35,11 +35,14 @@
     /* 新增：与计数器一致的入场/出场动画 */
     transform: translateY(-150%);
     opacity: 0;
-    /* 确保这里的 transition 与计数器的完全相同 */
+    /*
+      修复：移除了重复且错误的 `transform 0.2s ease`，
+      现在入场/出场的 transform 和 opacity 动画都将正确地使用 0.4s 的时长。
+      只为悬停效果保留了 background-color 的过渡。
+    */
     transition: transform 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1)),
                 opacity 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1)),
-                background-color 0.2s ease,
-                transform 0.2s ease; /* 保留悬停效果的过渡 */
+                background-color 0.2s ease;
 }
 
 .element-scan-help-icon.is-visible {
