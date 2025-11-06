@@ -1,0 +1,35 @@
+/* src/assets/styles/top-center-ui-container.css */
+
+/*
+ * 这是一个用于屏幕顶部中央UI（如计数器和帮助图标）的通用布局容器。
+ * 它使用Flexbox来确保其子项水平排列并居中。
+ */
+.top-center-ui-container {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2147483645;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    justify-content: center;
+    pointer-events: all;
+    /* 通过将容器本身的过渡效果设为0来避免对子元素动画的干扰 */
+    transition: none;
+}
+
+/*
+ * 关键覆盖：
+ * 默认情况下，计数器和帮助图标都有自己的 `position: fixed` 和居中样式。
+ * 当它们成为此Flex容器的子项时，我们必须覆盖这些样式，
+ * 让它们作为静态的Flex子项正常排列。
+ */
+.top-center-ui-container .tc-top-center-counter,
+.top-center-ui-container .tc-help-icon-button {
+    position: static; /* 覆盖 fixed 定位 */
+    left: auto;      /* 重置 left 属性 */
+    top: auto;       /* 重置 top 属性 */
+    transform: none; /* 移除 transform 以避免干扰Flex布局 */
+    margin: 0;       /* 重置外边距 */
+}

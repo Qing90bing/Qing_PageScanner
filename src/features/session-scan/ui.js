@@ -34,7 +34,8 @@ function showTopCenterUI() {
     if (topCenterContainer) return;
 
     topCenterContainer = document.createElement('div');
-    topCenterContainer.className = 'session-scan-top-center-ui-container';
+    // 使用通用的、统一的类名
+    topCenterContainer.className = 'top-center-ui-container';
 
     counterElement = createTopCenterCounter('common.discovered');
     helpIcon = createHelpIcon('tutorial.sessionScan');

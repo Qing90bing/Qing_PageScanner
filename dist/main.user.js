@@ -5767,7 +5767,7 @@ ${result.join(",\n")}
   function showTopCenterUI() {
     if (topCenterContainer) return;
     topCenterContainer = document.createElement("div");
-    topCenterContainer.className = "session-scan-top-center-ui-container";
+    topCenterContainer.className = "top-center-ui-container";
     counterElement = createTopCenterCounter("common.discovered");
     helpIcon = createHelpIcon("tutorial.sessionScan");
     topCenterContainer.appendChild(counterElement);
@@ -9386,18 +9386,6 @@ ${result.join(",\n")}
 #modal-placeholder strong{
     font-weight:600;
 }
-.session-scan-top-center-ui-container{
-    position:fixed;
-    top:20px;
-    left:50%;
-    transform:translateX(-50%);
-    z-index:2147483645;
-    display:flex;
-    gap:16px;
-    align-items:center;
-    justify-content:center;
-    pointer-events:all;
-}
 .settings-panel-overlay{
   position:fixed; top:0; left:0; width:100%; height:100%;
   background-color:var(--main-overlay-bg);
@@ -9625,6 +9613,27 @@ ${result.join(",\n")}
     font-weight:bold;
     font-size:16px;
     color:var(--main-primary);
+}
+.top-center-ui-container{
+    position:fixed;
+    top:20px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:2147483645;
+    display:flex;
+    gap:16px;
+    align-items:center;
+    justify-content:center;
+    pointer-events:all;
+    transition:none;
+}
+.top-center-ui-container .tc-top-center-counter,
+.top-center-ui-container .tc-help-icon-button{
+    position:static;
+    left:auto;
+    top:auto;
+    transform:none;
+    margin:0;
 }
 `;
     uiContainer.appendChild(styleElement);
