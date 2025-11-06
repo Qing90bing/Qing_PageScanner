@@ -30,6 +30,6 @@
     position: static; /* 覆盖 fixed 定位 */
     left: auto;      /* 重置 left 属性 */
     top: auto;       /* 重置 top 属性 */
-    transform: none; /* 移除 transform 以避免干扰Flex布局 */
+    /* 移除 transform: none; 以允许子组件拥有自己的动画效果 */
     margin: 0;       /* 重置外边距 */
 }

@@ -8790,6 +8790,15 @@ ${result.join(",\n")}
   border-color:var(--main-primary);
   box-shadow:0 0 0 2px var(--main-primary-hover-bg, rgba(30, 144, 255, 0.1));
 }
+.tc-help-icon-button{
+    opacity:0;
+    transform:translateY(-20px);
+    transition:transform 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1)), opacity 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1)), color 0.2s, background-color 0.2s;
+}
+.tc-help-icon-button.is-visible{
+    opacity:1;
+    transform:translateY(0);
+}
 .info-tooltip-overlay{
     position:fixed;
     top:0;
@@ -9632,7 +9641,6 @@ ${result.join(",\n")}
     position:static;
     left:auto;
     top:auto;
-    transform:none;
     margin:0;
 }
 `;

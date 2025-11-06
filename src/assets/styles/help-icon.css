@@ -1,0 +1,22 @@
+/* src/assets/styles/help-icon.css */
+
+.tc-help-icon-button {
+    /* Initial state for animation: off-screen and invisible */
+    opacity: 0;
+    transform: translateY(-20px);
+
+    /*
+     * Define the transition properties for visibility.
+     * These MUST match the properties in top-center-counter.css to ensure synchronous animation.
+     */
+    transition: transform 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1)),
+                opacity 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1)),
+                /* Include the original transitions for hover effects */
+                color 0.2s, background-color 0.2s;
+}
+
+.tc-help-icon-button.is-visible {
+    /* Final state for animation: in position and visible */
+    opacity: 1;
+    transform: translateY(0);
+}
