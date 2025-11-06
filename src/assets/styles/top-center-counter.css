@@ -22,7 +22,6 @@
     align-items: center;
     gap: 8px;
     border: 1px solid var(--main-border); /* Corrected variable */
-    pointer-events: none; /* Fix mouse passthrough */
 }
 
 .tc-top-center-counter.is-visible {

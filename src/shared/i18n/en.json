@@ -323,5 +323,11 @@
       "defaultWorkerPolicyWarning": "Trusted Types default policy failed for worker URL, falling back to raw URL.",
       "defaultHtmlPolicyWarning": "Trusted Types default policy failed for HTML, falling back to raw string."
     }
+  },
+  "tutorial": {
+    "elementScanTitle": "Element Scan Guide",
+    "elementScan": "<p class=\"tutorial-content\">This is a placeholder for the element scan tutorial. Rich text is supported.</p>",
+    "sessionScanTitle": "Session Scan Guide",
+    "sessionScan": "<p class=\"tutorial-content\">This is a placeholder for the session scan tutorial. Rich text is supported.</p>"
   }
 }

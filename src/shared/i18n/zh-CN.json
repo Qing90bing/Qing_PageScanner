@@ -323,5 +323,11 @@
       "defaultWorkerPolicyWarning": "用于 worker URL 的 Trusted Types 默认策略失败，回退到原始 URL。",
       "defaultHtmlPolicyWarning": "用于 HTML 的 Trusted Types 默认策略失败，回退到原始字符串。"
     }
+  },
+  "tutorial": {
+    "elementScanTitle": "选取元素扫描教程",
+    "elementScan": "<p class=\"tutorial-content\">这是一个用于选取元素扫描教程的占位符。支持富文本格式。</p>",
+    "sessionScanTitle": "会话扫描教程",
+    "sessionScan": "<p class=\"tutorial-content\">这是一个用于会话扫描教程的占位符。支持富文本格式。</p>"
   }
 }

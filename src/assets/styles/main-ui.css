@@ -215,3 +215,33 @@
     box-shadow: none;
     transform: none;
 }
+
+/* --- 可复用的帮助图标按钮 --- */
+.tc-help-icon-button {
+    background-color: var(--main-bg-a);
+    border: 1px solid var(--main-border);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    cursor: pointer;
+    color: var(--main-text-secondary);
+    transition: color 0.2s, transform 0.2s, background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--main-shadow);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+.tc-help-icon-button:hover {
+    color: var(--main-text);
+    background-color: var(--main-border);
+    /* 移除可能导致位移的 transform 属性，具体的悬停效果将由 .element-scan-help-icon 控制 */
+}
+
+.tc-help-icon-button svg {
+    width: 20px;
+    height: 20px;
+}
