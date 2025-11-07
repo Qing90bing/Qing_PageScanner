@@ -83,7 +83,7 @@
   },
   "scan": {
     "quick": "Quick Scan",
-    "session": "Session Scan",
+    "session": "Dynamic Scan",
     "stagedCount": "Staged:",
     "elementFinished": "Element scan finished, found {{count}} items.",
     "startSession": "Start Dynamic Scan Session",
@@ -163,8 +163,8 @@
       "text_truncation_limit": "This is a <strong>performance-saving</strong> feature. If the script extracts an <strong>extremely long single line of text</strong> (e.g., a base64 encoded image), it could cause the browser to <strong>lag or become unresponsive</strong>.<br><br>This setting truncates any single line exceeding the specified length to ensure the UI remains smooth. <strong>Note: This only affects the display; the exported file will still contain the full, untruncated content.</strong>"
     },
     "advanced": {
-        "title": "Advanced Settings Explanation",
-        "enable_debug_logging": "When enabled, the script will output detailed internal status, execution steps, and error messages to the browser's <strong>Developer Tools Console</strong> (usually opened with F12). This is primarily for developers or users who need to submit detailed bug reports."
+      "title": "Advanced Settings Explanation",
+      "enable_debug_logging": "When enabled, the script will output detailed internal status, execution steps, and error messages to the browser's <strong>Developer Tools Console</strong> (usually opened with F12). This is primarily for developers or users who need to submit detailed bug reports."
     }
   },
   "log": {
@@ -209,22 +209,22 @@
       }
     },
     "sessionScan": {
-      "switchToFallback": "[Session Scan] Switching to main thread fallback.",
+      "switchToFallback": "[Dynamic Scan] Switching to main thread fallback.",
       "domObserver": {
-        "stopped": "[Session Scan] Stopped listening for DOM changes."
+        "stopped": "[Dynamic Scan] Stopped listening for DOM changes."
       },
       "fallback": {
-        "initialized": "[Session Scan - Fallback] Initialized.",
-        "cleared": "[Session Scan - Fallback] Data cleared."
+        "initialized": "[Dynamic Scan - Fallback] Initialized.",
+        "cleared": "[Dynamic Scan - Fallback] Data cleared."
       },
       "worker": {
-        "logPrefix": "[Session Scan Worker]",
-        "starting": "Session Scan: Attempting to start Web Worker...",
-        "initFailed": "[Session Scan] Worker initialization failed. This is likely due to the website's Content Security Policy (CSP).",
-        "originalError": "[Session Scan] Original error: {{error}}",
-        "initialized": "[Session Scan] Worker initialized successfully, sent {{count}} initial texts to start the session.",
-        "initSyncError": "[Session Scan] Synchronous error during Worker initialization: {{error}}",
-        "clearCommandSent": "[Session Scan] Clear command sent to worker."
+        "logPrefix": "[Dynamic Scan Worker]",
+        "starting": "Dynamic Scan: Attempting to start Web Worker...",
+        "initFailed": "[Dynamic Scan] Worker initialization failed. This is likely due to the website's Content Security Policy (CSP).",
+        "originalError": "[Dynamic Scan] Original error: {{error}}",
+        "initialized": "[Dynamic Scan] Worker initialized successfully, sent {{count}} initial texts to start the session.",
+        "initSyncError": "[Dynamic Scan] Synchronous error during Worker initialization: {{error}}",
+        "clearCommandSent": "[Dynamic Scan] Clear command sent to worker."
       }
     },
     "ui": {
@@ -242,17 +242,17 @@
         "cancelled": "User cancelled the clear operation."
       },
       "modal": {
-      "opening": "Opening main modal...",
-      "closing": "Closing main modal...",
+        "opening": "Opening main modal...",
+        "closing": "Closing main modal...",
         "scanFailed": "Static scan failed: {{error}}",
-      "clearContent": "Clear content button clicked."
+        "clearContent": "Clear content button clicked."
       },
       "helpIcon": {
         "clicked": "Help icon clicked, displaying content for key: {{contentKey}}"
       }
     },
     "exporter": {
-    "buttonClicked": "Export button clicked, format: {{format}}.",
+      "buttonClicked": "Export button clicked, format: {{format}}.",
       "csvError": "Error while parsing text and generating CSV: {{error}}",
       "fileExported": "File exported: {{filename}}",
       "noContent": "No content to export.",
@@ -328,9 +328,9 @@
     }
   },
   "tutorial": {
-    "elementScanTitle": "Element Scan Guide",
-    "elementScan": "<p class=\"tutorial-content\">This is a placeholder for the element scan tutorial. Rich text is supported.</p>",
-    "sessionScanTitle": "Session Scan Guide",
-    "sessionScan": "<p class=\"tutorial-content\">This is a placeholder for the session scan tutorial. Rich text is supported.</p>"
+    "elementScanTitle": "Element Scan Tutorial",
+    "elementScan": "<p><strong>What it does:</strong></p><p>Element Scan allows you to precisely select one or more areas on a webpage (e.g., a paragraph, a list, a sidebar) and extract text only from those areas.</p><p><strong>How to use:</strong></p><ol><li><strong>Start:</strong> Click the \"Element Scan\" icon <span class=\"help-icon-placeholder element-scan-icon\"></span> in the floating button to enter scan mode.</li><li><strong>Select:</strong> Move your mouse over the page. The area you want to scan will be highlighted. Click to select it.</li><li><strong>Adjust:</strong> A toolbar will appear after selection. You can use the <strong>slider</strong> to expand or shrink the selection area.</li><li><strong>Stage:</strong> If you want to select multiple unrelated areas, click the <span class=\"action-key\">Stage</span> button to save the current selection and continue selecting other areas.</li><li><strong>Confirm:</strong> Once you have finished all selections, click the <span class=\"action-key\">Confirm</span> button to start extracting text from all your chosen areas.</li></ol><p><strong>How to exit:</strong></p><ul><li>Click the <span class=\"action-key\">Cancel</span> button on the toolbar during selection.</li><li>While the highlight box is visible, <strong>right-click</strong> anywhere on the page.</li><li>Press the <kbd>ESC</kbd> key at any time.</li><li>Click the \"Element Scan\" icon again at any time.</li></ul>",
+    "sessionScanTitle": "Dynamic Scan Tutorial",
+    "sessionScan": "<p><strong>What it does:</strong></p><p>Dynamic Scan continuously monitors and automatically records all text that dynamically loads or changes on a webpage. It is especially useful for capturing live chats, infinite scrolling content, or notifications.</p><p><strong>How to use:</strong></p><ul><li><strong>Start Scan:</strong> Click the \"Dynamic Scan\" icon <span class=\"help-icon-placeholder dynamic-scan-icon\"></span> in the floating button to start scanning immediately.</li><li><strong>Stop Scan:</strong> Click the icon again <span class=\"help-icon-placeholder stop-icon\"></span> to stop.</li><li><strong>View Results:</strong> After stopping, click the main floating button <span class=\"help-icon-placeholder summary-icon\"></span> to open the results window.</li></ul><p><strong>How to exit:</strong></p><ul><li>Click the \"Dynamic Scan\" icon again during the scan.</li><li>Press the <kbd>ESC</kbd> key at any time to quickly stop the scan.</li></ul>"
   }
 }

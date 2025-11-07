@@ -73,10 +73,6 @@
   transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
-.confirmation-modal-button:hover {
-    /* 移除向上移动的效果 */
-}
-
 .confirmation-modal-button.confirm {
   background-color: var(--main-primary);
   color: var(--main-primary-text);

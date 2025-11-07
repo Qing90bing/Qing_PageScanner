@@ -243,3 +243,26 @@
     width: 20px;
     height: 20px;
 }
+
+/* --- 教程文本中的特殊样式 --- */
+
+/* 用于教程中表示可交互按钮名称的“胶囊”样式 */
+.action-key {
+    position: relative;
+    top: -3px; 
+    display: inline-block;
+    padding: 3px 6px;
+    margin: 0 5px;
+    font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
+    font-size: 0.85em;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--main-text);
+    background-color: var(--main-bg);
+    border: 1px solid var(--main-border);
+    border-bottom-width: 3px; /* 模拟按键的厚度 */
+    border-radius: 4px;
+    box-shadow: 0 1px 1px var(--main-shadow);
+    white-space: nowrap;
+    vertical-align: baseline;
+}

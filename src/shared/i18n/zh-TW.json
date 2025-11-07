@@ -83,14 +83,14 @@
   },
   "scan": {
     "quick": "快速掃描",
-    "session": "會話掃描",
+    "session": "動態掃描",
     "stagedCount": "已暫存:",
     "elementFinished": "選取元素掃描完成，發現 {{count}} 條文本。",
     "startSession": "開始動態掃描會話",
     "stopSession": "停止動態掃描會話",
     "finished": "掃描完成，發現 {{count}} 條文本。",
     "quickFinished": "快速掃描完成，發現 {{count}} 條文本。",
-    "sessionStarted": "會話掃描已開始。",
+    "sessionStarted": "動態掃描已開始。",
     "sessionInProgress": "掃描進行中...",
     "truncationWarning": "為保持介面流暢，此處僅顯示部分文本。匯出後將包含完整內容。"
   },
@@ -163,8 +163,8 @@
       "text_truncation_limit": "這是一個<strong>效能優化</strong>功能。如果腳本提取到<strong>極長的單行文本</strong>（例如，base64編碼的圖片），可能會導致瀏覽器<strong>卡頓或無回應</strong>。<br><br>此設定會截斷任何超過指定長度的單行文本，以確保UI保持流暢。<strong>注意：這僅影響顯示；匯出的檔案仍將包含完整的、未截斷的內容。</strong>"
     },
     "advanced": {
-        "title": "進階設定說明",
-        "enable_debug_logging": "啟用後，腳本會將詳細的內部狀態、執行步驟和錯誤訊息輸出到瀏覽器的<strong>開發者工具控制台</strong>（通常用F12開啟）。這主要供開發者或需要提交詳細錯誤報告的使用者使用。"
+      "title": "進階設定說明",
+      "enable_debug_logging": "啟用後，腳本會將詳細的內部狀態、執行步驟和錯誤訊息輸出到瀏覽器的<strong>開發者工具控制台</strong>（通常用F12開啟）。這主要供開發者或需要提交詳細錯誤報告的使用者使用。"
     }
   },
   "log": {
@@ -209,22 +209,22 @@
       }
     },
     "sessionScan": {
-      "switchToFallback": "[會話掃描] 正在切換到主線程備選方案。",
+      "switchToFallback": "[動態掃描] 正在切換到主線程備選方案。",
       "domObserver": {
-        "stopped": "[會話掃描] 已停止監聽 DOM 變化。"
+        "stopped": "[動態掃描] 已停止監聽 DOM 變化。"
       },
       "fallback": {
-        "initialized": "[會話掃描 - 備選] 已初始化。",
-        "cleared": "[會話掃描 - 備選] 資料已清除。"
+        "initialized": "[動態掃描 - 備選] 已初始化。",
+        "cleared": "[動態掃描 - 備選] 資料已清除。"
       },
       "worker": {
-        "logPrefix": "[會話掃描 Worker]",
-        "starting": "會話掃描：正在嘗試啟動 Web Worker...",
-        "initFailed": "[會話掃描] Worker 初始化失敗。這很可能是由於網站的內容安全策略 (CSP) 導致的。",
-        "originalError": "[會話掃描] 原始錯誤: {{error}}",
-        "initialized": "[會話掃描] Worker 初始化成功，已發送 {{count}} 條初始文本以開始會話。",
-        "initSyncError": "[會話掃描] Worker 初始化期間發生同步錯誤: {{error}}",
-        "clearCommandSent": "[會話掃描] 清除命令已發送至 worker。"
+        "logPrefix": "[動態掃描 Worker]",
+        "starting": "動態掃描：正在嘗試啟動 Web Worker...",
+        "initFailed": "[動態掃描] Worker 初始化失敗。這很可能是由於網站的內容安全策略 (CSP) 導致的。",
+        "originalError": "[動態掃描] 原始錯誤: {{error}}",
+        "initialized": "[動態掃描] Worker 初始化成功，已發送 {{count}} 條初始文本以開始會話。",
+        "initSyncError": "[動態掃描] Worker 初始化期間發生同步錯誤: {{error}}",
+        "clearCommandSent": "[動態掃描] 清除命令已發送至 worker。"
       }
     },
     "ui": {
@@ -234,7 +234,7 @@
       },
       "confirmationModal": {
         "sessionScan": {
-          "confirmed": "使用者已確認清除會話掃描文本，正在調用回呼..."
+          "confirmed": "使用者已確認清除動態掃描文本，正在調用回呼..."
         },
         "quickScan": {
           "confirmed": "使用者已確認清除快速掃描文本。"
@@ -242,24 +242,24 @@
         "cancelled": "使用者已取消清除操作。"
       },
       "modal": {
-      "opening": "正在開啟主模態框...",
-      "closing": "正在關閉主模態框...",
+        "opening": "正在開啟主模態框...",
+        "closing": "正在關閉主模態框...",
         "scanFailed": "靜態掃描失敗: {{error}}",
-      "clearContent": "清空內容按鈕已點擊。"
+        "clearContent": "清空內容按鈕已點擊。"
       },
       "helpIcon": {
         "clicked": "點擊了幫助圖示，顯示內容鍵：{{contentKey}}"
       }
     },
     "exporter": {
-    "buttonClicked": "匯出按鈕已點擊，格式: {{format}}。",
+      "buttonClicked": "匯出按鈕已點擊，格式: {{format}}。",
       "csvError": "解析文本並產生CSV時出錯: {{error}}",
       "fileExported": "檔案已匯出: {{filename}}",
       "noContent": "無內容可匯出。",
       "unknownFormat": "未知的匯出格式: {{format}}"
     },
     "main": {
-      "requestingSessionScanData": "正在請求會話掃描模式的完整資料...",
+      "requestingSessionScanData": "正在請求動態掃描模式的完整資料...",
       "exportingQuickScanData": "正在匯出快速掃描模式記憶體中的完整資料...",
       "inIframe": "腳本在 iframe 中，已跳過初始化。",
       "initializing": "腳本初始化開始...",
@@ -328,9 +328,9 @@
     }
   },
   "tutorial": {
-    "elementScanTitle": "選取元素掃描教學",
-    "elementScan": "<p class=\"tutorial-content\">這是一個用於選取元素掃描教學的佔位符。支援富文本格式。</p>",
-    "sessionScanTitle": "會話掃描教學",
-    "sessionScan": "<p class=\"tutorial-content\">這是一個用於會話掃描教學的佔位符。支援富文本格式。</p>"
+    "elementScanTitle": "選取元素掃描教程",
+    "elementScan": "<p><strong>功能介紹:</strong></p><p>選取元素掃描允許您精確地選擇網頁上的一個或多個區域（例如一個段落、一個列表、一個側邊欄），並僅從這些區域中提取文本。</p><p><strong>如何使用:</strong></p><ol><li><strong>啟動:</strong> 點擊懸浮按鈕中的「選取元素」圖標 <span class=\"help-icon-placeholder element-scan-icon\"></span> 啟動掃描模式。</li><li><strong>選擇:</strong> 移動鼠標，您想掃描的區域會顯示高亮框。單擊以選定。</li><li><strong>調整:</strong> 選定後會出現工具欄。您可以使用<strong>滑塊</strong>來擴大或縮小選擇範圍。</li><li><strong>暫存:</strong> 如果您想選擇多個不相關的區域，可以點擊<span class=\"action-key\">暫存</span>按鈕保存當前選擇，然後繼續選擇其他區域。</li><li><strong>確認:</strong> 完成所有選擇後，點擊<span class=\"action-key\">確認</span>按鈕，系統將開始從您選擇的所有區域中提取文本。</li></ol><p><strong>如何退出:</strong></p><ul><li>在選擇過程中，點擊工具欄上的<span class=\"action-key\">取消</span>按鈕。</li><li>在選擇過程中（出現高亮框時），在頁面任意位置<strong>右鍵單擊</strong>。</li><li>在任何時候，按下 <kbd>ESC</kbd> 鍵。</li><li>在任何時候，再次點擊「選取元素掃描」圖標。</li></ul>",
+    "sessionScanTitle": "動態掃描教程",
+    "sessionScan": "<p><strong>功能介紹:</strong></p><p>動態掃描會持續監控並自動記錄網頁上所有動態加載或變化的文本，特別適用於抓取實時聊天、滾動加載內容或通知等。</p><p><strong>如何使用:</strong></p><ul><li><strong>開始掃描:</strong> 點擊懸浮按鈕中的「動態掃描」圖標 <span class=\"help-icon-placeholder dynamic-scan-icon\"></span>，掃描立即開始。</li><li><strong>停止掃描:</strong> 再次點擊該圖標 <span class=\"help-icon-placeholder stop-icon\"></span>，即可停止掃描。</li><li><strong>查看結果:</strong> 停止後，點擊主懸浮按鈕 <span class=\"help-icon-placeholder summary-icon\"></span> 打開結果窗口。</li></ul><p><strong>如何退出:</strong></p><ul><li>在掃描過程中，再次點擊「動態掃描」圖標。</li><li>在掃描過程中，隨時按下 <kbd>ESC</kbd> 鍵可快速停止。</li></ul>"
   }
 }

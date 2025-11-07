@@ -83,14 +83,14 @@
   },
   "scan": {
     "quick": "快速扫描",
-    "session": "会话扫描",
+    "session": "动态扫描",
     "stagedCount": "已暂存:",
     "elementFinished": "选取元素扫描完成，发现 {{count}} 条文本。",
     "startSession": "开始动态扫描会话",
     "stopSession": "停止动态扫描会话",
     "finished": "扫描完成，发现 {{count}} 条文本。",
     "quickFinished": "快速扫描完成，发现 {{count}} 条文本。",
-    "sessionStarted": "会话扫描已开始。",
+    "sessionStarted": "动态扫描已开始。",
     "sessionInProgress": "扫描进行中...",
     "truncationWarning": "为保持界面流畅，此处仅显示部分文本。导出后将包含完整内容。"
   },
@@ -163,8 +163,8 @@
       "text_truncation_limit": "这是一个<strong>性能优化</strong>功能。如果脚本提取到<strong>极长的单行文本</strong>（例如，base64编码的图片），可能会导致浏览器<strong>卡顿或无响应</strong>。<br><br>此设置会截断任何超过指定长度的单行文本，以确保UI保持流畅。<strong>注意：这仅影响显示；导出的文件仍将包含完整的、未截断的内容。</strong>"
     },
     "advanced": {
-        "title": "高级设置说明",
-        "enable_debug_logging": "启用后，脚本会将详细的内部状态、执行步骤和错误信息输出到浏览器的<strong>开发者工具控制台</strong>（通常用F12打开）。这主要供开发者或需要提交详细错误报告的用户使用。"
+      "title": "高级设置说明",
+      "enable_debug_logging": "启用后，脚本会将详细的内部状态、执行步骤和错误信息输出到浏览器的<strong>开发者工具控制台</strong>（通常用F12打开）。这主要供开发者或需要提交详细错误报告的用户使用。"
     }
   },
   "log": {
@@ -209,22 +209,22 @@
       }
     },
     "sessionScan": {
-      "switchToFallback": "[会话扫描] 正在切换到主线程备选方案。",
+      "switchToFallback": "[动态扫描] 正在切换到主线程备选方案。",
       "domObserver": {
-        "stopped": "[会话扫描] 已停止监听 DOM 变化。"
+        "stopped": "[动态扫描] 已停止监听 DOM 变化。"
       },
       "fallback": {
-        "initialized": "[会话扫描 - 备选] 已初始化。",
-        "cleared": "[会话扫描 - 备选] 数据已清除。"
+        "initialized": "[动态扫描 - 备选] 已初始化。",
+        "cleared": "[动态扫描 - 备选] 数据已清除。"
       },
       "worker": {
-        "logPrefix": "[会话扫描 Worker]",
-        "starting": "会话扫描：正在尝试启动 Web Worker...",
-        "initFailed": "[会话扫描] Worker 初始化失败。这很可能是由于网站的内容安全策略 (CSP) 导致的。",
-        "originalError": "[会话扫描] 原始错误: {{error}}",
-        "initialized": "[会话扫描] Worker 初始化成功，已发送 {{count}} 条初始文本以开始会话。",
-        "initSyncError": "[会话扫描] Worker 初始化期间发生同步错误: {{error}}",
-        "clearCommandSent": "[会话扫描] 清除命令已发送至 worker。"
+        "logPrefix": "[动态扫描 Worker]",
+        "starting": "动态扫描：正在尝试启动 Web Worker...",
+        "initFailed": "[动态扫描] Worker 初始化失败。这很可能是由于网站的内容安全策略 (CSP) 导致的。",
+        "originalError": "[动态扫描] 原始错误: {{error}}",
+        "initialized": "[动态扫描] Worker 初始化成功，已发送 {{count}} 条初始文本以开始会话。",
+        "initSyncError": "[动态扫描] Worker 初始化期间发生同步错误: {{error}}",
+        "clearCommandSent": "[动态扫描] 清除命令已发送至 worker。"
       }
     },
     "ui": {
@@ -234,7 +234,7 @@
       },
       "confirmationModal": {
         "sessionScan": {
-          "confirmed": "用户已确认清除会话扫描文本，正在调用回调..."
+          "confirmed": "用户已确认清除动态扫描文本，正在调用回调..."
         },
         "quickScan": {
           "confirmed": "用户已确认清除快速扫描文本。"
@@ -242,24 +242,24 @@
         "cancelled": "用户已取消清除操作。"
       },
       "modal": {
-      "opening": "正在打开主模态框...",
-      "closing": "正在关闭主模态框...",
+        "opening": "正在打开主模态框...",
+        "closing": "正在关闭主模态框...",
         "scanFailed": "静态扫描失败: {{error}}",
-      "clearContent": "清空内容按钮已点击。"
+        "clearContent": "清空内容按钮已点击。"
       },
       "helpIcon": {
         "clicked": "点击了帮助图标，显示内容键：{{contentKey}}"
       }
     },
     "exporter": {
-    "buttonClicked": "导出按钮已点击，格式: {{format}}。",
+      "buttonClicked": "导出按钮已点击，格式: {{format}}。",
       "csvError": "解析文本并生成CSV时出错: {{error}}",
       "fileExported": "文件已导出: {{filename}}",
       "noContent": "无内容可导出。",
       "unknownFormat": "未知的导出格式: {{format}}"
     },
     "main": {
-      "requestingSessionScanData": "正在请求会话扫描模式的完整数据...",
+      "requestingSessionScanData": "正在请求动态扫描模式的完整数据...",
       "exportingQuickScanData": "正在导出快速扫描模式内存中的完整数据...",
       "inIframe": "脚本在 iframe 中，已跳过初始化。",
       "initializing": "脚本初始化开始...",
@@ -329,8 +329,8 @@
   },
   "tutorial": {
     "elementScanTitle": "选取元素扫描教程",
-    "elementScan": "<p class=\"tutorial-content\">这是一个用于选取元素扫描教程的占位符。支持富文本格式。</p>",
-    "sessionScanTitle": "会话扫描教程",
-    "sessionScan": "<p class=\"tutorial-content\">这是一个用于会话扫描教程的占位符。支持富文本格式。</p>"
+    "elementScan": "<p><strong>功能介绍:</strong></p><p>选取元素扫描允许您精确地选择网页上的一个或多个区域（例如一个段落、一个列表、一个侧边栏），并仅从这些区域中提取文本。</p><p><strong>如何使用:</strong></p><ol><li><strong>启动:</strong> 点击悬浮按钮中的“选取元素”图标 <span class=\"help-icon-placeholder element-scan-icon\"></span> 启动扫描模式。</li><li><strong>选择:</strong> 移动鼠标，您想扫描的区域会显示高亮框。单击以选定。</li><li><strong>调整:</strong> 选定后会出现工具栏。您可以使用<strong>滑块</strong>来扩大或缩小选择范围。</li><li><strong>暂存:</strong> 如果您想选择多个不相关的区域，可以点击<span class=\"action-key\">暂存</span>按钮保存当前选择，然后继续选择其他区域。</li><li><strong>确认:</strong> 完成所有选择后，点击<span class=\"action-key\">确认</span>按钮，系统将开始从您选择的所有区域中提取文本。</li></ol><p><strong>如何退出:</strong></p><ul><li>在选择过程中，点击工具栏上的<span class=\"action-key\">取消</span>按钮。</li><li>在选择过程中（出现高亮框时），在页面任意位置<strong>右键单击</strong>。</li><li>在任何时候，按下<kbd>ESC</kbd>键。</li><li>在任何时候，再次点击“选取元素扫描”图标。</li></ul>",
+    "sessionScanTitle": "动态扫描教程",
+    "sessionScan": "<p><strong>功能介绍:</strong></p><p>动态扫描会持续监控并自动记录网页上所有动态加载或变化的文本，特别适用于抓取实时聊天、滚动加载内容或通知等。</p><p><strong>如何使用:</strong></p><ul><li><strong>开始扫描:</strong> 点击悬浮按钮中的“动态扫描”图标 <span class=\"help-icon-placeholder dynamic-scan-icon\"></span>，扫描立即开始。</li><li><strong>停止扫描:</strong> 再次点击该图标 <span class=\"help-icon-placeholder stop-icon\"></span>，即可停止扫描。</li><li><strong>查看结果:</strong> 停止后，点击主悬浮按钮 <span class=\"help-icon-placeholder summary-icon\"></span> 打开结果窗口。</li></ul><p><strong>如何退出:</strong></p><ul><li>在扫描过程中，再次点击“动态扫描”图标。</li><li>在扫描过程中，随时按下<kbd>ESC</kbd>键可快速停止。</li></ul>"
   }
 }

@@ -30,9 +30,9 @@
     box-shadow: 0 5px 15px var(--main-shadow); /* 与设置面板保持一致 */
     padding: 0; /* 移除内边距，交由 header/content 管理 */
     position: relative;
-    width: 400px; /* 统一宽度 */
-    max-width: 90vw;
-    max-height: 90vh;
+    width: 480px; /* 统一宽度 */
+    max-width: 80vw;
+    max-height: 80vh;
     display: flex;
     flex-direction: column;
     transform: scale(0.95);
@@ -98,7 +98,7 @@
 }
 
 .info-tooltip-content {
-    padding: 20px;
+    padding: 24px;
     overflow-y: auto; /* 当内容过长时显示滚动条 */
 }
 

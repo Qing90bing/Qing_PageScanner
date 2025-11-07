@@ -230,7 +230,7 @@ var TextExtractor = (() => {
     },
     scan: {
       quick: "Quick Scan",
-      session: "Session Scan",
+      session: "Dynamic Scan",
       stagedCount: "Staged:",
       elementFinished: "Element scan finished, found {{count}} items.",
       startSession: "Start Dynamic Scan Session",
@@ -356,22 +356,22 @@ var TextExtractor = (() => {
         }
       },
       sessionScan: {
-        switchToFallback: "[Session Scan] Switching to main thread fallback.",
+        switchToFallback: "[Dynamic Scan] Switching to main thread fallback.",
         domObserver: {
-          stopped: "[Session Scan] Stopped listening for DOM changes."
+          stopped: "[Dynamic Scan] Stopped listening for DOM changes."
         },
         fallback: {
-          initialized: "[Session Scan - Fallback] Initialized.",
-          cleared: "[Session Scan - Fallback] Data cleared."
+          initialized: "[Dynamic Scan - Fallback] Initialized.",
+          cleared: "[Dynamic Scan - Fallback] Data cleared."
         },
         worker: {
-          logPrefix: "[Session Scan Worker]",
-          starting: "Session Scan: Attempting to start Web Worker...",
-          initFailed: "[Session Scan] Worker initialization failed. This is likely due to the website's Content Security Policy (CSP).",
-          originalError: "[Session Scan] Original error: {{error}}",
-          initialized: "[Session Scan] Worker initialized successfully, sent {{count}} initial texts to start the session.",
-          initSyncError: "[Session Scan] Synchronous error during Worker initialization: {{error}}",
-          clearCommandSent: "[Session Scan] Clear command sent to worker."
+          logPrefix: "[Dynamic Scan Worker]",
+          starting: "Dynamic Scan: Attempting to start Web Worker...",
+          initFailed: "[Dynamic Scan] Worker initialization failed. This is likely due to the website's Content Security Policy (CSP).",
+          originalError: "[Dynamic Scan] Original error: {{error}}",
+          initialized: "[Dynamic Scan] Worker initialized successfully, sent {{count}} initial texts to start the session.",
+          initSyncError: "[Dynamic Scan] Synchronous error during Worker initialization: {{error}}",
+          clearCommandSent: "[Dynamic Scan] Clear command sent to worker."
         }
       },
       ui: {
@@ -475,10 +475,10 @@ var TextExtractor = (() => {
       }
     },
     tutorial: {
-      elementScanTitle: "Element Scan Guide",
-      elementScan: '<p class="tutorial-content">This is a placeholder for the element scan tutorial. Rich text is supported.</p>',
-      sessionScanTitle: "Session Scan Guide",
-      sessionScan: '<p class="tutorial-content">This is a placeholder for the session scan tutorial. Rich text is supported.</p>'
+      elementScanTitle: "Element Scan Tutorial",
+      elementScan: '<p><strong>What it does:</strong></p><p>Element Scan allows you to precisely select one or more areas on a webpage (e.g., a paragraph, a list, a sidebar) and extract text only from those areas.</p><p><strong>How to use:</strong></p><ol><li><strong>Start:</strong> Click the "Element Scan" icon <span class="help-icon-placeholder element-scan-icon"></span> in the floating button to enter scan mode.</li><li><strong>Select:</strong> Move your mouse over the page. The area you want to scan will be highlighted. Click to select it.</li><li><strong>Adjust:</strong> A toolbar will appear after selection. You can use the <strong>slider</strong> to expand or shrink the selection area.</li><li><strong>Stage:</strong> If you want to select multiple unrelated areas, click the <span class="action-key">Stage</span> button to save the current selection and continue selecting other areas.</li><li><strong>Confirm:</strong> Once you have finished all selections, click the <span class="action-key">Confirm</span> button to start extracting text from all your chosen areas.</li></ol><p><strong>How to exit:</strong></p><ul><li>Click the <span class="action-key">Cancel</span> button on the toolbar during selection.</li><li>While the highlight box is visible, <strong>right-click</strong> anywhere on the page.</li><li>Press the <kbd>ESC</kbd> key at any time.</li><li>Click the "Element Scan" icon again at any time.</li></ul>',
+      sessionScanTitle: "Dynamic Scan Tutorial",
+      sessionScan: '<p><strong>What it does:</strong></p><p>Dynamic Scan continuously monitors and automatically records all text that dynamically loads or changes on a webpage. It is especially useful for capturing live chats, infinite scrolling content, or notifications.</p><p><strong>How to use:</strong></p><ul><li><strong>Start Scan:</strong> Click the "Dynamic Scan" icon <span class="help-icon-placeholder dynamic-scan-icon"></span> in the floating button to start scanning immediately.</li><li><strong>Stop Scan:</strong> Click the icon again <span class="help-icon-placeholder stop-icon"></span> to stop.</li><li><strong>View Results:</strong> After stopping, click the main floating button <span class="help-icon-placeholder summary-icon"></span> to open the results window.</li></ul><p><strong>How to exit:</strong></p><ul><li>Click the "Dynamic Scan" icon again during the scan.</li><li>Press the <kbd>ESC</kbd> key at any time to quickly stop the scan.</li></ul>'
     }
   };
   var zh_CN_default = {
@@ -566,14 +566,14 @@ var TextExtractor = (() => {
     },
     scan: {
       quick: "\u5FEB\u901F\u626B\u63CF",
-      session: "\u4F1A\u8BDD\u626B\u63CF",
+      session: "\u52A8\u6001\u626B\u63CF",
       stagedCount: "\u5DF2\u6682\u5B58:",
       elementFinished: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5B8C\u6210\uFF0C\u53D1\u73B0 {{count}} \u6761\u6587\u672C\u3002",
       startSession: "\u5F00\u59CB\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD",
       stopSession: "\u505C\u6B62\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD",
       finished: "\u626B\u63CF\u5B8C\u6210\uFF0C\u53D1\u73B0 {{count}} \u6761\u6587\u672C\u3002",
       quickFinished: "\u5FEB\u901F\u626B\u63CF\u5B8C\u6210\uFF0C\u53D1\u73B0 {{count}} \u6761\u6587\u672C\u3002",
-      sessionStarted: "\u4F1A\u8BDD\u626B\u63CF\u5DF2\u5F00\u59CB\u3002",
+      sessionStarted: "\u52A8\u6001\u626B\u63CF\u5DF2\u5F00\u59CB\u3002",
       sessionInProgress: "\u626B\u63CF\u8FDB\u884C\u4E2D...",
       truncationWarning: "\u4E3A\u4FDD\u6301\u754C\u9762\u6D41\u7545\uFF0C\u6B64\u5904\u4EC5\u663E\u793A\u90E8\u5206\u6587\u672C\u3002\u5BFC\u51FA\u540E\u5C06\u5305\u542B\u5B8C\u6574\u5185\u5BB9\u3002"
     },
@@ -692,22 +692,22 @@ var TextExtractor = (() => {
         }
       },
       sessionScan: {
-        switchToFallback: "[\u4F1A\u8BDD\u626B\u63CF] \u6B63\u5728\u5207\u6362\u5230\u4E3B\u7EBF\u7A0B\u5907\u9009\u65B9\u6848\u3002",
+        switchToFallback: "[\u52A8\u6001\u626B\u63CF] \u6B63\u5728\u5207\u6362\u5230\u4E3B\u7EBF\u7A0B\u5907\u9009\u65B9\u6848\u3002",
         domObserver: {
-          stopped: "[\u4F1A\u8BDD\u626B\u63CF] \u5DF2\u505C\u6B62\u76D1\u542C DOM \u53D8\u5316\u3002"
+          stopped: "[\u52A8\u6001\u626B\u63CF] \u5DF2\u505C\u6B62\u76D1\u542C DOM \u53D8\u5316\u3002"
         },
         fallback: {
-          initialized: "[\u4F1A\u8BDD\u626B\u63CF - \u5907\u9009] \u5DF2\u521D\u59CB\u5316\u3002",
-          cleared: "[\u4F1A\u8BDD\u626B\u63CF - \u5907\u9009] \u6570\u636E\u5DF2\u6E05\u9664\u3002"
+          initialized: "[\u52A8\u6001\u626B\u63CF - \u5907\u9009] \u5DF2\u521D\u59CB\u5316\u3002",
+          cleared: "[\u52A8\u6001\u626B\u63CF - \u5907\u9009] \u6570\u636E\u5DF2\u6E05\u9664\u3002"
         },
         worker: {
-          logPrefix: "[\u4F1A\u8BDD\u626B\u63CF Worker]",
-          starting: "\u4F1A\u8BDD\u626B\u63CF\uFF1A\u6B63\u5728\u5C1D\u8BD5\u542F\u52A8 Web Worker...",
-          initFailed: "[\u4F1A\u8BDD\u626B\u63CF] Worker \u521D\u59CB\u5316\u5931\u8D25\u3002\u8FD9\u5F88\u53EF\u80FD\u662F\u7531\u4E8E\u7F51\u7AD9\u7684\u5185\u5BB9\u5B89\u5168\u7B56\u7565 (CSP) \u5BFC\u81F4\u7684\u3002",
-          originalError: "[\u4F1A\u8BDD\u626B\u63CF] \u539F\u59CB\u9519\u8BEF: {{error}}",
-          initialized: "[\u4F1A\u8BDD\u626B\u63CF] Worker \u521D\u59CB\u5316\u6210\u529F\uFF0C\u5DF2\u53D1\u9001 {{count}} \u6761\u521D\u59CB\u6587\u672C\u4EE5\u5F00\u59CB\u4F1A\u8BDD\u3002",
-          initSyncError: "[\u4F1A\u8BDD\u626B\u63CF] Worker \u521D\u59CB\u5316\u671F\u95F4\u53D1\u751F\u540C\u6B65\u9519\u8BEF: {{error}}",
-          clearCommandSent: "[\u4F1A\u8BDD\u626B\u63CF] \u6E05\u9664\u547D\u4EE4\u5DF2\u53D1\u9001\u81F3 worker\u3002"
+          logPrefix: "[\u52A8\u6001\u626B\u63CF Worker]",
+          starting: "\u52A8\u6001\u626B\u63CF\uFF1A\u6B63\u5728\u5C1D\u8BD5\u542F\u52A8 Web Worker...",
+          initFailed: "[\u52A8\u6001\u626B\u63CF] Worker \u521D\u59CB\u5316\u5931\u8D25\u3002\u8FD9\u5F88\u53EF\u80FD\u662F\u7531\u4E8E\u7F51\u7AD9\u7684\u5185\u5BB9\u5B89\u5168\u7B56\u7565 (CSP) \u5BFC\u81F4\u7684\u3002",
+          originalError: "[\u52A8\u6001\u626B\u63CF] \u539F\u59CB\u9519\u8BEF: {{error}}",
+          initialized: "[\u52A8\u6001\u626B\u63CF] Worker \u521D\u59CB\u5316\u6210\u529F\uFF0C\u5DF2\u53D1\u9001 {{count}} \u6761\u521D\u59CB\u6587\u672C\u4EE5\u5F00\u59CB\u4F1A\u8BDD\u3002",
+          initSyncError: "[\u52A8\u6001\u626B\u63CF] Worker \u521D\u59CB\u5316\u671F\u95F4\u53D1\u751F\u540C\u6B65\u9519\u8BEF: {{error}}",
+          clearCommandSent: "[\u52A8\u6001\u626B\u63CF] \u6E05\u9664\u547D\u4EE4\u5DF2\u53D1\u9001\u81F3 worker\u3002"
         }
       },
       ui: {
@@ -717,7 +717,7 @@ var TextExtractor = (() => {
         },
         confirmationModal: {
           sessionScan: {
-            confirmed: "\u7528\u6237\u5DF2\u786E\u8BA4\u6E05\u9664\u4F1A\u8BDD\u626B\u63CF\u6587\u672C\uFF0C\u6B63\u5728\u8C03\u7528\u56DE\u8C03..."
+            confirmed: "\u7528\u6237\u5DF2\u786E\u8BA4\u6E05\u9664\u52A8\u6001\u626B\u63CF\u6587\u672C\uFF0C\u6B63\u5728\u8C03\u7528\u56DE\u8C03..."
           },
           quickScan: {
             confirmed: "\u7528\u6237\u5DF2\u786E\u8BA4\u6E05\u9664\u5FEB\u901F\u626B\u63CF\u6587\u672C\u3002"
@@ -742,7 +742,7 @@ var TextExtractor = (() => {
         unknownFormat: "\u672A\u77E5\u7684\u5BFC\u51FA\u683C\u5F0F: {{format}}"
       },
       main: {
-        requestingSessionScanData: "\u6B63\u5728\u8BF7\u6C42\u4F1A\u8BDD\u626B\u63CF\u6A21\u5F0F\u7684\u5B8C\u6574\u6570\u636E...",
+        requestingSessionScanData: "\u6B63\u5728\u8BF7\u6C42\u52A8\u6001\u626B\u63CF\u6A21\u5F0F\u7684\u5B8C\u6574\u6570\u636E...",
         exportingQuickScanData: "\u6B63\u5728\u5BFC\u51FA\u5FEB\u901F\u626B\u63CF\u6A21\u5F0F\u5185\u5B58\u4E2D\u7684\u5B8C\u6574\u6570\u636E...",
         inIframe: "\u811A\u672C\u5728 iframe \u4E2D\uFF0C\u5DF2\u8DF3\u8FC7\u521D\u59CB\u5316\u3002",
         initializing: "\u811A\u672C\u521D\u59CB\u5316\u5F00\u59CB...",
@@ -812,9 +812,9 @@ var TextExtractor = (() => {
     },
     tutorial: {
       elementScanTitle: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u6559\u7A0B",
-      elementScan: '<p class="tutorial-content">\u8FD9\u662F\u4E00\u4E2A\u7528\u4E8E\u9009\u53D6\u5143\u7D20\u626B\u63CF\u6559\u7A0B\u7684\u5360\u4F4D\u7B26\u3002\u652F\u6301\u5BCC\u6587\u672C\u683C\u5F0F\u3002</p>',
-      sessionScanTitle: "\u4F1A\u8BDD\u626B\u63CF\u6559\u7A0B",
-      sessionScan: '<p class="tutorial-content">\u8FD9\u662F\u4E00\u4E2A\u7528\u4E8E\u4F1A\u8BDD\u626B\u63CF\u6559\u7A0B\u7684\u5360\u4F4D\u7B26\u3002\u652F\u6301\u5BCC\u6587\u672C\u683C\u5F0F\u3002</p>'
+      elementScan: '<p><strong>\u529F\u80FD\u4ECB\u7ECD:</strong></p><p>\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5141\u8BB8\u60A8\u7CBE\u786E\u5730\u9009\u62E9\u7F51\u9875\u4E0A\u7684\u4E00\u4E2A\u6216\u591A\u4E2A\u533A\u57DF\uFF08\u4F8B\u5982\u4E00\u4E2A\u6BB5\u843D\u3001\u4E00\u4E2A\u5217\u8868\u3001\u4E00\u4E2A\u4FA7\u8FB9\u680F\uFF09\uFF0C\u5E76\u4EC5\u4ECE\u8FD9\u4E9B\u533A\u57DF\u4E2D\u63D0\u53D6\u6587\u672C\u3002</p><p><strong>\u5982\u4F55\u4F7F\u7528:</strong></p><ol><li><strong>\u542F\u52A8:</strong> \u70B9\u51FB\u60AC\u6D6E\u6309\u94AE\u4E2D\u7684\u201C\u9009\u53D6\u5143\u7D20\u201D\u56FE\u6807 <span class="help-icon-placeholder element-scan-icon"></span> \u542F\u52A8\u626B\u63CF\u6A21\u5F0F\u3002</li><li><strong>\u9009\u62E9:</strong> \u79FB\u52A8\u9F20\u6807\uFF0C\u60A8\u60F3\u626B\u63CF\u7684\u533A\u57DF\u4F1A\u663E\u793A\u9AD8\u4EAE\u6846\u3002\u5355\u51FB\u4EE5\u9009\u5B9A\u3002</li><li><strong>\u8C03\u6574:</strong> \u9009\u5B9A\u540E\u4F1A\u51FA\u73B0\u5DE5\u5177\u680F\u3002\u60A8\u53EF\u4EE5\u4F7F\u7528<strong>\u6ED1\u5757</strong>\u6765\u6269\u5927\u6216\u7F29\u5C0F\u9009\u62E9\u8303\u56F4\u3002</li><li><strong>\u6682\u5B58:</strong> \u5982\u679C\u60A8\u60F3\u9009\u62E9\u591A\u4E2A\u4E0D\u76F8\u5173\u7684\u533A\u57DF\uFF0C\u53EF\u4EE5\u70B9\u51FB<span class="action-key">\u6682\u5B58</span>\u6309\u94AE\u4FDD\u5B58\u5F53\u524D\u9009\u62E9\uFF0C\u7136\u540E\u7EE7\u7EED\u9009\u62E9\u5176\u4ED6\u533A\u57DF\u3002</li><li><strong>\u786E\u8BA4:</strong> \u5B8C\u6210\u6240\u6709\u9009\u62E9\u540E\uFF0C\u70B9\u51FB<span class="action-key">\u786E\u8BA4</span>\u6309\u94AE\uFF0C\u7CFB\u7EDF\u5C06\u5F00\u59CB\u4ECE\u60A8\u9009\u62E9\u7684\u6240\u6709\u533A\u57DF\u4E2D\u63D0\u53D6\u6587\u672C\u3002</li></ol><p><strong>\u5982\u4F55\u9000\u51FA:</strong></p><ul><li>\u5728\u9009\u62E9\u8FC7\u7A0B\u4E2D\uFF0C\u70B9\u51FB\u5DE5\u5177\u680F\u4E0A\u7684<span class="action-key">\u53D6\u6D88</span>\u6309\u94AE\u3002</li><li>\u5728\u9009\u62E9\u8FC7\u7A0B\u4E2D\uFF08\u51FA\u73B0\u9AD8\u4EAE\u6846\u65F6\uFF09\uFF0C\u5728\u9875\u9762\u4EFB\u610F\u4F4D\u7F6E<strong>\u53F3\u952E\u5355\u51FB</strong>\u3002</li><li>\u5728\u4EFB\u4F55\u65F6\u5019\uFF0C\u6309\u4E0B<kbd>ESC</kbd>\u952E\u3002</li><li>\u5728\u4EFB\u4F55\u65F6\u5019\uFF0C\u518D\u6B21\u70B9\u51FB\u201C\u9009\u53D6\u5143\u7D20\u626B\u63CF\u201D\u56FE\u6807\u3002</li></ul>',
+      sessionScanTitle: "\u52A8\u6001\u626B\u63CF\u6559\u7A0B",
+      sessionScan: '<p><strong>\u529F\u80FD\u4ECB\u7ECD:</strong></p><p>\u52A8\u6001\u626B\u63CF\u4F1A\u6301\u7EED\u76D1\u63A7\u5E76\u81EA\u52A8\u8BB0\u5F55\u7F51\u9875\u4E0A\u6240\u6709\u52A8\u6001\u52A0\u8F7D\u6216\u53D8\u5316\u7684\u6587\u672C\uFF0C\u7279\u522B\u9002\u7528\u4E8E\u6293\u53D6\u5B9E\u65F6\u804A\u5929\u3001\u6EDA\u52A8\u52A0\u8F7D\u5185\u5BB9\u6216\u901A\u77E5\u7B49\u3002</p><p><strong>\u5982\u4F55\u4F7F\u7528:</strong></p><ul><li><strong>\u5F00\u59CB\u626B\u63CF:</strong> \u70B9\u51FB\u60AC\u6D6E\u6309\u94AE\u4E2D\u7684\u201C\u52A8\u6001\u626B\u63CF\u201D\u56FE\u6807 <span class="help-icon-placeholder dynamic-scan-icon"></span>\uFF0C\u626B\u63CF\u7ACB\u5373\u5F00\u59CB\u3002</li><li><strong>\u505C\u6B62\u626B\u63CF:</strong> \u518D\u6B21\u70B9\u51FB\u8BE5\u56FE\u6807 <span class="help-icon-placeholder stop-icon"></span>\uFF0C\u5373\u53EF\u505C\u6B62\u626B\u63CF\u3002</li><li><strong>\u67E5\u770B\u7ED3\u679C:</strong> \u505C\u6B62\u540E\uFF0C\u70B9\u51FB\u4E3B\u60AC\u6D6E\u6309\u94AE <span class="help-icon-placeholder summary-icon"></span> \u6253\u5F00\u7ED3\u679C\u7A97\u53E3\u3002</li></ul><p><strong>\u5982\u4F55\u9000\u51FA:</strong></p><ul><li>\u5728\u626B\u63CF\u8FC7\u7A0B\u4E2D\uFF0C\u518D\u6B21\u70B9\u51FB\u201C\u52A8\u6001\u626B\u63CF\u201D\u56FE\u6807\u3002</li><li>\u5728\u626B\u63CF\u8FC7\u7A0B\u4E2D\uFF0C\u968F\u65F6\u6309\u4E0B<kbd>ESC</kbd>\u952E\u53EF\u5FEB\u901F\u505C\u6B62\u3002</li></ul>'
     }
   };
   var zh_TW_default = {
@@ -902,14 +902,14 @@ var TextExtractor = (() => {
     },
     scan: {
       quick: "\u5FEB\u901F\u6383\u63CF",
-      session: "\u6703\u8A71\u6383\u63CF",
+      session: "\u52D5\u614B\u6383\u63CF",
       stagedCount: "\u5DF2\u66AB\u5B58:",
       elementFinished: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5B8C\u6210\uFF0C\u767C\u73FE {{count}} \u689D\u6587\u672C\u3002",
       startSession: "\u958B\u59CB\u52D5\u614B\u6383\u63CF\u6703\u8A71",
       stopSession: "\u505C\u6B62\u52D5\u614B\u6383\u63CF\u6703\u8A71",
       finished: "\u6383\u63CF\u5B8C\u6210\uFF0C\u767C\u73FE {{count}} \u689D\u6587\u672C\u3002",
       quickFinished: "\u5FEB\u901F\u6383\u63CF\u5B8C\u6210\uFF0C\u767C\u73FE {{count}} \u689D\u6587\u672C\u3002",
-      sessionStarted: "\u6703\u8A71\u6383\u63CF\u5DF2\u958B\u59CB\u3002",
+      sessionStarted: "\u52D5\u614B\u6383\u63CF\u5DF2\u958B\u59CB\u3002",
       sessionInProgress: "\u6383\u63CF\u9032\u884C\u4E2D...",
       truncationWarning: "\u70BA\u4FDD\u6301\u4ECB\u9762\u6D41\u66A2\uFF0C\u6B64\u8655\u50C5\u986F\u793A\u90E8\u5206\u6587\u672C\u3002\u532F\u51FA\u5F8C\u5C07\u5305\u542B\u5B8C\u6574\u5167\u5BB9\u3002"
     },
@@ -1028,22 +1028,22 @@ var TextExtractor = (() => {
         }
       },
       sessionScan: {
-        switchToFallback: "[\u6703\u8A71\u6383\u63CF] \u6B63\u5728\u5207\u63DB\u5230\u4E3B\u7DDA\u7A0B\u5099\u9078\u65B9\u6848\u3002",
+        switchToFallback: "[\u52D5\u614B\u6383\u63CF] \u6B63\u5728\u5207\u63DB\u5230\u4E3B\u7DDA\u7A0B\u5099\u9078\u65B9\u6848\u3002",
         domObserver: {
-          stopped: "[\u6703\u8A71\u6383\u63CF] \u5DF2\u505C\u6B62\u76E3\u807D DOM \u8B8A\u5316\u3002"
+          stopped: "[\u52D5\u614B\u6383\u63CF] \u5DF2\u505C\u6B62\u76E3\u807D DOM \u8B8A\u5316\u3002"
         },
         fallback: {
-          initialized: "[\u6703\u8A71\u6383\u63CF - \u5099\u9078] \u5DF2\u521D\u59CB\u5316\u3002",
-          cleared: "[\u6703\u8A71\u6383\u63CF - \u5099\u9078] \u8CC7\u6599\u5DF2\u6E05\u9664\u3002"
+          initialized: "[\u52D5\u614B\u6383\u63CF - \u5099\u9078] \u5DF2\u521D\u59CB\u5316\u3002",
+          cleared: "[\u52D5\u614B\u6383\u63CF - \u5099\u9078] \u8CC7\u6599\u5DF2\u6E05\u9664\u3002"
         },
         worker: {
-          logPrefix: "[\u6703\u8A71\u6383\u63CF Worker]",
-          starting: "\u6703\u8A71\u6383\u63CF\uFF1A\u6B63\u5728\u5617\u8A66\u555F\u52D5 Web Worker...",
-          initFailed: "[\u6703\u8A71\u6383\u63CF] Worker \u521D\u59CB\u5316\u5931\u6557\u3002\u9019\u5F88\u53EF\u80FD\u662F\u7531\u65BC\u7DB2\u7AD9\u7684\u5167\u5BB9\u5B89\u5168\u7B56\u7565 (CSP) \u5C0E\u81F4\u7684\u3002",
-          originalError: "[\u6703\u8A71\u6383\u63CF] \u539F\u59CB\u932F\u8AA4: {{error}}",
-          initialized: "[\u6703\u8A71\u6383\u63CF] Worker \u521D\u59CB\u5316\u6210\u529F\uFF0C\u5DF2\u767C\u9001 {{count}} \u689D\u521D\u59CB\u6587\u672C\u4EE5\u958B\u59CB\u6703\u8A71\u3002",
-          initSyncError: "[\u6703\u8A71\u6383\u63CF] Worker \u521D\u59CB\u5316\u671F\u9593\u767C\u751F\u540C\u6B65\u932F\u8AA4: {{error}}",
-          clearCommandSent: "[\u6703\u8A71\u6383\u63CF] \u6E05\u9664\u547D\u4EE4\u5DF2\u767C\u9001\u81F3 worker\u3002"
+          logPrefix: "[\u52D5\u614B\u6383\u63CF Worker]",
+          starting: "\u52D5\u614B\u6383\u63CF\uFF1A\u6B63\u5728\u5617\u8A66\u555F\u52D5 Web Worker...",
+          initFailed: "[\u52D5\u614B\u6383\u63CF] Worker \u521D\u59CB\u5316\u5931\u6557\u3002\u9019\u5F88\u53EF\u80FD\u662F\u7531\u65BC\u7DB2\u7AD9\u7684\u5167\u5BB9\u5B89\u5168\u7B56\u7565 (CSP) \u5C0E\u81F4\u7684\u3002",
+          originalError: "[\u52D5\u614B\u6383\u63CF] \u539F\u59CB\u932F\u8AA4: {{error}}",
+          initialized: "[\u52D5\u614B\u6383\u63CF] Worker \u521D\u59CB\u5316\u6210\u529F\uFF0C\u5DF2\u767C\u9001 {{count}} \u689D\u521D\u59CB\u6587\u672C\u4EE5\u958B\u59CB\u6703\u8A71\u3002",
+          initSyncError: "[\u52D5\u614B\u6383\u63CF] Worker \u521D\u59CB\u5316\u671F\u9593\u767C\u751F\u540C\u6B65\u932F\u8AA4: {{error}}",
+          clearCommandSent: "[\u52D5\u614B\u6383\u63CF] \u6E05\u9664\u547D\u4EE4\u5DF2\u767C\u9001\u81F3 worker\u3002"
         }
       },
       ui: {
@@ -1053,7 +1053,7 @@ var TextExtractor = (() => {
         },
         confirmationModal: {
           sessionScan: {
-            confirmed: "\u4F7F\u7528\u8005\u5DF2\u78BA\u8A8D\u6E05\u9664\u6703\u8A71\u6383\u63CF\u6587\u672C\uFF0C\u6B63\u5728\u8ABF\u7528\u56DE\u547C..."
+            confirmed: "\u4F7F\u7528\u8005\u5DF2\u78BA\u8A8D\u6E05\u9664\u52D5\u614B\u6383\u63CF\u6587\u672C\uFF0C\u6B63\u5728\u8ABF\u7528\u56DE\u547C..."
           },
           quickScan: {
             confirmed: "\u4F7F\u7528\u8005\u5DF2\u78BA\u8A8D\u6E05\u9664\u5FEB\u901F\u6383\u63CF\u6587\u672C\u3002"
@@ -1078,7 +1078,7 @@ var TextExtractor = (() => {
         unknownFormat: "\u672A\u77E5\u7684\u532F\u51FA\u683C\u5F0F: {{format}}"
       },
       main: {
-        requestingSessionScanData: "\u6B63\u5728\u8ACB\u6C42\u6703\u8A71\u6383\u63CF\u6A21\u5F0F\u7684\u5B8C\u6574\u8CC7\u6599...",
+        requestingSessionScanData: "\u6B63\u5728\u8ACB\u6C42\u52D5\u614B\u6383\u63CF\u6A21\u5F0F\u7684\u5B8C\u6574\u8CC7\u6599...",
         exportingQuickScanData: "\u6B63\u5728\u532F\u51FA\u5FEB\u901F\u6383\u63CF\u6A21\u5F0F\u8A18\u61B6\u9AD4\u4E2D\u7684\u5B8C\u6574\u8CC7\u6599...",
         inIframe: "\u8173\u672C\u5728 iframe \u4E2D\uFF0C\u5DF2\u8DF3\u904E\u521D\u59CB\u5316\u3002",
         initializing: "\u8173\u672C\u521D\u59CB\u5316\u958B\u59CB...",
@@ -1147,10 +1147,10 @@ var TextExtractor = (() => {
       }
     },
     tutorial: {
-      elementScanTitle: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u6559\u5B78",
-      elementScan: '<p class="tutorial-content">\u9019\u662F\u4E00\u500B\u7528\u65BC\u9078\u53D6\u5143\u7D20\u6383\u63CF\u6559\u5B78\u7684\u4F54\u4F4D\u7B26\u3002\u652F\u63F4\u5BCC\u6587\u672C\u683C\u5F0F\u3002</p>',
-      sessionScanTitle: "\u6703\u8A71\u6383\u63CF\u6559\u5B78",
-      sessionScan: '<p class="tutorial-content">\u9019\u662F\u4E00\u500B\u7528\u65BC\u6703\u8A71\u6383\u63CF\u6559\u5B78\u7684\u4F54\u4F4D\u7B26\u3002\u652F\u63F4\u5BCC\u6587\u672C\u683C\u5F0F\u3002</p>'
+      elementScanTitle: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u6559\u7A0B",
+      elementScan: '<p><strong>\u529F\u80FD\u4ECB\u7D39:</strong></p><p>\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5141\u8A31\u60A8\u7CBE\u78BA\u5730\u9078\u64C7\u7DB2\u9801\u4E0A\u7684\u4E00\u500B\u6216\u591A\u500B\u5340\u57DF\uFF08\u4F8B\u5982\u4E00\u500B\u6BB5\u843D\u3001\u4E00\u500B\u5217\u8868\u3001\u4E00\u500B\u5074\u908A\u6B04\uFF09\uFF0C\u4E26\u50C5\u5F9E\u9019\u4E9B\u5340\u57DF\u4E2D\u63D0\u53D6\u6587\u672C\u3002</p><p><strong>\u5982\u4F55\u4F7F\u7528:</strong></p><ol><li><strong>\u555F\u52D5:</strong> \u9EDE\u64CA\u61F8\u6D6E\u6309\u9215\u4E2D\u7684\u300C\u9078\u53D6\u5143\u7D20\u300D\u5716\u6A19 <span class="help-icon-placeholder element-scan-icon"></span> \u555F\u52D5\u6383\u63CF\u6A21\u5F0F\u3002</li><li><strong>\u9078\u64C7:</strong> \u79FB\u52D5\u9F20\u6A19\uFF0C\u60A8\u60F3\u6383\u63CF\u7684\u5340\u57DF\u6703\u986F\u793A\u9AD8\u4EAE\u6846\u3002\u55AE\u64CA\u4EE5\u9078\u5B9A\u3002</li><li><strong>\u8ABF\u6574:</strong> \u9078\u5B9A\u5F8C\u6703\u51FA\u73FE\u5DE5\u5177\u6B04\u3002\u60A8\u53EF\u4EE5\u4F7F\u7528<strong>\u6ED1\u584A</strong>\u4F86\u64F4\u5927\u6216\u7E2E\u5C0F\u9078\u64C7\u7BC4\u570D\u3002</li><li><strong>\u66AB\u5B58:</strong> \u5982\u679C\u60A8\u60F3\u9078\u64C7\u591A\u500B\u4E0D\u76F8\u95DC\u7684\u5340\u57DF\uFF0C\u53EF\u4EE5\u9EDE\u64CA<span class="action-key">\u66AB\u5B58</span>\u6309\u9215\u4FDD\u5B58\u7576\u524D\u9078\u64C7\uFF0C\u7136\u5F8C\u7E7C\u7E8C\u9078\u64C7\u5176\u4ED6\u5340\u57DF\u3002</li><li><strong>\u78BA\u8A8D:</strong> \u5B8C\u6210\u6240\u6709\u9078\u64C7\u5F8C\uFF0C\u9EDE\u64CA<span class="action-key">\u78BA\u8A8D</span>\u6309\u9215\uFF0C\u7CFB\u7D71\u5C07\u958B\u59CB\u5F9E\u60A8\u9078\u64C7\u7684\u6240\u6709\u5340\u57DF\u4E2D\u63D0\u53D6\u6587\u672C\u3002</li></ol><p><strong>\u5982\u4F55\u9000\u51FA:</strong></p><ul><li>\u5728\u9078\u64C7\u904E\u7A0B\u4E2D\uFF0C\u9EDE\u64CA\u5DE5\u5177\u6B04\u4E0A\u7684<span class="action-key">\u53D6\u6D88</span>\u6309\u9215\u3002</li><li>\u5728\u9078\u64C7\u904E\u7A0B\u4E2D\uFF08\u51FA\u73FE\u9AD8\u4EAE\u6846\u6642\uFF09\uFF0C\u5728\u9801\u9762\u4EFB\u610F\u4F4D\u7F6E<strong>\u53F3\u9375\u55AE\u64CA</strong>\u3002</li><li>\u5728\u4EFB\u4F55\u6642\u5019\uFF0C\u6309\u4E0B <kbd>ESC</kbd> \u9375\u3002</li><li>\u5728\u4EFB\u4F55\u6642\u5019\uFF0C\u518D\u6B21\u9EDE\u64CA\u300C\u9078\u53D6\u5143\u7D20\u6383\u63CF\u300D\u5716\u6A19\u3002</li></ul>',
+      sessionScanTitle: "\u52D5\u614B\u6383\u63CF\u6559\u7A0B",
+      sessionScan: '<p><strong>\u529F\u80FD\u4ECB\u7D39:</strong></p><p>\u52D5\u614B\u6383\u63CF\u6703\u6301\u7E8C\u76E3\u63A7\u4E26\u81EA\u52D5\u8A18\u9304\u7DB2\u9801\u4E0A\u6240\u6709\u52D5\u614B\u52A0\u8F09\u6216\u8B8A\u5316\u7684\u6587\u672C\uFF0C\u7279\u5225\u9069\u7528\u65BC\u6293\u53D6\u5BE6\u6642\u804A\u5929\u3001\u6EFE\u52D5\u52A0\u8F09\u5167\u5BB9\u6216\u901A\u77E5\u7B49\u3002</p><p><strong>\u5982\u4F55\u4F7F\u7528:</strong></p><ul><li><strong>\u958B\u59CB\u6383\u63CF:</strong> \u9EDE\u64CA\u61F8\u6D6E\u6309\u9215\u4E2D\u7684\u300C\u52D5\u614B\u6383\u63CF\u300D\u5716\u6A19 <span class="help-icon-placeholder dynamic-scan-icon"></span>\uFF0C\u6383\u63CF\u7ACB\u5373\u958B\u59CB\u3002</li><li><strong>\u505C\u6B62\u6383\u63CF:</strong> \u518D\u6B21\u9EDE\u64CA\u8A72\u5716\u6A19 <span class="help-icon-placeholder stop-icon"></span>\uFF0C\u5373\u53EF\u505C\u6B62\u6383\u63CF\u3002</li><li><strong>\u67E5\u770B\u7D50\u679C:</strong> \u505C\u6B62\u5F8C\uFF0C\u9EDE\u64CA\u4E3B\u61F8\u6D6E\u6309\u9215 <span class="help-icon-placeholder summary-icon"></span> \u6253\u958B\u7D50\u679C\u7A97\u53E3\u3002</li></ul><p><strong>\u5982\u4F55\u9000\u51FA:</strong></p><ul><li>\u5728\u6383\u63CF\u904E\u7A0B\u4E2D\uFF0C\u518D\u6B21\u9EDE\u64CA\u300C\u52D5\u614B\u6383\u63CF\u300D\u5716\u6A19\u3002</li><li>\u5728\u6383\u63CF\u904E\u7A0B\u4E2D\uFF0C\u96A8\u6642\u6309\u4E0B <kbd>ESC</kbd> \u9375\u53EF\u5FEB\u901F\u505C\u6B62\u3002</li></ul>'
     }
   };
   var isDebugEnabled = false;
@@ -2022,7 +2022,7 @@ ${result.join(",\n")}
     },
     scan: {
       quick: "Quick Scan",
-      session: "Session Scan",
+      session: "Dynamic Scan",
       stagedCount: "Staged:",
       elementFinished: "Element scan finished, found {{count}} items.",
       startSession: "Start Dynamic Scan Session",
@@ -2148,22 +2148,22 @@ ${result.join(",\n")}
         }
       },
       sessionScan: {
-        switchToFallback: "[Session Scan] Switching to main thread fallback.",
+        switchToFallback: "[Dynamic Scan] Switching to main thread fallback.",
         domObserver: {
-          stopped: "[Session Scan] Stopped listening for DOM changes."
+          stopped: "[Dynamic Scan] Stopped listening for DOM changes."
         },
         fallback: {
-          initialized: "[Session Scan - Fallback] Initialized.",
-          cleared: "[Session Scan - Fallback] Data cleared."
+          initialized: "[Dynamic Scan - Fallback] Initialized.",
+          cleared: "[Dynamic Scan - Fallback] Data cleared."
         },
         worker: {
-          logPrefix: "[Session Scan Worker]",
-          starting: "Session Scan: Attempting to start Web Worker...",
-          initFailed: "[Session Scan] Worker initialization failed. This is likely due to the website's Content Security Policy (CSP).",
-          originalError: "[Session Scan] Original error: {{error}}",
-          initialized: "[Session Scan] Worker initialized successfully, sent {{count}} initial texts to start the session.",
-          initSyncError: "[Session Scan] Synchronous error during Worker initialization: {{error}}",
-          clearCommandSent: "[Session Scan] Clear command sent to worker."
+          logPrefix: "[Dynamic Scan Worker]",
+          starting: "Dynamic Scan: Attempting to start Web Worker...",
+          initFailed: "[Dynamic Scan] Worker initialization failed. This is likely due to the website's Content Security Policy (CSP).",
+          originalError: "[Dynamic Scan] Original error: {{error}}",
+          initialized: "[Dynamic Scan] Worker initialized successfully, sent {{count}} initial texts to start the session.",
+          initSyncError: "[Dynamic Scan] Synchronous error during Worker initialization: {{error}}",
+          clearCommandSent: "[Dynamic Scan] Clear command sent to worker."
         }
       },
       ui: {
@@ -2267,10 +2267,10 @@ ${result.join(",\n")}
       }
     },
     tutorial: {
-      elementScanTitle: "Element Scan Guide",
-      elementScan: '<p class="tutorial-content">This is a placeholder for the element scan tutorial. Rich text is supported.</p>',
-      sessionScanTitle: "Session Scan Guide",
-      sessionScan: '<p class="tutorial-content">This is a placeholder for the session scan tutorial. Rich text is supported.</p>'
+      elementScanTitle: "Element Scan Tutorial",
+      elementScan: '<p><strong>What it does:</strong></p><p>Element Scan allows you to precisely select one or more areas on a webpage (e.g., a paragraph, a list, a sidebar) and extract text only from those areas.</p><p><strong>How to use:</strong></p><ol><li><strong>Start:</strong> Click the "Element Scan" icon <span class="help-icon-placeholder element-scan-icon"></span> in the floating button to enter scan mode.</li><li><strong>Select:</strong> Move your mouse over the page. The area you want to scan will be highlighted. Click to select it.</li><li><strong>Adjust:</strong> A toolbar will appear after selection. You can use the <strong>slider</strong> to expand or shrink the selection area.</li><li><strong>Stage:</strong> If you want to select multiple unrelated areas, click the <span class="action-key">Stage</span> button to save the current selection and continue selecting other areas.</li><li><strong>Confirm:</strong> Once you have finished all selections, click the <span class="action-key">Confirm</span> button to start extracting text from all your chosen areas.</li></ol><p><strong>How to exit:</strong></p><ul><li>Click the <span class="action-key">Cancel</span> button on the toolbar during selection.</li><li>While the highlight box is visible, <strong>right-click</strong> anywhere on the page.</li><li>Press the <kbd>ESC</kbd> key at any time.</li><li>Click the "Element Scan" icon again at any time.</li></ul>',
+      sessionScanTitle: "Dynamic Scan Tutorial",
+      sessionScan: '<p><strong>What it does:</strong></p><p>Dynamic Scan continuously monitors and automatically records all text that dynamically loads or changes on a webpage. It is especially useful for capturing live chats, infinite scrolling content, or notifications.</p><p><strong>How to use:</strong></p><ul><li><strong>Start Scan:</strong> Click the "Dynamic Scan" icon <span class="help-icon-placeholder dynamic-scan-icon"></span> in the floating button to start scanning immediately.</li><li><strong>Stop Scan:</strong> Click the icon again <span class="help-icon-placeholder stop-icon"></span> to stop.</li><li><strong>View Results:</strong> After stopping, click the main floating button <span class="help-icon-placeholder summary-icon"></span> to open the results window.</li></ul><p><strong>How to exit:</strong></p><ul><li>Click the "Dynamic Scan" icon again during the scan.</li><li>Press the <kbd>ESC</kbd> key at any time to quickly stop the scan.</li></ul>'
     }
   };
   // src/shared/i18n/zh-CN.json
@@ -2359,14 +2359,14 @@ ${result.join(",\n")}
     },
     scan: {
       quick: "\\u5FEB\\u901F\\u626B\\u63CF",
-      session: "\\u4F1A\\u8BDD\\u626B\\u63CF",
+      session: "\\u52A8\\u6001\\u626B\\u63CF",
       stagedCount: "\\u5DF2\\u6682\\u5B58:",
       elementFinished: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {{count}} \\u6761\\u6587\\u672C\\u3002",
       startSession: "\\u5F00\\u59CB\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD",
       stopSession: "\\u505C\\u6B62\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD",
       finished: "\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {{count}} \\u6761\\u6587\\u672C\\u3002",
       quickFinished: "\\u5FEB\\u901F\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {{count}} \\u6761\\u6587\\u672C\\u3002",
-      sessionStarted: "\\u4F1A\\u8BDD\\u626B\\u63CF\\u5DF2\\u5F00\\u59CB\\u3002",
+      sessionStarted: "\\u52A8\\u6001\\u626B\\u63CF\\u5DF2\\u5F00\\u59CB\\u3002",
       sessionInProgress: "\\u626B\\u63CF\\u8FDB\\u884C\\u4E2D...",
       truncationWarning: "\\u4E3A\\u4FDD\\u6301\\u754C\\u9762\\u6D41\\u7545\\uFF0C\\u6B64\\u5904\\u4EC5\\u663E\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u5BFC\\u51FA\\u540E\\u5C06\\u5305\\u542B\\u5B8C\\u6574\\u5185\\u5BB9\\u3002"
     },
@@ -2485,22 +2485,22 @@ ${result.join(",\n")}
         }
       },
       sessionScan: {
-        switchToFallback: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u6B63\\u5728\\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
+        switchToFallback: "[\\u52A8\\u6001\\u626B\\u63CF] \\u6B63\\u5728\\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
         domObserver: {
-          stopped: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u5DF2\\u505C\\u6B62\\u76D1\\u542C DOM \\u53D8\\u5316\\u3002"
+          stopped: "[\\u52A8\\u6001\\u626B\\u63CF] \\u5DF2\\u505C\\u6B62\\u76D1\\u542C DOM \\u53D8\\u5316\\u3002"
         },
         fallback: {
-          initialized: "[\\u4F1A\\u8BDD\\u626B\\u63CF - \\u5907\\u9009] \\u5DF2\\u521D\\u59CB\\u5316\\u3002",
-          cleared: "[\\u4F1A\\u8BDD\\u626B\\u63CF - \\u5907\\u9009] \\u6570\\u636E\\u5DF2\\u6E05\\u9664\\u3002"
+          initialized: "[\\u52A8\\u6001\\u626B\\u63CF - \\u5907\\u9009] \\u5DF2\\u521D\\u59CB\\u5316\\u3002",
+          cleared: "[\\u52A8\\u6001\\u626B\\u63CF - \\u5907\\u9009] \\u6570\\u636E\\u5DF2\\u6E05\\u9664\\u3002"
         },
         worker: {
-          logPrefix: "[\\u4F1A\\u8BDD\\u626B\\u63CF Worker]",
-          starting: "\\u4F1A\\u8BDD\\u626B\\u63CF\\uFF1A\\u6B63\\u5728\\u5C1D\\u8BD5\\u542F\\u52A8 Web Worker...",
-          initFailed: "[\\u4F1A\\u8BDD\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u8D25\\u3002\\u8FD9\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u4E8E\\u7F51\\u7AD9\\u7684\\u5185\\u5BB9\\u5B89\\u5168\\u7B56\\u7565 (CSP) \\u5BFC\\u81F4\\u7684\\u3002",
-          originalError: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u539F\\u59CB\\u9519\\u8BEF: {{error}}",
-          initialized: "[\\u4F1A\\u8BDD\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u6210\\u529F\\uFF0C\\u5DF2\\u53D1\\u9001 {{count}} \\u6761\\u521D\\u59CB\\u6587\\u672C\\u4EE5\\u5F00\\u59CB\\u4F1A\\u8BDD\\u3002",
-          initSyncError: "[\\u4F1A\\u8BDD\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u671F\\u95F4\\u53D1\\u751F\\u540C\\u6B65\\u9519\\u8BEF: {{error}}",
-          clearCommandSent: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u6E05\\u9664\\u547D\\u4EE4\\u5DF2\\u53D1\\u9001\\u81F3 worker\\u3002"
+          logPrefix: "[\\u52A8\\u6001\\u626B\\u63CF Worker]",
+          starting: "\\u52A8\\u6001\\u626B\\u63CF\\uFF1A\\u6B63\\u5728\\u5C1D\\u8BD5\\u542F\\u52A8 Web Worker...",
+          initFailed: "[\\u52A8\\u6001\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u8D25\\u3002\\u8FD9\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u4E8E\\u7F51\\u7AD9\\u7684\\u5185\\u5BB9\\u5B89\\u5168\\u7B56\\u7565 (CSP) \\u5BFC\\u81F4\\u7684\\u3002",
+          originalError: "[\\u52A8\\u6001\\u626B\\u63CF] \\u539F\\u59CB\\u9519\\u8BEF: {{error}}",
+          initialized: "[\\u52A8\\u6001\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u6210\\u529F\\uFF0C\\u5DF2\\u53D1\\u9001 {{count}} \\u6761\\u521D\\u59CB\\u6587\\u672C\\u4EE5\\u5F00\\u59CB\\u4F1A\\u8BDD\\u3002",
+          initSyncError: "[\\u52A8\\u6001\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u671F\\u95F4\\u53D1\\u751F\\u540C\\u6B65\\u9519\\u8BEF: {{error}}",
+          clearCommandSent: "[\\u52A8\\u6001\\u626B\\u63CF] \\u6E05\\u9664\\u547D\\u4EE4\\u5DF2\\u53D1\\u9001\\u81F3 worker\\u3002"
         }
       },
       ui: {
@@ -2510,7 +2510,7 @@ ${result.join(",\n")}
         },
         confirmationModal: {
           sessionScan: {
-            confirmed: "\\u7528\\u6237\\u5DF2\\u786E\\u8BA4\\u6E05\\u9664\\u4F1A\\u8BDD\\u626B\\u63CF\\u6587\\u672C\\uFF0C\\u6B63\\u5728\\u8C03\\u7528\\u56DE\\u8C03..."
+            confirmed: "\\u7528\\u6237\\u5DF2\\u786E\\u8BA4\\u6E05\\u9664\\u52A8\\u6001\\u626B\\u63CF\\u6587\\u672C\\uFF0C\\u6B63\\u5728\\u8C03\\u7528\\u56DE\\u8C03..."
           },
           quickScan: {
             confirmed: "\\u7528\\u6237\\u5DF2\\u786E\\u8BA4\\u6E05\\u9664\\u5FEB\\u901F\\u626B\\u63CF\\u6587\\u672C\\u3002"
@@ -2535,7 +2535,7 @@ ${result.join(",\n")}
         unknownFormat: "\\u672A\\u77E5\\u7684\\u5BFC\\u51FA\\u683C\\u5F0F: {{format}}"
       },
       main: {
-        requestingSessionScanData: "\\u6B63\\u5728\\u8BF7\\u6C42\\u4F1A\\u8BDD\\u626B\\u63CF\\u6A21\\u5F0F\\u7684\\u5B8C\\u6574\\u6570\\u636E...",
+        requestingSessionScanData: "\\u6B63\\u5728\\u8BF7\\u6C42\\u52A8\\u6001\\u626B\\u63CF\\u6A21\\u5F0F\\u7684\\u5B8C\\u6574\\u6570\\u636E...",
         exportingQuickScanData: "\\u6B63\\u5728\\u5BFC\\u51FA\\u5FEB\\u901F\\u626B\\u63CF\\u6A21\\u5F0F\\u5185\\u5B58\\u4E2D\\u7684\\u5B8C\\u6574\\u6570\\u636E...",
         inIframe: "\\u811A\\u672C\\u5728 iframe \\u4E2D\\uFF0C\\u5DF2\\u8DF3\\u8FC7\\u521D\\u59CB\\u5316\\u3002",
         initializing: "\\u811A\\u672C\\u521D\\u59CB\\u5316\\u5F00\\u59CB...",
@@ -2605,9 +2605,9 @@ ${result.join(",\n")}
     },
     tutorial: {
       elementScanTitle: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u6559\\u7A0B",
-      elementScan: '<p class="tutorial-content">\\u8FD9\\u662F\\u4E00\\u4E2A\\u7528\\u4E8E\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u6559\\u7A0B\\u7684\\u5360\\u4F4D\\u7B26\\u3002\\u652F\\u6301\\u5BCC\\u6587\\u672C\\u683C\\u5F0F\\u3002</p>',
-      sessionScanTitle: "\\u4F1A\\u8BDD\\u626B\\u63CF\\u6559\\u7A0B",
-      sessionScan: '<p class="tutorial-content">\\u8FD9\\u662F\\u4E00\\u4E2A\\u7528\\u4E8E\\u4F1A\\u8BDD\\u626B\\u63CF\\u6559\\u7A0B\\u7684\\u5360\\u4F4D\\u7B26\\u3002\\u652F\\u6301\\u5BCC\\u6587\\u672C\\u683C\\u5F0F\\u3002</p>'
+      elementScan: '<p><strong>\\u529F\\u80FD\\u4ECB\\u7ECD:</strong></p><p>\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5141\\u8BB8\\u60A8\\u7CBE\\u786E\\u5730\\u9009\\u62E9\\u7F51\\u9875\\u4E0A\\u7684\\u4E00\\u4E2A\\u6216\\u591A\\u4E2A\\u533A\\u57DF\\uFF08\\u4F8B\\u5982\\u4E00\\u4E2A\\u6BB5\\u843D\\u3001\\u4E00\\u4E2A\\u5217\\u8868\\u3001\\u4E00\\u4E2A\\u4FA7\\u8FB9\\u680F\\uFF09\\uFF0C\\u5E76\\u4EC5\\u4ECE\\u8FD9\\u4E9B\\u533A\\u57DF\\u4E2D\\u63D0\\u53D6\\u6587\\u672C\\u3002</p><p><strong>\\u5982\\u4F55\\u4F7F\\u7528:</strong></p><ol><li><strong>\\u542F\\u52A8:</strong> \\u70B9\\u51FB\\u60AC\\u6D6E\\u6309\\u94AE\\u4E2D\\u7684\\u201C\\u9009\\u53D6\\u5143\\u7D20\\u201D\\u56FE\\u6807 <span class="help-icon-placeholder element-scan-icon"></span> \\u542F\\u52A8\\u626B\\u63CF\\u6A21\\u5F0F\\u3002</li><li><strong>\\u9009\\u62E9:</strong> \\u79FB\\u52A8\\u9F20\\u6807\\uFF0C\\u60A8\\u60F3\\u626B\\u63CF\\u7684\\u533A\\u57DF\\u4F1A\\u663E\\u793A\\u9AD8\\u4EAE\\u6846\\u3002\\u5355\\u51FB\\u4EE5\\u9009\\u5B9A\\u3002</li><li><strong>\\u8C03\\u6574:</strong> \\u9009\\u5B9A\\u540E\\u4F1A\\u51FA\\u73B0\\u5DE5\\u5177\\u680F\\u3002\\u60A8\\u53EF\\u4EE5\\u4F7F\\u7528<strong>\\u6ED1\\u5757</strong>\\u6765\\u6269\\u5927\\u6216\\u7F29\\u5C0F\\u9009\\u62E9\\u8303\\u56F4\\u3002</li><li><strong>\\u6682\\u5B58:</strong> \\u5982\\u679C\\u60A8\\u60F3\\u9009\\u62E9\\u591A\\u4E2A\\u4E0D\\u76F8\\u5173\\u7684\\u533A\\u57DF\\uFF0C\\u53EF\\u4EE5\\u70B9\\u51FB<span class="action-key">\\u6682\\u5B58</span>\\u6309\\u94AE\\u4FDD\\u5B58\\u5F53\\u524D\\u9009\\u62E9\\uFF0C\\u7136\\u540E\\u7EE7\\u7EED\\u9009\\u62E9\\u5176\\u4ED6\\u533A\\u57DF\\u3002</li><li><strong>\\u786E\\u8BA4:</strong> \\u5B8C\\u6210\\u6240\\u6709\\u9009\\u62E9\\u540E\\uFF0C\\u70B9\\u51FB<span class="action-key">\\u786E\\u8BA4</span>\\u6309\\u94AE\\uFF0C\\u7CFB\\u7EDF\\u5C06\\u5F00\\u59CB\\u4ECE\\u60A8\\u9009\\u62E9\\u7684\\u6240\\u6709\\u533A\\u57DF\\u4E2D\\u63D0\\u53D6\\u6587\\u672C\\u3002</li></ol><p><strong>\\u5982\\u4F55\\u9000\\u51FA:</strong></p><ul><li>\\u5728\\u9009\\u62E9\\u8FC7\\u7A0B\\u4E2D\\uFF0C\\u70B9\\u51FB\\u5DE5\\u5177\\u680F\\u4E0A\\u7684<span class="action-key">\\u53D6\\u6D88</span>\\u6309\\u94AE\\u3002</li><li>\\u5728\\u9009\\u62E9\\u8FC7\\u7A0B\\u4E2D\\uFF08\\u51FA\\u73B0\\u9AD8\\u4EAE\\u6846\\u65F6\\uFF09\\uFF0C\\u5728\\u9875\\u9762\\u4EFB\\u610F\\u4F4D\\u7F6E<strong>\\u53F3\\u952E\\u5355\\u51FB</strong>\\u3002</li><li>\\u5728\\u4EFB\\u4F55\\u65F6\\u5019\\uFF0C\\u6309\\u4E0B<kbd>ESC</kbd>\\u952E\\u3002</li><li>\\u5728\\u4EFB\\u4F55\\u65F6\\u5019\\uFF0C\\u518D\\u6B21\\u70B9\\u51FB\\u201C\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u201D\\u56FE\\u6807\\u3002</li></ul>',
+      sessionScanTitle: "\\u52A8\\u6001\\u626B\\u63CF\\u6559\\u7A0B",
+      sessionScan: '<p><strong>\\u529F\\u80FD\\u4ECB\\u7ECD:</strong></p><p>\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u6301\\u7EED\\u76D1\\u63A7\\u5E76\\u81EA\\u52A8\\u8BB0\\u5F55\\u7F51\\u9875\\u4E0A\\u6240\\u6709\\u52A8\\u6001\\u52A0\\u8F7D\\u6216\\u53D8\\u5316\\u7684\\u6587\\u672C\\uFF0C\\u7279\\u522B\\u9002\\u7528\\u4E8E\\u6293\\u53D6\\u5B9E\\u65F6\\u804A\\u5929\\u3001\\u6EDA\\u52A8\\u52A0\\u8F7D\\u5185\\u5BB9\\u6216\\u901A\\u77E5\\u7B49\\u3002</p><p><strong>\\u5982\\u4F55\\u4F7F\\u7528:</strong></p><ul><li><strong>\\u5F00\\u59CB\\u626B\\u63CF:</strong> \\u70B9\\u51FB\\u60AC\\u6D6E\\u6309\\u94AE\\u4E2D\\u7684\\u201C\\u52A8\\u6001\\u626B\\u63CF\\u201D\\u56FE\\u6807 <span class="help-icon-placeholder dynamic-scan-icon"></span>\\uFF0C\\u626B\\u63CF\\u7ACB\\u5373\\u5F00\\u59CB\\u3002</li><li><strong>\\u505C\\u6B62\\u626B\\u63CF:</strong> \\u518D\\u6B21\\u70B9\\u51FB\\u8BE5\\u56FE\\u6807 <span class="help-icon-placeholder stop-icon"></span>\\uFF0C\\u5373\\u53EF\\u505C\\u6B62\\u626B\\u63CF\\u3002</li><li><strong>\\u67E5\\u770B\\u7ED3\\u679C:</strong> \\u505C\\u6B62\\u540E\\uFF0C\\u70B9\\u51FB\\u4E3B\\u60AC\\u6D6E\\u6309\\u94AE <span class="help-icon-placeholder summary-icon"></span> \\u6253\\u5F00\\u7ED3\\u679C\\u7A97\\u53E3\\u3002</li></ul><p><strong>\\u5982\\u4F55\\u9000\\u51FA:</strong></p><ul><li>\\u5728\\u626B\\u63CF\\u8FC7\\u7A0B\\u4E2D\\uFF0C\\u518D\\u6B21\\u70B9\\u51FB\\u201C\\u52A8\\u6001\\u626B\\u63CF\\u201D\\u56FE\\u6807\\u3002</li><li>\\u5728\\u626B\\u63CF\\u8FC7\\u7A0B\\u4E2D\\uFF0C\\u968F\\u65F6\\u6309\\u4E0B<kbd>ESC</kbd>\\u952E\\u53EF\\u5FEB\\u901F\\u505C\\u6B62\\u3002</li></ul>'
     }
   };
   // src/shared/i18n/zh-TW.json
@@ -2696,14 +2696,14 @@ ${result.join(",\n")}
     },
     scan: {
       quick: "\\u5FEB\\u901F\\u6383\\u63CF",
-      session: "\\u6703\\u8A71\\u6383\\u63CF",
+      session: "\\u52D5\\u614B\\u6383\\u63CF",
       stagedCount: "\\u5DF2\\u66AB\\u5B58:",
       elementFinished: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {{count}} \\u689D\\u6587\\u672C\\u3002",
       startSession: "\\u958B\\u59CB\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71",
       stopSession: "\\u505C\\u6B62\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71",
       finished: "\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {{count}} \\u689D\\u6587\\u672C\\u3002",
       quickFinished: "\\u5FEB\\u901F\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {{count}} \\u689D\\u6587\\u672C\\u3002",
-      sessionStarted: "\\u6703\\u8A71\\u6383\\u63CF\\u5DF2\\u958B\\u59CB\\u3002",
+      sessionStarted: "\\u52D5\\u614B\\u6383\\u63CF\\u5DF2\\u958B\\u59CB\\u3002",
       sessionInProgress: "\\u6383\\u63CF\\u9032\\u884C\\u4E2D...",
       truncationWarning: "\\u70BA\\u4FDD\\u6301\\u4ECB\\u9762\\u6D41\\u66A2\\uFF0C\\u6B64\\u8655\\u50C5\\u986F\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u532F\\u51FA\\u5F8C\\u5C07\\u5305\\u542B\\u5B8C\\u6574\\u5167\\u5BB9\\u3002"
     },
@@ -2822,22 +2822,22 @@ ${result.join(",\n")}
         }
       },
       sessionScan: {
-        switchToFallback: "[\\u6703\\u8A71\\u6383\\u63CF] \\u6B63\\u5728\\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
+        switchToFallback: "[\\u52D5\\u614B\\u6383\\u63CF] \\u6B63\\u5728\\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
         domObserver: {
-          stopped: "[\\u6703\\u8A71\\u6383\\u63CF] \\u5DF2\\u505C\\u6B62\\u76E3\\u807D DOM \\u8B8A\\u5316\\u3002"
+          stopped: "[\\u52D5\\u614B\\u6383\\u63CF] \\u5DF2\\u505C\\u6B62\\u76E3\\u807D DOM \\u8B8A\\u5316\\u3002"
         },
         fallback: {
-          initialized: "[\\u6703\\u8A71\\u6383\\u63CF - \\u5099\\u9078] \\u5DF2\\u521D\\u59CB\\u5316\\u3002",
-          cleared: "[\\u6703\\u8A71\\u6383\\u63CF - \\u5099\\u9078] \\u8CC7\\u6599\\u5DF2\\u6E05\\u9664\\u3002"
+          initialized: "[\\u52D5\\u614B\\u6383\\u63CF - \\u5099\\u9078] \\u5DF2\\u521D\\u59CB\\u5316\\u3002",
+          cleared: "[\\u52D5\\u614B\\u6383\\u63CF - \\u5099\\u9078] \\u8CC7\\u6599\\u5DF2\\u6E05\\u9664\\u3002"
         },
         worker: {
-          logPrefix: "[\\u6703\\u8A71\\u6383\\u63CF Worker]",
-          starting: "\\u6703\\u8A71\\u6383\\u63CF\\uFF1A\\u6B63\\u5728\\u5617\\u8A66\\u555F\\u52D5 Web Worker...",
-          initFailed: "[\\u6703\\u8A71\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u6557\\u3002\\u9019\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u65BC\\u7DB2\\u7AD9\\u7684\\u5167\\u5BB9\\u5B89\\u5168\\u7B56\\u7565 (CSP) \\u5C0E\\u81F4\\u7684\\u3002",
-          originalError: "[\\u6703\\u8A71\\u6383\\u63CF] \\u539F\\u59CB\\u932F\\u8AA4: {{error}}",
-          initialized: "[\\u6703\\u8A71\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u6210\\u529F\\uFF0C\\u5DF2\\u767C\\u9001 {{count}} \\u689D\\u521D\\u59CB\\u6587\\u672C\\u4EE5\\u958B\\u59CB\\u6703\\u8A71\\u3002",
-          initSyncError: "[\\u6703\\u8A71\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u671F\\u9593\\u767C\\u751F\\u540C\\u6B65\\u932F\\u8AA4: {{error}}",
-          clearCommandSent: "[\\u6703\\u8A71\\u6383\\u63CF] \\u6E05\\u9664\\u547D\\u4EE4\\u5DF2\\u767C\\u9001\\u81F3 worker\\u3002"
+          logPrefix: "[\\u52D5\\u614B\\u6383\\u63CF Worker]",
+          starting: "\\u52D5\\u614B\\u6383\\u63CF\\uFF1A\\u6B63\\u5728\\u5617\\u8A66\\u555F\\u52D5 Web Worker...",
+          initFailed: "[\\u52D5\\u614B\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u6557\\u3002\\u9019\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u65BC\\u7DB2\\u7AD9\\u7684\\u5167\\u5BB9\\u5B89\\u5168\\u7B56\\u7565 (CSP) \\u5C0E\\u81F4\\u7684\\u3002",
+          originalError: "[\\u52D5\\u614B\\u6383\\u63CF] \\u539F\\u59CB\\u932F\\u8AA4: {{error}}",
+          initialized: "[\\u52D5\\u614B\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u6210\\u529F\\uFF0C\\u5DF2\\u767C\\u9001 {{count}} \\u689D\\u521D\\u59CB\\u6587\\u672C\\u4EE5\\u958B\\u59CB\\u6703\\u8A71\\u3002",
+          initSyncError: "[\\u52D5\\u614B\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u671F\\u9593\\u767C\\u751F\\u540C\\u6B65\\u932F\\u8AA4: {{error}}",
+          clearCommandSent: "[\\u52D5\\u614B\\u6383\\u63CF] \\u6E05\\u9664\\u547D\\u4EE4\\u5DF2\\u767C\\u9001\\u81F3 worker\\u3002"
         }
       },
       ui: {
@@ -2847,7 +2847,7 @@ ${result.join(",\n")}
         },
         confirmationModal: {
           sessionScan: {
-            confirmed: "\\u4F7F\\u7528\\u8005\\u5DF2\\u78BA\\u8A8D\\u6E05\\u9664\\u6703\\u8A71\\u6383\\u63CF\\u6587\\u672C\\uFF0C\\u6B63\\u5728\\u8ABF\\u7528\\u56DE\\u547C..."
+            confirmed: "\\u4F7F\\u7528\\u8005\\u5DF2\\u78BA\\u8A8D\\u6E05\\u9664\\u52D5\\u614B\\u6383\\u63CF\\u6587\\u672C\\uFF0C\\u6B63\\u5728\\u8ABF\\u7528\\u56DE\\u547C..."
           },
           quickScan: {
             confirmed: "\\u4F7F\\u7528\\u8005\\u5DF2\\u78BA\\u8A8D\\u6E05\\u9664\\u5FEB\\u901F\\u6383\\u63CF\\u6587\\u672C\\u3002"
@@ -2872,7 +2872,7 @@ ${result.join(",\n")}
         unknownFormat: "\\u672A\\u77E5\\u7684\\u532F\\u51FA\\u683C\\u5F0F: {{format}}"
       },
       main: {
-        requestingSessionScanData: "\\u6B63\\u5728\\u8ACB\\u6C42\\u6703\\u8A71\\u6383\\u63CF\\u6A21\\u5F0F\\u7684\\u5B8C\\u6574\\u8CC7\\u6599...",
+        requestingSessionScanData: "\\u6B63\\u5728\\u8ACB\\u6C42\\u52D5\\u614B\\u6383\\u63CF\\u6A21\\u5F0F\\u7684\\u5B8C\\u6574\\u8CC7\\u6599...",
         exportingQuickScanData: "\\u6B63\\u5728\\u532F\\u51FA\\u5FEB\\u901F\\u6383\\u63CF\\u6A21\\u5F0F\\u8A18\\u61B6\\u9AD4\\u4E2D\\u7684\\u5B8C\\u6574\\u8CC7\\u6599...",
         inIframe: "\\u8173\\u672C\\u5728 iframe \\u4E2D\\uFF0C\\u5DF2\\u8DF3\\u904E\\u521D\\u59CB\\u5316\\u3002",
         initializing: "\\u8173\\u672C\\u521D\\u59CB\\u5316\\u958B\\u59CB...",
@@ -2941,10 +2941,10 @@ ${result.join(",\n")}
       }
     },
     tutorial: {
-      elementScanTitle: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u6559\\u5B78",
-      elementScan: '<p class="tutorial-content">\\u9019\\u662F\\u4E00\\u500B\\u7528\\u65BC\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u6559\\u5B78\\u7684\\u4F54\\u4F4D\\u7B26\\u3002\\u652F\\u63F4\\u5BCC\\u6587\\u672C\\u683C\\u5F0F\\u3002</p>',
-      sessionScanTitle: "\\u6703\\u8A71\\u6383\\u63CF\\u6559\\u5B78",
-      sessionScan: '<p class="tutorial-content">\\u9019\\u662F\\u4E00\\u500B\\u7528\\u65BC\\u6703\\u8A71\\u6383\\u63CF\\u6559\\u5B78\\u7684\\u4F54\\u4F4D\\u7B26\\u3002\\u652F\\u63F4\\u5BCC\\u6587\\u672C\\u683C\\u5F0F\\u3002</p>'
+      elementScanTitle: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u6559\\u7A0B",
+      elementScan: '<p><strong>\\u529F\\u80FD\\u4ECB\\u7D39:</strong></p><p>\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5141\\u8A31\\u60A8\\u7CBE\\u78BA\\u5730\\u9078\\u64C7\\u7DB2\\u9801\\u4E0A\\u7684\\u4E00\\u500B\\u6216\\u591A\\u500B\\u5340\\u57DF\\uFF08\\u4F8B\\u5982\\u4E00\\u500B\\u6BB5\\u843D\\u3001\\u4E00\\u500B\\u5217\\u8868\\u3001\\u4E00\\u500B\\u5074\\u908A\\u6B04\\uFF09\\uFF0C\\u4E26\\u50C5\\u5F9E\\u9019\\u4E9B\\u5340\\u57DF\\u4E2D\\u63D0\\u53D6\\u6587\\u672C\\u3002</p><p><strong>\\u5982\\u4F55\\u4F7F\\u7528:</strong></p><ol><li><strong>\\u555F\\u52D5:</strong> \\u9EDE\\u64CA\\u61F8\\u6D6E\\u6309\\u9215\\u4E2D\\u7684\\u300C\\u9078\\u53D6\\u5143\\u7D20\\u300D\\u5716\\u6A19 <span class="help-icon-placeholder element-scan-icon"></span> \\u555F\\u52D5\\u6383\\u63CF\\u6A21\\u5F0F\\u3002</li><li><strong>\\u9078\\u64C7:</strong> \\u79FB\\u52D5\\u9F20\\u6A19\\uFF0C\\u60A8\\u60F3\\u6383\\u63CF\\u7684\\u5340\\u57DF\\u6703\\u986F\\u793A\\u9AD8\\u4EAE\\u6846\\u3002\\u55AE\\u64CA\\u4EE5\\u9078\\u5B9A\\u3002</li><li><strong>\\u8ABF\\u6574:</strong> \\u9078\\u5B9A\\u5F8C\\u6703\\u51FA\\u73FE\\u5DE5\\u5177\\u6B04\\u3002\\u60A8\\u53EF\\u4EE5\\u4F7F\\u7528<strong>\\u6ED1\\u584A</strong>\\u4F86\\u64F4\\u5927\\u6216\\u7E2E\\u5C0F\\u9078\\u64C7\\u7BC4\\u570D\\u3002</li><li><strong>\\u66AB\\u5B58:</strong> \\u5982\\u679C\\u60A8\\u60F3\\u9078\\u64C7\\u591A\\u500B\\u4E0D\\u76F8\\u95DC\\u7684\\u5340\\u57DF\\uFF0C\\u53EF\\u4EE5\\u9EDE\\u64CA<span class="action-key">\\u66AB\\u5B58</span>\\u6309\\u9215\\u4FDD\\u5B58\\u7576\\u524D\\u9078\\u64C7\\uFF0C\\u7136\\u5F8C\\u7E7C\\u7E8C\\u9078\\u64C7\\u5176\\u4ED6\\u5340\\u57DF\\u3002</li><li><strong>\\u78BA\\u8A8D:</strong> \\u5B8C\\u6210\\u6240\\u6709\\u9078\\u64C7\\u5F8C\\uFF0C\\u9EDE\\u64CA<span class="action-key">\\u78BA\\u8A8D</span>\\u6309\\u9215\\uFF0C\\u7CFB\\u7D71\\u5C07\\u958B\\u59CB\\u5F9E\\u60A8\\u9078\\u64C7\\u7684\\u6240\\u6709\\u5340\\u57DF\\u4E2D\\u63D0\\u53D6\\u6587\\u672C\\u3002</li></ol><p><strong>\\u5982\\u4F55\\u9000\\u51FA:</strong></p><ul><li>\\u5728\\u9078\\u64C7\\u904E\\u7A0B\\u4E2D\\uFF0C\\u9EDE\\u64CA\\u5DE5\\u5177\\u6B04\\u4E0A\\u7684<span class="action-key">\\u53D6\\u6D88</span>\\u6309\\u9215\\u3002</li><li>\\u5728\\u9078\\u64C7\\u904E\\u7A0B\\u4E2D\\uFF08\\u51FA\\u73FE\\u9AD8\\u4EAE\\u6846\\u6642\\uFF09\\uFF0C\\u5728\\u9801\\u9762\\u4EFB\\u610F\\u4F4D\\u7F6E<strong>\\u53F3\\u9375\\u55AE\\u64CA</strong>\\u3002</li><li>\\u5728\\u4EFB\\u4F55\\u6642\\u5019\\uFF0C\\u6309\\u4E0B <kbd>ESC</kbd> \\u9375\\u3002</li><li>\\u5728\\u4EFB\\u4F55\\u6642\\u5019\\uFF0C\\u518D\\u6B21\\u9EDE\\u64CA\\u300C\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u300D\\u5716\\u6A19\\u3002</li></ul>',
+      sessionScanTitle: "\\u52D5\\u614B\\u6383\\u63CF\\u6559\\u7A0B",
+      sessionScan: '<p><strong>\\u529F\\u80FD\\u4ECB\\u7D39:</strong></p><p>\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u6301\\u7E8C\\u76E3\\u63A7\\u4E26\\u81EA\\u52D5\\u8A18\\u9304\\u7DB2\\u9801\\u4E0A\\u6240\\u6709\\u52D5\\u614B\\u52A0\\u8F09\\u6216\\u8B8A\\u5316\\u7684\\u6587\\u672C\\uFF0C\\u7279\\u5225\\u9069\\u7528\\u65BC\\u6293\\u53D6\\u5BE6\\u6642\\u804A\\u5929\\u3001\\u6EFE\\u52D5\\u52A0\\u8F09\\u5167\\u5BB9\\u6216\\u901A\\u77E5\\u7B49\\u3002</p><p><strong>\\u5982\\u4F55\\u4F7F\\u7528:</strong></p><ul><li><strong>\\u958B\\u59CB\\u6383\\u63CF:</strong> \\u9EDE\\u64CA\\u61F8\\u6D6E\\u6309\\u9215\\u4E2D\\u7684\\u300C\\u52D5\\u614B\\u6383\\u63CF\\u300D\\u5716\\u6A19 <span class="help-icon-placeholder dynamic-scan-icon"></span>\\uFF0C\\u6383\\u63CF\\u7ACB\\u5373\\u958B\\u59CB\\u3002</li><li><strong>\\u505C\\u6B62\\u6383\\u63CF:</strong> \\u518D\\u6B21\\u9EDE\\u64CA\\u8A72\\u5716\\u6A19 <span class="help-icon-placeholder stop-icon"></span>\\uFF0C\\u5373\\u53EF\\u505C\\u6B62\\u6383\\u63CF\\u3002</li><li><strong>\\u67E5\\u770B\\u7D50\\u679C:</strong> \\u505C\\u6B62\\u5F8C\\uFF0C\\u9EDE\\u64CA\\u4E3B\\u61F8\\u6D6E\\u6309\\u9215 <span class="help-icon-placeholder summary-icon"></span> \\u6253\\u958B\\u7D50\\u679C\\u7A97\\u53E3\\u3002</li></ul><p><strong>\\u5982\\u4F55\\u9000\\u51FA:</strong></p><ul><li>\\u5728\\u6383\\u63CF\\u904E\\u7A0B\\u4E2D\\uFF0C\\u518D\\u6B21\\u9EDE\\u64CA\\u300C\\u52D5\\u614B\\u6383\\u63CF\\u300D\\u5716\\u6A19\\u3002</li><li>\\u5728\\u6383\\u63CF\\u904E\\u7A0B\\u4E2D\\uFF0C\\u96A8\\u6642\\u6309\\u4E0B <kbd>ESC</kbd> \\u9375\\u53EF\\u5FEB\\u901F\\u505C\\u6B62\\u3002</li></ul>'
     }
   };
   // src/shared/i18n/management/languages.js
@@ -3508,7 +3508,7 @@ ${result.join(",\n")}
     },
     scan: {
       quick: "Quick Scan",
-      session: "Session Scan",
+      session: "Dynamic Scan",
       stagedCount: "Staged:",
       elementFinished: "Element scan finished, found {{count}} items.",
       startSession: "Start Dynamic Scan Session",
@@ -3634,22 +3634,22 @@ ${result.join(",\n")}
         }
       },
       sessionScan: {
-        switchToFallback: "[Session Scan] Switching to main thread fallback.",
+        switchToFallback: "[Dynamic Scan] Switching to main thread fallback.",
         domObserver: {
-          stopped: "[Session Scan] Stopped listening for DOM changes."
+          stopped: "[Dynamic Scan] Stopped listening for DOM changes."
         },
         fallback: {
-          initialized: "[Session Scan - Fallback] Initialized.",
-          cleared: "[Session Scan - Fallback] Data cleared."
+          initialized: "[Dynamic Scan - Fallback] Initialized.",
+          cleared: "[Dynamic Scan - Fallback] Data cleared."
         },
         worker: {
-          logPrefix: "[Session Scan Worker]",
-          starting: "Session Scan: Attempting to start Web Worker...",
-          initFailed: "[Session Scan] Worker initialization failed. This is likely due to the website's Content Security Policy (CSP).",
-          originalError: "[Session Scan] Original error: {{error}}",
-          initialized: "[Session Scan] Worker initialized successfully, sent {{count}} initial texts to start the session.",
-          initSyncError: "[Session Scan] Synchronous error during Worker initialization: {{error}}",
-          clearCommandSent: "[Session Scan] Clear command sent to worker."
+          logPrefix: "[Dynamic Scan Worker]",
+          starting: "Dynamic Scan: Attempting to start Web Worker...",
+          initFailed: "[Dynamic Scan] Worker initialization failed. This is likely due to the website's Content Security Policy (CSP).",
+          originalError: "[Dynamic Scan] Original error: {{error}}",
+          initialized: "[Dynamic Scan] Worker initialized successfully, sent {{count}} initial texts to start the session.",
+          initSyncError: "[Dynamic Scan] Synchronous error during Worker initialization: {{error}}",
+          clearCommandSent: "[Dynamic Scan] Clear command sent to worker."
         }
       },
       ui: {
@@ -3753,10 +3753,10 @@ ${result.join(",\n")}
       }
     },
     tutorial: {
-      elementScanTitle: "Element Scan Guide",
-      elementScan: '<p class="tutorial-content">This is a placeholder for the element scan tutorial. Rich text is supported.</p>',
-      sessionScanTitle: "Session Scan Guide",
-      sessionScan: '<p class="tutorial-content">This is a placeholder for the session scan tutorial. Rich text is supported.</p>'
+      elementScanTitle: "Element Scan Tutorial",
+      elementScan: '<p><strong>What it does:</strong></p><p>Element Scan allows you to precisely select one or more areas on a webpage (e.g., a paragraph, a list, a sidebar) and extract text only from those areas.</p><p><strong>How to use:</strong></p><ol><li><strong>Start:</strong> Click the "Element Scan" icon <span class="help-icon-placeholder element-scan-icon"></span> in the floating button to enter scan mode.</li><li><strong>Select:</strong> Move your mouse over the page. The area you want to scan will be highlighted. Click to select it.</li><li><strong>Adjust:</strong> A toolbar will appear after selection. You can use the <strong>slider</strong> to expand or shrink the selection area.</li><li><strong>Stage:</strong> If you want to select multiple unrelated areas, click the <span class="action-key">Stage</span> button to save the current selection and continue selecting other areas.</li><li><strong>Confirm:</strong> Once you have finished all selections, click the <span class="action-key">Confirm</span> button to start extracting text from all your chosen areas.</li></ol><p><strong>How to exit:</strong></p><ul><li>Click the <span class="action-key">Cancel</span> button on the toolbar during selection.</li><li>While the highlight box is visible, <strong>right-click</strong> anywhere on the page.</li><li>Press the <kbd>ESC</kbd> key at any time.</li><li>Click the "Element Scan" icon again at any time.</li></ul>',
+      sessionScanTitle: "Dynamic Scan Tutorial",
+      sessionScan: '<p><strong>What it does:</strong></p><p>Dynamic Scan continuously monitors and automatically records all text that dynamically loads or changes on a webpage. It is especially useful for capturing live chats, infinite scrolling content, or notifications.</p><p><strong>How to use:</strong></p><ul><li><strong>Start Scan:</strong> Click the "Dynamic Scan" icon <span class="help-icon-placeholder dynamic-scan-icon"></span> in the floating button to start scanning immediately.</li><li><strong>Stop Scan:</strong> Click the icon again <span class="help-icon-placeholder stop-icon"></span> to stop.</li><li><strong>View Results:</strong> After stopping, click the main floating button <span class="help-icon-placeholder summary-icon"></span> to open the results window.</li></ul><p><strong>How to exit:</strong></p><ul><li>Click the "Dynamic Scan" icon again during the scan.</li><li>Press the <kbd>ESC</kbd> key at any time to quickly stop the scan.</li></ul>'
     }
   };
   // src/shared/i18n/zh-CN.json
@@ -3845,14 +3845,14 @@ ${result.join(",\n")}
     },
     scan: {
       quick: "\\u5FEB\\u901F\\u626B\\u63CF",
-      session: "\\u4F1A\\u8BDD\\u626B\\u63CF",
+      session: "\\u52A8\\u6001\\u626B\\u63CF",
       stagedCount: "\\u5DF2\\u6682\\u5B58:",
       elementFinished: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {{count}} \\u6761\\u6587\\u672C\\u3002",
       startSession: "\\u5F00\\u59CB\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD",
       stopSession: "\\u505C\\u6B62\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD",
       finished: "\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {{count}} \\u6761\\u6587\\u672C\\u3002",
       quickFinished: "\\u5FEB\\u901F\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {{count}} \\u6761\\u6587\\u672C\\u3002",
-      sessionStarted: "\\u4F1A\\u8BDD\\u626B\\u63CF\\u5DF2\\u5F00\\u59CB\\u3002",
+      sessionStarted: "\\u52A8\\u6001\\u626B\\u63CF\\u5DF2\\u5F00\\u59CB\\u3002",
       sessionInProgress: "\\u626B\\u63CF\\u8FDB\\u884C\\u4E2D...",
       truncationWarning: "\\u4E3A\\u4FDD\\u6301\\u754C\\u9762\\u6D41\\u7545\\uFF0C\\u6B64\\u5904\\u4EC5\\u663E\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u5BFC\\u51FA\\u540E\\u5C06\\u5305\\u542B\\u5B8C\\u6574\\u5185\\u5BB9\\u3002"
     },
@@ -3971,22 +3971,22 @@ ${result.join(",\n")}
         }
       },
       sessionScan: {
-        switchToFallback: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u6B63\\u5728\\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
+        switchToFallback: "[\\u52A8\\u6001\\u626B\\u63CF] \\u6B63\\u5728\\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
         domObserver: {
-          stopped: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u5DF2\\u505C\\u6B62\\u76D1\\u542C DOM \\u53D8\\u5316\\u3002"
+          stopped: "[\\u52A8\\u6001\\u626B\\u63CF] \\u5DF2\\u505C\\u6B62\\u76D1\\u542C DOM \\u53D8\\u5316\\u3002"
         },
         fallback: {
-          initialized: "[\\u4F1A\\u8BDD\\u626B\\u63CF - \\u5907\\u9009] \\u5DF2\\u521D\\u59CB\\u5316\\u3002",
-          cleared: "[\\u4F1A\\u8BDD\\u626B\\u63CF - \\u5907\\u9009] \\u6570\\u636E\\u5DF2\\u6E05\\u9664\\u3002"
+          initialized: "[\\u52A8\\u6001\\u626B\\u63CF - \\u5907\\u9009] \\u5DF2\\u521D\\u59CB\\u5316\\u3002",
+          cleared: "[\\u52A8\\u6001\\u626B\\u63CF - \\u5907\\u9009] \\u6570\\u636E\\u5DF2\\u6E05\\u9664\\u3002"
         },
         worker: {
-          logPrefix: "[\\u4F1A\\u8BDD\\u626B\\u63CF Worker]",
-          starting: "\\u4F1A\\u8BDD\\u626B\\u63CF\\uFF1A\\u6B63\\u5728\\u5C1D\\u8BD5\\u542F\\u52A8 Web Worker...",
-          initFailed: "[\\u4F1A\\u8BDD\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u8D25\\u3002\\u8FD9\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u4E8E\\u7F51\\u7AD9\\u7684\\u5185\\u5BB9\\u5B89\\u5168\\u7B56\\u7565 (CSP) \\u5BFC\\u81F4\\u7684\\u3002",
-          originalError: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u539F\\u59CB\\u9519\\u8BEF: {{error}}",
-          initialized: "[\\u4F1A\\u8BDD\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u6210\\u529F\\uFF0C\\u5DF2\\u53D1\\u9001 {{count}} \\u6761\\u521D\\u59CB\\u6587\\u672C\\u4EE5\\u5F00\\u59CB\\u4F1A\\u8BDD\\u3002",
-          initSyncError: "[\\u4F1A\\u8BDD\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u671F\\u95F4\\u53D1\\u751F\\u540C\\u6B65\\u9519\\u8BEF: {{error}}",
-          clearCommandSent: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u6E05\\u9664\\u547D\\u4EE4\\u5DF2\\u53D1\\u9001\\u81F3 worker\\u3002"
+          logPrefix: "[\\u52A8\\u6001\\u626B\\u63CF Worker]",
+          starting: "\\u52A8\\u6001\\u626B\\u63CF\\uFF1A\\u6B63\\u5728\\u5C1D\\u8BD5\\u542F\\u52A8 Web Worker...",
+          initFailed: "[\\u52A8\\u6001\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u8D25\\u3002\\u8FD9\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u4E8E\\u7F51\\u7AD9\\u7684\\u5185\\u5BB9\\u5B89\\u5168\\u7B56\\u7565 (CSP) \\u5BFC\\u81F4\\u7684\\u3002",
+          originalError: "[\\u52A8\\u6001\\u626B\\u63CF] \\u539F\\u59CB\\u9519\\u8BEF: {{error}}",
+          initialized: "[\\u52A8\\u6001\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u6210\\u529F\\uFF0C\\u5DF2\\u53D1\\u9001 {{count}} \\u6761\\u521D\\u59CB\\u6587\\u672C\\u4EE5\\u5F00\\u59CB\\u4F1A\\u8BDD\\u3002",
+          initSyncError: "[\\u52A8\\u6001\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u671F\\u95F4\\u53D1\\u751F\\u540C\\u6B65\\u9519\\u8BEF: {{error}}",
+          clearCommandSent: "[\\u52A8\\u6001\\u626B\\u63CF] \\u6E05\\u9664\\u547D\\u4EE4\\u5DF2\\u53D1\\u9001\\u81F3 worker\\u3002"
         }
       },
       ui: {
@@ -3996,7 +3996,7 @@ ${result.join(",\n")}
         },
         confirmationModal: {
           sessionScan: {
-            confirmed: "\\u7528\\u6237\\u5DF2\\u786E\\u8BA4\\u6E05\\u9664\\u4F1A\\u8BDD\\u626B\\u63CF\\u6587\\u672C\\uFF0C\\u6B63\\u5728\\u8C03\\u7528\\u56DE\\u8C03..."
+            confirmed: "\\u7528\\u6237\\u5DF2\\u786E\\u8BA4\\u6E05\\u9664\\u52A8\\u6001\\u626B\\u63CF\\u6587\\u672C\\uFF0C\\u6B63\\u5728\\u8C03\\u7528\\u56DE\\u8C03..."
           },
           quickScan: {
             confirmed: "\\u7528\\u6237\\u5DF2\\u786E\\u8BA4\\u6E05\\u9664\\u5FEB\\u901F\\u626B\\u63CF\\u6587\\u672C\\u3002"
@@ -4021,7 +4021,7 @@ ${result.join(",\n")}
         unknownFormat: "\\u672A\\u77E5\\u7684\\u5BFC\\u51FA\\u683C\\u5F0F: {{format}}"
       },
       main: {
-        requestingSessionScanData: "\\u6B63\\u5728\\u8BF7\\u6C42\\u4F1A\\u8BDD\\u626B\\u63CF\\u6A21\\u5F0F\\u7684\\u5B8C\\u6574\\u6570\\u636E...",
+        requestingSessionScanData: "\\u6B63\\u5728\\u8BF7\\u6C42\\u52A8\\u6001\\u626B\\u63CF\\u6A21\\u5F0F\\u7684\\u5B8C\\u6574\\u6570\\u636E...",
         exportingQuickScanData: "\\u6B63\\u5728\\u5BFC\\u51FA\\u5FEB\\u901F\\u626B\\u63CF\\u6A21\\u5F0F\\u5185\\u5B58\\u4E2D\\u7684\\u5B8C\\u6574\\u6570\\u636E...",
         inIframe: "\\u811A\\u672C\\u5728 iframe \\u4E2D\\uFF0C\\u5DF2\\u8DF3\\u8FC7\\u521D\\u59CB\\u5316\\u3002",
         initializing: "\\u811A\\u672C\\u521D\\u59CB\\u5316\\u5F00\\u59CB...",
@@ -4091,9 +4091,9 @@ ${result.join(",\n")}
     },
     tutorial: {
       elementScanTitle: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u6559\\u7A0B",
-      elementScan: '<p class="tutorial-content">\\u8FD9\\u662F\\u4E00\\u4E2A\\u7528\\u4E8E\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u6559\\u7A0B\\u7684\\u5360\\u4F4D\\u7B26\\u3002\\u652F\\u6301\\u5BCC\\u6587\\u672C\\u683C\\u5F0F\\u3002</p>',
-      sessionScanTitle: "\\u4F1A\\u8BDD\\u626B\\u63CF\\u6559\\u7A0B",
-      sessionScan: '<p class="tutorial-content">\\u8FD9\\u662F\\u4E00\\u4E2A\\u7528\\u4E8E\\u4F1A\\u8BDD\\u626B\\u63CF\\u6559\\u7A0B\\u7684\\u5360\\u4F4D\\u7B26\\u3002\\u652F\\u6301\\u5BCC\\u6587\\u672C\\u683C\\u5F0F\\u3002</p>'
+      elementScan: '<p><strong>\\u529F\\u80FD\\u4ECB\\u7ECD:</strong></p><p>\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5141\\u8BB8\\u60A8\\u7CBE\\u786E\\u5730\\u9009\\u62E9\\u7F51\\u9875\\u4E0A\\u7684\\u4E00\\u4E2A\\u6216\\u591A\\u4E2A\\u533A\\u57DF\\uFF08\\u4F8B\\u5982\\u4E00\\u4E2A\\u6BB5\\u843D\\u3001\\u4E00\\u4E2A\\u5217\\u8868\\u3001\\u4E00\\u4E2A\\u4FA7\\u8FB9\\u680F\\uFF09\\uFF0C\\u5E76\\u4EC5\\u4ECE\\u8FD9\\u4E9B\\u533A\\u57DF\\u4E2D\\u63D0\\u53D6\\u6587\\u672C\\u3002</p><p><strong>\\u5982\\u4F55\\u4F7F\\u7528:</strong></p><ol><li><strong>\\u542F\\u52A8:</strong> \\u70B9\\u51FB\\u60AC\\u6D6E\\u6309\\u94AE\\u4E2D\\u7684\\u201C\\u9009\\u53D6\\u5143\\u7D20\\u201D\\u56FE\\u6807 <span class="help-icon-placeholder element-scan-icon"></span> \\u542F\\u52A8\\u626B\\u63CF\\u6A21\\u5F0F\\u3002</li><li><strong>\\u9009\\u62E9:</strong> \\u79FB\\u52A8\\u9F20\\u6807\\uFF0C\\u60A8\\u60F3\\u626B\\u63CF\\u7684\\u533A\\u57DF\\u4F1A\\u663E\\u793A\\u9AD8\\u4EAE\\u6846\\u3002\\u5355\\u51FB\\u4EE5\\u9009\\u5B9A\\u3002</li><li><strong>\\u8C03\\u6574:</strong> \\u9009\\u5B9A\\u540E\\u4F1A\\u51FA\\u73B0\\u5DE5\\u5177\\u680F\\u3002\\u60A8\\u53EF\\u4EE5\\u4F7F\\u7528<strong>\\u6ED1\\u5757</strong>\\u6765\\u6269\\u5927\\u6216\\u7F29\\u5C0F\\u9009\\u62E9\\u8303\\u56F4\\u3002</li><li><strong>\\u6682\\u5B58:</strong> \\u5982\\u679C\\u60A8\\u60F3\\u9009\\u62E9\\u591A\\u4E2A\\u4E0D\\u76F8\\u5173\\u7684\\u533A\\u57DF\\uFF0C\\u53EF\\u4EE5\\u70B9\\u51FB<span class="action-key">\\u6682\\u5B58</span>\\u6309\\u94AE\\u4FDD\\u5B58\\u5F53\\u524D\\u9009\\u62E9\\uFF0C\\u7136\\u540E\\u7EE7\\u7EED\\u9009\\u62E9\\u5176\\u4ED6\\u533A\\u57DF\\u3002</li><li><strong>\\u786E\\u8BA4:</strong> \\u5B8C\\u6210\\u6240\\u6709\\u9009\\u62E9\\u540E\\uFF0C\\u70B9\\u51FB<span class="action-key">\\u786E\\u8BA4</span>\\u6309\\u94AE\\uFF0C\\u7CFB\\u7EDF\\u5C06\\u5F00\\u59CB\\u4ECE\\u60A8\\u9009\\u62E9\\u7684\\u6240\\u6709\\u533A\\u57DF\\u4E2D\\u63D0\\u53D6\\u6587\\u672C\\u3002</li></ol><p><strong>\\u5982\\u4F55\\u9000\\u51FA:</strong></p><ul><li>\\u5728\\u9009\\u62E9\\u8FC7\\u7A0B\\u4E2D\\uFF0C\\u70B9\\u51FB\\u5DE5\\u5177\\u680F\\u4E0A\\u7684<span class="action-key">\\u53D6\\u6D88</span>\\u6309\\u94AE\\u3002</li><li>\\u5728\\u9009\\u62E9\\u8FC7\\u7A0B\\u4E2D\\uFF08\\u51FA\\u73B0\\u9AD8\\u4EAE\\u6846\\u65F6\\uFF09\\uFF0C\\u5728\\u9875\\u9762\\u4EFB\\u610F\\u4F4D\\u7F6E<strong>\\u53F3\\u952E\\u5355\\u51FB</strong>\\u3002</li><li>\\u5728\\u4EFB\\u4F55\\u65F6\\u5019\\uFF0C\\u6309\\u4E0B<kbd>ESC</kbd>\\u952E\\u3002</li><li>\\u5728\\u4EFB\\u4F55\\u65F6\\u5019\\uFF0C\\u518D\\u6B21\\u70B9\\u51FB\\u201C\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u201D\\u56FE\\u6807\\u3002</li></ul>',
+      sessionScanTitle: "\\u52A8\\u6001\\u626B\\u63CF\\u6559\\u7A0B",
+      sessionScan: '<p><strong>\\u529F\\u80FD\\u4ECB\\u7ECD:</strong></p><p>\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u6301\\u7EED\\u76D1\\u63A7\\u5E76\\u81EA\\u52A8\\u8BB0\\u5F55\\u7F51\\u9875\\u4E0A\\u6240\\u6709\\u52A8\\u6001\\u52A0\\u8F7D\\u6216\\u53D8\\u5316\\u7684\\u6587\\u672C\\uFF0C\\u7279\\u522B\\u9002\\u7528\\u4E8E\\u6293\\u53D6\\u5B9E\\u65F6\\u804A\\u5929\\u3001\\u6EDA\\u52A8\\u52A0\\u8F7D\\u5185\\u5BB9\\u6216\\u901A\\u77E5\\u7B49\\u3002</p><p><strong>\\u5982\\u4F55\\u4F7F\\u7528:</strong></p><ul><li><strong>\\u5F00\\u59CB\\u626B\\u63CF:</strong> \\u70B9\\u51FB\\u60AC\\u6D6E\\u6309\\u94AE\\u4E2D\\u7684\\u201C\\u52A8\\u6001\\u626B\\u63CF\\u201D\\u56FE\\u6807 <span class="help-icon-placeholder dynamic-scan-icon"></span>\\uFF0C\\u626B\\u63CF\\u7ACB\\u5373\\u5F00\\u59CB\\u3002</li><li><strong>\\u505C\\u6B62\\u626B\\u63CF:</strong> \\u518D\\u6B21\\u70B9\\u51FB\\u8BE5\\u56FE\\u6807 <span class="help-icon-placeholder stop-icon"></span>\\uFF0C\\u5373\\u53EF\\u505C\\u6B62\\u626B\\u63CF\\u3002</li><li><strong>\\u67E5\\u770B\\u7ED3\\u679C:</strong> \\u505C\\u6B62\\u540E\\uFF0C\\u70B9\\u51FB\\u4E3B\\u60AC\\u6D6E\\u6309\\u94AE <span class="help-icon-placeholder summary-icon"></span> \\u6253\\u5F00\\u7ED3\\u679C\\u7A97\\u53E3\\u3002</li></ul><p><strong>\\u5982\\u4F55\\u9000\\u51FA:</strong></p><ul><li>\\u5728\\u626B\\u63CF\\u8FC7\\u7A0B\\u4E2D\\uFF0C\\u518D\\u6B21\\u70B9\\u51FB\\u201C\\u52A8\\u6001\\u626B\\u63CF\\u201D\\u56FE\\u6807\\u3002</li><li>\\u5728\\u626B\\u63CF\\u8FC7\\u7A0B\\u4E2D\\uFF0C\\u968F\\u65F6\\u6309\\u4E0B<kbd>ESC</kbd>\\u952E\\u53EF\\u5FEB\\u901F\\u505C\\u6B62\\u3002</li></ul>'
     }
   };
   // src/shared/i18n/zh-TW.json
@@ -4182,14 +4182,14 @@ ${result.join(",\n")}
     },
     scan: {
       quick: "\\u5FEB\\u901F\\u6383\\u63CF",
-      session: "\\u6703\\u8A71\\u6383\\u63CF",
+      session: "\\u52D5\\u614B\\u6383\\u63CF",
       stagedCount: "\\u5DF2\\u66AB\\u5B58:",
       elementFinished: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {{count}} \\u689D\\u6587\\u672C\\u3002",
       startSession: "\\u958B\\u59CB\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71",
       stopSession: "\\u505C\\u6B62\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71",
       finished: "\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {{count}} \\u689D\\u6587\\u672C\\u3002",
       quickFinished: "\\u5FEB\\u901F\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {{count}} \\u689D\\u6587\\u672C\\u3002",
-      sessionStarted: "\\u6703\\u8A71\\u6383\\u63CF\\u5DF2\\u958B\\u59CB\\u3002",
+      sessionStarted: "\\u52D5\\u614B\\u6383\\u63CF\\u5DF2\\u958B\\u59CB\\u3002",
       sessionInProgress: "\\u6383\\u63CF\\u9032\\u884C\\u4E2D...",
       truncationWarning: "\\u70BA\\u4FDD\\u6301\\u4ECB\\u9762\\u6D41\\u66A2\\uFF0C\\u6B64\\u8655\\u50C5\\u986F\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u532F\\u51FA\\u5F8C\\u5C07\\u5305\\u542B\\u5B8C\\u6574\\u5167\\u5BB9\\u3002"
     },
@@ -4308,22 +4308,22 @@ ${result.join(",\n")}
         }
       },
       sessionScan: {
-        switchToFallback: "[\\u6703\\u8A71\\u6383\\u63CF] \\u6B63\\u5728\\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
+        switchToFallback: "[\\u52D5\\u614B\\u6383\\u63CF] \\u6B63\\u5728\\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
         domObserver: {
-          stopped: "[\\u6703\\u8A71\\u6383\\u63CF] \\u5DF2\\u505C\\u6B62\\u76E3\\u807D DOM \\u8B8A\\u5316\\u3002"
+          stopped: "[\\u52D5\\u614B\\u6383\\u63CF] \\u5DF2\\u505C\\u6B62\\u76E3\\u807D DOM \\u8B8A\\u5316\\u3002"
         },
         fallback: {
-          initialized: "[\\u6703\\u8A71\\u6383\\u63CF - \\u5099\\u9078] \\u5DF2\\u521D\\u59CB\\u5316\\u3002",
-          cleared: "[\\u6703\\u8A71\\u6383\\u63CF - \\u5099\\u9078] \\u8CC7\\u6599\\u5DF2\\u6E05\\u9664\\u3002"
+          initialized: "[\\u52D5\\u614B\\u6383\\u63CF - \\u5099\\u9078] \\u5DF2\\u521D\\u59CB\\u5316\\u3002",
+          cleared: "[\\u52D5\\u614B\\u6383\\u63CF - \\u5099\\u9078] \\u8CC7\\u6599\\u5DF2\\u6E05\\u9664\\u3002"
         },
         worker: {
-          logPrefix: "[\\u6703\\u8A71\\u6383\\u63CF Worker]",
-          starting: "\\u6703\\u8A71\\u6383\\u63CF\\uFF1A\\u6B63\\u5728\\u5617\\u8A66\\u555F\\u52D5 Web Worker...",
-          initFailed: "[\\u6703\\u8A71\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u6557\\u3002\\u9019\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u65BC\\u7DB2\\u7AD9\\u7684\\u5167\\u5BB9\\u5B89\\u5168\\u7B56\\u7565 (CSP) \\u5C0E\\u81F4\\u7684\\u3002",
-          originalError: "[\\u6703\\u8A71\\u6383\\u63CF] \\u539F\\u59CB\\u932F\\u8AA4: {{error}}",
-          initialized: "[\\u6703\\u8A71\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u6210\\u529F\\uFF0C\\u5DF2\\u767C\\u9001 {{count}} \\u689D\\u521D\\u59CB\\u6587\\u672C\\u4EE5\\u958B\\u59CB\\u6703\\u8A71\\u3002",
-          initSyncError: "[\\u6703\\u8A71\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u671F\\u9593\\u767C\\u751F\\u540C\\u6B65\\u932F\\u8AA4: {{error}}",
-          clearCommandSent: "[\\u6703\\u8A71\\u6383\\u63CF] \\u6E05\\u9664\\u547D\\u4EE4\\u5DF2\\u767C\\u9001\\u81F3 worker\\u3002"
+          logPrefix: "[\\u52D5\\u614B\\u6383\\u63CF Worker]",
+          starting: "\\u52D5\\u614B\\u6383\\u63CF\\uFF1A\\u6B63\\u5728\\u5617\\u8A66\\u555F\\u52D5 Web Worker...",
+          initFailed: "[\\u52D5\\u614B\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u6557\\u3002\\u9019\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u65BC\\u7DB2\\u7AD9\\u7684\\u5167\\u5BB9\\u5B89\\u5168\\u7B56\\u7565 (CSP) \\u5C0E\\u81F4\\u7684\\u3002",
+          originalError: "[\\u52D5\\u614B\\u6383\\u63CF] \\u539F\\u59CB\\u932F\\u8AA4: {{error}}",
+          initialized: "[\\u52D5\\u614B\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u6210\\u529F\\uFF0C\\u5DF2\\u767C\\u9001 {{count}} \\u689D\\u521D\\u59CB\\u6587\\u672C\\u4EE5\\u958B\\u59CB\\u6703\\u8A71\\u3002",
+          initSyncError: "[\\u52D5\\u614B\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u671F\\u9593\\u767C\\u751F\\u540C\\u6B65\\u932F\\u8AA4: {{error}}",
+          clearCommandSent: "[\\u52D5\\u614B\\u6383\\u63CF] \\u6E05\\u9664\\u547D\\u4EE4\\u5DF2\\u767C\\u9001\\u81F3 worker\\u3002"
         }
       },
       ui: {
@@ -4333,7 +4333,7 @@ ${result.join(",\n")}
         },
         confirmationModal: {
           sessionScan: {
-            confirmed: "\\u4F7F\\u7528\\u8005\\u5DF2\\u78BA\\u8A8D\\u6E05\\u9664\\u6703\\u8A71\\u6383\\u63CF\\u6587\\u672C\\uFF0C\\u6B63\\u5728\\u8ABF\\u7528\\u56DE\\u547C..."
+            confirmed: "\\u4F7F\\u7528\\u8005\\u5DF2\\u78BA\\u8A8D\\u6E05\\u9664\\u52D5\\u614B\\u6383\\u63CF\\u6587\\u672C\\uFF0C\\u6B63\\u5728\\u8ABF\\u7528\\u56DE\\u547C..."
           },
           quickScan: {
             confirmed: "\\u4F7F\\u7528\\u8005\\u5DF2\\u78BA\\u8A8D\\u6E05\\u9664\\u5FEB\\u901F\\u6383\\u63CF\\u6587\\u672C\\u3002"
@@ -4358,7 +4358,7 @@ ${result.join(",\n")}
         unknownFormat: "\\u672A\\u77E5\\u7684\\u532F\\u51FA\\u683C\\u5F0F: {{format}}"
       },
       main: {
-        requestingSessionScanData: "\\u6B63\\u5728\\u8ACB\\u6C42\\u6703\\u8A71\\u6383\\u63CF\\u6A21\\u5F0F\\u7684\\u5B8C\\u6574\\u8CC7\\u6599...",
+        requestingSessionScanData: "\\u6B63\\u5728\\u8ACB\\u6C42\\u52D5\\u614B\\u6383\\u63CF\\u6A21\\u5F0F\\u7684\\u5B8C\\u6574\\u8CC7\\u6599...",
         exportingQuickScanData: "\\u6B63\\u5728\\u532F\\u51FA\\u5FEB\\u901F\\u6383\\u63CF\\u6A21\\u5F0F\\u8A18\\u61B6\\u9AD4\\u4E2D\\u7684\\u5B8C\\u6574\\u8CC7\\u6599...",
         inIframe: "\\u8173\\u672C\\u5728 iframe \\u4E2D\\uFF0C\\u5DF2\\u8DF3\\u904E\\u521D\\u59CB\\u5316\\u3002",
         initializing: "\\u8173\\u672C\\u521D\\u59CB\\u5316\\u958B\\u59CB...",
@@ -4427,10 +4427,10 @@ ${result.join(",\n")}
       }
     },
     tutorial: {
-      elementScanTitle: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u6559\\u5B78",
-      elementScan: '<p class="tutorial-content">\\u9019\\u662F\\u4E00\\u500B\\u7528\\u65BC\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u6559\\u5B78\\u7684\\u4F54\\u4F4D\\u7B26\\u3002\\u652F\\u63F4\\u5BCC\\u6587\\u672C\\u683C\\u5F0F\\u3002</p>',
-      sessionScanTitle: "\\u6703\\u8A71\\u6383\\u63CF\\u6559\\u5B78",
-      sessionScan: '<p class="tutorial-content">\\u9019\\u662F\\u4E00\\u500B\\u7528\\u65BC\\u6703\\u8A71\\u6383\\u63CF\\u6559\\u5B78\\u7684\\u4F54\\u4F4D\\u7B26\\u3002\\u652F\\u63F4\\u5BCC\\u6587\\u672C\\u683C\\u5F0F\\u3002</p>'
+      elementScanTitle: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u6559\\u7A0B",
+      elementScan: '<p><strong>\\u529F\\u80FD\\u4ECB\\u7D39:</strong></p><p>\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5141\\u8A31\\u60A8\\u7CBE\\u78BA\\u5730\\u9078\\u64C7\\u7DB2\\u9801\\u4E0A\\u7684\\u4E00\\u500B\\u6216\\u591A\\u500B\\u5340\\u57DF\\uFF08\\u4F8B\\u5982\\u4E00\\u500B\\u6BB5\\u843D\\u3001\\u4E00\\u500B\\u5217\\u8868\\u3001\\u4E00\\u500B\\u5074\\u908A\\u6B04\\uFF09\\uFF0C\\u4E26\\u50C5\\u5F9E\\u9019\\u4E9B\\u5340\\u57DF\\u4E2D\\u63D0\\u53D6\\u6587\\u672C\\u3002</p><p><strong>\\u5982\\u4F55\\u4F7F\\u7528:</strong></p><ol><li><strong>\\u555F\\u52D5:</strong> \\u9EDE\\u64CA\\u61F8\\u6D6E\\u6309\\u9215\\u4E2D\\u7684\\u300C\\u9078\\u53D6\\u5143\\u7D20\\u300D\\u5716\\u6A19 <span class="help-icon-placeholder element-scan-icon"></span> \\u555F\\u52D5\\u6383\\u63CF\\u6A21\\u5F0F\\u3002</li><li><strong>\\u9078\\u64C7:</strong> \\u79FB\\u52D5\\u9F20\\u6A19\\uFF0C\\u60A8\\u60F3\\u6383\\u63CF\\u7684\\u5340\\u57DF\\u6703\\u986F\\u793A\\u9AD8\\u4EAE\\u6846\\u3002\\u55AE\\u64CA\\u4EE5\\u9078\\u5B9A\\u3002</li><li><strong>\\u8ABF\\u6574:</strong> \\u9078\\u5B9A\\u5F8C\\u6703\\u51FA\\u73FE\\u5DE5\\u5177\\u6B04\\u3002\\u60A8\\u53EF\\u4EE5\\u4F7F\\u7528<strong>\\u6ED1\\u584A</strong>\\u4F86\\u64F4\\u5927\\u6216\\u7E2E\\u5C0F\\u9078\\u64C7\\u7BC4\\u570D\\u3002</li><li><strong>\\u66AB\\u5B58:</strong> \\u5982\\u679C\\u60A8\\u60F3\\u9078\\u64C7\\u591A\\u500B\\u4E0D\\u76F8\\u95DC\\u7684\\u5340\\u57DF\\uFF0C\\u53EF\\u4EE5\\u9EDE\\u64CA<span class="action-key">\\u66AB\\u5B58</span>\\u6309\\u9215\\u4FDD\\u5B58\\u7576\\u524D\\u9078\\u64C7\\uFF0C\\u7136\\u5F8C\\u7E7C\\u7E8C\\u9078\\u64C7\\u5176\\u4ED6\\u5340\\u57DF\\u3002</li><li><strong>\\u78BA\\u8A8D:</strong> \\u5B8C\\u6210\\u6240\\u6709\\u9078\\u64C7\\u5F8C\\uFF0C\\u9EDE\\u64CA<span class="action-key">\\u78BA\\u8A8D</span>\\u6309\\u9215\\uFF0C\\u7CFB\\u7D71\\u5C07\\u958B\\u59CB\\u5F9E\\u60A8\\u9078\\u64C7\\u7684\\u6240\\u6709\\u5340\\u57DF\\u4E2D\\u63D0\\u53D6\\u6587\\u672C\\u3002</li></ol><p><strong>\\u5982\\u4F55\\u9000\\u51FA:</strong></p><ul><li>\\u5728\\u9078\\u64C7\\u904E\\u7A0B\\u4E2D\\uFF0C\\u9EDE\\u64CA\\u5DE5\\u5177\\u6B04\\u4E0A\\u7684<span class="action-key">\\u53D6\\u6D88</span>\\u6309\\u9215\\u3002</li><li>\\u5728\\u9078\\u64C7\\u904E\\u7A0B\\u4E2D\\uFF08\\u51FA\\u73FE\\u9AD8\\u4EAE\\u6846\\u6642\\uFF09\\uFF0C\\u5728\\u9801\\u9762\\u4EFB\\u610F\\u4F4D\\u7F6E<strong>\\u53F3\\u9375\\u55AE\\u64CA</strong>\\u3002</li><li>\\u5728\\u4EFB\\u4F55\\u6642\\u5019\\uFF0C\\u6309\\u4E0B <kbd>ESC</kbd> \\u9375\\u3002</li><li>\\u5728\\u4EFB\\u4F55\\u6642\\u5019\\uFF0C\\u518D\\u6B21\\u9EDE\\u64CA\\u300C\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u300D\\u5716\\u6A19\\u3002</li></ul>',
+      sessionScanTitle: "\\u52D5\\u614B\\u6383\\u63CF\\u6559\\u7A0B",
+      sessionScan: '<p><strong>\\u529F\\u80FD\\u4ECB\\u7D39:</strong></p><p>\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u6301\\u7E8C\\u76E3\\u63A7\\u4E26\\u81EA\\u52D5\\u8A18\\u9304\\u7DB2\\u9801\\u4E0A\\u6240\\u6709\\u52D5\\u614B\\u52A0\\u8F09\\u6216\\u8B8A\\u5316\\u7684\\u6587\\u672C\\uFF0C\\u7279\\u5225\\u9069\\u7528\\u65BC\\u6293\\u53D6\\u5BE6\\u6642\\u804A\\u5929\\u3001\\u6EFE\\u52D5\\u52A0\\u8F09\\u5167\\u5BB9\\u6216\\u901A\\u77E5\\u7B49\\u3002</p><p><strong>\\u5982\\u4F55\\u4F7F\\u7528:</strong></p><ul><li><strong>\\u958B\\u59CB\\u6383\\u63CF:</strong> \\u9EDE\\u64CA\\u61F8\\u6D6E\\u6309\\u9215\\u4E2D\\u7684\\u300C\\u52D5\\u614B\\u6383\\u63CF\\u300D\\u5716\\u6A19 <span class="help-icon-placeholder dynamic-scan-icon"></span>\\uFF0C\\u6383\\u63CF\\u7ACB\\u5373\\u958B\\u59CB\\u3002</li><li><strong>\\u505C\\u6B62\\u6383\\u63CF:</strong> \\u518D\\u6B21\\u9EDE\\u64CA\\u8A72\\u5716\\u6A19 <span class="help-icon-placeholder stop-icon"></span>\\uFF0C\\u5373\\u53EF\\u505C\\u6B62\\u6383\\u63CF\\u3002</li><li><strong>\\u67E5\\u770B\\u7D50\\u679C:</strong> \\u505C\\u6B62\\u5F8C\\uFF0C\\u9EDE\\u64CA\\u4E3B\\u61F8\\u6D6E\\u6309\\u9215 <span class="help-icon-placeholder summary-icon"></span> \\u6253\\u958B\\u7D50\\u679C\\u7A97\\u53E3\\u3002</li></ul><p><strong>\\u5982\\u4F55\\u9000\\u51FA:</strong></p><ul><li>\\u5728\\u6383\\u63CF\\u904E\\u7A0B\\u4E2D\\uFF0C\\u518D\\u6B21\\u9EDE\\u64CA\\u300C\\u52D5\\u614B\\u6383\\u63CF\\u300D\\u5716\\u6A19\\u3002</li><li>\\u5728\\u6383\\u63CF\\u904E\\u7A0B\\u4E2D\\uFF0C\\u96A8\\u6642\\u6309\\u4E0B <kbd>ESC</kbd> \\u9375\\u53EF\\u5FEB\\u901F\\u505C\\u6B62\\u3002</li></ul>'
     }
   };
   // src/shared/i18n/management/languages.js
@@ -6479,7 +6479,7 @@ ${result.join(",\n")}
     },
     scan: {
       quick: "Quick Scan",
-      session: "Session Scan",
+      session: "Dynamic Scan",
       stagedCount: "Staged:",
       elementFinished: "Element scan finished, found {{count}} items.",
       startSession: "Start Dynamic Scan Session",
@@ -6605,22 +6605,22 @@ ${result.join(",\n")}
         }
       },
       sessionScan: {
-        switchToFallback: "[Session Scan] Switching to main thread fallback.",
+        switchToFallback: "[Dynamic Scan] Switching to main thread fallback.",
         domObserver: {
-          stopped: "[Session Scan] Stopped listening for DOM changes."
+          stopped: "[Dynamic Scan] Stopped listening for DOM changes."
         },
         fallback: {
-          initialized: "[Session Scan - Fallback] Initialized.",
-          cleared: "[Session Scan - Fallback] Data cleared."
+          initialized: "[Dynamic Scan - Fallback] Initialized.",
+          cleared: "[Dynamic Scan - Fallback] Data cleared."
         },
         worker: {
-          logPrefix: "[Session Scan Worker]",
-          starting: "Session Scan: Attempting to start Web Worker...",
-          initFailed: "[Session Scan] Worker initialization failed. This is likely due to the website's Content Security Policy (CSP).",
-          originalError: "[Session Scan] Original error: {{error}}",
-          initialized: "[Session Scan] Worker initialized successfully, sent {{count}} initial texts to start the session.",
-          initSyncError: "[Session Scan] Synchronous error during Worker initialization: {{error}}",
-          clearCommandSent: "[Session Scan] Clear command sent to worker."
+          logPrefix: "[Dynamic Scan Worker]",
+          starting: "Dynamic Scan: Attempting to start Web Worker...",
+          initFailed: "[Dynamic Scan] Worker initialization failed. This is likely due to the website's Content Security Policy (CSP).",
+          originalError: "[Dynamic Scan] Original error: {{error}}",
+          initialized: "[Dynamic Scan] Worker initialized successfully, sent {{count}} initial texts to start the session.",
+          initSyncError: "[Dynamic Scan] Synchronous error during Worker initialization: {{error}}",
+          clearCommandSent: "[Dynamic Scan] Clear command sent to worker."
         }
       },
       ui: {
@@ -6724,10 +6724,10 @@ ${result.join(",\n")}
       }
     },
     tutorial: {
-      elementScanTitle: "Element Scan Guide",
-      elementScan: '<p class="tutorial-content">This is a placeholder for the element scan tutorial. Rich text is supported.</p>',
-      sessionScanTitle: "Session Scan Guide",
-      sessionScan: '<p class="tutorial-content">This is a placeholder for the session scan tutorial. Rich text is supported.</p>'
+      elementScanTitle: "Element Scan Tutorial",
+      elementScan: '<p><strong>What it does:</strong></p><p>Element Scan allows you to precisely select one or more areas on a webpage (e.g., a paragraph, a list, a sidebar) and extract text only from those areas.</p><p><strong>How to use:</strong></p><ol><li><strong>Start:</strong> Click the "Element Scan" icon <span class="help-icon-placeholder element-scan-icon"></span> in the floating button to enter scan mode.</li><li><strong>Select:</strong> Move your mouse over the page. The area you want to scan will be highlighted. Click to select it.</li><li><strong>Adjust:</strong> A toolbar will appear after selection. You can use the <strong>slider</strong> to expand or shrink the selection area.</li><li><strong>Stage:</strong> If you want to select multiple unrelated areas, click the <span class="action-key">Stage</span> button to save the current selection and continue selecting other areas.</li><li><strong>Confirm:</strong> Once you have finished all selections, click the <span class="action-key">Confirm</span> button to start extracting text from all your chosen areas.</li></ol><p><strong>How to exit:</strong></p><ul><li>Click the <span class="action-key">Cancel</span> button on the toolbar during selection.</li><li>While the highlight box is visible, <strong>right-click</strong> anywhere on the page.</li><li>Press the <kbd>ESC</kbd> key at any time.</li><li>Click the "Element Scan" icon again at any time.</li></ul>',
+      sessionScanTitle: "Dynamic Scan Tutorial",
+      sessionScan: '<p><strong>What it does:</strong></p><p>Dynamic Scan continuously monitors and automatically records all text that dynamically loads or changes on a webpage. It is especially useful for capturing live chats, infinite scrolling content, or notifications.</p><p><strong>How to use:</strong></p><ul><li><strong>Start Scan:</strong> Click the "Dynamic Scan" icon <span class="help-icon-placeholder dynamic-scan-icon"></span> in the floating button to start scanning immediately.</li><li><strong>Stop Scan:</strong> Click the icon again <span class="help-icon-placeholder stop-icon"></span> to stop.</li><li><strong>View Results:</strong> After stopping, click the main floating button <span class="help-icon-placeholder summary-icon"></span> to open the results window.</li></ul><p><strong>How to exit:</strong></p><ul><li>Click the "Dynamic Scan" icon again during the scan.</li><li>Press the <kbd>ESC</kbd> key at any time to quickly stop the scan.</li></ul>'
     }
   };
   // src/shared/i18n/zh-CN.json
@@ -6816,14 +6816,14 @@ ${result.join(",\n")}
     },
     scan: {
       quick: "\\u5FEB\\u901F\\u626B\\u63CF",
-      session: "\\u4F1A\\u8BDD\\u626B\\u63CF",
+      session: "\\u52A8\\u6001\\u626B\\u63CF",
       stagedCount: "\\u5DF2\\u6682\\u5B58:",
       elementFinished: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {{count}} \\u6761\\u6587\\u672C\\u3002",
       startSession: "\\u5F00\\u59CB\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD",
       stopSession: "\\u505C\\u6B62\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD",
       finished: "\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {{count}} \\u6761\\u6587\\u672C\\u3002",
       quickFinished: "\\u5FEB\\u901F\\u626B\\u63CF\\u5B8C\\u6210\\uFF0C\\u53D1\\u73B0 {{count}} \\u6761\\u6587\\u672C\\u3002",
-      sessionStarted: "\\u4F1A\\u8BDD\\u626B\\u63CF\\u5DF2\\u5F00\\u59CB\\u3002",
+      sessionStarted: "\\u52A8\\u6001\\u626B\\u63CF\\u5DF2\\u5F00\\u59CB\\u3002",
       sessionInProgress: "\\u626B\\u63CF\\u8FDB\\u884C\\u4E2D...",
       truncationWarning: "\\u4E3A\\u4FDD\\u6301\\u754C\\u9762\\u6D41\\u7545\\uFF0C\\u6B64\\u5904\\u4EC5\\u663E\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u5BFC\\u51FA\\u540E\\u5C06\\u5305\\u542B\\u5B8C\\u6574\\u5185\\u5BB9\\u3002"
     },
@@ -6942,22 +6942,22 @@ ${result.join(",\n")}
         }
       },
       sessionScan: {
-        switchToFallback: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u6B63\\u5728\\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
+        switchToFallback: "[\\u52A8\\u6001\\u626B\\u63CF] \\u6B63\\u5728\\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
         domObserver: {
-          stopped: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u5DF2\\u505C\\u6B62\\u76D1\\u542C DOM \\u53D8\\u5316\\u3002"
+          stopped: "[\\u52A8\\u6001\\u626B\\u63CF] \\u5DF2\\u505C\\u6B62\\u76D1\\u542C DOM \\u53D8\\u5316\\u3002"
         },
         fallback: {
-          initialized: "[\\u4F1A\\u8BDD\\u626B\\u63CF - \\u5907\\u9009] \\u5DF2\\u521D\\u59CB\\u5316\\u3002",
-          cleared: "[\\u4F1A\\u8BDD\\u626B\\u63CF - \\u5907\\u9009] \\u6570\\u636E\\u5DF2\\u6E05\\u9664\\u3002"
+          initialized: "[\\u52A8\\u6001\\u626B\\u63CF - \\u5907\\u9009] \\u5DF2\\u521D\\u59CB\\u5316\\u3002",
+          cleared: "[\\u52A8\\u6001\\u626B\\u63CF - \\u5907\\u9009] \\u6570\\u636E\\u5DF2\\u6E05\\u9664\\u3002"
         },
         worker: {
-          logPrefix: "[\\u4F1A\\u8BDD\\u626B\\u63CF Worker]",
-          starting: "\\u4F1A\\u8BDD\\u626B\\u63CF\\uFF1A\\u6B63\\u5728\\u5C1D\\u8BD5\\u542F\\u52A8 Web Worker...",
-          initFailed: "[\\u4F1A\\u8BDD\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u8D25\\u3002\\u8FD9\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u4E8E\\u7F51\\u7AD9\\u7684\\u5185\\u5BB9\\u5B89\\u5168\\u7B56\\u7565 (CSP) \\u5BFC\\u81F4\\u7684\\u3002",
-          originalError: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u539F\\u59CB\\u9519\\u8BEF: {{error}}",
-          initialized: "[\\u4F1A\\u8BDD\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u6210\\u529F\\uFF0C\\u5DF2\\u53D1\\u9001 {{count}} \\u6761\\u521D\\u59CB\\u6587\\u672C\\u4EE5\\u5F00\\u59CB\\u4F1A\\u8BDD\\u3002",
-          initSyncError: "[\\u4F1A\\u8BDD\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u671F\\u95F4\\u53D1\\u751F\\u540C\\u6B65\\u9519\\u8BEF: {{error}}",
-          clearCommandSent: "[\\u4F1A\\u8BDD\\u626B\\u63CF] \\u6E05\\u9664\\u547D\\u4EE4\\u5DF2\\u53D1\\u9001\\u81F3 worker\\u3002"
+          logPrefix: "[\\u52A8\\u6001\\u626B\\u63CF Worker]",
+          starting: "\\u52A8\\u6001\\u626B\\u63CF\\uFF1A\\u6B63\\u5728\\u5C1D\\u8BD5\\u542F\\u52A8 Web Worker...",
+          initFailed: "[\\u52A8\\u6001\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u8D25\\u3002\\u8FD9\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u4E8E\\u7F51\\u7AD9\\u7684\\u5185\\u5BB9\\u5B89\\u5168\\u7B56\\u7565 (CSP) \\u5BFC\\u81F4\\u7684\\u3002",
+          originalError: "[\\u52A8\\u6001\\u626B\\u63CF] \\u539F\\u59CB\\u9519\\u8BEF: {{error}}",
+          initialized: "[\\u52A8\\u6001\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u6210\\u529F\\uFF0C\\u5DF2\\u53D1\\u9001 {{count}} \\u6761\\u521D\\u59CB\\u6587\\u672C\\u4EE5\\u5F00\\u59CB\\u4F1A\\u8BDD\\u3002",
+          initSyncError: "[\\u52A8\\u6001\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u671F\\u95F4\\u53D1\\u751F\\u540C\\u6B65\\u9519\\u8BEF: {{error}}",
+          clearCommandSent: "[\\u52A8\\u6001\\u626B\\u63CF] \\u6E05\\u9664\\u547D\\u4EE4\\u5DF2\\u53D1\\u9001\\u81F3 worker\\u3002"
         }
       },
       ui: {
@@ -6967,7 +6967,7 @@ ${result.join(",\n")}
         },
         confirmationModal: {
           sessionScan: {
-            confirmed: "\\u7528\\u6237\\u5DF2\\u786E\\u8BA4\\u6E05\\u9664\\u4F1A\\u8BDD\\u626B\\u63CF\\u6587\\u672C\\uFF0C\\u6B63\\u5728\\u8C03\\u7528\\u56DE\\u8C03..."
+            confirmed: "\\u7528\\u6237\\u5DF2\\u786E\\u8BA4\\u6E05\\u9664\\u52A8\\u6001\\u626B\\u63CF\\u6587\\u672C\\uFF0C\\u6B63\\u5728\\u8C03\\u7528\\u56DE\\u8C03..."
           },
           quickScan: {
             confirmed: "\\u7528\\u6237\\u5DF2\\u786E\\u8BA4\\u6E05\\u9664\\u5FEB\\u901F\\u626B\\u63CF\\u6587\\u672C\\u3002"
@@ -6992,7 +6992,7 @@ ${result.join(",\n")}
         unknownFormat: "\\u672A\\u77E5\\u7684\\u5BFC\\u51FA\\u683C\\u5F0F: {{format}}"
       },
       main: {
-        requestingSessionScanData: "\\u6B63\\u5728\\u8BF7\\u6C42\\u4F1A\\u8BDD\\u626B\\u63CF\\u6A21\\u5F0F\\u7684\\u5B8C\\u6574\\u6570\\u636E...",
+        requestingSessionScanData: "\\u6B63\\u5728\\u8BF7\\u6C42\\u52A8\\u6001\\u626B\\u63CF\\u6A21\\u5F0F\\u7684\\u5B8C\\u6574\\u6570\\u636E...",
         exportingQuickScanData: "\\u6B63\\u5728\\u5BFC\\u51FA\\u5FEB\\u901F\\u626B\\u63CF\\u6A21\\u5F0F\\u5185\\u5B58\\u4E2D\\u7684\\u5B8C\\u6574\\u6570\\u636E...",
         inIframe: "\\u811A\\u672C\\u5728 iframe \\u4E2D\\uFF0C\\u5DF2\\u8DF3\\u8FC7\\u521D\\u59CB\\u5316\\u3002",
         initializing: "\\u811A\\u672C\\u521D\\u59CB\\u5316\\u5F00\\u59CB...",
@@ -7062,9 +7062,9 @@ ${result.join(",\n")}
     },
     tutorial: {
       elementScanTitle: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u6559\\u7A0B",
-      elementScan: '<p class="tutorial-content">\\u8FD9\\u662F\\u4E00\\u4E2A\\u7528\\u4E8E\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u6559\\u7A0B\\u7684\\u5360\\u4F4D\\u7B26\\u3002\\u652F\\u6301\\u5BCC\\u6587\\u672C\\u683C\\u5F0F\\u3002</p>',
-      sessionScanTitle: "\\u4F1A\\u8BDD\\u626B\\u63CF\\u6559\\u7A0B",
-      sessionScan: '<p class="tutorial-content">\\u8FD9\\u662F\\u4E00\\u4E2A\\u7528\\u4E8E\\u4F1A\\u8BDD\\u626B\\u63CF\\u6559\\u7A0B\\u7684\\u5360\\u4F4D\\u7B26\\u3002\\u652F\\u6301\\u5BCC\\u6587\\u672C\\u683C\\u5F0F\\u3002</p>'
+      elementScan: '<p><strong>\\u529F\\u80FD\\u4ECB\\u7ECD:</strong></p><p>\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5141\\u8BB8\\u60A8\\u7CBE\\u786E\\u5730\\u9009\\u62E9\\u7F51\\u9875\\u4E0A\\u7684\\u4E00\\u4E2A\\u6216\\u591A\\u4E2A\\u533A\\u57DF\\uFF08\\u4F8B\\u5982\\u4E00\\u4E2A\\u6BB5\\u843D\\u3001\\u4E00\\u4E2A\\u5217\\u8868\\u3001\\u4E00\\u4E2A\\u4FA7\\u8FB9\\u680F\\uFF09\\uFF0C\\u5E76\\u4EC5\\u4ECE\\u8FD9\\u4E9B\\u533A\\u57DF\\u4E2D\\u63D0\\u53D6\\u6587\\u672C\\u3002</p><p><strong>\\u5982\\u4F55\\u4F7F\\u7528:</strong></p><ol><li><strong>\\u542F\\u52A8:</strong> \\u70B9\\u51FB\\u60AC\\u6D6E\\u6309\\u94AE\\u4E2D\\u7684\\u201C\\u9009\\u53D6\\u5143\\u7D20\\u201D\\u56FE\\u6807 <span class="help-icon-placeholder element-scan-icon"></span> \\u542F\\u52A8\\u626B\\u63CF\\u6A21\\u5F0F\\u3002</li><li><strong>\\u9009\\u62E9:</strong> \\u79FB\\u52A8\\u9F20\\u6807\\uFF0C\\u60A8\\u60F3\\u626B\\u63CF\\u7684\\u533A\\u57DF\\u4F1A\\u663E\\u793A\\u9AD8\\u4EAE\\u6846\\u3002\\u5355\\u51FB\\u4EE5\\u9009\\u5B9A\\u3002</li><li><strong>\\u8C03\\u6574:</strong> \\u9009\\u5B9A\\u540E\\u4F1A\\u51FA\\u73B0\\u5DE5\\u5177\\u680F\\u3002\\u60A8\\u53EF\\u4EE5\\u4F7F\\u7528<strong>\\u6ED1\\u5757</strong>\\u6765\\u6269\\u5927\\u6216\\u7F29\\u5C0F\\u9009\\u62E9\\u8303\\u56F4\\u3002</li><li><strong>\\u6682\\u5B58:</strong> \\u5982\\u679C\\u60A8\\u60F3\\u9009\\u62E9\\u591A\\u4E2A\\u4E0D\\u76F8\\u5173\\u7684\\u533A\\u57DF\\uFF0C\\u53EF\\u4EE5\\u70B9\\u51FB<span class="action-key">\\u6682\\u5B58</span>\\u6309\\u94AE\\u4FDD\\u5B58\\u5F53\\u524D\\u9009\\u62E9\\uFF0C\\u7136\\u540E\\u7EE7\\u7EED\\u9009\\u62E9\\u5176\\u4ED6\\u533A\\u57DF\\u3002</li><li><strong>\\u786E\\u8BA4:</strong> \\u5B8C\\u6210\\u6240\\u6709\\u9009\\u62E9\\u540E\\uFF0C\\u70B9\\u51FB<span class="action-key">\\u786E\\u8BA4</span>\\u6309\\u94AE\\uFF0C\\u7CFB\\u7EDF\\u5C06\\u5F00\\u59CB\\u4ECE\\u60A8\\u9009\\u62E9\\u7684\\u6240\\u6709\\u533A\\u57DF\\u4E2D\\u63D0\\u53D6\\u6587\\u672C\\u3002</li></ol><p><strong>\\u5982\\u4F55\\u9000\\u51FA:</strong></p><ul><li>\\u5728\\u9009\\u62E9\\u8FC7\\u7A0B\\u4E2D\\uFF0C\\u70B9\\u51FB\\u5DE5\\u5177\\u680F\\u4E0A\\u7684<span class="action-key">\\u53D6\\u6D88</span>\\u6309\\u94AE\\u3002</li><li>\\u5728\\u9009\\u62E9\\u8FC7\\u7A0B\\u4E2D\\uFF08\\u51FA\\u73B0\\u9AD8\\u4EAE\\u6846\\u65F6\\uFF09\\uFF0C\\u5728\\u9875\\u9762\\u4EFB\\u610F\\u4F4D\\u7F6E<strong>\\u53F3\\u952E\\u5355\\u51FB</strong>\\u3002</li><li>\\u5728\\u4EFB\\u4F55\\u65F6\\u5019\\uFF0C\\u6309\\u4E0B<kbd>ESC</kbd>\\u952E\\u3002</li><li>\\u5728\\u4EFB\\u4F55\\u65F6\\u5019\\uFF0C\\u518D\\u6B21\\u70B9\\u51FB\\u201C\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u201D\\u56FE\\u6807\\u3002</li></ul>',
+      sessionScanTitle: "\\u52A8\\u6001\\u626B\\u63CF\\u6559\\u7A0B",
+      sessionScan: '<p><strong>\\u529F\\u80FD\\u4ECB\\u7ECD:</strong></p><p>\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u6301\\u7EED\\u76D1\\u63A7\\u5E76\\u81EA\\u52A8\\u8BB0\\u5F55\\u7F51\\u9875\\u4E0A\\u6240\\u6709\\u52A8\\u6001\\u52A0\\u8F7D\\u6216\\u53D8\\u5316\\u7684\\u6587\\u672C\\uFF0C\\u7279\\u522B\\u9002\\u7528\\u4E8E\\u6293\\u53D6\\u5B9E\\u65F6\\u804A\\u5929\\u3001\\u6EDA\\u52A8\\u52A0\\u8F7D\\u5185\\u5BB9\\u6216\\u901A\\u77E5\\u7B49\\u3002</p><p><strong>\\u5982\\u4F55\\u4F7F\\u7528:</strong></p><ul><li><strong>\\u5F00\\u59CB\\u626B\\u63CF:</strong> \\u70B9\\u51FB\\u60AC\\u6D6E\\u6309\\u94AE\\u4E2D\\u7684\\u201C\\u52A8\\u6001\\u626B\\u63CF\\u201D\\u56FE\\u6807 <span class="help-icon-placeholder dynamic-scan-icon"></span>\\uFF0C\\u626B\\u63CF\\u7ACB\\u5373\\u5F00\\u59CB\\u3002</li><li><strong>\\u505C\\u6B62\\u626B\\u63CF:</strong> \\u518D\\u6B21\\u70B9\\u51FB\\u8BE5\\u56FE\\u6807 <span class="help-icon-placeholder stop-icon"></span>\\uFF0C\\u5373\\u53EF\\u505C\\u6B62\\u626B\\u63CF\\u3002</li><li><strong>\\u67E5\\u770B\\u7ED3\\u679C:</strong> \\u505C\\u6B62\\u540E\\uFF0C\\u70B9\\u51FB\\u4E3B\\u60AC\\u6D6E\\u6309\\u94AE <span class="help-icon-placeholder summary-icon"></span> \\u6253\\u5F00\\u7ED3\\u679C\\u7A97\\u53E3\\u3002</li></ul><p><strong>\\u5982\\u4F55\\u9000\\u51FA:</strong></p><ul><li>\\u5728\\u626B\\u63CF\\u8FC7\\u7A0B\\u4E2D\\uFF0C\\u518D\\u6B21\\u70B9\\u51FB\\u201C\\u52A8\\u6001\\u626B\\u63CF\\u201D\\u56FE\\u6807\\u3002</li><li>\\u5728\\u626B\\u63CF\\u8FC7\\u7A0B\\u4E2D\\uFF0C\\u968F\\u65F6\\u6309\\u4E0B<kbd>ESC</kbd>\\u952E\\u53EF\\u5FEB\\u901F\\u505C\\u6B62\\u3002</li></ul>'
     }
   };
   // src/shared/i18n/zh-TW.json
@@ -7153,14 +7153,14 @@ ${result.join(",\n")}
     },
     scan: {
       quick: "\\u5FEB\\u901F\\u6383\\u63CF",
-      session: "\\u6703\\u8A71\\u6383\\u63CF",
+      session: "\\u52D5\\u614B\\u6383\\u63CF",
       stagedCount: "\\u5DF2\\u66AB\\u5B58:",
       elementFinished: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {{count}} \\u689D\\u6587\\u672C\\u3002",
       startSession: "\\u958B\\u59CB\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71",
       stopSession: "\\u505C\\u6B62\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71",
       finished: "\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {{count}} \\u689D\\u6587\\u672C\\u3002",
       quickFinished: "\\u5FEB\\u901F\\u6383\\u63CF\\u5B8C\\u6210\\uFF0C\\u767C\\u73FE {{count}} \\u689D\\u6587\\u672C\\u3002",
-      sessionStarted: "\\u6703\\u8A71\\u6383\\u63CF\\u5DF2\\u958B\\u59CB\\u3002",
+      sessionStarted: "\\u52D5\\u614B\\u6383\\u63CF\\u5DF2\\u958B\\u59CB\\u3002",
       sessionInProgress: "\\u6383\\u63CF\\u9032\\u884C\\u4E2D...",
       truncationWarning: "\\u70BA\\u4FDD\\u6301\\u4ECB\\u9762\\u6D41\\u66A2\\uFF0C\\u6B64\\u8655\\u50C5\\u986F\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u532F\\u51FA\\u5F8C\\u5C07\\u5305\\u542B\\u5B8C\\u6574\\u5167\\u5BB9\\u3002"
     },
@@ -7279,22 +7279,22 @@ ${result.join(",\n")}
         }
       },
       sessionScan: {
-        switchToFallback: "[\\u6703\\u8A71\\u6383\\u63CF] \\u6B63\\u5728\\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
+        switchToFallback: "[\\u52D5\\u614B\\u6383\\u63CF] \\u6B63\\u5728\\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
         domObserver: {
-          stopped: "[\\u6703\\u8A71\\u6383\\u63CF] \\u5DF2\\u505C\\u6B62\\u76E3\\u807D DOM \\u8B8A\\u5316\\u3002"
+          stopped: "[\\u52D5\\u614B\\u6383\\u63CF] \\u5DF2\\u505C\\u6B62\\u76E3\\u807D DOM \\u8B8A\\u5316\\u3002"
         },
         fallback: {
-          initialized: "[\\u6703\\u8A71\\u6383\\u63CF - \\u5099\\u9078] \\u5DF2\\u521D\\u59CB\\u5316\\u3002",
-          cleared: "[\\u6703\\u8A71\\u6383\\u63CF - \\u5099\\u9078] \\u8CC7\\u6599\\u5DF2\\u6E05\\u9664\\u3002"
+          initialized: "[\\u52D5\\u614B\\u6383\\u63CF - \\u5099\\u9078] \\u5DF2\\u521D\\u59CB\\u5316\\u3002",
+          cleared: "[\\u52D5\\u614B\\u6383\\u63CF - \\u5099\\u9078] \\u8CC7\\u6599\\u5DF2\\u6E05\\u9664\\u3002"
         },
         worker: {
-          logPrefix: "[\\u6703\\u8A71\\u6383\\u63CF Worker]",
-          starting: "\\u6703\\u8A71\\u6383\\u63CF\\uFF1A\\u6B63\\u5728\\u5617\\u8A66\\u555F\\u52D5 Web Worker...",
-          initFailed: "[\\u6703\\u8A71\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u6557\\u3002\\u9019\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u65BC\\u7DB2\\u7AD9\\u7684\\u5167\\u5BB9\\u5B89\\u5168\\u7B56\\u7565 (CSP) \\u5C0E\\u81F4\\u7684\\u3002",
-          originalError: "[\\u6703\\u8A71\\u6383\\u63CF] \\u539F\\u59CB\\u932F\\u8AA4: {{error}}",
-          initialized: "[\\u6703\\u8A71\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u6210\\u529F\\uFF0C\\u5DF2\\u767C\\u9001 {{count}} \\u689D\\u521D\\u59CB\\u6587\\u672C\\u4EE5\\u958B\\u59CB\\u6703\\u8A71\\u3002",
-          initSyncError: "[\\u6703\\u8A71\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u671F\\u9593\\u767C\\u751F\\u540C\\u6B65\\u932F\\u8AA4: {{error}}",
-          clearCommandSent: "[\\u6703\\u8A71\\u6383\\u63CF] \\u6E05\\u9664\\u547D\\u4EE4\\u5DF2\\u767C\\u9001\\u81F3 worker\\u3002"
+          logPrefix: "[\\u52D5\\u614B\\u6383\\u63CF Worker]",
+          starting: "\\u52D5\\u614B\\u6383\\u63CF\\uFF1A\\u6B63\\u5728\\u5617\\u8A66\\u555F\\u52D5 Web Worker...",
+          initFailed: "[\\u52D5\\u614B\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u6557\\u3002\\u9019\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u65BC\\u7DB2\\u7AD9\\u7684\\u5167\\u5BB9\\u5B89\\u5168\\u7B56\\u7565 (CSP) \\u5C0E\\u81F4\\u7684\\u3002",
+          originalError: "[\\u52D5\\u614B\\u6383\\u63CF] \\u539F\\u59CB\\u932F\\u8AA4: {{error}}",
+          initialized: "[\\u52D5\\u614B\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u6210\\u529F\\uFF0C\\u5DF2\\u767C\\u9001 {{count}} \\u689D\\u521D\\u59CB\\u6587\\u672C\\u4EE5\\u958B\\u59CB\\u6703\\u8A71\\u3002",
+          initSyncError: "[\\u52D5\\u614B\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u671F\\u9593\\u767C\\u751F\\u540C\\u6B65\\u932F\\u8AA4: {{error}}",
+          clearCommandSent: "[\\u52D5\\u614B\\u6383\\u63CF] \\u6E05\\u9664\\u547D\\u4EE4\\u5DF2\\u767C\\u9001\\u81F3 worker\\u3002"
         }
       },
       ui: {
@@ -7304,7 +7304,7 @@ ${result.join(",\n")}
         },
         confirmationModal: {
           sessionScan: {
-            confirmed: "\\u4F7F\\u7528\\u8005\\u5DF2\\u78BA\\u8A8D\\u6E05\\u9664\\u6703\\u8A71\\u6383\\u63CF\\u6587\\u672C\\uFF0C\\u6B63\\u5728\\u8ABF\\u7528\\u56DE\\u547C..."
+            confirmed: "\\u4F7F\\u7528\\u8005\\u5DF2\\u78BA\\u8A8D\\u6E05\\u9664\\u52D5\\u614B\\u6383\\u63CF\\u6587\\u672C\\uFF0C\\u6B63\\u5728\\u8ABF\\u7528\\u56DE\\u547C..."
           },
           quickScan: {
             confirmed: "\\u4F7F\\u7528\\u8005\\u5DF2\\u78BA\\u8A8D\\u6E05\\u9664\\u5FEB\\u901F\\u6383\\u63CF\\u6587\\u672C\\u3002"
@@ -7329,7 +7329,7 @@ ${result.join(",\n")}
         unknownFormat: "\\u672A\\u77E5\\u7684\\u532F\\u51FA\\u683C\\u5F0F: {{format}}"
       },
       main: {
-        requestingSessionScanData: "\\u6B63\\u5728\\u8ACB\\u6C42\\u6703\\u8A71\\u6383\\u63CF\\u6A21\\u5F0F\\u7684\\u5B8C\\u6574\\u8CC7\\u6599...",
+        requestingSessionScanData: "\\u6B63\\u5728\\u8ACB\\u6C42\\u52D5\\u614B\\u6383\\u63CF\\u6A21\\u5F0F\\u7684\\u5B8C\\u6574\\u8CC7\\u6599...",
         exportingQuickScanData: "\\u6B63\\u5728\\u532F\\u51FA\\u5FEB\\u901F\\u6383\\u63CF\\u6A21\\u5F0F\\u8A18\\u61B6\\u9AD4\\u4E2D\\u7684\\u5B8C\\u6574\\u8CC7\\u6599...",
         inIframe: "\\u8173\\u672C\\u5728 iframe \\u4E2D\\uFF0C\\u5DF2\\u8DF3\\u904E\\u521D\\u59CB\\u5316\\u3002",
         initializing: "\\u8173\\u672C\\u521D\\u59CB\\u5316\\u958B\\u59CB...",
@@ -7398,10 +7398,10 @@ ${result.join(",\n")}
       }
     },
     tutorial: {
-      elementScanTitle: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u6559\\u5B78",
-      elementScan: '<p class="tutorial-content">\\u9019\\u662F\\u4E00\\u500B\\u7528\\u65BC\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u6559\\u5B78\\u7684\\u4F54\\u4F4D\\u7B26\\u3002\\u652F\\u63F4\\u5BCC\\u6587\\u672C\\u683C\\u5F0F\\u3002</p>',
-      sessionScanTitle: "\\u6703\\u8A71\\u6383\\u63CF\\u6559\\u5B78",
-      sessionScan: '<p class="tutorial-content">\\u9019\\u662F\\u4E00\\u500B\\u7528\\u65BC\\u6703\\u8A71\\u6383\\u63CF\\u6559\\u5B78\\u7684\\u4F54\\u4F4D\\u7B26\\u3002\\u652F\\u63F4\\u5BCC\\u6587\\u672C\\u683C\\u5F0F\\u3002</p>'
+      elementScanTitle: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u6559\\u7A0B",
+      elementScan: '<p><strong>\\u529F\\u80FD\\u4ECB\\u7D39:</strong></p><p>\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5141\\u8A31\\u60A8\\u7CBE\\u78BA\\u5730\\u9078\\u64C7\\u7DB2\\u9801\\u4E0A\\u7684\\u4E00\\u500B\\u6216\\u591A\\u500B\\u5340\\u57DF\\uFF08\\u4F8B\\u5982\\u4E00\\u500B\\u6BB5\\u843D\\u3001\\u4E00\\u500B\\u5217\\u8868\\u3001\\u4E00\\u500B\\u5074\\u908A\\u6B04\\uFF09\\uFF0C\\u4E26\\u50C5\\u5F9E\\u9019\\u4E9B\\u5340\\u57DF\\u4E2D\\u63D0\\u53D6\\u6587\\u672C\\u3002</p><p><strong>\\u5982\\u4F55\\u4F7F\\u7528:</strong></p><ol><li><strong>\\u555F\\u52D5:</strong> \\u9EDE\\u64CA\\u61F8\\u6D6E\\u6309\\u9215\\u4E2D\\u7684\\u300C\\u9078\\u53D6\\u5143\\u7D20\\u300D\\u5716\\u6A19 <span class="help-icon-placeholder element-scan-icon"></span> \\u555F\\u52D5\\u6383\\u63CF\\u6A21\\u5F0F\\u3002</li><li><strong>\\u9078\\u64C7:</strong> \\u79FB\\u52D5\\u9F20\\u6A19\\uFF0C\\u60A8\\u60F3\\u6383\\u63CF\\u7684\\u5340\\u57DF\\u6703\\u986F\\u793A\\u9AD8\\u4EAE\\u6846\\u3002\\u55AE\\u64CA\\u4EE5\\u9078\\u5B9A\\u3002</li><li><strong>\\u8ABF\\u6574:</strong> \\u9078\\u5B9A\\u5F8C\\u6703\\u51FA\\u73FE\\u5DE5\\u5177\\u6B04\\u3002\\u60A8\\u53EF\\u4EE5\\u4F7F\\u7528<strong>\\u6ED1\\u584A</strong>\\u4F86\\u64F4\\u5927\\u6216\\u7E2E\\u5C0F\\u9078\\u64C7\\u7BC4\\u570D\\u3002</li><li><strong>\\u66AB\\u5B58:</strong> \\u5982\\u679C\\u60A8\\u60F3\\u9078\\u64C7\\u591A\\u500B\\u4E0D\\u76F8\\u95DC\\u7684\\u5340\\u57DF\\uFF0C\\u53EF\\u4EE5\\u9EDE\\u64CA<span class="action-key">\\u66AB\\u5B58</span>\\u6309\\u9215\\u4FDD\\u5B58\\u7576\\u524D\\u9078\\u64C7\\uFF0C\\u7136\\u5F8C\\u7E7C\\u7E8C\\u9078\\u64C7\\u5176\\u4ED6\\u5340\\u57DF\\u3002</li><li><strong>\\u78BA\\u8A8D:</strong> \\u5B8C\\u6210\\u6240\\u6709\\u9078\\u64C7\\u5F8C\\uFF0C\\u9EDE\\u64CA<span class="action-key">\\u78BA\\u8A8D</span>\\u6309\\u9215\\uFF0C\\u7CFB\\u7D71\\u5C07\\u958B\\u59CB\\u5F9E\\u60A8\\u9078\\u64C7\\u7684\\u6240\\u6709\\u5340\\u57DF\\u4E2D\\u63D0\\u53D6\\u6587\\u672C\\u3002</li></ol><p><strong>\\u5982\\u4F55\\u9000\\u51FA:</strong></p><ul><li>\\u5728\\u9078\\u64C7\\u904E\\u7A0B\\u4E2D\\uFF0C\\u9EDE\\u64CA\\u5DE5\\u5177\\u6B04\\u4E0A\\u7684<span class="action-key">\\u53D6\\u6D88</span>\\u6309\\u9215\\u3002</li><li>\\u5728\\u9078\\u64C7\\u904E\\u7A0B\\u4E2D\\uFF08\\u51FA\\u73FE\\u9AD8\\u4EAE\\u6846\\u6642\\uFF09\\uFF0C\\u5728\\u9801\\u9762\\u4EFB\\u610F\\u4F4D\\u7F6E<strong>\\u53F3\\u9375\\u55AE\\u64CA</strong>\\u3002</li><li>\\u5728\\u4EFB\\u4F55\\u6642\\u5019\\uFF0C\\u6309\\u4E0B <kbd>ESC</kbd> \\u9375\\u3002</li><li>\\u5728\\u4EFB\\u4F55\\u6642\\u5019\\uFF0C\\u518D\\u6B21\\u9EDE\\u64CA\\u300C\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u300D\\u5716\\u6A19\\u3002</li></ul>',
+      sessionScanTitle: "\\u52D5\\u614B\\u6383\\u63CF\\u6559\\u7A0B",
+      sessionScan: '<p><strong>\\u529F\\u80FD\\u4ECB\\u7D39:</strong></p><p>\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u6301\\u7E8C\\u76E3\\u63A7\\u4E26\\u81EA\\u52D5\\u8A18\\u9304\\u7DB2\\u9801\\u4E0A\\u6240\\u6709\\u52D5\\u614B\\u52A0\\u8F09\\u6216\\u8B8A\\u5316\\u7684\\u6587\\u672C\\uFF0C\\u7279\\u5225\\u9069\\u7528\\u65BC\\u6293\\u53D6\\u5BE6\\u6642\\u804A\\u5929\\u3001\\u6EFE\\u52D5\\u52A0\\u8F09\\u5167\\u5BB9\\u6216\\u901A\\u77E5\\u7B49\\u3002</p><p><strong>\\u5982\\u4F55\\u4F7F\\u7528:</strong></p><ul><li><strong>\\u958B\\u59CB\\u6383\\u63CF:</strong> \\u9EDE\\u64CA\\u61F8\\u6D6E\\u6309\\u9215\\u4E2D\\u7684\\u300C\\u52D5\\u614B\\u6383\\u63CF\\u300D\\u5716\\u6A19 <span class="help-icon-placeholder dynamic-scan-icon"></span>\\uFF0C\\u6383\\u63CF\\u7ACB\\u5373\\u958B\\u59CB\\u3002</li><li><strong>\\u505C\\u6B62\\u6383\\u63CF:</strong> \\u518D\\u6B21\\u9EDE\\u64CA\\u8A72\\u5716\\u6A19 <span class="help-icon-placeholder stop-icon"></span>\\uFF0C\\u5373\\u53EF\\u505C\\u6B62\\u6383\\u63CF\\u3002</li><li><strong>\\u67E5\\u770B\\u7D50\\u679C:</strong> \\u505C\\u6B62\\u5F8C\\uFF0C\\u9EDE\\u64CA\\u4E3B\\u61F8\\u6D6E\\u6309\\u9215 <span class="help-icon-placeholder summary-icon"></span> \\u6253\\u958B\\u7D50\\u679C\\u7A97\\u53E3\\u3002</li></ul><p><strong>\\u5982\\u4F55\\u9000\\u51FA:</strong></p><ul><li>\\u5728\\u6383\\u63CF\\u904E\\u7A0B\\u4E2D\\uFF0C\\u518D\\u6B21\\u9EDE\\u64CA\\u300C\\u52D5\\u614B\\u6383\\u63CF\\u300D\\u5716\\u6A19\\u3002</li><li>\\u5728\\u6383\\u63CF\\u904E\\u7A0B\\u4E2D\\uFF0C\\u96A8\\u6642\\u6309\\u4E0B <kbd>ESC</kbd> \\u9375\\u53EF\\u5FEB\\u901F\\u505C\\u6B62\\u3002</li></ul>'
     }
   };
   // src/shared/i18n/management/languages.js
@@ -8465,8 +8465,6 @@ ${result.join(",\n")}
   font-weight:bold;
   transition:background-color 0.2s ease, transform 0.2s ease;
 }
-.confirmation-modal-button:hover{
-}
 .confirmation-modal-button.confirm{
   background-color:var(--main-primary);
   color:var(--main-primary-text);
@@ -8941,9 +8939,9 @@ ${result.join(",\n")}
     box-shadow:0 5px 15px var(--main-shadow);
     padding:0;
     position:relative;
-    width:400px;
-    max-width:90vw;
-    max-height:90vh;
+    width:480px;
+    max-width:80vw;
+    max-height:80vh;
     display:flex;
     flex-direction:column;
     transform:scale(0.95);
@@ -8998,7 +8996,7 @@ ${result.join(",\n")}
     height:18px;
 }
 .info-tooltip-content{
-    padding:20px;
+    padding:24px;
     overflow-y:auto;
 }
 .info-tooltip-content p{
@@ -9049,6 +9047,25 @@ ${result.join(",\n")}
 .info-icon svg{
     width:16px;
     height:16px;
+}
+kbd{\r
+    position:relative;\r
+    top:-3px; \r
+    display:inline-block;\r
+    padding:3px 6px;\r
+    margin:0 4px;\r
+    font-family:'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';\r
+    font-size:0.85em;\r
+    font-weight:700;\r
+    line-height:1;\r
+    color:var(--main-text);\r
+    background-color:var(--main-bg);\r
+    border:1px solid var(--main-border);\r
+    border-bottom-width:3px;\r
+    border-radius:4px;\r
+    box-shadow:0 1px 1px var(--main-shadow);\r
+    white-space:nowrap;\r
+    vertical-align:baseline;\r
 }
 .gm-loading-overlay{
   position:absolute;
@@ -9271,6 +9288,25 @@ ${result.join(",\n")}
 .tc-help-icon-button svg{
     width:20px;
     height:20px;
+}
+.action-key{
+    position:relative;
+    top:-3px; 
+    display:inline-block;
+    padding:3px 6px;
+    margin:0 4px;
+    font-family:'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
+    font-size:0.85em;
+    font-weight:700;
+    line-height:1;
+    color:var(--main-text);
+    background-color:var(--main-bg);
+    border:1px solid var(--main-border);
+    border-bottom-width:3px;
+    border-radius:4px;
+    box-shadow:0 1px 1px var(--main-shadow);
+    white-space:nowrap;
+    vertical-align:baseline;
 }
 .tc-textarea-container{
     display:flex;
