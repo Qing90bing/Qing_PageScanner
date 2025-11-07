@@ -1,18 +1,18 @@
 // src/features/session-scan/ui.js
 
-import { updateModalContent, SHOW_PLACEHOLDER, SHOW_LOADING } from '../../shared/ui/mainModal.js';
+import { updateModalContent, SHOW_PLACEHOLDER, SHOW_LOADING, closeModal } from '../../shared/ui/mainModal.js';
+import { modalOverlay } from '../../shared/ui/mainModal/modalState.js';
 import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
 import * as sessionExtractor from './logic.js';
 import { showNotification } from '../../shared/ui/components/notification.js';
 import { createCounterWithHelp, showCounterWithHelp, hideCounterWithHelp, updateCounterValue } from '../../shared/ui/components/counterWithHelp.js';
 import { t } from '../../shared/i18n/index.js';
-import { setFabIcon, getElementScanFab, updateFabTooltip } from '../../shared/ui/components/fab.js';
+import { setFabIcon, getElementScanFab, updateFabTooltip, getDynamicFab } from '../../shared/ui/components/fab.js';
 import { dynamicIcon } from '../../assets/icons/dynamicIcon.js';
 import { stopIcon } from '../../assets/icons/stopIcon.js';
 import { simpleTemplate } from '../../shared/utils/templating.js';
 import { on } from '../../shared/utils/eventBus.js';
 import { log } from '../../shared/utils/logger.js';
-import { uiContainer } from '../../shared/ui/uiContainer.js';
 
 let currentSessionCount = 0;
 
@@ -67,6 +67,31 @@ export function showSessionSummary() {
 }
 
 /**
+ * @private
+ * @function handleEscForSessionScan
+ * @description 在会话扫描期间处理 Escape 键事件。
+ * @param {KeyboardEvent} event - 键盘事件。
+ */
+const handleEscForSessionScan = (event) => {
+    // 仅当按下 Escape 键、会话正在录制且模态框不可见时才执行
+    if (
+        event.key === 'Escape' &&
+        sessionExtractor.isSessionRecording() &&
+        !modalOverlay.classList.contains('is-visible')
+    ) {
+        // 阻止事件传播，以避免与其他 Escape 键监听器（如模态框的）冲突
+        event.preventDefault();
+        event.stopPropagation();
+        
+        // 获取动态 FAB 的引用并模拟点击以停止会话
+        const dynamicFab = getDynamicFab();
+        if (dynamicFab) {
+            handleDynamicExtractClick(dynamicFab);
+        }
+    }
+};
+
+/**
  * @public
  * @function handleDynamicExtractClick
  * @description 处理“动态扫描”按钮的点击事件，负责启动或停止会话扫描。
@@ -96,6 +121,8 @@ export function handleDynamicExtractClick(dynamicFab) {
                 updateFabTooltip(elementScanFab, elementScanFab.dataset.originalTooltipKey);
             }
         }
+        // 在停止时移除键盘事件监听器
+        document.removeEventListener('keydown', handleEscForSessionScan, true);
     } else {
         // --- 启动会话扫描 ---
         log(t('scan.startSession'));
@@ -119,5 +146,8 @@ export function handleDynamicExtractClick(dynamicFab) {
                 currentSessionCount = count;
             });
         }, 50);
+
+        // 在启动时添加键盘事件监听器，使用捕获阶段以确保优先执行
+        document.addEventListener('keydown', handleEscForSessionScan, true);
     }
 }

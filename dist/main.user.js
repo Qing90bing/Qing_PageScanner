@@ -5874,6 +5874,16 @@ ${result.join(",\n")}
       });
     }, 50);
   }
+  var handleEscForSessionScan = (event) => {
+    if (event.key === "Escape" && isSessionRecording() && !modalOverlay.classList.contains("is-visible")) {
+      event.preventDefault();
+      event.stopPropagation();
+      const dynamicFab2 = getDynamicFab();
+      if (dynamicFab2) {
+        handleDynamicExtractClick(dynamicFab2);
+      }
+    }
+  };
   function handleDynamicExtractClick(dynamicFab2) {
     const elementScanFab2 = getElementScanFab();
     if (isSessionRecording()) {
@@ -5893,6 +5903,7 @@ ${result.join(",\n")}
           updateFabTooltip(elementScanFab2, elementScanFab2.dataset.originalTooltipKey);
         }
       }
+      document.removeEventListener("keydown", handleEscForSessionScan, true);
     } else {
       log(t("scan.startSession"));
       setFabIcon(dynamicFab2, stopIcon);
@@ -5911,6 +5922,7 @@ ${result.join(",\n")}
           currentSessionCount = count;
         });
       }, 50);
+      document.addEventListener("keydown", handleEscForSessionScan, true);
     }
   }
   var unsubscribeStagedCountChanged = null;
