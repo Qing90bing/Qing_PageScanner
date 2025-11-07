@@ -5698,15 +5698,13 @@ ${result.join(",\n")}
       if (this.tooltipElement && this.tooltipElement.classList.contains("is-visible")) {
         this.tooltipElement.classList.remove("is-visible");
         this.tooltipElement.removeEventListener("keydown", this.handleEscKey);
-        const onTransitionEnd = () => {
+        setTimeout(() => {
           if (this.tooltipElement && this.tooltipElement.parentNode) {
-            this.tooltipElement.removeEventListener("transitionend", onTransitionEnd);
             this.tooltipElement.parentNode.removeChild(this.tooltipElement);
             this.tooltipElement = null;
             fire("infoTooltipDidHide");
           }
-        };
-        this.tooltipElement.addEventListener("transitionend", onTransitionEnd);
+        }, 300);
       }
     }
         handleEscKey(event) {

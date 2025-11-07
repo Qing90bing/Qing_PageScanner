@@ -109,16 +109,14 @@ class Tooltip {
             this.tooltipElement.classList.remove('is-visible');
             this.tooltipElement.removeEventListener('keydown', this.handleEscKey);
 
-            const onTransitionEnd = () => {
+            // 动画时长为 300ms，因此设置一个稍长一点的延时来确保动画完成
+            setTimeout(() => {
                 if (this.tooltipElement && this.tooltipElement.parentNode) {
-                    this.tooltipElement.removeEventListener('transitionend', onTransitionEnd);
                     this.tooltipElement.parentNode.removeChild(this.tooltipElement);
                     this.tooltipElement = null;
                     fire('infoTooltipDidHide'); // 通知父组件 tooltip 已完全隐藏
                 }
-            };
-
-            this.tooltipElement.addEventListener('transitionend', onTransitionEnd);
+            }, 300);
         }
     }
 
