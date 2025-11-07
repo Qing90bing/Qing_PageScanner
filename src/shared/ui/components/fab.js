@@ -97,7 +97,7 @@ export function createFab({ callbacks, isVisible }) {
     const fabContainer = document.createElement('div');
     fabContainer.className = 'text-extractor-fab-container';
 
-    // --- 创建三个按钮 ---
+    // --- 创建四个按钮 ---
 
     // 1. 总结按钮 (最上方)
     summaryFab = createSingleFab(

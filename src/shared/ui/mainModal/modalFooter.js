@@ -13,7 +13,6 @@ import warningIcon from '../../../assets/icons/warningIcon.js';
 import { createExportButton } from '../../../features/export/ui.js';
 import * as state from './modalState.js';
 import { SHOW_PLACEHOLDER } from './modalState.js';
-import { updateScanCount } from './modalHeader.js';
 
 let clearBtn, copyBtn;
 

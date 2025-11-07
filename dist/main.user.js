@@ -9053,7 +9053,7 @@ kbd{\r
     top:-3px; \r
     display:inline-block;\r
     padding:3px 6px;\r
-    margin:0 4px;\r
+    margin:0 5px;\r
     font-family:'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';\r
     font-size:0.85em;\r
     font-weight:700;\r
@@ -9294,7 +9294,7 @@ kbd{\r
     top:-3px; 
     display:inline-block;
     padding:3px 6px;
-    margin:0 4px;
+    margin:0 5px;
     font-family:'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
     font-size:0.85em;
     font-weight:700;
