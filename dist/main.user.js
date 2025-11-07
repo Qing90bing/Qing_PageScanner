@@ -1540,6 +1540,21 @@ var TextExtractor = (() => {
     }
     return null;
   }
+  var traverseNodeWithShadows = (node, callback) => {
+    if (!node || ![Node.ELEMENT_NODE, Node.DOCUMENT_FRAGMENT_NODE].includes(node.nodeType)) {
+      return;
+    }
+    for (const child of node.childNodes) {
+      if (child.nodeType === Node.TEXT_NODE) {
+        callback(child);
+      } else if (child.nodeType === Node.ELEMENT_NODE) {
+        traverseNodeWithShadows(child, callback);
+      }
+    }
+    if (node.nodeType === Node.ELEMENT_NODE && node.shadowRoot) {
+      traverseNodeWithShadows(node.shadowRoot, callback);
+    }
+  };
   var extractAndProcessText = () => {
     const settings = loadSettings();
     const { filterRules: filterRules2 } = settings;
@@ -1583,18 +1598,16 @@ var TextExtractor = (() => {
           }
         });
       }
-      const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null);
-      while (walker.nextNode()) {
-        const node = walker.currentNode;
+      traverseNodeWithShadows(element, (node) => {
         const parent = node.parentElement;
         if (parent && (parent.tagName === "SCRIPT" || parent.tagName === "STYLE" || parent.closest(ignoredSelectorString))) {
-          continue;
+          return;
         }
         if (parent && parent.closest(".text-extractor-fab, .text-extractor-modal-overlay, .settings-panel-overlay")) {
-          continue;
+          return;
         }
         processAndAddText(node.nodeValue);
-      }
+      });
     });
     return Array.from(uniqueTexts);
   };
@@ -1627,15 +1640,13 @@ var TextExtractor = (() => {
         processAndAddText(attrValue);
       }
     });
-    const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null);
-    while (walker.nextNode()) {
-      const node = walker.currentNode;
+    traverseNodeWithShadows(element, (node) => {
       const parent = node.parentElement;
       if (parent && (parent.tagName === "SCRIPT" || parent.tagName === "STYLE" || parent.closest(ignoredSelectorString) || parent.closest(".text-extractor-fab, .text-extractor-modal-overlay, .settings-panel-overlay"))) {
-        continue;
+        return;
       }
       processAndAddText(node.nodeValue);
-    }
+    });
     return Array.from(uniqueTexts);
   };
   var workerPolicy;

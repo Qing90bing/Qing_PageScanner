@@ -11,6 +11,40 @@ import { shouldFilter } from './filterLogic.js'; // 导入新的通用过滤函�
 import { log } from './logger.js';
 import { t } from '../i18n/index.js';
 
+// --- 私有函数 ---
+
+/**
+ * @private
+ * @description 递归地遍历一个节点及其所有后代，包括开放的 Shadow DOM，并对找到的每个文本节点执行一个回调函数。
+ * @param {Node} node - 开始遍历的节点（可以是 Element 或 ShadowRoot）。
+ * @param {function(Node): void} callback - 一个回调函数，当找到一个文本节点时，会以该文本节点作为参数来调用它。
+ */
+const traverseNodeWithShadows = (node, callback) => {
+    // 检查节点是否有效，以及是否是元素节点或文档片段节点（ShadowRoot是一种文档片段）
+    if (!node || ![Node.ELEMENT_NODE, Node.DOCUMENT_FRAGMENT_NODE].includes(node.nodeType)) {
+        return;
+    }
+
+    // 遍历当前节点的所有子节点
+    for (const child of node.childNodes) {
+        // 如果是文本节点，执行回调
+        if (child.nodeType === Node.TEXT_NODE) {
+            callback(child);
+        } 
+        // 如果是元素节点，则递归地继续遍历
+        else if (child.nodeType === Node.ELEMENT_NODE) {
+            traverseNodeWithShadows(child, callback); // 遍历子元素的常规子节点
+        }
+    }
+
+    // 在遍历完常规子节点后，检查当前节点（如果是元素）是否有 Shadow DOM
+    if (node.nodeType === Node.ELEMENT_NODE && node.shadowRoot) {
+        // 如果有，则以 ShadowRoot 为起点，递归地进行遍历
+        traverseNodeWithShadows(node.shadowRoot, callback);
+    }
+};
+
+
 // --- 公开函数 ---
 
 /**
@@ -93,24 +127,22 @@ export const extractAndProcessText = () => {
             });
         }
 
-        // 5.2 使用 TreeWalker 高效遍历其内部的所有文本节点
-        const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null);
-        while (walker.nextNode()) {
-            const node = walker.currentNode;
+        // 5.2 使用新的遍历函数递归处理每个目标元素及其所有后代（包括 Shadow DOM）
+        traverseNodeWithShadows(element, (node) => {
             const parent = node.parentElement;
 
-            // 5.3 进行初步排除，跳过无效的或不需要处理的节点
+            // 5.3 应用与之前相同的排除逻辑
             // 排除 <script> 和 <style> 标签内部的文本内容
             if (parent && (parent.tagName === 'SCRIPT' || parent.tagName === 'STYLE' || parent.closest(ignoredSelectorString))) {
-                continue;
+                return;
             }
             // 排除我们自己注入的 UI 元素（悬浮按钮、模态框、设置面板）内的文本
             if (parent && parent.closest('.text-extractor-fab, .text-extractor-modal-overlay, .settings-panel-overlay')) {
-                continue;
+                return;
             }
             
             processAndAddText(node.nodeValue);
-        }
+        });
     });
 
     // 6. 将 Set 转换为数组并返回
@@ -144,18 +176,17 @@ export const extractRawTextFromElement = (element) => {
         }
     });
 
-    // 使用 TreeWalker 遍历其内部的所有文本节点
-    const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null);
-    while (walker.nextNode()) {
-        const node = walker.currentNode;
+    // 使用新的遍历函数来处理节点及其 Shadow DOM
+    traverseNodeWithShadows(element, (node) => {
         const parent = node.parentElement;
+        // 应用与之前相同的排除逻辑
         if (parent && (parent.tagName === 'SCRIPT' || parent.tagName === 'STYLE' || parent.closest(ignoredSelectorString) || parent.closest('.text-extractor-fab, .text-extractor-modal-overlay, .settings-panel-overlay'))) {
-            continue;
+            return;
         }
         if (node.nodeValue) {
             texts.push(node.nodeValue);
         }
-    }
+    });
 
     return texts;
 };
@@ -203,16 +234,14 @@ export const extractAndProcessTextFromElement = (element) => {
         }
     });
 
-    // 使用 TreeWalker 遍历其内部的所有文本节点
-    const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null);
-    while (walker.nextNode()) {
-        const node = walker.currentNode;
+    // 使用新的遍历函数来处理节点及其 Shadow DOM
+    traverseNodeWithShadows(element, (node) => {
         const parent = node.parentElement;
         if (parent && (parent.tagName === 'SCRIPT' || parent.tagName === 'STYLE' || parent.closest(ignoredSelectorString) || parent.closest('.text-extractor-fab, .text-extractor-modal-overlay, .settings-panel-overlay'))) {
-            continue;
+            return;
         }
         processAndAddText(node.nodeValue);
-    }
+    });
 
     return Array.from(uniqueTexts);
 };
