@@ -1,14 +1,13 @@
 /* src/assets/styles/counter-with-help.css */
 
 /*
- * 主容器，负责定位和动画。
+ * 动画与定位基类：为背景和内容层定义通用的动画属性。
  */
-.counter-with-help-container {
+.counter-with-help-background,
+.counter-with-help-content {
     position: fixed;
     top: 20px;
     left: 50%;
-    z-index: 2147483645;
-    pointer-events: all;
 
     /* 动画初始状态: 在屏幕上方且不可见 */
     opacity: 0;
@@ -22,38 +21,23 @@
 /*
  * 动画结束状态: 进入视图并完全可见
  */
-.counter-with-help-container.is-visible {
+.counter-with-help-background.is-visible,
+.counter-with-help-content.is-visible {
     opacity: 1;
     transform: translate(-50%, 0);
 }
 
 /*
- * 内部包裹容器，负责“胶囊”外观和 Flexbox 布局。
- * 关键修复：将容器本身设为透明，并将背景和模糊效果移至 ::before 伪元素，
- * 以解决 transform 和 backdrop-filter 动画冲突导致的渲染延迟问题。
+ * 1. 背景层：只负责视觉背景（颜色、模糊、圆角、阴影）。
  */
-.counter-with-help-wrapper {
-    font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
-    position: relative; /* 为伪元素定位提供上下文 */
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 8px 12px;
-    z-index: 1; /* 确保内容在伪元素之上 */
-    border-radius: 24px; /* 保持圆角以便 overflow: hidden 生效 */
-    overflow: hidden; /* 裁剪伪元素的边角 */
-}
+.counter-with-help-background {
+    z-index: 2147483644; /* 位于内容层之下 */
+    pointer-events: none; /* 不接收鼠标事件 */
 
-.counter-with-help-wrapper::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: -1;
+    /* 胶囊外观样式 - 尺寸由内容层决定，这里给一个最小参考 */
+    min-width: 150px;
+    height: 42px;
 
-    /* 将所有背景、边框和模糊效果应用到这个静态的伪元素上 */
     background-color: var(--main-bg-a);
     border: 1px solid var(--main-border);
     border-radius: 24px;
@@ -63,11 +47,28 @@
 }
 
 /*
+ * 2. 内容层：负责承载内容（计数器、图标）和 Flex 布局。
+ */
+.counter-with-help-content {
+    z-index: 2147483645; /* 位于背景层之上 */
+    pointer-events: all; /* 接收鼠标事件 */
+    height: 42px; /* 强制与背景层高度一致 */
+
+    /* Flex 布局 */
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
+    box-sizing: border-box; /* 确保 padding 不会影响布局计算 */
+}
+
+/*
  * 分隔符样式
  */
 .counter-with-help-separator {
     width: 1px;
-    height: 16px; /* 确保分隔符有可见高度 */
+    height: 16px;
     background-color: var(--main-border);
 }
 
@@ -75,25 +76,12 @@
  * --- 样式覆盖 ---
  * 强制子元素（计数器和帮助图标）适应 Flexbox 布局。
  */
-.counter-with-help-wrapper .tc-top-center-counter {
-    /* 覆盖它们自己的定位和动画样式 */
+.counter-with-help-content .tc-top-center-counter,
+.counter-with-help-content .tc-help-icon-button {
     position: static;
     transform: none;
     opacity: 1;
     transition: none;
-}
-
-.counter-with-help-wrapper .tc-help-icon-button {
-    /* 覆盖定位和动画，但保留交互式过渡 */
-    position: static;
-    transform: none;
-    opacity: 1;
-    transition: color 0.2s, background-color 0.2s; /* 恢复悬停动画 */
-}
-
-.counter-with-help-wrapper .tc-top-center-counter,
-.counter-with-help-wrapper .tc-help-icon-button {
-    /* 通用的样式覆盖 */
     background-color: transparent;
     border: none;
     box-shadow: none;
@@ -103,15 +91,27 @@
     margin: 0;
 }
 
+.counter-with-help-content .tc-help-icon-button {
+    transition: color 0.2s, background-color 0.2s; /* 恢复悬停动画 */
+}
+
 /* 确保计数器内的文本样式不受影响 */
-.counter-with-help-wrapper .tc-top-center-counter {
+.counter-with-help-content .tc-top-center-counter {
     font-size: 14px;
     font-weight: 500;
-    /* 修正：恢复计数器数字的特定样式 */
 }
-.counter-with-help-wrapper .tc-top-center-counter span {
+.counter-with-help-content .tc-top-center-counter span {
     font-weight: bold;
     font-size: 16px;
     color: var(--main-primary);
-    margin-left: 6px; /* 增加间距 */
+    margin-left: 6px;
 }
+
+/*
+ * 动态尺寸调整的 Hack:
+ * 由于背景层和内容层是分离的，我们无法直接让背景层尺寸自适应内容。
+ * JS 在创建时会给两个元素相同的 class，但内容撑开的是 content 层。
+ * 这里的 CSS 暂时无法完美解决，理想情况下 JS 需要在内容确定后去同步背景层的宽度。
+ * 但对于这个组件，内容宽度相对固定，一个 min-width 和固定的 height 可以提供一个可接受的视觉效果。
+ * 如果内容差异很大，则需要 JS 介入调整。
+ */
