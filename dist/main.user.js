@@ -48,17 +48,17 @@ var TextExtractor = (() => {
   var dynamicIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M200-766v572q-17-17-32-36t-28-39v-422q13-20 28-39t32-36Zm160-96v764q-21-7-41-15.5T280-133v-694q19-11 39-19.5t41-15.5Zm280 749v-734q106 47 173 145t67 222q0 124-67 222T640-113ZM480-80q-10 0-20-.5T440-82v-796q10-1 20-1.5t20-.5q20 0 40 2t40 6v784q-20 4-40 6t-40 2Z"/></svg>`;
   var summaryIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M280-280h280v-80H280v80Zm0-160h400v-80H280v80Zm0-160h400v-80H280v80Zm-80 480q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/></svg>`;
   var elementScanIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M40-480v-80h80v80H40Zm800 0v-80h80v80h-80ZM40-640v-80h80v80H40Zm800 0v-80h80v80h-80ZM40-800v-80h80v80H40Zm160 320v-80h80v80h-80Zm480 0v-80h80v80h-80Zm160-320v-80h80v80h-80Zm-640 0v-80h80v80h-80Zm160 0v-80h80v80h-80Zm160 0v-80h80v80h-80Zm160 0v-80h80v80h-80ZM473-40q-24 0-46-9t-39-26L184-280l33-34q14-14 34-19t40 0l69 20v-327q0-17 11.5-28.5T400-680q17 0 28.5 11.5T440-640v433l-98-28 103 103q6 6 13 9t15 3h167q33 0 56.5-23.5T720-200v-160q0-17 11.5-28.5T760-400q17 0 28.5 11.5T800-360v160q0 66-47 113T640-40H473Zm7-280v-160q0-17 11.5-28.5T520-520q17 0 28.5 11.5T560-480v160h-80Zm120 0v-120q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440v120h-80Zm40 200H445h195Z"/></svg>`;
-  function updateScrollbarWidth(container2) {
+  function updateScrollbarWidth(container) {
     const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-    container2.style.setProperty("--scrollbar-width", `${scrollbarWidth}px`);
+    container.style.setProperty("--scrollbar-width", `${scrollbarWidth}px`);
   }
   function createUIContainer() {
-    const container2 = document.createElement("div");
-    container2.id = "text-extractor-container";
-    document.body.appendChild(container2);
-    updateScrollbarWidth(container2);
-    window.addEventListener("resize", () => updateScrollbarWidth(container2));
-    const shadowRoot = container2.attachShadow({ mode: "open" });
+    const container = document.createElement("div");
+    container.id = "text-extractor-container";
+    document.body.appendChild(container);
+    updateScrollbarWidth(container);
+    window.addEventListener("resize", () => updateScrollbarWidth(container));
+    const shadowRoot = container.attachShadow({ mode: "open" });
     return shadowRoot;
   }
   var uiContainer = createUIContainer();
@@ -1813,9 +1813,9 @@ ${result.join(",\n")}
     return notification;
   }
   function showNotification(message, { type = "info", duration = appConfig.ui.notificationDuration } = {}) {
-    const container2 = getNotificationContainer();
+    const container = getNotificationContainer();
     const notification = createNotificationElement(message, type);
-    container2.appendChild(notification);
+    container.appendChild(notification);
     const timer = setTimeout(() => {
       closeNotification(notification);
     }, duration);
@@ -1827,10 +1827,10 @@ ${result.join(",\n")}
     }
   }
   function createIconTitle(iconSVG, text) {
-    const container2 = document.createElement("div");
-    container2.style.display = "flex";
-    container2.style.alignItems = "center";
-    container2.style.gap = "8px";
+    const container = document.createElement("div");
+    container.style.display = "flex";
+    container.style.alignItems = "center";
+    container.style.gap = "8px";
     if (iconSVG) {
       const iconWrapper = document.createElement("span");
       iconWrapper.style.display = "flex";
@@ -1838,14 +1838,14 @@ ${result.join(",\n")}
       const svgElement = createSVGFromString(iconSVG);
       if (svgElement) {
         iconWrapper.appendChild(svgElement);
-        container2.appendChild(iconWrapper);
+        container.appendChild(iconWrapper);
       }
     }
     const textNode = document.createElement("span");
     textNode.className = "icon-title-text";
     textNode.textContent = text;
-    container2.appendChild(textNode);
-    return container2;
+    container.appendChild(textNode);
+    return container;
   }
   var simpleTemplate = (template, values) => {
     if (!template) return "";
@@ -5028,8 +5028,8 @@ ${result.join(",\n")}
     }
   }
   function createExportButton() {
-    const container2 = document.createElement("div");
-    container2.className = "tc-export-btn-container";
+    const container = document.createElement("div");
+    container.className = "tc-export-btn-container";
     exportBtn = document.createElement("button");
     exportBtn.className = "text-extractor-export-btn tc-button";
     exportMenu = document.createElement("div");
@@ -5046,8 +5046,8 @@ ${result.join(",\n")}
     exportMenu.appendChild(exportTxtBtn);
     exportMenu.appendChild(exportJsonBtn);
     exportMenu.appendChild(exportCsvBtn);
-    container2.appendChild(exportBtn);
-    container2.appendChild(exportMenu);
+    container.appendChild(exportBtn);
+    container.appendChild(exportMenu);
     rerenderExportTexts();
     const dropdown = createDropdown(exportBtn, exportMenu);
     const handleExport = (event) => {
@@ -5062,7 +5062,7 @@ ${result.join(",\n")}
     exportMenu.addEventListener("click", handleExport);
     on("languageChanged", rerenderExportTexts);
     exportBtn.disabled = true;
-    return container2;
+    return container;
   }
   function updateExportButtonState(hasContent) {
     if (exportBtn) {
@@ -5783,45 +5783,50 @@ ${result.join(",\n")}
     const duration = 500 + Math.min(Math.abs(end - start2) * 10, 1e3);
     animateCount(countSpan, start2, end, duration, easeOutQuad);
   }
-  var container = null;
+  var backgroundContainer = null;
+  var contentContainer = null;
   var counterElement = null;
   var helpIcon = null;
   function createCounterWithHelp(counterKey, helpKey) {
-    if (container) {
+    if (contentContainer) {
       updateCounterValue(0);
-      return container;
+      return contentContainer;
     }
-    container = document.createElement("div");
-    container.className = "counter-with-help-container";
-    const wrapper = document.createElement("div");
-    wrapper.className = "counter-with-help-wrapper";
+    backgroundContainer = document.createElement("div");
+    backgroundContainer.className = "counter-with-help-background";
+    contentContainer = document.createElement("div");
+    contentContainer.className = "counter-with-help-content";
     counterElement = createTopCenterCounter(counterKey);
     helpIcon = createHelpIcon(helpKey);
     const separator = document.createElement("div");
     separator.className = "counter-with-help-separator";
-    wrapper.appendChild(counterElement);
-    wrapper.appendChild(separator);
-    wrapper.appendChild(helpIcon);
-    container.appendChild(wrapper);
-    uiContainer.appendChild(container);
+    contentContainer.appendChild(counterElement);
+    contentContainer.appendChild(separator);
+    contentContainer.appendChild(helpIcon);
+    uiContainer.appendChild(backgroundContainer);
+    uiContainer.appendChild(contentContainer);
     updateCounterValue(0);
-    return container;
+    return contentContainer;
   }
   function showCounterWithHelp() {
-    if (!container) return;
+    if (!backgroundContainer || !contentContainer) return;
     requestAnimationFrame(() => {
-      container.classList.add("is-visible");
+      backgroundContainer.classList.add("is-visible");
+      contentContainer.classList.add("is-visible");
     });
   }
   function hideCounterWithHelp() {
-    if (!container) return;
-    const containerToRemove = container;
+    if (!backgroundContainer || !contentContainer) return;
+    const bgToRemove = backgroundContainer;
+    const contentToRemove = contentContainer;
     const counterToRemove = counterElement;
     const iconToRemove = helpIcon;
-    container = null;
+    backgroundContainer = null;
+    contentContainer = null;
     counterElement = null;
     helpIcon = null;
-    containerToRemove.classList.remove("is-visible");
+    bgToRemove.classList.remove("is-visible");
+    contentToRemove.classList.remove("is-visible");
     setTimeout(() => {
       if (counterToRemove && typeof counterToRemove.destroy === "function") {
         counterToRemove.destroy();
@@ -5829,8 +5834,11 @@ ${result.join(",\n")}
       if (iconToRemove && typeof iconToRemove.destroy === "function") {
         iconToRemove.destroy();
       }
-      if (containerToRemove) {
-        containerToRemove.remove();
+      if (bgToRemove) {
+        bgToRemove.remove();
+      }
+      if (contentToRemove) {
+        contentToRemove.remove();
       }
     }, 400);
   }
@@ -7919,8 +7927,8 @@ ${result.join(",\n")}
   }
   function createNumericInput(id, labelText, value, options = {}) {
     const { min, max, disabled = false } = options;
-    const container2 = document.createElement("div");
-    container2.className = "numeric-input-group";
+    const container = document.createElement("div");
+    container.className = "numeric-input-group";
     const label = document.createElement("label");
     label.className = "numeric-input-label";
     label.htmlFor = id;
@@ -7941,9 +7949,9 @@ ${result.join(",\n")}
     if (disabled) {
       input.disabled = true;
     }
-    container2.appendChild(label);
-    container2.appendChild(input);
-    return container2;
+    container.appendChild(label);
+    container.appendChild(input);
+    return container;
   }
   function buildPanelDOM(settings) {
     const modal = document.createElement("div");
@@ -8453,39 +8461,25 @@ ${result.join(",\n")}
 .confirmation-modal-button.cancel:hover{
   background-color:var(--main-shadow);
 }
-.counter-with-help-container{
+.counter-with-help-background,
+.counter-with-help-content{
     position:fixed;
     top:20px;
     left:50%;
-    z-index:2147483645;
-    pointer-events:all;
     opacity:0;
     transform:translate(-50%, -150%);
     transition:transform 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1)), opacity 0.4s var(--easing-standard, cubic-bezier(0.4, 0, 0.2, 1));
 }
-.counter-with-help-container.is-visible{
+.counter-with-help-background.is-visible,
+.counter-with-help-content.is-visible{
     opacity:1;
     transform:translate(-50%, 0);
 }
-.counter-with-help-wrapper{
-    font-family:'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
-    position:relative;
-    display:flex;
-    align-items:center;
-    gap:12px;
-    padding:8px 12px;
-    z-index:1;
-    border-radius:24px;
-    overflow:hidden;
-}
-.counter-with-help-wrapper::before{
-    content:'';
-    position:absolute;
-    top:0;
-    left:0;
-    right:0;
-    bottom:0;
-    z-index:-1;
+.counter-with-help-background{
+    z-index:2147483644;
+    pointer-events:none;
+    min-width:150px;
+    height:42px;
     background-color:var(--main-bg-a);
     border:1px solid var(--main-border);
     border-radius:24px;
@@ -8493,25 +8487,28 @@ ${result.join(",\n")}
     backdrop-filter:blur(16px);
     -webkit-backdrop-filter:blur(16px);
 }
+.counter-with-help-content{
+    z-index:2147483645;
+    pointer-events:all;
+    height:42px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:8px 12px;
+    font-family:'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
+    box-sizing:border-box;
+}
 .counter-with-help-separator{
     width:1px;
     height:16px;
     background-color:var(--main-border);
 }
-.counter-with-help-wrapper .tc-top-center-counter{
+.counter-with-help-content .tc-top-center-counter,
+.counter-with-help-content .tc-help-icon-button{
     position:static;
     transform:none;
     opacity:1;
     transition:none;
-}
-.counter-with-help-wrapper .tc-help-icon-button{
-    position:static;
-    transform:none;
-    opacity:1;
-    transition:color 0.2s, background-color 0.2s;
-}
-.counter-with-help-wrapper .tc-top-center-counter,
-.counter-with-help-wrapper .tc-help-icon-button{
     background-color:transparent;
     border:none;
     box-shadow:none;
@@ -8520,11 +8517,14 @@ ${result.join(",\n")}
     padding:0;
     margin:0;
 }
-.counter-with-help-wrapper .tc-top-center-counter{
+.counter-with-help-content .tc-help-icon-button{
+    transition:color 0.2s, background-color 0.2s;
+}
+.counter-with-help-content .tc-top-center-counter{
     font-size:14px;
     font-weight:500;
 }
-.counter-with-help-wrapper .tc-top-center-counter span{
+.counter-with-help-content .tc-top-center-counter span{
     font-weight:bold;
     font-size:16px;
     color:var(--main-primary);
