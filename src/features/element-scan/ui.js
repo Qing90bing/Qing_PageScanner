@@ -5,6 +5,11 @@ import { updateSelectionLevel, reselectElement, stopElementScan, confirmSelectio
 import { t } from '../../shared/i18n/index.js';
 import { createTrustedHTML } from '../../shared/utils/trustedTypes.js';
 import { log } from '../../shared/utils/logger.js';
+import { createButton } from '../../shared/ui/components/button.js';
+import { reselectIcon } from '../../assets/icons/reselectIcon.js';
+import { stashIcon } from '../../assets/icons/stashIcon.js';
+import { closeIcon } from '../../assets/icons/closeIcon.js';
+import { confirmIcon } from '../../assets/icons/confirmIcon.js';
 import { simpleTemplate } from '../../shared/utils/templating.js';
 import { on } from '../../shared/utils/eventBus.js';
 import { createCounterWithHelp, showCounterWithHelp, hideCounterWithHelp, updateCounterValue } from '../../shared/ui/components/counterWithHelp.js';
@@ -143,17 +148,64 @@ export function createAdjustmentToolbar(elementPath) {
     log(t('log.elementScanUI.creatingToolbar'));
     toolbar = document.createElement('div');
     toolbar.id = 'element-scan-toolbar';
-    toolbar.innerHTML = createTrustedHTML(`
+
+    // 创建静态部分
+    const staticContent = `
         <div id="element-scan-toolbar-tag" title="${t('tooltip.dragHint')}">${getElementSelector(elementPath[0])}</div>
         <input type="range" id="element-scan-level-slider" min="0" max="${elementPath.length - 1}" value="0" />
-        <div id="element-scan-toolbar-actions">
-            <button id="element-scan-toolbar-reselect">${t('common.reselect')}</button>
-            <button id="element-scan-toolbar-stage">${t('common.stage')}</button>
-            <button id="element-scan-toolbar-cancel">${t('common.cancel')}</button>
-            <button id="element-scan-toolbar-confirm">${t('common.confirm')}</button>
-        </div>
-    `);
+        <div id="element-scan-toolbar-actions"></div>
+    `;
+    toolbar.innerHTML = createTrustedHTML(staticContent);
     uiContainer.appendChild(toolbar);
+
+    // 动态创建并添加按钮
+    const actionsContainer = toolbar.querySelector('#element-scan-toolbar-actions');
+
+    const reselectBtn = createButton({
+        id: 'element-scan-toolbar-reselect',
+        textKey: 'common.reselect',
+        icon: reselectIcon,
+        onClick: () => {
+            log(t('log.elementScanUI.reselectClicked'));
+            reselectElement();
+        }
+    });
+
+    const stageBtn = createButton({
+        id: 'element-scan-toolbar-stage',
+        textKey: 'common.stage',
+        icon: stashIcon,
+        onClick: () => {
+            log(t('log.elementScanUI.stageClicked'));
+            stageCurrentElement();
+        }
+    });
+
+    const cancelBtn = createButton({
+        id: 'element-scan-toolbar-cancel',
+        textKey: 'common.cancel',
+        icon: closeIcon,
+        onClick: () => {
+            log(t('log.elementScanUI.cancelClicked'));
+            const fabElement = uiContainer.querySelector('.fab-element-scan');
+            stopElementScan(fabElement);
+        }
+    });
+
+    const confirmBtn = createButton({
+        id: 'element-scan-toolbar-confirm',
+        textKey: 'common.confirm',
+        icon: confirmIcon,
+        onClick: () => {
+            log(t('log.elementScanUI.confirmClicked'));
+            confirmSelectionAndExtract();
+        }
+    });
+
+    actionsContainer.appendChild(reselectBtn);
+    actionsContainer.appendChild(stageBtn);
+    actionsContainer.appendChild(cancelBtn);
+    actionsContainer.appendChild(confirmBtn);
 
     // --- 智能定位逻辑 ---
     // 自动计算工具栏的最佳初始位置，避免遮挡目标元素或超出屏幕边界。
@@ -198,50 +250,17 @@ export function createAdjustmentToolbar(elementPath) {
     toolbar.style.left = `${left}px`;
     log(t('log.elementScanUI.toolbarPositioned'));
 
-    addToolbarEventListeners();
-    makeDraggable(toolbar);
-
-    requestAnimationFrame(() => {
-        toolbar.classList.add('is-visible');
-    });
-}
-
-/**
- * @private
- * @function addToolbarEventListeners
- * @description为工具栏内的交互元素（滑块、按钮）添加事件监听器。
- */
-function addToolbarEventListeners() {
+    // 为滑块添加事件监听器
     const slider = uiContainer.querySelector('#element-scan-level-slider');
-    const reselectBtn = uiContainer.querySelector('#element-scan-toolbar-reselect');
-    const stageBtn = uiContainer.querySelector('#element-scan-toolbar-stage');
-    const cancelBtn = uiContainer.querySelector('#element-scan-toolbar-cancel');
-    const confirmBtn = uiContainer.querySelector('#element-scan-toolbar-confirm');
-
     slider.addEventListener('input', () => {
         log(simpleTemplate(t('log.elementScanUI.sliderChanged'), { level: slider.value }));
         updateSelectionLevel(slider.value);
     });
 
-    reselectBtn.addEventListener('click', () => {
-        log(t('log.elementScanUI.reselectClicked'));
-        reselectElement();
-    });
+    makeDraggable(toolbar);
 
-    stageBtn.addEventListener('click', () => {
-        log(t('log.elementScanUI.stageClicked'));
-        stageCurrentElement();
-    });
-
-    cancelBtn.addEventListener('click', () => {
-        log(t('log.elementScanUI.cancelClicked'));
-        const fabElement = uiContainer.querySelector('.fab-element-scan');
-        stopElementScan(fabElement);
-    });
-
-    confirmBtn.addEventListener('click', () => {
-        log(t('log.elementScanUI.confirmClicked'));
-        confirmSelectionAndExtract();
+    requestAnimationFrame(() => {
+        toolbar.classList.add('is-visible');
     });
 }
 

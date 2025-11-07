@@ -14,6 +14,7 @@ import { createIconTitle } from '../../shared/ui/iconTitle.js';
 import { on, fire } from '../../shared/utils/eventBus.js';
 import { createDropdown } from '../../shared/ui/components/dropdown.js';
 import { log } from '../../shared/utils/logger.js';
+import { createButton } from '../../shared/ui/components/button.js';
 
 let exportBtn, exportMenu, exportTxtBtn, exportJsonBtn, exportCsvBtn;
 
@@ -23,8 +24,7 @@ let exportBtn, exportMenu, exportTxtBtn, exportJsonBtn, exportCsvBtn;
  */
 function rerenderExportTexts() {
     if (exportBtn) {
-        exportBtn.replaceChildren();
-        exportBtn.appendChild(createIconTitle(exportIcon, t('common.export')));
+        exportBtn.updateText('common.export');
     }
     if (exportMenu) {
         exportTxtBtn.replaceChildren(createIconTitle(txtIcon, t('export.exportAsTxt')));
@@ -41,8 +41,12 @@ export function createExportButton() {
     const container = document.createElement('div');
     container.className = 'tc-export-btn-container';
 
-    exportBtn = document.createElement('button');
-    exportBtn.className = 'text-extractor-export-btn tc-button';
+    exportBtn = createButton({
+        className: 'text-extractor-export-btn',
+        textKey: 'common.export',
+        icon: exportIcon,
+        disabled: true,
+    });
 
     exportMenu = document.createElement('div');
     exportMenu.className = 'tc-export-menu';

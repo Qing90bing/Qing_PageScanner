@@ -13,17 +13,16 @@ import warningIcon from '../../../assets/icons/warningIcon.js';
 import { createExportButton } from '../../../features/export/ui.js';
 import * as state from './modalState.js';
 import { SHOW_PLACEHOLDER } from './modalState.js';
+import { createButton } from '../components/button.js';
 
 let clearBtn, copyBtn;
 
 function rerenderFooterTexts() {
     if (copyBtn) {
-        copyBtn.replaceChildren();
-        copyBtn.appendChild(createIconTitle(copyIcon, t('common.copy')));
+        copyBtn.updateText('common.copy');
     }
     if (clearBtn) {
-        clearBtn.replaceChildren();
-        clearBtn.appendChild(createIconTitle(clearIcon, t('common.clear')));
+        clearBtn.updateText('common.clear');
     }
     updateStatistics();
 }
@@ -36,25 +35,7 @@ export function populateModalFooter(modalFooter, updateContentCallback) {
     const footerButtonContainer = document.createElement('div');
     footerButtonContainer.className = 'tc-footer-buttons';
 
-    clearBtn = document.createElement('button');
-    clearBtn.className = 'text-extractor-clear-btn tc-button';
-    clearBtn.disabled = true;
-
-    copyBtn = document.createElement('button');
-    copyBtn.className = 'text-extractor-copy-btn tc-button';
-    copyBtn.disabled = true;
-
-    const exportBtnContainer = createExportButton();
-    footerButtonContainer.appendChild(exportBtnContainer);
-    footerButtonContainer.appendChild(clearBtn);
-    footerButtonContainer.appendChild(copyBtn);
-
-    modalFooter.appendChild(statsContainer);
-    modalFooter.appendChild(footerButtonContainer);
-
-    rerenderFooterTexts();
-
-    copyBtn.addEventListener('click', () => {
+    const handleCopyClick = () => {
         const textToCopy = state.outputTextarea.value;
         if (textToCopy && !copyBtn.disabled) {
             log(t('log.ui.copyButton.copied', { count: textToCopy.length }));
@@ -64,9 +45,9 @@ export function populateModalFooter(modalFooter, updateContentCallback) {
             log(t('log.ui.copyButton.nothingToCopy'));
             showNotification(t('notifications.nothingToCopy'), { type: 'info' });
         }
-    });
+    };
 
-    clearBtn.addEventListener('click', async () => {
+    const handleClearClick = async () => {
         if (clearBtn.disabled) return;
         log(t('log.ui.modal.clearContent'));
 
@@ -90,7 +71,32 @@ export function populateModalFooter(modalFooter, updateContentCallback) {
         } else {
             log(t('log.ui.confirmationModal.cancelled'));
         }
+    };
+
+    copyBtn = createButton({
+        className: 'text-extractor-copy-btn',
+        textKey: 'common.copy',
+        icon: copyIcon,
+        onClick: handleCopyClick,
+        disabled: true,
     });
+
+    clearBtn = createButton({
+        className: 'text-extractor-clear-btn',
+        textKey: 'common.clear',
+        icon: clearIcon,
+        onClick: handleClearClick,
+        disabled: true,
+    });
+
+    const exportBtnContainer = createExportButton();
+    footerButtonContainer.appendChild(exportBtnContainer);
+    footerButtonContainer.appendChild(clearBtn);
+    footerButtonContainer.appendChild(copyBtn);
+
+    modalFooter.appendChild(statsContainer);
+    modalFooter.appendChild(footerButtonContainer);
+
     on('languageChanged', rerenderFooterTexts);
 }
 

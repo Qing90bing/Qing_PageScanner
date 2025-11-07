@@ -16,6 +16,7 @@ import { filterIcon } from '../../assets/icons/filterIcon.js';
 import { saveIcon } from '../../assets/icons/saveIcon.js';
 import { relatedSettingsIcon } from '../../assets/icons/relatedSettingsIcon.js';
 import { updateSettingsMenu } from '../../shared/i18n/management/languageManager.js';
+import { createButton } from '../../shared/ui/components/button.js';
 
 // --- 模块级变量 ---
 
@@ -89,12 +90,17 @@ function showSettingsPanel(currentSettings, onSave) {
     const filterTitleContainer = settingsPanel.querySelector('#filter-setting-title-container');
     filterTitleContainer.appendChild(createIconTitle(filterIcon, t('settings.filterRules')));
 
-    const saveBtn = settingsPanel.querySelector('#save-settings-btn');
-    saveBtn.appendChild(createIconTitle(saveIcon, t('common.save')));
+    const footer = settingsPanel.querySelector('.settings-panel-footer');
+    const saveBtn = createButton({
+        id: 'save-settings-btn',
+        textKey: 'common.save',
+        icon: saveIcon,
+        onClick: () => handleSave(onSave),
+    });
+    footer.appendChild(saveBtn);
 
     // --- 绑定事件 ---
     settingsPanel.querySelector('.settings-panel-close').addEventListener('click', hideSettingsPanel);
-    saveBtn.addEventListener('click', () => handleSave(onSave));
     settingsPanel.addEventListener('keydown', handleKeyDown);
 
     // 监听 tooltip 事件以暂停/恢复 ESC 键的处理

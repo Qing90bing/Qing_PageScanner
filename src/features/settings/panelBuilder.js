@@ -133,10 +133,6 @@ export function buildPanelDOM(settings) {
     // --- Footer ---
     const footer = document.createElement('div');
     footer.className = 'settings-panel-footer';
-    const saveBtn = document.createElement('button');
-    saveBtn.id = 'save-settings-btn';
-    saveBtn.className = 'tc-button';
-    footer.appendChild(saveBtn);
 
     modal.appendChild(header);
     modal.appendChild(content);

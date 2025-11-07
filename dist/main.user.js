@@ -5022,6 +5022,26 @@ ${result.join(",\n")}
       toggle
     };
   }
+  function createButton({ id, className, textKey, icon, onClick, disabled = false }) {
+    const button = document.createElement("button");
+    button.className = "tc-button";
+    if (id) {
+      button.id = id;
+    }
+    if (className) {
+      button.classList.add(className);
+    }
+    button.appendChild(createIconTitle(icon, t(textKey)));
+    button.disabled = disabled;
+    if (onClick && typeof onClick === "function") {
+      button.addEventListener("click", onClick);
+    }
+    button.updateText = (newTextKey) => {
+      button.replaceChildren();
+      button.appendChild(createIconTitle(icon, t(newTextKey)));
+    };
+    return button;
+  }
   var exportBtn;
   var exportMenu;
   var exportTxtBtn;
@@ -5029,8 +5049,7 @@ ${result.join(",\n")}
   var exportCsvBtn;
   function rerenderExportTexts() {
     if (exportBtn) {
-      exportBtn.replaceChildren();
-      exportBtn.appendChild(createIconTitle(exportIcon_default, t("common.export")));
+      exportBtn.updateText("common.export");
     }
     if (exportMenu) {
       exportTxtBtn.replaceChildren(createIconTitle(txtIcon, t("export.exportAsTxt")));
@@ -5041,8 +5060,12 @@ ${result.join(",\n")}
   function createExportButton() {
     const container = document.createElement("div");
     container.className = "tc-export-btn-container";
-    exportBtn = document.createElement("button");
-    exportBtn.className = "text-extractor-export-btn tc-button";
+    exportBtn = createButton({
+      className: "text-extractor-export-btn",
+      textKey: "common.export",
+      icon: exportIcon_default,
+      disabled: true
+    });
     exportMenu = document.createElement("div");
     exportMenu.className = "tc-export-menu";
     exportTxtBtn = document.createElement("button");
@@ -5084,12 +5107,10 @@ ${result.join(",\n")}
   var copyBtn;
   function rerenderFooterTexts() {
     if (copyBtn) {
-      copyBtn.replaceChildren();
-      copyBtn.appendChild(createIconTitle(copyIcon, t("common.copy")));
+      copyBtn.updateText("common.copy");
     }
     if (clearBtn) {
-      clearBtn.replaceChildren();
-      clearBtn.appendChild(createIconTitle(clearIcon_default, t("common.clear")));
+      clearBtn.updateText("common.clear");
     }
     updateStatistics();
   }
@@ -5099,20 +5120,7 @@ ${result.join(",\n")}
     setStatsContainer(statsContainer2);
     const footerButtonContainer = document.createElement("div");
     footerButtonContainer.className = "tc-footer-buttons";
-    clearBtn = document.createElement("button");
-    clearBtn.className = "text-extractor-clear-btn tc-button";
-    clearBtn.disabled = true;
-    copyBtn = document.createElement("button");
-    copyBtn.className = "text-extractor-copy-btn tc-button";
-    copyBtn.disabled = true;
-    const exportBtnContainer = createExportButton();
-    footerButtonContainer.appendChild(exportBtnContainer);
-    footerButtonContainer.appendChild(clearBtn);
-    footerButtonContainer.appendChild(copyBtn);
-    modalFooter.appendChild(statsContainer2);
-    modalFooter.appendChild(footerButtonContainer);
-    rerenderFooterTexts();
-    copyBtn.addEventListener("click", () => {
+    const handleCopyClick = () => {
       const textToCopy = outputTextarea.value;
       if (textToCopy && !copyBtn.disabled) {
         log(t("log.ui.copyButton.copied", { count: textToCopy.length }));
@@ -5122,8 +5130,8 @@ ${result.join(",\n")}
         log(t("log.ui.copyButton.nothingToCopy"));
         showNotification(t("notifications.nothingToCopy"), { type: "info" });
       }
-    });
-    clearBtn.addEventListener("click", async () => {
+    };
+    const handleClearClick = async () => {
       if (clearBtn.disabled) return;
       log(t("log.ui.modal.clearContent"));
       const confirmed = await showConfirmationModal(
@@ -5143,7 +5151,27 @@ ${result.join(",\n")}
       } else {
         log(t("log.ui.confirmationModal.cancelled"));
       }
+    };
+    copyBtn = createButton({
+      className: "text-extractor-copy-btn",
+      textKey: "common.copy",
+      icon: copyIcon,
+      onClick: handleCopyClick,
+      disabled: true
     });
+    clearBtn = createButton({
+      className: "text-extractor-clear-btn",
+      textKey: "common.clear",
+      icon: clearIcon_default,
+      onClick: handleClearClick,
+      disabled: true
+    });
+    const exportBtnContainer = createExportButton();
+    footerButtonContainer.appendChild(exportBtnContainer);
+    footerButtonContainer.appendChild(clearBtn);
+    footerButtonContainer.appendChild(copyBtn);
+    modalFooter.appendChild(statsContainer2);
+    modalFooter.appendChild(footerButtonContainer);
     on("languageChanged", rerenderFooterTexts);
   }
   function updateStatistics() {
@@ -5936,6 +5964,9 @@ ${result.join(",\n")}
       document.addEventListener("keydown", handleEscForSessionScan, true);
     }
   }
+  var reselectIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v280h-80v-200H160v400h320v80H160ZM760 0q-73 0-127.5-45.5T564-160h62q13 44 49.5 72T760-60q58 0 99-41t41-99q0-58-41-99t-99-41q-29 0-54 10.5T662-300h58v60H560v-160h60v57q27-26 63-41.5t77-15.5q83 0 141.5 58.5T960-200q0 83-58.5 141.5T760 0Z"/></svg>`;
+  var stashIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M360-600v-80h360v80H360Zm0 120v-80h360v80H360Zm120 320H200h280Zm0 80H240q-50 0-85-35t-35-85v-120h120v-560h600v361q-20-2-40.5 1.5T760-505v-295H320v480h240l-80 80H200v40q0 17 11.5 28.5T240-160h240v80Zm80 0v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q8 9 12.5 20t4.5 22q0 11-4 22.5T903-300L683-80H560Zm300-263-37-37 37 37ZM620-140h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z"/></svg>`;
+  var confirmIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg>`;
   var unsubscribeStagedCountChanged = null;
   var scanContainer = null;
   var highlightBorder = null;
@@ -6005,17 +6036,55 @@ ${result.join(",\n")}
     log(t("log.elementScanUI.creatingToolbar"));
     toolbar = document.createElement("div");
     toolbar.id = "element-scan-toolbar";
-    toolbar.innerHTML = createTrustedHTML(`
+    const staticContent = `
         <div id="element-scan-toolbar-tag" title="${t("tooltip.dragHint")}">${getElementSelector(elementPath2[0])}</div>
         <input type="range" id="element-scan-level-slider" min="0" max="${elementPath2.length - 1}" value="0" />
-        <div id="element-scan-toolbar-actions">
-            <button id="element-scan-toolbar-reselect">${t("common.reselect")}</button>
-            <button id="element-scan-toolbar-stage">${t("common.stage")}</button>
-            <button id="element-scan-toolbar-cancel">${t("common.cancel")}</button>
-            <button id="element-scan-toolbar-confirm">${t("common.confirm")}</button>
-        </div>
-    `);
+        <div id="element-scan-toolbar-actions"></div>
+    `;
+    toolbar.innerHTML = createTrustedHTML(staticContent);
     uiContainer.appendChild(toolbar);
+    const actionsContainer = toolbar.querySelector("#element-scan-toolbar-actions");
+    const reselectBtn = createButton({
+      id: "element-scan-toolbar-reselect",
+      textKey: "common.reselect",
+      icon: reselectIcon,
+      onClick: () => {
+        log(t("log.elementScanUI.reselectClicked"));
+        reselectElement();
+      }
+    });
+    const stageBtn = createButton({
+      id: "element-scan-toolbar-stage",
+      textKey: "common.stage",
+      icon: stashIcon,
+      onClick: () => {
+        log(t("log.elementScanUI.stageClicked"));
+        stageCurrentElement();
+      }
+    });
+    const cancelBtn = createButton({
+      id: "element-scan-toolbar-cancel",
+      textKey: "common.cancel",
+      icon: closeIcon,
+      onClick: () => {
+        log(t("log.elementScanUI.cancelClicked"));
+        const fabElement = uiContainer.querySelector(".fab-element-scan");
+        stopElementScan(fabElement);
+      }
+    });
+    const confirmBtn = createButton({
+      id: "element-scan-toolbar-confirm",
+      textKey: "common.confirm",
+      icon: confirmIcon,
+      onClick: () => {
+        log(t("log.elementScanUI.confirmClicked"));
+        confirmSelectionAndExtract();
+      }
+    });
+    actionsContainer.appendChild(reselectBtn);
+    actionsContainer.appendChild(stageBtn);
+    actionsContainer.appendChild(cancelBtn);
+    actionsContainer.appendChild(confirmBtn);
     const initialRect = elementPath2[0].getBoundingClientRect();
     const toolbarRect = toolbar.getBoundingClientRect();
     const viewportWidth = window.innerWidth;
@@ -6047,38 +6116,14 @@ ${result.join(",\n")}
     toolbar.style.top = `${top}px`;
     toolbar.style.left = `${left}px`;
     log(t("log.elementScanUI.toolbarPositioned"));
-    addToolbarEventListeners();
-    makeDraggable(toolbar);
-    requestAnimationFrame(() => {
-      toolbar.classList.add("is-visible");
-    });
-  }
-  function addToolbarEventListeners() {
     const slider = uiContainer.querySelector("#element-scan-level-slider");
-    const reselectBtn = uiContainer.querySelector("#element-scan-toolbar-reselect");
-    const stageBtn = uiContainer.querySelector("#element-scan-toolbar-stage");
-    const cancelBtn = uiContainer.querySelector("#element-scan-toolbar-cancel");
-    const confirmBtn = uiContainer.querySelector("#element-scan-toolbar-confirm");
     slider.addEventListener("input", () => {
       log(simpleTemplate(t("log.elementScanUI.sliderChanged"), { level: slider.value }));
       updateSelectionLevel(slider.value);
     });
-    reselectBtn.addEventListener("click", () => {
-      log(t("log.elementScanUI.reselectClicked"));
-      reselectElement();
-    });
-    stageBtn.addEventListener("click", () => {
-      log(t("log.elementScanUI.stageClicked"));
-      stageCurrentElement();
-    });
-    cancelBtn.addEventListener("click", () => {
-      log(t("log.elementScanUI.cancelClicked"));
-      const fabElement = uiContainer.querySelector(".fab-element-scan");
-      stopElementScan(fabElement);
-    });
-    confirmBtn.addEventListener("click", () => {
-      log(t("log.elementScanUI.confirmClicked"));
-      confirmSelectionAndExtract();
+    makeDraggable(toolbar);
+    requestAnimationFrame(() => {
+      toolbar.classList.add("is-visible");
     });
   }
   function makeDraggable(element) {
@@ -8063,10 +8108,6 @@ ${result.join(",\n")}
     content.appendChild(filterItem);
     const footer = document.createElement("div");
     footer.className = "settings-panel-footer";
-    const saveBtn = document.createElement("button");
-    saveBtn.id = "save-settings-btn";
-    saveBtn.className = "tc-button";
-    footer.appendChild(saveBtn);
     modal.appendChild(header);
     modal.appendChild(content);
     modal.appendChild(footer);
@@ -8119,10 +8160,15 @@ ${result.join(",\n")}
     relatedTitleContainer.appendChild(createIconTitle(relatedSettingsIcon, t("settings.relatedSettings")));
     const filterTitleContainer = settingsPanel.querySelector("#filter-setting-title-container");
     filterTitleContainer.appendChild(createIconTitle(filterIcon, t("settings.filterRules")));
-    const saveBtn = settingsPanel.querySelector("#save-settings-btn");
-    saveBtn.appendChild(createIconTitle(saveIcon, t("common.save")));
+    const footer = settingsPanel.querySelector(".settings-panel-footer");
+    const saveBtn = createButton({
+      id: "save-settings-btn",
+      textKey: "common.save",
+      icon: saveIcon,
+      onClick: () => handleSave(onSave)
+    });
+    footer.appendChild(saveBtn);
     settingsPanel.querySelector(".settings-panel-close").addEventListener("click", hideSettingsPanel);
-    saveBtn.addEventListener("click", () => handleSave(onSave));
     settingsPanel.addEventListener("keydown", handleKeyDown2);
     on("infoTooltipWillShow", () => {
       isTooltipVisible = true;
@@ -8759,6 +8805,7 @@ ${result.join(",\n")}
     transition:all 0.1s ease-in-out;
 }
 #element-scan-toolbar{
+    font-family:'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
     position:fixed;
     z-index:10000000;
     background-color:var(--main-bg);
@@ -8769,7 +8816,7 @@ ${result.join(",\n")}
     cursor:move;
     display:flex;
     flex-direction:column;
-    width:220px;
+    width:fit-content;
     opacity:0;
     visibility:hidden;
     transition:opacity 0.2s ease-in-out, visibility 0s linear 0.2s;
@@ -8795,17 +8842,18 @@ ${result.join(",\n")}
 #element-scan-toolbar-actions{
     display:flex;
     justify-content:space-between;
-    gap:5px;
+    gap:6px;
+    white-space:nowrap;
 }
 #element-scan-toolbar-actions button{
+    margin:4px 0;
     flex-grow:1;
-    padding:6px 8px;
+    padding:8px 10px;
     border:none;
-    border-radius:12px;
+    border-radius:16px;
     cursor:pointer;
-    font-size:13px;
+    font-size:14px;
     color:var(--main-text);
-    transition:background-color 0.2s;
 }
 .text-extractor-fab.is-recording{
     background-color:#f39c12;
@@ -9048,24 +9096,24 @@ ${result.join(",\n")}
     width:16px;
     height:16px;
 }
-kbd{\r
-    position:relative;\r
-    top:-3px; \r
-    display:inline-block;\r
-    padding:3px 6px;\r
-    margin:0 5px;\r
-    font-family:'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';\r
-    font-size:0.85em;\r
-    font-weight:700;\r
-    line-height:1;\r
-    color:var(--main-text);\r
-    background-color:var(--main-bg);\r
-    border:1px solid var(--main-border);\r
-    border-bottom-width:3px;\r
-    border-radius:4px;\r
-    box-shadow:0 1px 1px var(--main-shadow);\r
-    white-space:nowrap;\r
-    vertical-align:baseline;\r
+kbd{
+    position:relative;
+    top:-3px; 
+    display:inline-block;
+    padding:3px 6px;
+    margin:0 5px;
+    font-family:'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
+    font-size:0.85em;
+    font-weight:700;
+    line-height:1;
+    color:var(--main-text);
+    background-color:var(--main-bg);
+    border:1px solid var(--main-border);
+    border-bottom-width:3px;
+    border-radius:4px;
+    box-shadow:0 1px 1px var(--main-shadow);
+    white-space:nowrap;
+    vertical-align:baseline;
 }
 .gm-loading-overlay{
   position:absolute;
