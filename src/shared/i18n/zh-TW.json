@@ -94,6 +94,9 @@
     "sessionInProgress": "掃描進行中...",
     "truncationWarning": "為保持介面流暢，此處僅顯示部分文本。匯出後將包含完整內容。"
   },
+  "slider": {
+    "adjustFrameSize": "移動滑塊以調整框架大小"
+  },
   "results": {
     "title": "提取的文本",
     "scanCountSession": "已掃描 {{count}} 個項目",

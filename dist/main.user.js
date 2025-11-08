@@ -241,6 +241,9 @@ var TextExtractor = (() => {
       sessionInProgress: "Scan in progress...",
       truncationWarning: "To maintain UI fluency, only a portion of the text is displayed here. The full content will be available upon export."
     },
+    slider: {
+      adjustFrameSize: "Move slider to adjust frame size"
+    },
     results: {
       title: "Extracted Text",
       scanCountSession: "Scanned {{count}} items",
@@ -577,6 +580,9 @@ var TextExtractor = (() => {
       sessionInProgress: "\u626B\u63CF\u8FDB\u884C\u4E2D...",
       truncationWarning: "\u4E3A\u4FDD\u6301\u754C\u9762\u6D41\u7545\uFF0C\u6B64\u5904\u4EC5\u663E\u793A\u90E8\u5206\u6587\u672C\u3002\u5BFC\u51FA\u540E\u5C06\u5305\u542B\u5B8C\u6574\u5185\u5BB9\u3002"
     },
+    slider: {
+      adjustFrameSize: "\u79FB\u52A8\u6ED1\u5757\u4EE5\u8C03\u6574\u6846\u67B6\u5927\u5C0F"
+    },
     results: {
       title: "\u63D0\u53D6\u7684\u6587\u672C",
       scanCountSession: "\u5DF2\u626B\u63CF {{count}} \u4E2A\u9879\u76EE",
@@ -912,6 +918,9 @@ var TextExtractor = (() => {
       sessionStarted: "\u52D5\u614B\u6383\u63CF\u5DF2\u958B\u59CB\u3002",
       sessionInProgress: "\u6383\u63CF\u9032\u884C\u4E2D...",
       truncationWarning: "\u70BA\u4FDD\u6301\u4ECB\u9762\u6D41\u66A2\uFF0C\u6B64\u8655\u50C5\u986F\u793A\u90E8\u5206\u6587\u672C\u3002\u532F\u51FA\u5F8C\u5C07\u5305\u542B\u5B8C\u6574\u5167\u5BB9\u3002"
+    },
+    slider: {
+      adjustFrameSize: "\u79FB\u52D5\u6ED1\u584A\u4EE5\u8ABF\u6574\u6846\u67B6\u5927\u5C0F"
     },
     results: {
       title: "\u63D0\u53D6\u7684\u6587\u672C",
@@ -2033,6 +2042,9 @@ ${result.join(",\n")}
       sessionInProgress: "Scan in progress...",
       truncationWarning: "To maintain UI fluency, only a portion of the text is displayed here. The full content will be available upon export."
     },
+    slider: {
+      adjustFrameSize: "Move slider to adjust frame size"
+    },
     results: {
       title: "Extracted Text",
       scanCountSession: "Scanned {{count}} items",
@@ -2370,6 +2382,9 @@ ${result.join(",\n")}
       sessionInProgress: "\\u626B\\u63CF\\u8FDB\\u884C\\u4E2D...",
       truncationWarning: "\\u4E3A\\u4FDD\\u6301\\u754C\\u9762\\u6D41\\u7545\\uFF0C\\u6B64\\u5904\\u4EC5\\u663E\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u5BFC\\u51FA\\u540E\\u5C06\\u5305\\u542B\\u5B8C\\u6574\\u5185\\u5BB9\\u3002"
     },
+    slider: {
+      adjustFrameSize: "\\u79FB\\u52A8\\u6ED1\\u5757\\u4EE5\\u8C03\\u6574\\u6846\\u67B6\\u5927\\u5C0F"
+    },
     results: {
       title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",
       scanCountSession: "\\u5DF2\\u626B\\u63CF {{count}} \\u4E2A\\u9879\\u76EE",
@@ -2706,6 +2721,9 @@ ${result.join(",\n")}
       sessionStarted: "\\u52D5\\u614B\\u6383\\u63CF\\u5DF2\\u958B\\u59CB\\u3002",
       sessionInProgress: "\\u6383\\u63CF\\u9032\\u884C\\u4E2D...",
       truncationWarning: "\\u70BA\\u4FDD\\u6301\\u4ECB\\u9762\\u6D41\\u66A2\\uFF0C\\u6B64\\u8655\\u50C5\\u986F\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u532F\\u51FA\\u5F8C\\u5C07\\u5305\\u542B\\u5B8C\\u6574\\u5167\\u5BB9\\u3002"
+    },
+    slider: {
+      adjustFrameSize: "\\u79FB\\u52D5\\u6ED1\\u584A\\u4EE5\\u8ABF\\u6574\\u6846\\u67B6\\u5927\\u5C0F"
     },
     results: {
       title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",
@@ -3519,6 +3537,9 @@ ${result.join(",\n")}
       sessionInProgress: "Scan in progress...",
       truncationWarning: "To maintain UI fluency, only a portion of the text is displayed here. The full content will be available upon export."
     },
+    slider: {
+      adjustFrameSize: "Move slider to adjust frame size"
+    },
     results: {
       title: "Extracted Text",
       scanCountSession: "Scanned {{count}} items",
@@ -3856,6 +3877,9 @@ ${result.join(",\n")}
       sessionInProgress: "\\u626B\\u63CF\\u8FDB\\u884C\\u4E2D...",
       truncationWarning: "\\u4E3A\\u4FDD\\u6301\\u754C\\u9762\\u6D41\\u7545\\uFF0C\\u6B64\\u5904\\u4EC5\\u663E\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u5BFC\\u51FA\\u540E\\u5C06\\u5305\\u542B\\u5B8C\\u6574\\u5185\\u5BB9\\u3002"
     },
+    slider: {
+      adjustFrameSize: "\\u79FB\\u52A8\\u6ED1\\u5757\\u4EE5\\u8C03\\u6574\\u6846\\u67B6\\u5927\\u5C0F"
+    },
     results: {
       title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",
       scanCountSession: "\\u5DF2\\u626B\\u63CF {{count}} \\u4E2A\\u9879\\u76EE",
@@ -4192,6 +4216,9 @@ ${result.join(",\n")}
       sessionStarted: "\\u52D5\\u614B\\u6383\\u63CF\\u5DF2\\u958B\\u59CB\\u3002",
       sessionInProgress: "\\u6383\\u63CF\\u9032\\u884C\\u4E2D...",
       truncationWarning: "\\u70BA\\u4FDD\\u6301\\u4ECB\\u9762\\u6D41\\u66A2\\uFF0C\\u6B64\\u8655\\u50C5\\u986F\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u532F\\u51FA\\u5F8C\\u5C07\\u5305\\u542B\\u5B8C\\u6574\\u5167\\u5BB9\\u3002"
+    },
+    slider: {
+      adjustFrameSize: "\\u79FB\\u52D5\\u6ED1\\u584A\\u4EE5\\u8ABF\\u6574\\u6846\\u67B6\\u5927\\u5C0F"
     },
     results: {
       title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",
@@ -5967,7 +5994,117 @@ ${result.join(",\n")}
   var reselectIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v280h-80v-200H160v400h320v80H160ZM760 0q-73 0-127.5-45.5T564-160h62q13 44 49.5 72T760-60q58 0 99-41t41-99q0-58-41-99t-99-41q-29 0-54 10.5T662-300h58v60H560v-160h60v57q27-26 63-41.5t77-15.5q83 0 141.5 58.5T960-200q0 83-58.5 141.5T760 0Z"/></svg>`;
   var stashIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M360-600v-80h360v80H360Zm0 120v-80h360v80H360Zm120 320H200h280Zm0 80H240q-50 0-85-35t-35-85v-120h120v-560h600v361q-20-2-40.5 1.5T760-505v-295H320v480h240l-80 80H200v40q0 17 11.5 28.5T240-160h240v80Zm80 0v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q8 9 12.5 20t4.5 22q0 11-4 22.5T903-300L683-80H560Zm300-263-37-37 37 37ZM620-140h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z"/></svg>`;
   var confirmIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg>`;
+  var CustomSlider = class {
+        constructor({ min, max, value, onChange }) {
+      this.min = min;
+      this.max = max;
+      this.value = value;
+      this.onChange = onChange;
+      this.element = this.createSliderElement();
+      this.thumb = this.element.querySelector(".custom-slider-thumb");
+      this.track = this.element.querySelector(".custom-slider-track");
+      this.ticksContainer = this.element.querySelector(".custom-slider-ticks");
+      this.updateTicks();
+      this.updateThumbPosition();
+      this.addEventListeners();
+    }
+        createSliderElement() {
+      const container = document.createElement("div");
+      container.className = "custom-slider-container";
+      const infoText = document.createElement("div");
+      infoText.className = "custom-slider-info-text";
+      infoText.textContent = t("slider.adjustFrameSize");
+      container.appendChild(infoText);
+      const sliderWrapper = document.createElement("div");
+      sliderWrapper.className = "custom-slider-wrapper";
+      const track = document.createElement("div");
+      track.className = "custom-slider-track";
+      const ticks = document.createElement("div");
+      ticks.className = "custom-slider-ticks";
+      const thumb = document.createElement("div");
+      thumb.className = "custom-slider-thumb";
+      track.appendChild(ticks);
+      track.appendChild(thumb);
+      sliderWrapper.appendChild(track);
+      container.appendChild(sliderWrapper);
+      return container;
+    }
+        updateTicks() {
+      this.ticksContainer.innerHTML = "";
+      const numTicks = this.max - this.min + 1;
+      if (numTicks > 1) {
+        for (let i = 0; i <= this.max; i++) {
+          const tick = document.createElement("div");
+          tick.className = "custom-slider-tick";
+          this.ticksContainer.appendChild(tick);
+        }
+      }
+    }
+        updateThumbPosition() {
+      const trackWidth = this.track.offsetWidth;
+      const thumbWidth = this.thumb.offsetWidth;
+      const percentage = this.max > this.min ? (this.value - this.min) / (this.max - this.min) : 0;
+      const targetCenter = percentage * trackWidth;
+      let newLeft = targetCenter - thumbWidth / 2;
+      newLeft = Math.max(0, newLeft);
+      newLeft = Math.min(trackWidth - thumbWidth, newLeft);
+      this.thumb.style.left = `${newLeft}px`;
+    }
+        addEventListeners() {
+      this.thumb.addEventListener("mousedown", this.handleMouseDown.bind(this));
+      this.track.addEventListener("click", this.handleTrackClick.bind(this));
+    }
+        handleTrackClick(e) {
+      if (e.target === this.thumb) return;
+      const rect = this.track.getBoundingClientRect();
+      let clickX = e.clientX - rect.left;
+      const percentage = Math.max(0, Math.min(1, clickX / rect.width));
+      const newValue = Math.round(this.min + percentage * (this.max - this.min));
+      this.setValue(newValue);
+    }
+        handleMouseDown(e) {
+      e.preventDefault();
+      this.thumb.classList.add("is-dragging");
+      this.handleMouseMove = this.handleMouseMove.bind(this);
+      this.handleMouseUp = this.handleMouseUp.bind(this);
+      document.addEventListener("mousemove", this.handleMouseMove);
+      document.addEventListener("mouseup", this.handleMouseUp);
+    }
+        handleMouseMove(e) {
+      const rect = this.track.getBoundingClientRect();
+      let newX = e.clientX - rect.left;
+      const percentage = Math.max(0, Math.min(1, newX / rect.width));
+      const newValue = Math.round(this.min + percentage * (this.max - this.min));
+      if (newValue !== this.value) {
+        this.setValue(newValue);
+      }
+    }
+        handleMouseUp() {
+      this.thumb.classList.remove("is-dragging");
+      document.removeEventListener("mousemove", this.handleMouseMove);
+      document.removeEventListener("mouseup", this.handleMouseUp);
+      this.updateThumbPosition();
+    }
+        setValue(newValue) {
+      const clampedValue = Math.max(this.min, Math.min(this.max, newValue));
+      if (this.value !== clampedValue) {
+        this.value = clampedValue;
+        this.updateThumbPosition();
+        if (this.onChange) {
+          this.onChange(this.value);
+        }
+      }
+    }
+        getElement() {
+      return this.element;
+    }
+        destroy() {
+      this.thumb.removeEventListener("mousedown", this.handleMouseDown);
+      this.track.removeEventListener("click", this.handleTrackClick);
+    }
+  };
   var unsubscribeStagedCountChanged = null;
+  var sliderInstance = null;
   var scanContainer = null;
   var highlightBorder = null;
   var tagNameTooltip = null;
@@ -6038,10 +6175,21 @@ ${result.join(",\n")}
     toolbar.id = "element-scan-toolbar";
     const staticContent = `
         <div id="element-scan-toolbar-tag" title="${t("tooltip.dragHint")}">${getElementSelector(elementPath2[0])}</div>
-        <input type="range" id="element-scan-level-slider" min="0" max="${elementPath2.length - 1}" value="0" />
+        <div id="element-scan-slider-container"></div>
         <div id="element-scan-toolbar-actions"></div>
     `;
     toolbar.innerHTML = createTrustedHTML(staticContent);
+    const sliderContainer = toolbar.querySelector("#element-scan-slider-container");
+    sliderInstance = new CustomSlider({
+      min: 0,
+      max: elementPath2.length - 1,
+      value: 0,
+      onChange: (newValue) => {
+        log(simpleTemplate(t("log.elementScanUI.sliderChanged"), { level: newValue }));
+        updateSelectionLevel(newValue);
+      }
+    });
+    sliderContainer.appendChild(sliderInstance.getElement());
     uiContainer.appendChild(toolbar);
     const actionsContainer = toolbar.querySelector("#element-scan-toolbar-actions");
     const reselectBtn = createButton({
@@ -6116,11 +6264,6 @@ ${result.join(",\n")}
     toolbar.style.top = `${top}px`;
     toolbar.style.left = `${left}px`;
     log(t("log.elementScanUI.toolbarPositioned"));
-    const slider = uiContainer.querySelector("#element-scan-level-slider");
-    slider.addEventListener("input", () => {
-      log(simpleTemplate(t("log.elementScanUI.sliderChanged"), { level: slider.value }));
-      updateSelectionLevel(slider.value);
-    });
     makeDraggable(toolbar);
     requestAnimationFrame(() => {
       toolbar.classList.add("is-visible");
@@ -6167,6 +6310,10 @@ ${result.join(",\n")}
   function cleanupToolbar() {
     if (toolbar) {
       log(t("log.elementScanUI.cleaningToolbar"));
+      if (sliderInstance) {
+        sliderInstance.destroy();
+        sliderInstance = null;
+      }
       const toolbarToRemove = toolbar;
       toolbar = null;
       toolbarToRemove.classList.remove("is-visible");
@@ -6535,6 +6682,9 @@ ${result.join(",\n")}
       sessionInProgress: "Scan in progress...",
       truncationWarning: "To maintain UI fluency, only a portion of the text is displayed here. The full content will be available upon export."
     },
+    slider: {
+      adjustFrameSize: "Move slider to adjust frame size"
+    },
     results: {
       title: "Extracted Text",
       scanCountSession: "Scanned {{count}} items",
@@ -6872,6 +7022,9 @@ ${result.join(",\n")}
       sessionInProgress: "\\u626B\\u63CF\\u8FDB\\u884C\\u4E2D...",
       truncationWarning: "\\u4E3A\\u4FDD\\u6301\\u754C\\u9762\\u6D41\\u7545\\uFF0C\\u6B64\\u5904\\u4EC5\\u663E\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u5BFC\\u51FA\\u540E\\u5C06\\u5305\\u542B\\u5B8C\\u6574\\u5185\\u5BB9\\u3002"
     },
+    slider: {
+      adjustFrameSize: "\\u79FB\\u52A8\\u6ED1\\u5757\\u4EE5\\u8C03\\u6574\\u6846\\u67B6\\u5927\\u5C0F"
+    },
     results: {
       title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",
       scanCountSession: "\\u5DF2\\u626B\\u63CF {{count}} \\u4E2A\\u9879\\u76EE",
@@ -7208,6 +7361,9 @@ ${result.join(",\n")}
       sessionStarted: "\\u52D5\\u614B\\u6383\\u63CF\\u5DF2\\u958B\\u59CB\\u3002",
       sessionInProgress: "\\u6383\\u63CF\\u9032\\u884C\\u4E2D...",
       truncationWarning: "\\u70BA\\u4FDD\\u6301\\u4ECB\\u9762\\u6D41\\u66A2\\uFF0C\\u6B64\\u8655\\u50C5\\u986F\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u532F\\u51FA\\u5F8C\\u5C07\\u5305\\u542B\\u5B8C\\u6574\\u5167\\u5BB9\\u3002"
+    },
+    slider: {
+      adjustFrameSize: "\\u79FB\\u52D5\\u6ED1\\u584A\\u4EE5\\u8ABF\\u6574\\u6846\\u67B6\\u5927\\u5C0F"
     },
     results: {
       title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",
@@ -8672,6 +8828,77 @@ ${result.join(",\n")}
 .custom-select-option .option-icon{
     display:flex;
     align-items:center;
+}
+.custom-slider-container{
+    font-family:'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    width:100%;
+    padding:8px 0;
+}
+.custom-slider-info-text{
+    font-size:15px;
+    font-weight:500;
+    color:var(--main-text-secondary);
+    margin:12px 0;
+}
+.custom-slider-wrapper{
+    margin:5px 0;
+    position:relative;
+    width:100%;
+    height:20px;
+    display:flex;
+    align-items:center;
+}
+.custom-slider-track{
+    position:absolute;
+    left:4px;
+    right:4px;
+    height:8px;
+    background-color:var(--main-textarea-bg);
+    border:1px solid var(--main-textarea-border);
+    border-radius:4px;
+    cursor:pointer;
+}
+.custom-slider-ticks{
+    position:absolute;
+    left:0;
+    right:0;
+    height:100%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    pointer-events:none;
+    padding:0 4px;
+    box-sizing:border-box;
+}
+.custom-slider-tick{
+    width:4px;
+    height:4px;
+    background-color:var(--main-border);
+    border-radius:50%;
+}
+.custom-slider-thumb{
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    width:18px;
+    height:18px;
+    background-color:var(--main-primary);
+    border-radius:50%;
+    cursor:grab;
+    transition:transform 0.1s ease-out, left 0.1s ease-out;
+    will-change:transform, left;
+    box-shadow:0 2px 4px var(--main-shadow);
+    border:2px solid var(--main-bg);
+}
+.custom-slider-thumb:hover{
+    transform:translateY(-50%) scale(1.1);
+}
+.custom-slider-thumb.is-dragging{
+    cursor:grabbing;
+    transform:translateY(-50%) scale(1.2);
 }
 .tc-dropdown-menu{
     position:absolute;

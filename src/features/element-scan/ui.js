@@ -13,9 +13,11 @@ import { confirmIcon } from '../../assets/icons/confirmIcon.js';
 import { simpleTemplate } from '../../shared/utils/templating.js';
 import { on } from '../../shared/utils/eventBus.js';
 import { createCounterWithHelp, showCounterWithHelp, hideCounterWithHelp, updateCounterValue } from '../../shared/ui/components/counterWithHelp.js';
+import { CustomSlider } from '../../shared/ui/components/customSlider.js';
 
 // --- 模块级变量 ---
 let unsubscribeStagedCountChanged = null;
+let sliderInstance = null;
 
 // --- 模块级变量，用于缓存UI元素的引用 ---
 
@@ -149,13 +151,27 @@ export function createAdjustmentToolbar(elementPath) {
     toolbar = document.createElement('div');
     toolbar.id = 'element-scan-toolbar';
 
-    // 创建静态部分
+    // 创建静态部分（移除滑块的硬编码HTML）
     const staticContent = `
         <div id="element-scan-toolbar-tag" title="${t('tooltip.dragHint')}">${getElementSelector(elementPath[0])}</div>
-        <input type="range" id="element-scan-level-slider" min="0" max="${elementPath.length - 1}" value="0" />
+        <div id="element-scan-slider-container"></div>
         <div id="element-scan-toolbar-actions"></div>
     `;
     toolbar.innerHTML = createTrustedHTML(staticContent);
+
+    // 实例化并添加新的自定义滑块
+    const sliderContainer = toolbar.querySelector('#element-scan-slider-container');
+    sliderInstance = new CustomSlider({
+        min: 0,
+        max: elementPath.length - 1,
+        value: 0,
+        onChange: (newValue) => {
+            log(simpleTemplate(t('log.elementScanUI.sliderChanged'), { level: newValue }));
+            updateSelectionLevel(newValue);
+        }
+    });
+    sliderContainer.appendChild(sliderInstance.getElement());
+
     uiContainer.appendChild(toolbar);
 
     // 动态创建并添加按钮
@@ -250,13 +266,6 @@ export function createAdjustmentToolbar(elementPath) {
     toolbar.style.left = `${left}px`;
     log(t('log.elementScanUI.toolbarPositioned'));
 
-    // 为滑块添加事件监听器
-    const slider = uiContainer.querySelector('#element-scan-level-slider');
-    slider.addEventListener('input', () => {
-        log(simpleTemplate(t('log.elementScanUI.sliderChanged'), { level: slider.value }));
-        updateSelectionLevel(slider.value);
-    });
-
     makeDraggable(toolbar);
 
     requestAnimationFrame(() => {
@@ -332,6 +341,10 @@ export function cleanupUI() {
 export function cleanupToolbar() {
     if (toolbar) {
         log(t('log.elementScanUI.cleaningToolbar'));
+        if (sliderInstance) {
+            sliderInstance.destroy();
+            sliderInstance = null;
+        }
         const toolbarToRemove = toolbar;
         toolbar = null; // 立即清除引用，防止重复操作
         toolbarToRemove.classList.remove('is-visible');
