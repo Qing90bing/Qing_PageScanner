@@ -9,8 +9,9 @@ import { loadSettings } from '../settings/logic.js';
 import { log } from '../../shared/utils/logger.js';
 import { createTrustedWorkerUrl } from '../../shared/utils/trustedTypes.js';
 import { performScanInMainThread } from './fallback.js';
+import { trustedWorkerUrl } from '../../shared/workers/worker-url.js';
 import { showNotification } from '../../shared/ui/components/notification.js';
-import { t } from '../../shared/i18n/index.js';
+import { t, getTranslationObject } from '../../shared/i18n/index.js';
 import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
 
 /**
@@ -39,10 +40,7 @@ export const performQuickScan = (texts) => {
 
         try {
             log(t('log.quickScan.worker.starting'));
-            const workerScript = __QUICK_SCAN_WORKER_STRING__;
-            const workerUrl = `data:application/javascript,${encodeURIComponent(workerScript)}`;
-            const trustedUrl = createTrustedWorkerUrl(workerUrl);
-            const worker = new Worker(trustedUrl);
+            const worker = new Worker(trustedWorkerUrl);
 
             worker.onmessage = (event) => {
                 const { type, payload } = event.data;
@@ -64,7 +62,7 @@ export const performQuickScan = (texts) => {
             // 只有在 onerror 没有立即触发的情况下，这些日志才有意义
             log(t('log.quickScan.worker.sendingData', { count: texts.length }));
             worker.postMessage({
-                type: 'scan',
+                type: 'process-single',
                 payload: {
                     texts,
                     filterRules,
@@ -73,6 +71,7 @@ export const performQuickScan = (texts) => {
                         workerLogPrefix: t('log.quickScan.worker.logPrefix'),
                         textFiltered: t('log.textProcessor.filtered'),
                         scanComplete: t('log.quickScan.worker.completed'),
+                        filterReasons: getTranslationObject('filterReasons'),
                     },
                 },
             });

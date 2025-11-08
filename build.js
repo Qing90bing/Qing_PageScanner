@@ -9,6 +9,8 @@ import discardComments from 'postcss-discard-comments';
 
 // --- 主构建函数 ---
 async function build() {
+    let originalWorkerStringContent;
+    const workerStringTemplatePath = 'src/shared/workers/worker-string.js';
     try {
         console.log('开始构建...');
 
@@ -44,27 +46,27 @@ async function build() {
         const cleanedCss = postcssResult.css;
         console.log('CSS 注释清理完成。');
 
-        // 3. 【新增】独立打包 Web Worker 脚本
-        console.log('正在打包 Web Workers...');
+        // 3. 【重构】打包通用的 Web Worker 脚本
+        console.log('正在打包通用 Web Worker...');
         const workerBuildResult = await esbuild.build({
-            entryPoints: [
-                'src/features/session-scan/worker.js',
-                'src/features/quick-scan/worker.js',
-                'src/features/element-scan/worker.js'
-            ],
+            entryPoints: ['src/shared/utils/processing-worker.js'],
             bundle: true,
             write: false,
-            outdir: 'dist/workers', // 虚拟输出目录
+            outfile: 'dist/processing-worker.js', // 虚拟输出文件
             format: 'iife',
         });
+        const processingWorkerCode = workerBuildResult.outputFiles[0].text;
+        console.log('通用 Web Worker 打包完成。');
 
-        // 分别获取两个 worker 的代码
-        const sessionScanWorkerCode = workerBuildResult.outputFiles.find(f => f.path.includes('session-scan')).text;
-        const quickScanWorkerCode = workerBuildResult.outputFiles.find(f => f.path.includes('quick-scan')).text;
-        const elementScanWorkerCode = workerBuildResult.outputFiles.find(f => f.path.includes('element-scan')).text;
-        console.log('Web Workers 打包完成。');
+        // 4. 动态注入 Worker 代码到模块文件
+        console.log('正在将 Worker 代码注入到模块...');
+        originalWorkerStringContent = await fs.readFile(workerStringTemplatePath, 'utf-8');
+        const finalWorkerStringContent = `export const processingWorkerString = ${JSON.stringify(processingWorkerCode)};`;
+        await fs.writeFile(workerStringTemplatePath, finalWorkerStringContent);
+        console.log('Worker 代码注入完成。');
 
-        // 4. 从 src/main.js 开始打包主应用程序代码
+
+        // 5. 从 src/main.js 开始打包主应用程序代码
         console.log('正在打包主应用程序...');
         const result = await esbuild.build({
             entryPoints: ['src/main.js'],
@@ -76,10 +78,8 @@ async function build() {
             define: {
                 // 将所有合并后的 CSS 作为单个字符串注入
                 '__INJECTED_CSS__': JSON.stringify(cleanedCss),
-                // 将打包好的、无依赖的 Worker 代码注入
-                '__WORKER_STRING__': JSON.stringify(sessionScanWorkerCode),
-                '__QUICK_SCAN_WORKER_STRING__': JSON.stringify(quickScanWorkerCode),
-                '__ELEMENT_SCAN_WORKER_STRING__': JSON.stringify(elementScanWorkerCode),
+                // 将打包好的、无依赖的通用 Worker 代码注入
+        // '__PROCESSING_WORKER_STRING__': JSON.stringify(processingWorkerCode),
             }
         });
         console.log('主应用程序打包完成。');
@@ -102,6 +102,13 @@ async function build() {
     } catch (error) {
         console.error('🔥 构建失败:', error);
         process.exit(1);
+    } finally {
+        // 无论成功还是失败，都恢复 worker-string.js 的原始状态
+        if (originalWorkerStringContent) {
+            console.log('正在恢复 worker-string.js...');
+            await fs.writeFile(workerStringTemplatePath, originalWorkerStringContent);
+            console.log('worker-string.js 已恢复。');
+        }
     }
 }
 

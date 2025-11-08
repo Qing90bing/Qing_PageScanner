@@ -6,12 +6,13 @@ import { updateModalContent } from '../../shared/ui/mainModal.js';
 import { uiContainer } from '../../shared/ui/uiContainer.js';
 import { getDynamicFab, updateFabTooltip } from '../../shared/ui/components/fab.js';
 import { showNotification } from '../../shared/ui/components/notification.js';
-import { t } from '../../shared/i18n/index.js';
+import { t, getTranslationObject } from '../../shared/i18n/index.js';
 import { simpleTemplate } from '../../shared/utils/templating.js';
 import { log } from '../../shared/utils/logger.js';
 import { loadSettings } from '../settings/logic.js';
 import { createTrustedWorkerUrl } from '../../shared/utils/trustedTypes.js';
 import { performScanInMainThread } from './fallback.js';
+import { trustedWorkerUrl } from '../../shared/workers/worker-url.js';
 import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
 import { on, fire } from '../../shared/utils/eventBus.js';
 
@@ -294,10 +295,7 @@ function processTextsWithWorker(texts) {
 
         try {
             log(t('log.elementScan.worker.starting'));
-            const workerScript = __ELEMENT_SCAN_WORKER_STRING__;
-            const workerUrl = `data:application/javascript,${encodeURIComponent(workerScript)}`;
-            const trustedUrl = createTrustedWorkerUrl(workerUrl);
-            const worker = new Worker(trustedUrl);
+            const worker = new Worker(trustedWorkerUrl);
 
             worker.onmessage = (event) => {
                 const { type, payload } = event.data;
@@ -323,7 +321,7 @@ function processTextsWithWorker(texts) {
             }, {});
 
             worker.postMessage({
-                type: 'scan-element',
+                type: 'process-single',
                 payload: {
                     texts,
                     filterRules,
@@ -332,7 +330,7 @@ function processTextsWithWorker(texts) {
                         workerLogPrefix: t('log.elementScan.worker.logPrefix'),
                         textFiltered: t('log.textProcessor.filtered'),
                         scanComplete: t('log.elementScan.worker.completed'),
-                        filterReasons: filterReasonTranslations,
+                        filterReasons: getTranslationObject('filterReasons'),
                     },
                 },
             });

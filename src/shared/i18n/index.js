@@ -83,6 +83,20 @@ export function t(key, replacements) {
 }
 
 /**
+ * 获取一个键对应的整个翻译对象，而不是单个字符串。
+ * @param {string} key - 翻译文件的键，支持点状路径 (e.g., 'settings.title')
+ * @returns {object | undefined} - 返回找到的对象，如果找不到则返回 undefined。
+ */
+export function getTranslationObject(key) {
+    return key.split('.').reduce((obj, k) => {
+        if (typeof obj === 'object' && obj !== null && k in obj) {
+            return obj[k];
+        }
+        return undefined;
+    }, currentTranslations);
+}
+
+/**
  * 获取所有可用语言的列表（用于设置菜单）
  * @returns {{value: string, label: string}[]}
  */

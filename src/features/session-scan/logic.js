@@ -11,9 +11,10 @@ import { appConfig } from '../settings/config.js';
 import { log } from '../../shared/utils/logger.js';
 import { createTrustedWorkerUrl } from '../../shared/utils/trustedTypes.js';
 import { showNotification } from '../../shared/ui/components/notification.js';
-import { t } from '../../shared/i18n/index.js';
+import { t, getTranslationObject } from '../../shared/i18n/index.js';
 import { fire, on } from '../../shared/utils/eventBus.js';
 import * as fallback from './fallback.js';
+import { trustedWorkerUrl } from '../../shared/workers/worker-url.js';
 import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
 
 // --- 模块级变量 ---
@@ -58,8 +59,8 @@ const handleMutations = (mutations) => {
             }
         } else if (worker) {
             worker.postMessage({
-                type: 'data',
-                payload: { texts: textsBatch, logPrefix }
+                type: 'session-add-texts',
+                payload: { texts: textsBatch }
             });
         }
     }
@@ -77,7 +78,7 @@ function clearSessionData() {
         updateScanCount(0, 'session');
         fire('sessionCleared'); // 触发事件
     } else if (worker) {
-        worker.postMessage({ type: 'clear' });
+        worker.postMessage({ type: 'session-clear' });
         log(t('log.sessionScan.worker.clearCommandSent'));
     }
 }
@@ -115,10 +116,7 @@ export const start = (onUpdate) => {
 
     try {
         log(t('log.sessionScan.worker.starting'));
-        const workerScript = __WORKER_STRING__;
-        const workerUrl = `data:application/javascript,${encodeURIComponent(workerScript)}`;
-        const trustedUrl = createTrustedWorkerUrl(workerUrl);
-        worker = new Worker(trustedUrl);
+        worker = new Worker(trustedWorkerUrl);
 
         worker.onmessage = (event) => {
             const { type, payload } = event.data;
@@ -140,17 +138,20 @@ export const start = (onUpdate) => {
             activateFallbackMode(initialTexts);
         };
 
+        const { enableDebugLogging } = loadSettings();
         worker.postMessage({
-            type: 'init',
+            type: 'session-start',
             payload: {
                 filterRules,
+                enableDebugLogging,
                 translations: {
                     workerLogPrefix: t('log.sessionScan.worker.logPrefix'),
                     textFiltered: t('log.textProcessor.filtered'),
+                    filterReasons: getTranslationObject('filterReasons'),
                 },
             },
         });
-        worker.postMessage({ type: 'data', payload: { texts: initialTexts } });
+        worker.postMessage({ type: 'session-add-texts', payload: { texts: initialTexts } });
         log(t('log.sessionScan.worker.initialized', { count: initialTexts.length }));
 
     } catch (e) {
@@ -189,7 +190,7 @@ export const stop = (onStopped) => {
                 }
             };
             worker.addEventListener('message', finalCountListener);
-            worker.postMessage({ type: 'getCount' });
+            worker.postMessage({ type: 'session-get-count' });
         } else {
             onStopped(0);
         }
@@ -205,7 +206,7 @@ export const requestSummary = (onReady) => {
         onReady(summaryText, summaryCount);
     } else if (worker) {
         onSummaryCallback = onReady;
-        worker.postMessage({ type: 'getSummary' });
+        worker.postMessage({ type: 'session-get-summary' });
     } else {
         onReady("[]", 0);
     }
