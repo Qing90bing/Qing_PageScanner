@@ -6030,17 +6030,19 @@ ${result.join(",\n")}
       return container;
     }
         updateTicks() {
-      this.ticksContainer.innerHTML = "";
       const numTicks = this.max - this.min + 1;
       if (numTicks > 1) {
-        for (let i = 0; i <= this.max; i++) {
-          const tick = document.createElement("div");
-          tick.className = "custom-slider-tick";
-          this.ticksContainer.appendChild(tick);
-        }
+        const ticksHtml = Array.from({ length: numTicks }, () => `<div class="custom-slider-tick"></div>`).join("");
+        this.ticksContainer.innerHTML = createTrustedHTML(ticksHtml);
+      } else {
+        this.ticksContainer.innerHTML = createTrustedHTML("");
       }
     }
-        updateThumbPosition() {
+    /**
+     * 根据当前值更新滑块按钮的位置。
+     * @private
+     */
+    updateThumbPosition() {
       const trackWidth = this.track.offsetWidth;
       const thumbWidth = this.thumb.offsetWidth;
       const percentage = this.max > this.min ? (this.value - this.min) / (this.max - this.min) : 0;
@@ -6050,7 +6052,11 @@ ${result.join(",\n")}
       newLeft = Math.min(trackWidth - thumbWidth, newLeft);
       this.thumb.style.left = `${newLeft}px`;
     }
-        addEventListeners() {
+    /**
+     * 添加所有必要的事件监听器。
+     * @private
+     */
+    addEventListeners() {
       this.thumb.addEventListener("mousedown", this.handleMouseDown.bind(this));
       this.track.addEventListener("click", this.handleTrackClick.bind(this));
     }

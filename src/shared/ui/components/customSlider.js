@@ -1,6 +1,6 @@
 // src/shared/ui/components/customSlider.js
 import { t } from '../../i18n/index.js';
-
+import { createTrustedHTML } from '../../utils/trustedTypes.js';
 /**
  * CustomSlider 类用于创建一个可自定义的滑块组件。
  * @class
@@ -69,14 +69,12 @@ export class CustomSlider {
      * @private
      */
     updateTicks() {
-        this.ticksContainer.innerHTML = '';
         const numTicks = this.max - this.min + 1;
         if (numTicks > 1) {
-            for (let i = 0; i <= this.max; i++) {
-                const tick = document.createElement('div');
-                tick.className = 'custom-slider-tick';
-                this.ticksContainer.appendChild(tick);
-            }
+            const ticksHtml = Array.from({ length: numTicks }, () => `<div class="custom-slider-tick"></div>`).join('');
+            this.ticksContainer.innerHTML = createTrustedHTML(ticksHtml);
+        } else {
+            this.ticksContainer.innerHTML = createTrustedHTML('');
         }
     }
 
