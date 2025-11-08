@@ -6,7 +6,6 @@
  *              该模块作为总协调器，整合来自 ./mainModal/ 子模块的功能。
  */
 
-import { extractAndProcessText } from '../utils/textProcessor.js';
 import { performQuickScan } from '../../features/quick-scan/logic.js';
 import { showNotification } from './components/notification.js';
 import { loadSettings } from '../../features/settings/logic.js';
@@ -93,11 +92,8 @@ export async function openModal() {
     updateModalContent(state.SHOW_LOADING, true, 'quick-scan');
 
     try {
-        // 2. 从 DOM 提取文本（这必须在主线程完成）
-        const extractedTexts = extractAndProcessText();
-
-        // 3. 将繁重任务交给 Web Worker 处理
-        const { formattedText, count } = await performQuickScan(extractedTexts);
+        // 2. 调用重构后的 performQuickScan，它现在内部处理所有逻辑
+        const { formattedText, count } = await performQuickScan();
 
         // 在更新内容前隐藏加载动画，确保流畅性
         hideLoading();

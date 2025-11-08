@@ -211,7 +211,8 @@
         "initFailed": "[快速扫描] Worker 初始化失败。这很可能是由于网站的内容安全策略 (CSP) 导致的。",
         "originalError": "[快速扫描] 原始错误: {{error}}",
         "sendingData": "[快速扫描] Web Worker 已创建，正在发送 {{count}} 条文本进行处理...",
-        "initSyncError": "[快速扫描] Worker 初始化期间发生同步错误: {{error}}"
+        "initSyncError": "[快速扫描] Worker 初始化期间发生同步错误: {{error}}",
+        "cspBlocked": "[快速扫描] CSP检查失败，不允许创建Worker。"
       }
     },
     "sessionScan": {
@@ -230,7 +231,8 @@
         "originalError": "[动态扫描] 原始错误: {{error}}",
         "initialized": "[动态扫描] Worker 初始化成功，已发送 {{count}} 条初始文本以开始会话。",
         "initSyncError": "[动态扫描] Worker 初始化期间发生同步错误: {{error}}",
-        "clearCommandSent": "[动态扫描] 清除命令已发送至 worker。"
+        "clearCommandSent": "[动态扫描] 清除命令已发送至 worker。",
+        "cspBlocked": "[动态扫描] CSP检查失败，不允许创建Worker。"
       }
     },
     "ui": {
@@ -303,7 +305,8 @@
         "completed": "选取元素扫描 Worker 已完成，找到 {{count}} 条不重复文本。",
         "initFailed": "选取元素扫描 Worker 初始化失败。浏览器的CSP可能阻止了 data: URL。",
         "initSyncError": "选取元素扫描 Worker 初始化期间发生同步错误: {{error}}",
-        "originalError": "原始 Worker 错误: {{error}}"
+        "originalError": "原始 Worker 错误: {{error}}",
+        "cspBlocked": "选取元素扫描的CSP检查失败，不允许创建Worker。"
       },
       "switchToFallback": "正在为选取元素扫描切换到主线程备选方案。",
       "fallbackFailed": "选取元素扫描备选方案执行失败: {{error}}"

@@ -10,7 +10,7 @@ import { t, getTranslationObject } from '../../shared/i18n/index.js';
 import { simpleTemplate } from '../../shared/utils/templating.js';
 import { log } from '../../shared/utils/logger.js';
 import { loadSettings } from '../settings/logic.js';
-import { createTrustedWorkerUrl } from '../../shared/utils/trustedTypes.js';
+import { isWorkerAllowed } from '../../shared/utils/csp-checker.js';
 import { performScanInMainThread } from './fallback.js';
 import { trustedWorkerUrl } from '../../shared/workers/worker-url.js';
 import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
@@ -277,22 +277,26 @@ export function updateSelectionLevel(level) {
     }
 }
 
-function processTextsWithWorker(texts) {
-    return new Promise((resolve, reject) => {
-        const { filterRules, enableDebugLogging } = loadSettings();
-        const runFallback = () => {
-            log(t('log.elementScan.switchToFallback'));
-            showNotification(t('notifications.cspWorkerWarning'), { type: 'info', duration: 5000 });
-            try {
-                const result = performScanInMainThread(texts, filterRules, enableDebugLogging);
-                updateScanCount(result.count, 'element');
-                resolve(result);
-            } catch (fallbackError) {
-                log(t('log.elementScan.fallbackFailed', { error: fallbackError.message }), 'error');
-                reject(fallbackError);
-            }
-        };
+async function processTextsWithWorker(texts, { filterRules, enableDebugLogging }, workerAllowed) {
+    const runFallback = () => {
+        log(t('log.elementScan.switchToFallback'));
+        showNotification(t('notifications.cspWorkerWarning'), { type: 'info', duration: 5000 });
+        try {
+            const result = performScanInMainThread(texts, filterRules, enableDebugLogging);
+            updateScanCount(result.count, 'element');
+            return Promise.resolve(result);
+        } catch (fallbackError) {
+            log(t('log.elementScan.fallbackFailed', { error: fallbackError.message }), 'error');
+            return Promise.reject(fallbackError);
+        }
+    };
 
+    if (!workerAllowed) {
+        log(t('log.elementScan.worker.cspBlocked'), 'warn');
+        return runFallback();
+    }
+
+    return new Promise((resolve, reject) => {
         try {
             log(t('log.elementScan.worker.starting'));
             const worker = new Worker(trustedWorkerUrl);
@@ -311,7 +315,8 @@ function processTextsWithWorker(texts) {
                 log(t('log.elementScan.worker.initFailed'), 'warn');
                 log(t('log.elementScan.worker.originalError', { error: error.message }), 'debug');
                 worker.terminate();
-                runFallback();
+                // Since runFallback now returns a promise, we need to handle it
+                runFallback().then(resolve).catch(reject);
             };
 
             log(t('log.elementScan.worker.sendingData', { count: texts.length }));
@@ -337,7 +342,7 @@ function processTextsWithWorker(texts) {
 
         } catch (e) {
             log(t('log.elementScan.worker.initSyncError', { error: e.message }), 'error');
-            runFallback();
+            runFallback().then(resolve).catch(reject);
         }
     });
 }
@@ -348,7 +353,13 @@ export async function confirmSelectionAndExtract() {
         return;
     }
 
-    const newTexts = extractAndProcessTextFromElement(currentTarget);
+    // 在暂存最后选定的元素的同时，并行加载设置和检查CSP
+    const [newTexts, settings, workerAllowed] = await Promise.all([
+        extractAndProcessTextFromElement(currentTarget),
+        loadSettings(),
+        isWorkerAllowed()
+    ]);
+
     newTexts.forEach(text => stagedTexts.add(text));
     updateStagedCount();
 
@@ -365,12 +376,10 @@ export async function confirmSelectionAndExtract() {
     setShouldResumeAfterModalClose(true);
 
     try {
-        const allCleanTexts = Array.from(stagedTexts);
-        log(simpleTemplate(t('log.elementScan.extractedCount'), { count: allCleanTexts.length }));
+        const allTexts = Array.from(stagedTexts);
+        log(simpleTemplate(t('log.elementScan.extractedCount'), { count: allTexts.length }));
 
-        // 注意：这里的文本已经是过滤和去重过的，但Worker仍然可以处理它们
-        // Worker内部可能会有进一步的处理或格式化
-        const { formattedText, count } = await processTextsWithWorker(allCleanTexts);
+        const { formattedText, count } = await processTextsWithWorker(allTexts, settings, workerAllowed);
         updateModalContent(formattedText, true, 'element-scan');
         const notificationText = simpleTemplate(t('scan.elementFinished'), { count });
         showNotification(notificationText, { type: 'success' });

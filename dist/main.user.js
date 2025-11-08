@@ -358,7 +358,8 @@ var TextExtractor = (() => {
           initFailed: "[Quick Scan] Worker initialization failed. This is likely due to the website's Content Security Policy (CSP).",
           originalError: "[Quick Scan] Original error: {{error}}",
           sendingData: "[Quick Scan] Web Worker created, sending {{count}} texts for processing...",
-          initSyncError: "[Quick Scan] Synchronous error during Worker initialization: {{error}}"
+          initSyncError: "[Quick Scan] Synchronous error during Worker initialization: {{error}}",
+          cspBlocked: "[Quick Scan] CSP check failed. Worker creation is not allowed."
         }
       },
       sessionScan: {
@@ -377,7 +378,8 @@ var TextExtractor = (() => {
           originalError: "[Dynamic Scan] Original error: {{error}}",
           initialized: "[Dynamic Scan] Worker initialized successfully, sent {{count}} initial texts to start the session.",
           initSyncError: "[Dynamic Scan] Synchronous error during Worker initialization: {{error}}",
-          clearCommandSent: "[Dynamic Scan] Clear command sent to worker."
+          clearCommandSent: "[Dynamic Scan] Clear command sent to worker.",
+          cspBlocked: "[Dynamic Scan] CSP check failed. Worker creation is not allowed."
         }
       },
       ui: {
@@ -450,7 +452,8 @@ var TextExtractor = (() => {
           completed: "Element Scan Worker completed, found {{count}} unique texts.",
           initFailed: "Element Scan Worker initialization failed. The browser's CSP might be blocking data: URLs.",
           initSyncError: "Synchronous error during Element Scan Worker initialization: {{error}}",
-          originalError: "Original worker error: {{error}}"
+          originalError: "Original worker error: {{error}}",
+          cspBlocked: "Element Scan CSP check failed. Worker creation is not allowed."
         },
         switchToFallback: "Switching to main thread fallback for Element Scan.",
         fallbackFailed: "Element Scan fallback mode failed: {{error}}"
@@ -700,7 +703,8 @@ var TextExtractor = (() => {
           initFailed: "[\u5FEB\u901F\u626B\u63CF] Worker \u521D\u59CB\u5316\u5931\u8D25\u3002\u8FD9\u5F88\u53EF\u80FD\u662F\u7531\u4E8E\u7F51\u7AD9\u7684\u5185\u5BB9\u5B89\u5168\u7B56\u7565 (CSP) \u5BFC\u81F4\u7684\u3002",
           originalError: "[\u5FEB\u901F\u626B\u63CF] \u539F\u59CB\u9519\u8BEF: {{error}}",
           sendingData: "[\u5FEB\u901F\u626B\u63CF] Web Worker \u5DF2\u521B\u5EFA\uFF0C\u6B63\u5728\u53D1\u9001 {{count}} \u6761\u6587\u672C\u8FDB\u884C\u5904\u7406...",
-          initSyncError: "[\u5FEB\u901F\u626B\u63CF] Worker \u521D\u59CB\u5316\u671F\u95F4\u53D1\u751F\u540C\u6B65\u9519\u8BEF: {{error}}"
+          initSyncError: "[\u5FEB\u901F\u626B\u63CF] Worker \u521D\u59CB\u5316\u671F\u95F4\u53D1\u751F\u540C\u6B65\u9519\u8BEF: {{error}}",
+          cspBlocked: "[\u5FEB\u901F\u626B\u63CF] CSP\u68C0\u67E5\u5931\u8D25\uFF0C\u4E0D\u5141\u8BB8\u521B\u5EFAWorker\u3002"
         }
       },
       sessionScan: {
@@ -719,7 +723,8 @@ var TextExtractor = (() => {
           originalError: "[\u52A8\u6001\u626B\u63CF] \u539F\u59CB\u9519\u8BEF: {{error}}",
           initialized: "[\u52A8\u6001\u626B\u63CF] Worker \u521D\u59CB\u5316\u6210\u529F\uFF0C\u5DF2\u53D1\u9001 {{count}} \u6761\u521D\u59CB\u6587\u672C\u4EE5\u5F00\u59CB\u4F1A\u8BDD\u3002",
           initSyncError: "[\u52A8\u6001\u626B\u63CF] Worker \u521D\u59CB\u5316\u671F\u95F4\u53D1\u751F\u540C\u6B65\u9519\u8BEF: {{error}}",
-          clearCommandSent: "[\u52A8\u6001\u626B\u63CF] \u6E05\u9664\u547D\u4EE4\u5DF2\u53D1\u9001\u81F3 worker\u3002"
+          clearCommandSent: "[\u52A8\u6001\u626B\u63CF] \u6E05\u9664\u547D\u4EE4\u5DF2\u53D1\u9001\u81F3 worker\u3002",
+          cspBlocked: "[\u52A8\u6001\u626B\u63CF] CSP\u68C0\u67E5\u5931\u8D25\uFF0C\u4E0D\u5141\u8BB8\u521B\u5EFAWorker\u3002"
         }
       },
       ui: {
@@ -792,7 +797,8 @@ var TextExtractor = (() => {
           completed: "\u9009\u53D6\u5143\u7D20\u626B\u63CF Worker \u5DF2\u5B8C\u6210\uFF0C\u627E\u5230 {{count}} \u6761\u4E0D\u91CD\u590D\u6587\u672C\u3002",
           initFailed: "\u9009\u53D6\u5143\u7D20\u626B\u63CF Worker \u521D\u59CB\u5316\u5931\u8D25\u3002\u6D4F\u89C8\u5668\u7684CSP\u53EF\u80FD\u963B\u6B62\u4E86 data: URL\u3002",
           initSyncError: "\u9009\u53D6\u5143\u7D20\u626B\u63CF Worker \u521D\u59CB\u5316\u671F\u95F4\u53D1\u751F\u540C\u6B65\u9519\u8BEF: {{error}}",
-          originalError: "\u539F\u59CB Worker \u9519\u8BEF: {{error}}"
+          originalError: "\u539F\u59CB Worker \u9519\u8BEF: {{error}}",
+          cspBlocked: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u7684CSP\u68C0\u67E5\u5931\u8D25\uFF0C\u4E0D\u5141\u8BB8\u521B\u5EFAWorker\u3002"
         },
         switchToFallback: "\u6B63\u5728\u4E3A\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5207\u6362\u5230\u4E3B\u7EBF\u7A0B\u5907\u9009\u65B9\u6848\u3002",
         fallbackFailed: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5907\u9009\u65B9\u6848\u6267\u884C\u5931\u8D25: {{error}}"
@@ -1042,7 +1048,8 @@ var TextExtractor = (() => {
           initFailed: "[\u5FEB\u901F\u6383\u63CF] Worker \u521D\u59CB\u5316\u5931\u6557\u3002\u9019\u5F88\u53EF\u80FD\u662F\u7531\u65BC\u7DB2\u7AD9\u7684\u5167\u5BB9\u5B89\u5168\u7B56\u7565 (CSP) \u5C0E\u81F4\u7684\u3002",
           originalError: "[\u5FEB\u901F\u6383\u63CF] \u539F\u59CB\u932F\u8AA4: {{error}}",
           sendingData: "[\u5FEB\u901F\u6383\u63CF] Web Worker \u5DF2\u5EFA\u7ACB\uFF0C\u6B63\u5728\u767C\u9001 {{count}} \u689D\u6587\u672C\u9032\u884C\u8655\u7406...",
-          initSyncError: "[\u5FEB\u901F\u6383\u63CF] Worker \u521D\u59CB\u5316\u671F\u9593\u767C\u751F\u540C\u6B65\u932F\u8AA4: {{error}}"
+          initSyncError: "[\u5FEB\u901F\u6383\u63CF] Worker \u521D\u59CB\u5316\u671F\u9593\u767C\u751F\u540C\u6B65\u932F\u8AA4: {{error}}",
+          cspBlocked: "[\u5FEB\u901F\u6383\u63CF] CSP\u6AA2\u67E5\u5931\u6557\uFF0C\u4E0D\u5141\u8A31\u5EFA\u7ACBWorker\u3002"
         }
       },
       sessionScan: {
@@ -1061,7 +1068,8 @@ var TextExtractor = (() => {
           originalError: "[\u52D5\u614B\u6383\u63CF] \u539F\u59CB\u932F\u8AA4: {{error}}",
           initialized: "[\u52D5\u614B\u6383\u63CF] Worker \u521D\u59CB\u5316\u6210\u529F\uFF0C\u5DF2\u767C\u9001 {{count}} \u689D\u521D\u59CB\u6587\u672C\u4EE5\u958B\u59CB\u6703\u8A71\u3002",
           initSyncError: "[\u52D5\u614B\u6383\u63CF] Worker \u521D\u59CB\u5316\u671F\u9593\u767C\u751F\u540C\u6B65\u932F\u8AA4: {{error}}",
-          clearCommandSent: "[\u52D5\u614B\u6383\u63CF] \u6E05\u9664\u547D\u4EE4\u5DF2\u767C\u9001\u81F3 worker\u3002"
+          clearCommandSent: "[\u52D5\u614B\u6383\u63CF] \u6E05\u9664\u547D\u4EE4\u5DF2\u767C\u9001\u81F3 worker\u3002",
+          cspBlocked: "[\u52D5\u614B\u6383\u63CF] CSP\u6AA2\u67E5\u5931\u6557\uFF0C\u4E0D\u5141\u8A31\u5EFA\u7ACBWorker\u3002"
         }
       },
       ui: {
@@ -1134,7 +1142,8 @@ var TextExtractor = (() => {
           completed: "\u9078\u53D6\u5143\u7D20\u6383\u63CF Worker \u5DF2\u5B8C\u6210\uFF0C\u627E\u5230 {{count}} \u689D\u4E0D\u91CD\u8907\u6587\u672C\u3002",
           initFailed: "\u9078\u53D6\u5143\u7D20\u6383\u63CF Worker \u521D\u59CB\u5316\u5931\u6557\u3002\u700F\u89BD\u5668\u7684CSP\u53EF\u80FD\u963B\u6B62\u4E86 data: URL\u3002",
           initSyncError: "\u9078\u53D6\u5143\u7D20\u6383\u63CF Worker \u521D\u59CB\u5316\u671F\u9593\u767C\u751F\u540C\u6B65\u932F\u8AA4: {{error}}",
-          originalError: "\u539F\u59CB Worker \u932F\u8AA4: {{error}}"
+          originalError: "\u539F\u59CB Worker \u932F\u8AA4: {{error}}",
+          cspBlocked: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u7684CSP\u6AA2\u67E5\u5931\u6557\uFF0C\u4E0D\u5141\u8A31\u5EFA\u7ACBWorker\u3002"
         },
         switchToFallback: "\u6B63\u5728\u70BA\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5207\u63DB\u5230\u4E3B\u7DDA\u7A0B\u5099\u9078\u65B9\u6848\u3002",
         fallbackFailed: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5099\u9078\u65B9\u6848\u57F7\u884C\u5931\u6557: {{error}}"
@@ -1457,6 +1466,81 @@ var TextExtractor = (() => {
       saveSettings(settings);
     }
   }
+  var workerPolicy;
+  var htmlPolicy;
+  if (window.trustedTypes && window.trustedTypes.createPolicy) {
+    try {
+      workerPolicy = window.trustedTypes.createPolicy("text-extractor-worker", {
+        createScriptURL: (url) => url
+      });
+    } catch (e) {
+      if (!(e.name === "TypeError" && e.message.includes("Policy already exists"))) {
+        log(t("log.trustedTypes.workerPolicyError"), e);
+      }
+    }
+    try {
+      htmlPolicy = window.trustedTypes.createPolicy("text-extractor-html", {
+        createHTML: (htmlString) => htmlString
+      });
+    } catch (e) {
+      if (!(e.name === "TypeError" && e.message.includes("Policy already exists"))) {
+        log(t("log.trustedTypes.htmlPolicyError"), e);
+      }
+    }
+  }
+  function createTrustedWorkerUrl(url) {
+    if (workerPolicy) {
+      return workerPolicy.createScriptURL(url);
+    }
+    if (window.trustedTypes && window.trustedTypes.defaultPolicy) {
+      try {
+        return window.trustedTypes.defaultPolicy.createScriptURL(url);
+      } catch (e) {
+        log(t("log.trustedTypes.defaultWorkerPolicyWarning"), e, true);
+      }
+    }
+    return url;
+  }
+  function createTrustedHTML(htmlString) {
+    if (htmlPolicy) {
+      return htmlPolicy.createHTML(htmlString);
+    }
+    if (window.trustedTypes && window.trustedTypes.defaultPolicy) {
+      try {
+        return window.trustedTypes.defaultPolicy.createHTML(htmlString);
+      } catch (e) {
+        log(t("log.trustedTypes.defaultHtmlPolicyWarning"), e, true);
+      }
+    }
+    return htmlString;
+  }
+  var isAllowed = null;
+  async function isWorkerAllowed() {
+    if (isAllowed !== null) {
+      return isAllowed;
+    }
+    if (typeof Worker === "undefined" || typeof Blob === "undefined" || typeof URL === "undefined") {
+      isAllowed = false;
+      return isAllowed;
+    }
+    const testWorkerBlob = new Blob(["/* test */"], { type: "application/javascript" });
+    let workerURL;
+    let worker2;
+    try {
+      workerURL = createTrustedWorkerUrl(URL.createObjectURL(testWorkerBlob));
+      worker2 = new Worker(workerURL);
+      isAllowed = true;
+      worker2.terminate();
+      URL.revokeObjectURL(workerURL);
+    } catch (e) {
+      isAllowed = false;
+      console.error("[CSP Checker] Worker creation failed:", e);
+      if (workerURL) {
+        URL.revokeObjectURL(workerURL);
+      }
+    }
+    return isAllowed;
+  }
   var IGNORED_TERMS = [
     "Github",
     "Microsoft",
@@ -1565,163 +1649,6 @@ var TextExtractor = (() => {
       }
     }
     return null;
-  }
-  var traverseNodeWithShadows = (node, callback) => {
-    if (!node || ![Node.ELEMENT_NODE, Node.DOCUMENT_FRAGMENT_NODE].includes(node.nodeType)) {
-      return;
-    }
-    for (const child of node.childNodes) {
-      if (child.nodeType === Node.TEXT_NODE) {
-        callback(child);
-      } else if (child.nodeType === Node.ELEMENT_NODE) {
-        traverseNodeWithShadows(child, callback);
-      }
-    }
-    if (node.nodeType === Node.ELEMENT_NODE && node.shadowRoot) {
-      traverseNodeWithShadows(node.shadowRoot, callback);
-    }
-  };
-  var extractAndProcessText = () => {
-    const settings = loadSettings();
-    const { filterRules: filterRules2 } = settings;
-    const uniqueTexts =  new Set();
-    const processAndAddText = (rawText) => {
-      if (!rawText) return;
-      const normalizedText = rawText.normalize("NFC");
-      let text = normalizedText.replace(/(\r\n|\n|\r)+/g, "\n");
-      if (text.trim() === "") {
-        return;
-      }
-      const trimmedText = text.trim();
-      const filterReason = shouldFilter(trimmedText, filterRules2);
-      if (filterReason) {
-        log(t("log.textProcessor.filtered", { text: trimmedText, reason: filterReason }));
-        return;
-      }
-      uniqueTexts.add(text);
-    };
-    processAndAddText(document.title);
-    const targetElements = document.querySelectorAll(appConfig.scanner.targetSelectors.join(", "));
-    const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(", ");
-    targetElements.forEach((element) => {
-      if (element.closest(ignoredSelectorString)) {
-        return;
-      }
-      const attributesToExtract = appConfig.scanner.attributesToExtract;
-      if (element.tagName === "INPUT" && ["button", "submit", "reset"].includes(element.type)) {
-        const dynamicAttributes = [...attributesToExtract, "value"];
-        dynamicAttributes.forEach((attr) => {
-          const attrValue = element.getAttribute(attr);
-          if (attrValue) {
-            processAndAddText(attrValue);
-          }
-        });
-      } else {
-        attributesToExtract.forEach((attr) => {
-          const attrValue = element.getAttribute(attr);
-          if (attrValue) {
-            processAndAddText(attrValue);
-          }
-        });
-      }
-      traverseNodeWithShadows(element, (node) => {
-        const parent = node.parentElement;
-        if (parent && (parent.tagName === "SCRIPT" || parent.tagName === "STYLE" || parent.closest(ignoredSelectorString))) {
-          return;
-        }
-        if (parent && parent.closest(".text-extractor-fab, .text-extractor-modal-overlay, .settings-panel-overlay")) {
-          return;
-        }
-        processAndAddText(node.nodeValue);
-      });
-    });
-    return Array.from(uniqueTexts);
-  };
-  var extractAndProcessTextFromElement = (element) => {
-    if (!element) return [];
-    const settings = loadSettings();
-    const { filterRules: filterRules2 } = settings;
-    const uniqueTexts =  new Set();
-    const processAndAddText = (rawText) => {
-      if (!rawText) return;
-      const normalizedText = rawText.normalize("NFC");
-      let text = normalizedText.replace(/(\\r\\n|\\n|\\r)+/g, "\\n");
-      if (text.trim() === "") return;
-      const trimmedText = text.trim();
-      const filterReason = shouldFilter(trimmedText, filterRules2);
-      if (filterReason) {
-        log(t("log.textProcessor.filtered", { text: trimmedText, reason: filterReason }));
-        return;
-      }
-      uniqueTexts.add(text);
-    };
-    const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(", ");
-    if (element.closest(ignoredSelectorString)) {
-      return [];
-    }
-    const attributesToExtract = appConfig.scanner.attributesToExtract;
-    attributesToExtract.forEach((attr) => {
-      const attrValue = element.getAttribute(attr);
-      if (attrValue) {
-        processAndAddText(attrValue);
-      }
-    });
-    traverseNodeWithShadows(element, (node) => {
-      const parent = node.parentElement;
-      if (parent && (parent.tagName === "SCRIPT" || parent.tagName === "STYLE" || parent.closest(ignoredSelectorString) || parent.closest(".text-extractor-fab, .text-extractor-modal-overlay, .settings-panel-overlay"))) {
-        return;
-      }
-      processAndAddText(node.nodeValue);
-    });
-    return Array.from(uniqueTexts);
-  };
-  var workerPolicy;
-  var htmlPolicy;
-  if (window.trustedTypes && window.trustedTypes.createPolicy) {
-    try {
-      workerPolicy = window.trustedTypes.createPolicy("text-extractor-worker", {
-        createScriptURL: (url) => url
-      });
-    } catch (e) {
-      if (!(e.name === "TypeError" && e.message.includes("Policy already exists"))) {
-        log(t("log.trustedTypes.workerPolicyError"), e);
-      }
-    }
-    try {
-      htmlPolicy = window.trustedTypes.createPolicy("text-extractor-html", {
-        createHTML: (htmlString) => htmlString
-      });
-    } catch (e) {
-      if (!(e.name === "TypeError" && e.message.includes("Policy already exists"))) {
-        log(t("log.trustedTypes.htmlPolicyError"), e);
-      }
-    }
-  }
-  function createTrustedWorkerUrl(url) {
-    if (workerPolicy) {
-      return workerPolicy.createScriptURL(url);
-    }
-    if (window.trustedTypes && window.trustedTypes.defaultPolicy) {
-      try {
-        return window.trustedTypes.defaultPolicy.createScriptURL(url);
-      } catch (e) {
-        log(t("log.trustedTypes.defaultWorkerPolicyWarning"), e, true);
-      }
-    }
-    return url;
-  }
-  function createTrustedHTML(htmlString) {
-    if (htmlPolicy) {
-      return htmlPolicy.createHTML(htmlString);
-    }
-    if (window.trustedTypes && window.trustedTypes.defaultPolicy) {
-      try {
-        return window.trustedTypes.defaultPolicy.createHTML(htmlString);
-      } catch (e) {
-        log(t("log.trustedTypes.defaultHtmlPolicyWarning"), e, true);
-      }
-    }
-    return htmlString;
   }
   var formatTextsForTranslation = (texts) => {
     const result = texts.map(
@@ -1973,7 +1900,8 @@ ${result.join(",\n")}
           initFailed: "[Quick Scan] Worker initialization failed. This is likely due to the website's Content Security Policy (CSP).",
           originalError: "[Quick Scan] Original error: {{error}}",
           sendingData: "[Quick Scan] Web Worker created, sending {{count}} texts for processing...",
-          initSyncError: "[Quick Scan] Synchronous error during Worker initialization: {{error}}"
+          initSyncError: "[Quick Scan] Synchronous error during Worker initialization: {{error}}",
+          cspBlocked: "[Quick Scan] CSP check failed. Worker creation is not allowed."
         }
       },
       sessionScan: {
@@ -1992,7 +1920,8 @@ ${result.join(",\n")}
           originalError: "[Dynamic Scan] Original error: {{error}}",
           initialized: "[Dynamic Scan] Worker initialized successfully, sent {{count}} initial texts to start the session.",
           initSyncError: "[Dynamic Scan] Synchronous error during Worker initialization: {{error}}",
-          clearCommandSent: "[Dynamic Scan] Clear command sent to worker."
+          clearCommandSent: "[Dynamic Scan] Clear command sent to worker.",
+          cspBlocked: "[Dynamic Scan] CSP check failed. Worker creation is not allowed."
         }
       },
       ui: {
@@ -2065,7 +1994,8 @@ ${result.join(",\n")}
           completed: "Element Scan Worker completed, found {{count}} unique texts.",
           initFailed: "Element Scan Worker initialization failed. The browser's CSP might be blocking data: URLs.",
           initSyncError: "Synchronous error during Element Scan Worker initialization: {{error}}",
-          originalError: "Original worker error: {{error}}"
+          originalError: "Original worker error: {{error}}",
+          cspBlocked: "Element Scan CSP check failed. Worker creation is not allowed."
         },
         switchToFallback: "Switching to main thread fallback for Element Scan.",
         fallbackFailed: "Element Scan fallback mode failed: {{error}}"
@@ -2316,7 +2246,8 @@ ${result.join(",\n")}
           initFailed: "[\\u5FEB\\u901F\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u8D25\\u3002\\u8FD9\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u4E8E\\u7F51\\u7AD9\\u7684\\u5185\\u5BB9\\u5B89\\u5168\\u7B56\\u7565 (CSP) \\u5BFC\\u81F4\\u7684\\u3002",
           originalError: "[\\u5FEB\\u901F\\u626B\\u63CF] \\u539F\\u59CB\\u9519\\u8BEF: {{error}}",
           sendingData: "[\\u5FEB\\u901F\\u626B\\u63CF] Web Worker \\u5DF2\\u521B\\u5EFA\\uFF0C\\u6B63\\u5728\\u53D1\\u9001 {{count}} \\u6761\\u6587\\u672C\\u8FDB\\u884C\\u5904\\u7406...",
-          initSyncError: "[\\u5FEB\\u901F\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u671F\\u95F4\\u53D1\\u751F\\u540C\\u6B65\\u9519\\u8BEF: {{error}}"
+          initSyncError: "[\\u5FEB\\u901F\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u671F\\u95F4\\u53D1\\u751F\\u540C\\u6B65\\u9519\\u8BEF: {{error}}",
+          cspBlocked: "[\\u5FEB\\u901F\\u626B\\u63CF] CSP\\u68C0\\u67E5\\u5931\\u8D25\\uFF0C\\u4E0D\\u5141\\u8BB8\\u521B\\u5EFAWorker\\u3002"
         }
       },
       sessionScan: {
@@ -2335,7 +2266,8 @@ ${result.join(",\n")}
           originalError: "[\\u52A8\\u6001\\u626B\\u63CF] \\u539F\\u59CB\\u9519\\u8BEF: {{error}}",
           initialized: "[\\u52A8\\u6001\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u6210\\u529F\\uFF0C\\u5DF2\\u53D1\\u9001 {{count}} \\u6761\\u521D\\u59CB\\u6587\\u672C\\u4EE5\\u5F00\\u59CB\\u4F1A\\u8BDD\\u3002",
           initSyncError: "[\\u52A8\\u6001\\u626B\\u63CF] Worker \\u521D\\u59CB\\u5316\\u671F\\u95F4\\u53D1\\u751F\\u540C\\u6B65\\u9519\\u8BEF: {{error}}",
-          clearCommandSent: "[\\u52A8\\u6001\\u626B\\u63CF] \\u6E05\\u9664\\u547D\\u4EE4\\u5DF2\\u53D1\\u9001\\u81F3 worker\\u3002"
+          clearCommandSent: "[\\u52A8\\u6001\\u626B\\u63CF] \\u6E05\\u9664\\u547D\\u4EE4\\u5DF2\\u53D1\\u9001\\u81F3 worker\\u3002",
+          cspBlocked: "[\\u52A8\\u6001\\u626B\\u63CF] CSP\\u68C0\\u67E5\\u5931\\u8D25\\uFF0C\\u4E0D\\u5141\\u8BB8\\u521B\\u5EFAWorker\\u3002"
         }
       },
       ui: {
@@ -2408,7 +2340,8 @@ ${result.join(",\n")}
           completed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u5DF2\\u5B8C\\u6210\\uFF0C\\u627E\\u5230 {{count}} \\u6761\\u4E0D\\u91CD\\u590D\\u6587\\u672C\\u3002",
           initFailed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u521D\\u59CB\\u5316\\u5931\\u8D25\\u3002\\u6D4F\\u89C8\\u5668\\u7684CSP\\u53EF\\u80FD\\u963B\\u6B62\\u4E86 data: URL\\u3002",
           initSyncError: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u521D\\u59CB\\u5316\\u671F\\u95F4\\u53D1\\u751F\\u540C\\u6B65\\u9519\\u8BEF: {{error}}",
-          originalError: "\\u539F\\u59CB Worker \\u9519\\u8BEF: {{error}}"
+          originalError: "\\u539F\\u59CB Worker \\u9519\\u8BEF: {{error}}",
+          cspBlocked: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u7684CSP\\u68C0\\u67E5\\u5931\\u8D25\\uFF0C\\u4E0D\\u5141\\u8BB8\\u521B\\u5EFAWorker\\u3002"
         },
         switchToFallback: "\\u6B63\\u5728\\u4E3A\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
         fallbackFailed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5907\\u9009\\u65B9\\u6848\\u6267\\u884C\\u5931\\u8D25: {{error}}"
@@ -2659,7 +2592,8 @@ ${result.join(",\n")}
           initFailed: "[\\u5FEB\\u901F\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u5931\\u6557\\u3002\\u9019\\u5F88\\u53EF\\u80FD\\u662F\\u7531\\u65BC\\u7DB2\\u7AD9\\u7684\\u5167\\u5BB9\\u5B89\\u5168\\u7B56\\u7565 (CSP) \\u5C0E\\u81F4\\u7684\\u3002",
           originalError: "[\\u5FEB\\u901F\\u6383\\u63CF] \\u539F\\u59CB\\u932F\\u8AA4: {{error}}",
           sendingData: "[\\u5FEB\\u901F\\u6383\\u63CF] Web Worker \\u5DF2\\u5EFA\\u7ACB\\uFF0C\\u6B63\\u5728\\u767C\\u9001 {{count}} \\u689D\\u6587\\u672C\\u9032\\u884C\\u8655\\u7406...",
-          initSyncError: "[\\u5FEB\\u901F\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u671F\\u9593\\u767C\\u751F\\u540C\\u6B65\\u932F\\u8AA4: {{error}}"
+          initSyncError: "[\\u5FEB\\u901F\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u671F\\u9593\\u767C\\u751F\\u540C\\u6B65\\u932F\\u8AA4: {{error}}",
+          cspBlocked: "[\\u5FEB\\u901F\\u6383\\u63CF] CSP\\u6AA2\\u67E5\\u5931\\u6557\\uFF0C\\u4E0D\\u5141\\u8A31\\u5EFA\\u7ACBWorker\\u3002"
         }
       },
       sessionScan: {
@@ -2678,7 +2612,8 @@ ${result.join(",\n")}
           originalError: "[\\u52D5\\u614B\\u6383\\u63CF] \\u539F\\u59CB\\u932F\\u8AA4: {{error}}",
           initialized: "[\\u52D5\\u614B\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u6210\\u529F\\uFF0C\\u5DF2\\u767C\\u9001 {{count}} \\u689D\\u521D\\u59CB\\u6587\\u672C\\u4EE5\\u958B\\u59CB\\u6703\\u8A71\\u3002",
           initSyncError: "[\\u52D5\\u614B\\u6383\\u63CF] Worker \\u521D\\u59CB\\u5316\\u671F\\u9593\\u767C\\u751F\\u540C\\u6B65\\u932F\\u8AA4: {{error}}",
-          clearCommandSent: "[\\u52D5\\u614B\\u6383\\u63CF] \\u6E05\\u9664\\u547D\\u4EE4\\u5DF2\\u767C\\u9001\\u81F3 worker\\u3002"
+          clearCommandSent: "[\\u52D5\\u614B\\u6383\\u63CF] \\u6E05\\u9664\\u547D\\u4EE4\\u5DF2\\u767C\\u9001\\u81F3 worker\\u3002",
+          cspBlocked: "[\\u52D5\\u614B\\u6383\\u63CF] CSP\\u6AA2\\u67E5\\u5931\\u6557\\uFF0C\\u4E0D\\u5141\\u8A31\\u5EFA\\u7ACBWorker\\u3002"
         }
       },
       ui: {
@@ -2751,7 +2686,8 @@ ${result.join(",\n")}
           completed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u5DF2\\u5B8C\\u6210\\uFF0C\\u627E\\u5230 {{count}} \\u689D\\u4E0D\\u91CD\\u8907\\u6587\\u672C\\u3002",
           initFailed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u521D\\u59CB\\u5316\\u5931\\u6557\\u3002\\u700F\\u89BD\\u5668\\u7684CSP\\u53EF\\u80FD\\u963B\\u6B62\\u4E86 data: URL\\u3002",
           initSyncError: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u521D\\u59CB\\u5316\\u671F\\u9593\\u767C\\u751F\\u540C\\u6B65\\u932F\\u8AA4: {{error}}",
-          originalError: "\\u539F\\u59CB Worker \\u932F\\u8AA4: {{error}}"
+          originalError: "\\u539F\\u59CB Worker \\u932F\\u8AA4: {{error}}",
+          cspBlocked: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u7684CSP\\u6AA2\\u67E5\\u5931\\u6557\\uFF0C\\u4E0D\\u5141\\u8A31\\u5EFA\\u7ACBWorker\\u3002"
         },
         switchToFallback: "\\u6B63\\u5728\\u70BA\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
         fallbackFailed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5099\\u9078\\u65B9\\u6848\\u57F7\\u884C\\u5931\\u6557: {{error}}"
@@ -3320,9 +3256,106 @@ ${result.join(",\n")}
     currentScanState = { count, type };
     updateScanCountDisplay();
   }
-  var performQuickScan = (texts) => {
-    return new Promise((resolve, reject) => {
+  var traverseNodeWithShadows = (node, callback) => {
+    if (!node || ![Node.ELEMENT_NODE, Node.DOCUMENT_FRAGMENT_NODE].includes(node.nodeType)) {
+      return;
+    }
+    for (const child of node.childNodes) {
+      if (child.nodeType === Node.TEXT_NODE) {
+        callback(child);
+      } else if (child.nodeType === Node.ELEMENT_NODE) {
+        traverseNodeWithShadows(child, callback);
+      }
+    }
+    if (node.nodeType === Node.ELEMENT_NODE && node.shadowRoot) {
+      traverseNodeWithShadows(node.shadowRoot, callback);
+    }
+  };
+  var extractAndProcessText = () => {
+    const uniqueTexts =  new Set();
+    const processAndAddText = (rawText) => {
+      if (!rawText) return;
+      const normalizedText = rawText.normalize("NFC");
+      let text = normalizedText.replace(/(\r\n|\n|\r)+/g, "\n");
+      if (text.trim() === "") {
+        return;
+      }
+      uniqueTexts.add(text);
+    };
+    processAndAddText(document.title);
+    const targetElements = document.querySelectorAll(appConfig.scanner.targetSelectors.join(", "));
+    const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(", ");
+    targetElements.forEach((element) => {
+      if (element.closest(ignoredSelectorString)) {
+        return;
+      }
+      const attributesToExtract = appConfig.scanner.attributesToExtract;
+      if (element.tagName === "INPUT" && ["button", "submit", "reset"].includes(element.type)) {
+        const dynamicAttributes = [...attributesToExtract, "value"];
+        dynamicAttributes.forEach((attr) => {
+          const attrValue = element.getAttribute(attr);
+          if (attrValue) {
+            processAndAddText(attrValue);
+          }
+        });
+      } else {
+        attributesToExtract.forEach((attr) => {
+          const attrValue = element.getAttribute(attr);
+          if (attrValue) {
+            processAndAddText(attrValue);
+          }
+        });
+      }
+      traverseNodeWithShadows(element, (node) => {
+        const parent = node.parentElement;
+        if (parent && (parent.tagName === "SCRIPT" || parent.tagName === "STYLE" || parent.closest(ignoredSelectorString))) {
+          return;
+        }
+        if (parent && parent.closest(".text-extractor-fab, .text-extractor-modal-overlay, .settings-panel-overlay")) {
+          return;
+        }
+        processAndAddText(node.nodeValue);
+      });
+    });
+    return Array.from(uniqueTexts);
+  };
+  var extractAndProcessTextFromElement = (element) => {
+    if (!element) return [];
+    const uniqueTexts =  new Set();
+    const processAndAddText = (rawText) => {
+      if (!rawText) return;
+      const normalizedText = rawText.normalize("NFC");
+      let text = normalizedText.replace(/(\\r\\n|\\n|\\r)+/g, "\\n");
+      if (text.trim() === "") return;
+      uniqueTexts.add(text);
+    };
+    const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(", ");
+    if (element.closest(ignoredSelectorString)) {
+      return [];
+    }
+    const attributesToExtract = appConfig.scanner.attributesToExtract;
+    attributesToExtract.forEach((attr) => {
+      const attrValue = element.getAttribute(attr);
+      if (attrValue) {
+        processAndAddText(attrValue);
+      }
+    });
+    traverseNodeWithShadows(element, (node) => {
+      const parent = node.parentElement;
+      if (parent && (parent.tagName === "SCRIPT" || parent.tagName === "STYLE" || parent.closest(ignoredSelectorString) || parent.closest(".text-extractor-fab, .text-extractor-modal-overlay, .settings-panel-overlay"))) {
+        return;
+      }
+      processAndAddText(node.nodeValue);
+    });
+    return Array.from(uniqueTexts);
+  };
+  var performQuickScan = () => {
+    return new Promise(async (resolve, reject) => {
       const { filterRules: filterRules2, enableDebugLogging } = loadSettings();
+      const [texts, workerAllowed] = await Promise.all([
+        extractAndProcessText(),
+        isWorkerAllowed()
+      ]);
       const runFallback = () => {
         log(t("log.quickScan.switchToFallback"));
         showNotification(t("notifications.cspWorkerWarning"), { type: "info", duration: 5e3 });
@@ -3335,6 +3368,10 @@ ${result.join(",\n")}
           reject(fallbackError);
         }
       };
+      if (!workerAllowed) {
+        log(t("log.quickScan.worker.cspBlocked"), "warn");
+        return runFallback();
+      }
       try {
         log(t("log.quickScan.worker.starting"));
         const worker2 = new Worker(trustedWorkerUrl);
@@ -3515,28 +3552,37 @@ ${result.join(",\n")}
       log(t("log.sessionScan.worker.clearCommandSent"));
     }
   }
-  var start = (onUpdate) => {
+  var start = async (onUpdate) => {
     if (isRecording) return;
     if (worker) worker.terminate();
     currentCount = 0;
     onUpdateCallback = onUpdate;
     useFallback = false;
     isRecording = true;
-    const { filterRules: filterRules2 } = loadSettings();
-    const activateFallbackMode = (initialTexts2) => {
+    const [initialTexts, settings, workerAllowed] = await Promise.all([
+      extractAndProcessText(),
+      loadSettings(),
+      isWorkerAllowed()
+    ]);
+    const { filterRules: filterRules2, enableDebugLogging } = settings;
+    const activateFallbackMode = () => {
       log(t("log.sessionScan.switchToFallback"), "warn");
       worker = null;
       useFallback = true;
-      showNotification(t("notifications.cspWorkerWarning"), { type: "info", duration: 5e3 });
       initFallback(filterRules2);
-      processTextsInFallback(initialTexts2);
+      processTextsInFallback(initialTexts);
       const count = getCountInFallback();
       if (onUpdateCallback) onUpdateCallback(count);
       updateScanCount(count, "session");
       observer = new MutationObserver(handleMutations);
       observer.observe(document.body, { childList: true, subtree: true });
     };
-    const initialTexts = extractAndProcessText();
+    if (!workerAllowed) {
+      log(t("log.sessionScan.worker.cspBlocked"), "warn");
+      showNotification(t("notifications.cspWorkerWarning"), { type: "info", duration: 5e3 });
+      activateFallbackMode();
+      return;
+    }
     try {
       log(t("log.sessionScan.worker.starting"));
       worker = new Worker(trustedWorkerUrl);
@@ -3555,9 +3601,9 @@ ${result.join(",\n")}
         log(t("log.sessionScan.worker.initFailed"), "warn");
         log(t("log.sessionScan.worker.originalError", { error: error.message }), "debug");
         if (worker) worker.terminate();
-        activateFallbackMode(initialTexts);
+        showNotification(t("notifications.cspWorkerWarning"), { type: "info", duration: 5e3 });
+        activateFallbackMode();
       };
-      const { enableDebugLogging } = loadSettings();
       worker.postMessage({
         type: "session-start",
         payload: {
@@ -3574,7 +3620,8 @@ ${result.join(",\n")}
       log(t("log.sessionScan.worker.initialized", { count: initialTexts.length }));
     } catch (e) {
       log(t("log.sessionScan.worker.initSyncError", { error: e.message }), "error");
-      activateFallbackMode(initialTexts);
+      showNotification(t("notifications.cspWorkerWarning"), { type: "info", duration: 5e3 });
+      activateFallbackMode();
     }
     if (!useFallback) {
       observer = new MutationObserver(handleMutations);
@@ -4175,8 +4222,7 @@ ${result.join(",\n")}
     log(t("log.ui.modal.opening"));
     updateModalContent(SHOW_LOADING, true, "quick-scan");
     try {
-      const extractedTexts = extractAndProcessText();
-      const { formattedText, count } = await performQuickScan(extractedTexts);
+      const { formattedText, count } = await performQuickScan();
       hideLoading();
       fullQuickScanContent = formattedText;
       updateModalContent(formattedText, false, "quick-scan");
@@ -5423,21 +5469,24 @@ ${result.join(",\n")}
       updateHighlight(targetElement);
     }
   }
-  function processTextsWithWorker(texts) {
+  async function processTextsWithWorker(texts, { filterRules: filterRules2, enableDebugLogging }, workerAllowed) {
+    const runFallback = () => {
+      log(t("log.elementScan.switchToFallback"));
+      showNotification(t("notifications.cspWorkerWarning"), { type: "info", duration: 5e3 });
+      try {
+        const result = performScanInMainThread2(texts, filterRules2, enableDebugLogging);
+        updateScanCount(result.count, "element");
+        return Promise.resolve(result);
+      } catch (fallbackError) {
+        log(t("log.elementScan.fallbackFailed", { error: fallbackError.message }), "error");
+        return Promise.reject(fallbackError);
+      }
+    };
+    if (!workerAllowed) {
+      log(t("log.elementScan.worker.cspBlocked"), "warn");
+      return runFallback();
+    }
     return new Promise((resolve, reject) => {
-      const { filterRules: filterRules2, enableDebugLogging } = loadSettings();
-      const runFallback = () => {
-        log(t("log.elementScan.switchToFallback"));
-        showNotification(t("notifications.cspWorkerWarning"), { type: "info", duration: 5e3 });
-        try {
-          const result = performScanInMainThread2(texts, filterRules2, enableDebugLogging);
-          updateScanCount(result.count, "element");
-          resolve(result);
-        } catch (fallbackError) {
-          log(t("log.elementScan.fallbackFailed", { error: fallbackError.message }), "error");
-          reject(fallbackError);
-        }
-      };
       try {
         log(t("log.elementScan.worker.starting"));
         const worker2 = new Worker(trustedWorkerUrl);
@@ -5454,7 +5503,7 @@ ${result.join(",\n")}
           log(t("log.elementScan.worker.initFailed"), "warn");
           log(t("log.elementScan.worker.originalError", { error: error.message }), "debug");
           worker2.terminate();
-          runFallback();
+          runFallback().then(resolve).catch(reject);
         };
         log(t("log.elementScan.worker.sendingData", { count: texts.length }));
         const filterReasonTranslations = Object.keys(filterRules2).reduce((acc, key) => {
@@ -5477,7 +5526,7 @@ ${result.join(",\n")}
         });
       } catch (e) {
         log(t("log.elementScan.worker.initSyncError", { error: e.message }), "error");
-        runFallback();
+        runFallback().then(resolve).catch(reject);
       }
     });
   }
@@ -5486,7 +5535,11 @@ ${result.join(",\n")}
       log(t("log.elementScan.confirmFailedNoTarget"));
       return;
     }
-    const newTexts = extractAndProcessTextFromElement(currentTarget);
+    const [newTexts, settings, workerAllowed] = await Promise.all([
+      extractAndProcessTextFromElement(currentTarget),
+      loadSettings(),
+      isWorkerAllowed()
+    ]);
     newTexts.forEach((text) => stagedTexts.add(text));
     updateStagedCount();
     const totalToProcess = stagedTexts.size;
@@ -5499,9 +5552,9 @@ ${result.join(",\n")}
     removeScrollListeners();
     setShouldResumeAfterModalClose(true);
     try {
-      const allCleanTexts = Array.from(stagedTexts);
-      log(simpleTemplate(t("log.elementScan.extractedCount"), { count: allCleanTexts.length }));
-      const { formattedText, count } = await processTextsWithWorker(allCleanTexts);
+      const allTexts = Array.from(stagedTexts);
+      log(simpleTemplate(t("log.elementScan.extractedCount"), { count: allTexts.length }));
+      const { formattedText, count } = await processTextsWithWorker(allTexts, settings, workerAllowed);
       updateModalContent(formattedText, true, "element-scan");
       const notificationText = simpleTemplate(t("scan.elementFinished"), { count });
       showNotification(notificationText, { type: "success" });

@@ -211,7 +211,8 @@
         "initFailed": "[Quick Scan] Worker initialization failed. This is likely due to the website's Content Security Policy (CSP).",
         "originalError": "[Quick Scan] Original error: {{error}}",
         "sendingData": "[Quick Scan] Web Worker created, sending {{count}} texts for processing...",
-        "initSyncError": "[Quick Scan] Synchronous error during Worker initialization: {{error}}"
+        "initSyncError": "[Quick Scan] Synchronous error during Worker initialization: {{error}}",
+        "cspBlocked": "[Quick Scan] CSP check failed. Worker creation is not allowed."
       }
     },
     "sessionScan": {
@@ -230,7 +231,8 @@
         "originalError": "[Dynamic Scan] Original error: {{error}}",
         "initialized": "[Dynamic Scan] Worker initialized successfully, sent {{count}} initial texts to start the session.",
         "initSyncError": "[Dynamic Scan] Synchronous error during Worker initialization: {{error}}",
-        "clearCommandSent": "[Dynamic Scan] Clear command sent to worker."
+        "clearCommandSent": "[Dynamic Scan] Clear command sent to worker.",
+        "cspBlocked": "[Dynamic Scan] CSP check failed. Worker creation is not allowed."
       }
     },
     "ui": {
@@ -303,7 +305,8 @@
         "completed": "Element Scan Worker completed, found {{count}} unique texts.",
         "initFailed": "Element Scan Worker initialization failed. The browser's CSP might be blocking data: URLs.",
         "initSyncError": "Synchronous error during Element Scan Worker initialization: {{error}}",
-        "originalError": "Original worker error: {{error}}"
+        "originalError": "Original worker error: {{error}}",
+        "cspBlocked": "Element Scan CSP check failed. Worker creation is not allowed."
       },
       "switchToFallback": "Switching to main thread fallback for Element Scan.",
       "fallbackFailed": "Element Scan fallback mode failed: {{error}}"

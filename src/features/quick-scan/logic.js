@@ -7,22 +7,28 @@
 
 import { loadSettings } from '../settings/logic.js';
 import { log } from '../../shared/utils/logger.js';
-import { createTrustedWorkerUrl } from '../../shared/utils/trustedTypes.js';
+import { isWorkerAllowed } from '../../shared/utils/csp-checker.js';
 import { performScanInMainThread } from './fallback.js';
 import { trustedWorkerUrl } from '../../shared/workers/worker-url.js';
 import { showNotification } from '../../shared/ui/components/notification.js';
 import { t, getTranslationObject } from '../../shared/i18n/index.js';
 import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
+import { extractAndProcessText } from '../../shared/utils/textProcessor.js';
 
 /**
  * @description 执行一次性的静态页面扫描。
- * @param {string[]} texts - 从 DOM 提取的原始文本数组。
  * @returns {Promise<{formattedText: string, count: number}>} - 返回一个 Promise，
  *          该 Promise 在扫描完成时解析为一个包含格式化文本和计数的对象。
  */
-export const performQuickScan = (texts) => {
-    return new Promise((resolve, reject) => {
+export const performQuickScan = () => {
+    return new Promise(async (resolve, reject) => {
         const { filterRules, enableDebugLogging } = loadSettings();
+
+        // 并行执行文本提取和CSP检查
+        const [texts, workerAllowed] = await Promise.all([
+            extractAndProcessText(),
+            isWorkerAllowed()
+        ]);
 
         // 备选方案逻辑
         const runFallback = () => {
@@ -37,6 +43,11 @@ export const performQuickScan = (texts) => {
                 reject(fallbackError);
             }
         };
+
+        if (!workerAllowed) {
+            log(t('log.quickScan.worker.cspBlocked'), 'warn');
+            return runFallback();
+        }
 
         try {
             log(t('log.quickScan.worker.starting'));

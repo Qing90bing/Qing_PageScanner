@@ -211,7 +211,8 @@
         "initFailed": "[快速掃描] Worker 初始化失敗。這很可能是由於網站的內容安全策略 (CSP) 導致的。",
         "originalError": "[快速掃描] 原始錯誤: {{error}}",
         "sendingData": "[快速掃描] Web Worker 已建立，正在發送 {{count}} 條文本進行處理...",
-        "initSyncError": "[快速掃描] Worker 初始化期間發生同步錯誤: {{error}}"
+        "initSyncError": "[快速掃描] Worker 初始化期間發生同步錯誤: {{error}}",
+        "cspBlocked": "[快速掃描] CSP檢查失敗，不允許建立Worker。"
       }
     },
     "sessionScan": {
@@ -230,7 +231,8 @@
         "originalError": "[動態掃描] 原始錯誤: {{error}}",
         "initialized": "[動態掃描] Worker 初始化成功，已發送 {{count}} 條初始文本以開始會話。",
         "initSyncError": "[動態掃描] Worker 初始化期間發生同步錯誤: {{error}}",
-        "clearCommandSent": "[動態掃描] 清除命令已發送至 worker。"
+        "clearCommandSent": "[動態掃描] 清除命令已發送至 worker。",
+        "cspBlocked": "[動態掃描] CSP檢查失敗，不允許建立Worker。"
       }
     },
     "ui": {
@@ -303,7 +305,8 @@
         "completed": "選取元素掃描 Worker 已完成，找到 {{count}} 條不重複文本。",
         "initFailed": "選取元素掃描 Worker 初始化失敗。瀏覽器的CSP可能阻止了 data: URL。",
         "initSyncError": "選取元素掃描 Worker 初始化期間發生同步錯誤: {{error}}",
-        "originalError": "原始 Worker 錯誤: {{error}}"
+        "originalError": "原始 Worker 錯誤: {{error}}",
+        "cspBlocked": "選取元素掃描的CSP檢查失敗，不允許建立Worker。"
       },
       "switchToFallback": "正在為選取元素掃描切換到主線程備選方案。",
       "fallbackFailed": "選取元素掃描備選方案執行失敗: {{error}}"

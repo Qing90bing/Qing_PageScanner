@@ -5,11 +5,7 @@
  * @description 包含了脚本的核心文本处理功能，负责从页面 DOM 中提取、过滤和格式化文本。
  */
 
-import { loadSettings } from '../../features/settings/logic.js';
 import { appConfig } from '../../features/settings/config.js';
-import { shouldFilter } from './filterLogic.js'; // 导入新的通用过滤函数
-import { log } from './logger.js';
-import { t } from '../i18n/index.js';
 
 // --- 私有函数 ---
 
@@ -51,49 +47,21 @@ const traverseNodeWithShadows = (node, callback) => {
  * @public
  * @returns {string[]} 一个包含从页面上提取并处理过的、唯一的文本字符串的数组。
  * @description 这是脚本的核心功能函数。它会遍历整个页面的 DOM 树，
- * 提取所有文本节点，然后根据用户设置的过滤规则进行筛选，最后返回一个去重后的文本数组。
+ * 提取所有文本节点，然后返回一个去重后的原始文本数组。
  */
 export const extractAndProcessText = () => {
-    // 1. 加载最新的用户设置和静态配置
-    const settings = loadSettings();
-    const { filterRules } = settings;
-
-    // 2. 使用 Set 来存储唯一的文本，可以自动去重
     const uniqueTexts = new Set();
 
-    /**
-     * @private
-     * @description 对单个文本片段进行预处理、过滤，并将有效的文本添加到 uniqueTexts 集合中。
-     * @param {string | null | undefined} rawText - 需要处理的原始文本。
-     */
     const processAndAddText = (rawText) => {
         if (!rawText) return;
-
-        // Unicode 标准化，修复特殊字符（如组合字符）的显示问题
         const normalizedText = rawText.normalize('NFC');
-
-        // 规范化换行符
         let text = normalizedText.replace(/(\r\n|\n|\r)+/g, '\n');
-
-        // 忽略纯空白字符串
         if (text.trim() === '') {
             return;
         }
-
-        const trimmedText = text.trim();
-
-        // 使用重构后的通用函数来应用所有过滤规则
-        const filterReason = shouldFilter(trimmedText, filterRules);
-        if (filterReason) {
-            log(t('log.textProcessor.filtered', { text: trimmedText, reason: filterReason }));
-            return;
-        }
-
-        // 如果通过所有过滤，则添加到 Set 中
         uniqueTexts.add(text);
     };
 
-    // 3. 提取页面标题
     processAndAddText(document.title);
 
     // 4. 根据配置文件中的选择器，获取所有目标元素
@@ -201,8 +169,6 @@ export const extractRawTextFromElement = (element) => {
 export const extractAndProcessTextFromElement = (element) => {
     if (!element) return [];
 
-    const settings = loadSettings();
-    const { filterRules } = settings;
     const uniqueTexts = new Set();
 
     const processAndAddText = (rawText) => {
@@ -211,12 +177,6 @@ export const extractAndProcessTextFromElement = (element) => {
         let text = normalizedText.replace(/(\\r\\n|\\n|\\r)+/g, '\\n');
         if (text.trim() === '') return;
 
-        const trimmedText = text.trim();
-        const filterReason = shouldFilter(trimmedText, filterRules);
-        if (filterReason) {
-            log(t('log.textProcessor.filtered', { text: trimmedText, reason: filterReason }));
-            return;
-        }
         uniqueTexts.add(text);
     };
 

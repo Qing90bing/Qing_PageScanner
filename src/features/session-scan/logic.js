@@ -9,7 +9,7 @@ import { extractAndProcessText } from '../../shared/utils/textProcessor.js';
 import { loadSettings } from '../settings/logic.js';
 import { appConfig } from '../settings/config.js';
 import { log } from '../../shared/utils/logger.js';
-import { createTrustedWorkerUrl } from '../../shared/utils/trustedTypes.js';
+import { isWorkerAllowed } from '../../shared/utils/csp-checker.js';
 import { showNotification } from '../../shared/ui/components/notification.js';
 import { t, getTranslationObject } from '../../shared/i18n/index.js';
 import { fire, on } from '../../shared/utils/eventBus.js';
@@ -85,34 +85,44 @@ function clearSessionData() {
 
 // --- 公开函数 ---
 
-export const start = (onUpdate) => {
+export const start = async (onUpdate) => {
     if (isRecording) return;
 
     if (worker) worker.terminate();
-    currentCount = 0; // 开始新会话时重置计数值
+    currentCount = 0;
     onUpdateCallback = onUpdate;
     useFallback = false;
     isRecording = true;
 
-    const { filterRules } = loadSettings();
+    const [initialTexts, settings, workerAllowed] = await Promise.all([
+        extractAndProcessText(),
+        loadSettings(),
+        isWorkerAllowed()
+    ]);
 
-    const activateFallbackMode = (initialTexts) => {
+    const { filterRules, enableDebugLogging } = settings;
+
+    const activateFallbackMode = () => {
         log(t('log.sessionScan.switchToFallback'), 'warn');
         worker = null;
         useFallback = true;
-        showNotification(t('notifications.cspWorkerWarning'), { type: 'info', duration: 5000 });
 
         fallback.initFallback(filterRules);
-        fallback.processTextsInFallback(initialTexts); // 处理文本
-        const count = fallback.getCountInFallback();   // 立即获取当前计数
-        if (onUpdateCallback) onUpdateCallback(count); // 强制更新UI
-        updateScanCount(count, 'session');             // 同时更新模态框内的计数
+        fallback.processTextsInFallback(initialTexts);
+        const count = fallback.getCountInFallback();
+        if (onUpdateCallback) onUpdateCallback(count);
+        updateScanCount(count, 'session');
 
         observer = new MutationObserver(handleMutations);
         observer.observe(document.body, { childList: true, subtree: true });
     };
 
-    const initialTexts = extractAndProcessText();
+    if (!workerAllowed) {
+        log(t('log.sessionScan.worker.cspBlocked'), 'warn');
+        showNotification(t('notifications.cspWorkerWarning'), { type: 'info', duration: 5000 });
+        activateFallbackMode();
+        return;
+    }
 
     try {
         log(t('log.sessionScan.worker.starting'));
@@ -135,10 +145,10 @@ export const start = (onUpdate) => {
             log(t('log.sessionScan.worker.initFailed'), 'warn');
             log(t('log.sessionScan.worker.originalError', { error: error.message }), 'debug');
             if (worker) worker.terminate();
-            activateFallbackMode(initialTexts);
+            showNotification(t('notifications.cspWorkerWarning'), { type: 'info', duration: 5000 });
+            activateFallbackMode();
         };
 
-        const { enableDebugLogging } = loadSettings();
         worker.postMessage({
             type: 'session-start',
             payload: {
@@ -156,7 +166,8 @@ export const start = (onUpdate) => {
 
     } catch (e) {
         log(t('log.sessionScan.worker.initSyncError', { error: e.message }), 'error');
-        activateFallbackMode(initialTexts);
+        showNotification(t('notifications.cspWorkerWarning'), { type: 'info', duration: 5000 });
+        activateFallbackMode();
     }
 
     if (!useFallback) {
