@@ -96,7 +96,9 @@
     "truncationWarning": "为保持界面流畅，此处仅显示部分文本。导出后将包含完整内容。"
   },
   "slider": {
-    "adjustFrameSize": "移动滑块以调整框架大小"
+    "adjustFrameSize": "移动滑块以调整框架大小",
+    "minLabel": "最小",
+    "maxLabel": "最大"
   },
   "results": {
     "title": "提取的文本",

@@ -1,40 +1,57 @@
 // src/shared/ui/components/customSlider.js
 import { t } from '../../i18n/index.js';
 import { createTrustedHTML } from '../../utils/trustedTypes.js';
-/**
- * CustomSlider 类用于创建一个可自定义的滑块组件。
- * @class
- */
+
 export class CustomSlider {
-    /**
-     * 创建一个 CustomSlider 实例。
-     * @param {object} options - 滑块的配置选项。
-     * @param {number} options.min - 滑块的最小值。
-     * @param {number} options.max - 滑块的最大值。
-     * @param {number} options.value - 滑块的初始值。
-     * @param {function(number): void} options.onChange - 当滑块值改变时调用的回调函数。
-     */
     constructor({ min, max, value, onChange }) {
         this.min = min;
         this.max = max;
         this.value = value;
         this.onChange = onChange;
+        this.isInitialized = false;
+        this.observer = null;
+
         this.element = this.createSliderElement();
         this.thumb = this.element.querySelector('.custom-slider-thumb');
         this.track = this.element.querySelector('.custom-slider-track');
         this.ticksContainer = this.element.querySelector('.custom-slider-ticks');
 
-        this.updateTicks();
-        this.updateThumbPosition();
+        this.resizeHandler = this.updateThumbPosition.bind(this);
+        this.initOnVisible();
+    }
 
+    initOnVisible() {
+        this.observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    if (!this.isInitialized) {
+                        this.performInitialMeasurement();
+                        this.isInitialized = true;
+                    }
+                    // Stop observing once it's visible and initialized.
+                    observer.unobserve(this.element);
+                }
+            });
+        }, { threshold: 0.1 }); // Trigger when at least 10% is visible
+
+        this.observer.observe(this.element);
+    }
+
+    performInitialMeasurement() {
+        this.updateTicks();
+        this.getStyleValues();
+        this.updateThumbPosition();
         this.addEventListeners();
     }
 
-    /**
-     * 创建滑块的 DOM 结构。
-     * @returns {HTMLElement} 滑块的根元素。
-     * @private
-     */
+    getStyleValues() {
+        const ticksStyle = window.getComputedStyle(this.ticksContainer);
+        const firstTick = this.ticksContainer.querySelector('.custom-slider-tick');
+
+        this.padding = parseFloat(ticksStyle.paddingLeft) || 0;
+        this.tickWidth = firstTick ? (parseFloat(window.getComputedStyle(firstTick).width) || 0) : 0;
+    }
+
     createSliderElement() {
         const container = document.createElement('div');
         container.className = 'custom-slider-container';
@@ -47,6 +64,14 @@ export class CustomSlider {
         const sliderWrapper = document.createElement('div');
         sliderWrapper.className = 'custom-slider-wrapper';
 
+        const minLabel = document.createElement('div');
+        minLabel.className = 'custom-slider-label custom-slider-label-min';
+        minLabel.textContent = t('slider.minLabel');
+
+        const maxLabel = document.createElement('div');
+        maxLabel.className = 'custom-slider-label custom-slider-label-max';
+        maxLabel.textContent = t('slider.maxLabel');
+
         const track = document.createElement('div');
         track.className = 'custom-slider-track';
 
@@ -57,17 +82,16 @@ export class CustomSlider {
         thumb.className = 'custom-slider-thumb';
 
         track.appendChild(ticks);
-        track.appendChild(thumb); // 将 thumb 移入 track
-        sliderWrapper.appendChild(track);
-        container.appendChild(sliderWrapper);
+        track.appendChild(thumb);
 
+        sliderWrapper.appendChild(minLabel);
+        sliderWrapper.appendChild(track);
+        sliderWrapper.appendChild(maxLabel);
+
+        container.appendChild(sliderWrapper);
         return container;
     }
 
-    /**
-     * 更新轨道上的刻度点。
-     * @private
-     */
     updateTicks() {
         const numTicks = this.max - this.min + 1;
         if (numTicks > 1) {
@@ -78,102 +102,73 @@ export class CustomSlider {
         }
     }
 
-    /**
-     * 根据当前值更新滑块按钮的位置。
-     * @private
-     */
     updateThumbPosition() {
-        const trackWidth = this.track.offsetWidth;
-        const thumbWidth = this.thumb.offsetWidth;
-
-        // 关键修复：计算位置时使用轨道的总宽度，以确保与刻度对齐
-        const percentage = this.max > this.min ? (this.value - this.min) / (this.max - this.min) : 0;
-        const targetCenter = percentage * trackWidth;
-        let newLeft = targetCenter - (thumbWidth / 2);
-
-        // 确保滑块不会超出轨道的边界
-        newLeft = Math.max(0, newLeft);
-        newLeft = Math.min(trackWidth - thumbWidth, newLeft);
-
-        this.thumb.style.left = `${newLeft}px`;
+        if (!this.isInitialized) return;
+        requestAnimationFrame(() => {
+            if (!this.track || !this.thumb) return;
+            const trackWidth = this.track.offsetWidth;
+            const thumbWidth = this.thumb.offsetWidth;
+            const travelRange = trackWidth - 2 * this.padding - this.tickWidth;
+            const travelStart = this.padding + this.tickWidth / 2;
+            const percentage = this.max > this.min ? (this.value - this.min) / (this.max - this.min) : 0;
+            const thumbCenterTarget = travelStart + percentage * travelRange;
+            let newLeft = thumbCenterTarget - thumbWidth / 2;
+            this.thumb.style.left = `${newLeft}px`;
+        });
     }
 
-    /**
-     * 添加所有必要的事件监听器。
-     * @private
-     */
     addEventListeners() {
-        this.thumb.addEventListener('mousedown', this.handleMouseDown.bind(this));
-        this.track.addEventListener('click', this.handleTrackClick.bind(this));
+        this.boundHandleMouseDown = this.handleMouseDown.bind(this);
+        this.boundHandleTrackClick = this.handleTrackClick.bind(this);
+        this.thumb.addEventListener('mousedown', this.boundHandleMouseDown);
+        this.track.addEventListener('click', this.boundHandleTrackClick);
+        window.addEventListener('resize', this.resizeHandler);
     }
 
-    /**
-     * 处理轨道点击事件，将滑块移动到点击位置。
-     * @param {MouseEvent} e - 鼠标事件对象。
-     * @private
-     */
     handleTrackClick(e) {
-        if (e.target === this.thumb) return;
-
+        if (e.target === this.thumb || !this.isInitialized) return;
         const rect = this.track.getBoundingClientRect();
-        let clickX = e.clientX - rect.left;
-
-        // 关键修复：基于轨道总宽度计算百分比
-        const percentage = Math.max(0, Math.min(1, clickX / rect.width));
-        const newValue = Math.round(this.min + percentage * (this.max - this.min));
+        const clickX = e.clientX - rect.left;
+        const travelRange = rect.width - 2 * this.padding - this.tickWidth;
+        const travelStart = this.padding + this.tickWidth / 2;
+        const percentage = (clickX - travelStart) / travelRange;
+        const clampedPercentage = Math.max(0, Math.min(1, percentage));
+        const newValue = Math.round(this.min + clampedPercentage * (this.max - this.min));
         this.setValue(newValue);
     }
 
-    /**
-     * 处理鼠标在滑块按钮上按下的事件。
-     * @param {MouseEvent} e - 鼠标事件对象。
-     * @private
-     */
     handleMouseDown(e) {
+        if (!this.isInitialized) return;
         e.preventDefault();
         this.thumb.classList.add('is-dragging');
-
-        // 绑定到 document 是为了确保即使鼠标移出滑块范围也能继续拖动
-        this.handleMouseMove = this.handleMouseMove.bind(this);
-        this.handleMouseUp = this.handleMouseUp.bind(this);
-        document.addEventListener('mousemove', this.handleMouseMove);
-        document.addEventListener('mouseup', this.handleMouseUp);
+        this.boundHandleMouseMove = this.handleMouseMove.bind(this);
+        this.boundHandleMouseUp = this.handleMouseUp.bind(this);
+        document.addEventListener('mousemove', this.boundHandleMouseMove);
+        document.addEventListener('mouseup', this.boundHandleMouseUp);
     }
 
-    /**
-     * 处理鼠标移动事件，更新滑块位置和值。
-     * @param {MouseEvent} e - 鼠标事件对象。
-     * @private
-     */
     handleMouseMove(e) {
+        if (!this.isInitialized) return;
         const rect = this.track.getBoundingClientRect();
-        let newX = e.clientX - rect.left;
-
-        // 关键修复：基于轨道总宽度计算百分比
-        const percentage = Math.max(0, Math.min(1, newX / rect.width));
-        const newValue = Math.round(this.min + percentage * (this.max - this.min));
-
+        const newX = e.clientX - rect.left;
+        const travelRange = rect.width - 2 * this.padding - this.tickWidth;
+        const travelStart = this.padding + this.tickWidth / 2;
+        const percentage = (newX - travelStart) / travelRange;
+        const clampedPercentage = Math.max(0, Math.min(1, percentage));
+        const newValue = Math.round(this.min + clampedPercentage * (this.max - this.min));
         if (newValue !== this.value) {
             this.setValue(newValue);
         }
     }
 
-    /**
-     * 处理鼠标释放事件，结束拖动。
-     * @private
-     */
     handleMouseUp() {
+        if (!this.isInitialized) return;
         this.thumb.classList.remove('is-dragging');
-        document.removeEventListener('mousemove', this.handleMouseMove);
-        document.removeEventListener('mouseup', this.handleMouseUp);
-        // 吸附到最近的刻度
+        document.removeEventListener('mousemove', this.boundHandleMouseMove);
+        document.removeEventListener('mouseup', this.boundHandleMouseUp);
         this.updateThumbPosition();
     }
 
-    /**
-     * 设置滑块的新值，并触发 onChange 回调。
-     * @param {number} newValue - 新的滑块值。
-     */
     setValue(newValue) {
         const clampedValue = Math.max(this.min, Math.min(this.max, newValue));
         if (this.value !== clampedValue) {
@@ -185,20 +180,22 @@ export class CustomSlider {
         }
     }
 
-    /**
-     * 返回滑块的根 DOM 元素。
-     * @returns {HTMLElement}
-     */
     getElement() {
         return this.element;
     }
 
-    /**
-     * 销毁组件，移除事件监听器。
-     */
     destroy() {
-        this.thumb.removeEventListener('mousedown', this.handleMouseDown);
-        this.track.removeEventListener('click', this.handleTrackClick);
-        // 如果有其他需要清理的，也在这里进行
+        if (this.observer) {
+            this.observer.disconnect();
+        }
+        if (this.thumb && this.boundHandleMouseDown) {
+            this.thumb.removeEventListener('mousedown', this.boundHandleMouseDown);
+        }
+        if (this.track && this.boundHandleTrackClick) {
+            this.track.removeEventListener('click', this.boundHandleTrackClick);
+        }
+        window.removeEventListener('resize', this.resizeHandler);
+        this.track = null;
+        this.thumb = null;
     }
 }

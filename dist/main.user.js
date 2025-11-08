@@ -243,7 +243,9 @@ var TextExtractor = (() => {
       truncationWarning: "To maintain UI fluency, only a portion of the text is displayed here. The full content will be available upon export."
     },
     slider: {
-      adjustFrameSize: "Move slider to adjust frame size"
+      adjustFrameSize: "Move slider to adjust frame size",
+      minLabel: "Min",
+      maxLabel: "Max"
     },
     results: {
       title: "Extracted Text",
@@ -583,7 +585,9 @@ var TextExtractor = (() => {
       truncationWarning: "\u4E3A\u4FDD\u6301\u754C\u9762\u6D41\u7545\uFF0C\u6B64\u5904\u4EC5\u663E\u793A\u90E8\u5206\u6587\u672C\u3002\u5BFC\u51FA\u540E\u5C06\u5305\u542B\u5B8C\u6574\u5185\u5BB9\u3002"
     },
     slider: {
-      adjustFrameSize: "\u79FB\u52A8\u6ED1\u5757\u4EE5\u8C03\u6574\u6846\u67B6\u5927\u5C0F"
+      adjustFrameSize: "\u79FB\u52A8\u6ED1\u5757\u4EE5\u8C03\u6574\u6846\u67B6\u5927\u5C0F",
+      minLabel: "\u6700\u5C0F",
+      maxLabel: "\u6700\u5927"
     },
     results: {
       title: "\u63D0\u53D6\u7684\u6587\u672C",
@@ -923,7 +927,9 @@ var TextExtractor = (() => {
       truncationWarning: "\u70BA\u4FDD\u6301\u4ECB\u9762\u6D41\u66A2\uFF0C\u6B64\u8655\u50C5\u986F\u793A\u90E8\u5206\u6587\u672C\u3002\u532F\u51FA\u5F8C\u5C07\u5305\u542B\u5B8C\u6574\u5167\u5BB9\u3002"
     },
     slider: {
-      adjustFrameSize: "\u79FB\u52D5\u6ED1\u584A\u4EE5\u8ABF\u6574\u6846\u67B6\u5927\u5C0F"
+      adjustFrameSize: "\u79FB\u52D5\u6ED1\u584A\u4EE5\u8ABF\u6574\u6846\u67B6\u5927\u5C0F",
+      minLabel: "\u6700\u5C0F",
+      maxLabel: "\u6700\u5927"
     },
     results: {
       title: "\u63D0\u53D6\u7684\u6587\u672C",
@@ -2047,7 +2053,9 @@ ${result.join(",\n")}
       truncationWarning: "To maintain UI fluency, only a portion of the text is displayed here. The full content will be available upon export."
     },
     slider: {
-      adjustFrameSize: "Move slider to adjust frame size"
+      adjustFrameSize: "Move slider to adjust frame size",
+      minLabel: "Min",
+      maxLabel: "Max"
     },
     results: {
       title: "Extracted Text",
@@ -2388,7 +2396,9 @@ ${result.join(",\n")}
       truncationWarning: "\\u4E3A\\u4FDD\\u6301\\u754C\\u9762\\u6D41\\u7545\\uFF0C\\u6B64\\u5904\\u4EC5\\u663E\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u5BFC\\u51FA\\u540E\\u5C06\\u5305\\u542B\\u5B8C\\u6574\\u5185\\u5BB9\\u3002"
     },
     slider: {
-      adjustFrameSize: "\\u79FB\\u52A8\\u6ED1\\u5757\\u4EE5\\u8C03\\u6574\\u6846\\u67B6\\u5927\\u5C0F"
+      adjustFrameSize: "\\u79FB\\u52A8\\u6ED1\\u5757\\u4EE5\\u8C03\\u6574\\u6846\\u67B6\\u5927\\u5C0F",
+      minLabel: "\\u6700\\u5C0F",
+      maxLabel: "\\u6700\\u5927"
     },
     results: {
       title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",
@@ -2729,7 +2739,9 @@ ${result.join(",\n")}
       truncationWarning: "\\u70BA\\u4FDD\\u6301\\u4ECB\\u9762\\u6D41\\u66A2\\uFF0C\\u6B64\\u8655\\u50C5\\u986F\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u532F\\u51FA\\u5F8C\\u5C07\\u5305\\u542B\\u5B8C\\u6574\\u5167\\u5BB9\\u3002"
     },
     slider: {
-      adjustFrameSize: "\\u79FB\\u52D5\\u6ED1\\u584A\\u4EE5\\u8ABF\\u6574\\u6846\\u67B6\\u5927\\u5C0F"
+      adjustFrameSize: "\\u79FB\\u52D5\\u6ED1\\u584A\\u4EE5\\u8ABF\\u6574\\u6846\\u67B6\\u5927\\u5C0F",
+      minLabel: "\\u6700\\u5C0F",
+      maxLabel: "\\u6700\\u5927"
     },
     results: {
       title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",
@@ -3545,7 +3557,9 @@ ${result.join(",\n")}
       truncationWarning: "To maintain UI fluency, only a portion of the text is displayed here. The full content will be available upon export."
     },
     slider: {
-      adjustFrameSize: "Move slider to adjust frame size"
+      adjustFrameSize: "Move slider to adjust frame size",
+      minLabel: "Min",
+      maxLabel: "Max"
     },
     results: {
       title: "Extracted Text",
@@ -3886,7 +3900,9 @@ ${result.join(",\n")}
       truncationWarning: "\\u4E3A\\u4FDD\\u6301\\u754C\\u9762\\u6D41\\u7545\\uFF0C\\u6B64\\u5904\\u4EC5\\u663E\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u5BFC\\u51FA\\u540E\\u5C06\\u5305\\u542B\\u5B8C\\u6574\\u5185\\u5BB9\\u3002"
     },
     slider: {
-      adjustFrameSize: "\\u79FB\\u52A8\\u6ED1\\u5757\\u4EE5\\u8C03\\u6574\\u6846\\u67B6\\u5927\\u5C0F"
+      adjustFrameSize: "\\u79FB\\u52A8\\u6ED1\\u5757\\u4EE5\\u8C03\\u6574\\u6846\\u67B6\\u5927\\u5C0F",
+      minLabel: "\\u6700\\u5C0F",
+      maxLabel: "\\u6700\\u5927"
     },
     results: {
       title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",
@@ -4227,7 +4243,9 @@ ${result.join(",\n")}
       truncationWarning: "\\u70BA\\u4FDD\\u6301\\u4ECB\\u9762\\u6D41\\u66A2\\uFF0C\\u6B64\\u8655\\u50C5\\u986F\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u532F\\u51FA\\u5F8C\\u5C07\\u5305\\u542B\\u5B8C\\u6574\\u5167\\u5BB9\\u3002"
     },
     slider: {
-      adjustFrameSize: "\\u79FB\\u52D5\\u6ED1\\u584A\\u4EE5\\u8ABF\\u6574\\u6846\\u67B6\\u5927\\u5C0F"
+      adjustFrameSize: "\\u79FB\\u52D5\\u6ED1\\u584A\\u4EE5\\u8ABF\\u6574\\u6846\\u67B6\\u5927\\u5C0F",
+      minLabel: "\\u6700\\u5C0F",
+      maxLabel: "\\u6700\\u5927"
     },
     results: {
       title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",
@@ -6004,20 +6022,47 @@ ${result.join(",\n")}
   var stashIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M360-600v-80h360v80H360Zm0 120v-80h360v80H360Zm120 320H200h280Zm0 80H240q-50 0-85-35t-35-85v-120h120v-560h600v361q-20-2-40.5 1.5T760-505v-295H320v480h240l-80 80H200v40q0 17 11.5 28.5T240-160h240v80Zm80 0v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q8 9 12.5 20t4.5 22q0 11-4 22.5T903-300L683-80H560Zm300-263-37-37 37 37ZM620-140h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z"/></svg>`;
   var confirmIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg>`;
   var CustomSlider = class {
-        constructor({ min, max, value, onChange }) {
+    constructor({ min, max, value, onChange }) {
       this.min = min;
       this.max = max;
       this.value = value;
       this.onChange = onChange;
+      this.isInitialized = false;
+      this.observer = null;
       this.element = this.createSliderElement();
       this.thumb = this.element.querySelector(".custom-slider-thumb");
       this.track = this.element.querySelector(".custom-slider-track");
       this.ticksContainer = this.element.querySelector(".custom-slider-ticks");
+      this.resizeHandler = this.updateThumbPosition.bind(this);
+      this.initOnVisible();
+    }
+    initOnVisible() {
+      this.observer = new IntersectionObserver((entries, observer2) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            if (!this.isInitialized) {
+              this.performInitialMeasurement();
+              this.isInitialized = true;
+            }
+            observer2.unobserve(this.element);
+          }
+        });
+      }, { threshold: 0.1 });
+      this.observer.observe(this.element);
+    }
+    performInitialMeasurement() {
       this.updateTicks();
+      this.getStyleValues();
       this.updateThumbPosition();
       this.addEventListeners();
     }
-        createSliderElement() {
+    getStyleValues() {
+      const ticksStyle = window.getComputedStyle(this.ticksContainer);
+      const firstTick = this.ticksContainer.querySelector(".custom-slider-tick");
+      this.padding = parseFloat(ticksStyle.paddingLeft) || 0;
+      this.tickWidth = firstTick ? parseFloat(window.getComputedStyle(firstTick).width) || 0 : 0;
+    }
+    createSliderElement() {
       const container = document.createElement("div");
       container.className = "custom-slider-container";
       const infoText = document.createElement("div");
@@ -6026,6 +6071,12 @@ ${result.join(",\n")}
       container.appendChild(infoText);
       const sliderWrapper = document.createElement("div");
       sliderWrapper.className = "custom-slider-wrapper";
+      const minLabel = document.createElement("div");
+      minLabel.className = "custom-slider-label custom-slider-label-min";
+      minLabel.textContent = t("slider.minLabel");
+      const maxLabel = document.createElement("div");
+      maxLabel.className = "custom-slider-label custom-slider-label-max";
+      maxLabel.textContent = t("slider.maxLabel");
       const track = document.createElement("div");
       track.className = "custom-slider-track";
       const ticks = document.createElement("div");
@@ -6034,11 +6085,13 @@ ${result.join(",\n")}
       thumb.className = "custom-slider-thumb";
       track.appendChild(ticks);
       track.appendChild(thumb);
+      sliderWrapper.appendChild(minLabel);
       sliderWrapper.appendChild(track);
+      sliderWrapper.appendChild(maxLabel);
       container.appendChild(sliderWrapper);
       return container;
     }
-        updateTicks() {
+    updateTicks() {
       const numTicks = this.max - this.min + 1;
       if (numTicks > 1) {
         const ticksHtml = Array.from({ length: numTicks }, () => `<div class="custom-slider-tick"></div>`).join("");
@@ -6047,60 +6100,68 @@ ${result.join(",\n")}
         this.ticksContainer.innerHTML = createTrustedHTML("");
       }
     }
-    /**
-     * 根据当前值更新滑块按钮的位置。
-     * @private
-     */
     updateThumbPosition() {
-      const trackWidth = this.track.offsetWidth;
-      const thumbWidth = this.thumb.offsetWidth;
-      const percentage = this.max > this.min ? (this.value - this.min) / (this.max - this.min) : 0;
-      const targetCenter = percentage * trackWidth;
-      let newLeft = targetCenter - thumbWidth / 2;
-      newLeft = Math.max(0, newLeft);
-      newLeft = Math.min(trackWidth - thumbWidth, newLeft);
-      this.thumb.style.left = `${newLeft}px`;
+      if (!this.isInitialized) return;
+      requestAnimationFrame(() => {
+        if (!this.track || !this.thumb) return;
+        const trackWidth = this.track.offsetWidth;
+        const thumbWidth = this.thumb.offsetWidth;
+        const travelRange = trackWidth - 2 * this.padding - this.tickWidth;
+        const travelStart = this.padding + this.tickWidth / 2;
+        const percentage = this.max > this.min ? (this.value - this.min) / (this.max - this.min) : 0;
+        const thumbCenterTarget = travelStart + percentage * travelRange;
+        let newLeft = thumbCenterTarget - thumbWidth / 2;
+        this.thumb.style.left = `${newLeft}px`;
+      });
     }
-    /**
-     * 添加所有必要的事件监听器。
-     * @private
-     */
     addEventListeners() {
-      this.thumb.addEventListener("mousedown", this.handleMouseDown.bind(this));
-      this.track.addEventListener("click", this.handleTrackClick.bind(this));
+      this.boundHandleMouseDown = this.handleMouseDown.bind(this);
+      this.boundHandleTrackClick = this.handleTrackClick.bind(this);
+      this.thumb.addEventListener("mousedown", this.boundHandleMouseDown);
+      this.track.addEventListener("click", this.boundHandleTrackClick);
+      window.addEventListener("resize", this.resizeHandler);
     }
-        handleTrackClick(e) {
-      if (e.target === this.thumb) return;
+    handleTrackClick(e) {
+      if (e.target === this.thumb || !this.isInitialized) return;
       const rect = this.track.getBoundingClientRect();
-      let clickX = e.clientX - rect.left;
-      const percentage = Math.max(0, Math.min(1, clickX / rect.width));
-      const newValue = Math.round(this.min + percentage * (this.max - this.min));
+      const clickX = e.clientX - rect.left;
+      const travelRange = rect.width - 2 * this.padding - this.tickWidth;
+      const travelStart = this.padding + this.tickWidth / 2;
+      const percentage = (clickX - travelStart) / travelRange;
+      const clampedPercentage = Math.max(0, Math.min(1, percentage));
+      const newValue = Math.round(this.min + clampedPercentage * (this.max - this.min));
       this.setValue(newValue);
     }
-        handleMouseDown(e) {
+    handleMouseDown(e) {
+      if (!this.isInitialized) return;
       e.preventDefault();
       this.thumb.classList.add("is-dragging");
-      this.handleMouseMove = this.handleMouseMove.bind(this);
-      this.handleMouseUp = this.handleMouseUp.bind(this);
-      document.addEventListener("mousemove", this.handleMouseMove);
-      document.addEventListener("mouseup", this.handleMouseUp);
+      this.boundHandleMouseMove = this.handleMouseMove.bind(this);
+      this.boundHandleMouseUp = this.handleMouseUp.bind(this);
+      document.addEventListener("mousemove", this.boundHandleMouseMove);
+      document.addEventListener("mouseup", this.boundHandleMouseUp);
     }
-        handleMouseMove(e) {
+    handleMouseMove(e) {
+      if (!this.isInitialized) return;
       const rect = this.track.getBoundingClientRect();
-      let newX = e.clientX - rect.left;
-      const percentage = Math.max(0, Math.min(1, newX / rect.width));
-      const newValue = Math.round(this.min + percentage * (this.max - this.min));
+      const newX = e.clientX - rect.left;
+      const travelRange = rect.width - 2 * this.padding - this.tickWidth;
+      const travelStart = this.padding + this.tickWidth / 2;
+      const percentage = (newX - travelStart) / travelRange;
+      const clampedPercentage = Math.max(0, Math.min(1, percentage));
+      const newValue = Math.round(this.min + clampedPercentage * (this.max - this.min));
       if (newValue !== this.value) {
         this.setValue(newValue);
       }
     }
-        handleMouseUp() {
+    handleMouseUp() {
+      if (!this.isInitialized) return;
       this.thumb.classList.remove("is-dragging");
-      document.removeEventListener("mousemove", this.handleMouseMove);
-      document.removeEventListener("mouseup", this.handleMouseUp);
+      document.removeEventListener("mousemove", this.boundHandleMouseMove);
+      document.removeEventListener("mouseup", this.boundHandleMouseUp);
       this.updateThumbPosition();
     }
-        setValue(newValue) {
+    setValue(newValue) {
       const clampedValue = Math.max(this.min, Math.min(this.max, newValue));
       if (this.value !== clampedValue) {
         this.value = clampedValue;
@@ -6110,12 +6171,22 @@ ${result.join(",\n")}
         }
       }
     }
-        getElement() {
+    getElement() {
       return this.element;
     }
-        destroy() {
-      this.thumb.removeEventListener("mousedown", this.handleMouseDown);
-      this.track.removeEventListener("click", this.handleTrackClick);
+    destroy() {
+      if (this.observer) {
+        this.observer.disconnect();
+      }
+      if (this.thumb && this.boundHandleMouseDown) {
+        this.thumb.removeEventListener("mousedown", this.boundHandleMouseDown);
+      }
+      if (this.track && this.boundHandleTrackClick) {
+        this.track.removeEventListener("click", this.boundHandleTrackClick);
+      }
+      window.removeEventListener("resize", this.resizeHandler);
+      this.track = null;
+      this.thumb = null;
     }
   };
   var unsubscribeStagedCountChanged = null;
@@ -6711,7 +6782,9 @@ ${result.join(",\n")}
       truncationWarning: "To maintain UI fluency, only a portion of the text is displayed here. The full content will be available upon export."
     },
     slider: {
-      adjustFrameSize: "Move slider to adjust frame size"
+      adjustFrameSize: "Move slider to adjust frame size",
+      minLabel: "Min",
+      maxLabel: "Max"
     },
     results: {
       title: "Extracted Text",
@@ -7052,7 +7125,9 @@ ${result.join(",\n")}
       truncationWarning: "\\u4E3A\\u4FDD\\u6301\\u754C\\u9762\\u6D41\\u7545\\uFF0C\\u6B64\\u5904\\u4EC5\\u663E\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u5BFC\\u51FA\\u540E\\u5C06\\u5305\\u542B\\u5B8C\\u6574\\u5185\\u5BB9\\u3002"
     },
     slider: {
-      adjustFrameSize: "\\u79FB\\u52A8\\u6ED1\\u5757\\u4EE5\\u8C03\\u6574\\u6846\\u67B6\\u5927\\u5C0F"
+      adjustFrameSize: "\\u79FB\\u52A8\\u6ED1\\u5757\\u4EE5\\u8C03\\u6574\\u6846\\u67B6\\u5927\\u5C0F",
+      minLabel: "\\u6700\\u5C0F",
+      maxLabel: "\\u6700\\u5927"
     },
     results: {
       title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",
@@ -7393,7 +7468,9 @@ ${result.join(",\n")}
       truncationWarning: "\\u70BA\\u4FDD\\u6301\\u4ECB\\u9762\\u6D41\\u66A2\\uFF0C\\u6B64\\u8655\\u50C5\\u986F\\u793A\\u90E8\\u5206\\u6587\\u672C\\u3002\\u532F\\u51FA\\u5F8C\\u5C07\\u5305\\u542B\\u5B8C\\u6574\\u5167\\u5BB9\\u3002"
     },
     slider: {
-      adjustFrameSize: "\\u79FB\\u52D5\\u6ED1\\u584A\\u4EE5\\u8ABF\\u6574\\u6846\\u67B6\\u5927\\u5C0F"
+      adjustFrameSize: "\\u79FB\\u52D5\\u6ED1\\u584A\\u4EE5\\u8ABF\\u6574\\u6846\\u67B6\\u5927\\u5C0F",
+      minLabel: "\\u6700\\u5C0F",
+      maxLabel: "\\u6700\\u5927"
     },
     results: {
       title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",
@@ -8874,16 +8951,21 @@ ${result.join(",\n")}
 }
 .custom-slider-wrapper{
     margin:5px 0;
-    position:relative;
     width:100%;
     height:20px;
     display:flex;
     align-items:center;
+    gap:8px;
+}
+.custom-slider-label{
+    font-size:12px;
+    color:var(--main-text-secondary);
+    user-select:none;
+    white-space:nowrap;
 }
 .custom-slider-track{
-    position:absolute;
-    left:4px;
-    right:4px;
+    position:relative;
+    flex-grow:1;
     height:8px;
     background-color:var(--main-textarea-bg);
     border:1px solid var(--main-textarea-border);

@@ -96,7 +96,9 @@
     "truncationWarning": "To maintain UI fluency, only a portion of the text is displayed here. The full content will be available upon export."
   },
   "slider": {
-    "adjustFrameSize": "Move slider to adjust frame size"
+    "adjustFrameSize": "Move slider to adjust frame size",
+    "minLabel": "Min",
+    "maxLabel": "Max"
   },
   "results": {
     "title": "Extracted Text",
