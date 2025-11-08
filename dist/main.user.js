@@ -8846,6 +8846,7 @@ ${result.join(",\n")}
     white-space:nowrap;
 }
 #element-scan-toolbar-actions button{
+    color:var(--main-primary-text);
     margin:4px 0;
     flex-grow:1;
     padding:8px 10px;
@@ -8853,7 +8854,6 @@ ${result.join(",\n")}
     border-radius:16px;
     cursor:pointer;
     font-size:14px;
-    color:var(--main-text);
 }
 .text-extractor-fab.is-recording{
     background-color:#f39c12;

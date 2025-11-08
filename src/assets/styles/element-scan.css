@@ -89,6 +89,7 @@
 
 /* 工具栏按钮 */
 #element-scan-toolbar-actions button {
+    color: var(--main-primary-text);
     margin: 4px 0;
     flex-grow: 1;
     padding: 8px 10px;
@@ -96,7 +97,6 @@
     border-radius: 16px;
     cursor: pointer;
     font-size: 14px;
-    color: var(--main-text);
 }
 
 /* --- FAB按钮的激活状态 --- */
