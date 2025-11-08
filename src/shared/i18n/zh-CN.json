@@ -11,7 +11,8 @@
     "cancel": "取消",
     "export": "导出",
     "reselect": "重新选择",
-    "stage": "暂存"
+    "stage": "暂存",
+    "processingElement": "处理元素"
   },
   "export": {
     "exportAsTxt": "导出为 TXT",

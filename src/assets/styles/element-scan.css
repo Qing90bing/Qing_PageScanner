@@ -64,14 +64,30 @@
 
 
 /* 工具栏标题/当前标签显示 */
+#element-scan-toolbar-title,
+#element-scan-toolbar-tag,
+.custom-slider-info-text {
+    user-select: none; /* 防止拖动时选中文本 */
+}
+
+#element-scan-toolbar-title {
+    font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--main-text);
+    text-align: center;
+    margin-bottom: 12px;
+}
+
 #element-scan-toolbar-tag {
     font-weight: bold;
     font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
     text-align: center;
     color: var(--main-text);
-    padding: 5px;
+    padding: 0 8px;
     border-radius: 4px;
     font-size: 14px;
+    transition: opacity 0.1s ease-in-out;
 }
 
 /* 滑块样式 */
@@ -97,6 +113,41 @@
     border-radius: 16px;
     cursor: pointer;
     font-size: 14px;
+    transition: background-color 0.2s ease-in-out; /* 添加颜色过渡动画 */
+}
+
+/* --- 特定按钮颜色 --- */
+
+/* 确认按钮 - 绿色 */
+#element-scan-toolbar-confirm:hover{
+    background-color: #27ae60; /* 翡翠绿 */
+}
+#element-scan-toolbar-confirm {
+    background-color: #2ecc71; /* 亮一点的翡翠绿 */
+}
+
+/* 取消按钮 - 红色 */
+#element-scan-toolbar-cancel:hover {
+    background-color: #c0392b; /* 石榴红 */
+}
+#element-scan-toolbar-cancel {
+    background-color: #e74c3c; /* 亮一点的石榴红 */
+}
+
+/* 重新选择按钮 - 蓝色 (主题色) */
+#element-scan-toolbar-reselect {
+    background-color: var(--main-primary);
+}
+#element-scan-toolbar-reselect:hover {
+    background-color: var(--main-primary-hover);
+}
+
+/* 暂存按钮 - 中性色 */
+#element-scan-toolbar-stage:hover {
+    background-color: #7f8c8d; /* 石棉灰 */
+}
+#element-scan-toolbar-stage {
+    background-color: #95a5a6; /* 亮一点的石棉灰 */
 }
 
 /* --- FAB按钮的激活状态 --- */

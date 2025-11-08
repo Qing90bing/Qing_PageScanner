@@ -132,10 +132,34 @@ export function updateHighlight(targetElement) {
     tagNameTooltip.textContent = elementSelector;
 
     // 如果工具栏已存在，同时更新工具栏上显示的标签名
+    updateToolbarTagAnimated(getElementSelector(targetElement));
+}
+
+/**
+ * @private
+ * @function updateToolbarTagAnimated
+ * @description 使用淡入淡出动画效果更新工具栏中的元素标签。
+ * @param {string} newText - 要显示的新文本内容。
+ */
+function updateToolbarTagAnimated(newText) {
     const toolbarTag = uiContainer.querySelector('#element-scan-toolbar-tag');
-    if (toolbarTag) {
-        toolbarTag.textContent = getElementSelector(targetElement);
+    if (!toolbarTag) return;
+
+    // 如果文本内容没有变化，则不执行任何操作
+    if (toolbarTag.textContent === newText) {
+        return;
     }
+
+    // 1. 开始淡出
+    toolbarTag.style.opacity = '0';
+
+    // 2. 等待淡出动画完成 (100ms)
+    setTimeout(() => {
+        // 3. 更新文本内容
+        toolbarTag.textContent = newText;
+        // 4. 开始淡入
+        toolbarTag.style.opacity = '1';
+    }, 100);
 }
 
 /**
@@ -153,6 +177,7 @@ export function createAdjustmentToolbar(elementPath) {
 
     // 创建静态部分（移除滑块的硬编码HTML）
     const staticContent = `
+        <div id="element-scan-toolbar-title">${t('common.processingElement')}</div>
         <div id="element-scan-toolbar-tag" title="${t('tooltip.dragHint')}">${getElementSelector(elementPath[0])}</div>
         <div id="element-scan-slider-container"></div>
         <div id="element-scan-toolbar-actions"></div>
@@ -283,15 +308,20 @@ function makeDraggable(element) {
     let offsetX, offsetY;
 
     const onMouseDown = (e) => {
-        // 只在点击工具栏本身或标签时触发拖动，避免在点击按钮或滑块时也触发
-        if (e.target.id !== 'element-scan-toolbar' && e.target.id !== 'element-scan-toolbar-tag') return;
-        e.preventDefault();
-        const rect = element.getBoundingClientRect();
-        offsetX = e.clientX - rect.left;
-        offsetY = e.clientY - rect.top;
-        document.addEventListener('mousemove', onMouseMove);
-        document.addEventListener('mouseup', onMouseUp);
-        log(t('log.elementScanUI.dragStarted'));
+        // 检查点击的是否是交互式元素（按钮、滑块本身或滑块的拖动点）
+        // .closest() 方法会从当前元素开始向上遍历DOM树
+        const isInteractive = e.target.closest('button, .custom-slider-thumb, .custom-slider-track');
+
+        // 如果点击的不是交互式元素，则启动拖动
+        if (!isInteractive) {
+            e.preventDefault();
+            const rect = element.getBoundingClientRect();
+            offsetX = e.clientX - rect.left;
+            offsetY = e.clientY - rect.top;
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', onMouseUp);
+            log(t('log.elementScanUI.dragStarted'));
+        }
     };
 
     const onMouseMove = (e) => {

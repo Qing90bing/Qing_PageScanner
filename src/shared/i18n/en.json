@@ -11,7 +11,8 @@
     "cancel": "Cancel",
     "export": "Export",
     "reselect": "Reselect",
-    "stage": "Stage"
+    "stage": "Stage",
+    "processingElement": "Processing Element"
   },
   "export": {
     "exportAsTxt": "Export as TXT",

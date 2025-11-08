@@ -158,7 +158,8 @@ var TextExtractor = (() => {
       cancel: "Cancel",
       export: "Export",
       reselect: "Reselect",
-      stage: "Stage"
+      stage: "Stage",
+      processingElement: "Processing Element"
     },
     export: {
       exportAsTxt: "Export as TXT",
@@ -497,7 +498,8 @@ var TextExtractor = (() => {
       cancel: "\u53D6\u6D88",
       export: "\u5BFC\u51FA",
       reselect: "\u91CD\u65B0\u9009\u62E9",
-      stage: "\u6682\u5B58"
+      stage: "\u6682\u5B58",
+      processingElement: "\u5904\u7406\u5143\u7D20"
     },
     export: {
       exportAsTxt: "\u5BFC\u51FA\u4E3A TXT",
@@ -836,7 +838,8 @@ var TextExtractor = (() => {
       cancel: "\u53D6\u6D88",
       export: "\u532F\u51FA",
       reselect: "\u91CD\u65B0\u9078\u64C7",
-      stage: "\u66AB\u5B58"
+      stage: "\u66AB\u5B58",
+      processingElement: "\u8655\u7406\u5143\u7D20"
     },
     export: {
       exportAsTxt: "\u532F\u51FA\u70BA TXT",
@@ -1959,7 +1962,8 @@ ${result.join(",\n")}
       cancel: "Cancel",
       export: "Export",
       reselect: "Reselect",
-      stage: "Stage"
+      stage: "Stage",
+      processingElement: "Processing Element"
     },
     export: {
       exportAsTxt: "Export as TXT",
@@ -2299,7 +2303,8 @@ ${result.join(",\n")}
       cancel: "\\u53D6\\u6D88",
       export: "\\u5BFC\\u51FA",
       reselect: "\\u91CD\\u65B0\\u9009\\u62E9",
-      stage: "\\u6682\\u5B58"
+      stage: "\\u6682\\u5B58",
+      processingElement: "\\u5904\\u7406\\u5143\\u7D20"
     },
     export: {
       exportAsTxt: "\\u5BFC\\u51FA\\u4E3A TXT",
@@ -2639,7 +2644,8 @@ ${result.join(",\n")}
       cancel: "\\u53D6\\u6D88",
       export: "\\u532F\\u51FA",
       reselect: "\\u91CD\\u65B0\\u9078\\u64C7",
-      stage: "\\u66AB\\u5B58"
+      stage: "\\u66AB\\u5B58",
+      processingElement: "\\u8655\\u7406\\u5143\\u7D20"
     },
     export: {
       exportAsTxt: "\\u532F\\u51FA\\u70BA TXT",
@@ -3454,7 +3460,8 @@ ${result.join(",\n")}
       cancel: "Cancel",
       export: "Export",
       reselect: "Reselect",
-      stage: "Stage"
+      stage: "Stage",
+      processingElement: "Processing Element"
     },
     export: {
       exportAsTxt: "Export as TXT",
@@ -3794,7 +3801,8 @@ ${result.join(",\n")}
       cancel: "\\u53D6\\u6D88",
       export: "\\u5BFC\\u51FA",
       reselect: "\\u91CD\\u65B0\\u9009\\u62E9",
-      stage: "\\u6682\\u5B58"
+      stage: "\\u6682\\u5B58",
+      processingElement: "\\u5904\\u7406\\u5143\\u7D20"
     },
     export: {
       exportAsTxt: "\\u5BFC\\u51FA\\u4E3A TXT",
@@ -4134,7 +4142,8 @@ ${result.join(",\n")}
       cancel: "\\u53D6\\u6D88",
       export: "\\u532F\\u51FA",
       reselect: "\\u91CD\\u65B0\\u9078\\u64C7",
-      stage: "\\u66AB\\u5B58"
+      stage: "\\u66AB\\u5B58",
+      processingElement: "\\u8655\\u7406\\u5143\\u7D20"
     },
     export: {
       exportAsTxt: "\\u532F\\u51FA\\u70BA TXT",
@@ -6169,10 +6178,19 @@ ${result.join(",\n")}
     scanContainer.style.height = `${newHeight}px`;
     scanContainer.style.transform = `translate(${newX}px, ${newY}px)`;
     tagNameTooltip.textContent = elementSelector;
+    updateToolbarTagAnimated(getElementSelector(targetElement));
+  }
+  function updateToolbarTagAnimated(newText) {
     const toolbarTag = uiContainer.querySelector("#element-scan-toolbar-tag");
-    if (toolbarTag) {
-      toolbarTag.textContent = getElementSelector(targetElement);
+    if (!toolbarTag) return;
+    if (toolbarTag.textContent === newText) {
+      return;
     }
+    toolbarTag.style.opacity = "0";
+    setTimeout(() => {
+      toolbarTag.textContent = newText;
+      toolbarTag.style.opacity = "1";
+    }, 100);
   }
   function createAdjustmentToolbar(elementPath2) {
     if (toolbar) cleanupToolbar();
@@ -6180,6 +6198,7 @@ ${result.join(",\n")}
     toolbar = document.createElement("div");
     toolbar.id = "element-scan-toolbar";
     const staticContent = `
+        <div id="element-scan-toolbar-title">${t("common.processingElement")}</div>
         <div id="element-scan-toolbar-tag" title="${t("tooltip.dragHint")}">${getElementSelector(elementPath2[0])}</div>
         <div id="element-scan-slider-container"></div>
         <div id="element-scan-toolbar-actions"></div>
@@ -6278,14 +6297,16 @@ ${result.join(",\n")}
   function makeDraggable(element) {
     let offsetX, offsetY;
     const onMouseDown = (e) => {
-      if (e.target.id !== "element-scan-toolbar" && e.target.id !== "element-scan-toolbar-tag") return;
-      e.preventDefault();
-      const rect = element.getBoundingClientRect();
-      offsetX = e.clientX - rect.left;
-      offsetY = e.clientY - rect.top;
-      document.addEventListener("mousemove", onMouseMove);
-      document.addEventListener("mouseup", onMouseUp);
-      log(t("log.elementScanUI.dragStarted"));
+      const isInteractive = e.target.closest("button, .custom-slider-thumb, .custom-slider-track");
+      if (!isInteractive) {
+        e.preventDefault();
+        const rect = element.getBoundingClientRect();
+        offsetX = e.clientX - rect.left;
+        offsetY = e.clientY - rect.top;
+        document.addEventListener("mousemove", onMouseMove);
+        document.addEventListener("mouseup", onMouseUp);
+        log(t("log.elementScanUI.dragStarted"));
+      }
     };
     const onMouseMove = (e) => {
       const viewportWidth = window.innerWidth;
@@ -6605,7 +6626,8 @@ ${result.join(",\n")}
       cancel: "Cancel",
       export: "Export",
       reselect: "Reselect",
-      stage: "Stage"
+      stage: "Stage",
+      processingElement: "Processing Element"
     },
     export: {
       exportAsTxt: "Export as TXT",
@@ -6945,7 +6967,8 @@ ${result.join(",\n")}
       cancel: "\\u53D6\\u6D88",
       export: "\\u5BFC\\u51FA",
       reselect: "\\u91CD\\u65B0\\u9009\\u62E9",
-      stage: "\\u6682\\u5B58"
+      stage: "\\u6682\\u5B58",
+      processingElement: "\\u5904\\u7406\\u5143\\u7D20"
     },
     export: {
       exportAsTxt: "\\u5BFC\\u51FA\\u4E3A TXT",
@@ -7285,7 +7308,8 @@ ${result.join(",\n")}
       cancel: "\\u53D6\\u6D88",
       export: "\\u532F\\u51FA",
       reselect: "\\u91CD\\u65B0\\u9078\\u64C7",
-      stage: "\\u66AB\\u5B58"
+      stage: "\\u66AB\\u5B58",
+      processingElement: "\\u8655\\u7406\\u5143\\u7D20"
     },
     export: {
       exportAsTxt: "\\u532F\\u51FA\\u70BA TXT",
@@ -8841,13 +8865,12 @@ ${result.join(",\n")}
     flex-direction:column;
     align-items:center;
     width:100%;
-    padding:8px 0;
 }
 .custom-slider-info-text{
     font-size:15px;
     font-weight:500;
     color:var(--main-text-secondary);
-    margin:12px 0;
+    margin:12px 0 0 0;
 }
 .custom-slider-wrapper{
     margin:5px 0;
@@ -9060,14 +9083,28 @@ ${result.join(",\n")}
     visibility:visible;
     transition-delay:0s;
 }
+#element-scan-toolbar-title,
+#element-scan-toolbar-tag,
+.custom-slider-info-text{
+    user-select:none;
+}
+#element-scan-toolbar-title{
+    font-family:'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
+    font-size:18px;
+    font-weight:bold;
+    color:var(--main-text);
+    text-align:center;
+    margin-bottom:12px;
+}
 #element-scan-toolbar-tag{
     font-weight:bold;
     font-family:'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
     text-align:center;
     color:var(--main-text);
-    padding:5px;
+    padding:0 8px;
     border-radius:4px;
     font-size:14px;
+    transition:opacity 0.1s ease-in-out;
 }
 #element-scan-level-slider{
     width:100%;
@@ -9087,6 +9124,31 @@ ${result.join(",\n")}
     border-radius:16px;
     cursor:pointer;
     font-size:14px;
+    transition:background-color 0.2s ease-in-out;
+}
+#element-scan-toolbar-confirm:hover{
+    background-color:#27ae60;
+}
+#element-scan-toolbar-confirm{
+    background-color:#2ecc71;
+}
+#element-scan-toolbar-cancel:hover{
+    background-color:#c0392b;
+}
+#element-scan-toolbar-cancel{
+    background-color:#e74c3c;
+}
+#element-scan-toolbar-reselect{
+    background-color:var(--main-primary);
+}
+#element-scan-toolbar-reselect:hover{
+    background-color:var(--main-primary-hover);
+}
+#element-scan-toolbar-stage:hover{
+    background-color:#7f8c8d;
+}
+#element-scan-toolbar-stage{
+    background-color:#95a5a6;
 }
 .text-extractor-fab.is-recording{
     background-color:#f39c12;
