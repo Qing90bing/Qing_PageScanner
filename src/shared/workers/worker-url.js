@@ -1,6 +1,5 @@
 // src/shared/workers/worker-url.js
 
-import { processingWorkerString } from './worker-string.js';
 import { createTrustedWorkerUrl } from '../utils/trustedTypes.js';
 
 /**
@@ -9,5 +8,5 @@ import { createTrustedWorkerUrl } from '../utils/trustedTypes.js';
  * 通过将此操作放在一个独立的模块中，我们确保它在整个应用程序的生命周期中只执行一次，
  * 且结果被缓存和复用。
  */
-const workerUrl = `data:application/javascript,${encodeURIComponent(processingWorkerString)}`;
+const workerUrl = `data:application/javascript,${encodeURIComponent(__PROCESSING_WORKER_STRING__)}`;
 export const trustedWorkerUrl = createTrustedWorkerUrl(workerUrl);

@@ -10,8 +10,6 @@ import cssnano from 'cssnano';
 
 // --- 主构建函数 ---
 async function build() {
-    let originalWorkerStringContent;
-    const workerStringTemplatePath = 'src/shared/workers/worker-string.js';
     try {
         console.log('开始构建...');
 
@@ -62,15 +60,7 @@ async function build() {
         const processingWorkerCode = workerBuildResult.outputFiles[0].text;
         console.log('通用 Web Worker 打包完成。');
 
-        // 4. 动态注入 Worker 代码到模块文件
-        console.log('正在将 Worker 代码注入到模块...');
-        originalWorkerStringContent = await fs.readFile(workerStringTemplatePath, 'utf-8');
-        const finalWorkerStringContent = `export const processingWorkerString = ${JSON.stringify(processingWorkerCode)};`;
-        await fs.writeFile(workerStringTemplatePath, finalWorkerStringContent);
-        console.log('Worker 代码注入完成。');
-
-
-        // 5. 从 src/main.js 开始打包主应用程序代码
+        // 4. 从 src/main.js 开始打包主应用程序代码
         console.log('正在打包主应用程序...');
         const result = await esbuild.build({
             entryPoints: ['src/main.js'],
@@ -83,7 +73,7 @@ async function build() {
                 // 将所有合并后的 CSS 作为单个字符串注入
                 '__INJECTED_CSS__': JSON.stringify(cleanedCss),
                 // 将打包好的、无依赖的通用 Worker 代码注入
-        // '__PROCESSING_WORKER_STRING__': JSON.stringify(processingWorkerCode),
+                '__PROCESSING_WORKER_STRING__': JSON.stringify(processingWorkerCode),
             }
         });
         console.log('主应用程序打包完成。');
@@ -106,13 +96,6 @@ async function build() {
     } catch (error) {
         console.error('🔥 构建失败:', error);
         process.exit(1);
-    } finally {
-        // 无论成功还是失败，都恢复 worker-string.js 的原始状态
-        if (originalWorkerStringContent) {
-            console.log('正在恢复 worker-string.js...');
-            await fs.writeFile(workerStringTemplatePath, originalWorkerStringContent);
-            console.log('worker-string.js 已恢复。');
-        }
     }
 }
 
