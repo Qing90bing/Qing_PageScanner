@@ -26,6 +26,7 @@ let elementPath = [];
 let stagedTexts = new Set();
 let shouldResumeAfterModalClose = false;
 let fallbackNotificationShown = false; // 用于跟踪兼容模式通知是否已显示
+let isHighlightUpdateQueued = false; // 用于 requestAnimationFrame 节流
 
 // 用于跟踪滚动监听
 let scrollableParents = [];
@@ -303,16 +304,43 @@ function updateStagedCount() {
     fire('stagedCountChanged', stagedTexts.size);
 }
 
+/**
+ * @private
+ * @function scheduledHighlightUpdate
+ * @description 在 animation frame 中更新高亮。
+ *              这是被 requestAnimationFrame 调用的函数，确保UI更新平滑进行。
+ */
+function scheduledHighlightUpdate() {
+    if (currentTarget) {
+        updateHighlight(currentTarget);
+    }
+    isHighlightUpdateQueued = false;
+}
+
+
 function handleMouseOver(event) {
     if (!isActive || isAdjusting) return;
-    if (event.target.closest('.text-extractor-fab-container') || event.target.closest('#text-extractor-container')) {
-        cleanupUI();
-        currentTarget = null;
+
+    const target = event.target;
+    // 忽略 FAB 容器内的元素
+    if (target.closest('.text-extractor-fab-container') || target.closest('#text-extractor-container')) {
+        if (currentTarget) { // 如果之前有高亮的元素，则清理
+            cleanupUI();
+            currentTarget = null;
+        }
         return;
     }
-    currentTarget = event.target;
-    log(simpleTemplate(t('log.elementScan.hovering'), { tagName: currentTarget.tagName }));
-    updateHighlight(currentTarget);
+
+    // 只有当目标元素改变时才记录日志和请求更新
+    if (target !== currentTarget) {
+        currentTarget = target;
+        log(simpleTemplate(t('log.elementScan.hovering'), { tagName: currentTarget.tagName }));
+
+        if (!isHighlightUpdateQueued) {
+            isHighlightUpdateQueued = true;
+            requestAnimationFrame(scheduledHighlightUpdate);
+        }
+    }
 }
 
 function handleMouseOut(event) {

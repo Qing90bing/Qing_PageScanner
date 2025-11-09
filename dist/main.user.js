@@ -5337,6 +5337,7 @@ ${result.join(",\n")}
   var stagedTexts =  new Set();
   var shouldResumeAfterModalClose = false;
   var fallbackNotificationShown = false;
+  var isHighlightUpdateQueued = false;
   var scrollableParents = [];
   var scrollUpdateQueued = false;
   on("clearElementScan", () => {
@@ -5545,16 +5546,30 @@ ${result.join(",\n")}
   function updateStagedCount() {
     fire("stagedCountChanged", stagedTexts.size);
   }
+  function scheduledHighlightUpdate() {
+    if (currentTarget) {
+      updateHighlight(currentTarget);
+    }
+    isHighlightUpdateQueued = false;
+  }
   function handleMouseOver(event) {
     if (!isActive || isAdjusting) return;
-    if (event.target.closest(".text-extractor-fab-container") || event.target.closest("#text-extractor-container")) {
-      cleanupUI();
-      currentTarget = null;
+    const target = event.target;
+    if (target.closest(".text-extractor-fab-container") || target.closest("#text-extractor-container")) {
+      if (currentTarget) {
+        cleanupUI();
+        currentTarget = null;
+      }
       return;
     }
-    currentTarget = event.target;
-    log(simpleTemplate(t("log.elementScan.hovering"), { tagName: currentTarget.tagName }));
-    updateHighlight(currentTarget);
+    if (target !== currentTarget) {
+      currentTarget = target;
+      log(simpleTemplate(t("log.elementScan.hovering"), { tagName: currentTarget.tagName }));
+      if (!isHighlightUpdateQueued) {
+        isHighlightUpdateQueued = true;
+        requestAnimationFrame(scheduledHighlightUpdate);
+      }
+    }
   }
   function handleMouseOut(event) {
     if (event.target === currentTarget) {
