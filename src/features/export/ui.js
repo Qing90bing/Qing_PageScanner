@@ -5,7 +5,7 @@
  * @description 负责创建和管理导出功能的 UI 组件，包括导出按钮和菜单。
  */
 
-import exportIcon from '../../assets/icons/exportIcon.js';
+import { exportIcon } from '../../assets/icons/exportIcon.js';
 import { txtIcon } from '../../assets/icons/txtIcon.js';
 import { jsonIcon } from '../../assets/icons/jsonIcon.js';
 import { csvIcon } from '../../assets/icons/csvIcon.js';

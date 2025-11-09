@@ -2,9 +2,8 @@
 
 import { setClipboard } from '../../services/tampermonkey.js';
 import { showNotification } from '../components/notification.js';
-import { createIconTitle } from '../iconTitle.js';
 import { copyIcon } from '../../../assets/icons/copyIcon.js';
-import clearIcon from '../../../assets/icons/clearIcon.js';
+import { clearIcon } from '../../../assets/icons/clearIcon.js';
 import { log } from '../../utils/logger.js';
 import { t } from '../../i18n/index.js';
 import { on, fire } from '../../utils/eventBus.js';
