@@ -6,6 +6,7 @@ import path from 'path';
 import strip from 'strip-comments';
 import postcss from 'postcss';
 import discardComments from 'postcss-discard-comments';
+import cssnano from 'cssnano';
 
 // --- 主构建函数 ---
 async function build() {
@@ -40,11 +41,14 @@ async function build() {
         }
         console.log('CSS 文件合并完成。');
 
-        // 使用 PostCSS 清理 CSS 注释
-        console.log('正在清理 CSS 注释...');
-        const postcssResult = await postcss([discardComments({ removeAll: true })]).process(allCssContent, { from: undefined });
+        // 使用 PostCSS 清理和压缩 CSS
+        console.log('正在清理和压缩 CSS...');
+        const postcssResult = await postcss([
+            discardComments({ removeAll: true }),
+            cssnano()
+        ]).process(allCssContent, { from: undefined });
         const cleanedCss = postcssResult.css;
-        console.log('CSS 注释清理完成。');
+        console.log('CSS 清理和压缩完成。');
 
         // 3. 【重构】打包通用的 Web Worker 脚本
         console.log('正在打包通用 Web Worker...');
