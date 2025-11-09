@@ -12,7 +12,7 @@ import { simpleTemplate } from '../../shared/utils/templating.js';
 import { log } from '../../shared/utils/logger.js';
 import { loadSettings } from '../settings/logic.js';
 import { isWorkerAllowed } from '../../shared/utils/csp-checker.js';
-import { performScanInMainThread } from './fallback.js';
+import { performScanInMainThread } from '../../shared/utils/fallbackProcessor.js';
 import { trustedWorkerUrl } from '../../shared/workers/worker-url.js';
 import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
 import { on, fire } from '../../shared/utils/eventBus.js';

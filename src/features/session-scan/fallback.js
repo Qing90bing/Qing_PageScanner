@@ -6,7 +6,7 @@
  *              模拟 Web Worker 的状态和行为。
  */
 
-import { shouldFilter } from '../../shared/utils/filterLogic.js';
+import { filterAndNormalizeTexts } from '../../shared/utils/textProcessor.js';
 import { log } from '../../shared/utils/logger.js';
 import { t } from '../../shared/i18n/index.js';
 
@@ -30,31 +30,22 @@ export function initFallback(rules) {
  * @returns {boolean} - 如果成功添加了新文本，则返回 true。
  */
 export function processTextsInFallback(texts, logPrefix = '') {
-    let changed = false;
-    if (Array.isArray(texts)) {
-        texts.forEach(rawText => {
-            if (!rawText || typeof rawText !== 'string') return;
+    const originalSize = sessionTexts.size;
 
-            const normalizedText = rawText.normalize('NFC');
-            const textForFiltering = normalizedText.replace(/(\r\n|\n|\r)+/g, '\n').trim();
-            if (textForFiltering === '') return;
+    // 定义一个适配 session-scan 日志格式的日志记录器
+    const logFiltered = (text, reason) => {
+        const prefix = logPrefix ? `${logPrefix} ` : '';
+        log(prefix + t('log.textProcessor.filtered', { text, reason }));
+    };
 
-            const filterResult = shouldFilter(textForFiltering, filterRules);
-            if (filterResult) {
-                const prefix = logPrefix ? `${logPrefix} ` : '';
-                log(prefix + t('log.textProcessor.filtered', { text: textForFiltering, reason: filterResult }));
-                return;
-            }
+    // 调用核心处理函数，注意：这里假设调试日志在需要时已通过外部逻辑启用
+    const processedTexts = filterAndNormalizeTexts(texts, filterRules, true, logFiltered);
 
-            const originalSize = sessionTexts.size;
-            sessionTexts.add(normalizedText.replace(/(\r\n|\n|\r)+/g, '\n'));
+    // 将处理后的文本添加到会话 Set 中
+    processedTexts.forEach(text => sessionTexts.add(text));
 
-            if (sessionTexts.size > originalSize) {
-                changed = true;
-            }
-        });
-    }
-    return changed;
+    // 如果 Set 的大小发生变化，则返回 true
+    return sessionTexts.size > originalSize;
 }
 
 /**

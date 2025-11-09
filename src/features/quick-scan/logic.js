@@ -8,7 +8,8 @@
 import { loadSettings } from '../settings/logic.js';
 import { log } from '../../shared/utils/logger.js';
 import { isWorkerAllowed } from '../../shared/utils/csp-checker.js';
-import { performScanInMainThread } from './fallback.js';
+import { performScanInMainThread } from '../../shared/utils/fallbackProcessor.js';
+import { formatTextsForTranslation } from '../../shared/utils/formatting.js';
 import { trustedWorkerUrl } from '../../shared/workers/worker-url.js';
 import { showNotification } from '../../shared/ui/components/notification.js';
 import { t, getTranslationObject } from '../../shared/i18n/index.js';
@@ -35,7 +36,16 @@ export const performQuickScan = () => {
             log(t('log.quickScan.switchToFallback'));
             showNotification(t('notifications.cspWorkerWarning'), { type: 'info', duration: 5000 });
             try {
-                const result = performScanInMainThread(texts, filterRules, enableDebugLogging);
+                // 调用通用的主线程扫描函数
+                const scanResult = performScanInMainThread(texts, filterRules, enableDebugLogging);
+                // 格式化文本以供显示
+                const formattedText = formatTextsForTranslation(scanResult.texts);
+
+                const result = {
+                    formattedText,
+                    count: scanResult.count,
+                };
+
                 updateScanCount(result.count, 'static');
                 resolve(result);
             } catch (fallbackError) {

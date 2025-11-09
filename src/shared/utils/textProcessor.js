@@ -6,6 +6,7 @@
  */
 
 import { appConfig } from '../../features/settings/config.js';
+import { shouldFilter } from './filterLogic.js';
 
 // --- 私有函数 ---
 
@@ -114,6 +115,46 @@ export const extractAndProcessText = () => {
     });
 
     // 6. 将 Set 转换为数组并返回
+    return Array.from(uniqueTexts);
+};
+
+
+/**
+ * @public
+ * @description 接收一个原始文本数组，并对其进行规范化、过滤和去重。
+ *              这是在 Web Worker 和主线程回退逻辑中共享的核心处理步骤。
+ * @param {string[]} texts - 原始文本数组。
+ * @param {object} filterRules - 应用于文本的过滤规则。
+ * @param {boolean} enableDebugLogging - 是否启用调试日志。
+ * @param {function(string, string): void} [logFiltered] - (可选) 用于记录被过滤文本的日志函数。
+ * @returns {string[]} 返回一个经过处理的、唯一的文本数组。
+ */
+export const filterAndNormalizeTexts = (texts, filterRules, enableDebugLogging, logFiltered) => {
+    const uniqueTexts = new Set();
+
+    if (Array.isArray(texts)) {
+        texts.forEach(rawText => {
+            if (!rawText || typeof rawText !== 'string') return;
+
+            // 规范化文本，统一换行符并移除首尾空格
+            const normalizedText = rawText.normalize('NFC');
+            const textForFiltering = normalizedText.replace(/(\r\n|\n|\r)+/g, '\n').trim();
+            if (textForFiltering === '') return;
+
+            // 应用过滤规则
+            const filterResult = shouldFilter(textForFiltering, filterRules);
+            if (filterResult) {
+                if (enableDebugLogging && logFiltered) {
+                    logFiltered(textForFiltering, filterResult);
+                }
+                return;
+            }
+
+            // 将处理过的、符合条件的文本添加到结果集
+            uniqueTexts.add(normalizedText.replace(/(\r\n|\n|\r)+/g, '\n'));
+        });
+    }
+
     return Array.from(uniqueTexts);
 };
 
