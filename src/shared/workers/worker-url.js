@@ -8,5 +8,6 @@ import { createTrustedWorkerUrl } from '../utils/trustedTypes.js';
  * 通过将此操作放在一个独立的模块中，我们确保它在整个应用程序的生命周期中只执行一次，
  * 且结果被缓存和复用。
  */
-const workerUrl = `data:application/javascript,${encodeURIComponent(__PROCESSING_WORKER_STRING__)}`;
+const workerBlob = new Blob([__PROCESSING_WORKER_STRING__], { type: 'application/javascript' });
+const workerUrl = URL.createObjectURL(workerBlob);
 export const trustedWorkerUrl = createTrustedWorkerUrl(workerUrl);

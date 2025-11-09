@@ -1784,7 +1784,8 @@ var TextExtractor = (() => {
 ${result.join(",\n")}
 ]`;
   };
-  var workerUrl = `data:application/javascript,${encodeURIComponent(`(() => {
+  var workerBlob = new Blob([`(() => {
+  // src/shared/i18n/en.json
   var en_default = {
     common: {
       scan: "Scan",
@@ -2139,6 +2140,7 @@ ${result.join(",\n")}
       sessionScan: '<p><strong>What it does:</strong></p><p>Dynamic Scan continuously monitors and automatically records all text that dynamically loads or changes on a webpage. It is especially useful for capturing live chats, infinite scrolling content, or notifications.</p><p><strong>How to use:</strong></p><ul><li><strong>Start Scan:</strong> Click the "Dynamic Scan" icon <span class="help-icon-placeholder dynamic-scan-icon"></span> in the floating button to start scanning immediately.</li><li><strong>Stop Scan:</strong> Click the icon again <span class="help-icon-placeholder stop-icon"></span> to stop.</li><li><strong>View Results:</strong> After stopping, click the main floating button <span class="help-icon-placeholder summary-icon"></span> to open the results window.</li></ul><p><strong>How to exit:</strong></p><ul><li>Click the "Dynamic Scan" icon again during the scan.</li><li>Press the <kbd>ESC</kbd> key at any time to quickly stop the scan.</li></ul>'
     }
   };
+  // src/shared/i18n/zh-CN.json
   var zh_CN_default = {
     common: {
       scan: "\\u626B\\u63CF",
@@ -2493,6 +2495,7 @@ ${result.join(",\n")}
       sessionScan: '<p><strong>\\u529F\\u80FD\\u4ECB\\u7ECD:</strong></p><p>\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u6301\\u7EED\\u76D1\\u63A7\\u5E76\\u81EA\\u52A8\\u8BB0\\u5F55\\u7F51\\u9875\\u4E0A\\u6240\\u6709\\u52A8\\u6001\\u52A0\\u8F7D\\u6216\\u53D8\\u5316\\u7684\\u6587\\u672C\\uFF0C\\u7279\\u522B\\u9002\\u7528\\u4E8E\\u6293\\u53D6\\u5B9E\\u65F6\\u804A\\u5929\\u3001\\u6EDA\\u52A8\\u52A0\\u8F7D\\u5185\\u5BB9\\u6216\\u901A\\u77E5\\u7B49\\u3002</p><p><strong>\\u5982\\u4F55\\u4F7F\\u7528:</strong></p><ul><li><strong>\\u5F00\\u59CB\\u626B\\u63CF:</strong> \\u70B9\\u51FB\\u60AC\\u6D6E\\u6309\\u94AE\\u4E2D\\u7684\\u201C\\u52A8\\u6001\\u626B\\u63CF\\u201D\\u56FE\\u6807 <span class="help-icon-placeholder dynamic-scan-icon"></span>\\uFF0C\\u626B\\u63CF\\u7ACB\\u5373\\u5F00\\u59CB\\u3002</li><li><strong>\\u505C\\u6B62\\u626B\\u63CF:</strong> \\u518D\\u6B21\\u70B9\\u51FB\\u8BE5\\u56FE\\u6807 <span class="help-icon-placeholder stop-icon"></span>\\uFF0C\\u5373\\u53EF\\u505C\\u6B62\\u626B\\u63CF\\u3002</li><li><strong>\\u67E5\\u770B\\u7ED3\\u679C:</strong> \\u505C\\u6B62\\u540E\\uFF0C\\u70B9\\u51FB\\u4E3B\\u60AC\\u6D6E\\u6309\\u94AE <span class="help-icon-placeholder summary-icon"></span> \\u6253\\u5F00\\u7ED3\\u679C\\u7A97\\u53E3\\u3002</li></ul><p><strong>\\u5982\\u4F55\\u9000\\u51FA:</strong></p><ul><li>\\u5728\\u626B\\u63CF\\u8FC7\\u7A0B\\u4E2D\\uFF0C\\u518D\\u6B21\\u70B9\\u51FB\\u201C\\u52A8\\u6001\\u626B\\u63CF\\u201D\\u56FE\\u6807\\u3002</li><li>\\u5728\\u626B\\u63CF\\u8FC7\\u7A0B\\u4E2D\\uFF0C\\u968F\\u65F6\\u6309\\u4E0B<kbd>ESC</kbd>\\u952E\\u53EF\\u5FEB\\u901F\\u505C\\u6B62\\u3002</li></ul>'
     }
   };
+  // src/shared/i18n/zh-TW.json
   var zh_TW_default = {
     common: {
       scan: "\\u6383\\u63CF",
@@ -2847,11 +2850,13 @@ ${result.join(",\n")}
       sessionScan: '<p><strong>\\u529F\\u80FD\\u4ECB\\u7D39:</strong></p><p>\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u6301\\u7E8C\\u76E3\\u63A7\\u4E26\\u81EA\\u52D5\\u8A18\\u9304\\u7DB2\\u9801\\u4E0A\\u6240\\u6709\\u52D5\\u614B\\u52A0\\u8F09\\u6216\\u8B8A\\u5316\\u7684\\u6587\\u672C\\uFF0C\\u7279\\u5225\\u9069\\u7528\\u65BC\\u6293\\u53D6\\u5BE6\\u6642\\u804A\\u5929\\u3001\\u6EFE\\u52D5\\u52A0\\u8F09\\u5167\\u5BB9\\u6216\\u901A\\u77E5\\u7B49\\u3002</p><p><strong>\\u5982\\u4F55\\u4F7F\\u7528:</strong></p><ul><li><strong>\\u958B\\u59CB\\u6383\\u63CF:</strong> \\u9EDE\\u64CA\\u61F8\\u6D6E\\u6309\\u9215\\u4E2D\\u7684\\u300C\\u52D5\\u614B\\u6383\\u63CF\\u300D\\u5716\\u6A19 <span class="help-icon-placeholder dynamic-scan-icon"></span>\\uFF0C\\u6383\\u63CF\\u7ACB\\u5373\\u958B\\u59CB\\u3002</li><li><strong>\\u505C\\u6B62\\u6383\\u63CF:</strong> \\u518D\\u6B21\\u9EDE\\u64CA\\u8A72\\u5716\\u6A19 <span class="help-icon-placeholder stop-icon"></span>\\uFF0C\\u5373\\u53EF\\u505C\\u6B62\\u6383\\u63CF\\u3002</li><li><strong>\\u67E5\\u770B\\u7D50\\u679C:</strong> \\u505C\\u6B62\\u5F8C\\uFF0C\\u9EDE\\u64CA\\u4E3B\\u61F8\\u6D6E\\u6309\\u9215 <span class="help-icon-placeholder summary-icon"></span> \\u6253\\u958B\\u7D50\\u679C\\u7A97\\u53E3\\u3002</li></ul><p><strong>\\u5982\\u4F55\\u9000\\u51FA:</strong></p><ul><li>\\u5728\\u6383\\u63CF\\u904E\\u7A0B\\u4E2D\\uFF0C\\u518D\\u6B21\\u9EDE\\u64CA\\u300C\\u52D5\\u614B\\u6383\\u63CF\\u300D\\u5716\\u6A19\\u3002</li><li>\\u5728\\u6383\\u63CF\\u904E\\u7A0B\\u4E2D\\uFF0C\\u96A8\\u6642\\u6309\\u4E0B <kbd>ESC</kbd> \\u9375\\u53EF\\u5FEB\\u901F\\u505C\\u6B62\\u3002</li></ul>'
     }
   };
+  // src/shared/i18n/management/languages.js
   var supportedLanguages = [
     { code: "en", name: "English" },
     { code: "zh-CN", name: "\\u7B80\\u4F53\\u4E2D\\u6587" },
     { code: "zh-TW", name: "\\u7E41\\u9AD4\\u4E2D\\u6587" }
   ];
+  // src/shared/i18n/index.js
   var translationModules = {
     en: en_default,
     "zh-CN": zh_CN_default,
@@ -2888,6 +2893,7 @@ ${result.join(",\n")}
       label: lang.name
     }));
   }
+  // src/shared/utils/ignoredTerms.js
   var IGNORED_TERMS = [
     "Github",
     "Microsoft",
@@ -2923,9 +2929,13 @@ ${result.join(",\n")}
     "AI"
   ];
   var ignoredTerms_default = IGNORED_TERMS;
+  // src/assets/icons/themeIcon.js
   var themeIcon = \`<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 32.5-156t88-127Q256-817 330-848.5T488-880q80 0 151 27.5t124.5 76q53.5 48.5 85 115T880-518q0 115-70 176.5T640-280h-74q-9 0-12.5 5t-3.5 11q0 12 15 34.5t15 51.5q0 50-27.5 74T480-80Zm0-400Zm-220 40q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120-160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm200 0q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120 160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17ZM480-160q9 0 14.5-5t5.5-13q0-14-15-33t-15-57q0-42 29-67t71-25h70q66 0 113-38.5T800-518q0-121-92.5-201.5T488-800q-136 0-232 93t-96 227q0 133 93.5 226.5T480-160Z"/></svg>\`;
+  // src/assets/icons/languageIcon.js
   var languageIcon_default = \`<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-155.5t86-127Q252-817 325-848.5T480-880q83 0 155.5 31.5t127 86q54.5 54.5 86 127T880-480q0 82-31.5 155t-86 127.5q-54.5 54.5-127 86T480-80Zm0-82q26-36 45-75t31-83H404q12 44 31 83t45 75Zm-104-16q-18-33-31.5-68.5T322-320H204q29 50 72.5 87t99.5 55Zm208 0q56-18 99.5-55t72.5-87H638q-9 38-22.5 73.5T584-178ZM170-400h136q-3-20-4.5-39.5T300-480q0-21 1.5-40.5T306-560H170q-5 20-7.5 39.5T160-480q0 21 2.5 40.5T170-400Zm216 0h188q3-20 4.5-39.5T580-480q0-21-1.5-40.5T574-560H386q-3 20-4.5 39.5T380-480q0 21 1.5 40.5T386-400Zm268 0h136q5-20 7.5-39.5T800-480q0-21-2.5-40.5T790-560H654q3 20 4.5 39.5T660-480q0 21-1.5 40.5T654-400Zm-16-240h118q-29-50-72.5-87T584-782q18 33 31.5 68.5T638-640Zm-234 0h152q-12-44-31-83t-45-75q-26 36-45 75t-31 83Zm-200 0h118q9-38 22.5-73.5T376-782q-56 18-99.5 55T204-640Z"/></svg>\`;
+  // src/assets/icons/infoIcon.js
   var infoIcon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>';
+  // src/features/settings/config.js
   var selectSettingsDefinitions = [
     {
       id: "theme-select",
@@ -2943,6 +2953,7 @@ ${result.join(",\n")}
       key: "language",
       label: "settings.language",
       icon: languageIcon_default,
+      // \u76F4\u63A5\u4ECE i18n \u6A21\u5757\u83B7\u53D6\u8BED\u8A00\u5217\u8868\uFF0C\u5176\u6807\u7B7E\u5DF2\u7ECF\u662F\u539F\u751F\u540D\u79F0\uFF0C\u65E0\u9700\u518D\u7FFB\u8BD1\u3002
       options: getAvailableLanguages()
     }
   ];
@@ -2972,8 +2983,9 @@ ${result.join(",\n")}
     { id: "filter-website-urls", key: "websiteUrl", label: "settings.filters.website_urls", tooltip: { titleIcon: infoIcon, title: "settings.filters.website_urls_title", text: "tooltip.filters.website_urls" } },
     { id: "filter-shorthand-numbers", key: "shorthandNumber", label: "settings.filters.shorthand_numbers", tooltip: { titleIcon: infoIcon, title: "settings.filters.shorthand_numbers_title", text: "tooltip.filters.shorthand_numbers" } }
   ];
+  // src/shared/utils/filterLogic.js
   var filterConfigMap = new Map(filterDefinitions.map((def) => [def.key, def.label]));
-  var ruleChecks =  new Map([
+  var ruleChecks = /* @__PURE__ */ new Map([
     ["numbers", {
       regex: /^[$\\\u20AC\\\xA3\\\xA5\\d,.\\s]+$/,
       label: filterConfigMap.get("numbers")
@@ -2991,6 +3003,7 @@ ${result.join(",\n")}
       label: filterConfigMap.get("emojiOnly")
     }],
     ["symbols", {
+      // \u8FD9\u4E2A\u903B\u8F91\u6BD4\u8F83\u7279\u6B8A\uFF0C\u662F\u201C\u4E0D\u5305\u542B\u5B57\u6BCD\u6216\u6570\u5B57\u201D\uFF0C\u6240\u4EE5\u6211\u4EEC\u7528\u4E00\u4E2A\u51FD\u6570\u6765\u5904\u7406
       test: (text) => !/[\\p{L}\\p{N}]/u.test(text),
       label: filterConfigMap.get("symbols")
     }],
@@ -3027,10 +3040,12 @@ ${result.join(",\n")}
       label: filterConfigMap.get("gitCommitHash")
     }],
     ["websiteUrl", {
+      // \u5339\u914D\u5E38\u89C1\u7684\u7F51\u5740\u683C\u5F0F\uFF0C\u5305\u62EC\u534F\u8BAE\u3001www\u524D\u7F00\u548C\u88F8\u57DF\u540D\uFF0C\u8981\u6C42\u4E25\u683C\u5339\u914D\u6574\u4E2A\u5B57\u7B26\u4E32\u4EE5\u907F\u514D\u8BEF\u4F24\u3002
       regex: /^(?:(?:https?|ftp):\\/\\/)?(?:www\\.)?([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}(?:\\/.*)?$/,
       label: filterConfigMap.get("websiteUrl")
     }],
     ["shorthandNumber", {
+      // \u5339\u914D\u5E26k/m/b\u540E\u7F00\u7684\u6570\u5B57\uFF0C\u652F\u6301\u6574\u6570\u3001\u6D6E\u70B9\u6570\u3001\u5927\u5C0F\u5199\u4EE5\u53CA\u53EF\u9009\u7684\u7A7A\u683C\u3002
       regex: /^\\d+(\\.\\d+)?\\s?[kmb]$/i,
       label: filterConfigMap.get("shorthandNumber")
     }]
@@ -3046,6 +3061,7 @@ ${result.join(",\n")}
     }
     return null;
   }
+  // src/shared/utils/formatting.js
   var formatTextsForTranslation = (texts) => {
     const result = texts.map(
       (text) => \`    ["\${text.replace(/"/g, '\\\\"').replace(/\\n/g, "\\\\n")}", ""]\`
@@ -3054,7 +3070,8 @@ ${result.join(",\n")}
 \${result.join(",\\n")}
 ]\`;
   };
-  var sessionTexts =  new Set();
+  // src/shared/utils/processing-worker.js
+  var sessionTexts = /* @__PURE__ */ new Set();
   var filterRules = {};
   var translations2 = {};
   var enableDebugLogging = false;
@@ -3104,9 +3121,12 @@ ${result.join(",\n")}
       filterRules = payload.filterRules;
     }
     switch (type) {
-            case "process-single": {
+      /**
+       * \u5904\u7406\u4E00\u6B21\u6027\u626B\u63CF\u4EFB\u52A1 (\u7528\u4E8E Quick Scan \u548C Element Scan)
+       */
+      case "process-single": {
         const { texts } = payload;
-        const uniqueTexts =  new Set();
+        const uniqueTexts = /* @__PURE__ */ new Set();
         if (Array.isArray(texts)) {
           texts.forEach((text) => processText(text, uniqueTexts));
         }
@@ -3122,9 +3142,12 @@ ${result.join(",\n")}
         });
         break;
       }
-            case "filter-texts": {
+      /**
+       * \u53EA\u8FC7\u6EE4\u6587\u672C\u5E76\u8FD4\u56DE\u6570\u7EC4 (\u7528\u4E8E Element Scan \u7684\u6682\u5B58)
+       */
+      case "filter-texts": {
         const { texts } = payload;
-        const filteredTexts =  new Set();
+        const filteredTexts = /* @__PURE__ */ new Set();
         if (Array.isArray(texts)) {
           texts.forEach((text) => processText(text, filteredTexts));
         }
@@ -3136,11 +3159,17 @@ ${result.join(",\n")}
         });
         break;
       }
-            case "session-start":
+      /**
+       * \u4F1A\u8BDD\u6A21\u5F0F\uFF1A\u5F00\u59CB\u4E00\u4E2A\u65B0\u7684\u4F1A\u8BDD
+       */
+      case "session-start":
         sessionTexts.clear();
         log2("Session started and cleared.");
         break;
-            case "session-add-texts": {
+      /**
+       * \u4F1A\u8BDD\u6A21\u5F0F\uFF1A\u6DFB\u52A0\u6587\u672C
+       */
+      case "session-add-texts": {
         const { texts } = payload;
         let changed = false;
         if (Array.isArray(texts)) {
@@ -3155,24 +3184,34 @@ ${result.join(",\n")}
         }
         break;
       }
-            case "session-get-summary": {
+      /**
+       * \u4F1A\u8BDD\u6A21\u5F0F\uFF1A\u8BF7\u6C42\u603B\u7ED3
+       */
+      case "session-get-summary": {
         const sessionTextsArray = Array.from(sessionTexts);
         const formattedText = formatTextsForTranslation(sessionTextsArray);
         self.postMessage({ type: "summaryReady", payload: formattedText });
         break;
       }
-            case "session-clear":
+      /**
+       * \u4F1A\u8BDD\u6A21\u5F0F\uFF1A\u6E05\u7A7A\u4F1A\u8BDD
+       */
+      case "session-clear":
         sessionTexts.clear();
         log2("Session cleared.");
         self.postMessage({ type: "countUpdated", payload: 0 });
         break;
-            case "session-get-count":
+      /**
+       * \u4F1A\u8BDD\u6A21\u5F0F\uFF1A\u83B7\u53D6\u5F53\u524D\u8BA1\u6570\u503C
+       */
+      case "session-get-count":
         self.postMessage({ type: "countUpdated", payload: sessionTexts.size });
         break;
     }
   };
 })();
-`)}`;
+`], { type: "application/javascript" });
+  var workerUrl = URL.createObjectURL(workerBlob);
   var trustedWorkerUrl = createTrustedWorkerUrl(workerUrl);
   function createSVGFromString(svgString) {
     if (!svgString || typeof svgString !== "string") return null;
