@@ -51,28 +51,33 @@ function getRawContent(text) {
  */
 function formatAsCsv(text) {
     const header = `"${t('export.csv.id')}","${t('export.csv.original')}","${t('export.csv.translation')}"\n`;
-    let csvContent = header;
-
-    // 正则表达式，用于匹配并捕获 ["...", ""] 中的第一个字符串
-    const regex = /\[\s*"((?:[^"\\]|\\.)*)"\s*,\s*""\s*\]/g;
 
     try {
-        const matches = text.matchAll(regex);
-        let id = 1;
-        for (const match of matches) {
-            // match[1] 包含捕获的原文，并处理转义字符
-            const originalText = match[1].replace(/\\"/g, '"').replace(/\\n/g, '\n');
-            const escapedLine = `"${originalText.replace(/"/g, '""')}"`;
-            csvContent += `${id},${escapedLine},""\n`;
-            id++;
+        const parsedData = JSON.parse(text);
+
+        if (!Array.isArray(parsedData)) {
+            log(t('log.exporter.csvError'), new Error('Parsed JSON is not an array.'));
+            return header;
         }
+
+        let csvContent = header;
+        parsedData.forEach((row, index) => {
+            // 确保 row 是一个数组并且至少有一个元素
+            if (Array.isArray(row) && row.length > 0) {
+                const originalText = String(row[0]); // 确保是字符串
+                // 为了 CSV 格式的正确性，转义文本中的双引号
+                const escapedLine = `"${originalText.replace(/"/g, '""')}"`;
+                csvContent += `${index + 1},${escapedLine},""\n`;
+            }
+        });
+        
+        return csvContent;
+
     } catch (error) {
         log(t('log.exporter.csvError'), error);
-        // 出错时依然返回只包含表头的空文件，以保持健壮性
+        // 在 JSON 解析失败时，返回只包含表头的 CSV 以保持健壮性
         return header;
     }
-
-    return csvContent;
 }
 
 /**

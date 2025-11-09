@@ -6027,23 +6027,26 @@ ${result.join(",\n")}
   function formatAsCsv(text) {
     const header = `"${t("export.csv.id")}","${t("export.csv.original")}","${t("export.csv.translation")}"
 `;
-    let csvContent = header;
-    const regex = /\[\s*"((?:[^"\\]|\\.)*)"\s*,\s*""\s*\]/g;
     try {
-      const matches = text.matchAll(regex);
-      let id = 1;
-      for (const match of matches) {
-        const originalText = match[1].replace(/\\"/g, '"').replace(/\\n/g, "\n");
-        const escapedLine = `"${originalText.replace(/"/g, '""')}"`;
-        csvContent += `${id},${escapedLine},""
-`;
-        id++;
+      const parsedData = JSON.parse(text);
+      if (!Array.isArray(parsedData)) {
+        log(t("log.exporter.csvError"), new Error("Parsed JSON is not an array."));
+        return header;
       }
+      let csvContent = header;
+      parsedData.forEach((row, index) => {
+        if (Array.isArray(row) && row.length > 0) {
+          const originalText = String(row[0]);
+          const escapedLine = `"${originalText.replace(/"/g, '""')}"`;
+          csvContent += `${index + 1},${escapedLine},""
+`;
+        }
+      });
+      return csvContent;
     } catch (error) {
       log(t("log.exporter.csvError"), error);
       return header;
     }
-    return csvContent;
   }
   function downloadFile(filename, content, mimeType) {
     const blob = new Blob([content], { type: mimeType });
