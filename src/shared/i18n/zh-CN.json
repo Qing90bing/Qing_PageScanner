@@ -306,10 +306,19 @@
         "initFailed": "选取元素扫描 Worker 初始化失败。浏览器的CSP可能阻止了 data: URL。",
         "initSyncError": "选取元素扫描 Worker 初始化期间发生同步错误: {{error}}",
         "originalError": "原始 Worker 错误: {{error}}",
-        "cspBlocked": "选取元素扫描的CSP检查失败，不允许创建Worker。"
+        "cspBlocked": "选取元素扫描的CSP检查失败，不允许创建Worker。",
+        "attemping": "正在尝试使用 Web Worker 进行过滤...",
+        "fallback": "已切换到主线程进行过滤。",
+        "cspHint": "这可能是由于网站的内容安全策略（CSP）导致的。"
       },
       "switchToFallback": "正在为选取元素扫描切换到主线程备选方案。",
-      "fallbackFailed": "选取元素扫描备选方案执行失败: {{error}}"
+      "fallbackFailed": "“选取元素扫描”后备模式失败：{{error}}",
+      "stagingStarted": "开始暂存元素：<{{tagName}}>",
+      "stagedNothingNew": "未能从此元素中暂存任何新的唯一文本。",
+      "stagingFinished": "暂存操作已完成。",
+      "confirmStarted": "确认流程已开始...",
+      "confirmFinished": "确认流程已成功完成。",
+      "confirmFailed": "确认流程失败。错误：{{error}}"
     },
     "elementScanUI": {
       "creatingHighlights": "元素扫描UI：首次创建高亮元素。",

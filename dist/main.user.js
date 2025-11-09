@@ -453,10 +453,19 @@ var TextExtractor = (() => {
           initFailed: "Element Scan Worker initialization failed. The browser's CSP might be blocking data: URLs.",
           initSyncError: "Synchronous error during Element Scan Worker initialization: {{error}}",
           originalError: "Original worker error: {{error}}",
-          cspBlocked: "Element Scan CSP check failed. Worker creation is not allowed."
+          cspBlocked: "Element Scan CSP check failed. Worker creation is not allowed.",
+          attemping: "Attempting to use Web Worker for filtering...",
+          fallback: "Switched to main thread for filtering.",
+          cspHint: "This may be due to the site's Content Security Policy (CSP)."
         },
         switchToFallback: "Switching to main thread fallback for Element Scan.",
-        fallbackFailed: "Element Scan fallback mode failed: {{error}}"
+        fallbackFailed: "Element Scan fallback mode failed: {{error}}",
+        stagingStarted: "Staging started for element: <{{tagName}}>",
+        stagedNothingNew: "No new unique text was staged from this element.",
+        stagingFinished: "Staging finished.",
+        confirmStarted: "Confirmation process started...",
+        confirmFinished: "Confirmation process finished successfully.",
+        confirmFailed: "Confirmation process failed. Error: {{error}}"
       },
       elementScanUI: {
         creatingHighlights: "Element Scan UI: Creating highlight elements for the first time.",
@@ -798,10 +807,19 @@ var TextExtractor = (() => {
           initFailed: "\u9009\u53D6\u5143\u7D20\u626B\u63CF Worker \u521D\u59CB\u5316\u5931\u8D25\u3002\u6D4F\u89C8\u5668\u7684CSP\u53EF\u80FD\u963B\u6B62\u4E86 data: URL\u3002",
           initSyncError: "\u9009\u53D6\u5143\u7D20\u626B\u63CF Worker \u521D\u59CB\u5316\u671F\u95F4\u53D1\u751F\u540C\u6B65\u9519\u8BEF: {{error}}",
           originalError: "\u539F\u59CB Worker \u9519\u8BEF: {{error}}",
-          cspBlocked: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u7684CSP\u68C0\u67E5\u5931\u8D25\uFF0C\u4E0D\u5141\u8BB8\u521B\u5EFAWorker\u3002"
+          cspBlocked: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u7684CSP\u68C0\u67E5\u5931\u8D25\uFF0C\u4E0D\u5141\u8BB8\u521B\u5EFAWorker\u3002",
+          attemping: "\u6B63\u5728\u5C1D\u8BD5\u4F7F\u7528 Web Worker \u8FDB\u884C\u8FC7\u6EE4...",
+          fallback: "\u5DF2\u5207\u6362\u5230\u4E3B\u7EBF\u7A0B\u8FDB\u884C\u8FC7\u6EE4\u3002",
+          cspHint: "\u8FD9\u53EF\u80FD\u662F\u7531\u4E8E\u7F51\u7AD9\u7684\u5185\u5BB9\u5B89\u5168\u7B56\u7565\uFF08CSP\uFF09\u5BFC\u81F4\u7684\u3002"
         },
         switchToFallback: "\u6B63\u5728\u4E3A\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5207\u6362\u5230\u4E3B\u7EBF\u7A0B\u5907\u9009\u65B9\u6848\u3002",
-        fallbackFailed: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5907\u9009\u65B9\u6848\u6267\u884C\u5931\u8D25: {{error}}"
+        fallbackFailed: "\u201C\u9009\u53D6\u5143\u7D20\u626B\u63CF\u201D\u540E\u5907\u6A21\u5F0F\u5931\u8D25\uFF1A{{error}}",
+        stagingStarted: "\u5F00\u59CB\u6682\u5B58\u5143\u7D20\uFF1A<{{tagName}}>",
+        stagedNothingNew: "\u672A\u80FD\u4ECE\u6B64\u5143\u7D20\u4E2D\u6682\u5B58\u4EFB\u4F55\u65B0\u7684\u552F\u4E00\u6587\u672C\u3002",
+        stagingFinished: "\u6682\u5B58\u64CD\u4F5C\u5DF2\u5B8C\u6210\u3002",
+        confirmStarted: "\u786E\u8BA4\u6D41\u7A0B\u5DF2\u5F00\u59CB...",
+        confirmFinished: "\u786E\u8BA4\u6D41\u7A0B\u5DF2\u6210\u529F\u5B8C\u6210\u3002",
+        confirmFailed: "\u786E\u8BA4\u6D41\u7A0B\u5931\u8D25\u3002\u9519\u8BEF\uFF1A{{error}}"
       },
       elementScanUI: {
         creatingHighlights: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u9996\u6B21\u521B\u5EFA\u9AD8\u4EAE\u5143\u7D20\u3002",
@@ -1143,10 +1161,19 @@ var TextExtractor = (() => {
           initFailed: "\u9078\u53D6\u5143\u7D20\u6383\u63CF Worker \u521D\u59CB\u5316\u5931\u6557\u3002\u700F\u89BD\u5668\u7684CSP\u53EF\u80FD\u963B\u6B62\u4E86 data: URL\u3002",
           initSyncError: "\u9078\u53D6\u5143\u7D20\u6383\u63CF Worker \u521D\u59CB\u5316\u671F\u9593\u767C\u751F\u540C\u6B65\u932F\u8AA4: {{error}}",
           originalError: "\u539F\u59CB Worker \u932F\u8AA4: {{error}}",
-          cspBlocked: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u7684CSP\u6AA2\u67E5\u5931\u6557\uFF0C\u4E0D\u5141\u8A31\u5EFA\u7ACBWorker\u3002"
+          cspBlocked: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u7684CSP\u6AA2\u67E5\u5931\u6557\uFF0C\u4E0D\u5141\u8A31\u5EFA\u7ACBWorker\u3002",
+          attemping: "\u6B63\u5728\u5617\u8A66\u4F7F\u7528 Web Worker \u9032\u884C\u904E\u6FFE...",
+          fallback: "\u5DF2\u5207\u63DB\u5230\u4E3B\u57F7\u884C\u7DD2\u9032\u884C\u904E\u6FFE\u3002",
+          cspHint: "\u9019\u53EF\u80FD\u662F\u7531\u65BC\u7DB2\u7AD9\u7684\u5167\u5BB9\u5B89\u5168\u7B56\u7565\uFF08CSP\uFF09\u5C0E\u81F4\u7684\u3002"
         },
         switchToFallback: "\u6B63\u5728\u70BA\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5207\u63DB\u5230\u4E3B\u7DDA\u7A0B\u5099\u9078\u65B9\u6848\u3002",
-        fallbackFailed: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5099\u9078\u65B9\u6848\u57F7\u884C\u5931\u6557: {{error}}"
+        fallbackFailed: "\u300C\u9078\u53D6\u5143\u7D20\u6383\u63CF\u300D\u5099\u7528\u6A21\u5F0F\u5931\u6557\uFF1A{{error}}",
+        stagingStarted: "\u958B\u59CB\u66AB\u5B58\u5143\u7D20\uFF1A<{{tagName}}>",
+        stagedNothingNew: "\u672A\u80FD\u5F9E\u6B64\u5143\u7D20\u4E2D\u66AB\u5B58\u4EFB\u4F55\u65B0\u7684\u552F\u4E00\u6587\u672C\u3002",
+        stagingFinished: "\u66AB\u5B58\u64CD\u4F5C\u5DF2\u5B8C\u6210\u3002",
+        confirmStarted: "\u78BA\u8A8D\u6D41\u7A0B\u5DF2\u958B\u59CB...",
+        confirmFinished: "\u78BA\u8A8D\u6D41\u7A0B\u5DF2\u6210\u529F\u5B8C\u6210\u3002",
+        confirmFailed: "\u78BA\u8A8D\u6D41\u7A0B\u5931\u6557\u3002\u932F\u8AA4\uFF1A{{error}}"
       },
       elementScanUI: {
         creatingHighlights: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u9996\u6B21\u5EFA\u7ACB\u9AD8\u4EAE\u5143\u7D20\u3002",
@@ -1995,10 +2022,19 @@ ${result.join(",\n")}
           initFailed: "Element Scan Worker initialization failed. The browser's CSP might be blocking data: URLs.",
           initSyncError: "Synchronous error during Element Scan Worker initialization: {{error}}",
           originalError: "Original worker error: {{error}}",
-          cspBlocked: "Element Scan CSP check failed. Worker creation is not allowed."
+          cspBlocked: "Element Scan CSP check failed. Worker creation is not allowed.",
+          attemping: "Attempting to use Web Worker for filtering...",
+          fallback: "Switched to main thread for filtering.",
+          cspHint: "This may be due to the site's Content Security Policy (CSP)."
         },
         switchToFallback: "Switching to main thread fallback for Element Scan.",
-        fallbackFailed: "Element Scan fallback mode failed: {{error}}"
+        fallbackFailed: "Element Scan fallback mode failed: {{error}}",
+        stagingStarted: "Staging started for element: <{{tagName}}>",
+        stagedNothingNew: "No new unique text was staged from this element.",
+        stagingFinished: "Staging finished.",
+        confirmStarted: "Confirmation process started...",
+        confirmFinished: "Confirmation process finished successfully.",
+        confirmFailed: "Confirmation process failed. Error: {{error}}"
       },
       elementScanUI: {
         creatingHighlights: "Element Scan UI: Creating highlight elements for the first time.",
@@ -2341,10 +2377,19 @@ ${result.join(",\n")}
           initFailed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u521D\\u59CB\\u5316\\u5931\\u8D25\\u3002\\u6D4F\\u89C8\\u5668\\u7684CSP\\u53EF\\u80FD\\u963B\\u6B62\\u4E86 data: URL\\u3002",
           initSyncError: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF Worker \\u521D\\u59CB\\u5316\\u671F\\u95F4\\u53D1\\u751F\\u540C\\u6B65\\u9519\\u8BEF: {{error}}",
           originalError: "\\u539F\\u59CB Worker \\u9519\\u8BEF: {{error}}",
-          cspBlocked: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u7684CSP\\u68C0\\u67E5\\u5931\\u8D25\\uFF0C\\u4E0D\\u5141\\u8BB8\\u521B\\u5EFAWorker\\u3002"
+          cspBlocked: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u7684CSP\\u68C0\\u67E5\\u5931\\u8D25\\uFF0C\\u4E0D\\u5141\\u8BB8\\u521B\\u5EFAWorker\\u3002",
+          attemping: "\\u6B63\\u5728\\u5C1D\\u8BD5\\u4F7F\\u7528 Web Worker \\u8FDB\\u884C\\u8FC7\\u6EE4...",
+          fallback: "\\u5DF2\\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u8FDB\\u884C\\u8FC7\\u6EE4\\u3002",
+          cspHint: "\\u8FD9\\u53EF\\u80FD\\u662F\\u7531\\u4E8E\\u7F51\\u7AD9\\u7684\\u5185\\u5BB9\\u5B89\\u5168\\u7B56\\u7565\\uFF08CSP\\uFF09\\u5BFC\\u81F4\\u7684\\u3002"
         },
         switchToFallback: "\\u6B63\\u5728\\u4E3A\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
-        fallbackFailed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5907\\u9009\\u65B9\\u6848\\u6267\\u884C\\u5931\\u8D25: {{error}}"
+        fallbackFailed: "\\u201C\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u201D\\u540E\\u5907\\u6A21\\u5F0F\\u5931\\u8D25\\uFF1A{{error}}",
+        stagingStarted: "\\u5F00\\u59CB\\u6682\\u5B58\\u5143\\u7D20\\uFF1A<{{tagName}}>",
+        stagedNothingNew: "\\u672A\\u80FD\\u4ECE\\u6B64\\u5143\\u7D20\\u4E2D\\u6682\\u5B58\\u4EFB\\u4F55\\u65B0\\u7684\\u552F\\u4E00\\u6587\\u672C\\u3002",
+        stagingFinished: "\\u6682\\u5B58\\u64CD\\u4F5C\\u5DF2\\u5B8C\\u6210\\u3002",
+        confirmStarted: "\\u786E\\u8BA4\\u6D41\\u7A0B\\u5DF2\\u5F00\\u59CB...",
+        confirmFinished: "\\u786E\\u8BA4\\u6D41\\u7A0B\\u5DF2\\u6210\\u529F\\u5B8C\\u6210\\u3002",
+        confirmFailed: "\\u786E\\u8BA4\\u6D41\\u7A0B\\u5931\\u8D25\\u3002\\u9519\\u8BEF\\uFF1A{{error}}"
       },
       elementScanUI: {
         creatingHighlights: "\\u5143\\u7D20\\u626B\\u63CFUI\\uFF1A\\u9996\\u6B21\\u521B\\u5EFA\\u9AD8\\u4EAE\\u5143\\u7D20\\u3002",
@@ -2687,10 +2732,19 @@ ${result.join(",\n")}
           initFailed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u521D\\u59CB\\u5316\\u5931\\u6557\\u3002\\u700F\\u89BD\\u5668\\u7684CSP\\u53EF\\u80FD\\u963B\\u6B62\\u4E86 data: URL\\u3002",
           initSyncError: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF Worker \\u521D\\u59CB\\u5316\\u671F\\u9593\\u767C\\u751F\\u540C\\u6B65\\u932F\\u8AA4: {{error}}",
           originalError: "\\u539F\\u59CB Worker \\u932F\\u8AA4: {{error}}",
-          cspBlocked: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u7684CSP\\u6AA2\\u67E5\\u5931\\u6557\\uFF0C\\u4E0D\\u5141\\u8A31\\u5EFA\\u7ACBWorker\\u3002"
+          cspBlocked: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u7684CSP\\u6AA2\\u67E5\\u5931\\u6557\\uFF0C\\u4E0D\\u5141\\u8A31\\u5EFA\\u7ACBWorker\\u3002",
+          attemping: "\\u6B63\\u5728\\u5617\\u8A66\\u4F7F\\u7528 Web Worker \\u9032\\u884C\\u904E\\u6FFE...",
+          fallback: "\\u5DF2\\u5207\\u63DB\\u5230\\u4E3B\\u57F7\\u884C\\u7DD2\\u9032\\u884C\\u904E\\u6FFE\\u3002",
+          cspHint: "\\u9019\\u53EF\\u80FD\\u662F\\u7531\\u65BC\\u7DB2\\u7AD9\\u7684\\u5167\\u5BB9\\u5B89\\u5168\\u7B56\\u7565\\uFF08CSP\\uFF09\\u5C0E\\u81F4\\u7684\\u3002"
         },
         switchToFallback: "\\u6B63\\u5728\\u70BA\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
-        fallbackFailed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5099\\u9078\\u65B9\\u6848\\u57F7\\u884C\\u5931\\u6557: {{error}}"
+        fallbackFailed: "\\u300C\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u300D\\u5099\\u7528\\u6A21\\u5F0F\\u5931\\u6557\\uFF1A{{error}}",
+        stagingStarted: "\\u958B\\u59CB\\u66AB\\u5B58\\u5143\\u7D20\\uFF1A<{{tagName}}>",
+        stagedNothingNew: "\\u672A\\u80FD\\u5F9E\\u6B64\\u5143\\u7D20\\u4E2D\\u66AB\\u5B58\\u4EFB\\u4F55\\u65B0\\u7684\\u552F\\u4E00\\u6587\\u672C\\u3002",
+        stagingFinished: "\\u66AB\\u5B58\\u64CD\\u4F5C\\u5DF2\\u5B8C\\u6210\\u3002",
+        confirmStarted: "\\u78BA\\u8A8D\\u6D41\\u7A0B\\u5DF2\\u958B\\u59CB...",
+        confirmFinished: "\\u78BA\\u8A8D\\u6D41\\u7A0B\\u5DF2\\u6210\\u529F\\u5B8C\\u6210\\u3002",
+        confirmFailed: "\\u78BA\\u8A8D\\u6D41\\u7A0B\\u5931\\u6557\\u3002\\u932F\\u8AA4\\uFF1A{{error}}"
       },
       elementScanUI: {
         creatingHighlights: "\\u5143\\u7D20\\u6383\\u63CFUI\\uFF1A\\u9996\\u6B21\\u5EFA\\u7ACB\\u9AD8\\u4EAE\\u5143\\u7D20\\u3002",
@@ -3017,6 +3071,23 @@ ${result.join(",\n")}
         break;
       }
       /**
+       * \u53EA\u8FC7\u6EE4\u6587\u672C\u5E76\u8FD4\u56DE\u6570\u7EC4 (\u7528\u4E8E Element Scan \u7684\u6682\u5B58)
+       */
+      case "filter-texts": {
+        const { texts } = payload;
+        const filteredTexts = /* @__PURE__ */ new Set();
+        if (Array.isArray(texts)) {
+          texts.forEach((text) => processText(text, filteredTexts));
+        }
+        self.postMessage({
+          type: "textsFiltered",
+          payload: {
+            texts: Array.from(filteredTexts)
+          }
+        });
+        break;
+      }
+      /**
        * \u4F1A\u8BDD\u6A21\u5F0F\uFF1A\u5F00\u59CB\u4E00\u4E2A\u65B0\u7684\u4F1A\u8BDD
        */
       case "session-start":
@@ -3319,16 +3390,9 @@ ${result.join(",\n")}
     });
     return Array.from(uniqueTexts);
   };
-  var extractAndProcessTextFromElement = (element) => {
+  var extractRawTextFromElement = (element) => {
     if (!element) return [];
-    const uniqueTexts =  new Set();
-    const processAndAddText = (rawText) => {
-      if (!rawText) return;
-      const normalizedText = rawText.normalize("NFC");
-      let text = normalizedText.replace(/(\\r\\n|\\n|\\r)+/g, "\\n");
-      if (text.trim() === "") return;
-      uniqueTexts.add(text);
-    };
+    const texts = [];
     const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(", ");
     if (element.closest(ignoredSelectorString)) {
       return [];
@@ -3337,7 +3401,7 @@ ${result.join(",\n")}
     attributesToExtract.forEach((attr) => {
       const attrValue = element.getAttribute(attr);
       if (attrValue) {
-        processAndAddText(attrValue);
+        texts.push(attrValue);
       }
     });
     traverseNodeWithShadows(element, (node) => {
@@ -3345,9 +3409,11 @@ ${result.join(",\n")}
       if (parent && (parent.tagName === "SCRIPT" || parent.tagName === "STYLE" || parent.closest(ignoredSelectorString) || parent.closest(".text-extractor-fab, .text-extractor-modal-overlay, .settings-panel-overlay"))) {
         return;
       }
-      processAndAddText(node.nodeValue);
+      if (node.nodeValue) {
+        texts.push(node.nodeValue);
+      }
     });
-    return Array.from(uniqueTexts);
+    return texts;
   };
   var performQuickScan = () => {
     return new Promise(async (resolve, reject) => {
@@ -5242,11 +5308,6 @@ ${result.join(",\n")}
   }
   var performScanInMainThread2 = (texts, filterRules2, enableDebugLogging) => {
     const uniqueTexts =  new Set();
-    const mainThreadLog = (message, ...args) => {
-      if (enableDebugLogging) {
-        log(message, ...args);
-      }
-    };
     if (Array.isArray(texts)) {
       texts.forEach((rawText) => {
         if (!rawText || typeof rawText !== "string") return;
@@ -5255,16 +5316,17 @@ ${result.join(",\n")}
         if (textForFiltering === "") return;
         const filterResult = shouldFilter(textForFiltering, filterRules2);
         if (filterResult) {
-          mainThreadLog(t("log.textProcessor.filtered", { text: textForFiltering, reason: filterResult }));
+          if (enableDebugLogging) {
+            log(t("log.textProcessor.filtered", { text: textForFiltering, reason: filterResult }));
+          }
           return;
         }
         uniqueTexts.add(normalizedText.replace(/(\r\n|\n|\r)+/g, "\n"));
       });
     }
     const textsArray = Array.from(uniqueTexts);
-    const formattedText = formatTextsForTranslation(textsArray);
     return {
-      formattedText,
+      texts: textsArray,
       count: textsArray.length
     };
   };
@@ -5274,6 +5336,7 @@ ${result.join(",\n")}
   var elementPath = [];
   var stagedTexts =  new Set();
   var shouldResumeAfterModalClose = false;
+  var fallbackNotificationShown = false;
   var scrollableParents = [];
   var scrollUpdateQueued = false;
   on("clearElementScan", () => {
@@ -5335,6 +5398,7 @@ ${result.join(",\n")}
     showNotification(t("notifications.elementScanStarted"), { type: "info" });
     isActive = true;
     isAdjusting = false;
+    fallbackNotificationShown = false;
     fabElement.classList.add("is-recording");
     updateFabTooltip(fabElement, "scan.stopSession");
     showTopCenterUI2();
@@ -5384,6 +5448,7 @@ ${result.join(",\n")}
     elementPath = [];
     currentTarget = null;
     stagedTexts.clear();
+    fallbackNotificationShown = false;
     updateStagedCount();
     log(t("log.elementScan.stateReset"));
   }
@@ -5397,13 +5462,84 @@ ${result.join(",\n")}
     document.addEventListener("mouseout", handleMouseOut);
     document.addEventListener("click", handleElementClick, true);
   }
-  function stageCurrentElement() {
-    if (currentTarget) {
-      const newTexts = extractAndProcessTextFromElement(currentTarget);
-      newTexts.forEach((text) => stagedTexts.add(text));
-      log(simpleTemplate(t("log.elementScan.staged"), { count: stagedTexts.size }));
-      updateStagedCount();
+  function filterTextsWithWorker(texts, settings) {
+    return new Promise(async (resolve) => {
+      const handleFallback = () => {
+        log(t("log.elementScan.worker.fallback"), "info");
+        if (!fallbackNotificationShown) {
+          showNotification(t("notifications.cspWorkerWarning"), { type: "info", duration: 5e3 });
+          fallbackNotificationShown = true;
+        }
+        const result = performScanInMainThread2(texts, settings.filterRules, settings.enableDebugLogging);
+        resolve(result.texts);
+      };
+      const workerAllowed = await isWorkerAllowed();
+      if (!workerAllowed) {
+        log(t("log.elementScan.worker.cspBlocked"), "warn");
+        handleFallback();
+        return;
+      }
+      try {
+        log(t("log.elementScan.worker.attemping"), "info");
+        const worker2 = new Worker(trustedWorkerUrl);
+        worker2.onmessage = (event) => {
+          const { type, payload } = event.data;
+          if (type === "textsFiltered") {
+            resolve(payload.texts);
+            worker2.terminate();
+          }
+        };
+        worker2.onerror = (error) => {
+          log(t("log.elementScan.worker.initFailed"), "warn");
+          log(t("log.elementScan.worker.cspHint"), "debug");
+          worker2.terminate();
+          handleFallback();
+        };
+        try {
+          worker2.postMessage({
+            type: "filter-texts",
+            payload: {
+              texts,
+              filterRules: settings.filterRules,
+              enableDebugLogging: settings.enableDebugLogging,
+              translations: {
+                workerLogPrefix: t("log.elementScan.worker.logPrefix"),
+                textFiltered: t("log.textProcessor.filtered"),
+                filterReasons: getTranslationObject("filterReasons")
+              }
+            }
+          });
+        } catch (postError) {
+          log(t("log.elementScan.worker.postMessageFailed", { error: postError.message }), "error");
+          worker2.terminate();
+          handleFallback();
+        }
+      } catch (initError) {
+        log(t("log.elementScan.worker.initSyncError", { error: initError.message }), "error");
+        handleFallback();
+      }
+    });
+  }
+  async function stageCurrentElement() {
+    if (!currentTarget) return;
+    log(t("log.elementScan.stagingStarted", { tagName: currentTarget.tagName }));
+    const rawTexts = extractRawTextFromElement(currentTarget);
+    const settings = await loadSettings();
+    try {
+      const filteredTexts = await filterTextsWithWorker(rawTexts, settings);
+      const newlyStagedCount = filteredTexts.length;
+      if (newlyStagedCount > 0) {
+        filteredTexts.forEach((text) => stagedTexts.add(text));
+        log(t("log.elementScan.staged", { count: newlyStagedCount, total: stagedTexts.size }));
+        updateStagedCount();
+      } else {
+        log(t("log.elementScan.stagedNothingNew"));
+      }
+    } catch (error) {
+      log(t("log.elementScan.processingError", { error: error.message }), "error");
+      showNotification(t("notifications.scanFailed"), { type: "error" });
     }
+    log(t("log.elementScan.stagingFinished"));
     reselectElement();
   }
   function updateStagedCount() {
@@ -5469,79 +5605,25 @@ ${result.join(",\n")}
       updateHighlight(targetElement);
     }
   }
-  async function processTextsWithWorker(texts, { filterRules: filterRules2, enableDebugLogging }, workerAllowed) {
-    const runFallback = () => {
-      log(t("log.elementScan.switchToFallback"));
-      showNotification(t("notifications.cspWorkerWarning"), { type: "info", duration: 5e3 });
-      try {
-        const result = performScanInMainThread2(texts, filterRules2, enableDebugLogging);
-        updateScanCount(result.count, "element");
-        return Promise.resolve(result);
-      } catch (fallbackError) {
-        log(t("log.elementScan.fallbackFailed", { error: fallbackError.message }), "error");
-        return Promise.reject(fallbackError);
-      }
-    };
-    if (!workerAllowed) {
-      log(t("log.elementScan.worker.cspBlocked"), "warn");
-      return runFallback();
-    }
-    return new Promise((resolve, reject) => {
-      try {
-        log(t("log.elementScan.worker.starting"));
-        const worker2 = new Worker(trustedWorkerUrl);
-        worker2.onmessage = (event) => {
-          const { type, payload } = event.data;
-          if (type === "scanCompleted") {
-            log(t("log.elementScan.worker.completed", { count: payload.count }));
-            updateScanCount(payload.count, "element");
-            resolve(payload);
-            worker2.terminate();
-          }
-        };
-        worker2.onerror = (error) => {
-          log(t("log.elementScan.worker.initFailed"), "warn");
-          log(t("log.elementScan.worker.originalError", { error: error.message }), "debug");
-          worker2.terminate();
-          runFallback().then(resolve).catch(reject);
-        };
-        log(t("log.elementScan.worker.sendingData", { count: texts.length }));
-        const filterReasonTranslations = Object.keys(filterRules2).reduce((acc, key) => {
-          acc[key] = t(`settings.filters.${key}`);
-          return acc;
-        }, {});
-        worker2.postMessage({
-          type: "process-single",
-          payload: {
-            texts,
-            filterRules: filterRules2,
-            enableDebugLogging,
-            translations: {
-              workerLogPrefix: t("log.elementScan.worker.logPrefix"),
-              textFiltered: t("log.textProcessor.filtered"),
-              scanComplete: t("log.elementScan.worker.completed"),
-              filterReasons: getTranslationObject("filterReasons")
-            }
-          }
-        });
-      } catch (e) {
-        log(t("log.elementScan.worker.initSyncError", { error: e.message }), "error");
-        runFallback().then(resolve).catch(reject);
-      }
-    });
-  }
   async function confirmSelectionAndExtract() {
     if (!currentTarget) {
       log(t("log.elementScan.confirmFailedNoTarget"));
       return;
     }
-    const [newTexts, settings, workerAllowed] = await Promise.all([
-      extractAndProcessTextFromElement(currentTarget),
-      loadSettings(),
-      isWorkerAllowed()
-    ]);
-    newTexts.forEach((text) => stagedTexts.add(text));
-    updateStagedCount();
+    log(t("log.elementScan.confirmStarted"));
+    const rawTexts = extractRawTextFromElement(currentTarget);
+    const settings = await loadSettings();
+    try {
+      const filteredTexts = await filterTextsWithWorker(rawTexts, settings);
+      filteredTexts.forEach((text) => stagedTexts.add(text));
+      updateStagedCount();
+    } catch (error) {
+      log(t("log.elementScan.processingError", { error: error.message }), "error");
+      showNotification(t("notifications.scanFailed"), { type: "error" });
+      const fabElement = uiContainer.querySelector(".fab-element-scan");
+      stopElementScan(fabElement);
+      return;
+    }
     const totalToProcess = stagedTexts.size;
     log(simpleTemplate(t("log.elementScan.confirmingStaged"), { count: totalToProcess }));
     isAdjusting = true;
@@ -5554,14 +5636,18 @@ ${result.join(",\n")}
     try {
       const allTexts = Array.from(stagedTexts);
       log(simpleTemplate(t("log.elementScan.extractedCount"), { count: allTexts.length }));
-      const { formattedText, count } = await processTextsWithWorker(allTexts, settings, workerAllowed);
+      const formattedText = formatTextsForTranslation(allTexts);
+      const count = allTexts.length;
       updateModalContent(formattedText, true, "element-scan");
+      updateScanCount(count, "element");
       const notificationText = simpleTemplate(t("scan.elementFinished"), { count });
       showNotification(notificationText, { type: "success" });
+      log(t("log.elementScan.confirmFinished"));
     } catch (error) {
-      log(t("log.elementScan.processingError", { error: error.message }), "error");
+      log(t("log.elementScan.confirmFailed", { error: error.message }), "error");
       showNotification(t("notifications.scanFailed"), { type: "error" });
-      stopElementScan();
+      const fabElement = uiContainer.querySelector(".fab-element-scan");
+      stopElementScan(fabElement);
     }
   }
   function handleSummaryClick() {

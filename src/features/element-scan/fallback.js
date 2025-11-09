@@ -7,7 +7,6 @@
  */
 
 import { shouldFilter } from '../../shared/utils/filterLogic.js';
-import { formatTextsForTranslation } from '../../shared/utils/formatting.js';
 import { log } from '../../shared/utils/logger.js';
 import { t } from '../../shared/i18n/index.js';
 
@@ -16,16 +15,10 @@ import { t } from '../../shared/i18n/index.js';
  * @param {string[]} texts - 从 DOM 元素中提取的原始文本数组。
  * @param {object} filterRules - 当前的过滤规则。
  * @param {boolean} enableDebugLogging - 是否启用调试日志。
- * @returns {{formattedText: string, count: number}} - 返回包含格式化文本和计数的对象。
+ * @returns {{texts: string[], count: number}} - 返回包含过滤后文本数组和计数的对象。
  */
 export const performScanInMainThread = (texts, filterRules, enableDebugLogging) => {
     const uniqueTexts = new Set();
-
-    const mainThreadLog = (message, ...args) => {
-        if (enableDebugLogging) {
-            log(message, ...args);
-        }
-    };
 
     if (Array.isArray(texts)) {
         texts.forEach(rawText => {
@@ -37,7 +30,10 @@ export const performScanInMainThread = (texts, filterRules, enableDebugLogging) 
 
             const filterResult = shouldFilter(textForFiltering, filterRules);
             if (filterResult) {
-                mainThreadLog(t('log.textProcessor.filtered', { text: textForFiltering, reason: filterResult }));
+                // 直接使用全局 log，并确保在 debug 模式开启时打印
+                if (enableDebugLogging) {
+                    log(t('log.textProcessor.filtered', { text: textForFiltering, reason: filterResult }));
+                }
                 return;
             }
 
@@ -46,10 +42,9 @@ export const performScanInMainThread = (texts, filterRules, enableDebugLogging) 
     }
 
     const textsArray = Array.from(uniqueTexts);
-    const formattedText = formatTextsForTranslation(textsArray);
 
     return {
-        formattedText,
+        texts: textsArray,
         count: textsArray.length
     };
 };

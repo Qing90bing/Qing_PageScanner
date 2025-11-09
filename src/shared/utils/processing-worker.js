@@ -120,6 +120,26 @@ self.onmessage = (event) => {
         }
 
         /**
+         * 只过滤文本并返回数组 (用于 Element Scan 的暂存)
+         */
+        case 'filter-texts': {
+            const { texts } = payload;
+            const filteredTexts = new Set();
+
+            if (Array.isArray(texts)) {
+                texts.forEach(text => processText(text, filteredTexts));
+            }
+
+            self.postMessage({
+                type: 'textsFiltered',
+                payload: {
+                    texts: Array.from(filteredTexts)
+                }
+            });
+            break;
+        }
+
+        /**
          * 会话模式：开始一个新的会话
          */
         case 'session-start':

@@ -1,7 +1,8 @@
 // src/features/element-scan/logic.js
 
 import { updateHighlight, cleanupUI, createAdjustmentToolbar, cleanupToolbar, showTopCenterUI, hideTopCenterUI } from './ui.js';
-import { extractAndProcessTextFromElement } from '../../shared/utils/textProcessor.js';
+import { extractRawTextFromElement } from '../../shared/utils/textProcessor.js';
+import { formatTextsForTranslation } from '../../shared/utils/formatting.js';
 import { updateModalContent } from '../../shared/ui/mainModal.js';
 import { uiContainer } from '../../shared/ui/uiContainer.js';
 import { getDynamicFab, updateFabTooltip } from '../../shared/ui/components/fab.js';
@@ -24,6 +25,7 @@ let currentTarget = null;
 let elementPath = [];
 let stagedTexts = new Set();
 let shouldResumeAfterModalClose = false;
+let fallbackNotificationShown = false; // 用于跟踪兼容模式通知是否已显示
 
 // 用于跟踪滚动监听
 let scrollableParents = [];
@@ -110,6 +112,7 @@ function startElementScan(fabElement) {
     showNotification(t('notifications.elementScanStarted'), { type: 'info' });
     isActive = true;
     isAdjusting = false;
+    fallbackNotificationShown = false; // 重置通知状态
     fabElement.classList.add('is-recording');
     updateFabTooltip(fabElement, 'scan.stopSession'); // 更新自己的工具提示
     showTopCenterUI();
@@ -169,6 +172,7 @@ export function stopElementScan(fabElement) {
     elementPath = [];
     currentTarget = null;
     stagedTexts.clear();
+    fallbackNotificationShown = false; // 清理通知状态
     updateStagedCount();
     log(t('log.elementScan.stateReset'));
 }
@@ -185,15 +189,107 @@ export function reselectElement() {
     document.addEventListener('click', handleElementClick, true);
 }
 
-export function stageCurrentElement() {
-    if (currentTarget) {
-        const newTexts = extractAndProcessTextFromElement(currentTarget);
-        newTexts.forEach(text => stagedTexts.add(text));
-        log(simpleTemplate(t('log.elementScan.staged'), { count: stagedTexts.size }));
-        updateStagedCount();
+/**
+ * @description 使用 Web Worker 过滤文本数组。
+ * @param {string[]} texts - 要过滤的原始文本数组。
+ * @param {object} settings - 当前的设置，包含过滤规则等。
+ * @returns {Promise<string[]>} - 一个解析为过滤后文本数组的 Promise。
+ */
+function filterTextsWithWorker(texts, settings) {
+    return new Promise(async (resolve) => { // No longer rejects, always resolves
+        const handleFallback = () => {
+            log(t('log.elementScan.worker.fallback'), 'info');
+            if (!fallbackNotificationShown) {
+                showNotification(t('notifications.cspWorkerWarning'), { type: 'info', duration: 5000 });
+                fallbackNotificationShown = true;
+            }
+            const result = performScanInMainThread(texts, settings.filterRules, settings.enableDebugLogging);
+            resolve(result.texts);
+        };
+
+        const workerAllowed = await isWorkerAllowed();
+        if (!workerAllowed) {
+            log(t('log.elementScan.worker.cspBlocked'), 'warn');
+            handleFallback();
+            return;
+        }
+
+        try {
+            log(t('log.elementScan.worker.attemping'), 'info');
+            const worker = new Worker(trustedWorkerUrl);
+
+            worker.onmessage = (event) => {
+                const { type, payload } = event.data;
+                if (type === 'textsFiltered') {
+                    resolve(payload.texts);
+                    worker.terminate();
+                }
+            };
+
+            worker.onerror = (error) => {
+                // error 对象本身可能信息量不大，特别是在CSP场景下
+                log(t('log.elementScan.worker.initFailed'), 'warn');
+                // 添加更具体的日志，解释这可能是CSP问题
+                log(t('log.elementScan.worker.cspHint'), 'debug');
+                worker.terminate();
+                handleFallback();
+            };
+
+            try {
+                worker.postMessage({
+                    type: 'filter-texts',
+                    payload: {
+                        texts,
+                        filterRules: settings.filterRules,
+                        enableDebugLogging: settings.enableDebugLogging,
+                        translations: { // 确保 worker 有翻译文本
+                            workerLogPrefix: t('log.elementScan.worker.logPrefix'),
+                            textFiltered: t('log.textProcessor.filtered'),
+                            filterReasons: getTranslationObject('filterReasons'),
+                        }
+                    }
+                });
+            } catch (postError) {
+                log(t('log.elementScan.worker.postMessageFailed', { error: postError.message }), 'error');
+                worker.terminate();
+                handleFallback();
+            }
+        } catch (initError) {
+            log(t('log.elementScan.worker.initSyncError', { error: initError.message }), 'error');
+            handleFallback();
+        }
+    });
+}
+
+
+export async function stageCurrentElement() {
+    if (!currentTarget) return;
+
+    log(t('log.elementScan.stagingStarted', { tagName: currentTarget.tagName }));
+
+    const rawTexts = extractRawTextFromElement(currentTarget);
+    const settings = await loadSettings();
+
+    try {
+        const filteredTexts = await filterTextsWithWorker(rawTexts, settings);
+        const newlyStagedCount = filteredTexts.length;
+
+        if (newlyStagedCount > 0) {
+            filteredTexts.forEach(text => stagedTexts.add(text));
+            log(t('log.elementScan.staged', { count: newlyStagedCount, total: stagedTexts.size }));
+            updateStagedCount();
+        } else {
+            log(t('log.elementScan.stagedNothingNew'));
+        }
+    } catch (error) {
+        log(t('log.elementScan.processingError', { error: error.message }), 'error');
+        showNotification(t('notifications.scanFailed'), { type: 'error' });
     }
+
+    log(t('log.elementScan.stagingFinished'));
     reselectElement();
 }
+
 
 /**
  * @private
@@ -277,95 +373,34 @@ export function updateSelectionLevel(level) {
     }
 }
 
-async function processTextsWithWorker(texts, { filterRules, enableDebugLogging }, workerAllowed) {
-    const runFallback = () => {
-        log(t('log.elementScan.switchToFallback'));
-        showNotification(t('notifications.cspWorkerWarning'), { type: 'info', duration: 5000 });
-        try {
-            const result = performScanInMainThread(texts, filterRules, enableDebugLogging);
-            updateScanCount(result.count, 'element');
-            return Promise.resolve(result);
-        } catch (fallbackError) {
-            log(t('log.elementScan.fallbackFailed', { error: fallbackError.message }), 'error');
-            return Promise.reject(fallbackError);
-        }
-    };
-
-    if (!workerAllowed) {
-        log(t('log.elementScan.worker.cspBlocked'), 'warn');
-        return runFallback();
-    }
-
-    return new Promise((resolve, reject) => {
-        try {
-            log(t('log.elementScan.worker.starting'));
-            const worker = new Worker(trustedWorkerUrl);
-
-            worker.onmessage = (event) => {
-                const { type, payload } = event.data;
-                if (type === 'scanCompleted') {
-                    log(t('log.elementScan.worker.completed', { count: payload.count }));
-                    updateScanCount(payload.count, 'element');
-                    resolve(payload);
-                    worker.terminate();
-                }
-            };
-
-            worker.onerror = (error) => {
-                log(t('log.elementScan.worker.initFailed'), 'warn');
-                log(t('log.elementScan.worker.originalError', { error: error.message }), 'debug');
-                worker.terminate();
-                // Since runFallback now returns a promise, we need to handle it
-                runFallback().then(resolve).catch(reject);
-            };
-
-            log(t('log.elementScan.worker.sendingData', { count: texts.length }));
-            const filterReasonTranslations = Object.keys(filterRules).reduce((acc, key) => {
-                acc[key] = t(`settings.filters.${key}`);
-                return acc;
-            }, {});
-
-            worker.postMessage({
-                type: 'process-single',
-                payload: {
-                    texts,
-                    filterRules,
-                    enableDebugLogging,
-                    translations: {
-                        workerLogPrefix: t('log.elementScan.worker.logPrefix'),
-                        textFiltered: t('log.textProcessor.filtered'),
-                        scanComplete: t('log.elementScan.worker.completed'),
-                        filterReasons: getTranslationObject('filterReasons'),
-                    },
-                },
-            });
-
-        } catch (e) {
-            log(t('log.elementScan.worker.initSyncError', { error: e.message }), 'error');
-            runFallback().then(resolve).catch(reject);
-        }
-    });
-}
-
 export async function confirmSelectionAndExtract() {
     if (!currentTarget) {
         log(t('log.elementScan.confirmFailedNoTarget'));
         return;
     }
 
-    // 在暂存最后选定的元素的同时，并行加载设置和检查CSP
-    const [newTexts, settings, workerAllowed] = await Promise.all([
-        extractAndProcessTextFromElement(currentTarget),
-        loadSettings(),
-        isWorkerAllowed()
-    ]);
+    log(t('log.elementScan.confirmStarted'));
 
-    newTexts.forEach(text => stagedTexts.add(text));
-    updateStagedCount();
+    // 1. 对最后选定的元素，提取并通过 Worker 过滤文本
+    const rawTexts = extractRawTextFromElement(currentTarget);
+    const settings = await loadSettings();
+
+    try {
+        const filteredTexts = await filterTextsWithWorker(rawTexts, settings);
+        filteredTexts.forEach(text => stagedTexts.add(text));
+        updateStagedCount(); // 更新最终计数值
+    } catch (error) {
+        log(t('log.elementScan.processingError', { error: error.message }), 'error');
+        showNotification(t('notifications.scanFailed'), { type: 'error' });
+        const fabElement = uiContainer.querySelector('.fab-element-scan');
+        stopElementScan(fabElement);
+        return;
+    }
 
     const totalToProcess = stagedTexts.size;
     log(simpleTemplate(t('log.elementScan.confirmingStaged'), { count: totalToProcess }));
 
+    // 2. 清理UI并为显示模态框做准备
     isAdjusting = true;
     document.removeEventListener('mouseover', handleMouseOver);
     document.removeEventListener('mouseout', handleMouseOut);
@@ -375,18 +410,27 @@ export async function confirmSelectionAndExtract() {
 
     setShouldResumeAfterModalClose(true);
 
+    // 3. 处理并显示结果
     try {
         const allTexts = Array.from(stagedTexts);
         log(simpleTemplate(t('log.elementScan.extractedCount'), { count: allTexts.length }));
 
-        const { formattedText, count } = await processTextsWithWorker(allTexts, settings, workerAllowed);
+        // 由于所有文本在暂存时已经过过滤，现在只需格式化即可
+        const formattedText = formatTextsForTranslation(allTexts);
+        const count = allTexts.length;
+
         updateModalContent(formattedText, true, 'element-scan');
+        updateScanCount(count, 'element');
+
         const notificationText = simpleTemplate(t('scan.elementFinished'), { count });
         showNotification(notificationText, { type: 'success' });
+        log(t('log.elementScan.confirmFinished'));
 
     } catch (error) {
-        log(t('log.elementScan.processingError', { error: error.message }), 'error');
+        log(t('log.elementScan.confirmFailed', { error: error.message }), 'error');
         showNotification(t('notifications.scanFailed'), { type: 'error' });
-        stopElementScan();
+        // 即使出错，也要确保停止扫描以清理状态
+        const fabElement = uiContainer.querySelector('.fab-element-scan');
+        stopElementScan(fabElement);
     }
 }

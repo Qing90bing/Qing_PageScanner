@@ -306,10 +306,19 @@
         "initFailed": "Element Scan Worker initialization failed. The browser's CSP might be blocking data: URLs.",
         "initSyncError": "Synchronous error during Element Scan Worker initialization: {{error}}",
         "originalError": "Original worker error: {{error}}",
-        "cspBlocked": "Element Scan CSP check failed. Worker creation is not allowed."
+        "cspBlocked": "Element Scan CSP check failed. Worker creation is not allowed.",
+        "attemping": "Attempting to use Web Worker for filtering...",
+        "fallback": "Switched to main thread for filtering.",
+        "cspHint": "This may be due to the site's Content Security Policy (CSP)."
       },
       "switchToFallback": "Switching to main thread fallback for Element Scan.",
-      "fallbackFailed": "Element Scan fallback mode failed: {{error}}"
+      "fallbackFailed": "Element Scan fallback mode failed: {{error}}",
+      "stagingStarted": "Staging started for element: <{{tagName}}>",
+      "stagedNothingNew": "No new unique text was staged from this element.",
+      "stagingFinished": "Staging finished.",
+      "confirmStarted": "Confirmation process started...",
+      "confirmFinished": "Confirmation process finished successfully.",
+      "confirmFailed": "Confirmation process failed. Error: {{error}}"
     },
     "elementScanUI": {
       "creatingHighlights": "Element Scan UI: Creating highlight elements for the first time.",
