@@ -3174,37 +3174,9 @@ ${result.join(",\n")}
 })();
 `)}`;
   var trustedWorkerUrl = createTrustedWorkerUrl(workerUrl);
-  var trustedTypePolicy = null;
-  var policyCreated = false;
-  function createTrustedTypePolicy() {
-    if (policyCreated) {
-      return trustedTypePolicy;
-    }
-    if (window.trustedTypes && window.trustedTypes.createPolicy) {
-      try {
-        trustedTypePolicy = window.trustedTypes.createPolicy("script-svg-policy", {
-          createHTML: (input) => {
-            return input;
-          }
-        });
-      } catch (e) {
-        if (e.message.includes("already exists")) {
-          trustedTypePolicy = window.trustedTypes.policies.get("script-svg-policy");
-        } else {
-          log(t("log.dom.ttpCreationError"), e);
-        }
-      }
-    }
-    policyCreated = true;
-    return trustedTypePolicy;
-  }
   function createSVGFromString(svgString) {
     if (!svgString || typeof svgString !== "string") return null;
-    const policy = createTrustedTypePolicy();
-    let sanitizedSVG = svgString.trim();
-    if (policy) {
-      sanitizedSVG = policy.createHTML(sanitizedSVG);
-    }
+    const sanitizedSVG = createTrustedHTML(svgString.trim());
     const parser = new DOMParser();
     const doc = parser.parseFromString(sanitizedSVG, "image/svg+xml");
     const svgNode = doc.documentElement;
