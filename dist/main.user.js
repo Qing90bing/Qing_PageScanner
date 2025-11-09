@@ -1677,19 +1677,48 @@ var TextExtractor = (() => {
     }
     return null;
   }
-  var traverseNodeWithShadows = (node, callback) => {
-    if (!node || ![Node.ELEMENT_NODE, Node.DOCUMENT_FRAGMENT_NODE].includes(node.nodeType)) {
+  var traverseDOMAndExtract = (node, textCallback) => {
+    if (!node) {
       return;
     }
-    for (const child of node.childNodes) {
-      if (child.nodeType === Node.TEXT_NODE) {
-        callback(child);
-      } else if (child.nodeType === Node.ELEMENT_NODE) {
-        traverseNodeWithShadows(child, callback);
+    switch (node.nodeType) {
+      case Node.ELEMENT_NODE: {
+        const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(", ");
+        const ourUiSelector = ".text-extractor-fab, .text-extractor-modal-overlay, .settings-panel-overlay";
+        if (node.closest(ignoredSelectorString) || node.closest(ourUiSelector)) {
+          return;
+        }
+        const attributesToExtract = appConfig.scanner.attributesToExtract;
+        attributesToExtract.forEach((attr) => {
+          const attrValue = node.getAttribute(attr);
+          if (attrValue) {
+            textCallback(attrValue);
+          }
+        });
+        if (node.tagName === "INPUT" && ["button", "submit", "reset"].includes(node.type)) {
+          const value = node.getAttribute("value");
+          if (value) {
+            textCallback(value);
+          }
+        }
+        break;
       }
+      case Node.TEXT_NODE: {
+        const parent = node.parentElement;
+        if (parent && (parent.tagName === "SCRIPT" || parent.tagName === "STYLE")) {
+          return;
+        }
+        textCallback(node.nodeValue);
+        return;
+      }
+      default:
+        break;
+    }
+    for (const child of node.childNodes) {
+      traverseDOMAndExtract(child, textCallback);
     }
     if (node.nodeType === Node.ELEMENT_NODE && node.shadowRoot) {
-      traverseNodeWithShadows(node.shadowRoot, callback);
+      traverseDOMAndExtract(node.shadowRoot, textCallback);
     }
   };
   var extractAndProcessText = () => {
@@ -1704,44 +1733,13 @@ var TextExtractor = (() => {
       uniqueTexts.add(text);
     };
     processAndAddText(document.title);
-    const targetElements = document.querySelectorAll(appConfig.scanner.targetSelectors.join(", "));
-    const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(", ");
-    targetElements.forEach((element) => {
-      if (element.closest(ignoredSelectorString)) {
-        return;
-      }
-      const attributesToExtract = appConfig.scanner.attributesToExtract;
-      if (element.tagName === "INPUT" && ["button", "submit", "reset"].includes(element.type)) {
-        const dynamicAttributes = [...attributesToExtract, "value"];
-        dynamicAttributes.forEach((attr) => {
-          const attrValue = element.getAttribute(attr);
-          if (attrValue) {
-            processAndAddText(attrValue);
-          }
-        });
-      } else {
-        attributesToExtract.forEach((attr) => {
-          const attrValue = element.getAttribute(attr);
-          if (attrValue) {
-            processAndAddText(attrValue);
-          }
-        });
-      }
-      traverseNodeWithShadows(element, (node) => {
-        const parent = node.parentElement;
-        if (parent && (parent.tagName === "SCRIPT" || parent.tagName === "STYLE" || parent.closest(ignoredSelectorString))) {
-          return;
-        }
-        if (parent && parent.closest(".text-extractor-fab, .text-extractor-modal-overlay, .settings-panel-overlay")) {
-          return;
-        }
-        processAndAddText(node.nodeValue);
-      });
-    });
+    if (document.body) {
+      traverseDOMAndExtract(document.body, processAndAddText);
+    }
     return Array.from(uniqueTexts);
   };
   var filterAndNormalizeTexts = (texts, filterRules2, enableDebugLogging, logFiltered) => {
-    const uniqueTexts =  new Set();
+    const uniqueTexts = /* @__PURE__ */ new Set();
     if (Array.isArray(texts)) {
       texts.forEach((rawText) => {
         if (!rawText || typeof rawText !== "string") return;
@@ -1763,25 +1761,8 @@ var TextExtractor = (() => {
   var extractRawTextFromElement = (element) => {
     if (!element) return [];
     const texts = [];
-    const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(", ");
-    if (element.closest(ignoredSelectorString)) {
-      return [];
-    }
-    const attributesToExtract = appConfig.scanner.attributesToExtract;
-    attributesToExtract.forEach((attr) => {
-      const attrValue = element.getAttribute(attr);
-      if (attrValue) {
-        texts.push(attrValue);
-      }
-    });
-    traverseNodeWithShadows(element, (node) => {
-      const parent = node.parentElement;
-      if (parent && (parent.tagName === "SCRIPT" || parent.tagName === "STYLE" || parent.closest(ignoredSelectorString) || parent.closest(".text-extractor-fab, .text-extractor-modal-overlay, .settings-panel-overlay"))) {
-        return;
-      }
-      if (node.nodeValue) {
-        texts.push(node.nodeValue);
-      }
+    traverseDOMAndExtract(element, (rawText) => {
+      texts.push(rawText);
     });
     return texts;
   };

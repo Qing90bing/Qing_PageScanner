@@ -12,32 +12,71 @@ import { shouldFilter } from './filterLogic.js';
 
 /**
  * @private
- * @description 递归地遍历一个节点及其所有后代，包括开放的 Shadow DOM，并对找到的每个文本节点执行一个回调函数。
- * @param {Node} node - 开始遍历的节点（可以是 Element 或 ShadowRoot）。
- * @param {function(Node): void} callback - 一个回调函数，当找到一个文本节点时，会以该文本节点作为参数来调用它。
+ * @description 递归地遍历一个 DOM 节点及其后代（包括 Shadow DOM），提取属性和文本节点中的文本内容。
+ * @param {Node} node - 开始遍历的节点（可以是 Element, ShadowRoot, 或其他 Node 类型）。
+ * @param {function(string): void} textCallback - 每当提取到一个原始文本字符串时，就会调用此回调函数。
  */
-const traverseNodeWithShadows = (node, callback) => {
-    // 检查节点是否有效，以及是否是元素节点或文档片段节点（ShadowRoot是一种文档片段）
-    if (!node || ![Node.ELEMENT_NODE, Node.DOCUMENT_FRAGMENT_NODE].includes(node.nodeType)) {
+const traverseDOMAndExtract = (node, textCallback) => {
+    if (!node) {
         return;
     }
 
-    // 遍历当前节点的所有子节点
-    for (const child of node.childNodes) {
-        // 如果是文本节点，执行回调
-        if (child.nodeType === Node.TEXT_NODE) {
-            callback(child);
-        } 
-        // 如果是元素节点，则递归地继续遍历
-        else if (child.nodeType === Node.ELEMENT_NODE) {
-            traverseNodeWithShadows(child, callback); // 遍历子元素的常规子节点
+    // 根据节点类型进行不同处理
+    switch (node.nodeType) {
+        // 对于元素节点
+        case Node.ELEMENT_NODE: {
+            const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(', ');
+            const ourUiSelector = '.text-extractor-fab, .text-extractor-modal-overlay, .settings-panel-overlay';
+
+            // 如果元素匹配忽略选择器，则停止遍历此分支
+            if (node.closest(ignoredSelectorString) || node.closest(ourUiSelector)) {
+                return;
+            }
+            
+            // 1. 首先提取当前元素自身的属性文本
+            const attributesToExtract = appConfig.scanner.attributesToExtract;
+            attributesToExtract.forEach(attr => {
+                const attrValue = node.getAttribute(attr);
+                if (attrValue) {
+                    textCallback(attrValue);
+                }
+            });
+
+            // 特殊处理 input 元素的 value 属性
+            if (node.tagName === 'INPUT' && ['button', 'submit', 'reset'].includes(node.type)) {
+                const value = node.getAttribute('value');
+                if (value) {
+                    textCallback(value);
+                }
+            }
+            // 元素节点处理完毕后，继续向下遍历其子节点和 Shadow DOM
+            break;
         }
+        
+        // 对于文本节点
+        case Node.TEXT_NODE: {
+            // 再次检查父元素，确保不提取 <script> 或 <style> 标签内的文本
+            const parent = node.parentElement;
+            if (parent && (parent.tagName === 'SCRIPT' || parent.tagName === 'STYLE')) {
+                return;
+            }
+            textCallback(node.nodeValue);
+            return; // 文本节点没有子节点，直接返回
+        }
+
+        // 对于其他类型的节点（如注释节点），我们什么都不做，但允许继续遍历其子节点
+        default:
+            break;
     }
 
-    // 在遍历完常规子节点后，检查当前节点（如果是元素）是否有 Shadow DOM
+    // 2. 递归遍历所有子节点
+    for (const child of node.childNodes) {
+        traverseDOMAndExtract(child, textCallback);
+    }
+    
+    // 3. 如果存在 Shadow DOM，则递归遍历它
     if (node.nodeType === Node.ELEMENT_NODE && node.shadowRoot) {
-        // 如果有，则以 ShadowRoot 为起点，递归地进行遍历
-        traverseNodeWithShadows(node.shadowRoot, callback);
+        traverseDOMAndExtract(node.shadowRoot, textCallback);
     }
 };
 
@@ -47,7 +86,7 @@ const traverseNodeWithShadows = (node, callback) => {
 /**
  * @public
  * @returns {string[]} 一个包含从页面上提取并处理过的、唯一的文本字符串的数组。
- * @description 这是脚本的核心功能函数。它会遍历整个页面的 DOM 树，
+ * @description 这是脚本的核心功能函数。它会从 document.body 开始执行一次高效的 DOM 遍历，
  * 提取所有文本节点，然后返回一个去重后的原始文本数组。
  */
 export const extractAndProcessText = () => {
@@ -63,58 +102,15 @@ export const extractAndProcessText = () => {
         uniqueTexts.add(text);
     };
 
+    // 1. 始终将页面标题作为第一个文本进行处理
     processAndAddText(document.title);
 
-    // 4. 根据配置文件中的选择器，获取所有目标元素
-    const targetElements = document.querySelectorAll(appConfig.scanner.targetSelectors.join(', '));
+    // 2. 从 document.body 开始执行单次遍历
+    if (document.body) {
+        traverseDOMAndExtract(document.body, processAndAddText);
+    }
 
-    // 5. 遍历每一个目标元素，提取其属性和内部文本
-    const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(', ');
-    targetElements.forEach(element => {
-        // 检查元素或其任何父元素是否匹配“禁止扫描”的选择器
-        if (element.closest(ignoredSelectorString)) {
-            return; // 如果匹配，则完全跳过此元素及其后代
-        }
-        // 5.1 提取指定属性的文本
-        const attributesToExtract = appConfig.scanner.attributesToExtract;
-        // 对于特定类型的 input，也提取其 value
-        if (element.tagName === 'INPUT' && ['button', 'submit', 'reset'].includes(element.type)) {
-            // 创建一个副本以避免修改原始配置
-            const dynamicAttributes = [...attributesToExtract, 'value'];
-            dynamicAttributes.forEach(attr => {
-                const attrValue = element.getAttribute(attr);
-                if (attrValue) {
-                    processAndAddText(attrValue);
-                }
-            });
-        } else {
-            attributesToExtract.forEach(attr => {
-                const attrValue = element.getAttribute(attr);
-                if (attrValue) {
-                    processAndAddText(attrValue);
-                }
-            });
-        }
-
-        // 5.2 使用新的遍历函数递归处理每个目标元素及其所有后代（包括 Shadow DOM）
-        traverseNodeWithShadows(element, (node) => {
-            const parent = node.parentElement;
-
-            // 5.3 应用与之前相同的排除逻辑
-            // 排除 <script> 和 <style> 标签内部的文本内容
-            if (parent && (parent.tagName === 'SCRIPT' || parent.tagName === 'STYLE' || parent.closest(ignoredSelectorString))) {
-                return;
-            }
-            // 排除我们自己注入的 UI 元素（悬浮按钮、模态框、设置面板）内的文本
-            if (parent && parent.closest('.text-extractor-fab, .text-extractor-modal-overlay, .settings-panel-overlay')) {
-                return;
-            }
-            
-            processAndAddText(node.nodeValue);
-        });
-    });
-
-    // 6. 将 Set 转换为数组并返回
+    // 3. 将结果转换为数组并返回
     return Array.from(uniqueTexts);
 };
 
@@ -170,31 +166,8 @@ export const extractRawTextFromElement = (element) => {
     if (!element) return [];
 
     const texts = [];
-
-    const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(', ');
-    if (element.closest(ignoredSelectorString)) {
-        return [];
-    }
-
-    // 提取元素自身的属性
-    const attributesToExtract = appConfig.scanner.attributesToExtract;
-    attributesToExtract.forEach(attr => {
-        const attrValue = element.getAttribute(attr);
-        if (attrValue) {
-            texts.push(attrValue);
-        }
-    });
-
-    // 使用新的遍历函数来处理节点及其 Shadow DOM
-    traverseNodeWithShadows(element, (node) => {
-        const parent = node.parentElement;
-        // 应用与之前相同的排除逻辑
-        if (parent && (parent.tagName === 'SCRIPT' || parent.tagName === 'STYLE' || parent.closest(ignoredSelectorString) || parent.closest('.text-extractor-fab, .text-extractor-modal-overlay, .settings-panel-overlay'))) {
-            return;
-        }
-        if (node.nodeValue) {
-            texts.push(node.nodeValue);
-        }
+    traverseDOMAndExtract(element, (rawText) => {
+        texts.push(rawText);
     });
 
     return texts;
@@ -215,34 +188,13 @@ export const extractAndProcessTextFromElement = (element) => {
     const processAndAddText = (rawText) => {
         if (!rawText) return;
         const normalizedText = rawText.normalize('NFC');
-        let text = normalizedText.replace(/(\\r\\n|\\n|\\r)+/g, '\\n');
+        let text = normalizedText.replace(/(\r\n|\n|\r)+/g, '\n');
         if (text.trim() === '') return;
 
         uniqueTexts.add(text);
     };
 
-    const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(', ');
-    if (element.closest(ignoredSelectorString)) {
-        return [];
-    }
-
-    // 提取元素自身的属性
-    const attributesToExtract = appConfig.scanner.attributesToExtract;
-    attributesToExtract.forEach(attr => {
-        const attrValue = element.getAttribute(attr);
-        if (attrValue) {
-            processAndAddText(attrValue);
-        }
-    });
-
-    // 使用新的遍历函数来处理节点及其 Shadow DOM
-    traverseNodeWithShadows(element, (node) => {
-        const parent = node.parentElement;
-        if (parent && (parent.tagName === 'SCRIPT' || parent.tagName === 'STYLE' || parent.closest(ignoredSelectorString) || parent.closest('.text-extractor-fab, .text-extractor-modal-overlay, .settings-panel-overlay'))) {
-            return;
-        }
-        processAndAddText(node.nodeValue);
-    });
+    traverseDOMAndExtract(element, processAndAddText);
 
     return Array.from(uniqueTexts);
 };
