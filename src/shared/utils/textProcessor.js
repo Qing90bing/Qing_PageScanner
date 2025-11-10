@@ -173,28 +173,3 @@ export const extractRawTextFromElement = (element) => {
     return texts;
 };
 
-
-/**
- * @public
- * @description 从指定的单个DOM元素及其后代中提取、处理并返回唯一的文本字符串数组。
- * @param {HTMLElement} element - 开始提取文本的根元素。
- * @returns {string[]} 一个包含处理过的、唯一文本的数组。
- */
-export const extractAndProcessTextFromElement = (element) => {
-    if (!element) return [];
-
-    const uniqueTexts = new Set();
-
-    const processAndAddText = (rawText) => {
-        if (!rawText) return;
-        const normalizedText = rawText.normalize('NFC');
-        let text = normalizedText.replace(/(\r\n|\n|\r)+/g, '\n');
-        if (text.trim() === '') return;
-
-        uniqueTexts.add(text);
-    };
-
-    traverseDOMAndExtract(element, processAndAddText);
-
-    return Array.from(uniqueTexts);
-};
