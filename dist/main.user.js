@@ -4047,12 +4047,12 @@ ${result.join(",\n")}
   }
   function updateStatistics() {
     if (!statsContainer || !outputTextarea) return;
-    setTimeout(() => {
+    requestAnimationFrame(() => {
       const text = outputTextarea.value;
       const lineCount = text.split("\n").length;
       const charCount = text.length;
       statsContainer.textContent = `${t("results.stats.lines")}: ${lineCount} | ${t("results.stats.chars")}: ${charCount}`;
-    }, 0);
+    });
   }
   function calcStringLines(sentence, width) {
     if (!width || !canvasContext) return 1;

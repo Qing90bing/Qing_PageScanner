@@ -104,10 +104,10 @@ export function populateModalFooter(modalFooter, updateContentCallback) {
 export function updateStatistics() {
     if (!state.statsContainer || !state.outputTextarea) return;
 
-    setTimeout(() => {
+    requestAnimationFrame(() => {
         const text = state.outputTextarea.value;
         const lineCount = text.split('\n').length;
         const charCount = text.length;
         state.statsContainer.textContent = `${t('results.stats.lines')}: ${lineCount} | ${t('results.stats.chars')}: ${charCount}`;
-    }, 0);
+    });
 }
