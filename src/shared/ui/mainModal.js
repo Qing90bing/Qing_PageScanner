@@ -193,9 +193,9 @@ export function updateModalContent(content, shouldOpen = false, mode = 'quick-sc
             updateScanCount(0, mode);
         }
 
-        // 使用 setTimeout 将重量级的 DOM 更新推迟到下一个事件循环
-        // 这给了浏览器足够的时间来隐藏加载动画，避免UI冻结
-        setTimeout(() => {
+        // 使用 requestAnimationFrame 将重量级的 DOM 更新推迟到下一个浏览器重绘周期
+        // 这确保了在隐藏加载动画后，UI更新能够最平滑地进行
+        requestAnimationFrame(() => {
             state.outputTextarea.value = displayText; // 显示可能被截断的文本
             setButtonsDisabled(!isData);
             state.outputTextarea.readOnly = !isData;
@@ -204,8 +204,8 @@ export function updateModalContent(content, shouldOpen = false, mode = 'quick-sc
             state.outputTextarea.dispatchEvent(new Event('input'));
 
             // 确保活动行在内容渲染后更新
-            setTimeout(updateActiveLine, 0);
-        }, 0);
+            requestAnimationFrame(updateActiveLine);
+        });
     }
 
     updateModalAddonsVisibility();

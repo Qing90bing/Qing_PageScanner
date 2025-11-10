@@ -156,7 +156,7 @@ export function updateLineNumbers() {
     if (!state.lineNumbersDiv || !state.outputTextarea || isThrottled) return;
 
     isThrottled = true;
-    setTimeout(() => {
+    requestAnimationFrame(() => {
         const { lineNumbers, lineMap } = calcLines();
         state.setCurrentLineMap(lineMap);
 
@@ -193,7 +193,7 @@ export function updateLineNumbers() {
 
         updateActiveLine();
         isThrottled = false;
-    }, 100); // 100ms 的节流延迟
+    });
 }
 
 /**
