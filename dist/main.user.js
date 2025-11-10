@@ -4784,7 +4784,7 @@ ${result.join(",\n")}
     setTimeout(() => {
       requestSummary((formattedText, count) => {
         updateScanCount(count, "session");
-        if (!formattedText || formattedText.trim() === "[]") {
+        if (!formattedText || formattedText.trim().slice(1, -1).trim().length === 0) {
           updateModalContent(SHOW_PLACEHOLDER, true, "session-scan");
         } else {
           updateModalContent(formattedText, true, "session-scan");
