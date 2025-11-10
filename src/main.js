@@ -9,10 +9,6 @@ import { loadSettings } from './features/settings/logic.js';
 import { initializeExporter } from './features/export/exporter.js';
 import { t } from './shared/i18n/index.js';
 import { initializeLanguage } from './shared/i18n/management/languageManager.js';
-import './features/quick-scan/index.js'; // 导入以备将来初始化
-import './features/session-scan/index.js'; // 导入以备将来初始化
-import './features/element-scan/index.js'; // 导入以备将来初始化
-
 export { initUI };
 
 /**
