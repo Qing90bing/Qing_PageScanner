@@ -8,7 +8,7 @@ import { log } from '../../utils/logger.js';
 import { t } from '../../i18n/index.js';
 import { on, fire } from '../../utils/eventBus.js';
 import { showConfirmationModal } from '../components/confirmationModal.js';
-import warningIcon from '../../../assets/icons/warningIcon.js';
+import { warningIcon } from '../../../assets/icons/warningIcon.js';
 import { createExportButton } from '../../../features/export/ui.js';
 import * as state from './modalState.js';
 import { SHOW_PLACEHOLDER } from './modalState.js';
