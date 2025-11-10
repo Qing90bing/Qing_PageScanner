@@ -12,6 +12,7 @@ import { warningIcon } from '../../../assets/icons/warningIcon.js';
 import { createExportButton } from '../../../features/export/ui.js';
 import * as state from './modalState.js';
 import { SHOW_PLACEHOLDER } from './modalState.js';
+import { updateScanCount } from './modalHeader.js';
 import { createButton } from '../components/button.js';
 
 let clearBtn, copyBtn;
@@ -64,7 +65,8 @@ export function populateModalFooter(modalFooter, updateContentCallback) {
             } else if (currentMode === 'element-scan') {
                 fire('clearElementScan');
             }
-
+            // 重置扫描计数显示
+            updateScanCount(0, null);
             updateContentCallback(SHOW_PLACEHOLDER, true, currentMode);
             showNotification(t('notifications.contentCleared'), { type: 'success' });
         } else {

@@ -4016,6 +4016,7 @@ ${result.join(",\n")}
         } else if (currentMode2 === "element-scan") {
           fire("clearElementScan");
         }
+        updateScanCount(0, null);
         updateContentCallback(SHOW_PLACEHOLDER, true, currentMode2);
         showNotification(t("notifications.contentCleared"), { type: "success" });
       } else {
