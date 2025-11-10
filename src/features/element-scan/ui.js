@@ -228,8 +228,7 @@ export function createAdjustmentToolbar(elementPath) {
         icon: closeIcon,
         onClick: () => {
             log(t('log.elementScanUI.cancelClicked'));
-            const fabElement = uiContainer.querySelector('.fab-element-scan');
-            stopElementScan(fabElement);
+            reselectElement();
         }
     });
 
