@@ -4157,7 +4157,7 @@ ${result.join(",\n")}
   function updateLineNumbers() {
     if (!lineNumbersDiv || !outputTextarea || isThrottled) return;
     isThrottled = true;
-    setTimeout(() => {
+    requestAnimationFrame(() => {
       const { lineNumbers, lineMap } = calcLines();
       setCurrentLineMap(lineMap);
       const currentLineCount = lineNumbersDiv.children.length;
@@ -4185,7 +4185,7 @@ ${result.join(",\n")}
       }
       updateActiveLine();
       isThrottled = false;
-    }, 100);
+    });
   }
   function initializeLineNumbers() {
     const canvas = document.createElement("canvas");
@@ -4298,13 +4298,13 @@ ${result.join(",\n")}
       if (!isData || content === t("results.noSummary")) {
         updateScanCount(0, mode);
       }
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         outputTextarea.value = displayText;
         setButtonsDisabled(!isData);
         outputTextarea.readOnly = !isData;
         outputTextarea.dispatchEvent(new Event("input"));
-        setTimeout(updateActiveLine, 0);
-      }, 0);
+        requestAnimationFrame(updateActiveLine);
+      });
     }
     updateModalAddonsVisibility();
     if (shouldOpen) {
