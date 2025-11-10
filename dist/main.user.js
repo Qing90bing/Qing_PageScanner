@@ -1777,6 +1777,9 @@ var TextExtractor = (() => {
     };
   };
   var formatTextsForTranslation = (texts) => {
+    if (!texts || texts.length === 0) {
+      return "[]";
+    }
     const result = texts.map(
       (text) => `    ["${text.replace(/"/g, '\\"').replace(/\n/g, "\\n")}", ""]`
     );
@@ -3063,6 +3066,9 @@ ${result.join(",\n")}
   }
   // src/shared/utils/formatting.js
   var formatTextsForTranslation = (texts) => {
+    if (!texts || texts.length === 0) {
+      return "[]";
+    }
     const result = texts.map(
       (text) => \`    ["\${text.replace(/"/g, '\\\\"').replace(/\\n/g, "\\\\n")}", ""]\`
     );
@@ -3500,15 +3506,7 @@ ${result.join(",\n")}
   }
   function getSummaryInFallback() {
     const textsArray = Array.from(sessionTexts);
-    if (!textsArray || textsArray.length === 0) {
-      return "[]";
-    }
-    const result = textsArray.map(
-      (text) => `    ["${text.replace(/"/g, '\\"').replace(/\n/g, "\\n")}", ""]`
-    );
-    return `[
-${result.join(",\n")}
-]`;
+    return formatTextsForTranslation(textsArray);
   }
   function clearInFallback() {
     sessionTexts.clear();
