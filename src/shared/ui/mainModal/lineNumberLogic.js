@@ -82,9 +82,10 @@ function calcLines() {
 }
 
 /**
- * @description 根据光标位置更新活动行号的样式。
+ * @private
+ * @description 立即执行活动行高亮的更新逻辑。
  */
-export function updateActiveLine() {
+function _performActiveLineUpdate() {
     if (!state.lineNumbersDiv || !state.lineNumbersDiv.classList.contains('is-visible') || !state.outputTextarea) return;
 
     const settings = loadSettings();
@@ -147,6 +148,21 @@ export function updateActiveLine() {
     }
 }
 
+let isUpdateActiveLineScheduled = false;
+
+/**
+ * @description (节流版) 根据光标位置更新活动行号的样式。
+ */
+export function updateActiveLine() {
+    if (isUpdateActiveLineScheduled) return;
+
+    isUpdateActiveLineScheduled = true;
+    requestAnimationFrame(() => {
+        _performActiveLineUpdate();
+        isUpdateActiveLineScheduled = false;
+    });
+}
+
 let isThrottled = false;
 
 /**
@@ -191,7 +207,7 @@ export function updateLineNumbers() {
             }
         }
 
-        updateActiveLine();
+        _performActiveLineUpdate(); // 在更新行号后，立即同步更新活动行
         isThrottled = false;
     });
 }

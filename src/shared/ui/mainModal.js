@@ -204,7 +204,7 @@ export function updateModalContent(content, shouldOpen = false, mode = 'quick-sc
             state.outputTextarea.dispatchEvent(new Event('input'));
 
             // 确保活动行在内容渲染后更新
-            requestAnimationFrame(updateActiveLine);
+            updateActiveLine();
         });
     }
 

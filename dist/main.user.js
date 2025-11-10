@@ -4102,7 +4102,7 @@ ${result.join(",\n")}
     }
     return { lineNumbers, lineMap };
   }
-  function updateActiveLine() {
+  function _performActiveLineUpdate() {
     if (!lineNumbersDiv || !lineNumbersDiv.classList.contains("is-visible") || !outputTextarea) return;
     const settings = loadSettings();
     const textarea = outputTextarea;
@@ -4152,6 +4152,15 @@ ${result.join(",\n")}
       lineDivs[finalVisualLineIndex].classList.add("is-active");
     }
   }
+  var isUpdateActiveLineScheduled = false;
+  function updateActiveLine() {
+    if (isUpdateActiveLineScheduled) return;
+    isUpdateActiveLineScheduled = true;
+    requestAnimationFrame(() => {
+      _performActiveLineUpdate();
+      isUpdateActiveLineScheduled = false;
+    });
+  }
   var isThrottled = false;
   function updateLineNumbers() {
     if (!lineNumbersDiv || !outputTextarea || isThrottled) return;
@@ -4182,7 +4191,7 @@ ${result.join(",\n")}
           lineNumbersDiv.removeChild(lineNumbersDiv.children[i]);
         }
       }
-      updateActiveLine();
+      _performActiveLineUpdate();
       isThrottled = false;
     });
   }
@@ -4302,7 +4311,7 @@ ${result.join(",\n")}
         setButtonsDisabled(!isData);
         outputTextarea.readOnly = !isData;
         outputTextarea.dispatchEvent(new Event("input"));
-        requestAnimationFrame(updateActiveLine);
+        updateActiveLine();
       });
     }
     updateModalAddonsVisibility();
