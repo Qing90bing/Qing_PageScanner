@@ -10,9 +10,8 @@ import { createFab } from './components/fab.js';
 import { createMainModal } from './mainModal.js';
 import { handleQuickScanClick } from '../../features/quick-scan/ui.js';
 import { handleDynamicExtractClick } from '../../features/session-scan/ui.js';
-import { handleElementScanClick, reselectElement, getShouldResumeAfterModalClose, setShouldResumeAfterModalClose, isElementScanActive } from '../../features/element-scan/logic.js';
+import { handleElementScanClick } from '../../features/element-scan/logic.js';
 import { loadSettings } from '../../features/settings/logic.js';
-import { on } from '../utils/eventBus.js';
 import { handleSummaryClick } from './summaryHandler.js'; // New import
 
 /**
@@ -34,13 +33,5 @@ export function initUI() {
         onElementScan: handleElementScanClick,
     },
     isVisible: settings.showFab,
-  });
-
-  // 添加事件监听器，以在模态框关闭后恢复元素扫描
-  on('modalClosed', () => {
-    if (isElementScanActive() && getShouldResumeAfterModalClose()) {
-        setShouldResumeAfterModalClose(false); // 重置标志
-        reselectElement();
-    }
   });
 }

@@ -39,6 +39,14 @@ on('clearElementScan', () => {
     updateStagedCount();
 });
 
+// 当模态框关闭后，如果需要，则恢复元素扫描模式
+on('modalClosed', () => {
+    if (isElementScanActive() && getShouldResumeAfterModalClose()) {
+        setShouldResumeAfterModalClose(false); // 重置标志
+        reselectElement();
+    }
+});
+
 /**
  * 滚动事件处理函数。
  * 使用 requestAnimationFrame 优化性能，避免在高频滚动时重复渲染。
