@@ -3239,10 +3239,6 @@ ${result.join(",\n")}
     notification.classList.add("tc-notification-fade-out");
     notification.addEventListener("animationend", () => {
       notification.remove();
-      if (notificationContainer && notificationContainer.childElementCount === 0) {
-        notificationContainer.remove();
-        notificationContainer = null;
-      }
     }, { once: true });
   }
   function createNotificationElement(message, type = "info") {

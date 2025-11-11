@@ -36,11 +36,6 @@ function closeNotification(notification) {
     notification.classList.add('tc-notification-fade-out');
     notification.addEventListener('animationend', () => {
         notification.remove();
-        // 检查容器是否为空，如果是，则也移除容器以进行垃圾回收
-        if (notificationContainer && notificationContainer.childElementCount === 0) {
-            notificationContainer.remove();
-            notificationContainer = null;
-        }
     }, { once: true }); // 使用 once 确保事件监听器在执行后自动移除
 }
 
