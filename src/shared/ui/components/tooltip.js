@@ -1,19 +1,11 @@
 // src/shared/ui/components/tooltip.js
 
-let currentTooltip = null;
+let tooltipElement = null; // 单例模式的元素
 let hideTimeout = null;
 
 import { uiContainer } from '../uiContainer.js';
 
 const MARGIN = 12; // 安全边距
-
-/**
- * 强制从 DOM 中移除所有现存的 tooltip 实例。
- */
-function removeAllTooltips() {
-    uiContainer.querySelectorAll('.text-extractor-tooltip').forEach(tip => tip.remove());
-    currentTooltip = null;
-}
 
 /**
  * 检查一个矩形是否与一组障碍物矩形发生碰撞
@@ -104,16 +96,20 @@ function calculateOptimalPosition(targetRect, tooltipRect, obstacles) {
  */
 export function showTooltip(targetElement, text) {
     clearTimeout(hideTimeout);
-    removeAllTooltips();
 
-    const tooltip = document.createElement('div');
-    tooltip.className = 'text-extractor-tooltip';
-    tooltip.textContent = text;
-    uiContainer.appendChild(tooltip);
-    currentTooltip = tooltip;
+    // 懒加载：如果 tooltip 元素不存在，则创建并添加到 DOM
+    if (!tooltipElement) {
+        tooltipElement = document.createElement('div');
+        tooltipElement.className = 'text-extractor-tooltip';
+        uiContainer.appendChild(tooltipElement);
+    }
 
+    // 更新内容
+    tooltipElement.textContent = text;
+
+    // 每次显示时都重新计算位置
     const targetRect = targetElement.getBoundingClientRect();
-    const tooltipRect = tooltip.getBoundingClientRect();
+    const tooltipRect = tooltipElement.getBoundingClientRect();
 
     // 获取所有其他的 FAB 按钮作为障碍物
     const obstacles = Array.from(uiContainer.querySelectorAll('.text-extractor-fab'))
@@ -122,13 +118,12 @@ export function showTooltip(targetElement, text) {
 
     const { top, left } = calculateOptimalPosition(targetRect, tooltipRect, obstacles);
 
-    tooltip.style.top = `${top}px`;
-    tooltip.style.left = `${left}px`;
+    tooltipElement.style.top = `${top}px`;
+    tooltipElement.style.left = `${left}px`;
 
+    // 使用 rAF 确保样式更新后再生效 class，触发过渡动画
     requestAnimationFrame(() => {
-        if (tooltip === currentTooltip) {
-            tooltip.classList.add('is-visible');
-        }
+        tooltipElement.classList.add('is-visible');
     });
 }
 
@@ -136,14 +131,7 @@ export function showTooltip(targetElement, text) {
  * 隐藏提示框
  */
 export function hideTooltip() {
-    if (!currentTooltip) return;
+    if (!tooltipElement) return;
 
-    const tooltipToHide = currentTooltip;
-    currentTooltip = null;
-
-    tooltipToHide.classList.remove('is-visible');
-
-    hideTimeout = setTimeout(() => {
-        tooltipToHide.remove();
-    }, 200);
+    tooltipElement.classList.remove('is-visible');
 }

@@ -62,13 +62,9 @@ var TextExtractor = (() => {
     return shadowRoot;
   }
   var uiContainer = createUIContainer();
-  var currentTooltip = null;
+  var tooltipElement = null;
   var hideTimeout = null;
   var MARGIN = 12;
-  function removeAllTooltips() {
-    uiContainer.querySelectorAll(".text-extractor-tooltip").forEach((tip) => tip.remove());
-    currentTooltip = null;
-  }
   function checkCollision(rect, obstacles) {
     for (const obstacle of obstacles) {
       if (rect.left < obstacle.right && rect.left + rect.width > obstacle.left && rect.top < obstacle.bottom && rect.top + rect.height > obstacle.top) {
@@ -115,32 +111,25 @@ var TextExtractor = (() => {
   }
   function showTooltip(targetElement, text) {
     clearTimeout(hideTimeout);
-    removeAllTooltips();
-    const tooltip = document.createElement("div");
-    tooltip.className = "text-extractor-tooltip";
-    tooltip.textContent = text;
-    uiContainer.appendChild(tooltip);
-    currentTooltip = tooltip;
+    if (!tooltipElement) {
+      tooltipElement = document.createElement("div");
+      tooltipElement.className = "text-extractor-tooltip";
+      uiContainer.appendChild(tooltipElement);
+    }
+    tooltipElement.textContent = text;
     const targetRect = targetElement.getBoundingClientRect();
-    const tooltipRect = tooltip.getBoundingClientRect();
+    const tooltipRect = tooltipElement.getBoundingClientRect();
     const obstacles = Array.from(uiContainer.querySelectorAll(".text-extractor-fab")).filter((el) => el !== targetElement).map((el) => el.getBoundingClientRect());
     const { top, left } = calculateOptimalPosition(targetRect, tooltipRect, obstacles);
-    tooltip.style.top = `${top}px`;
-    tooltip.style.left = `${left}px`;
+    tooltipElement.style.top = `${top}px`;
+    tooltipElement.style.left = `${left}px`;
     requestAnimationFrame(() => {
-      if (tooltip === currentTooltip) {
-        tooltip.classList.add("is-visible");
-      }
+      tooltipElement.classList.add("is-visible");
     });
   }
   function hideTooltip() {
-    if (!currentTooltip) return;
-    const tooltipToHide = currentTooltip;
-    currentTooltip = null;
-    tooltipToHide.classList.remove("is-visible");
-    hideTimeout = setTimeout(() => {
-      tooltipToHide.remove();
-    }, 200);
+    if (!tooltipElement) return;
+    tooltipElement.classList.remove("is-visible");
   }
   var themeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 32.5-156t88-127Q256-817 330-848.5T488-880q80 0 151 27.5t124.5 76q53.5 48.5 85 115T880-518q0 115-70 176.5T640-280h-74q-9 0-12.5 5t-3.5 11q0 12 15 34.5t15 51.5q0 50-27.5 74T480-80Zm0-400Zm-220 40q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120-160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm200 0q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120 160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17ZM480-160q9 0 14.5-5t5.5-13q0-14-15-33t-15-57q0-42 29-67t71-25h70q66 0 113-38.5T800-518q0-121-92.5-201.5T488-800q-136 0-232 93t-96 227q0 133 93.5 226.5T480-160Z"/></svg>`;
   var languageIcon_default = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-155.5t86-127Q252-817 325-848.5T480-880q83 0 155.5 31.5t127 86q54.5 54.5 86 127T880-480q0 82-31.5 155t-86 127.5q-54.5 54.5-127 86T480-80Zm0-82q26-36 45-75t31-83H404q12 44 31 83t45 75Zm-104-16q-18-33-31.5-68.5T322-320H204q29 50 72.5 87t99.5 55Zm208 0q56-18 99.5-55t72.5-87H638q-9 38-22.5 73.5T584-178ZM170-400h136q-3-20-4.5-39.5T300-480q0-21 1.5-40.5T306-560H170q-5 20-7.5 39.5T160-480q0 21 2.5 40.5T170-400Zm216 0h188q3-20 4.5-39.5T580-480q0-21-1.5-40.5T574-560H386q-3 20-4.5 39.5T380-480q0 21 1.5 40.5T386-400Zm268 0h136q5-20 7.5-39.5T800-480q0-21-2.5-40.5T790-560H654q3 20 4.5 39.5T660-480q0 21-1.5 40.5T654-400Zm-16-240h118q-29-50-72.5-87T584-782q18 33 31.5 68.5T638-640Zm-234 0h152q-12-44-31-83t-45-75q-26 36-45 75t-31 83Zm-200 0h118q9-38 22.5-73.5T376-782q-56 18-99.5 55T204-640Z"/></svg>`;
