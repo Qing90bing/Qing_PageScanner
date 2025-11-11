@@ -31,7 +31,7 @@
  * 1. 背景层：只负责视觉背景（颜色、模糊、圆角、阴影）。
  */
 .counter-with-help-background {
-    z-index: 2147483644; /* 位于内容层之下 */
+    z-index: 9999998; /* 位于内容层之下 */
     pointer-events: none; /* 不接收鼠标事件 */
 
     /* 胶囊外观样式 - 尺寸由内容层决定，这里给一个最小参考 */
@@ -50,7 +50,7 @@
  * 2. 内容层：负责承载内容（计数器、图标）和 Flex 布局。
  */
 .counter-with-help-content {
-    z-index: 2147483645; /* 位于背景层之上 */
+    z-index: 9999999; /* 位于背景层之上 */
     pointer-events: all; /* 接收鼠标事件 */
     height: 42px; /* 强制与背景层高度一致 */
 

@@ -19,7 +19,7 @@
     align-items: center; /* 垂直居中对齐 */
     gap: 8px; /* 子元素之间的间距 */
 
-    z-index: 9999998;
+    z-index: 9999999;
     /* 移除 opacity 和 transition，父容器不再有动画 */
 }
 
