@@ -1,7 +1,9 @@
 // src/shared/ui/confirmationModal.js
 import { createSVGFromString } from '../../utils/dom.js';
-import { t } from '../../i18n/index.js';
 import { uiContainer } from '../uiContainer.js'; // 直接导入Shadow DOM根
+import { createButton } from './button.js';
+import { closeIcon } from '../../../assets/icons/closeIcon.js';
+import { confirmIcon } from '../../../assets/icons/confirmIcon.js';
 
 let modalContainer = null;
 let resolvePromise = null;
@@ -33,13 +35,19 @@ export function showConfirmationModal(text, iconSVG) {
       const buttonContainer = document.createElement('div');
       buttonContainer.className = 'confirmation-modal-buttons';
 
-      const confirmButton = document.createElement('button');
-      confirmButton.className = 'confirmation-modal-button confirm';
-      confirmButton.textContent = t('common.confirm');
+      const confirmButton = createButton({
+        className: 'confirm',
+        textKey: 'common.confirm',
+        icon: confirmIcon,
+        onClick: () => handleConfirmation(true)
+      });
 
-      const cancelButton = document.createElement('button');
-      cancelButton.className = 'confirmation-modal-button cancel';
-      cancelButton.textContent = t('common.cancel');
+      const cancelButton = createButton({
+        className: 'cancel',
+        textKey: 'common.cancel',
+        icon: closeIcon,
+        onClick: () => handleConfirmation(false)
+      });
 
       buttonContainer.append(cancelButton, confirmButton);
       modalContent.append(iconContainer, textContainer, buttonContainer);
@@ -49,8 +57,6 @@ export function showConfirmationModal(text, iconSVG) {
       uiContainer.append(modalContainer);
 
       // --- 事件监听器 ---
-      confirmButton.addEventListener('click', () => handleConfirmation(true));
-      cancelButton.addEventListener('click', () => handleConfirmation(false));
       modalContainer.addEventListener('click', (e) => {
         if (e.target === modalContainer) {
           handleConfirmation(false);

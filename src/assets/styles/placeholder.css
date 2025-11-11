@@ -1,6 +1,7 @@
 /* src/assets/styles/placeholder.css */
 
 #modal-placeholder {
+    font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
     display: flex; /* 改为flex以便应用flex属性 */
     opacity: 0; /* 初始透明 */
     visibility: hidden; /* 初始隐藏 */

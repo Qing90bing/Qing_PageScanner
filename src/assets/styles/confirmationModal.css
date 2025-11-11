@@ -26,10 +26,11 @@
 }
 
 .confirmation-modal-content {
+  font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';;
   background-color: var(--main-bg);
   color: var(--main-text);
   padding: 30px;
-  border-radius: 12px;
+  border-radius: 16px;
   text-align: center;
   width: 320px;
   box-shadow: 0 10px 30px var(--main-shadow);

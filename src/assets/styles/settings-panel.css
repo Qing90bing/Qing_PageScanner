@@ -27,7 +27,7 @@
   border-radius: 16px; /* 增大圆角 */
   box-shadow: 0 5px 15px var(--main-shadow);
   width: 90%;
-  max-width: 400px;
+  max-width: 450px;
   max-height: 85vh; /* 与主模态框保持一致 */
   display: flex; /* 启用flexbox以控制内部布局 */
   flex-direction: column; /* 垂直布局 */
