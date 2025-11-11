@@ -90,6 +90,10 @@
     transition: opacity 0.1s ease-in-out;
 }
 
+#element-scan-slider-container {
+    min-width: 320px;
+}
+
 /* 滑块样式 */
 #element-scan-level-slider {
     width: 100%;
@@ -113,7 +117,15 @@
     border-radius: 16px;
     cursor: pointer;
     font-size: 14px;
-    transition: background-color 0.2s ease-in-out; /* 添加颜色过渡动画 */
+    transition: background-color 0.1s ease-in-out, transform 0.1s ease-in-out; /* 添加颜色和变换的过渡动画 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px; /* 在图标和文本之间添加间距 */
+}
+
+#element-scan-toolbar-actions button:active {
+    transform: scale(0.95); /* 点击时轻微缩小 */
 }
 
 /* --- 特定按钮颜色 --- */

@@ -222,16 +222,6 @@ export function createAdjustmentToolbar(elementPath) {
         }
     });
 
-    const cancelBtn = createButton({
-        id: 'element-scan-toolbar-cancel',
-        textKey: 'common.cancel',
-        icon: closeIcon,
-        onClick: () => {
-            log(t('log.elementScanUI.cancelClicked'));
-            reselectElement();
-        }
-    });
-
     const confirmBtn = createButton({
         id: 'element-scan-toolbar-confirm',
         textKey: 'common.confirm',
@@ -244,7 +234,6 @@ export function createAdjustmentToolbar(elementPath) {
 
     actionsContainer.appendChild(reselectBtn);
     actionsContainer.appendChild(stageBtn);
-    actionsContainer.appendChild(cancelBtn);
     actionsContainer.appendChild(confirmBtn);
 
     // --- 智能定位逻辑 ---
