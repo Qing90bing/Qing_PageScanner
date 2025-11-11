@@ -2,6 +2,7 @@
   "common": {
     "scan": "Scan",
     "stop": "Stop",
+    "pause": "Pause",
     "resume": "Resume",
     "clear": "Clear",
     "copy": "Copy",
@@ -121,6 +122,10 @@
     "noTextSelected": "No text selected.",
     "scanFailed": "Scan failed.",
     "elementScanStarted": "Element scan started.",
+    "elementScanPaused": "Element scan paused.",
+    "elementScanResumed": "Element scan resumed.",
+    "sessionScanPaused": "Dynamic scan paused.",
+    "sessionScanResumed": "Dynamic scan resumed.",
     "cspWorkerWarning": "Switched to compatibility scan mode due to website security restrictions."
   },
   "placeholders": {
@@ -138,6 +143,10 @@
     "dynamic_scan": "Dynamic Scan",
     "static_scan": "Static Scan",
     "element_scan": "Element Scan",
+    "pauseElementScan": "Pause Element Scan",
+    "resumeElementScan": "Resume Element Scan",
+    "pauseSessionScan": "Pause Dynamic Scan",
+    "resumeSessionScan": "Resume Dynamic Scan",
     "disabled": {
       "scan_in_progress": "Another scan is in progress"
     },

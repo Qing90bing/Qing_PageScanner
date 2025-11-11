@@ -2,50 +2,85 @@
 
 import { t } from '../../i18n/index.js';
 import { createHelpIcon } from './helpIcon.js';
+import { createButton } from './button.js';
 import { updateTopCenterCounter, createTopCenterCounter } from './topCenterCounter.js';
 import { uiContainer } from '../uiContainer.js';
+import { pauseIcon } from '../../../assets/icons/pauseIcon.js';
+import { resumeIcon } from '../../../assets/icons/resumeIcon.js';
 
 let backgroundContainer = null;
 let contentContainer = null;
 let counterElement = null;
 let helpIcon = null;
+let pauseResumeButton = null;
 
 /**
  * @public
  * @function createCounterWithHelp
  * @description 创建并初始化包含计数器、分隔符和帮助图标的组合UI组件。
- *              采用双层分离结构（背景层和内容层）以优化动画性能并修复渲染问题。
- * @param {string} counterKey - 用于计数器标签的i18n key。
- * @param {string} helpKey - 用于帮助图标工具提示的i18n key。
+ * @param {object} config - 组件的配置对象。
+ * @param {string} config.counterKey - 用于计数器标签的i18n key。
+ * @param {string} config.helpKey - 用于帮助图标工具提示的i18n key。
+ * @param {function} [config.onPause] - “暂停”按钮点击事件的回调。
+ * @param {function} [config.onResume] - “恢复”按钮点击事件的回调。
+ * @param {string} [config.scanType] - 当前扫描的类型，用于工具提示。
  * @returns {HTMLElement} - 返回创建的内容容器元素。
  */
-export function createCounterWithHelp(counterKey, helpKey) {
+export function createCounterWithHelp({ counterKey, helpKey, onPause, onResume, scanType }) {
     if (contentContainer) {
         updateCounterValue(0);
         return contentContainer;
     }
 
-    // 1. 创建背景容器，负责模糊背景和动画
+    let isPaused = false;
+
     backgroundContainer = document.createElement('div');
     backgroundContainer.className = 'counter-with-help-background';
 
-    // 2. 创建内容容器，负责承载内容并同步动画
     contentContainer = document.createElement('div');
     contentContainer.className = 'counter-with-help-content';
 
-    // 3. 创建和配置子元素
     counterElement = createTopCenterCounter(counterKey);
     helpIcon = createHelpIcon(helpKey);
 
-    const separator = document.createElement('div');
-    separator.className = 'counter-with-help-separator';
-
-    // 4. 将子元素组装到内容容器中
     contentContainer.appendChild(counterElement);
-    contentContainer.appendChild(separator);
-    contentContainer.appendChild(helpIcon);
 
-    // 5. 将两个独立的容器都添加到主UI容器中
+    if (onPause && onResume && scanType) {
+        const separator = document.createElement('div');
+        separator.className = 'counter-with-help-separator';
+        contentContainer.appendChild(separator);
+
+        pauseResumeButton = createButton({
+            icon: pauseIcon,
+            iconOnly: true,
+            tooltipKey: `tooltip.pause${scanType}`,
+            onClick: () => {
+                isPaused = !isPaused;
+                if (isPaused) {
+                    onPause();
+                    pauseResumeButton.updateIcon(resumeIcon);
+                    pauseResumeButton.updateText(`tooltip.resume${scanType}`);
+                } else {
+                    onResume();
+                    pauseResumeButton.updateIcon(pauseIcon);
+                    pauseResumeButton.updateText(`tooltip.pause${scanType}`);
+                }
+            }
+        });
+
+        const actionsContainer = document.createElement('div');
+        actionsContainer.className = 'counter-actions-container';
+        actionsContainer.appendChild(pauseResumeButton);
+        actionsContainer.appendChild(helpIcon);
+
+        contentContainer.appendChild(actionsContainer);
+    } else {
+        const separator = document.createElement('div');
+        separator.className = 'counter-with-help-separator';
+        contentContainer.appendChild(separator);
+        contentContainer.appendChild(helpIcon);
+    }
+
     uiContainer.appendChild(backgroundContainer);
     uiContainer.appendChild(contentContainer);
 
@@ -64,6 +99,14 @@ export function showCounterWithHelp() {
     requestAnimationFrame(() => {
         backgroundContainer.classList.add('is-visible');
         contentContainer.classList.add('is-visible');
+
+        // 动态调整背景宽度以匹配内容
+        setTimeout(() => {
+            if (backgroundContainer && contentContainer) {
+                const contentWidth = contentContainer.offsetWidth;
+                backgroundContainer.style.width = `${contentWidth}px`;
+            }
+        }, 50); // 延迟以确保内容已渲染并获得正确宽度
     });
 }
 
@@ -86,8 +129,10 @@ export function hideCounterWithHelp() {
     contentContainer = null;
     counterElement = null;
     helpIcon = null;
+    pauseResumeButton = null;
 
     // 触发退场动画
+    bgToRemove.style.width = ''; // 重置宽度
     bgToRemove.classList.remove('is-visible');
     contentToRemove.classList.remove('is-visible');
 
@@ -98,6 +143,9 @@ export function hideCounterWithHelp() {
         }
         if (iconToRemove && typeof iconToRemove.destroy === 'function') {
             iconToRemove.destroy();
+        }
+        if (pauseResumeButton && typeof pauseResumeButton.destroy === 'function') {
+            pauseResumeButton.destroy();
         }
         if (bgToRemove) {
             bgToRemove.remove();

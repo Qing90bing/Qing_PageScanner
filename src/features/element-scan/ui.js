@@ -1,7 +1,7 @@
 // src/features/element-scan/ui.js
 
 import { uiContainer } from '../../shared/ui/uiContainer.js';
-import { updateSelectionLevel, reselectElement, stopElementScan, confirmSelectionAndExtract, stageCurrentElement } from './logic.js';
+import { updateSelectionLevel, reselectElement, stopElementScan, confirmSelectionAndExtract, stageCurrentElement, pauseElementScan, resumeElementScan } from './logic.js';
 import { t } from '../../shared/i18n/index.js';
 import { createTrustedHTML } from '../../shared/utils/trustedTypes.js';
 import { log } from '../../shared/utils/logger.js';
@@ -379,7 +379,13 @@ export function cleanupToolbar() {
  * @description 显示顶部中央的“计数器与帮助”组合UI。
  */
 export function showTopCenterUI() {
-    createCounterWithHelp('scan.stagedCount', 'tutorial.elementScan');
+    createCounterWithHelp({
+        counterKey: 'scan.stagedCount',
+        helpKey: 'tutorial.elementScan',
+        onPause: pauseElementScan,
+        onResume: resumeElementScan,
+        scanType: 'ElementScan'
+    });
     showCounterWithHelp();
 
     // 订阅计数变化事件

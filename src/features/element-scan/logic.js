@@ -20,6 +20,7 @@ import { on, fire } from '../../shared/utils/eventBus.js';
 // --- 模块级状态变量 ---
 
 let isActive = false;
+let isPaused = false;
 let isAdjusting = false;
 let currentTarget = null;
 let elementPath = [];
@@ -149,6 +150,7 @@ export function stopElementScan(fabElement) {
     log(t('log.elementScan.stopping'));
     isActive = false;
     isAdjusting = false;
+    isPaused = false;
 
     if (fabElement) {
         fabElement.classList.remove('is-recording');
@@ -186,7 +188,27 @@ export function stopElementScan(fabElement) {
     log(t('log.elementScan.stateReset'));
 }
 
+export function pauseElementScan() {
+    if (!isActive || isPaused) return;
+    isPaused = true;
+    showNotification(t('notifications.elementScanPaused'), { type: 'info' });
+    cleanupUI();
+    cleanupToolbar();
+    removeScrollListeners();
+    document.removeEventListener('mouseover', handleMouseOver);
+    document.removeEventListener('mouseout', handleMouseOut);
+    document.removeEventListener('click', handleElementClick, true);
+}
+
+export function resumeElementScan() {
+    if (!isActive || !isPaused) return;
+    isPaused = false;
+    showNotification(t('notifications.elementScanResumed'), { type: 'success' });
+    reselectElement();
+}
+
 export function reselectElement() {
+    if (isPaused) return;
     log(t('log.elementScan.reselecting'));
     isAdjusting = false;
     cleanupUI();
@@ -327,7 +349,7 @@ function scheduledHighlightUpdate() {
 
 
 function handleMouseOver(event) {
-    if (!isActive || isAdjusting) return;
+    if (!isActive || isAdjusting || isPaused) return;
 
     const target = event.target;
     // 忽略 FAB 容器内的元素
@@ -375,7 +397,7 @@ function handleContextMenu(event) {
 }
 
 function handleElementClick(event) {
-    if (!isActive || isAdjusting || !currentTarget) return;
+    if (!isActive || isAdjusting || !currentTarget || isPaused) return;
     event.preventDefault();
     event.stopPropagation();
     

@@ -2,6 +2,7 @@
   "common": {
     "scan": "掃描",
     "stop": "停止",
+    "pause": "暫停",
     "resume": "恢復",
     "clear": "清空",
     "copy": "複製",
@@ -121,6 +122,10 @@
     "noTextSelected": "未選擇任何文本。",
     "scanFailed": "掃描失敗。",
     "elementScanStarted": "選取元素掃描已開始。",
+    "elementScanPaused": "元素掃描已暫停。",
+    "elementScanResumed": "元素掃描已恢復。",
+    "sessionScanPaused": "動態掃描已暫停。",
+    "sessionScanResumed": "動態掃描已恢復。",
     "cspWorkerWarning": "因網站安全限制，已切換至相容掃描模式。"
   },
   "placeholders": {
@@ -138,6 +143,10 @@
     "dynamic_scan": "動態掃描",
     "static_scan": "靜態掃描",
     "element_scan": "選取元素掃描",
+    "pauseElementScan": "暫停元素掃描",
+    "resumeElementScan": "恢復元素掃描",
+    "pauseSessionScan": "暫停動態掃描",
+    "resumeSessionScan": "恢復動態掃描",
     "disabled": {
       "scan_in_progress": "另一項掃描正在進行中"
     },

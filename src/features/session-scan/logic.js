@@ -19,6 +19,7 @@ import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
 
 // --- 模块级变量 ---
 let isRecording = false;
+let isPaused = false;
 let observer = null;
 let worker = null;
 let useFallback = false;
@@ -89,6 +90,7 @@ export const start = async (onUpdate) => {
     if (isRecording) return;
 
     // --- 1. 彻底清理旧状态 ---
+    isPaused = false;
     if (worker) {
         worker.terminate();
         worker = null;
@@ -201,6 +203,7 @@ export const stop = (onStopped) => {
         observer = null;
     }
     isRecording = false;
+    isPaused = false;
     onUpdateCallback = null;
 
     if (onStopped) {
@@ -237,3 +240,21 @@ export const requestSummary = (onReady) => {
 };
 
 export const isSessionRecording = () => isRecording;
+
+export const pauseSessionScan = () => {
+    if (!isRecording || isPaused) return;
+    isPaused = true;
+    showNotification(t('notifications.sessionScanPaused'), { type: 'info' });
+    if (observer) {
+        observer.disconnect();
+    }
+};
+
+export const resumeSessionScan = () => {
+    if (!isRecording || !isPaused) return;
+    isPaused = false;
+    showNotification(t('notifications.sessionScanResumed'), { type: 'success' });
+    if (observer) {
+        observer.observe(document.body, { childList: true, subtree: true });
+    }
+};

@@ -27,7 +27,13 @@ on('sessionCleared', () => {
  * @description 创建并显示包含计数器和帮助图标的顶部中央UI。
  */
 function showTopCenterUI() {
-    createCounterWithHelp('common.discovered', 'tutorial.sessionScan');
+    createCounterWithHelp({
+        counterKey: 'common.discovered',
+        helpKey: 'tutorial.sessionScan',
+        onPause: sessionExtractor.pauseSessionScan,
+        onResume: sessionExtractor.resumeSessionScan,
+        scanType: 'SessionScan'
+    });
     showCounterWithHelp();
 }
 

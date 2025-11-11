@@ -40,23 +40,23 @@ function calculateOptimalPosition(targetRect, tooltipRect, obstacles) {
 
     // 定义四个候选位置及其矩形信息
     const positions = [
-        // 1. 右侧 (Right)
+        // 1. 下方 (Bottom) - 优先
+        {
+            name: 'bottom',
+            top: targetRect.bottom + MARGIN,
+            left: targetRect.left + (targetRect.width / 2) - (ttWidth / 2),
+        },
+        // 2. 右侧 (Right)
         {
             name: 'right',
             top: targetRect.top + (targetRect.height / 2) - (ttHeight / 2),
             left: targetRect.right + MARGIN,
         },
-        // 2. 左侧 (Left)
+        // 3. 左侧 (Left)
         {
             name: 'left',
             top: targetRect.top + (targetRect.height / 2) - (ttHeight / 2),
             left: targetRect.left - ttWidth - MARGIN,
-        },
-        // 3. 下方 (Bottom)
-        {
-            name: 'bottom',
-            top: targetRect.bottom + MARGIN,
-            left: targetRect.left + (targetRect.width / 2) - (ttWidth / 2),
         },
         // 4. 上方 (Top)
         {

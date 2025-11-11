@@ -26,7 +26,7 @@ import { simpleTemplate } from '../../utils/templating.js';
  */
 export function createHelpIcon(contentKey) {
     const helpButton = document.createElement('button');
-    helpButton.className = 'tc-help-icon-button';
+    helpButton.className = 'tc-icon-button';
     helpButton.innerHTML = createTrustedHTML(questionMarkIcon);
 
     const handleClick = (event) => {

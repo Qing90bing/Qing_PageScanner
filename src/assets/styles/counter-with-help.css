@@ -77,7 +77,7 @@
  * 强制子元素（计数器和帮助图标）适应 Flexbox 布局。
  */
 .counter-with-help-content .tc-top-center-counter,
-.counter-with-help-content .tc-help-icon-button {
+.counter-with-help-content .tc-icon-button {
     position: static;
     transform: none;
     opacity: 1;
@@ -91,20 +91,44 @@
     margin: 0;
 }
 
-.counter-with-help-content .tc-help-icon-button {
+.counter-with-help-content .tc-icon-button {
     transition: color 0.2s, background-color 0.2s; /* 恢复悬停动画 */
+    border-radius: 50%; /* 确保悬停背景是圆形的 */
+    width: 32px; /* 固定尺寸 */
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--main-text-secondary);
+}
+
+.counter-with-help-content .tc-icon-button:hover {
+    background-color: var(--main-border);
+    color: var(--main-text);
+}
+
+.counter-with-help-content .tc-icon-button svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+}
+
+.counter-actions-container {
+    display: flex;
+    align-items: center;
+    gap: 4px; /* 图标之间的微小间距 */
 }
 
 /* 确保计数器内的文本样式不受影响 */
 .counter-with-help-content .tc-top-center-counter {
     font-size: 14px;
     font-weight: 500;
+    margin-left: 9px;
 }
 .counter-with-help-content .tc-top-center-counter span {
     font-weight: bold;
     font-size: 16px;
     color: var(--main-primary);
-    margin-left: 6px;
 }
 
 /*
