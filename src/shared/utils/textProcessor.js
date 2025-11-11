@@ -26,7 +26,7 @@ const traverseDOMAndExtract = (node, textCallback) => {
         // 对于元素节点
         case Node.ELEMENT_NODE: {
             const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(', ');
-            const ourUiSelector = '.text-extractor-fab, .text-extractor-modal-overlay, .settings-panel-overlay';
+            const ourUiSelector = '#text-extractor-container';
 
             // 如果元素匹配忽略选择器，则停止遍历此分支
             if (node.closest(ignoredSelectorString) || node.closest(ourUiSelector)) {

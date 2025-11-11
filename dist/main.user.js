@@ -1674,7 +1674,7 @@ var TextExtractor = (() => {
     switch (node.nodeType) {
       case Node.ELEMENT_NODE: {
         const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(", ");
-        const ourUiSelector = ".text-extractor-fab, .text-extractor-modal-overlay, .settings-panel-overlay";
+        const ourUiSelector = "#text-extractor-container";
         if (node.closest(ignoredSelectorString) || node.closest(ourUiSelector)) {
           return;
         }
