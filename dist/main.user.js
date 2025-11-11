@@ -4451,20 +4451,6 @@ ${result.join(",\n")}
     });
     return fab;
   }
-  function updateFabTooltips() {
-    if (summaryFab) {
-      summaryFab.addEventListener("mouseenter", () => showTooltip(summaryFab, t(summaryFab.dataset.tooltipKey)));
-    }
-    if (dynamicFab) {
-      dynamicFab.addEventListener("mouseenter", () => showTooltip(dynamicFab, t(dynamicFab.dataset.tooltipKey)));
-    }
-    if (staticFab) {
-      staticFab.addEventListener("mouseenter", () => showTooltip(staticFab, t(staticFab.dataset.tooltipKey)));
-    }
-    if (elementScanFab) {
-      elementScanFab.addEventListener("mouseenter", () => showTooltip(elementScanFab, t(elementScanFab.dataset.tooltipKey)));
-    }
-  }
   function createFab({ callbacks, isVisible }) {
     const { onStaticExtract, onDynamicExtract, onSummary, onElementScan } = callbacks;
     const fabContainer = document.createElement("div");
@@ -4504,7 +4490,6 @@ ${result.join(",\n")}
       }, appConfig.ui.fabAnimationDelay);
     }
     updateFabPosition(fabContainer);
-    on("languageChanged", updateFabTooltips);
     on("settingsSaved", () => updateFabPosition(fabContainer));
   }
   function updateFabPosition(fabContainer) {

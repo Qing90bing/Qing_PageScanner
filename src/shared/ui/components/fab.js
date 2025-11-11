@@ -62,26 +62,6 @@ function createSingleFab(className, iconSVGString, titleKey, onClick) {
 }
 
 /**
- * @private
- * @description 更新所有悬浮按钮的工具提示文本。
- */
-function updateFabTooltips() {
-    if (summaryFab) {
-        summaryFab.addEventListener('mouseenter', () => showTooltip(summaryFab, t(summaryFab.dataset.tooltipKey)));
-    }
-    if (dynamicFab) {
-        dynamicFab.addEventListener('mouseenter', () => showTooltip(dynamicFab, t(dynamicFab.dataset.tooltipKey)));
-    }
-    if (staticFab) {
-        staticFab.addEventListener('mouseenter', () => showTooltip(staticFab, t(staticFab.dataset.tooltipKey)));
-    }
-    if (elementScanFab) {
-        elementScanFab.addEventListener('mouseenter', () => showTooltip(elementScanFab, t(elementScanFab.dataset.tooltipKey)));
-    }
-}
-
-
-/**
  * @description 创建并初始化所有悬浮操作按钮。
  * @param {object} options - 配置对象。
  * @param {object} options.callbacks - 包含所有按钮点击事件回调的对象。
@@ -149,8 +129,6 @@ export function createFab({ callbacks, isVisible }) {
     // 更新位置
     updateFabPosition(fabContainer);
 
-    // 监听语言变化事件以更新工具提示
-    on('languageChanged', updateFabTooltips);
     on('settingsSaved', () => updateFabPosition(fabContainer));
 }
 
