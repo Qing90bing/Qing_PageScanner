@@ -8,8 +8,7 @@ import { uiContainer } from '../uiContainer.js';
 import { pauseIcon } from '../../../assets/icons/pauseIcon.js';
 import { resumeIcon } from '../../../assets/icons/resumeIcon.js';
 
-let backgroundContainer = null;
-let contentContainer = null;
+let counterWithHelpContainer = null;
 let counterElement = null;
 let helpIcon = null;
 let pauseResumeButton = null;
@@ -24,31 +23,28 @@ let pauseResumeButton = null;
  * @param {function} [config.onPause] - “暂停”按钮点击事件的回调。
  * @param {function} [config.onResume] - “恢复”按钮点击事件的回调。
  * @param {string} [config.scanType] - 当前扫描的类型，用于工具提示。
- * @returns {HTMLElement} - 返回创建的内容容器元素。
+ * @returns {HTMLElement} - 返回创建的容器元素。
  */
 export function createCounterWithHelp({ counterKey, helpKey, onPause, onResume, scanType }) {
-    if (contentContainer) {
+    if (counterWithHelpContainer) {
         updateCounterValue(0);
-        return contentContainer;
+        return counterWithHelpContainer;
     }
 
     let isPaused = false;
 
-    backgroundContainer = document.createElement('div');
-    backgroundContainer.className = 'counter-with-help-background';
-
-    contentContainer = document.createElement('div');
-    contentContainer.className = 'counter-with-help-content';
+    counterWithHelpContainer = document.createElement('div');
+    counterWithHelpContainer.className = 'counter-with-help-container';
 
     counterElement = createTopCenterCounter(counterKey);
     helpIcon = createHelpIcon(helpKey);
 
-    contentContainer.appendChild(counterElement);
+    counterWithHelpContainer.appendChild(counterElement);
 
     if (onPause && onResume && scanType) {
         const separator = document.createElement('div');
         separator.className = 'counter-with-help-separator';
-        contentContainer.appendChild(separator);
+        counterWithHelpContainer.appendChild(separator);
 
         pauseResumeButton = createButton({
             icon: pauseIcon,
@@ -73,68 +69,55 @@ export function createCounterWithHelp({ counterKey, helpKey, onPause, onResume, 
         actionsContainer.appendChild(pauseResumeButton);
         actionsContainer.appendChild(helpIcon);
 
-        contentContainer.appendChild(actionsContainer);
+        counterWithHelpContainer.appendChild(actionsContainer);
     } else {
         const separator = document.createElement('div');
         separator.className = 'counter-with-help-separator';
-        contentContainer.appendChild(separator);
-        contentContainer.appendChild(helpIcon);
+        counterWithHelpContainer.appendChild(separator);
+        counterWithHelpContainer.appendChild(helpIcon);
     }
 
-    uiContainer.appendChild(backgroundContainer);
-    uiContainer.appendChild(contentContainer);
+    uiContainer.appendChild(counterWithHelpContainer);
 
     updateCounterValue(0);
-    return contentContainer;
+    return counterWithHelpContainer;
 }
 
 /**
  * @public
  * @function showCounterWithHelp
- * @description 同步显示背景和内容容器，并触发统一的入场动画。
+ * @description 显示计数器并触发统一的入场动画。
  */
 export function showCounterWithHelp() {
-    if (!backgroundContainer || !contentContainer) return;
+    if (!counterWithHelpContainer) return;
 
     requestAnimationFrame(() => {
-        backgroundContainer.classList.add('is-visible');
-        contentContainer.classList.add('is-visible');
-
-        // 动态调整背景宽度以匹配内容
-        setTimeout(() => {
-            if (backgroundContainer && contentContainer) {
-                const contentWidth = contentContainer.offsetWidth;
-                backgroundContainer.style.width = `${contentWidth}px`;
-            }
-        }, 50); // 延迟以确保内容已渲染并获得正确宽度
+        counterWithHelpContainer.classList.add('is-visible');
     });
 }
 
 /**
  * @public
  * @function hideCounterWithHelp
- * @description 同步隐藏背景和内容容器，并触发统一的退场动画，之后清理资源。
+ * @description 隐藏计数器并触发统一的退场动画，之后清理资源。
  */
 export function hideCounterWithHelp() {
-    if (!backgroundContainer || !contentContainer) return;
+    if (!counterWithHelpContainer) return;
 
     // 引用当前需要被移除的元素
-    const bgToRemove = backgroundContainer;
-    const contentToRemove = contentContainer;
+    const containerToRemove = counterWithHelpContainer;
     const counterToRemove = counterElement;
     const iconToRemove = helpIcon;
+    const buttonToRemove = pauseResumeButton; // 引用按钮
 
     // 立即清除全局引用，防止重复操作
-    backgroundContainer = null;
-    contentContainer = null;
+    counterWithHelpContainer = null;
     counterElement = null;
     helpIcon = null;
     pauseResumeButton = null;
 
     // 触发退场动画
-    bgToRemove.style.width = ''; // 重置宽度
-    bgToRemove.classList.remove('is-visible');
-    contentToRemove.classList.remove('is-visible');
+    containerToRemove.classList.remove('is-visible');
 
     // 在动画结束后清理所有相关资源
     setTimeout(() => {
@@ -144,14 +127,11 @@ export function hideCounterWithHelp() {
         if (iconToRemove && typeof iconToRemove.destroy === 'function') {
             iconToRemove.destroy();
         }
-        if (pauseResumeButton && typeof pauseResumeButton.destroy === 'function') {
-            pauseResumeButton.destroy();
+        if (buttonToRemove && typeof buttonToRemove.destroy === 'function') {
+            buttonToRemove.destroy();
         }
-        if (bgToRemove) {
-            bgToRemove.remove();
-        }
-        if (contentToRemove) {
-            contentToRemove.remove();
+        if (containerToRemove) {
+            containerToRemove.remove();
         }
     }, 400); // 必须匹配CSS中的动画持续时间
 }
