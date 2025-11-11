@@ -88,92 +88,105 @@ function clearSessionData() {
 export const start = async (onUpdate) => {
     if (isRecording) return;
 
-    if (worker) worker.terminate();
+    // --- 1. 彻底清理旧状态 ---
+    if (worker) {
+        worker.terminate();
+        worker = null;
+    }
+    if (observer) {
+        observer.disconnect();
+        observer = null;
+    }
+    
+    // --- 2. 初始化本次会话的状态 ---
     currentCount = 0;
     onUpdateCallback = onUpdate;
     useFallback = false;
     isRecording = true;
 
+    // --- 3. 加载初始数据和设置 ---
     const [initialTexts, settings, workerAllowed] = await Promise.all([
         extractAndProcessText(),
         loadSettings(),
         isWorkerAllowed()
     ]);
-
     const { filterRules, enableDebugLogging } = settings;
 
+    // --- 4. 定义后备模式激活函数 ---
     const activateFallbackMode = () => {
         log(t('log.sessionScan.switchToFallback'), 'warn');
-        worker = null;
+        if (worker) {
+            worker.terminate();
+            worker = null;
+        }
         useFallback = true;
-
+        
         fallback.initFallback(filterRules);
-        fallback.processTextsInFallback(initialTexts);
-        const count = fallback.getCountInFallback();
-        if (onUpdateCallback) onUpdateCallback(count);
-        updateScanCount(count, 'session');
-
-        observer = new MutationObserver(handleMutations);
-        observer.observe(document.body, { childList: true, subtree: true });
+        if (initialTexts.length > 0) {
+            fallback.processTextsInFallback(initialTexts);
+            const count = fallback.getCountInFallback();
+            if (onUpdateCallback) onUpdateCallback(count);
+            updateScanCount(count, 'session');
+        }
     };
 
-    if (!workerAllowed) {
+    // --- 5. 尝试启动 Web Worker ---
+    if (workerAllowed) {
+        try {
+            log(t('log.sessionScan.worker.starting'));
+            worker = new Worker(trustedWorkerUrl);
+
+            worker.onmessage = (event) => {
+                const { type, payload } = event.data;
+                if (type === 'countUpdated') {
+                    currentCount = payload;
+                    if (onUpdateCallback) onUpdateCallback(payload);
+                    updateScanCount(payload, 'session');
+                } else if (type === 'summaryReady' && onSummaryCallback) {
+                    onSummaryCallback(payload, currentCount);
+                    onSummaryCallback = null;
+                }
+            };
+
+            worker.onerror = (error) => {
+                log(t('log.sessionScan.worker.initFailed'), 'warn');
+                log(t('log.sessionScan.worker.originalError', { error: error.message }), 'debug');
+                showNotification(t('notifications.cspWorkerWarning'), { type: 'info', duration: 5000 });
+                activateFallbackMode();
+            };
+
+            worker.postMessage({
+                type: 'session-start',
+                payload: {
+                    filterRules,
+                    enableDebugLogging,
+                    translations: {
+                        workerLogPrefix: t('log.sessionScan.worker.logPrefix'),
+                        textFiltered: t('log.textProcessor.filtered'),
+                        filterReasons: getTranslationObject('filterReasons'),
+                    },
+                },
+            });
+            worker.postMessage({ type: 'session-add-texts', payload: { texts: initialTexts } });
+            log(t('log.sessionScan.worker.initialized', { count: initialTexts.length }));
+
+        } catch (e) {
+            log(t('log.sessionScan.worker.initSyncError', { error: e.message }), 'error');
+            showNotification(t('notifications.cspWorkerWarning'), { type: 'info', duration: 5000 });
+            activateFallbackMode();
+        }
+    } else {
         log(t('log.sessionScan.worker.cspBlocked'), 'warn');
         showNotification(t('notifications.cspWorkerWarning'), { type: 'info', duration: 5000 });
         activateFallbackMode();
-        return;
     }
 
-    try {
-        log(t('log.sessionScan.worker.starting'));
-        worker = new Worker(trustedWorkerUrl);
-
-        worker.onmessage = (event) => {
-            const { type, payload } = event.data;
-            if (type === 'countUpdated') {
-                currentCount = payload; // 更新模块内的计数值
-                if (onUpdateCallback) onUpdateCallback(payload);
-                updateScanCount(payload, 'session');
-            } else if (type === 'summaryReady' && onSummaryCallback) {
-                // Worker只返回文本(payload)，我们使用模块内跟踪的计数值
-                onSummaryCallback(payload, currentCount);
-                onSummaryCallback = null;
-            }
-        };
-
-        worker.onerror = (error) => {
-            log(t('log.sessionScan.worker.initFailed'), 'warn');
-            log(t('log.sessionScan.worker.originalError', { error: error.message }), 'debug');
-            if (worker) worker.terminate();
-            showNotification(t('notifications.cspWorkerWarning'), { type: 'info', duration: 5000 });
-            activateFallbackMode();
-        };
-
-        worker.postMessage({
-            type: 'session-start',
-            payload: {
-                filterRules,
-                enableDebugLogging,
-                translations: {
-                    workerLogPrefix: t('log.sessionScan.worker.logPrefix'),
-                    textFiltered: t('log.textProcessor.filtered'),
-                    filterReasons: getTranslationObject('filterReasons'),
-                },
-            },
-        });
-        worker.postMessage({ type: 'session-add-texts', payload: { texts: initialTexts } });
-        log(t('log.sessionScan.worker.initialized', { count: initialTexts.length }));
-
-    } catch (e) {
-        log(t('log.sessionScan.worker.initSyncError', { error: e.message }), 'error');
-        showNotification(t('notifications.cspWorkerWarning'), { type: 'info', duration: 5000 });
-        activateFallbackMode();
-    }
-
-    if (!useFallback) {
-        observer = new MutationObserver(handleMutations);
-        observer.observe(document.body, { childList: true, subtree: true });
-    }
+    // --- 6. 统一启动 MutationObserver ---
+    // 无论之前的路径如何（成功、CSP阻塞、同步/异步失败），
+    // 都在这里统一、安全地启动 DOM 监听。
+    observer = new MutationObserver(handleMutations);
+    observer.observe(document.body, { childList: true, subtree: true });
+    log(t('log.sessionScan.domObserver.started'));
 };
 
 export const stop = (onStopped) => {

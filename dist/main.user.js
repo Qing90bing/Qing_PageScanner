@@ -3556,7 +3556,14 @@ ${result.join(",\n")}
   }
   var start = async (onUpdate) => {
     if (isRecording) return;
-    if (worker) worker.terminate();
+    if (worker) {
+      worker.terminate();
+      worker = null;
+    }
+    if (observer) {
+      observer.disconnect();
+      observer = null;
+    }
     currentCount = 0;
     onUpdateCallback = onUpdate;
     useFallback = false;
@@ -3569,66 +3576,67 @@ ${result.join(",\n")}
     const { filterRules: filterRules2, enableDebugLogging } = settings;
     const activateFallbackMode = () => {
       log(t("log.sessionScan.switchToFallback"), "warn");
-      worker = null;
+      if (worker) {
+        worker.terminate();
+        worker = null;
+      }
       useFallback = true;
       initFallback(filterRules2);
-      processTextsInFallback(initialTexts);
-      const count = getCountInFallback();
-      if (onUpdateCallback) onUpdateCallback(count);
-      updateScanCount(count, "session");
-      observer = new MutationObserver(handleMutations);
-      observer.observe(document.body, { childList: true, subtree: true });
+      if (initialTexts.length > 0) {
+        processTextsInFallback(initialTexts);
+        const count = getCountInFallback();
+        if (onUpdateCallback) onUpdateCallback(count);
+        updateScanCount(count, "session");
+      }
     };
-    if (!workerAllowed) {
+    if (workerAllowed) {
+      try {
+        log(t("log.sessionScan.worker.starting"));
+        worker = new Worker(trustedWorkerUrl);
+        worker.onmessage = (event) => {
+          const { type, payload } = event.data;
+          if (type === "countUpdated") {
+            currentCount = payload;
+            if (onUpdateCallback) onUpdateCallback(payload);
+            updateScanCount(payload, "session");
+          } else if (type === "summaryReady" && onSummaryCallback) {
+            onSummaryCallback(payload, currentCount);
+            onSummaryCallback = null;
+          }
+        };
+        worker.onerror = (error) => {
+          log(t("log.sessionScan.worker.initFailed"), "warn");
+          log(t("log.sessionScan.worker.originalError", { error: error.message }), "debug");
+          showNotification(t("notifications.cspWorkerWarning"), { type: "info", duration: 5e3 });
+          activateFallbackMode();
+        };
+        worker.postMessage({
+          type: "session-start",
+          payload: {
+            filterRules: filterRules2,
+            enableDebugLogging,
+            translations: {
+              workerLogPrefix: t("log.sessionScan.worker.logPrefix"),
+              textFiltered: t("log.textProcessor.filtered"),
+              filterReasons: getTranslationObject("filterReasons")
+            }
+          }
+        });
+        worker.postMessage({ type: "session-add-texts", payload: { texts: initialTexts } });
+        log(t("log.sessionScan.worker.initialized", { count: initialTexts.length }));
+      } catch (e) {
+        log(t("log.sessionScan.worker.initSyncError", { error: e.message }), "error");
+        showNotification(t("notifications.cspWorkerWarning"), { type: "info", duration: 5e3 });
+        activateFallbackMode();
+      }
+    } else {
       log(t("log.sessionScan.worker.cspBlocked"), "warn");
       showNotification(t("notifications.cspWorkerWarning"), { type: "info", duration: 5e3 });
       activateFallbackMode();
-      return;
     }
-    try {
-      log(t("log.sessionScan.worker.starting"));
-      worker = new Worker(trustedWorkerUrl);
-      worker.onmessage = (event) => {
-        const { type, payload } = event.data;
-        if (type === "countUpdated") {
-          currentCount = payload;
-          if (onUpdateCallback) onUpdateCallback(payload);
-          updateScanCount(payload, "session");
-        } else if (type === "summaryReady" && onSummaryCallback) {
-          onSummaryCallback(payload, currentCount);
-          onSummaryCallback = null;
-        }
-      };
-      worker.onerror = (error) => {
-        log(t("log.sessionScan.worker.initFailed"), "warn");
-        log(t("log.sessionScan.worker.originalError", { error: error.message }), "debug");
-        if (worker) worker.terminate();
-        showNotification(t("notifications.cspWorkerWarning"), { type: "info", duration: 5e3 });
-        activateFallbackMode();
-      };
-      worker.postMessage({
-        type: "session-start",
-        payload: {
-          filterRules: filterRules2,
-          enableDebugLogging,
-          translations: {
-            workerLogPrefix: t("log.sessionScan.worker.logPrefix"),
-            textFiltered: t("log.textProcessor.filtered"),
-            filterReasons: getTranslationObject("filterReasons")
-          }
-        }
-      });
-      worker.postMessage({ type: "session-add-texts", payload: { texts: initialTexts } });
-      log(t("log.sessionScan.worker.initialized", { count: initialTexts.length }));
-    } catch (e) {
-      log(t("log.sessionScan.worker.initSyncError", { error: e.message }), "error");
-      showNotification(t("notifications.cspWorkerWarning"), { type: "info", duration: 5e3 });
-      activateFallbackMode();
-    }
-    if (!useFallback) {
-      observer = new MutationObserver(handleMutations);
-      observer.observe(document.body, { childList: true, subtree: true });
-    }
+    observer = new MutationObserver(handleMutations);
+    observer.observe(document.body, { childList: true, subtree: true });
+    log(t("log.sessionScan.domObserver.started"));
   };
   var stop = (onStopped) => {
     if (!isRecording) {
