@@ -35,12 +35,15 @@ export async function isWorkerAllowed() {
     // 注释是必需的，否则Blob内容为空字符串，某些浏览器会拒绝
     const testWorkerBlob = new Blob(['/* test */'], { type: 'application/javascript' });
 
-    let workerURL;
+    let objectURL;
     let worker;
 
     try {
-        // 使用Trusted Types创建URL以兼容CSP
-        workerURL = createTrustedWorkerUrl(URL.createObjectURL(testWorkerBlob));
+        // Step 1: 创建对象URL并立即存储
+        objectURL = URL.createObjectURL(testWorkerBlob);
+
+        // Step 2: 使用Trusted Types创建可信URL，此步骤可能因CSP失败
+        const workerURL = createTrustedWorkerUrl(objectURL);
 
         // 尝试创建一个测试Worker
         worker = new Worker(workerURL);
@@ -50,7 +53,6 @@ export async function isWorkerAllowed() {
 
         // 清理测试Worker
         worker.terminate();
-        URL.revokeObjectURL(workerURL);
 
     } catch (e) {
         // 捕获到错误（通常是SecurityError），意味着CSP阻止了Worker的创建
@@ -59,9 +61,10 @@ export async function isWorkerAllowed() {
         // 记录错误以用于调试
         console.error('[CSP Checker] Worker creation failed:', e);
 
-        // 如果URL已创建但Worker创建失败，也要清理URL
-        if (workerURL) {
-            URL.revokeObjectURL(workerURL);
+    } finally {
+        // 无论成功与否，只要objectURL被创建，就必须释放它
+        if (objectURL) {
+            URL.revokeObjectURL(objectURL);
         }
     }
 

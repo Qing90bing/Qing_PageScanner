@@ -1540,19 +1540,20 @@ var TextExtractor = (() => {
       return isAllowed;
     }
     const testWorkerBlob = new Blob(["/* test */"], { type: "application/javascript" });
-    let workerURL;
+    let objectURL;
     let worker2;
     try {
-      workerURL = createTrustedWorkerUrl(URL.createObjectURL(testWorkerBlob));
+      objectURL = URL.createObjectURL(testWorkerBlob);
+      const workerURL = createTrustedWorkerUrl(objectURL);
       worker2 = new Worker(workerURL);
       isAllowed = true;
       worker2.terminate();
-      URL.revokeObjectURL(workerURL);
     } catch (e) {
       isAllowed = false;
       console.error("[CSP Checker] Worker creation failed:", e);
-      if (workerURL) {
-        URL.revokeObjectURL(workerURL);
+    } finally {
+      if (objectURL) {
+        URL.revokeObjectURL(objectURL);
       }
     }
     return isAllowed;
