@@ -6,6 +6,7 @@ import { t } from '../../i18n/index.js';
 import { createTrustedHTML } from '../../utils/trustedTypes.js';
 import { log } from '../../utils/logger.js';
 import { simpleTemplate } from '../../utils/templating.js';
+import { showTooltip, hideTooltip } from './tooltip.js';
 
 /**
  * @file 提供了创建帮助图标UI组件的功能。
@@ -43,6 +44,12 @@ export function createHelpIcon(contentKey) {
 
     helpButton.addEventListener('click', handleClick);
 
+    const handleMouseEnter = () => showTooltip(helpButton, t('tooltip.tooltipHelp'));
+    const handleMouseLeave = () => hideTooltip();
+
+    helpButton.addEventListener('mouseenter', handleMouseEnter);
+    helpButton.addEventListener('mouseleave', handleMouseLeave);
+
     /**
      * @memberof helpButton
      * @function destroy
@@ -50,6 +57,8 @@ export function createHelpIcon(contentKey) {
      */
     helpButton.destroy = () => {
         helpButton.removeEventListener('click', handleClick);
+        helpButton.removeEventListener('mouseenter', handleMouseEnter);
+        helpButton.removeEventListener('mouseleave', handleMouseLeave);
     };
 
     return helpButton;

@@ -147,6 +147,7 @@
     "resumeElementScan": "恢復元素掃描",
     "pauseSessionScan": "暫停動態掃描",
     "resumeSessionScan": "恢復動態掃描",
+    "tooltipHelp": "幫助",
     "disabled": {
       "scan_in_progress": "另一項掃描正在進行中"
     },

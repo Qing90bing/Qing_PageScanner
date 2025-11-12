@@ -147,6 +147,7 @@
     "resumeElementScan": "Resume Element Scan",
     "pauseSessionScan": "Pause Dynamic Scan",
     "resumeSessionScan": "Resume Dynamic Scan",
+    "tooltipHelp": "Help",
     "disabled": {
       "scan_in_progress": "Another scan is in progress"
     },

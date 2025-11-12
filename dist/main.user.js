@@ -283,6 +283,7 @@ var TextExtractor = (() => {
       resumeElementScan: "Resume Element Scan",
       pauseSessionScan: "Pause Dynamic Scan",
       resumeSessionScan: "Resume Dynamic Scan",
+      tooltipHelp: "Help",
       disabled: {
         scan_in_progress: "Another scan is in progress"
       },
@@ -646,6 +647,7 @@ var TextExtractor = (() => {
       resumeElementScan: "\u6062\u590D\u5143\u7D20\u626B\u63CF",
       pauseSessionScan: "\u6682\u505C\u52A8\u6001\u626B\u63CF",
       resumeSessionScan: "\u6062\u590D\u52A8\u6001\u626B\u63CF",
+      tooltipHelp: "\u5E2E\u52A9",
       disabled: {
         scan_in_progress: "\u53E6\u4E00\u9879\u626B\u63CF\u6B63\u5728\u8FDB\u884C\u4E2D"
       },
@@ -1009,6 +1011,7 @@ var TextExtractor = (() => {
       resumeElementScan: "\u6062\u5FA9\u5143\u7D20\u6383\u63CF",
       pauseSessionScan: "\u66AB\u505C\u52D5\u614B\u6383\u63CF",
       resumeSessionScan: "\u6062\u5FA9\u52D5\u614B\u6383\u63CF",
+      tooltipHelp: "\u5E6B\u52A9",
       disabled: {
         scan_in_progress: "\u53E6\u4E00\u9805\u6383\u63CF\u6B63\u5728\u9032\u884C\u4E2D"
       },
@@ -1955,6 +1958,7 @@ ${result.join(",\n")}
       resumeElementScan: "Resume Element Scan",
       pauseSessionScan: "Pause Dynamic Scan",
       resumeSessionScan: "Resume Dynamic Scan",
+      tooltipHelp: "Help",
       disabled: {
         scan_in_progress: "Another scan is in progress"
       },
@@ -2319,6 +2323,7 @@ ${result.join(",\n")}
       resumeElementScan: "\\u6062\\u590D\\u5143\\u7D20\\u626B\\u63CF",
       pauseSessionScan: "\\u6682\\u505C\\u52A8\\u6001\\u626B\\u63CF",
       resumeSessionScan: "\\u6062\\u590D\\u52A8\\u6001\\u626B\\u63CF",
+      tooltipHelp: "\\u5E2E\\u52A9",
       disabled: {
         scan_in_progress: "\\u53E6\\u4E00\\u9879\\u626B\\u63CF\\u6B63\\u5728\\u8FDB\\u884C\\u4E2D"
       },
@@ -2683,6 +2688,7 @@ ${result.join(",\n")}
       resumeElementScan: "\\u6062\\u5FA9\\u5143\\u7D20\\u6383\\u63CF",
       pauseSessionScan: "\\u66AB\\u505C\\u52D5\\u614B\\u6383\\u63CF",
       resumeSessionScan: "\\u6062\\u5FA9\\u52D5\\u614B\\u6383\\u63CF",
+      tooltipHelp: "\\u5E6B\\u52A9",
       disabled: {
         scan_in_progress: "\\u53E6\\u4E00\\u9805\\u6383\\u63CF\\u6B63\\u5728\\u9032\\u884C\\u4E2D"
       },
@@ -4779,8 +4785,14 @@ ${result.join(",\n")}
       });
     };
     helpButton.addEventListener("click", handleClick);
+    const handleMouseEnter = () => showTooltip(helpButton, t("tooltip.tooltipHelp"));
+    const handleMouseLeave = () => hideTooltip();
+    helpButton.addEventListener("mouseenter", handleMouseEnter);
+    helpButton.addEventListener("mouseleave", handleMouseLeave);
     helpButton.destroy = () => {
       helpButton.removeEventListener("click", handleClick);
+      helpButton.removeEventListener("mouseenter", handleMouseEnter);
+      helpButton.removeEventListener("mouseleave", handleMouseLeave);
     };
     return helpButton;
   }

@@ -147,6 +147,7 @@
     "resumeElementScan": "恢复元素扫描",
     "pauseSessionScan": "暂停动态扫描",
     "resumeSessionScan": "恢复动态扫描",
+    "tooltipHelp": "帮助",
     "disabled": {
       "scan_in_progress": "另一项扫描正在进行中"
     },
