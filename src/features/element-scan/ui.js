@@ -32,6 +32,9 @@ let tagNameTooltip = null;
 
 /** @type {HTMLElement | null} - 层级调整工具栏。 */
 let toolbar = null;
+let reselectBtn = null;
+let stageBtn = null;
+let confirmBtn = null;
 
 /**
  * @private
@@ -202,7 +205,7 @@ export function createAdjustmentToolbar(elementPath) {
     // 动态创建并添加按钮
     const actionsContainer = toolbar.querySelector('#element-scan-toolbar-actions');
 
-    const reselectBtn = createButton({
+    reselectBtn = createButton({
         id: 'element-scan-toolbar-reselect',
         textKey: 'common.reselect',
         icon: reselectIcon,
@@ -212,7 +215,7 @@ export function createAdjustmentToolbar(elementPath) {
         }
     });
 
-    const stageBtn = createButton({
+    stageBtn = createButton({
         id: 'element-scan-toolbar-stage',
         textKey: 'common.stage',
         icon: stashIcon,
@@ -222,7 +225,7 @@ export function createAdjustmentToolbar(elementPath) {
         }
     });
 
-    const confirmBtn = createButton({
+    confirmBtn = createButton({
         id: 'element-scan-toolbar-confirm',
         textKey: 'common.confirm',
         icon: confirmIcon,
@@ -363,6 +366,21 @@ export function cleanupToolbar() {
             sliderInstance.destroy();
             sliderInstance = null;
         }
+
+        // 销毁按钮以移除事件监听器
+        if (reselectBtn) {
+            reselectBtn.destroy();
+            reselectBtn = null;
+        }
+        if (stageBtn) {
+            stageBtn.destroy();
+            stageBtn = null;
+        }
+        if (confirmBtn) {
+            confirmBtn.destroy();
+            confirmBtn = null;
+        }
+
         const toolbarToRemove = toolbar;
         toolbar = null; // 立即清除引用，防止重复操作
         toolbarToRemove.classList.remove('is-visible');

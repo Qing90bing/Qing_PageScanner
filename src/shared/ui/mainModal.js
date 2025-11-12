@@ -19,9 +19,9 @@ import { isSessionRecording } from '../../features/session-scan/logic.js';
 // 重新导出常量以保持API兼容性
 export { SHOW_PLACEHOLDER, SHOW_LOADING } from './mainModal/modalState.js';
 import { createModalLayout } from './mainModal/modalLayout.js';
-import { populateModalHeader, updateScanCount } from './mainModal/modalHeader.js';
-import { populateModalContent, showLoading, hideLoading } from './mainModal/modalContent.js';
-import { populateModalFooter, updateStatistics } from './mainModal/modalFooter.js';
+import { populateModalHeader, destroyModalHeader, updateScanCount } from './mainModal/modalHeader.js';
+import { populateModalContent, destroyModalContent, showLoading, hideLoading } from './mainModal/modalContent.js';
+import { populateModalFooter, destroyModalFooter, updateStatistics } from './mainModal/modalFooter.js';
 import { initializeLineNumbers, updateLineNumbers, updateActiveLine } from './mainModal/lineNumberLogic.js';
 import { updateExportButtonState } from '../../features/export/ui.js';
 
@@ -75,6 +75,36 @@ export function createMainModal() {
 
     // 5. 根据设置更新UI元素的可见性
     updateModalAddonsVisibility();
+}
+
+/**
+ * @public
+ * @description 彻底销毁主模态框，释放所有资源。
+ */
+export function destroyMainModal() {
+    if (!state.modalOverlay) return;
+
+    // 1. 销毁子模块
+    destroyModalHeader(closeModal);
+    destroyModalContent();
+    destroyModalFooter();
+
+    // 2. 移除绑定的事件
+    state.outputTextarea.removeEventListener('input', handleTextareaUpdate);
+    state.outputTextarea.removeEventListener('click', updateActiveLine);
+    state.outputTextarea.removeEventListener('keyup', updateActiveLine);
+    state.outputTextarea.removeEventListener('scroll', () => {
+        state.lineNumbersDiv.scrollTop = state.outputTextarea.scrollTop;
+    });
+    closeModal(); // 确保 keydown 监听器被移除
+
+    // 3. 从DOM中移除元素
+    state.modalOverlay.remove();
+
+    // 4. 重置状态
+    state.resetState();
+    fullQuickScanContent = '';
+    log('Main modal destroyed.');
 }
 
 /**

@@ -115,16 +115,16 @@ export class CustomSelect {
      * @description 绑定所有必要的事件监听器。
      */
     bindEvents() {
-        this.trigger.addEventListener('click', () => this.toggle());
-
-        this.optionsContainer.addEventListener('click', (e) => {
+        this.handleTriggerClick = this.toggle.bind(this);
+        this.handleOptionClick = (e) => {
             const optionEl = e.target.closest('.custom-select-option');
             if (optionEl) {
                 this.select(optionEl.dataset.value);
             }
-        });
+        };
 
-        // 全局点击事件将在 toggle 方法中动态处理
+        this.trigger.addEventListener('click', this.handleTriggerClick);
+        this.optionsContainer.addEventListener('click', this.handleOptionClick);
     }
 
     /**
@@ -217,6 +217,21 @@ export class CustomSelect {
         const currentSelectedOption = this.options.find(opt => opt.value === this.currentValue);
         if (currentSelectedOption) {
             this.updateSelectedContent(currentSelectedOption);
+        }
+    }
+
+    /**
+     * @public
+     * @description 销毁组件，移除所有事件监听器。
+     */
+    destroy() {
+        this.close(); // 确保移除 document 上的点击监听器
+
+        if (this.trigger && this.handleTriggerClick) {
+            this.trigger.removeEventListener('click', this.handleTriggerClick);
+        }
+        if (this.optionsContainer && this.handleOptionClick) {
+            this.optionsContainer.removeEventListener('click', this.handleOptionClick);
         }
     }
 }

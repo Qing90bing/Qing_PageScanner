@@ -14,8 +14,7 @@ import { closeIcon } from '../../../assets/icons/closeIcon.js';
 import { loadSettings } from '../../../features/settings/logic.js';
 import { simpleTemplate } from '../../utils/templating.js';
 
-let titleContainer;
-let scanCountDisplay;
+let titleContainer, scanCountDisplay, closeBtn, unsubscribeLanguageChanged, unsubscribeSettingsSaved;
 let currentScanState = { count: 0, type: null };
 
 /**
@@ -81,7 +80,7 @@ export function populateModalHeader(modalHeader, closeCallback) {
   newTitleElement.appendChild(scanCountDisplay);
 
   // 关闭按钮
-  const closeBtn = document.createElement('span');
+  closeBtn = document.createElement('span');
   closeBtn.className = 'tc-close-button text-extractor-modal-close';
   closeBtn.appendChild(createSVGFromString(closeIcon));
 
@@ -95,10 +94,30 @@ export function populateModalHeader(modalHeader, closeCallback) {
   // 绑定事件
   closeBtn.addEventListener('click', closeCallback);
 
-  // 监听语言变化事件
-  on('languageChanged', rerenderHeaderTexts);
-  // 监听设置保存事件
-  on('settingsSaved', updateScanCountDisplay);
+  // 监听事件
+  unsubscribeLanguageChanged = on('languageChanged', rerenderHeaderTexts);
+  unsubscribeSettingsSaved = on('settingsSaved', updateScanCountDisplay);
+}
+
+/**
+ * @description 销毁模态框头部，清理事件监听器和引用。
+ * @param {Function} closeCallback - 创建时传入的同一个回调函数，用于移除监听器。
+ */
+export function destroyModalHeader(closeCallback) {
+    if (closeBtn) {
+        closeBtn.removeEventListener('click', closeCallback);
+        closeBtn = null;
+    }
+    if (unsubscribeLanguageChanged) {
+        unsubscribeLanguageChanged();
+        unsubscribeLanguageChanged = null;
+    }
+    if (unsubscribeSettingsSaved) {
+        unsubscribeSettingsSaved();
+        unsubscribeSettingsSaved = null;
+    }
+    titleContainer = null;
+    scanCountDisplay = null;
 }
 
 /**

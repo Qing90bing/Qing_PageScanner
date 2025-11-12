@@ -16,7 +16,7 @@ import { createDropdown } from '../../shared/ui/components/dropdown.js';
 import { log } from '../../shared/utils/logger.js';
 import { createButton } from '../../shared/ui/components/button.js';
 
-let exportBtn, exportMenu, exportTxtBtn, exportJsonBtn, exportCsvBtn;
+let exportBtn, exportMenu, exportTxtBtn, exportJsonBtn, exportCsvBtn, dropdown, unsubscribeLanguageChanged;
 
 /**
  * @private
@@ -72,7 +72,7 @@ export function createExportButton() {
 
     rerenderExportTexts();
 
-    const dropdown = createDropdown(exportBtn, exportMenu);
+    dropdown = createDropdown(exportBtn, exportMenu);
 
     const handleExport = (event) => {
         const target = event.target.closest('[data-format]');
@@ -86,10 +86,30 @@ export function createExportButton() {
 
     exportMenu.addEventListener('click', handleExport);
 
-    on('languageChanged', rerenderExportTexts);
+    unsubscribeLanguageChanged = on('languageChanged', rerenderExportTexts);
 
     // 默认禁用按钮
     exportBtn.disabled = true;
+
+    // 添加 destroy 方法
+    container.destroy = () => {
+        if (exportBtn) {
+            exportBtn.destroy();
+            exportBtn = null;
+        }
+        if (dropdown) {
+            dropdown.destroy();
+            dropdown = null;
+        }
+        if (exportMenu) {
+            exportMenu.removeEventListener('click', handleExport);
+        }
+        if (unsubscribeLanguageChanged) {
+            unsubscribeLanguageChanged();
+            unsubscribeLanguageChanged = null;
+        }
+        log('Export UI cleaned up.');
+    };
 
     return container;
 }

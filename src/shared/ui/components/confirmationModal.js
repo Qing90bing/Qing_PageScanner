@@ -7,6 +7,8 @@ import { confirmIcon } from '../../../assets/icons/confirmIcon.js';
 
 let modalContainer = null;
 let resolvePromise = null;
+let confirmButton = null;
+let cancelButton = null;
 
 /**
  * 创建并显示一个可复用的确认模态框。
@@ -35,14 +37,14 @@ export function showConfirmationModal(text, iconSVG) {
       const buttonContainer = document.createElement('div');
       buttonContainer.className = 'confirmation-modal-buttons';
 
-      const confirmButton = createButton({
+      confirmButton = createButton({
         className: 'confirm',
         textKey: 'common.confirm',
         icon: confirmIcon,
         onClick: () => handleConfirmation(true)
       });
 
-      const cancelButton = createButton({
+      cancelButton = createButton({
         className: 'cancel',
         textKey: 'common.cancel',
         icon: closeIcon,
@@ -83,6 +85,15 @@ function handleConfirmation(confirmed) {
   if (modalContainer) {
     modalContainer.classList.remove('is-visible');
     setTimeout(() => {
+        if (confirmButton) {
+            confirmButton.destroy();
+            confirmButton = null;
+        }
+        if (cancelButton) {
+            cancelButton.destroy();
+            cancelButton = null;
+        }
+
         // 清理模态框DOM
         modalContainer.remove();
         modalContainer = null;

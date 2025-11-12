@@ -3366,6 +3366,9 @@ ${result.join(",\n")}
   // src/shared/ui/mainModal/modalHeader.js
   var titleContainer;
   var scanCountDisplay;
+  var closeBtn;
+  var unsubscribeLanguageChanged;
+  var unsubscribeSettingsSaved;
   var currentScanState = { count: 0, type: null };
   function updateScanCountDisplay() {
     const { showScanCount } = loadSettings();
@@ -3403,15 +3406,15 @@ ${result.join(",\n")}
     scanCountDisplay = document.createElement("span");
     scanCountDisplay.id = "scan-count-display";
     newTitleElement.appendChild(scanCountDisplay);
-    const closeBtn = document.createElement("span");
+    closeBtn = document.createElement("span");
     closeBtn.className = "tc-close-button text-extractor-modal-close";
     closeBtn.appendChild(createSVGFromString(closeIcon));
     rightControlsContainer.appendChild(closeBtn);
     modalHeader.appendChild(titleContainer);
     modalHeader.appendChild(rightControlsContainer);
     closeBtn.addEventListener("click", closeCallback);
-    on("languageChanged", rerenderHeaderTexts);
-    on("settingsSaved", updateScanCountDisplay);
+    unsubscribeLanguageChanged = on("languageChanged", rerenderHeaderTexts);
+    unsubscribeSettingsSaved = on("settingsSaved", updateScanCountDisplay);
   }
   function updateScanCount(count, type) {
     currentScanState = { count, type };
@@ -3779,6 +3782,7 @@ ${result.join(",\n")}
   </svg>
 `;
   var placeholder2;
+  var unsubscribeLanguageChanged2;
   function rerenderPlaceholder() {
     if (!placeholder2) return;
     placeholder2.replaceChildren();
@@ -3851,7 +3855,7 @@ ${result.join(",\n")}
     modalContent.appendChild(placeholder2);
     modalContent.appendChild(textareaContainer);
     modalContent.appendChild(loadingContainer2);
-    on("languageChanged", rerenderPlaceholder);
+    unsubscribeLanguageChanged2 = on("languageChanged", rerenderPlaceholder);
   }
   function showLoading() {
     if (loadingContainer) loadingContainer.classList.add("is-visible");
@@ -3865,6 +3869,11 @@ ${result.join(",\n")}
   var clearIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M120-40v-280q0-83 58.5-141.5T320-520h40v-320q0-33 23.5-56.5T440-920h80q33 0 56.5 23.5T600-840v320h40q83 0 141.5 58.5T840-320v280H120Zm80-80h80v-120q0-17 11.5-28.5T320-280q17 0 28.5 11.5T360-240v120h80v-120q0-17 11.5-28.5T480-280q17 0 28.5 11.5T520-240v120h80v-120q0-17 11.5-28.5T640-280q17 0 28.5 11.5T680-240v120h80v-200q0-50-35-85t-85-35H320q-50 0-85 35t-35 85v200Zm320-400v-320h-80v320h80Zm0 0h-80 80Z"/></svg>`;
   function createButton({ id, className, textKey, tooltipKey, icon, onClick, disabled = false, iconOnly = false }) {
     const button = document.createElement("button");
+    const eventListeners = [];
+    const addTrackedEventListener = (element, type, listener) => {
+      element.addEventListener(type, listener);
+      eventListeners.push({ element, type, listener });
+    };
     if (id) {
       button.id = id;
     }
@@ -3875,8 +3884,8 @@ ${result.join(",\n")}
       }
       button.innerHTML = createTrustedHTML(icon);
       let currentTooltipKey = tooltipKey;
-      button.addEventListener("mouseover", () => showTooltip(button, t(currentTooltipKey)));
-      button.addEventListener("mouseout", hideTooltip);
+      addTrackedEventListener(button, "mouseover", () => showTooltip(button, t(currentTooltipKey)));
+      addTrackedEventListener(button, "mouseout", hideTooltip);
       button.updateText = (newTooltipKey) => {
         currentTooltipKey = newTooltipKey;
       };
@@ -3895,7 +3904,7 @@ ${result.join(",\n")}
     }
     button.disabled = disabled;
     if (onClick && typeof onClick === "function") {
-      button.addEventListener("click", onClick);
+      addTrackedEventListener(button, "click", onClick);
     }
     button.updateIcon = (newIcon) => {
       const iconElement = button.querySelector("svg");
@@ -3903,11 +3912,19 @@ ${result.join(",\n")}
         iconElement.replaceWith(createSVGFromString(newIcon));
       }
     };
+    button.destroy = () => {
+      eventListeners.forEach(({ element, type, listener }) => {
+        element.removeEventListener(type, listener);
+      });
+      eventListeners.length = 0;
+    };
     return button;
   }
   var confirmIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg>`;
   var modalContainer = null;
   var resolvePromise = null;
+  var confirmButton = null;
+  var cancelButton = null;
   function showConfirmationModal(text, iconSVG) {
     return new Promise((resolve) => {
       resolvePromise = resolve;
@@ -3922,13 +3939,13 @@ ${result.join(",\n")}
         textContainer.className = "confirmation-modal-text";
         const buttonContainer = document.createElement("div");
         buttonContainer.className = "confirmation-modal-buttons";
-        const confirmButton = createButton({
+        confirmButton = createButton({
           className: "confirm",
           textKey: "common.confirm",
           icon: confirmIcon,
           onClick: () => handleConfirmation(true)
         });
-        const cancelButton = createButton({
+        cancelButton = createButton({
           className: "cancel",
           textKey: "common.cancel",
           icon: closeIcon,
@@ -3955,6 +3972,14 @@ ${result.join(",\n")}
     if (modalContainer) {
       modalContainer.classList.remove("is-visible");
       setTimeout(() => {
+        if (confirmButton) {
+          confirmButton.destroy();
+          confirmButton = null;
+        }
+        if (cancelButton) {
+          cancelButton.destroy();
+          cancelButton = null;
+        }
         modalContainer.remove();
         modalContainer = null;
         if (resolvePromise) {
@@ -3995,13 +4020,19 @@ ${result.join(",\n")}
       }
       toggle();
     };
-    triggerElement.addEventListener("click", (e) => {
+    const triggerClickHandler = (e) => {
       e.stopPropagation();
       toggle();
-    });
+    };
+    triggerElement.addEventListener("click", triggerClickHandler);
+    const destroy = () => {
+      triggerElement.removeEventListener("click", triggerClickHandler);
+      document.removeEventListener("click", handleDocumentClick, true);
+    };
     return {
       menuElement: menuContent,
-      toggle
+      toggle,
+      destroy
     };
   }
   var exportBtn;
@@ -4009,6 +4040,8 @@ ${result.join(",\n")}
   var exportTxtBtn;
   var exportJsonBtn;
   var exportCsvBtn;
+  var dropdown;
+  var unsubscribeLanguageChanged3;
   function rerenderExportTexts() {
     if (exportBtn) {
       exportBtn.updateText("common.export");
@@ -4045,7 +4078,7 @@ ${result.join(",\n")}
     container.appendChild(exportBtn);
     container.appendChild(exportMenu);
     rerenderExportTexts();
-    const dropdown = createDropdown(exportBtn, exportMenu);
+    dropdown = createDropdown(exportBtn, exportMenu);
     const handleExport = (event) => {
       const target = event.target.closest("[data-format]");
       if (target) {
@@ -4056,8 +4089,26 @@ ${result.join(",\n")}
       }
     };
     exportMenu.addEventListener("click", handleExport);
-    on("languageChanged", rerenderExportTexts);
+    unsubscribeLanguageChanged3 = on("languageChanged", rerenderExportTexts);
     exportBtn.disabled = true;
+    container.destroy = () => {
+      if (exportBtn) {
+        exportBtn.destroy();
+        exportBtn = null;
+      }
+      if (dropdown) {
+        dropdown.destroy();
+        dropdown = null;
+      }
+      if (exportMenu) {
+        exportMenu.removeEventListener("click", handleExport);
+      }
+      if (unsubscribeLanguageChanged3) {
+        unsubscribeLanguageChanged3();
+        unsubscribeLanguageChanged3 = null;
+      }
+      log("Export UI cleaned up.");
+    };
     return container;
   }
   function updateExportButtonState(hasContent) {
@@ -4067,6 +4118,8 @@ ${result.join(",\n")}
   }
   var clearBtn;
   var copyBtn;
+  var exportBtnContainer;
+  var unsubscribeLanguageChanged4;
   function rerenderFooterTexts() {
     if (copyBtn) {
       copyBtn.updateText("common.copy");
@@ -4129,13 +4182,13 @@ ${result.join(",\n")}
       onClick: handleClearClick,
       disabled: true
     });
-    const exportBtnContainer = createExportButton();
+    exportBtnContainer = createExportButton();
     footerButtonContainer.appendChild(exportBtnContainer);
     footerButtonContainer.appendChild(clearBtn);
     footerButtonContainer.appendChild(copyBtn);
     modalFooter.appendChild(statsContainer2);
     modalFooter.appendChild(footerButtonContainer);
-    on("languageChanged", rerenderFooterTexts);
+    unsubscribeLanguageChanged4 = on("languageChanged", rerenderFooterTexts);
   }
   function updateStatistics() {
     if (!statsContainer || !outputTextarea) return;
@@ -4315,11 +4368,11 @@ ${result.join(",\n")}
     populateModalContent(modalContent);
     populateModalFooter(modalFooter, updateModalContent);
     initializeLineNumbers();
-    const handleTextareaUpdate = () => {
+    const handleTextareaUpdate2 = () => {
       updateLineNumbers();
       updateStatistics();
     };
-    outputTextarea.addEventListener("input", handleTextareaUpdate);
+    outputTextarea.addEventListener("input", handleTextareaUpdate2);
     outputTextarea.addEventListener("click", updateActiveLine);
     outputTextarea.addEventListener("keyup", updateActiveLine);
     outputTextarea.addEventListener("scroll", () => {
@@ -5130,6 +5183,9 @@ ${result.join(",\n")}
   var highlightBorder = null;
   var tagNameTooltip = null;
   var toolbar = null;
+  var reselectBtn = null;
+  var stageBtn = null;
+  var confirmBtn = null;
   function getElementSelector(element) {
     if (!element) return "";
     const currentTag = element.tagName.toLowerCase();
@@ -5223,7 +5279,7 @@ ${result.join(",\n")}
     sliderContainer.appendChild(sliderInstance.getElement());
     uiContainer.appendChild(toolbar);
     const actionsContainer = toolbar.querySelector("#element-scan-toolbar-actions");
-    const reselectBtn = createButton({
+    reselectBtn = createButton({
       id: "element-scan-toolbar-reselect",
       textKey: "common.reselect",
       icon: reselectIcon,
@@ -5232,7 +5288,7 @@ ${result.join(",\n")}
         reselectElement();
       }
     });
-    const stageBtn = createButton({
+    stageBtn = createButton({
       id: "element-scan-toolbar-stage",
       textKey: "common.stage",
       icon: stashIcon,
@@ -5241,7 +5297,7 @@ ${result.join(",\n")}
         stageCurrentElement();
       }
     });
-    const confirmBtn = createButton({
+    confirmBtn = createButton({
       id: "element-scan-toolbar-confirm",
       textKey: "common.confirm",
       icon: confirmIcon,
@@ -5335,6 +5391,18 @@ ${result.join(",\n")}
       if (sliderInstance) {
         sliderInstance.destroy();
         sliderInstance = null;
+      }
+      if (reselectBtn) {
+        reselectBtn.destroy();
+        reselectBtn = null;
+      }
+      if (stageBtn) {
+        stageBtn.destroy();
+        stageBtn = null;
+      }
+      if (confirmBtn) {
+        confirmBtn.destroy();
+        confirmBtn = null;
       }
       const toolbarToRemove = toolbar;
       toolbar = null;
@@ -5817,13 +5885,15 @@ ${result.join(",\n")}
       this.selectedContent.appendChild(content);
     }
         bindEvents() {
-      this.trigger.addEventListener("click", () => this.toggle());
-      this.optionsContainer.addEventListener("click", (e) => {
+      this.handleTriggerClick = this.toggle.bind(this);
+      this.handleOptionClick = (e) => {
         const optionEl = e.target.closest(".custom-select-option");
         if (optionEl) {
           this.select(optionEl.dataset.value);
         }
-      });
+      };
+      this.trigger.addEventListener("click", this.handleTriggerClick);
+      this.optionsContainer.addEventListener("click", this.handleOptionClick);
     }
         handleDocumentClick = (e) => {
       const path = e.composedPath();
@@ -5875,6 +5945,15 @@ ${result.join(",\n")}
       const currentSelectedOption = this.options.find((opt) => opt.value === this.currentValue);
       if (currentSelectedOption) {
         this.updateSelectedContent(currentSelectedOption);
+      }
+    }
+        destroy() {
+      this.close();
+      if (this.trigger && this.handleTriggerClick) {
+        this.trigger.removeEventListener("click", this.handleTriggerClick);
+      }
+      if (this.optionsContainer && this.handleOptionClick) {
+        this.optionsContainer.removeEventListener("click", this.handleOptionClick);
       }
     }
   };
@@ -5949,11 +6028,11 @@ ${result.join(",\n")}
     header.className = "settings-panel-header";
     const titleContainer2 = document.createElement("div");
     titleContainer2.id = "settings-panel-title-container";
-    const closeBtn = document.createElement("span");
-    closeBtn.className = "tc-close-button settings-panel-close";
-    closeBtn.appendChild(createSVGFromString(closeIcon));
+    const closeBtn2 = document.createElement("span");
+    closeBtn2.className = "tc-close-button settings-panel-close";
+    closeBtn2.appendChild(createSVGFromString(closeIcon));
     header.appendChild(titleContainer2);
-    header.appendChild(closeBtn);
+    header.appendChild(closeBtn2);
     const content = document.createElement("div");
     content.className = "settings-panel-content";
     selectSettingsDefinitions.forEach((definition) => {
@@ -6043,6 +6122,9 @@ ${result.join(",\n")}
   var settingsPanel = null;
   var selectComponents = {};
   var isTooltipVisible = false;
+  var saveBtn = null;
+  var unsubscribeTooltipShow = null;
+  var unsubscribeTooltipHide = null;
   var handleKeyDown2 = (event) => {
     if (isTooltipVisible) return;
     if (event.key === "Escape") {
@@ -6084,7 +6166,7 @@ ${result.join(",\n")}
     const filterTitleContainer = settingsPanel.querySelector("#filter-setting-title-container");
     filterTitleContainer.appendChild(createIconTitle(filterIcon, t("settings.filterRules")));
     const footer = settingsPanel.querySelector(".settings-panel-footer");
-    const saveBtn = createButton({
+    saveBtn = createButton({
       id: "save-settings-btn",
       textKey: "common.save",
       icon: saveIcon,
@@ -6093,10 +6175,10 @@ ${result.join(",\n")}
     footer.appendChild(saveBtn);
     settingsPanel.querySelector(".settings-panel-close").addEventListener("click", hideSettingsPanel);
     settingsPanel.addEventListener("keydown", handleKeyDown2);
-    on("infoTooltipWillShow", () => {
+    unsubscribeTooltipShow = on("infoTooltipWillShow", () => {
       isTooltipVisible = true;
     });
-    on("infoTooltipDidHide", () => {
+    unsubscribeTooltipHide = on("infoTooltipDidHide", () => {
       isTooltipVisible = false;
     });
     settingsPanel.addEventListener("transitionend", () => {
@@ -6111,11 +6193,24 @@ ${result.join(",\n")}
       log(t("log.settings.panel.closing"));
       settingsPanel.removeEventListener("keydown", handleKeyDown2);
       settingsPanel.classList.remove("is-visible");
+      if (unsubscribeTooltipShow) unsubscribeTooltipShow();
+      if (unsubscribeTooltipHide) unsubscribeTooltipHide();
+      unsubscribeTooltipShow = null;
+      unsubscribeTooltipHide = null;
+      if (saveBtn) {
+        saveBtn.destroy();
+        saveBtn = null;
+      }
+      for (const key in selectComponents) {
+        if (selectComponents[key].destroy) {
+          selectComponents[key].destroy();
+        }
+      }
+      selectComponents = {};
       setTimeout(() => {
         if (settingsPanel) {
           settingsPanel.remove();
           settingsPanel = null;
-          selectComponents = {};
         }
       }, 300);
     }

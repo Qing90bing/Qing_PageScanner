@@ -34,3 +34,15 @@ export function setCanvasContext(context) { canvasContext = context; }
 export function setCurrentLineMap(map) { currentLineMap = map; }
 export function setCurrentMode(mode) { currentMode = mode; }
 export function getCurrentMode() { return currentMode; }
+
+export function resetState() {
+    modalOverlay = null;
+    outputTextarea = null;
+    lineNumbersDiv = null;
+    statsContainer = null;
+    placeholder = null;
+    loadingContainer = null;
+    canvasContext = null;
+    currentLineMap = [];
+    currentMode = 'quick-scan';
+}

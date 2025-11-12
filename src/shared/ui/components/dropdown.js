@@ -42,13 +42,21 @@ export function createDropdown(triggerElement, menuContent) {
         toggle();
     };
 
-    triggerElement.addEventListener('click', (e) => {
+    const triggerClickHandler = (e) => {
         e.stopPropagation();
         toggle();
-    });
+    };
+    triggerElement.addEventListener('click', triggerClickHandler);
+
+    const destroy = () => {
+        triggerElement.removeEventListener('click', triggerClickHandler);
+        // 确保在销毁时，document 上的事件监听器也被移除
+        document.removeEventListener('click', handleDocumentClick, true);
+    };
 
     return {
         menuElement: menuContent,
-        toggle: toggle
+        toggle: toggle,
+        destroy: destroy
     };
 }

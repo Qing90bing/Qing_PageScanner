@@ -16,7 +16,7 @@ import { loadingSpinner } from '../../../assets/icons/loadingSpinner.js';
 import { appConfig } from '../../../features/settings/config.js';
 
 
-let placeholder;
+let placeholder, unsubscribeLanguageChanged;
 
 /**
  * @private
@@ -120,7 +120,18 @@ export function populateModalContent(modalContent) {
     modalContent.appendChild(textareaContainer);
     modalContent.appendChild(loadingContainer);
 
-    on('languageChanged', rerenderPlaceholder);
+    unsubscribeLanguageChanged = on('languageChanged', rerenderPlaceholder);
+}
+
+/**
+ * @description 销毁模态框内容，清理事件监听器和引用。
+ */
+export function destroyModalContent() {
+    if (unsubscribeLanguageChanged) {
+        unsubscribeLanguageChanged();
+        unsubscribeLanguageChanged = null;
+    }
+    placeholder = null;
 }
 
 /**

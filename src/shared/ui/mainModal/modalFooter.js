@@ -15,7 +15,7 @@ import { SHOW_PLACEHOLDER } from './modalState.js';
 import { updateScanCount } from './modalHeader.js';
 import { createButton } from '../components/button.js';
 
-let clearBtn, copyBtn;
+let clearBtn, copyBtn, exportBtnContainer, unsubscribeLanguageChanged;
 
 function rerenderFooterTexts() {
     if (copyBtn) {
@@ -90,7 +90,7 @@ export function populateModalFooter(modalFooter, updateContentCallback) {
         disabled: true,
     });
 
-    const exportBtnContainer = createExportButton();
+    exportBtnContainer = createExportButton();
     footerButtonContainer.appendChild(exportBtnContainer);
     footerButtonContainer.appendChild(clearBtn);
     footerButtonContainer.appendChild(copyBtn);
@@ -98,7 +98,27 @@ export function populateModalFooter(modalFooter, updateContentCallback) {
     modalFooter.appendChild(statsContainer);
     modalFooter.appendChild(footerButtonContainer);
 
-    on('languageChanged', rerenderFooterTexts);
+    unsubscribeLanguageChanged = on('languageChanged', rerenderFooterTexts);
+}
+
+export function destroyModalFooter() {
+    if (copyBtn) {
+        copyBtn.destroy();
+        copyBtn = null;
+    }
+    if (clearBtn) {
+        clearBtn.destroy();
+        clearBtn = null;
+    }
+    if (exportBtnContainer) {
+        exportBtnContainer.destroy();
+        exportBtnContainer = null;
+    }
+    if (unsubscribeLanguageChanged) {
+        unsubscribeLanguageChanged();
+        unsubscribeLanguageChanged = null;
+    }
+    log('Modal footer cleaned up.');
 }
 
 export function updateStatistics() {

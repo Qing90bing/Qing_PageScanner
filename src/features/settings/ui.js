@@ -23,6 +23,9 @@ import { createButton } from '../../shared/ui/components/button.js';
 let settingsPanel = null;
 let selectComponents = {};
 let isTooltipVisible = false;
+let saveBtn = null;
+let unsubscribeTooltipShow = null;
+let unsubscribeTooltipHide = null;
 
 // --- 私有函数 ---
 
@@ -91,7 +94,7 @@ function showSettingsPanel(currentSettings, onSave) {
     filterTitleContainer.appendChild(createIconTitle(filterIcon, t('settings.filterRules')));
 
     const footer = settingsPanel.querySelector('.settings-panel-footer');
-    const saveBtn = createButton({
+    saveBtn = createButton({
         id: 'save-settings-btn',
         textKey: 'common.save',
         icon: saveIcon,
@@ -104,8 +107,8 @@ function showSettingsPanel(currentSettings, onSave) {
     settingsPanel.addEventListener('keydown', handleKeyDown);
 
     // 监听 tooltip 事件以暂停/恢复 ESC 键的处理
-    on('infoTooltipWillShow', () => { isTooltipVisible = true; });
-    on('infoTooltipDidHide', () => { isTooltipVisible = false; });
+    unsubscribeTooltipShow = on('infoTooltipWillShow', () => { isTooltipVisible = true; });
+    unsubscribeTooltipHide = on('infoTooltipDidHide', () => { isTooltipVisible = false; });
 
     // 修复：确保在CSS过渡动画完成后再设置焦点。
     settingsPanel.addEventListener('transitionend', () => {
@@ -127,11 +130,29 @@ function hideSettingsPanel() {
         log(t('log.settings.panel.closing'));
         settingsPanel.removeEventListener('keydown', handleKeyDown);
         settingsPanel.classList.remove('is-visible');
+
+        // 清理事件总线监听器
+        if (unsubscribeTooltipShow) unsubscribeTooltipShow();
+        if (unsubscribeTooltipHide) unsubscribeTooltipHide();
+        unsubscribeTooltipShow = null;
+        unsubscribeTooltipHide = null;
+
+        // 销毁按钮和自定义选择组件
+        if (saveBtn) {
+            saveBtn.destroy();
+            saveBtn = null;
+        }
+        for (const key in selectComponents) {
+            if (selectComponents[key].destroy) {
+                selectComponents[key].destroy();
+            }
+        }
+        selectComponents = {};
+
         setTimeout(() => {
             if (settingsPanel) {
                 settingsPanel.remove();
                 settingsPanel = null;
-                selectComponents = {};
             }
         }, 300);
     }
