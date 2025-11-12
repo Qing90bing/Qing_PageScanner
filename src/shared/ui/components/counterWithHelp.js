@@ -26,11 +26,6 @@ let pauseResumeButton = null;
  * @returns {HTMLElement} - 返回创建的容器元素。
  */
 export function createCounterWithHelp({ counterKey, helpKey, onPause, onResume, scanType }) {
-    if (counterWithHelpContainer) {
-        updateCounterValue(0);
-        return counterWithHelpContainer;
-    }
-
     let isPaused = false;
 
     counterWithHelpContainer = document.createElement('div');

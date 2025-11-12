@@ -4838,10 +4838,6 @@ ${result.join(",\n")}
   var helpIcon = null;
   var pauseResumeButton = null;
   function createCounterWithHelp({ counterKey, helpKey, onPause, onResume, scanType }) {
-    if (counterWithHelpContainer) {
-      updateCounterValue(0);
-      return counterWithHelpContainer;
-    }
     let isPaused3 = false;
     counterWithHelpContainer = document.createElement("div");
     counterWithHelpContainer.className = "counter-with-help-container";
