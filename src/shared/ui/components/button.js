@@ -22,13 +22,8 @@ import { createTrustedHTML } from '../../utils/trustedTypes.js';
  */
 export function createButton({ id, className, textKey, tooltipKey, icon, onClick, disabled = false, iconOnly = false }) {
     const button = document.createElement('button');
-    const eventListeners = [];
-
-    // 辅助函数，用于添加事件监听器并追踪它们
-    const addTrackedEventListener = (element, type, listener) => {
-        element.addEventListener(type, listener);
-        eventListeners.push({ element, type, listener });
-    };
+    const controller = new AbortController();
+    const { signal } = controller;
 
     if (id) {
         button.id = id;
@@ -42,8 +37,8 @@ export function createButton({ id, className, textKey, tooltipKey, icon, onClick
         button.innerHTML = createTrustedHTML(icon);
         let currentTooltipKey = tooltipKey;
 
-        addTrackedEventListener(button, 'mouseover', () => showTooltip(button, t(currentTooltipKey)));
-        addTrackedEventListener(button, 'mouseout', hideTooltip);
+        button.addEventListener('mouseover', () => showTooltip(button, t(currentTooltipKey)), { signal });
+        button.addEventListener('mouseout', hideTooltip, { signal });
 
         button.updateText = (newTooltipKey) => {
             currentTooltipKey = newTooltipKey;
@@ -66,7 +61,7 @@ export function createButton({ id, className, textKey, tooltipKey, icon, onClick
     button.disabled = disabled;
 
     if (onClick && typeof onClick === 'function') {
-        addTrackedEventListener(button, 'click', onClick);
+        button.addEventListener('click', onClick, { signal });
     }
 
     button.updateIcon = (newIcon) => {
@@ -95,13 +90,7 @@ export function createButton({ id, className, textKey, tooltipKey, icon, onClick
     };
 
     // 添加 destroy 方法来移除所有事件监听器
-    button.destroy = () => {
-        eventListeners.forEach(({ element, type, listener }) => {
-            element.removeEventListener(type, listener);
-        });
-        // 清空数组以释放引用
-        eventListeners.length = 0;
-    };
+    button.destroy = () => controller.abort();
 
     return button;
 }

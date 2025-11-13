@@ -9,6 +9,7 @@ let modalContainer = null;
 let resolvePromise = null;
 let confirmButton = null;
 let cancelButton = null;
+let controller = null;
 
 /**
  * 创建并显示一个可复用的确认模态框。
@@ -19,6 +20,8 @@ let cancelButton = null;
 export function showConfirmationModal(text, iconSVG) {
   return new Promise((resolve) => {
     resolvePromise = resolve;
+    controller = new AbortController();
+    const { signal } = controller;
 
     if (!modalContainer) {
       // 简化后的逻辑：只创建DOM元素，样式由全局CSS处理
@@ -63,7 +66,7 @@ export function showConfirmationModal(text, iconSVG) {
         if (e.target === modalContainer) {
           handleConfirmation(false);
         }
-      });
+      }, { signal });
     }
 
     // 更新内容
@@ -92,6 +95,12 @@ function handleConfirmation(confirmed) {
         if (cancelButton) {
             cancelButton.destroy();
             cancelButton = null;
+        }
+
+        // 清理事件监听器
+        if (controller) {
+            controller.abort();
+            controller = null;
         }
 
         // 清理模态框DOM

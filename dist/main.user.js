@@ -3875,11 +3875,8 @@ ${result.join(",\n")}
   var clearIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M120-40v-280q0-83 58.5-141.5T320-520h40v-320q0-33 23.5-56.5T440-920h80q33 0 56.5 23.5T600-840v320h40q83 0 141.5 58.5T840-320v280H120Zm80-80h80v-120q0-17 11.5-28.5T320-280q17 0 28.5 11.5T360-240v120h80v-120q0-17 11.5-28.5T480-280q17 0 28.5 11.5T520-240v120h80v-120q0-17 11.5-28.5T640-280q17 0 28.5 11.5T680-240v120h80v-200q0-50-35-85t-85-35H320q-50 0-85 35t-35 85v200Zm320-400v-320h-80v320h80Zm0 0h-80 80Z"/></svg>`;
   function createButton({ id, className, textKey, tooltipKey, icon, onClick, disabled = false, iconOnly = false }) {
     const button = document.createElement("button");
-    const eventListeners = [];
-    const addTrackedEventListener = (element, type, listener) => {
-      element.addEventListener(type, listener);
-      eventListeners.push({ element, type, listener });
-    };
+    const controller2 = new AbortController();
+    const { signal } = controller2;
     if (id) {
       button.id = id;
     }
@@ -3890,8 +3887,8 @@ ${result.join(",\n")}
       }
       button.innerHTML = createTrustedHTML(icon);
       let currentTooltipKey = tooltipKey;
-      addTrackedEventListener(button, "mouseover", () => showTooltip(button, t(currentTooltipKey)));
-      addTrackedEventListener(button, "mouseout", hideTooltip);
+      button.addEventListener("mouseover", () => showTooltip(button, t(currentTooltipKey)), { signal });
+      button.addEventListener("mouseout", hideTooltip, { signal });
       button.updateText = (newTooltipKey) => {
         currentTooltipKey = newTooltipKey;
       };
@@ -3910,7 +3907,7 @@ ${result.join(",\n")}
     }
     button.disabled = disabled;
     if (onClick && typeof onClick === "function") {
-      addTrackedEventListener(button, "click", onClick);
+      button.addEventListener("click", onClick, { signal });
     }
     button.updateIcon = (newIcon) => {
       const oldIconElements = button.querySelectorAll("svg");
@@ -3928,12 +3925,7 @@ ${result.join(",\n")}
         oldIconElements.forEach((icon2) => icon2.remove());
       }, 300);
     };
-    button.destroy = () => {
-      eventListeners.forEach(({ element, type, listener }) => {
-        element.removeEventListener(type, listener);
-      });
-      eventListeners.length = 0;
-    };
+    button.destroy = () => controller2.abort();
     return button;
   }
   var confirmIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg>`;
@@ -3941,9 +3933,12 @@ ${result.join(",\n")}
   var resolvePromise = null;
   var confirmButton = null;
   var cancelButton = null;
+  var controller = null;
   function showConfirmationModal(text, iconSVG) {
     return new Promise((resolve) => {
       resolvePromise = resolve;
+      controller = new AbortController();
+      const { signal } = controller;
       if (!modalContainer) {
         modalContainer = document.createElement("div");
         modalContainer.className = "confirmation-modal-overlay";
@@ -3975,7 +3970,7 @@ ${result.join(",\n")}
           if (e.target === modalContainer) {
             handleConfirmation(false);
           }
-        });
+        }, { signal });
       }
       modalContainer.querySelector(".confirmation-modal-icon").replaceChildren(createSVGFromString(iconSVG));
       modalContainer.querySelector(".confirmation-modal-text").textContent = text;
@@ -3996,6 +3991,10 @@ ${result.join(",\n")}
           cancelButton.destroy();
           cancelButton = null;
         }
+        if (controller) {
+          controller.abort();
+          controller = null;
+        }
         modalContainer.remove();
         modalContainer = null;
         if (resolvePromise) {
@@ -4012,6 +4011,9 @@ ${result.join(",\n")}
   var csvIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M230-360h120v-60H250v-120h100v-60H230q-17 0-28.5 11.5T190-560v160q0 17 11.5 28.5T230-360Zm156 0h120q17 0 28.5-11.5T546-400v-60q0-17-11.5-31.5T506-506h-60v-34h100v-60H426q-17 0-28.5 11.5T386-560v60q0 17 11.5 30.5T426-456h60v36H386v60Zm264 0h60l70-240h-60l-40 138-40-138h-60l70 240ZM160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm0-80h640v-480H160v480Zm0 0v-480 480Z"/></svg>`;
   function createDropdown(triggerElement, menuContent) {
     menuContent.classList.add("tc-dropdown-menu");
+    const controller2 = new AbortController();
+    const { signal } = controller2;
+    let docClickListenerController = null;
     const toggle = () => {
       const isVisible = menuContent.classList.contains("visible");
       if (isVisible) {
@@ -4019,10 +4021,14 @@ ${result.join(",\n")}
         menuContent.addEventListener("animationend", () => {
           menuContent.classList.remove("visible", "is-hiding");
         }, { once: true });
-        document.removeEventListener("click", handleDocumentClick, true);
+        if (docClickListenerController) {
+          docClickListenerController.abort();
+          docClickListenerController = null;
+        }
       } else {
         menuContent.classList.add("visible");
-        document.addEventListener("click", handleDocumentClick, true);
+        docClickListenerController = new AbortController();
+        document.addEventListener("click", handleDocumentClick, { signal: docClickListenerController.signal, capture: true });
       }
     };
     const handleDocumentClick = (event) => {
@@ -4040,10 +4046,12 @@ ${result.join(",\n")}
       e.stopPropagation();
       toggle();
     };
-    triggerElement.addEventListener("click", triggerClickHandler);
+    triggerElement.addEventListener("click", triggerClickHandler, { signal });
     const destroy = () => {
-      triggerElement.removeEventListener("click", triggerClickHandler);
-      document.removeEventListener("click", handleDocumentClick, true);
+      controller2.abort();
+      if (docClickListenerController) {
+        docClickListenerController.abort();
+      }
     };
     return {
       menuElement: menuContent,
@@ -4783,6 +4791,8 @@ ${result.join(",\n")}
     const helpButton = document.createElement("button");
     helpButton.className = "tc-icon-button";
     helpButton.innerHTML = createTrustedHTML(questionMarkIcon);
+    const controller2 = new AbortController();
+    const { signal } = controller2;
     const handleClick = (event) => {
       event.stopPropagation();
       log(simpleTemplate(t("log.ui.helpIcon.clicked"), { contentKey }));
@@ -4794,16 +4804,12 @@ ${result.join(",\n")}
         titleIcon: questionMarkIcon
       });
     };
-    helpButton.addEventListener("click", handleClick);
+    helpButton.addEventListener("click", handleClick, { signal });
     const handleMouseEnter = () => showTooltip(helpButton, t("tooltip.tooltipHelp"));
     const handleMouseLeave = () => hideTooltip();
-    helpButton.addEventListener("mouseenter", handleMouseEnter);
-    helpButton.addEventListener("mouseleave", handleMouseLeave);
-    helpButton.destroy = () => {
-      helpButton.removeEventListener("click", handleClick);
-      helpButton.removeEventListener("mouseenter", handleMouseEnter);
-      helpButton.removeEventListener("mouseleave", handleMouseLeave);
-    };
+    helpButton.addEventListener("mouseenter", handleMouseEnter, { signal });
+    helpButton.addEventListener("mouseleave", handleMouseLeave, { signal });
+    helpButton.destroy = () => controller2.abort();
     return helpButton;
   }
   function animateCount(element, start2, end, duration, easing) {

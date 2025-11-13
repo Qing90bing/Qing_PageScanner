@@ -13,6 +13,10 @@
  */
 export function createDropdown(triggerElement, menuContent) {
     menuContent.classList.add('tc-dropdown-menu');
+    const controller = new AbortController();
+    const { signal } = controller;
+
+    let docClickListenerController = null;
 
     const toggle = () => {
         const isVisible = menuContent.classList.contains('visible');
@@ -22,10 +26,15 @@ export function createDropdown(triggerElement, menuContent) {
             menuContent.addEventListener('animationend', () => {
                 menuContent.classList.remove('visible', 'is-hiding');
             }, { once: true });
-            document.removeEventListener('click', handleDocumentClick, true);
+
+            if (docClickListenerController) {
+                docClickListenerController.abort();
+                docClickListenerController = null;
+            }
         } else {
             menuContent.classList.add('visible');
-            document.addEventListener('click', handleDocumentClick, true);
+            docClickListenerController = new AbortController();
+            document.addEventListener('click', handleDocumentClick, { signal: docClickListenerController.signal, capture: true });
         }
     };
 
@@ -46,12 +55,13 @@ export function createDropdown(triggerElement, menuContent) {
         e.stopPropagation();
         toggle();
     };
-    triggerElement.addEventListener('click', triggerClickHandler);
+    triggerElement.addEventListener('click', triggerClickHandler, { signal });
 
     const destroy = () => {
-        triggerElement.removeEventListener('click', triggerClickHandler);
-        // 确保在销毁时，document 上的事件监听器也被移除
-        document.removeEventListener('click', handleDocumentClick, true);
+        controller.abort();
+        if (docClickListenerController) {
+            docClickListenerController.abort();
+        }
     };
 
     return {

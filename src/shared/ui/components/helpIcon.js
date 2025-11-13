@@ -29,6 +29,8 @@ export function createHelpIcon(contentKey) {
     const helpButton = document.createElement('button');
     helpButton.className = 'tc-icon-button';
     helpButton.innerHTML = createTrustedHTML(questionMarkIcon);
+    const controller = new AbortController();
+    const { signal } = controller;
 
     const handleClick = (event) => {
         event.stopPropagation();
@@ -42,24 +44,20 @@ export function createHelpIcon(contentKey) {
         });
     };
 
-    helpButton.addEventListener('click', handleClick);
+    helpButton.addEventListener('click', handleClick, { signal });
 
     const handleMouseEnter = () => showTooltip(helpButton, t('tooltip.tooltipHelp'));
     const handleMouseLeave = () => hideTooltip();
 
-    helpButton.addEventListener('mouseenter', handleMouseEnter);
-    helpButton.addEventListener('mouseleave', handleMouseLeave);
+    helpButton.addEventListener('mouseenter', handleMouseEnter, { signal });
+    helpButton.addEventListener('mouseleave', handleMouseLeave, { signal });
 
     /**
      * @memberof helpButton
      * @function destroy
      * @description 移除事件监听器，用于组件销毁时的资源清理。
      */
-    helpButton.destroy = () => {
-        helpButton.removeEventListener('click', handleClick);
-        helpButton.removeEventListener('mouseenter', handleMouseEnter);
-        helpButton.removeEventListener('mouseleave', handleMouseLeave);
-    };
+    helpButton.destroy = () => controller.abort();
 
     return helpButton;
 }
