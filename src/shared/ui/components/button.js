@@ -72,7 +72,21 @@ export function createButton({ id, className, textKey, tooltipKey, icon, onClick
     button.updateIcon = (newIcon) => {
         const iconElement = button.querySelector('svg');
         if (iconElement) {
-            iconElement.replaceWith(createSVGFromString(newIcon));
+            // 1. 开始淡出
+            iconElement.style.opacity = '0';
+
+            // 2. 等待淡出动画（100ms）结束后再替换图标
+            setTimeout(() => {
+                const newIconElement = createSVGFromString(newIcon);
+                // 确保新图标在 DOM 中时初始状态是透明的
+                newIconElement.style.opacity = '0';
+                iconElement.replaceWith(newIconElement);
+
+                // 3. 使用 requestAnimationFrame 确保在下一帧开始淡入
+                requestAnimationFrame(() => {
+                    newIconElement.style.opacity = '1';
+                });
+            }, 100); // 这个时间应该匹配 CSS transition 的持续时间
         }
     };
 

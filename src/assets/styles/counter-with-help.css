@@ -101,6 +101,7 @@
     width: 20px;
     height: 20px;
     fill: currentColor;
+    transition: opacity 0.1s ease-in-out;
 }
 
 .counter-actions-container {
