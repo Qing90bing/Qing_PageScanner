@@ -4858,6 +4858,25 @@ ${result.join(",\n")}
   var counterElement = null;
   var helpIcon = null;
   var pauseResumeButton = null;
+  function handleSpacebarPauseResume(event) {
+    if (event.key !== " " && event.code !== "Space") {
+      return;
+    }
+    if (!pauseResumeButton || !counterWithHelpContainer || !counterWithHelpContainer.classList.contains("is-visible")) {
+      return;
+    }
+    const activeElement = document.activeElement;
+    if (activeElement) {
+      const tagName = activeElement.tagName.toUpperCase();
+      const isContentEditable = activeElement.isContentEditable;
+      if (tagName === "INPUT" || tagName === "TEXTAREA" || isContentEditable) {
+        return;
+      }
+    }
+    event.preventDefault();
+    event.stopPropagation();
+    pauseResumeButton.click();
+  }
   function createCounterWithHelp({ counterKey, helpKey, onPause, onResume, scanType }) {
     let isPaused3 = false;
     counterWithHelpContainer = document.createElement("div");
@@ -4906,8 +4925,10 @@ ${result.join(",\n")}
     requestAnimationFrame(() => {
       counterWithHelpContainer.classList.add("is-visible");
     });
+    document.addEventListener("keydown", handleSpacebarPauseResume, true);
   }
   function hideCounterWithHelp() {
+    document.removeEventListener("keydown", handleSpacebarPauseResume, true);
     if (!counterWithHelpContainer) return;
     const containerToRemove = counterWithHelpContainer;
     const counterToRemove = counterElement;
@@ -5739,6 +5760,9 @@ ${result.join(",\n")}
     }
   }
   function handleElementClick(event) {
+    if (event.detail === 0) {
+      return;
+    }
     if (!isActive || isAdjusting || !currentTarget || isPaused2) return;
     event.preventDefault();
     event.stopPropagation();

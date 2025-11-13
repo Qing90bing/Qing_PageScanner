@@ -397,6 +397,14 @@ function handleContextMenu(event) {
 }
 
 function handleElementClick(event) {
+    // 关键修复：检查 event.detail。
+    // 真实的用户鼠标点击，event.detail >= 1。
+    // 由键盘（如空格键）触发的 click 事件，event.detail === 0。
+    // 这可以防止空格键快捷方式错误地触发展示工具栏的逻辑。
+    if (event.detail === 0) {
+        return; // 忽略由键盘触发的 click 事件
+    }
+
     if (!isActive || isAdjusting || !currentTarget || isPaused) return;
     event.preventDefault();
     event.stopPropagation();
