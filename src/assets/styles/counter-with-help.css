@@ -90,6 +90,7 @@
     align-items: center;
     justify-content: center;
     color: var(--main-text-secondary);
+    position: relative; /* 使其成为绝对定位子元素的容器 */
 }
 
 .counter-with-help-container .tc-icon-button:hover {
@@ -101,6 +102,11 @@
     width: 20px;
     height: 20px;
     fill: currentColor;
+    transition: opacity 0.3s ease-in-out;
+    position: absolute; /* 允许图标重叠 */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* 精确居中 */
 }
 
 .counter-actions-container {

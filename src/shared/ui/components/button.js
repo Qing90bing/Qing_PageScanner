@@ -70,10 +70,28 @@ export function createButton({ id, className, textKey, tooltipKey, icon, onClick
     }
 
     button.updateIcon = (newIcon) => {
-        const iconElement = button.querySelector('svg');
-        if (iconElement) {
-            iconElement.replaceWith(createSVGFromString(newIcon));
-        }
+        const oldIconElement = button.querySelector('svg');
+        if (!oldIconElement) return;
+
+        // 1. 创建新图标并添加到按钮中，初始状态为透明
+        const newIconElement = createSVGFromString(newIcon);
+        newIconElement.style.opacity = '0';
+        button.appendChild(newIconElement);
+
+        // 2. 强制浏览器重绘，确保新图标的初始状态被应用
+        // (void) newIconElement.offsetHeight; 是一种常用的强制重绘技巧
+        void newIconElement.offsetHeight;
+
+        // 3. 在下一帧同时触发新旧图标的淡入淡出动画
+        requestAnimationFrame(() => {
+            oldIconElement.style.opacity = '0';
+            newIconElement.style.opacity = '1';
+        });
+
+        // 4. 在动画结束后（300ms）移除旧图标
+        setTimeout(() => {
+            oldIconElement.remove();
+        }, 300); // 必须匹配 CSS transition 的持续时间
     };
 
     // 添加 destroy 方法来移除所有事件监听器
