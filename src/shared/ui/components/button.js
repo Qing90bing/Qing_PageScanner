@@ -70,10 +70,63 @@ export function createButton({ id, className, textKey, tooltipKey, icon, onClick
     }
 
     button.updateIcon = (newIcon) => {
-        const iconElement = button.querySelector('svg');
-        if (iconElement) {
-            iconElement.replaceWith(createSVGFromString(newIcon));
+        const oldIconElement = button.querySelector('svg');
+        if (!oldIconElement) {
+            // 如果没有旧图标，直接设置新图标
+            button.innerHTML = createTrustedHTML(newIcon);
+            return;
         }
+
+        const newIconElement = createSVGFromString(newIcon);
+
+        // 确保按钮是一个有效的定位上下文，以便图标可以相对于它进行绝对定位
+        const originalPosition = button.style.position;
+        if (originalPosition !== 'relative' && originalPosition !== 'absolute' && originalPosition !== 'fixed') {
+            button.style.position = 'relative';
+        }
+
+        // 定义统一的图标样式，用于绝对定位居中和过渡动画
+        const iconStyle = `
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.1s ease-in-out;
+        `;
+
+        // 应用样式到两个图标
+        oldIconElement.style.cssText += iconStyle;
+        newIconElement.style.cssText += iconStyle;
+
+        // 设置新图标的初始状态为透明
+        newIconElement.style.opacity = '0';
+
+        // 将新图标添加到按钮中，与旧图标并存
+        button.appendChild(newIconElement);
+
+        // 使用 requestAnimationFrame 确保DOM更新后再触发动画
+        requestAnimationFrame(() => {
+            // 开始淡入淡出动画
+            oldIconElement.style.opacity = '0';
+            newIconElement.style.opacity = '1';
+        });
+
+        // 动画结束后，执行清理工作
+        setTimeout(() => {
+            // 移除已经透明的旧图标
+            if (oldIconElement && oldIconElement.parentNode) {
+                oldIconElement.remove();
+            }
+            // 清理新图标的内联样式，使其恢复由CSS类控制
+            newIconElement.style.position = '';
+            newIconElement.style.top = '';
+            newIconElement.style.left = '';
+            newIconElement.style.transform = '';
+            newIconElement.style.transition = '';
+
+            // 恢复按钮原始的 position 样式
+            button.style.position = originalPosition;
+        }, 100); // 动画时长为 0.1秒 (100毫秒)
     };
 
     // 添加 destroy 方法来移除所有事件监听器

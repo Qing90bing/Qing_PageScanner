@@ -3913,10 +3913,42 @@ ${result.join(",\n")}
       addTrackedEventListener(button, "click", onClick);
     }
     button.updateIcon = (newIcon) => {
-      const iconElement = button.querySelector("svg");
-      if (iconElement) {
-        iconElement.replaceWith(createSVGFromString(newIcon));
+      const oldIconElement = button.querySelector("svg");
+      if (!oldIconElement) {
+        button.innerHTML = createTrustedHTML(newIcon);
+        return;
       }
+      const newIconElement = createSVGFromString(newIcon);
+      const originalPosition = button.style.position;
+      if (originalPosition !== "relative" && originalPosition !== "absolute" && originalPosition !== "fixed") {
+        button.style.position = "relative";
+      }
+      const iconStyle = `
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.1s ease-in-out;
+        `;
+      oldIconElement.style.cssText += iconStyle;
+      newIconElement.style.cssText += iconStyle;
+      newIconElement.style.opacity = "0";
+      button.appendChild(newIconElement);
+      requestAnimationFrame(() => {
+        oldIconElement.style.opacity = "0";
+        newIconElement.style.opacity = "1";
+      });
+      setTimeout(() => {
+        if (oldIconElement && oldIconElement.parentNode) {
+          oldIconElement.remove();
+        }
+        newIconElement.style.position = "";
+        newIconElement.style.top = "";
+        newIconElement.style.left = "";
+        newIconElement.style.transform = "";
+        newIconElement.style.transition = "";
+        button.style.position = originalPosition;
+      }, 100);
     };
     button.destroy = () => {
       eventListeners.forEach(({ element, type, listener }) => {
@@ -3926,7 +3958,8 @@ ${result.join(",\n")}
     };
     return button;
   }
-  var confirmIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg>`;
+  // src/assets/icons/confirmIcon.js
+  var confirmIcon = `<svg xmlns="http:
   var modalContainer = null;
   var resolvePromise = null;
   var confirmButton = null;
