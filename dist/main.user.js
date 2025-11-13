@@ -1588,214 +1588,6 @@ var TextExtractor = (() => {
     }
     return isAllowed;
   }
-  var IGNORED_TERMS = [
-    "Github",
-    "Microsoft",
-    "Tampermonkey",
-    "JavaScript",
-    "TypeScript",
-    "Hugging Face",
-    "Google",
-    "Facebook",
-    "Twitter",
-    "LinkedIn",
-    "OpenAI",
-    "ChatGPT",
-    "API",
-    "Glossary of computer science",
-    "HTML",
-    "CSS",
-    "JSON",
-    "XML",
-    "HTTP",
-    "HTTPS",
-    "URL",
-    "IP address",
-    "DNS",
-    "CPU",
-    "GPU",
-    "RAM",
-    "SSD",
-    "USB",
-    "Wi-Fi",
-    "Bluetooth",
-    "VPN",
-    "AI"
-  ];
-  var ignoredTerms_default = IGNORED_TERMS;
-  var filterConfigMap = new Map(filterDefinitions.map((def) => [def.key, def.label]));
-  var ruleChecks =  new Map([
-    ["numbers", {
-      regex: /^[$\€\£\¥\d,.\s]+$/,
-      label: filterConfigMap.get("numbers")
-    }],
-    ["chinese", {
-      regex: /^[\u4e00-\u9fa5\s]+$/u,
-      label: filterConfigMap.get("chinese")
-    }],
-    ["containsChinese", {
-      regex: /[\u4e00-\u9fa5]/u,
-      label: filterConfigMap.get("containsChinese")
-    }],
-    ["emojiOnly", {
-      regex: /^[\p{Emoji}\s]+$/u,
-      label: filterConfigMap.get("emojiOnly")
-    }],
-    ["symbols", {
-      test: (text) => !/[\p{L}\p{N}]/u.test(text),
-      label: filterConfigMap.get("symbols")
-    }],
-    ["termFilter", {
-      test: (text) => ignoredTerms_default.includes(text),
-      label: filterConfigMap.get("termFilter")
-    }],
-    ["singleLetter", {
-      regex: /^[a-zA-Z]$/,
-      label: filterConfigMap.get("singleLetter")
-    }],
-    ["repeatingChars", {
-      regex: /^\s*(.)\1+\s*$/,
-      label: filterConfigMap.get("repeatingChars")
-    }],
-    ["filePath", {
-      regex: /^(?:[a-zA-Z]:\\|\\\\|~|\.\.?\/)[\w\-\.\/ \\]*[\w\-\.]+\.[\w]{2,4}$/,
-      label: filterConfigMap.get("filePath")
-    }],
-    ["hexColor", {
-      regex: /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3,4}|[A-Fa-f0-9]{8})$/,
-      label: filterConfigMap.get("hexColor")
-    }],
-    ["email", {
-      regex: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/,
-      label: filterConfigMap.get("email")
-    }],
-    ["uuid", {
-      regex: /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/,
-      label: filterConfigMap.get("uuid")
-    }],
-    ["gitCommitHash", {
-      regex: /^[0-9a-f]{7,40}$/i,
-      label: filterConfigMap.get("gitCommitHash")
-    }],
-    ["websiteUrl", {
-      regex: /^(?:(?:https?|ftp):\/\/)?(?:www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(?:\/.*)?$/,
-      label: filterConfigMap.get("websiteUrl")
-    }],
-    ["shorthandNumber", {
-      regex: /^\d+(\.\d+)?\s?[kmb]$/i,
-      label: filterConfigMap.get("shorthandNumber")
-    }]
-  ]);
-  function shouldFilter(text, filterRules2) {
-    for (const [key, rule] of ruleChecks.entries()) {
-      if (filterRules2[key]) {
-        const isFiltered = rule.regex ? rule.regex.test(text) : rule.test(text);
-        if (isFiltered) {
-          return t(rule.label);
-        }
-      }
-    }
-    return null;
-  }
-  var traverseDOMAndExtract = (node, textCallback) => {
-    if (!node) {
-      return;
-    }
-    switch (node.nodeType) {
-      case Node.ELEMENT_NODE: {
-        const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(", ");
-        const ourUiSelector = "#text-extractor-container";
-        if (node.closest(ignoredSelectorString) || node.closest(ourUiSelector)) {
-          return;
-        }
-        const attributesToExtract = appConfig.scanner.attributesToExtract;
-        attributesToExtract.forEach((attr) => {
-          const attrValue = node.getAttribute(attr);
-          if (attrValue) {
-            textCallback(attrValue);
-          }
-        });
-        if (node.tagName === "INPUT" && ["button", "submit", "reset"].includes(node.type)) {
-          const value = node.getAttribute("value");
-          if (value) {
-            textCallback(value);
-          }
-        }
-        break;
-      }
-      case Node.TEXT_NODE: {
-        const parent = node.parentElement;
-        if (parent && (parent.tagName === "SCRIPT" || parent.tagName === "STYLE")) {
-          return;
-        }
-        textCallback(node.nodeValue);
-        return;
-      }
-      default:
-        break;
-    }
-    for (const child of node.childNodes) {
-      traverseDOMAndExtract(child, textCallback);
-    }
-    if (node.nodeType === Node.ELEMENT_NODE && node.shadowRoot) {
-      traverseDOMAndExtract(node.shadowRoot, textCallback);
-    }
-  };
-  var extractAndProcessText = () => {
-    const uniqueTexts =  new Set();
-    const processAndAddText = (rawText) => {
-      if (!rawText) return;
-      const normalizedText = rawText.normalize("NFC");
-      let text = normalizedText.replace(/(\r\n|\n|\r)+/g, "\n");
-      if (text.trim() === "") {
-        return;
-      }
-      uniqueTexts.add(text);
-    };
-    processAndAddText(document.title);
-    if (document.body) {
-      traverseDOMAndExtract(document.body, processAndAddText);
-    }
-    return Array.from(uniqueTexts);
-  };
-  var filterAndNormalizeTexts = (texts, filterRules2, enableDebugLogging, logFiltered) => {
-    const uniqueTexts = /* @__PURE__ */ new Set();
-    if (Array.isArray(texts)) {
-      texts.forEach((rawText) => {
-        if (!rawText || typeof rawText !== "string") return;
-        const normalizedText = rawText.normalize("NFC");
-        const textForFiltering = normalizedText.replace(/(\r\n|\n|\r)+/g, "\n").trim();
-        if (textForFiltering === "") return;
-        const filterResult = shouldFilter(textForFiltering, filterRules2);
-        if (filterResult) {
-          if (enableDebugLogging && logFiltered) {
-            logFiltered(textForFiltering, filterResult);
-          }
-          return;
-        }
-        uniqueTexts.add(normalizedText.replace(/(\r\n|\n|\r)+/g, "\n"));
-      });
-    }
-    return Array.from(uniqueTexts);
-  };
-  var extractRawTextFromElement = (element) => {
-    if (!element) return [];
-    const texts = [];
-    traverseDOMAndExtract(element, (rawText) => {
-      texts.push(rawText);
-    });
-    return texts;
-  };
-  var performScanInMainThread = (texts, filterRules2, enableDebugLogging) => {
-    const logFiltered = (text, reason) => {
-      log(t("log.textProcessor.filtered", { text, reason }));
-    };
-    const textsArray = filterAndNormalizeTexts(texts, filterRules2, enableDebugLogging, logFiltered);
-    return {
-      texts: textsArray,
-      count: textsArray.length
-    };
-  };
   var formatTextsForTranslation = (texts) => {
     if (!texts || texts.length === 0) {
       return "[]";
@@ -3426,6 +3218,204 @@ ${result.join(",\n")}
     currentScanState = { count, type };
     updateScanCountDisplay();
   }
+  var IGNORED_TERMS = [
+    "Github",
+    "Microsoft",
+    "Tampermonkey",
+    "JavaScript",
+    "TypeScript",
+    "Hugging Face",
+    "Google",
+    "Facebook",
+    "Twitter",
+    "LinkedIn",
+    "OpenAI",
+    "ChatGPT",
+    "API",
+    "Glossary of computer science",
+    "HTML",
+    "CSS",
+    "JSON",
+    "XML",
+    "HTTP",
+    "HTTPS",
+    "URL",
+    "IP address",
+    "DNS",
+    "CPU",
+    "GPU",
+    "RAM",
+    "SSD",
+    "USB",
+    "Wi-Fi",
+    "Bluetooth",
+    "VPN",
+    "AI"
+  ];
+  var ignoredTerms_default = IGNORED_TERMS;
+  var filterConfigMap = new Map(filterDefinitions.map((def) => [def.key, def.label]));
+  var ruleChecks =  new Map([
+    ["numbers", {
+      regex: /^[$\€\£\¥\d,.\s]+$/,
+      label: filterConfigMap.get("numbers")
+    }],
+    ["chinese", {
+      regex: /^[\u4e00-\u9fa5\s]+$/u,
+      label: filterConfigMap.get("chinese")
+    }],
+    ["containsChinese", {
+      regex: /[\u4e00-\u9fa5]/u,
+      label: filterConfigMap.get("containsChinese")
+    }],
+    ["emojiOnly", {
+      regex: /^[\p{Emoji}\s]+$/u,
+      label: filterConfigMap.get("emojiOnly")
+    }],
+    ["symbols", {
+      test: (text) => !/[\p{L}\p{N}]/u.test(text),
+      label: filterConfigMap.get("symbols")
+    }],
+    ["termFilter", {
+      test: (text) => ignoredTerms_default.includes(text),
+      label: filterConfigMap.get("termFilter")
+    }],
+    ["singleLetter", {
+      regex: /^[a-zA-Z]$/,
+      label: filterConfigMap.get("singleLetter")
+    }],
+    ["repeatingChars", {
+      regex: /^\s*(.)\1+\s*$/,
+      label: filterConfigMap.get("repeatingChars")
+    }],
+    ["filePath", {
+      regex: /^(?:[a-zA-Z]:\\|\\\\|~|\.\.?\/)[\w\-\.\/ \\]*[\w\-\.]+\.[\w]{2,4}$/,
+      label: filterConfigMap.get("filePath")
+    }],
+    ["hexColor", {
+      regex: /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3,4}|[A-Fa-f0-9]{8})$/,
+      label: filterConfigMap.get("hexColor")
+    }],
+    ["email", {
+      regex: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/,
+      label: filterConfigMap.get("email")
+    }],
+    ["uuid", {
+      regex: /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/,
+      label: filterConfigMap.get("uuid")
+    }],
+    ["gitCommitHash", {
+      regex: /^[0-9a-f]{7,40}$/i,
+      label: filterConfigMap.get("gitCommitHash")
+    }],
+    ["websiteUrl", {
+      regex: /^(?:(?:https?|ftp):\/\/)?(?:www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(?:\/.*)?$/,
+      label: filterConfigMap.get("websiteUrl")
+    }],
+    ["shorthandNumber", {
+      regex: /^\d+(\.\d+)?\s?[kmb]$/i,
+      label: filterConfigMap.get("shorthandNumber")
+    }]
+  ]);
+  function shouldFilter(text, filterRules2) {
+    for (const [key, rule] of ruleChecks.entries()) {
+      if (filterRules2[key]) {
+        const isFiltered = rule.regex ? rule.regex.test(text) : rule.test(text);
+        if (isFiltered) {
+          return t(rule.label);
+        }
+      }
+    }
+    return null;
+  }
+  var traverseDOMAndExtract = (node, textCallback) => {
+    if (!node) {
+      return;
+    }
+    switch (node.nodeType) {
+      case Node.ELEMENT_NODE: {
+        const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(", ");
+        const ourUiSelector = "#text-extractor-container";
+        if (node.closest(ignoredSelectorString) || node.closest(ourUiSelector)) {
+          return;
+        }
+        const attributesToExtract = appConfig.scanner.attributesToExtract;
+        attributesToExtract.forEach((attr) => {
+          const attrValue = node.getAttribute(attr);
+          if (attrValue) {
+            textCallback(attrValue);
+          }
+        });
+        if (node.tagName === "INPUT" && ["button", "submit", "reset"].includes(node.type)) {
+          const value = node.getAttribute("value");
+          if (value) {
+            textCallback(value);
+          }
+        }
+        break;
+      }
+      case Node.TEXT_NODE: {
+        const parent = node.parentElement;
+        if (parent && (parent.tagName === "SCRIPT" || parent.tagName === "STYLE")) {
+          return;
+        }
+        textCallback(node.nodeValue);
+        return;
+      }
+      default:
+        break;
+    }
+    for (const child of node.childNodes) {
+      traverseDOMAndExtract(child, textCallback);
+    }
+    if (node.nodeType === Node.ELEMENT_NODE && node.shadowRoot) {
+      traverseDOMAndExtract(node.shadowRoot, textCallback);
+    }
+  };
+  var extractAndProcessText = () => {
+    const uniqueTexts =  new Set();
+    const processAndAddText = (rawText) => {
+      if (!rawText) return;
+      const normalizedText = rawText.normalize("NFC");
+      let text = normalizedText.replace(/(\r\n|\n|\r)+/g, "\n");
+      if (text.trim() === "") {
+        return;
+      }
+      uniqueTexts.add(text);
+    };
+    processAndAddText(document.title);
+    if (document.body) {
+      traverseDOMAndExtract(document.body, processAndAddText);
+    }
+    return Array.from(uniqueTexts);
+  };
+  var filterAndNormalizeTexts = (texts, filterRules2, enableDebugLogging, logFiltered) => {
+    const uniqueTexts = /* @__PURE__ */ new Set();
+    if (Array.isArray(texts)) {
+      texts.forEach((rawText) => {
+        if (!rawText || typeof rawText !== "string") return;
+        const normalizedText = rawText.normalize("NFC");
+        const textForFiltering = normalizedText.replace(/(\r\n|\n|\r)+/g, "\n").trim();
+        if (textForFiltering === "") return;
+        const filterResult = shouldFilter(textForFiltering, filterRules2);
+        if (filterResult) {
+          if (enableDebugLogging && logFiltered) {
+            logFiltered(textForFiltering, filterResult);
+          }
+          return;
+        }
+        uniqueTexts.add(normalizedText.replace(/(\r\n|\n|\r)+/g, "\n"));
+      });
+    }
+    return Array.from(uniqueTexts);
+  };
+  var extractRawTextFromElement = (element) => {
+    if (!element) return [];
+    const texts = [];
+    traverseDOMAndExtract(element, (rawText) => {
+      texts.push(rawText);
+    });
+    return texts;
+  };
   var performQuickScan = () => {
     return new Promise(async (resolve, reject) => {
       const { filterRules: filterRules2, enableDebugLogging } = loadSettings();
@@ -3437,11 +3427,19 @@ ${result.join(",\n")}
         log(t("log.quickScan.switchToFallback"));
         showNotification(t("notifications.cspWorkerWarning"), { type: "info", duration: 5e3 });
         try {
-          const scanResult = performScanInMainThread(texts, filterRules2, enableDebugLogging);
-          const formattedText = formatTextsForTranslation(scanResult.texts);
+          const logFiltered = (text, reason) => {
+            log(t("log.textProcessor.filtered", { text, reason }));
+          };
+          const filteredTexts = filterAndNormalizeTexts(
+            texts,
+            filterRules2,
+            enableDebugLogging,
+            logFiltered
+          );
+          const formattedText = formatTextsForTranslation(filteredTexts);
           const result = {
             formattedText,
-            count: scanResult.count
+            count: filteredTexts.length
           };
           updateScanCount(result.count, "static");
           resolve(result);
@@ -5646,8 +5644,16 @@ ${result.join(",\n")}
           showNotification(t("notifications.cspWorkerWarning"), { type: "info", duration: 5e3 });
           fallbackNotificationShown = true;
         }
-        const result = performScanInMainThread(texts, settings.filterRules, settings.enableDebugLogging);
-        resolve(result.texts);
+        const logFiltered = (text, reason) => {
+          log(t("log.textProcessor.filtered", { text, reason }));
+        };
+        const filteredTexts = filterAndNormalizeTexts(
+          texts,
+          settings.filterRules,
+          settings.enableDebugLogging,
+          logFiltered
+        );
+        resolve(filteredTexts);
       };
       const workerAllowed = await isWorkerAllowed();
       if (!workerAllowed) {

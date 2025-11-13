@@ -12,7 +12,7 @@ import { simpleTemplate } from '../../shared/utils/templating.js';
 import { log } from '../../shared/utils/logger.js';
 import { loadSettings } from '../settings/logic.js';
 import { isWorkerAllowed } from '../../shared/utils/csp-checker.js';
-import { performScanInMainThread } from '../../shared/utils/fallbackProcessor.js';
+import { filterAndNormalizeTexts } from '../../shared/utils/textProcessor.js';
 import { trustedWorkerUrl } from '../../shared/workers/worker-url.js';
 import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
 import { on, fire } from '../../shared/utils/eventBus.js';
@@ -234,8 +234,19 @@ function filterTextsWithWorker(texts, settings) {
                 showNotification(t('notifications.cspWorkerWarning'), { type: 'info', duration: 5000 });
                 fallbackNotificationShown = true;
             }
-            const result = performScanInMainThread(texts, settings.filterRules, settings.enableDebugLogging);
-            resolve(result.texts);
+            
+            // 定义一个日志记录函数以传递给核心处理器
+            const logFiltered = (text, reason) => {
+                log(t('log.textProcessor.filtered', { text, reason }));
+            };
+
+            const filteredTexts = filterAndNormalizeTexts(
+                texts,
+                settings.filterRules,
+                settings.enableDebugLogging,
+                logFiltered
+            );
+            resolve(filteredTexts);
         };
 
         const workerAllowed = await isWorkerAllowed();

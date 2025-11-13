@@ -8,13 +8,12 @@
 import { loadSettings } from '../settings/logic.js';
 import { log } from '../../shared/utils/logger.js';
 import { isWorkerAllowed } from '../../shared/utils/csp-checker.js';
-import { performScanInMainThread } from '../../shared/utils/fallbackProcessor.js';
 import { formatTextsForTranslation } from '../../shared/utils/formatting.js';
 import { trustedWorkerUrl } from '../../shared/workers/worker-url.js';
 import { showNotification } from '../../shared/ui/components/notification.js';
 import { t, getTranslationObject } from '../../shared/i18n/index.js';
 import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
-import { extractAndProcessText } from '../../shared/utils/textProcessor.js';
+import { extractAndProcessText, filterAndNormalizeTexts } from '../../shared/utils/textProcessor.js';
 
 /**
  * @description 执行一次性的静态页面扫描。
@@ -36,14 +35,21 @@ export const performQuickScan = () => {
             log(t('log.quickScan.switchToFallback'));
             showNotification(t('notifications.cspWorkerWarning'), { type: 'info', duration: 5000 });
             try {
-                // 调用通用的主线程扫描函数
-                const scanResult = performScanInMainThread(texts, filterRules, enableDebugLogging);
-                // 格式化文本以供显示
-                const formattedText = formatTextsForTranslation(scanResult.texts);
+                const logFiltered = (text, reason) => {
+                    log(t('log.textProcessor.filtered', { text, reason }));
+                };
 
+                const filteredTexts = filterAndNormalizeTexts(
+                    texts,
+                    filterRules,
+                    enableDebugLogging,
+                    logFiltered
+                );
+                
+                const formattedText = formatTextsForTranslation(filteredTexts);
                 const result = {
                     formattedText,
-                    count: scanResult.count,
+                    count: filteredTexts.length,
                 };
 
                 updateScanCount(result.count, 'static');
