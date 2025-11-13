@@ -3913,18 +3913,19 @@ ${result.join(",\n")}
       addTrackedEventListener(button, "click", onClick);
     }
     button.updateIcon = (newIcon) => {
-      const oldIconElement = button.querySelector("svg");
-      if (!oldIconElement) return;
+      const oldIconElements = button.querySelectorAll("svg");
       const newIconElement = createSVGFromString(newIcon);
       newIconElement.style.opacity = "0";
       button.appendChild(newIconElement);
       void newIconElement.offsetHeight;
       requestAnimationFrame(() => {
-        oldIconElement.style.opacity = "0";
+        oldIconElements.forEach((icon2) => {
+          icon2.style.opacity = "0";
+        });
         newIconElement.style.opacity = "1";
       });
       setTimeout(() => {
-        oldIconElement.remove();
+        oldIconElements.forEach((icon2) => icon2.remove());
       }, 300);
     };
     button.destroy = () => {
