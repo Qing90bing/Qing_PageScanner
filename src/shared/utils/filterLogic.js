@@ -7,7 +7,7 @@
  */
 
 import { t } from '../i18n/index.js';
-import IGNORED_TERMS from './ignoredTerms.js';
+import IGNORED_TERMS_SET from './ignoredTerms.js';
 import { filterDefinitions } from '../../features/settings/config.js';
 
 // 将配置转换为更易于查找的映射
@@ -38,7 +38,8 @@ const ruleChecks = new Map([
     label: filterConfigMap.get('symbols')
   }],
   ['termFilter', {
-    test: (text) => IGNORED_TERMS.includes(text),
+    // 将 .includes() 修改为 .has()
+    test: (text) => IGNORED_TERMS_SET.has(text),
     label: filterConfigMap.get('termFilter')
   }],
   ['singleLetter', {

@@ -12,7 +12,7 @@
  * IGNORED_TERMS: ['IGNORE', 'TERM']
  * @type {string[]}
  */
-const IGNORED_TERMS = [
+const IGNORED_TERMS_ARRAY = [
   'Github',
   'Microsoft',
   'Tampermonkey',
@@ -47,4 +47,8 @@ const IGNORED_TERMS = [
   'AI',
 ];
 
-export default IGNORED_TERMS;
+// 新增：基于数组创建一个 Set
+const IGNORED_TERMS_SET = new Set(IGNORED_TERMS_ARRAY);
+
+// 默认导出 Set
+export default IGNORED_TERMS_SET;
