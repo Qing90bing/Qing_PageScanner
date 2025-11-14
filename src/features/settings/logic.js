@@ -80,6 +80,14 @@ const defaultSettings = {
     // 是否过滤带单位的简写数字
     shorthandNumber: true,
   },
+  // Contextual settings for Dynamic Scan
+  dynamicScanSettings: {
+    persistDataAcrossPages: false,
+  },
+  // Contextual settings for Element Scan
+  elementScanSettings: {
+    persistDataAcrossPages: false,
+  },
 };
 
 // --- 公开函数 ---
@@ -129,6 +137,14 @@ export function loadSettings() {
         filterRules: {
           ...defaultSettings.filterRules, // 级别3：应用默认的过滤规则
           ...(parsedSettings.filterRules || {}), // 级别4：用已保存的过滤规则覆盖
+        },
+        dynamicScanSettings: {
+          ...defaultSettings.dynamicScanSettings,
+          ...(parsedSettings.dynamicScanSettings || {}),
+        },
+        elementScanSettings: {
+          ...defaultSettings.elementScanSettings,
+          ...(parsedSettings.elementScanSettings || {}),
         },
       };
       return mergedSettings;

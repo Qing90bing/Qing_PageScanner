@@ -126,7 +126,17 @@
     "elementScanResumed": "Element scan resumed.",
     "sessionScanPaused": "Dynamic scan paused.",
     "sessionScanResumed": "Dynamic scan resumed.",
-    "cspWorkerWarning": "Switched to compatibility scan mode due to website security restrictions."
+    "cspWorkerWarning": "Switched to compatibility scan mode due to website security restrictions.",
+    "restoringSession": "Restoring previous scan session..."
+  },
+  "scanSettings": {
+    "dynamic": {
+      "title": "Dynamic Scan Settings"
+    },
+    "element": {
+      "title": "Element Scan Settings"
+    },
+    "persistData": "Persist this scan's data across page navigations"
   },
   "placeholders": {
     "click": "Click ",
@@ -148,6 +158,7 @@
     "pauseSessionScan": "Pause Dynamic Scan",
     "resumeSessionScan": "Resume Dynamic Scan",
     "tooltipHelp": "Help",
+    "scanSettings": "Scan Settings",
     "disabled": {
       "scan_in_progress": "Another scan is in progress"
     },

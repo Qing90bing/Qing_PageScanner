@@ -9,24 +9,86 @@ import { loadSettings } from './features/settings/logic.js';
 import { initializeExporter } from './features/export/exporter.js';
 import { t } from './shared/i18n/index.js';
 import { initializeLanguage } from './shared/i18n/management/languageManager.js';
+import { getValue, setValue } from './shared/services/tampermonkey.js';
+import { getSessionScanData, isSessionRecording } from './features/session-scan/logic.js';
+import { handleDynamicExtractClick } from './features/session-scan/ui.js';
+import { getStagedTexts, isElementScanActive, handleElementScanClick } from './features/element-scan/logic.js';
+import { showNotification } from './shared/ui/components/notification.js';
+import { getElementScanFab } from './shared/ui/components/fab.js';
 export { initUI };
+
+// --- Data Persistence ---
+
+window.addEventListener('beforeunload', () => {
+    const settings = loadSettings();
+    let dataToPersist = null;
+    let scanType = null;
+
+    if (isSessionRecording() && settings.dynamicScanSettings.persistDataAcrossPages) {
+        dataToPersist = getSessionScanData();
+        scanType = 'dynamic';
+    } else if (isElementScanActive() && settings.elementScanSettings.persistDataAcrossPages) {
+        dataToPersist = getStagedTexts();
+        scanType = 'element';
+    }
+
+    if (dataToPersist && dataToPersist.length > 0) {
+        setValue('persistedScanData', JSON.stringify(dataToPersist));
+        setValue('persistedScanType', scanType);
+    } else {
+        setValue('persistedScanData', null);
+        setValue('persistedScanType', null);
+    }
+});
+
 
 /**
  * 应用程序的主入口点。
  */
 // 导出 main 函数以供测试和全局访问
-export function initialize() {
+export async function initialize() {
   // 将顶层窗口检查移入函数内部
   if (window.top !== window.self) {
     log(t('log.main.inIframe'));
     return;
   }
 
-  // 1. 加载设置
+  // 1. 尝试恢复持久化数据
+  const persistedDataJSON = await getValue('persistedScanData', null);
+  const persistedScanType = await getValue('persistedScanType', null);
+  let restoredData = [];
+
+  if (persistedDataJSON) {
+      try {
+          restoredData = JSON.parse(persistedDataJSON);
+      } catch (e) {
+          restoredData = [];
+      }
+  }
+
+  // 2. 加载设置
   const settings = loadSettings();
 
-  // 2. 初始化国际化（i18n）
+  // 3. 初始化国际化（i18n）
   initializeLanguage(settings);
+
+  // 4. 如果有恢复的数据，则启动相应扫描
+  if (restoredData.length > 0 && persistedScanType) {
+      const shouldRestoreDynamic = persistedScanType === 'dynamic' && settings.dynamicScanSettings.persistDataAcrossPages;
+      const shouldRestoreElement = persistedScanType === 'element' && settings.elementScanSettings.persistDataAcrossPages;
+
+      if (shouldRestoreDynamic || shouldRestoreElement) {
+          showNotification(t('notifications.restoringSession'), { type: 'info' });
+          setValue('persistedScanData', null);
+          setValue('persistedScanType', null);
+
+          if (shouldRestoreDynamic) {
+              handleDynamicExtractClick(restoredData);
+          } else if (shouldRestoreElement) {
+              handleElementScanClick(restoredData);
+          }
+      }
+  }
 
   // 3. 根据设置初始化日志记录器
   updateLoggerState(settings.enableDebugLogging);

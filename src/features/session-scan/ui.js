@@ -101,8 +101,16 @@ const handleEscForSessionScan = (event) => {
  * @public
  * @function handleDynamicExtractClick
  * @description 处理“动态扫描”按钮的点击事件，负责启动或停止会话扫描。
+ * @param {HTMLElement | string[]} dynamicFab - FAB 元素或恢复的数据数组。
+ * @param {string[]} [restoredData] - （可选）从持久化存储中恢复的文本数据。
  */
-export function handleDynamicExtractClick(dynamicFab) {
+export function handleDynamicExtractClick(dynamicFab, restoredData = []) {
+    // 兼容旧调用和新调用（当第一个参数是恢复数据时）
+    if (Array.isArray(dynamicFab)) {
+        restoredData = dynamicFab;
+        dynamicFab = getDynamicFab();
+    }
+
     const elementScanFab = getElementScanFab();
 
     if (sessionExtractor.isSessionRecording()) {
@@ -150,7 +158,7 @@ export function handleDynamicExtractClick(dynamicFab) {
             sessionExtractor.start((count) => {
                 updateCounterValue(count);
                 currentSessionCount = count;
-            });
+            }, restoredData);
         }, 50);
 
         // 在启动时添加键盘事件监听器，使用捕获阶段以确保优先执行

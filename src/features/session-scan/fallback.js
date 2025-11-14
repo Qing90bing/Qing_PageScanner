@@ -28,7 +28,7 @@ export function initFallback(rules) {
  * @description 处理并添加一批文本。
  * @param {string[]} texts - 待处理的原始文本数组。
  * @param {string} [logPrefix=''] - 用于日志输出的前缀。
- * @returns {boolean} - 如果成功添加了新文本，则返回 true。
+ * @returns {{newTexts: string[]}} - 一个包含新发现文本数组的对象。
  */
 export function processTextsInFallback(texts, logPrefix = '') {
     const originalSize = sessionTexts.size;
@@ -41,12 +41,17 @@ export function processTextsInFallback(texts, logPrefix = '') {
 
     // 调用核心处理函数，注意：这里假设调试日志在需要时已通过外部逻辑启用
     const processedTexts = filterAndNormalizeTexts(texts, filterRules, true, logFiltered);
+    const newTexts = [];
 
-    // 将处理后的文本添加到会话 Set 中
-    processedTexts.forEach(text => sessionTexts.add(text));
+    // 将处理后的文本添加到会话 Set 中，并收集新文本
+    processedTexts.forEach(text => {
+        if (!sessionTexts.has(text)) {
+            sessionTexts.add(text);
+            newTexts.push(text);
+        }
+    });
 
-    // 如果 Set 的大小发生变化，则返回 true
-    return sessionTexts.size > originalSize;
+    return { newTexts };
 }
 
 /**

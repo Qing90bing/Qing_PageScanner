@@ -126,7 +126,17 @@
     "elementScanResumed": "元素掃描已恢復。",
     "sessionScanPaused": "動態掃描已暫停。",
     "sessionScanResumed": "動態掃描已恢復。",
-    "cspWorkerWarning": "因網站安全限制，已切換至相容掃描模式。"
+    "cspWorkerWarning": "因網站安全限制，已切換至相容掃描模式。",
+    "restoringSession": "正在恢復上次的掃描會話..."
+  },
+  "scanSettings": {
+    "dynamic": {
+      "title": "動態掃描 設定"
+    },
+    "element": {
+      "title": "元素掃描 設定"
+    },
+    "persistData": "在頁面跳轉時保留本次掃描的資料"
   },
   "placeholders": {
     "click": "點擊 ",
@@ -148,6 +158,7 @@
     "pauseSessionScan": "暫停動態掃描",
     "resumeSessionScan": "恢復動態掃描",
     "tooltipHelp": "幫助",
+    "scanSettings": "掃描設定",
     "disabled": {
       "scan_in_progress": "另一項掃描正在進行中"
     },

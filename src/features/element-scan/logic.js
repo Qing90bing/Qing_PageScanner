@@ -5,7 +5,7 @@ import { extractRawTextFromElement } from '../../shared/utils/textProcessor.js';
 import { formatTextsForTranslation } from '../../shared/utils/formatting.js';
 import { updateModalContent } from '../../shared/ui/mainModal.js';
 import { uiContainer } from '../../shared/ui/uiContainer.js';
-import { getDynamicFab, updateFabTooltip } from '../../shared/ui/components/fab.js';
+import { getDynamicFab, updateFabTooltip, getElementScanFab } from '../../shared/ui/components/fab.js';
 import { showNotification } from '../../shared/ui/components/notification.js';
 import { t, getTranslationObject } from '../../shared/i18n/index.js';
 import { simpleTemplate } from '../../shared/utils/templating.js';
@@ -109,23 +109,36 @@ export function setShouldResumeAfterModalClose(value) {
     shouldResumeAfterModalClose = value;
 }
 
-export function handleElementScanClick(fabElement) {
+export function handleElementScanClick(fabElement, restoredData = []) {
+    // 兼容恢复数据和 fab 点击事件两种调用方式
+    if (Array.isArray(fabElement)) {
+        restoredData = fabElement;
+        fabElement = getElementScanFab();
+    }
+
     if (isActive) {
         stopElementScan(fabElement);
     } else {
-        startElementScan(fabElement);
+        startElementScan(fabElement, restoredData);
     }
 }
 
-function startElementScan(fabElement) {
+function startElementScan(fabElement, restoredData = []) {
     log(t('log.elementScan.starting'));
-    showNotification(t('notifications.elementScanStarted'), { type: 'info' });
+
+    if (restoredData && restoredData.length > 0) {
+        stagedTexts = new Set(restoredData);
+    } else {
+        showNotification(t('notifications.elementScanStarted'), { type: 'info' });
+    }
+
     isActive = true;
     isAdjusting = false;
     fallbackNotificationShown = false; // 重置通知状态
     fabElement.classList.add('is-recording');
     updateFabTooltip(fabElement, 'scan.stopSession'); // 更新自己的工具提示
     showTopCenterUI();
+    updateStagedCount();
 
     // 禁用“动态扫描”按钮并更新其工具提示
     const dynamicFab = getDynamicFab();

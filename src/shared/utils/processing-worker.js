@@ -153,16 +153,22 @@ self.onmessage = (event) => {
          */
         case 'session-add-texts': {
             const { texts } = payload;
-            let changed = false;
+            const newTexts = [];
             if (Array.isArray(texts)) {
                 texts.forEach(text => {
                     if (processText(text, sessionTexts)) {
-                        changed = true;
+                        newTexts.push(text);
                     }
                 });
             }
-            if (changed) {
-                self.postMessage({ type: 'countUpdated', payload: sessionTexts.size });
+            if (newTexts.length > 0) {
+                self.postMessage({
+                    type: 'countUpdated',
+                    payload: {
+                        count: sessionTexts.size,
+                        newTexts: newTexts
+                    }
+                });
             }
             break;
         }
@@ -183,14 +189,14 @@ self.onmessage = (event) => {
         case 'session-clear':
             sessionTexts.clear();
             log('Session cleared.');
-            self.postMessage({ type: 'countUpdated', payload: 0 });
+            self.postMessage({ type: 'countUpdated', payload: { count: 0, newTexts: [] } });
             break;
 
         /**
          * 会话模式：获取当前计数值
          */
         case 'session-get-count':
-            self.postMessage({ type: 'countUpdated', payload: sessionTexts.size });
+            self.postMessage({ type: 'countUpdated', payload: { count: sessionTexts.size, newTexts: [] } });
             break;
     }
 };

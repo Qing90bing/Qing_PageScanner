@@ -7,11 +7,15 @@ import { updateTopCenterCounter, createTopCenterCounter } from './topCenterCount
 import { uiContainer } from '../uiContainer.js';
 import { pauseIcon } from '../../../assets/icons/pauseIcon.js';
 import { resumeIcon } from '../../../assets/icons/resumeIcon.js';
+import { settingsIcon } from '../../../assets/icons/settingsIcon.js';
+import { openScanModeSettings } from '../../../features/scan-settings/ui.js';
+import { loadSettings, saveSettings, applySettings } from '../../../features/settings/logic.js';
 
 let counterWithHelpContainer = null;
 let counterElement = null;
 let helpIcon = null;
 let pauseResumeButton = null;
+let settingsButton = null;
 
 /**
  * @private
@@ -73,11 +77,15 @@ export function createCounterWithHelp({ counterKey, helpKey, onPause, onResume, 
 
     counterWithHelpContainer.appendChild(counterElement);
 
-    if (onPause && onResume && scanType) {
-        const separator = document.createElement('div');
-        separator.className = 'counter-with-help-separator';
-        counterWithHelpContainer.appendChild(separator);
+    const separator = document.createElement('div');
+    separator.className = 'counter-with-help-separator';
+    counterWithHelpContainer.appendChild(separator);
 
+    const actionsContainer = document.createElement('div');
+    actionsContainer.className = 'counter-actions-container';
+
+    // Create Pause/Resume button if callbacks are provided
+    if (onPause && onResume && scanType) {
         pauseResumeButton = createButton({
             icon: pauseIcon,
             iconOnly: true,
@@ -95,19 +103,29 @@ export function createCounterWithHelp({ counterKey, helpKey, onPause, onResume, 
                 }
             }
         });
-
-        const actionsContainer = document.createElement('div');
-        actionsContainer.className = 'counter-actions-container';
         actionsContainer.appendChild(pauseResumeButton);
-        actionsContainer.appendChild(helpIcon);
-
-        counterWithHelpContainer.appendChild(actionsContainer);
-    } else {
-        const separator = document.createElement('div');
-        separator.className = 'counter-with-help-separator';
-        counterWithHelpContainer.appendChild(separator);
-        counterWithHelpContainer.appendChild(helpIcon);
     }
+
+    // Create Settings button
+    const scanTypeForSettings = scanType === 'SessionScan' ? 'dynamic' : 'element';
+    settingsButton = createButton({
+        icon: settingsIcon,
+        iconOnly: true,
+        tooltipKey: 'tooltip.scanSettings',
+        onClick: () => {
+            const currentSettings = loadSettings();
+            openScanModeSettings(scanTypeForSettings, currentSettings, (newSettings) => {
+                const oldSettings = loadSettings();
+                saveSettings(newSettings);
+                applySettings(newSettings, oldSettings);
+            });
+        }
+    });
+    actionsContainer.appendChild(settingsButton);
+
+
+    actionsContainer.appendChild(helpIcon);
+    counterWithHelpContainer.appendChild(actionsContainer);
 
     uiContainer.appendChild(counterWithHelpContainer);
 
@@ -146,13 +164,15 @@ export function hideCounterWithHelp() {
     const containerToRemove = counterWithHelpContainer;
     const counterToRemove = counterElement;
     const iconToRemove = helpIcon;
-    const buttonToRemove = pauseResumeButton; // 引用按钮
+    const buttonToRemove = pauseResumeButton;
+    const settingsButtonToRemove = settingsButton;
 
     // 立即清除全局引用，防止重复操作
     counterWithHelpContainer = null;
     counterElement = null;
     helpIcon = null;
     pauseResumeButton = null;
+    settingsButton = null;
 
     // 触发退场动画
     containerToRemove.classList.remove('is-visible');
@@ -167,6 +187,9 @@ export function hideCounterWithHelp() {
         }
         if (buttonToRemove && typeof buttonToRemove.destroy === 'function') {
             buttonToRemove.destroy();
+        }
+        if (settingsButtonToRemove && typeof settingsButtonToRemove.destroy === 'function') {
+            settingsButtonToRemove.destroy();
         }
         if (containerToRemove) {
             containerToRemove.remove();

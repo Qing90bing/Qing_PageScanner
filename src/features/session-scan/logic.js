@@ -25,7 +25,8 @@ let worker = null;
 let useFallback = false;
 let onSummaryCallback = null;
 let onUpdateCallback = null;
-let currentCount = 0; // 新增：在模块级别跟踪计数值
+let currentCount = 0;
+let allDiscoveredTexts = new Set();
 
 // --- 事件监听 ---
 on('clearSessionScan', () => {
@@ -53,7 +54,9 @@ const handleMutations = (mutations) => {
     if (textsBatch.length > 0) {
         const logPrefix = '动态新发现';
         if (useFallback) {
-            if (fallback.processTextsInFallback(textsBatch, logPrefix)) {
+            const result = fallback.processTextsInFallback(textsBatch, logPrefix);
+            if (result && result.newTexts.length > 0) {
+                result.newTexts.forEach(text => allDiscoveredTexts.add(text));
                 const count = fallback.getCountInFallback();
                 if (onUpdateCallback) onUpdateCallback(count);
                 updateScanCount(count, 'session');
@@ -73,6 +76,7 @@ const handleMutations = (mutations) => {
  */
 function clearSessionData() {
     currentCount = 0; // 重置计数值
+    allDiscoveredTexts.clear();
     if (useFallback) {
         fallback.clearInFallback();
         if (onUpdateCallback) onUpdateCallback(0);
@@ -84,9 +88,17 @@ function clearSessionData() {
     }
 }
 
+/**
+ * Returns all texts discovered during the session.
+ * @returns {string[]} An array of unique texts.
+ */
+export function getSessionScanData() {
+    return Array.from(allDiscoveredTexts);
+}
+
 // --- 公开函数 ---
 
-export const start = async (onUpdate) => {
+export const start = async (onUpdate, restoredData = []) => {
     if (isRecording) return;
 
     // --- 1. 彻底清理旧状态 ---
@@ -107,11 +119,15 @@ export const start = async (onUpdate) => {
     isRecording = true;
 
     // --- 3. 加载初始数据和设置 ---
+    if (restoredData && restoredData.length > 0) {
+        restoredData.forEach(text => allDiscoveredTexts.add(text));
+    }
     const [initialTexts, settings, workerAllowed] = await Promise.all([
         extractAndProcessText(),
         loadSettings(),
         isWorkerAllowed()
     ]);
+    const combinedInitialTexts = [...new Set([...restoredData, ...initialTexts])];
     const { filterRules, enableDebugLogging } = settings;
 
     // --- 4. 定义后备模式激活函数 ---
@@ -124,8 +140,11 @@ export const start = async (onUpdate) => {
         useFallback = true;
         
         fallback.initFallback(filterRules);
-        if (initialTexts.length > 0) {
-            fallback.processTextsInFallback(initialTexts);
+        if (combinedInitialTexts.length > 0) {
+            const result = fallback.processTextsInFallback(combinedInitialTexts);
+            if (result && result.newTexts.length > 0) {
+                result.newTexts.forEach(text => allDiscoveredTexts.add(text));
+            }
             const count = fallback.getCountInFallback();
             if (onUpdateCallback) onUpdateCallback(count);
             updateScanCount(count, 'session');
@@ -141,9 +160,12 @@ export const start = async (onUpdate) => {
             worker.onmessage = (event) => {
                 const { type, payload } = event.data;
                 if (type === 'countUpdated') {
-                    currentCount = payload;
-                    if (onUpdateCallback) onUpdateCallback(payload);
-                    updateScanCount(payload, 'session');
+                    currentCount = payload.count;
+                    if (payload.newTexts && payload.newTexts.length > 0) {
+                        payload.newTexts.forEach(text => allDiscoveredTexts.add(text));
+                    }
+                    if (onUpdateCallback) onUpdateCallback(payload.count);
+                    updateScanCount(payload.count, 'session');
                 } else if (type === 'summaryReady' && onSummaryCallback) {
                     onSummaryCallback(payload, currentCount);
                     onSummaryCallback = null;
@@ -169,8 +191,8 @@ export const start = async (onUpdate) => {
                     },
                 },
             });
-            worker.postMessage({ type: 'session-add-texts', payload: { texts: initialTexts } });
-            log(t('log.sessionScan.worker.initialized', { count: initialTexts.length }));
+            worker.postMessage({ type: 'session-add-texts', payload: { texts: combinedInitialTexts } });
+            log(t('log.sessionScan.worker.initialized', { count: combinedInitialTexts.length }));
 
         } catch (e) {
             log(t('log.sessionScan.worker.initSyncError', { error: e.message }), 'error');

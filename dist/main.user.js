@@ -262,7 +262,17 @@ var TextExtractor = (() => {
       elementScanResumed: "Element scan resumed.",
       sessionScanPaused: "Dynamic scan paused.",
       sessionScanResumed: "Dynamic scan resumed.",
-      cspWorkerWarning: "Switched to compatibility scan mode due to website security restrictions."
+      cspWorkerWarning: "Switched to compatibility scan mode due to website security restrictions.",
+      restoringSession: "Restoring previous scan session..."
+    },
+    scanSettings: {
+      dynamic: {
+        title: "Dynamic Scan Settings"
+      },
+      element: {
+        title: "Element Scan Settings"
+      },
+      persistData: "Persist this scan's data across page navigations"
     },
     placeholders: {
       click: "Click ",
@@ -284,6 +294,7 @@ var TextExtractor = (() => {
       pauseSessionScan: "Pause Dynamic Scan",
       resumeSessionScan: "Resume Dynamic Scan",
       tooltipHelp: "Help",
+      scanSettings: "Scan Settings",
       disabled: {
         scan_in_progress: "Another scan is in progress"
       },
@@ -626,7 +637,17 @@ var TextExtractor = (() => {
       elementScanResumed: "\u5143\u7D20\u626B\u63CF\u5DF2\u6062\u590D\u3002",
       sessionScanPaused: "\u52A8\u6001\u626B\u63CF\u5DF2\u6682\u505C\u3002",
       sessionScanResumed: "\u52A8\u6001\u626B\u63CF\u5DF2\u6062\u590D\u3002",
-      cspWorkerWarning: "\u56E0\u7F51\u7AD9\u5B89\u5168\u9650\u5236\uFF0C\u5DF2\u5207\u6362\u81F3\u517C\u5BB9\u626B\u63CF\u6A21\u5F0F\u3002"
+      cspWorkerWarning: "\u56E0\u7F51\u7AD9\u5B89\u5168\u9650\u5236\uFF0C\u5DF2\u5207\u6362\u81F3\u517C\u5BB9\u626B\u63CF\u6A21\u5F0F\u3002",
+      restoringSession: "\u6B63\u5728\u6062\u590D\u4E0A\u6B21\u7684\u626B\u63CF\u4F1A\u8BDD..."
+    },
+    scanSettings: {
+      dynamic: {
+        title: "\u52A8\u6001\u626B\u63CF \u8BBE\u7F6E"
+      },
+      element: {
+        title: "\u5143\u7D20\u626B\u63CF \u8BBE\u7F6E"
+      },
+      persistData: "\u5728\u9875\u9762\u8DF3\u8F6C\u65F6\u4FDD\u7559\u672C\u6B21\u626B\u63CF\u7684\u6570\u636E"
     },
     placeholders: {
       click: "\u70B9\u51FB ",
@@ -648,6 +669,7 @@ var TextExtractor = (() => {
       pauseSessionScan: "\u6682\u505C\u52A8\u6001\u626B\u63CF",
       resumeSessionScan: "\u6062\u590D\u52A8\u6001\u626B\u63CF",
       tooltipHelp: "\u5E2E\u52A9",
+      scanSettings: "\u626B\u63CF\u8BBE\u7F6E",
       disabled: {
         scan_in_progress: "\u53E6\u4E00\u9879\u626B\u63CF\u6B63\u5728\u8FDB\u884C\u4E2D"
       },
@@ -990,7 +1012,17 @@ var TextExtractor = (() => {
       elementScanResumed: "\u5143\u7D20\u6383\u63CF\u5DF2\u6062\u5FA9\u3002",
       sessionScanPaused: "\u52D5\u614B\u6383\u63CF\u5DF2\u66AB\u505C\u3002",
       sessionScanResumed: "\u52D5\u614B\u6383\u63CF\u5DF2\u6062\u5FA9\u3002",
-      cspWorkerWarning: "\u56E0\u7DB2\u7AD9\u5B89\u5168\u9650\u5236\uFF0C\u5DF2\u5207\u63DB\u81F3\u76F8\u5BB9\u6383\u63CF\u6A21\u5F0F\u3002"
+      cspWorkerWarning: "\u56E0\u7DB2\u7AD9\u5B89\u5168\u9650\u5236\uFF0C\u5DF2\u5207\u63DB\u81F3\u76F8\u5BB9\u6383\u63CF\u6A21\u5F0F\u3002",
+      restoringSession: "\u6B63\u5728\u6062\u5FA9\u4E0A\u6B21\u7684\u6383\u63CF\u6703\u8A71..."
+    },
+    scanSettings: {
+      dynamic: {
+        title: "\u52D5\u614B\u6383\u63CF \u8A2D\u5B9A"
+      },
+      element: {
+        title: "\u5143\u7D20\u6383\u63CF \u8A2D\u5B9A"
+      },
+      persistData: "\u5728\u9801\u9762\u8DF3\u8F49\u6642\u4FDD\u7559\u672C\u6B21\u6383\u63CF\u7684\u8CC7\u6599"
     },
     placeholders: {
       click: "\u9EDE\u64CA ",
@@ -1012,6 +1044,7 @@ var TextExtractor = (() => {
       pauseSessionScan: "\u66AB\u505C\u52D5\u614B\u6383\u63CF",
       resumeSessionScan: "\u6062\u5FA9\u52D5\u614B\u6383\u63CF",
       tooltipHelp: "\u5E6B\u52A9",
+      scanSettings: "\u6383\u63CF\u8A2D\u5B9A",
       disabled: {
         scan_in_progress: "\u53E6\u4E00\u9805\u6383\u63CF\u6B63\u5728\u9032\u884C\u4E2D"
       },
@@ -1729,7 +1762,17 @@ ${result.join(",\n")}
       elementScanResumed: "Element scan resumed.",
       sessionScanPaused: "Dynamic scan paused.",
       sessionScanResumed: "Dynamic scan resumed.",
-      cspWorkerWarning: "Switched to compatibility scan mode due to website security restrictions."
+      cspWorkerWarning: "Switched to compatibility scan mode due to website security restrictions.",
+      restoringSession: "Restoring previous scan session..."
+    },
+    scanSettings: {
+      dynamic: {
+        title: "Dynamic Scan Settings"
+      },
+      element: {
+        title: "Element Scan Settings"
+      },
+      persistData: "Persist this scan's data across page navigations"
     },
     placeholders: {
       click: "Click ",
@@ -1751,6 +1794,7 @@ ${result.join(",\n")}
       pauseSessionScan: "Pause Dynamic Scan",
       resumeSessionScan: "Resume Dynamic Scan",
       tooltipHelp: "Help",
+      scanSettings: "Scan Settings",
       disabled: {
         scan_in_progress: "Another scan is in progress"
       },
@@ -2094,7 +2138,17 @@ ${result.join(",\n")}
       elementScanResumed: "\\u5143\\u7D20\\u626B\\u63CF\\u5DF2\\u6062\\u590D\\u3002",
       sessionScanPaused: "\\u52A8\\u6001\\u626B\\u63CF\\u5DF2\\u6682\\u505C\\u3002",
       sessionScanResumed: "\\u52A8\\u6001\\u626B\\u63CF\\u5DF2\\u6062\\u590D\\u3002",
-      cspWorkerWarning: "\\u56E0\\u7F51\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u6362\\u81F3\\u517C\\u5BB9\\u626B\\u63CF\\u6A21\\u5F0F\\u3002"
+      cspWorkerWarning: "\\u56E0\\u7F51\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u6362\\u81F3\\u517C\\u5BB9\\u626B\\u63CF\\u6A21\\u5F0F\\u3002",
+      restoringSession: "\\u6B63\\u5728\\u6062\\u590D\\u4E0A\\u6B21\\u7684\\u626B\\u63CF\\u4F1A\\u8BDD..."
+    },
+    scanSettings: {
+      dynamic: {
+        title: "\\u52A8\\u6001\\u626B\\u63CF \\u8BBE\\u7F6E"
+      },
+      element: {
+        title: "\\u5143\\u7D20\\u626B\\u63CF \\u8BBE\\u7F6E"
+      },
+      persistData: "\\u5728\\u9875\\u9762\\u8DF3\\u8F6C\\u65F6\\u4FDD\\u7559\\u672C\\u6B21\\u626B\\u63CF\\u7684\\u6570\\u636E"
     },
     placeholders: {
       click: "\\u70B9\\u51FB ",
@@ -2116,6 +2170,7 @@ ${result.join(",\n")}
       pauseSessionScan: "\\u6682\\u505C\\u52A8\\u6001\\u626B\\u63CF",
       resumeSessionScan: "\\u6062\\u590D\\u52A8\\u6001\\u626B\\u63CF",
       tooltipHelp: "\\u5E2E\\u52A9",
+      scanSettings: "\\u626B\\u63CF\\u8BBE\\u7F6E",
       disabled: {
         scan_in_progress: "\\u53E6\\u4E00\\u9879\\u626B\\u63CF\\u6B63\\u5728\\u8FDB\\u884C\\u4E2D"
       },
@@ -2459,7 +2514,17 @@ ${result.join(",\n")}
       elementScanResumed: "\\u5143\\u7D20\\u6383\\u63CF\\u5DF2\\u6062\\u5FA9\\u3002",
       sessionScanPaused: "\\u52D5\\u614B\\u6383\\u63CF\\u5DF2\\u66AB\\u505C\\u3002",
       sessionScanResumed: "\\u52D5\\u614B\\u6383\\u63CF\\u5DF2\\u6062\\u5FA9\\u3002",
-      cspWorkerWarning: "\\u56E0\\u7DB2\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u63DB\\u81F3\\u76F8\\u5BB9\\u6383\\u63CF\\u6A21\\u5F0F\\u3002"
+      cspWorkerWarning: "\\u56E0\\u7DB2\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u63DB\\u81F3\\u76F8\\u5BB9\\u6383\\u63CF\\u6A21\\u5F0F\\u3002",
+      restoringSession: "\\u6B63\\u5728\\u6062\\u5FA9\\u4E0A\\u6B21\\u7684\\u6383\\u63CF\\u6703\\u8A71..."
+    },
+    scanSettings: {
+      dynamic: {
+        title: "\\u52D5\\u614B\\u6383\\u63CF \\u8A2D\\u5B9A"
+      },
+      element: {
+        title: "\\u5143\\u7D20\\u6383\\u63CF \\u8A2D\\u5B9A"
+      },
+      persistData: "\\u5728\\u9801\\u9762\\u8DF3\\u8F49\\u6642\\u4FDD\\u7559\\u672C\\u6B21\\u6383\\u63CF\\u7684\\u8CC7\\u6599"
     },
     placeholders: {
       click: "\\u9EDE\\u64CA ",
@@ -2481,6 +2546,7 @@ ${result.join(",\n")}
       pauseSessionScan: "\\u66AB\\u505C\\u52D5\\u614B\\u6383\\u63CF",
       resumeSessionScan: "\\u6062\\u5FA9\\u52D5\\u614B\\u6383\\u63CF",
       tooltipHelp: "\\u5E6B\\u52A9",
+      scanSettings: "\\u6383\\u63CF\\u8A2D\\u5B9A",
       disabled: {
         scan_in_progress: "\\u53E6\\u4E00\\u9805\\u6383\\u63CF\\u6B63\\u5728\\u9032\\u884C\\u4E2D"
       },
@@ -3021,16 +3087,22 @@ ${result.join(",\n")}
        */
       case "session-add-texts": {
         const { texts } = payload;
-        let changed = false;
+        const newTexts = [];
         if (Array.isArray(texts)) {
           texts.forEach((text) => {
             if (processText(text, sessionTexts)) {
-              changed = true;
+              newTexts.push(text);
             }
           });
         }
-        if (changed) {
-          self.postMessage({ type: "countUpdated", payload: sessionTexts.size });
+        if (newTexts.length > 0) {
+          self.postMessage({
+            type: "countUpdated",
+            payload: {
+              count: sessionTexts.size,
+              newTexts
+            }
+          });
         }
         break;
       }
@@ -3049,13 +3121,13 @@ ${result.join(",\n")}
       case "session-clear":
         sessionTexts.clear();
         log2("Session cleared.");
-        self.postMessage({ type: "countUpdated", payload: 0 });
+        self.postMessage({ type: "countUpdated", payload: { count: 0, newTexts: [] } });
         break;
       /**
        * \u4F1A\u8BDD\u6A21\u5F0F\uFF1A\u83B7\u53D6\u5F53\u524D\u8BA1\u6570\u503C
        */
       case "session-get-count":
-        self.postMessage({ type: "countUpdated", payload: sessionTexts.size });
+        self.postMessage({ type: "countUpdated", payload: { count: sessionTexts.size, newTexts: [] } });
         break;
     }
   };
@@ -3548,8 +3620,14 @@ ${result.join(",\n")}
       log(prefix + t("log.textProcessor.filtered", { text, reason }));
     };
     const processedTexts = filterAndNormalizeTexts(texts, filterRules, true, logFiltered);
-    processedTexts.forEach((text) => sessionTexts.add(text));
-    return sessionTexts.size > originalSize;
+    const newTexts = [];
+    processedTexts.forEach((text) => {
+      if (!sessionTexts.has(text)) {
+        sessionTexts.add(text);
+        newTexts.push(text);
+      }
+    });
+    return { newTexts };
   }
   function getCountInFallback() {
     return sessionTexts.size;
@@ -3570,6 +3648,7 @@ ${result.join(",\n")}
   var onSummaryCallback = null;
   var onUpdateCallback = null;
   var currentCount = 0;
+  var allDiscoveredTexts =  new Set();
   on("clearSessionScan", () => {
     clearSessionData();
   });
@@ -3590,7 +3669,9 @@ ${result.join(",\n")}
     if (textsBatch.length > 0) {
       const logPrefix = "\u52A8\u6001\u65B0\u53D1\u73B0";
       if (useFallback) {
-        if (processTextsInFallback(textsBatch, logPrefix)) {
+        const result = processTextsInFallback(textsBatch, logPrefix);
+        if (result && result.newTexts.length > 0) {
+          result.newTexts.forEach((text) => allDiscoveredTexts.add(text));
           const count = getCountInFallback();
           if (onUpdateCallback) onUpdateCallback(count);
           updateScanCount(count, "session");
@@ -3605,6 +3686,7 @@ ${result.join(",\n")}
   };
   function clearSessionData() {
     currentCount = 0;
+    allDiscoveredTexts.clear();
     if (useFallback) {
       clearInFallback();
       if (onUpdateCallback) onUpdateCallback(0);
@@ -3615,7 +3697,10 @@ ${result.join(",\n")}
       log(t("log.sessionScan.worker.clearCommandSent"));
     }
   }
-  var start = async (onUpdate) => {
+  function getSessionScanData() {
+    return Array.from(allDiscoveredTexts);
+  }
+  var start = async (onUpdate, restoredData = []) => {
     if (isRecording) return;
     isPaused = false;
     if (worker) {
@@ -3630,11 +3715,15 @@ ${result.join(",\n")}
     onUpdateCallback = onUpdate;
     useFallback = false;
     isRecording = true;
+    if (restoredData && restoredData.length > 0) {
+      restoredData.forEach((text) => allDiscoveredTexts.add(text));
+    }
     const [initialTexts, settings, workerAllowed] = await Promise.all([
       extractAndProcessText(),
       loadSettings(),
       isWorkerAllowed()
     ]);
+    const combinedInitialTexts = [... new Set([...restoredData, ...initialTexts])];
     const { filterRules: filterRules2, enableDebugLogging } = settings;
     const activateFallbackMode = () => {
       log(t("log.sessionScan.switchToFallback"), "warn");
@@ -3644,8 +3733,11 @@ ${result.join(",\n")}
       }
       useFallback = true;
       initFallback(filterRules2);
-      if (initialTexts.length > 0) {
-        processTextsInFallback(initialTexts);
+      if (combinedInitialTexts.length > 0) {
+        const result = processTextsInFallback(combinedInitialTexts);
+        if (result && result.newTexts.length > 0) {
+          result.newTexts.forEach((text) => allDiscoveredTexts.add(text));
+        }
         const count = getCountInFallback();
         if (onUpdateCallback) onUpdateCallback(count);
         updateScanCount(count, "session");
@@ -3658,9 +3750,12 @@ ${result.join(",\n")}
         worker.onmessage = (event) => {
           const { type, payload } = event.data;
           if (type === "countUpdated") {
-            currentCount = payload;
-            if (onUpdateCallback) onUpdateCallback(payload);
-            updateScanCount(payload, "session");
+            currentCount = payload.count;
+            if (payload.newTexts && payload.newTexts.length > 0) {
+              payload.newTexts.forEach((text) => allDiscoveredTexts.add(text));
+            }
+            if (onUpdateCallback) onUpdateCallback(payload.count);
+            updateScanCount(payload.count, "session");
           } else if (type === "summaryReady" && onSummaryCallback) {
             onSummaryCallback(payload, currentCount);
             onSummaryCallback = null;
@@ -3684,8 +3779,8 @@ ${result.join(",\n")}
             }
           }
         });
-        worker.postMessage({ type: "session-add-texts", payload: { texts: initialTexts } });
-        log(t("log.sessionScan.worker.initialized", { count: initialTexts.length }));
+        worker.postMessage({ type: "session-add-texts", payload: { texts: combinedInitialTexts } });
+        log(t("log.sessionScan.worker.initialized", { count: combinedInitialTexts.length }));
       } catch (e) {
         log(t("log.sessionScan.worker.initSyncError", { error: e.message }), "error");
         showNotification(t("notifications.cspWorkerWarning"), { type: "info", duration: 5e3 });
@@ -4536,6 +4631,12 @@ ${result.join(",\n")}
       gitCommitHash: true,
       websiteUrl: true,
       shorthandNumber: true
+    },
+    dynamicScanSettings: {
+      persistDataAcrossPages: false
+    },
+    elementScanSettings: {
+      persistDataAcrossPages: false
     }
   };
   function applySettings(newSettings, oldSettings) {
@@ -4564,6 +4665,14 @@ ${result.join(",\n")}
           filterRules: {
             ...defaultSettings.filterRules,
             ...parsedSettings.filterRules || {}
+          },
+          dynamicScanSettings: {
+            ...defaultSettings.dynamicScanSettings,
+            ...parsedSettings.dynamicScanSettings || {}
+          },
+          elementScanSettings: {
+            ...defaultSettings.elementScanSettings,
+            ...parsedSettings.elementScanSettings || {}
           }
         };
         return mergedSettings;
@@ -4708,9 +4817,9 @@ ${result.join(",\n")}
       this.handleEscKey = this.handleEscKey.bind(this);
     }
         _createDOM(config) {
-      const overlay = document.createElement("div");
-      overlay.className = "info-tooltip-overlay";
-      overlay.tabIndex = -1;
+      const overlay2 = document.createElement("div");
+      overlay2.className = "info-tooltip-overlay";
+      overlay2.tabIndex = -1;
       const tooltip = document.createElement("div");
       tooltip.className = "info-tooltip-modal";
       if (config.width) tooltip.style.width = config.width;
@@ -4741,8 +4850,8 @@ ${result.join(",\n")}
       content.appendChild(textElement);
       tooltip.appendChild(header);
       tooltip.appendChild(content);
-      overlay.appendChild(tooltip);
-      this.tooltipElement = overlay;
+      overlay2.appendChild(tooltip);
+      this.tooltipElement = overlay2;
       uiContainer.appendChild(this.tooltipElement);
     }
     /**
@@ -4862,10 +4971,102 @@ ${result.join(",\n")}
 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M360-320h80v-320h-80v320Zm160 0h80v-320h-80v320ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>`;
   var resumeIcon = `
 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m380-300 280-180-280-180v360ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>`;
+  var settingsIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z"/></svg>`;
+  function buildScanModePanelDOM(scanType, settings) {
+    const container = document.createElement("div");
+    container.className = "settings-panel-content";
+    const header = document.createElement("div");
+    header.className = "settings-panel-header";
+    const titleKey = scanType === "dynamic" ? "scanSettings.dynamic.title" : "scanSettings.element.title";
+    header.textContent = t(titleKey);
+    container.appendChild(header);
+    const body = document.createElement("div");
+    body.className = "settings-panel-body";
+    container.appendChild(body);
+    const persistSetting = createCheckboxSetting(
+      "persist-data-checkbox",
+      t("scanSettings.persistData"),
+      settings.persistDataAcrossPages
+    );
+    body.appendChild(persistSetting);
+    return container;
+  }
+  function createCheckboxSetting(id, labelText, isChecked) {
+    const settingRow = document.createElement("div");
+    settingRow.className = "setting-row";
+    const label = document.createElement("label");
+    label.setAttribute("for", id);
+    label.textContent = labelText;
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.id = id;
+    checkbox.checked = isChecked;
+    settingRow.appendChild(label);
+    settingRow.appendChild(checkbox);
+    return settingRow;
+  }
+  var overlay = null;
+  function openScanModeSettings(scanType, currentSettings, onSave) {
+    if (overlay) {
+      return;
+    }
+    overlay = document.createElement("div");
+    overlay.className = "settings-panel-overlay";
+    const modal = document.createElement("div");
+    modal.className = "settings-panel-modal";
+    overlay.appendChild(modal);
+    const scanSettings = scanType === "dynamic" ? currentSettings.dynamicScanSettings : currentSettings.elementScanSettings;
+    const panelDOM = buildScanModePanelDOM(scanType, scanSettings);
+    modal.appendChild(panelDOM);
+    const footer = document.createElement("div");
+    footer.className = "settings-panel-footer";
+    const saveButton = document.createElement("button");
+    saveButton.className = "save-button";
+    saveButton.textContent = t("common.save");
+    footer.appendChild(saveButton);
+    modal.appendChild(footer);
+    const shadowRoot = document.querySelector(".text-extractor-container")?.shadowRoot;
+    if (shadowRoot) {
+      shadowRoot.appendChild(overlay);
+    } else {
+      document.body.appendChild(overlay);
+    }
+    const removePanel = () => {
+      if (overlay) {
+        overlay.remove();
+        overlay = null;
+      }
+    };
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) {
+        removePanel();
+      }
+    });
+    saveButton.addEventListener("click", () => {
+      const checkbox = panelDOM.querySelector("#persist-data-checkbox");
+      const isChecked = checkbox.checked;
+      const newSettings = { ...currentSettings };
+      if (scanType === "dynamic") {
+        newSettings.dynamicScanSettings.persistDataAcrossPages = isChecked;
+      } else {
+        newSettings.elementScanSettings.persistDataAcrossPages = isChecked;
+      }
+      onSave(newSettings);
+      removePanel();
+    });
+    const keydownHandler = (e) => {
+      if (e.key === "Escape") {
+        removePanel();
+        document.removeEventListener("keydown", keydownHandler);
+      }
+    };
+    document.addEventListener("keydown", keydownHandler);
+  }
   var counterWithHelpContainer = null;
   var counterElement = null;
   var helpIcon = null;
   var pauseResumeButton = null;
+  var settingsButton = null;
   function handleSpacebarPauseResume(event) {
     if (event.key !== " " && event.code !== "Space") {
       return;
@@ -4892,10 +5093,12 @@ ${result.join(",\n")}
     counterElement = createTopCenterCounter(counterKey);
     helpIcon = createHelpIcon(helpKey);
     counterWithHelpContainer.appendChild(counterElement);
+    const separator = document.createElement("div");
+    separator.className = "counter-with-help-separator";
+    counterWithHelpContainer.appendChild(separator);
+    const actionsContainer = document.createElement("div");
+    actionsContainer.className = "counter-actions-container";
     if (onPause && onResume && scanType) {
-      const separator = document.createElement("div");
-      separator.className = "counter-with-help-separator";
-      counterWithHelpContainer.appendChild(separator);
       pauseResumeButton = createButton({
         icon: pauseIcon,
         iconOnly: true,
@@ -4913,17 +5116,25 @@ ${result.join(",\n")}
           }
         }
       });
-      const actionsContainer = document.createElement("div");
-      actionsContainer.className = "counter-actions-container";
       actionsContainer.appendChild(pauseResumeButton);
-      actionsContainer.appendChild(helpIcon);
-      counterWithHelpContainer.appendChild(actionsContainer);
-    } else {
-      const separator = document.createElement("div");
-      separator.className = "counter-with-help-separator";
-      counterWithHelpContainer.appendChild(separator);
-      counterWithHelpContainer.appendChild(helpIcon);
     }
+    const scanTypeForSettings = scanType === "SessionScan" ? "dynamic" : "element";
+    settingsButton = createButton({
+      icon: settingsIcon,
+      iconOnly: true,
+      tooltipKey: "tooltip.scanSettings",
+      onClick: () => {
+        const currentSettings = loadSettings();
+        openScanModeSettings(scanTypeForSettings, currentSettings, (newSettings) => {
+          const oldSettings = loadSettings();
+          saveSettings(newSettings);
+          applySettings(newSettings, oldSettings);
+        });
+      }
+    });
+    actionsContainer.appendChild(settingsButton);
+    actionsContainer.appendChild(helpIcon);
+    counterWithHelpContainer.appendChild(actionsContainer);
     uiContainer.appendChild(counterWithHelpContainer);
     updateCounterValue(0);
     return counterWithHelpContainer;
@@ -4942,10 +5153,12 @@ ${result.join(",\n")}
     const counterToRemove = counterElement;
     const iconToRemove = helpIcon;
     const buttonToRemove = pauseResumeButton;
+    const settingsButtonToRemove = settingsButton;
     counterWithHelpContainer = null;
     counterElement = null;
     helpIcon = null;
     pauseResumeButton = null;
+    settingsButton = null;
     containerToRemove.classList.remove("is-visible");
     setTimeout(() => {
       if (counterToRemove && typeof counterToRemove.destroy === "function") {
@@ -4956,6 +5169,9 @@ ${result.join(",\n")}
       }
       if (buttonToRemove && typeof buttonToRemove.destroy === "function") {
         buttonToRemove.destroy();
+      }
+      if (settingsButtonToRemove && typeof settingsButtonToRemove.destroy === "function") {
+        settingsButtonToRemove.destroy();
       }
       if (containerToRemove) {
         containerToRemove.remove();
@@ -5012,7 +5228,11 @@ ${result.join(",\n")}
       }
     }
   };
-  function handleDynamicExtractClick(dynamicFab2) {
+  function handleDynamicExtractClick(dynamicFab2, restoredData = []) {
+    if (Array.isArray(dynamicFab2)) {
+      restoredData = dynamicFab2;
+      dynamicFab2 = getDynamicFab();
+    }
     const elementScanFab2 = getElementScanFab();
     if (isSessionRecording()) {
       log(t("scan.stopSession"));
@@ -5048,7 +5268,7 @@ ${result.join(",\n")}
         start((count) => {
           updateCounterValue(count);
           currentSessionCount = count;
-        });
+        }, restoredData);
       }, 50);
       document.addEventListener("keydown", handleEscForSessionScan, true);
     }
@@ -5544,22 +5764,31 @@ ${result.join(",\n")}
   function setShouldResumeAfterModalClose(value) {
     shouldResumeAfterModalClose = value;
   }
-  function handleElementScanClick(fabElement) {
+  function handleElementScanClick(fabElement, restoredData = []) {
+    if (Array.isArray(fabElement)) {
+      restoredData = fabElement;
+      fabElement = getElementScanFab();
+    }
     if (isActive) {
       stopElementScan(fabElement);
     } else {
-      startElementScan(fabElement);
+      startElementScan(fabElement, restoredData);
     }
   }
-  function startElementScan(fabElement) {
+  function startElementScan(fabElement, restoredData = []) {
     log(t("log.elementScan.starting"));
-    showNotification(t("notifications.elementScanStarted"), { type: "info" });
+    if (restoredData && restoredData.length > 0) {
+      stagedTexts = new Set(restoredData);
+    } else {
+      showNotification(t("notifications.elementScanStarted"), { type: "info" });
+    }
     isActive = true;
     isAdjusting = false;
     fallbackNotificationShown = false;
     fabElement.classList.add("is-recording");
     updateFabTooltip(fabElement, "scan.stopSession");
     showTopCenterUI2();
+    updateStagedCount();
     const dynamicFab2 = getDynamicFab();
     if (dynamicFab2) {
       dynamicFab2.dataset.originalTooltipKey = dynamicFab2.dataset.tooltipKey;
@@ -6172,7 +6401,6 @@ ${result.join(",\n")}
     modal.appendChild(footer);
     return modal;
   }
-  var settingsIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z"/></svg>`;
   var filterIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M440-160q-17 0-28.5-11.5T400-200v-240L168-736q-15-20-4.5-42t36.5-22h560q26 0 36.5 22t-4.5 42L560-440v240q0 17-11.5 28.5T520-160h-80Zm40-308 198-252H282l198 252Zm0 0Z"/></svg>`;
   var saveIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z"/></svg>`;
   var relatedSettingsIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M320-280h320v-400H320v400Zm80-80v-240h160v240H400Zm40-120h80v-80h-80v80ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/></svg>`;
@@ -6424,13 +6652,56 @@ ${result.join(",\n")}
   function initializeExporter() {
     on("exportToFile", exportToFile);
   }
-  function initialize2() {
+  window.addEventListener("beforeunload", () => {
+    const settings = loadSettings();
+    let dataToPersist = null;
+    let scanType = null;
+    if (isSessionRecording() && settings.dynamicScanSettings.persistDataAcrossPages) {
+      dataToPersist = getSessionScanData();
+      scanType = "dynamic";
+    } else if (isElementScanActive() && settings.elementScanSettings.persistDataAcrossPages) {
+      dataToPersist = getStagedTexts();
+      scanType = "element";
+    }
+    if (dataToPersist && dataToPersist.length > 0) {
+      setValue("persistedScanData", JSON.stringify(dataToPersist));
+      setValue("persistedScanType", scanType);
+    } else {
+      setValue("persistedScanData", null);
+      setValue("persistedScanType", null);
+    }
+  });
+  async function initialize2() {
     if (window.top !== window.self) {
       log(t("log.main.inIframe"));
       return;
     }
+    const persistedDataJSON = await getValue("persistedScanData", null);
+    const persistedScanType = await getValue("persistedScanType", null);
+    let restoredData = [];
+    if (persistedDataJSON) {
+      try {
+        restoredData = JSON.parse(persistedDataJSON);
+      } catch (e) {
+        restoredData = [];
+      }
+    }
     const settings = loadSettings();
     initializeLanguage(settings);
+    if (restoredData.length > 0 && persistedScanType) {
+      const shouldRestoreDynamic = persistedScanType === "dynamic" && settings.dynamicScanSettings.persistDataAcrossPages;
+      const shouldRestoreElement = persistedScanType === "element" && settings.elementScanSettings.persistDataAcrossPages;
+      if (shouldRestoreDynamic || shouldRestoreElement) {
+        showNotification(t("notifications.restoringSession"), { type: "info" });
+        setValue("persistedScanData", null);
+        setValue("persistedScanType", null);
+        if (shouldRestoreDynamic) {
+          handleDynamicExtractClick(restoredData);
+        } else if (shouldRestoreElement) {
+          handleElementScanClick(restoredData);
+        }
+      }
+    }
     updateLoggerState(settings.enableDebugLogging);
     log(t("log.main.initializing"));
     log(t("log.main.initialSettingsLoaded"), settings);
