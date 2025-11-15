@@ -7,11 +7,13 @@ import { updateTopCenterCounter, createTopCenterCounter } from './topCenterCount
 import { uiContainer } from '../uiContainer.js';
 import { pauseIcon } from '../../../assets/icons/pauseIcon.js';
 import { resumeIcon } from '../../../assets/icons/resumeIcon.js';
+import { settingsIcon } from '../../../assets/icons/settingsIcon.js';
 
 let counterWithHelpContainer = null;
 let counterElement = null;
 let helpIcon = null;
 let pauseResumeButton = null;
+let settingsButton = null;
 
 /**
  * @private
@@ -60,9 +62,10 @@ function handleSpacebarPauseResume(event) {
  * @param {function} [config.onPause] - “暂停”按钮点击事件的回调。
  * @param {function} [config.onResume] - “恢复”按钮点击事件的回调。
  * @param {string} [config.scanType] - 当前扫描的类型，用于工具提示。
+ * @param {function} [config.onSettingsClick] - “设置”按钮点击事件的回调。
  * @returns {HTMLElement} - 返回创建的容器元素。
  */
-export function createCounterWithHelp({ counterKey, helpKey, onPause, onResume, scanType }) {
+export function createCounterWithHelp({ counterKey, helpKey, onPause, onResume, scanType, onSettingsClick }) {
     let isPaused = false;
 
     counterWithHelpContainer = document.createElement('div');
@@ -73,11 +76,14 @@ export function createCounterWithHelp({ counterKey, helpKey, onPause, onResume, 
 
     counterWithHelpContainer.appendChild(counterElement);
 
-    if (onPause && onResume && scanType) {
-        const separator = document.createElement('div');
-        separator.className = 'counter-with-help-separator';
-        counterWithHelpContainer.appendChild(separator);
+    const separator = document.createElement('div');
+    separator.className = 'counter-with-help-separator';
+    counterWithHelpContainer.appendChild(separator);
 
+    const actionsContainer = document.createElement('div');
+    actionsContainer.className = 'counter-actions-container';
+
+    if (onPause && onResume && scanType) {
         pauseResumeButton = createButton({
             icon: pauseIcon,
             iconOnly: true,
@@ -95,20 +101,22 @@ export function createCounterWithHelp({ counterKey, helpKey, onPause, onResume, 
                 }
             }
         });
-
-        const actionsContainer = document.createElement('div');
-        actionsContainer.className = 'counter-actions-container';
         actionsContainer.appendChild(pauseResumeButton);
-        actionsContainer.appendChild(helpIcon);
-
-        counterWithHelpContainer.appendChild(actionsContainer);
-    } else {
-        const separator = document.createElement('div');
-        separator.className = 'counter-with-help-separator';
-        counterWithHelpContainer.appendChild(separator);
-        counterWithHelpContainer.appendChild(helpIcon);
     }
 
+    actionsContainer.appendChild(helpIcon);
+
+    if (onSettingsClick) {
+        settingsButton = createButton({
+            icon: settingsIcon,
+            iconOnly: true,
+            tooltipKey: 'settings.title',
+            onClick: onSettingsClick
+        });
+        actionsContainer.appendChild(settingsButton);
+    }
+
+    counterWithHelpContainer.appendChild(actionsContainer);
     uiContainer.appendChild(counterWithHelpContainer);
 
     updateCounterValue(0);
@@ -147,12 +155,14 @@ export function hideCounterWithHelp() {
     const counterToRemove = counterElement;
     const iconToRemove = helpIcon;
     const buttonToRemove = pauseResumeButton; // 引用按钮
+    const settingsButtonToRemove = settingsButton;
 
     // 立即清除全局引用，防止重复操作
     counterWithHelpContainer = null;
     counterElement = null;
     helpIcon = null;
     pauseResumeButton = null;
+    settingsButton = null;
 
     // 触发退场动画
     containerToRemove.classList.remove('is-visible');
@@ -167,6 +177,9 @@ export function hideCounterWithHelp() {
         }
         if (buttonToRemove && typeof buttonToRemove.destroy === 'function') {
             buttonToRemove.destroy();
+        }
+        if (settingsButtonToRemove && typeof settingsButtonToRemove.destroy === 'function') {
+            settingsButtonToRemove.destroy();
         }
         if (containerToRemove) {
             containerToRemove.remove();

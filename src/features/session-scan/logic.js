@@ -16,6 +16,7 @@ import { fire, on } from '../../shared/utils/eventBus.js';
 import * as fallback from './fallback.js';
 import { trustedWorkerUrl } from '../../shared/workers/worker-url.js';
 import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
+import { saveActiveSession, clearActiveSession } from '../../shared/services/sessionPersistence.js';
 
 // --- 模块级变量 ---
 let isRecording = false;
@@ -26,6 +27,7 @@ let useFallback = false;
 let onSummaryCallback = null;
 let onUpdateCallback = null;
 let currentCount = 0; // 新增：在模块级别跟踪计数值
+let sessionTextsMirror = new Set(); // 主线程数据镜像
 
 // --- 事件监听 ---
 on('clearSessionScan', () => {
@@ -73,6 +75,7 @@ const handleMutations = (mutations) => {
  */
 function clearSessionData() {
     currentCount = 0; // 重置计数值
+    sessionTextsMirror.clear();
     if (useFallback) {
         fallback.clearInFallback();
         if (onUpdateCallback) onUpdateCallback(0);
@@ -86,7 +89,7 @@ function clearSessionData() {
 
 // --- 公开函数 ---
 
-export const start = async (onUpdate) => {
+export const start = async (onUpdate, resumedData = null) => {
     if (isRecording) return;
 
     // --- 1. 彻底清理旧状态 ---
@@ -102,6 +105,7 @@ export const start = async (onUpdate) => {
     
     // --- 2. 初始化本次会话的状态 ---
     currentCount = 0;
+    sessionTextsMirror.clear();
     onUpdateCallback = onUpdate;
     useFallback = false;
     isRecording = true;
@@ -112,6 +116,13 @@ export const start = async (onUpdate) => {
         loadSettings(),
         isWorkerAllowed()
     ]);
+
+    if (resumedData && Array.isArray(resumedData)) {
+        resumedData.forEach(text => {
+            initialTexts.push(text);
+            sessionTextsMirror.add(text);
+        });
+    }
     const { filterRules, enableDebugLogging } = settings;
 
     // --- 4. 定义后备模式激活函数 ---
@@ -141,9 +152,13 @@ export const start = async (onUpdate) => {
             worker.onmessage = (event) => {
                 const { type, payload } = event.data;
                 if (type === 'countUpdated') {
-                    currentCount = payload;
-                    if (onUpdateCallback) onUpdateCallback(payload);
-                    updateScanCount(payload, 'session');
+                    currentCount = payload.count;
+                    if (onUpdateCallback) onUpdateCallback(payload.count);
+                    updateScanCount(payload.count, 'session');
+
+                    if (payload.newTexts && Array.isArray(payload.newTexts)) {
+                        payload.newTexts.forEach(text => sessionTextsMirror.add(text));
+                    }
                 } else if (type === 'summaryReady' && onSummaryCallback) {
                     onSummaryCallback(payload, currentCount);
                     onSummaryCallback = null;
@@ -167,9 +182,9 @@ export const start = async (onUpdate) => {
                         textFiltered: t('log.textProcessor.filtered'),
                         filterReasons: getTranslationObject('filterReasons'),
                     },
+                    initialData: initialTexts
                 },
             });
-            worker.postMessage({ type: 'session-add-texts', payload: { texts: initialTexts } });
             log(t('log.sessionScan.worker.initialized', { count: initialTexts.length }));
 
         } catch (e) {
@@ -188,7 +203,12 @@ export const start = async (onUpdate) => {
     // 都在这里统一、安全地启动 DOM 监听。
     observer = new MutationObserver(handleMutations);
     observer.observe(document.body, { childList: true, subtree: true });
+    window.addEventListener('beforeunload', handleSessionScanUnload);
     log(t('log.sessionScan.domObserver.started'));
+};
+
+const handleSessionScanUnload = () => {
+    saveActiveSession('session-scan');
 };
 
 export const stop = (onStopped) => {
@@ -202,8 +222,11 @@ export const stop = (onStopped) => {
         observer.disconnect();
         observer = null;
     }
+    window.removeEventListener('beforeunload', handleSessionScanUnload);
+    clearActiveSession();
     isRecording = false;
     isPaused = false;
+    sessionTextsMirror.clear();
     onUpdateCallback = null;
 
     if (onStopped) {
@@ -211,8 +234,9 @@ export const stop = (onStopped) => {
             onStopped(fallback.getCountInFallback());
         } else if (worker) {
             const finalCountListener = (event) => {
-                if (event.data.type === 'countUpdated') {
-                    onStopped(event.data.payload);
+                const { type, payload } = event.data;
+                if (type === 'countUpdated' && typeof payload.count !== 'undefined') {
+                    onStopped(payload.count);
                     worker.removeEventListener('message', finalCountListener);
                 }
             };
@@ -222,6 +246,10 @@ export const stop = (onStopped) => {
             onStopped(0);
         }
     }
+};
+
+export const getSessionTexts = () => {
+    return sessionTextsMirror;
 };
 
 export const requestSummary = (onReady) => {

@@ -7,7 +7,7 @@ import { systemThemeIcon } from '../../assets/icons/systemThemeIcon.js';
 import { lightThemeIcon } from '../../assets/icons/lightThemeIcon.js';
 import { darkThemeIcon } from '../../assets/icons/darkThemeIcon.js';
 import { uiContainer } from '../../shared/ui/uiContainer.js';
-import { buildPanelDOM } from './panelBuilder.js';
+import { buildPanelDOM, buildContextualPanelDOM } from './panelBuilder.js';
 import { filterDefinitions, relatedSettingsDefinitions, selectSettingsDefinitions } from './config.js';
 import { t } from '../../shared/i18n/index.js';
 import { on } from '../../shared/utils/eventBus.js';
@@ -249,4 +249,64 @@ export function initSettingsPanel(onOpen) {
  */
 export function openSettingsPanel(settings, onSaveCallback) {
     showSettingsPanel(settings, onSaveCallback);
+}
+
+export function openContextualSettingsPanel({ titleKey, definitions, settings, onSave }) {
+    let contextualPanel = document.createElement('div');
+    contextualPanel.className = 'settings-panel-overlay';
+    contextualPanel.tabIndex = -1;
+
+    const panelModal = buildContextualPanelDOM({ titleKey, definitions, settings });
+    contextualPanel.appendChild(panelModal);
+    uiContainer.appendChild(contextualPanel);
+
+    const handleKeyDown = (event) => {
+        if (event.key === 'Escape') {
+            closePanel();
+        }
+    };
+
+    const closePanel = () => {
+        if (contextualPanel) {
+            document.removeEventListener('keydown', handleKeyDown, true);
+            contextualPanel.classList.remove('is-visible');
+            setTimeout(() => {
+                contextualPanel.remove();
+                contextualPanel = null;
+            }, 300);
+        }
+    };
+
+    const handleSave = () => {
+        const newSettings = {};
+        definitions.forEach(def => {
+            if (def.type === 'checkbox') {
+                const checkbox = contextualPanel.querySelector(`#${def.id}`);
+                if (checkbox) newSettings[def.key] = checkbox.checked;
+            }
+        });
+        if (onSave) {
+            onSave(newSettings);
+        }
+        closePanel();
+    };
+
+    const footer = contextualPanel.querySelector('.settings-panel-footer');
+    const saveButton = createButton({
+        id: 'save-contextual-settings-btn',
+        textKey: 'common.save',
+        icon: saveIcon,
+        onClick: handleSave,
+    });
+    footer.appendChild(saveButton);
+
+    contextualPanel.querySelector('.settings-panel-close').addEventListener('click', closePanel);
+    document.addEventListener('keydown', handleKeyDown, true);
+
+    setTimeout(() => {
+        if (contextualPanel) {
+            contextualPanel.classList.add('is-visible');
+            contextualPanel.focus();
+        }
+    }, 10);
 }

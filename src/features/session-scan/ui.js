@@ -13,6 +13,8 @@ import { stopIcon } from '../../assets/icons/stopIcon.js';
 import { simpleTemplate } from '../../shared/utils/templating.js';
 import { on } from '../../shared/utils/eventBus.js';
 import { log } from '../../shared/utils/logger.js';
+import { openContextualSettingsPanel } from '../settings/ui.js';
+import { loadSettings, saveSettings, applySettings } from '../settings/logic.js';
 
 let currentSessionCount = 0;
 
@@ -32,7 +34,29 @@ function showTopCenterUI() {
         helpKey: 'tutorial.sessionScan',
         onPause: sessionExtractor.pauseSessionScan,
         onResume: sessionExtractor.resumeSessionScan,
-        scanType: 'SessionScan'
+        scanType: 'SessionScan',
+        onSettingsClick: () => {
+            const currentSettings = loadSettings();
+            const definitions = [
+                {
+                    id: 'persist-data-checkbox-session',
+                    key: 'sessionScan_persistData',
+                    type: 'checkbox',
+                    label: 'settings.contextual.persistData',
+                    tooltip: 'settings.contextual.persistDataTooltip.sessionScan'
+                }
+            ];
+            openContextualSettingsPanel({
+                titleKey: 'settings.contextual.sessionScanTitle',
+                definitions: definitions,
+                settings: currentSettings,
+                onSave: (newSettings) => {
+                    const updatedSettings = { ...currentSettings, ...newSettings };
+                    saveSettings(updatedSettings);
+                    applySettings(updatedSettings, currentSettings);
+                }
+            });
+        }
     });
     showCounterWithHelp();
 }
@@ -157,3 +181,39 @@ export function handleDynamicExtractClick(dynamicFab) {
         document.addEventListener('keydown', handleEscForSessionScan, true);
     }
 }
+
+// 新增：监听会话恢复事件
+on('resumeScanSession', async (state) => {
+    if (state.mode === 'session-scan') {
+        log('Resuming session-scan from previous page...');
+        const dynamicFab = getDynamicFab();
+        const settings = await loadSettings();
+
+        // 确保按钮存在且当前未在扫描
+        if (dynamicFab && !sessionExtractor.isSessionRecording()) {
+            const resumedData = (settings.sessionScan_persistData && state.data) ? state.data : null;
+
+            // 直接调用 start 函数，并传入恢复的数据
+            sessionExtractor.start((count) => {
+                updateCounterValue(count);
+                currentSessionCount = count;
+            }, resumedData);
+
+            // 手动更新UI状态以匹配“正在录制”
+            setFabIcon(dynamicFab, stopIcon);
+            dynamicFab.classList.add('is-recording');
+            updateFabTooltip(dynamicFab, 'scan.stopSession');
+            showTopCenterUI();
+
+            // 禁用“元素扫描”按钮
+            const elementScanFab = getElementScanFab();
+            if (elementScanFab) {
+                elementScanFab.dataset.originalTooltipKey = elementScanFab.dataset.tooltipKey;
+                updateFabTooltip(elementScanFab, 'tooltip.disabled.scan_in_progress');
+                elementScanFab.classList.add('fab-disabled');
+            }
+
+            showNotification(t('notifications.sessionScanResumed'), { type: 'info' });
+        }
+    }
+});

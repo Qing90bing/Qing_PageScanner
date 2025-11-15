@@ -72,6 +72,15 @@
     "panel": {
       "title": "Settings Panel"
     },
+    "contextual": {
+        "elementScanTitle": "Element Scan Settings",
+        "sessionScanTitle": "Dynamic Scan Settings",
+        "persistData": "Persist data across pages",
+        "persistDataTooltip": {
+            "elementScan": "When enabled, automatically restores all currently staged text when you navigate to a new page. If disabled, only the scan mode is restored, and the staged area will be empty.",
+            "sessionScan": "When enabled, automatically resumes and continues accumulating results from the previous page when you navigate to a new one. If disabled, only the scan mode is restored, and a new scan session begins."
+        }
+    },
     "languages": {
       "en": "English",
       "zh_CN": "简体中文",
@@ -123,9 +132,9 @@
     "scanFailed": "Scan failed.",
     "elementScanStarted": "Element scan started.",
     "elementScanPaused": "Element scan paused.",
-    "elementScanResumed": "Element scan resumed.",
+    "elementScanResumed": "Element scan session resumed from previous page.",
     "sessionScanPaused": "Dynamic scan paused.",
-    "sessionScanResumed": "Dynamic scan resumed.",
+    "sessionScanResumed": "Dynamic scan session resumed from previous page.",
     "cspWorkerWarning": "Switched to compatibility scan mode due to website security restrictions."
   },
   "placeholders": {

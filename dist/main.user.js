@@ -208,6 +208,15 @@ var TextExtractor = (() => {
       panel: {
         title: "Settings Panel"
       },
+      contextual: {
+        elementScanTitle: "Element Scan Settings",
+        sessionScanTitle: "Dynamic Scan Settings",
+        persistData: "Persist data across pages",
+        persistDataTooltip: {
+          elementScan: "When enabled, automatically restores all currently staged text when you navigate to a new page. If disabled, only the scan mode is restored, and the staged area will be empty.",
+          sessionScan: "When enabled, automatically resumes and continues accumulating results from the previous page when you navigate to a new one. If disabled, only the scan mode is restored, and a new scan session begins."
+        }
+      },
       languages: {
         en: "English",
         zh_CN: "\u7B80\u4F53\u4E2D\u6587",
@@ -259,9 +268,9 @@ var TextExtractor = (() => {
       scanFailed: "Scan failed.",
       elementScanStarted: "Element scan started.",
       elementScanPaused: "Element scan paused.",
-      elementScanResumed: "Element scan resumed.",
+      elementScanResumed: "Element scan session resumed from previous page.",
       sessionScanPaused: "Dynamic scan paused.",
-      sessionScanResumed: "Dynamic scan resumed.",
+      sessionScanResumed: "Dynamic scan session resumed from previous page.",
       cspWorkerWarning: "Switched to compatibility scan mode due to website security restrictions."
     },
     placeholders: {
@@ -572,6 +581,15 @@ var TextExtractor = (() => {
       panel: {
         title: "\u8BBE\u7F6E\u9762\u677F"
       },
+      contextual: {
+        elementScanTitle: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u8BBE\u7F6E",
+        sessionScanTitle: "\u52A8\u6001\u626B\u63CF\u8BBE\u7F6E",
+        persistData: "\u8DE8\u9875\u9762\u65F6\u4FDD\u7559\u626B\u63CF\u6570\u636E",
+        persistDataTooltip: {
+          elementScan: "\u5F00\u542F\u540E\uFF0C\u5F53\u70B9\u51FB\u94FE\u63A5\u8DF3\u8F6C\u5230\u65B0\u9875\u9762\u65F6\uFF0C\u4F1A\u81EA\u52A8\u6062\u590D\u5F53\u524D\u5DF2\u6682\u5B58\u7684\u6240\u6709\u6587\u672C\u3002\u5173\u95ED\u6B64\u9009\u9879\uFF0C\u5219\u53EA\u6062\u590D\u626B\u63CF\u6A21\u5F0F\uFF0C\u4F46\u6682\u5B58\u533A\u4F1A\u662F\u7A7A\u7684\u3002",
+          sessionScan: "\u5F00\u542F\u540E\uFF0C\u5F53\u70B9\u51FB\u94FE\u63A5\u8DF3\u8F6C\u5230\u65B0\u9875\u9762\u65F6\uFF0C\u4F1A\u81EA\u52A8\u6062\u590D\u5E76\u7EE7\u7EED\u7D2F\u52A0\u4E0A\u4E00\u9875\u7684\u626B\u63CF\u7ED3\u679C\u3002\u5173\u95ED\u6B64\u9009\u9879\uFF0C\u5219\u53EA\u6062\u590D\u626B\u63CF\u6A21\u5F0F\uFF0C\u4F46\u4F1A\u5F00\u59CB\u4E00\u6B21\u5168\u65B0\u7684\u626B\u63CF\u3002"
+        }
+      },
       languages: {
         en: "English",
         zh_CN: "\u7B80\u4F53\u4E2D\u6587",
@@ -623,9 +641,9 @@ var TextExtractor = (() => {
       scanFailed: "\u626B\u63CF\u5931\u8D25\u3002",
       elementScanStarted: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5DF2\u5F00\u59CB\u3002",
       elementScanPaused: "\u5143\u7D20\u626B\u63CF\u5DF2\u6682\u505C\u3002",
-      elementScanResumed: "\u5143\u7D20\u626B\u63CF\u5DF2\u6062\u590D\u3002",
       sessionScanPaused: "\u52A8\u6001\u626B\u63CF\u5DF2\u6682\u505C\u3002",
-      sessionScanResumed: "\u52A8\u6001\u626B\u63CF\u5DF2\u6062\u590D\u3002",
+      sessionScanResumed: "\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD\u5DF2\u4ECE\u4E0A\u4E00\u9875\u6062\u590D\u3002",
+      elementScanResumed: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u4F1A\u8BDD\u5DF2\u4ECE\u4E0A\u4E00\u9875\u6062\u590D\u3002",
       cspWorkerWarning: "\u56E0\u7F51\u7AD9\u5B89\u5168\u9650\u5236\uFF0C\u5DF2\u5207\u6362\u81F3\u517C\u5BB9\u626B\u63CF\u6A21\u5F0F\u3002"
     },
     placeholders: {
@@ -936,6 +954,15 @@ var TextExtractor = (() => {
       panel: {
         title: "\u8A2D\u5B9A\u9762\u677F"
       },
+      contextual: {
+        elementScanTitle: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u8A2D\u5B9A",
+        sessionScanTitle: "\u52D5\u614B\u6383\u63CF\u8A2D\u5B9A",
+        persistData: "\u8DE8\u9801\u9762\u6642\u4FDD\u7559\u6383\u63CF\u6578\u64DA",
+        persistDataTooltip: {
+          elementScan: "\u958B\u555F\u5F8C\uFF0C\u7576\u9EDE\u64CA\u93C8\u63A5\u8DF3\u8F49\u5230\u65B0\u9801\u9762\u6642\uFF0C\u6703\u81EA\u52D5\u6062\u5FA9\u7576\u524D\u5DF2\u66AB\u5B58\u7684\u6240\u6709\u6587\u672C\u3002\u95DC\u9589\u6B64\u9078\u9805\uFF0C\u5247\u53EA\u6062\u5FA9\u6383\u63CF\u6A21\u5F0F\uFF0C\u4F46\u66AB\u5B58\u5340\u6703\u662F\u7A7A\u7684\u3002",
+          sessionScan: "\u958B\u555F\u5F8C\uFF0C\u7576\u9EDE\u64CA\u93C8\u63A5\u8DF3\u8F49\u5230\u65B0\u9801\u9762\u6642\uFF0C\u6703\u81EA\u52D5\u6062\u5FA9\u4E26\u7E7C\u7E8C\u7D2F\u52A0\u4E0A\u4E00\u9801\u7684\u6383\u63CF\u7D50\u679C\u3002\u95DC\u9589\u6B64\u9078\u9805\uFF0C\u5247\u53EA\u6062\u5FA9\u6383\u63CF\u6A21\u5F0F\uFF0C\u4F46\u6703\u958B\u59CB\u4E00\u6B21\u5168\u65B0\u7684\u6383\u63CF\u3002"
+        }
+      },
       languages: {
         en: "English",
         zh_CN: "\u7B80\u4F53\u4E2D\u6587",
@@ -987,9 +1014,9 @@ var TextExtractor = (() => {
       scanFailed: "\u6383\u63CF\u5931\u6557\u3002",
       elementScanStarted: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5DF2\u958B\u59CB\u3002",
       elementScanPaused: "\u5143\u7D20\u6383\u63CF\u5DF2\u66AB\u505C\u3002",
-      elementScanResumed: "\u5143\u7D20\u6383\u63CF\u5DF2\u6062\u5FA9\u3002",
       sessionScanPaused: "\u52D5\u614B\u6383\u63CF\u5DF2\u66AB\u505C\u3002",
-      sessionScanResumed: "\u52D5\u614B\u6383\u63CF\u5DF2\u6062\u5FA9\u3002",
+      sessionScanResumed: "\u52D5\u614B\u6383\u63CF\u6703\u8A71\u5DF2\u5F9E\u4E0A\u4E00\u9801\u6062\u5FA9\u3002",
+      elementScanResumed: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u6703\u8A71\u5DF2\u5F9E\u4E0A\u4E00\u9801\u6062\u5FA9\u3002",
       cspWorkerWarning: "\u56E0\u7DB2\u7AD9\u5B89\u5168\u9650\u5236\uFF0C\u5DF2\u5207\u63DB\u81F3\u76F8\u5BB9\u6383\u63CF\u6A21\u5F0F\u3002"
     },
     placeholders: {
@@ -1675,6 +1702,15 @@ ${result.join(",\n")}
       panel: {
         title: "Settings Panel"
       },
+      contextual: {
+        elementScanTitle: "Element Scan Settings",
+        sessionScanTitle: "Dynamic Scan Settings",
+        persistData: "Persist data across pages",
+        persistDataTooltip: {
+          elementScan: "When enabled, automatically restores all currently staged text when you navigate to a new page. If disabled, only the scan mode is restored, and the staged area will be empty.",
+          sessionScan: "When enabled, automatically resumes and continues accumulating results from the previous page when you navigate to a new one. If disabled, only the scan mode is restored, and a new scan session begins."
+        }
+      },
       languages: {
         en: "English",
         zh_CN: "\\u7B80\\u4F53\\u4E2D\\u6587",
@@ -1726,9 +1762,9 @@ ${result.join(",\n")}
       scanFailed: "Scan failed.",
       elementScanStarted: "Element scan started.",
       elementScanPaused: "Element scan paused.",
-      elementScanResumed: "Element scan resumed.",
+      elementScanResumed: "Element scan session resumed from previous page.",
       sessionScanPaused: "Dynamic scan paused.",
-      sessionScanResumed: "Dynamic scan resumed.",
+      sessionScanResumed: "Dynamic scan session resumed from previous page.",
       cspWorkerWarning: "Switched to compatibility scan mode due to website security restrictions."
     },
     placeholders: {
@@ -2040,6 +2076,15 @@ ${result.join(",\n")}
       panel: {
         title: "\\u8BBE\\u7F6E\\u9762\\u677F"
       },
+      contextual: {
+        elementScanTitle: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u8BBE\\u7F6E",
+        sessionScanTitle: "\\u52A8\\u6001\\u626B\\u63CF\\u8BBE\\u7F6E",
+        persistData: "\\u8DE8\\u9875\\u9762\\u65F6\\u4FDD\\u7559\\u626B\\u63CF\\u6570\\u636E",
+        persistDataTooltip: {
+          elementScan: "\\u5F00\\u542F\\u540E\\uFF0C\\u5F53\\u70B9\\u51FB\\u94FE\\u63A5\\u8DF3\\u8F6C\\u5230\\u65B0\\u9875\\u9762\\u65F6\\uFF0C\\u4F1A\\u81EA\\u52A8\\u6062\\u590D\\u5F53\\u524D\\u5DF2\\u6682\\u5B58\\u7684\\u6240\\u6709\\u6587\\u672C\\u3002\\u5173\\u95ED\\u6B64\\u9009\\u9879\\uFF0C\\u5219\\u53EA\\u6062\\u590D\\u626B\\u63CF\\u6A21\\u5F0F\\uFF0C\\u4F46\\u6682\\u5B58\\u533A\\u4F1A\\u662F\\u7A7A\\u7684\\u3002",
+          sessionScan: "\\u5F00\\u542F\\u540E\\uFF0C\\u5F53\\u70B9\\u51FB\\u94FE\\u63A5\\u8DF3\\u8F6C\\u5230\\u65B0\\u9875\\u9762\\u65F6\\uFF0C\\u4F1A\\u81EA\\u52A8\\u6062\\u590D\\u5E76\\u7EE7\\u7EED\\u7D2F\\u52A0\\u4E0A\\u4E00\\u9875\\u7684\\u626B\\u63CF\\u7ED3\\u679C\\u3002\\u5173\\u95ED\\u6B64\\u9009\\u9879\\uFF0C\\u5219\\u53EA\\u6062\\u590D\\u626B\\u63CF\\u6A21\\u5F0F\\uFF0C\\u4F46\\u4F1A\\u5F00\\u59CB\\u4E00\\u6B21\\u5168\\u65B0\\u7684\\u626B\\u63CF\\u3002"
+        }
+      },
       languages: {
         en: "English",
         zh_CN: "\\u7B80\\u4F53\\u4E2D\\u6587",
@@ -2091,9 +2136,9 @@ ${result.join(",\n")}
       scanFailed: "\\u626B\\u63CF\\u5931\\u8D25\\u3002",
       elementScanStarted: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5DF2\\u5F00\\u59CB\\u3002",
       elementScanPaused: "\\u5143\\u7D20\\u626B\\u63CF\\u5DF2\\u6682\\u505C\\u3002",
-      elementScanResumed: "\\u5143\\u7D20\\u626B\\u63CF\\u5DF2\\u6062\\u590D\\u3002",
       sessionScanPaused: "\\u52A8\\u6001\\u626B\\u63CF\\u5DF2\\u6682\\u505C\\u3002",
-      sessionScanResumed: "\\u52A8\\u6001\\u626B\\u63CF\\u5DF2\\u6062\\u590D\\u3002",
+      sessionScanResumed: "\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD\\u5DF2\\u4ECE\\u4E0A\\u4E00\\u9875\\u6062\\u590D\\u3002",
+      elementScanResumed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u4F1A\\u8BDD\\u5DF2\\u4ECE\\u4E0A\\u4E00\\u9875\\u6062\\u590D\\u3002",
       cspWorkerWarning: "\\u56E0\\u7F51\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u6362\\u81F3\\u517C\\u5BB9\\u626B\\u63CF\\u6A21\\u5F0F\\u3002"
     },
     placeholders: {
@@ -2405,6 +2450,15 @@ ${result.join(",\n")}
       panel: {
         title: "\\u8A2D\\u5B9A\\u9762\\u677F"
       },
+      contextual: {
+        elementScanTitle: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u8A2D\\u5B9A",
+        sessionScanTitle: "\\u52D5\\u614B\\u6383\\u63CF\\u8A2D\\u5B9A",
+        persistData: "\\u8DE8\\u9801\\u9762\\u6642\\u4FDD\\u7559\\u6383\\u63CF\\u6578\\u64DA",
+        persistDataTooltip: {
+          elementScan: "\\u958B\\u555F\\u5F8C\\uFF0C\\u7576\\u9EDE\\u64CA\\u93C8\\u63A5\\u8DF3\\u8F49\\u5230\\u65B0\\u9801\\u9762\\u6642\\uFF0C\\u6703\\u81EA\\u52D5\\u6062\\u5FA9\\u7576\\u524D\\u5DF2\\u66AB\\u5B58\\u7684\\u6240\\u6709\\u6587\\u672C\\u3002\\u95DC\\u9589\\u6B64\\u9078\\u9805\\uFF0C\\u5247\\u53EA\\u6062\\u5FA9\\u6383\\u63CF\\u6A21\\u5F0F\\uFF0C\\u4F46\\u66AB\\u5B58\\u5340\\u6703\\u662F\\u7A7A\\u7684\\u3002",
+          sessionScan: "\\u958B\\u555F\\u5F8C\\uFF0C\\u7576\\u9EDE\\u64CA\\u93C8\\u63A5\\u8DF3\\u8F49\\u5230\\u65B0\\u9801\\u9762\\u6642\\uFF0C\\u6703\\u81EA\\u52D5\\u6062\\u5FA9\\u4E26\\u7E7C\\u7E8C\\u7D2F\\u52A0\\u4E0A\\u4E00\\u9801\\u7684\\u6383\\u63CF\\u7D50\\u679C\\u3002\\u95DC\\u9589\\u6B64\\u9078\\u9805\\uFF0C\\u5247\\u53EA\\u6062\\u5FA9\\u6383\\u63CF\\u6A21\\u5F0F\\uFF0C\\u4F46\\u6703\\u958B\\u59CB\\u4E00\\u6B21\\u5168\\u65B0\\u7684\\u6383\\u63CF\\u3002"
+        }
+      },
       languages: {
         en: "English",
         zh_CN: "\\u7B80\\u4F53\\u4E2D\\u6587",
@@ -2456,9 +2510,9 @@ ${result.join(",\n")}
       scanFailed: "\\u6383\\u63CF\\u5931\\u6557\\u3002",
       elementScanStarted: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5DF2\\u958B\\u59CB\\u3002",
       elementScanPaused: "\\u5143\\u7D20\\u6383\\u63CF\\u5DF2\\u66AB\\u505C\\u3002",
-      elementScanResumed: "\\u5143\\u7D20\\u6383\\u63CF\\u5DF2\\u6062\\u5FA9\\u3002",
       sessionScanPaused: "\\u52D5\\u614B\\u6383\\u63CF\\u5DF2\\u66AB\\u505C\\u3002",
-      sessionScanResumed: "\\u52D5\\u614B\\u6383\\u63CF\\u5DF2\\u6062\\u5FA9\\u3002",
+      sessionScanResumed: "\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71\\u5DF2\\u5F9E\\u4E0A\\u4E00\\u9801\\u6062\\u5FA9\\u3002",
+      elementScanResumed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u6703\\u8A71\\u5DF2\\u5F9E\\u4E0A\\u4E00\\u9801\\u6062\\u5FA9\\u3002",
       cspWorkerWarning: "\\u56E0\\u7DB2\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u63DB\\u81F3\\u76F8\\u5BB9\\u6383\\u63CF\\u6A21\\u5F0F\\u3002"
     },
     placeholders: {
@@ -3013,24 +3067,46 @@ ${result.join(",\n")}
        * \u4F1A\u8BDD\u6A21\u5F0F\uFF1A\u5F00\u59CB\u4E00\u4E2A\u65B0\u7684\u4F1A\u8BDD
        */
       case "session-start":
+        const { initialData } = payload;
         sessionTexts.clear();
-        log2("Session started and cleared.");
+        const newTexts = [];
+        if (Array.isArray(initialData)) {
+          initialData.forEach((text) => {
+            if (processText(text, sessionTexts)) {
+              newTexts.push(text);
+            }
+          });
+        }
+        log2(\`Session started with \${sessionTexts.size} initial items.\`);
+        self.postMessage({
+          type: "countUpdated",
+          payload: {
+            count: sessionTexts.size,
+            newTexts
+          }
+        });
         break;
       /**
        * \u4F1A\u8BDD\u6A21\u5F0F\uFF1A\u6DFB\u52A0\u6587\u672C
        */
       case "session-add-texts": {
         const { texts } = payload;
-        let changed = false;
+        const newTexts2 = [];
         if (Array.isArray(texts)) {
           texts.forEach((text) => {
             if (processText(text, sessionTexts)) {
-              changed = true;
+              newTexts2.push(text);
             }
           });
         }
-        if (changed) {
-          self.postMessage({ type: "countUpdated", payload: sessionTexts.size });
+        if (newTexts2.length > 0) {
+          self.postMessage({
+            type: "countUpdated",
+            payload: {
+              count: sessionTexts.size,
+              newTexts: newTexts2
+            }
+          });
         }
         break;
       }
@@ -3049,13 +3125,13 @@ ${result.join(",\n")}
       case "session-clear":
         sessionTexts.clear();
         log2("Session cleared.");
-        self.postMessage({ type: "countUpdated", payload: 0 });
+        self.postMessage({ type: "countUpdated", payload: { count: 0, newTexts: [] } });
         break;
       /**
        * \u4F1A\u8BDD\u6A21\u5F0F\uFF1A\u83B7\u53D6\u5F53\u524D\u8BA1\u6570\u503C
        */
       case "session-get-count":
-        self.postMessage({ type: "countUpdated", payload: sessionTexts.size });
+        self.postMessage({ type: "countUpdated", payload: { count: sessionTexts.size } });
         break;
     }
   };
@@ -3562,6 +3638,42 @@ ${result.join(",\n")}
     sessionTexts.clear();
     log(t("log.sessionScan.fallback.cleared"));
   }
+  var SESSION_KEY = "qing_pagescanner_session";
+  var RESUME_TIMEOUT_MS = 15e3;
+  async function saveActiveSession(mode, data = null) {
+    let sessionData = data;
+    if (mode === "session-scan") {
+      const textsMirror = getSessionTexts();
+      sessionData = Array.from(textsMirror);
+    }
+    const sessionState = {
+      mode,
+      data: sessionData,
+      timestamp: Date.now()
+    };
+    await setValue(SESSION_KEY, JSON.stringify(sessionState));
+  }
+  async function clearActiveSession() {
+    await setValue(SESSION_KEY, null);
+  }
+  async function loadAndResumeSession() {
+    const savedSessionJSON = await getValue(SESSION_KEY, null);
+    if (!savedSessionJSON) {
+      return;
+    }
+    await setValue(SESSION_KEY, null);
+    try {
+      const state = JSON.parse(savedSessionJSON);
+      if (Date.now() - state.timestamp > RESUME_TIMEOUT_MS) {
+        log("Stale session found, ignoring.");
+        return;
+      }
+      fire("resumeScanSession", state);
+    } catch (e) {
+      log("Failed to parse saved session, clearing.", e);
+      await clearActiveSession();
+    }
+  }
   var isRecording = false;
   var isPaused = false;
   var observer = null;
@@ -3570,6 +3682,7 @@ ${result.join(",\n")}
   var onSummaryCallback = null;
   var onUpdateCallback = null;
   var currentCount = 0;
+  var sessionTextsMirror =  new Set();
   on("clearSessionScan", () => {
     clearSessionData();
   });
@@ -3605,6 +3718,7 @@ ${result.join(",\n")}
   };
   function clearSessionData() {
     currentCount = 0;
+    sessionTextsMirror.clear();
     if (useFallback) {
       clearInFallback();
       if (onUpdateCallback) onUpdateCallback(0);
@@ -3615,7 +3729,7 @@ ${result.join(",\n")}
       log(t("log.sessionScan.worker.clearCommandSent"));
     }
   }
-  var start = async (onUpdate) => {
+  var start = async (onUpdate, resumedData = null) => {
     if (isRecording) return;
     isPaused = false;
     if (worker) {
@@ -3627,6 +3741,7 @@ ${result.join(",\n")}
       observer = null;
     }
     currentCount = 0;
+    sessionTextsMirror.clear();
     onUpdateCallback = onUpdate;
     useFallback = false;
     isRecording = true;
@@ -3635,6 +3750,12 @@ ${result.join(",\n")}
       loadSettings(),
       isWorkerAllowed()
     ]);
+    if (resumedData && Array.isArray(resumedData)) {
+      resumedData.forEach((text) => {
+        initialTexts.push(text);
+        sessionTextsMirror.add(text);
+      });
+    }
     const { filterRules: filterRules2, enableDebugLogging } = settings;
     const activateFallbackMode = () => {
       log(t("log.sessionScan.switchToFallback"), "warn");
@@ -3658,9 +3779,12 @@ ${result.join(",\n")}
         worker.onmessage = (event) => {
           const { type, payload } = event.data;
           if (type === "countUpdated") {
-            currentCount = payload;
-            if (onUpdateCallback) onUpdateCallback(payload);
-            updateScanCount(payload, "session");
+            currentCount = payload.count;
+            if (onUpdateCallback) onUpdateCallback(payload.count);
+            updateScanCount(payload.count, "session");
+            if (payload.newTexts && Array.isArray(payload.newTexts)) {
+              payload.newTexts.forEach((text) => sessionTextsMirror.add(text));
+            }
           } else if (type === "summaryReady" && onSummaryCallback) {
             onSummaryCallback(payload, currentCount);
             onSummaryCallback = null;
@@ -3681,10 +3805,10 @@ ${result.join(",\n")}
               workerLogPrefix: t("log.sessionScan.worker.logPrefix"),
               textFiltered: t("log.textProcessor.filtered"),
               filterReasons: getTranslationObject("filterReasons")
-            }
+            },
+            initialData: initialTexts
           }
         });
-        worker.postMessage({ type: "session-add-texts", payload: { texts: initialTexts } });
         log(t("log.sessionScan.worker.initialized", { count: initialTexts.length }));
       } catch (e) {
         log(t("log.sessionScan.worker.initSyncError", { error: e.message }), "error");
@@ -3698,7 +3822,11 @@ ${result.join(",\n")}
     }
     observer = new MutationObserver(handleMutations);
     observer.observe(document.body, { childList: true, subtree: true });
+    window.addEventListener("beforeunload", handleSessionScanUnload);
     log(t("log.sessionScan.domObserver.started"));
+  };
+  var handleSessionScanUnload = () => {
+    saveActiveSession("session-scan");
   };
   var stop = (onStopped) => {
     if (!isRecording) {
@@ -3710,16 +3838,20 @@ ${result.join(",\n")}
       observer.disconnect();
       observer = null;
     }
+    window.removeEventListener("beforeunload", handleSessionScanUnload);
+    clearActiveSession();
     isRecording = false;
     isPaused = false;
+    sessionTextsMirror.clear();
     onUpdateCallback = null;
     if (onStopped) {
       if (useFallback) {
         onStopped(getCountInFallback());
       } else if (worker) {
         const finalCountListener = (event) => {
-          if (event.data.type === "countUpdated") {
-            onStopped(event.data.payload);
+          const { type, payload } = event.data;
+          if (type === "countUpdated" && typeof payload.count !== "undefined") {
+            onStopped(payload.count);
             worker.removeEventListener("message", finalCountListener);
           }
         };
@@ -3729,6 +3861,9 @@ ${result.join(",\n")}
         onStopped(0);
       }
     }
+  };
+  var getSessionTexts = () => {
+    return sessionTextsMirror;
   };
   var requestSummary = (onReady) => {
     if (!onReady) return;
@@ -4520,6 +4655,8 @@ ${result.join(",\n")}
     enableTextTruncation: true,
     textTruncationLength: 5e4,
     enableDebugLogging: false,
+    elementScan_persistData: true,
+    sessionScan_persistData: true,
     filterRules: {
       numbers: true,
       chinese: true,
@@ -4862,10 +4999,12 @@ ${result.join(",\n")}
 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M360-320h80v-320h-80v320Zm160 0h80v-320h-80v320ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>`;
   var resumeIcon = `
 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m380-300 280-180-280-180v360ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>`;
+  var settingsIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z"/></svg>`;
   var counterWithHelpContainer = null;
   var counterElement = null;
   var helpIcon = null;
   var pauseResumeButton = null;
+  var settingsButton = null;
   function handleSpacebarPauseResume(event) {
     if (event.key !== " " && event.code !== "Space") {
       return;
@@ -4885,17 +5024,19 @@ ${result.join(",\n")}
     event.stopPropagation();
     pauseResumeButton.click();
   }
-  function createCounterWithHelp({ counterKey, helpKey, onPause, onResume, scanType }) {
+  function createCounterWithHelp({ counterKey, helpKey, onPause, onResume, scanType, onSettingsClick }) {
     let isPaused3 = false;
     counterWithHelpContainer = document.createElement("div");
     counterWithHelpContainer.className = "counter-with-help-container";
     counterElement = createTopCenterCounter(counterKey);
     helpIcon = createHelpIcon(helpKey);
     counterWithHelpContainer.appendChild(counterElement);
+    const separator = document.createElement("div");
+    separator.className = "counter-with-help-separator";
+    counterWithHelpContainer.appendChild(separator);
+    const actionsContainer = document.createElement("div");
+    actionsContainer.className = "counter-actions-container";
     if (onPause && onResume && scanType) {
-      const separator = document.createElement("div");
-      separator.className = "counter-with-help-separator";
-      counterWithHelpContainer.appendChild(separator);
       pauseResumeButton = createButton({
         icon: pauseIcon,
         iconOnly: true,
@@ -4913,17 +5054,19 @@ ${result.join(",\n")}
           }
         }
       });
-      const actionsContainer = document.createElement("div");
-      actionsContainer.className = "counter-actions-container";
       actionsContainer.appendChild(pauseResumeButton);
-      actionsContainer.appendChild(helpIcon);
-      counterWithHelpContainer.appendChild(actionsContainer);
-    } else {
-      const separator = document.createElement("div");
-      separator.className = "counter-with-help-separator";
-      counterWithHelpContainer.appendChild(separator);
-      counterWithHelpContainer.appendChild(helpIcon);
     }
+    actionsContainer.appendChild(helpIcon);
+    if (onSettingsClick) {
+      settingsButton = createButton({
+        icon: settingsIcon,
+        iconOnly: true,
+        tooltipKey: "settings.title",
+        onClick: onSettingsClick
+      });
+      actionsContainer.appendChild(settingsButton);
+    }
+    counterWithHelpContainer.appendChild(actionsContainer);
     uiContainer.appendChild(counterWithHelpContainer);
     updateCounterValue(0);
     return counterWithHelpContainer;
@@ -4942,10 +5085,12 @@ ${result.join(",\n")}
     const counterToRemove = counterElement;
     const iconToRemove = helpIcon;
     const buttonToRemove = pauseResumeButton;
+    const settingsButtonToRemove = settingsButton;
     counterWithHelpContainer = null;
     counterElement = null;
     helpIcon = null;
     pauseResumeButton = null;
+    settingsButton = null;
     containerToRemove.classList.remove("is-visible");
     setTimeout(() => {
       if (counterToRemove && typeof counterToRemove.destroy === "function") {
@@ -4957,6 +5102,9 @@ ${result.join(",\n")}
       if (buttonToRemove && typeof buttonToRemove.destroy === "function") {
         buttonToRemove.destroy();
       }
+      if (settingsButtonToRemove && typeof settingsButtonToRemove.destroy === "function") {
+        settingsButtonToRemove.destroy();
+      }
       if (containerToRemove) {
         containerToRemove.remove();
       }
@@ -4967,6 +5115,532 @@ ${result.join(",\n")}
     updateTopCenterCounter(counterElement, newCount);
   }
   var stopIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M280-280v-400h400v400H280Z"/></svg>`;
+  var arrowDownIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>`;
+  var CustomSelect = class {
+        constructor(parentElement, options, initialValue) {
+      this.parentElement = parentElement;
+      this.options = options;
+      this.currentValue = initialValue;
+      this.isOpen = false;
+      this.render();
+      this.bindEvents();
+    }
+        render() {
+      this.container = document.createElement("div");
+      this.container.className = "custom-select-container";
+      this.container.dataset.value = this.currentValue;
+      this.trigger = document.createElement("div");
+      this.trigger.className = "custom-select-trigger";
+      this.selectedContent = document.createElement("div");
+      this.selectedContent.className = "selected-option-content";
+      const arrowDiv = document.createElement("div");
+      arrowDiv.className = "custom-select-arrow";
+      const arrowSVG = createSVGFromString(arrowDownIcon);
+      if (arrowSVG) {
+        arrowDiv.appendChild(arrowSVG);
+      }
+      this.trigger.appendChild(this.selectedContent);
+      this.trigger.appendChild(arrowDiv);
+      this.optionsContainer = document.createElement("div");
+      this.optionsContainer.className = "custom-select-options";
+      this.container.appendChild(this.trigger);
+      this.container.appendChild(this.optionsContainer);
+      this.parentElement.appendChild(this.container);
+      let initialOption = this.options.find((opt) => opt.value === this.currentValue);
+      if (!initialOption && this.options.length > 0) {
+        console.warn(`CustomSelect: \u521D\u59CB\u503C "${this.currentValue}" \u5728\u9009\u9879\u4E2D\u672A\u627E\u5230\u3002\u5C06\u9ED8\u8BA4\u9009\u62E9\u7B2C\u4E00\u4E2A\u9009\u9879\u3002`);
+        initialOption = this.options[0];
+        this.currentValue = initialOption.value;
+      }
+      this.populateOptions();
+      this.updateSelectedContent(initialOption);
+    }
+        populateOptions() {
+      this.options.forEach((option) => {
+        const optionEl = document.createElement("div");
+        optionEl.className = "custom-select-option";
+        optionEl.dataset.value = option.value;
+        optionEl.setAttribute("role", "option");
+        if (option.value === this.currentValue) {
+          optionEl.classList.add("selected");
+        }
+        const optionContent = createIconTitle(option.icon, option.label);
+        optionEl.appendChild(optionContent);
+        this.optionsContainer.appendChild(optionEl);
+      });
+    }
+        updateSelectedContent(option) {
+      while (this.selectedContent.firstChild) {
+        this.selectedContent.removeChild(this.selectedContent.firstChild);
+      }
+      const content = createIconTitle(option.icon, option.label);
+      this.selectedContent.appendChild(content);
+    }
+        bindEvents() {
+      this.handleTriggerClick = this.toggle.bind(this);
+      this.handleOptionClick = (e) => {
+        const optionEl = e.target.closest(".custom-select-option");
+        if (optionEl) {
+          this.select(optionEl.dataset.value);
+        }
+      };
+      this.trigger.addEventListener("click", this.handleTriggerClick);
+      this.optionsContainer.addEventListener("click", this.handleOptionClick);
+    }
+        handleDocumentClick = (e) => {
+      const path = e.composedPath();
+      if (!path.includes(this.container)) {
+        this.close();
+      }
+    };
+        toggle() {
+      this.isOpen = !this.isOpen;
+      this.container.classList.toggle("open", this.isOpen);
+      if (this.isOpen) {
+        document.addEventListener("click", this.handleDocumentClick, true);
+      } else {
+        document.removeEventListener("click", this.handleDocumentClick, true);
+      }
+    }
+        close() {
+      if (this.isOpen) {
+        this.isOpen = false;
+        this.container.classList.remove("open");
+        document.removeEventListener("click", this.handleDocumentClick, true);
+      }
+    }
+        select(value) {
+      if (value === this.currentValue) {
+        this.close();
+        return;
+      }
+      this.currentValue = value;
+      this.container.dataset.value = value;
+      const selectedOption = this.options.find((opt) => opt.value === value);
+      this.updateSelectedContent(selectedOption);
+      this.optionsContainer.querySelector(".custom-select-option.selected")?.classList.remove("selected");
+      const newSelectedOptionEl = this.optionsContainer.querySelector(`[data-value="${value}"]`);
+      if (newSelectedOptionEl) {
+        newSelectedOptionEl.classList.add("selected");
+      }
+      this.close();
+    }
+        getValue() {
+      return this.currentValue;
+    }
+        updateOptions(newOptions) {
+      this.options = newOptions;
+      while (this.optionsContainer.firstChild) {
+        this.optionsContainer.removeChild(this.optionsContainer.firstChild);
+      }
+      this.populateOptions();
+      const currentSelectedOption = this.options.find((opt) => opt.value === this.currentValue);
+      if (currentSelectedOption) {
+        this.updateSelectedContent(currentSelectedOption);
+      }
+    }
+        destroy() {
+      this.close();
+      if (this.trigger && this.handleTriggerClick) {
+        this.trigger.removeEventListener("click", this.handleTriggerClick);
+      }
+      if (this.optionsContainer && this.handleOptionClick) {
+        this.optionsContainer.removeEventListener("click", this.handleOptionClick);
+      }
+    }
+  };
+  var systemThemeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M320-120v-80h80v-80H160q-33 0-56.5-23.5T80-360v-400q0-33 23.5-56.5T160-840h640q33 0 56.5 23.5T880-760v400q0 33-23.5 56.5T800-280H560v80h80v80H320ZM160-360h640v-400H160v400Zm0 0v-400 400Z"/></svg>`;
+  var lightThemeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm0 80q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Zm326-268Z"/></svg>`;
+  var darkThemeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Zm0-80q88 0 158-48.5T740-375q-20 5-40 8t-40 3q-123 0-209.5-86.5T364-660q0-20 3-40t8-40q-78 32-126.5 102T200-480q0 116 82 198t198 82Zm-10-270Z"/></svg>`;
+  function createCheckbox(id, labelText, isChecked, tooltipConfig) {
+    const label = document.createElement("label");
+    label.className = "checkbox-group";
+    label.htmlFor = id;
+    label.appendChild(document.createTextNode(labelText));
+    if (tooltipConfig && tooltipConfig.text) {
+      const infoIconElement = document.createElement("span");
+      infoIconElement.className = "info-icon";
+      infoIconElement.appendChild(createSVGFromString(infoIcon));
+      infoIconElement.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const translatedConfig = {
+          ...tooltipConfig,
+          title: t(tooltipConfig.title),
+          text: t(tooltipConfig.text)
+        };
+        infoTooltip.show(translatedConfig);
+      });
+      label.appendChild(infoIconElement);
+    }
+    const input = document.createElement("input");
+    input.type = "checkbox";
+    input.id = id;
+    if (isChecked) {
+      input.checked = true;
+    }
+    const checkmark = document.createElement("span");
+    checkmark.className = "checkmark";
+    label.appendChild(input);
+    label.appendChild(checkmark);
+    return label;
+  }
+  function createNumericInput(id, labelText, value, options = {}) {
+    const { min, max, disabled = false } = options;
+    const container = document.createElement("div");
+    container.className = "numeric-input-group";
+    const label = document.createElement("label");
+    label.className = "numeric-input-label";
+    label.htmlFor = id;
+    if (labelText) {
+      label.textContent = labelText;
+    }
+    const input = document.createElement("input");
+    input.type = "number";
+    input.id = id;
+    input.value = value;
+    input.className = "numeric-input";
+    if (typeof min !== "undefined") {
+      input.min = min;
+    }
+    if (typeof max !== "undefined") {
+      input.max = max;
+    }
+    if (disabled) {
+      input.disabled = true;
+    }
+    container.appendChild(label);
+    container.appendChild(input);
+    return container;
+  }
+  function buildPanelDOM(settings) {
+    const modal = document.createElement("div");
+    modal.className = "settings-panel-modal";
+    const header = document.createElement("div");
+    header.className = "settings-panel-header";
+    const titleContainer2 = document.createElement("div");
+    titleContainer2.id = "settings-panel-title-container";
+    const closeBtn2 = document.createElement("span");
+    closeBtn2.className = "tc-close-button settings-panel-close";
+    closeBtn2.appendChild(createSVGFromString(closeIcon));
+    header.appendChild(titleContainer2);
+    header.appendChild(closeBtn2);
+    const content = document.createElement("div");
+    content.className = "settings-panel-content";
+    selectSettingsDefinitions.forEach((definition) => {
+      const selectItem = document.createElement("div");
+      selectItem.className = "setting-item";
+      const titleContainer3 = document.createElement("div");
+      titleContainer3.id = `${definition.id}-title-container`;
+      titleContainer3.className = "setting-title-container";
+      const selectWrapper = document.createElement("div");
+      selectWrapper.id = `${definition.id}-wrapper`;
+      selectItem.appendChild(titleContainer3);
+      selectItem.appendChild(selectWrapper);
+      content.appendChild(selectItem);
+    });
+    const relatedItem = document.createElement("div");
+    relatedItem.className = "setting-item";
+    const relatedTitleContainer = document.createElement("div");
+    relatedTitleContainer.id = "related-setting-title-container";
+    relatedTitleContainer.className = "setting-title-container";
+    relatedItem.appendChild(relatedTitleContainer);
+    relatedSettingsDefinitions.forEach((setting) => {
+      if (setting.linkedNumeric) {
+        const compositeContainer = document.createElement("div");
+        compositeContainer.className = "composite-setting-container";
+        const checkboxElement = createCheckbox(setting.id, t(setting.label), settings[setting.key], setting.tooltip);
+        compositeContainer.appendChild(checkboxElement);
+        const numericConfig = setting.linkedNumeric;
+        const numericValue = settings[numericConfig.key];
+        const numericLabel = t("settings.display.character_limit");
+        const numericInputElement = createNumericInput(
+          numericConfig.id,
+          numericLabel,
+          numericValue,
+          {
+            min: 5,
+            disabled: !settings[setting.key]
+          }
+        );
+        numericInputElement.classList.add("linked-numeric-input");
+        compositeContainer.appendChild(numericInputElement);
+        const checkbox = checkboxElement.querySelector('input[type="checkbox"]');
+        const numericInput = numericInputElement.querySelector('input[type="number"]');
+        checkbox.addEventListener("change", (event) => {
+          numericInput.disabled = !event.target.checked;
+        });
+        relatedItem.appendChild(compositeContainer);
+      } else if (setting.type === "select") {
+        const selectContainer = document.createElement("div");
+        selectContainer.className = "setting-item-select";
+        const selectTitle = document.createElement("div");
+        selectTitle.className = "setting-label";
+        selectTitle.textContent = t(setting.label);
+        const selectWrapper = document.createElement("div");
+        selectWrapper.id = setting.id;
+        new CustomSelect(selectWrapper, setting.options.map((opt) => ({ ...opt, label: t(opt.label) })), settings[setting.key]);
+        selectContainer.appendChild(selectTitle);
+        selectContainer.appendChild(selectWrapper);
+        relatedItem.appendChild(selectContainer);
+      } else {
+        const checkboxElement = createCheckbox(setting.id, t(setting.label), settings[setting.key], setting.tooltip);
+        relatedItem.appendChild(checkboxElement);
+      }
+    });
+    const filterItem = document.createElement("div");
+    filterItem.className = "setting-item";
+    const filterTitleContainer = document.createElement("div");
+    filterTitleContainer.id = "filter-setting-title-container";
+    filterTitleContainer.className = "setting-title-container";
+    filterItem.appendChild(filterTitleContainer);
+    filterDefinitions.forEach((filter) => {
+      const checkboxElement = createCheckbox(filter.id, t(filter.label), settings.filterRules[filter.key], filter.tooltip);
+      filterItem.appendChild(checkboxElement);
+    });
+    content.appendChild(relatedItem);
+    content.appendChild(filterItem);
+    const footer = document.createElement("div");
+    footer.className = "settings-panel-footer";
+    modal.appendChild(header);
+    modal.appendChild(content);
+    modal.appendChild(footer);
+    return modal;
+  }
+  function buildContextualPanelDOM({ titleKey, definitions, settings }) {
+    const modal = document.createElement("div");
+    modal.className = "settings-panel-modal contextual-settings-modal";
+    const header = document.createElement("div");
+    header.className = "settings-panel-header";
+    const titleContainer2 = document.createElement("div");
+    titleContainer2.textContent = t(titleKey);
+    const closeBtn2 = document.createElement("span");
+    closeBtn2.className = "tc-close-button settings-panel-close";
+    closeBtn2.appendChild(createSVGFromString(closeIcon));
+    header.appendChild(titleContainer2);
+    header.appendChild(closeBtn2);
+    const content = document.createElement("div");
+    content.className = "settings-panel-content";
+    definitions.forEach((setting) => {
+      const item = document.createElement("div");
+      item.className = "setting-item";
+      if (setting.type === "checkbox") {
+        const checkboxElement = createCheckbox(setting.id, t(setting.label), settings[setting.key], setting.tooltip);
+        item.appendChild(checkboxElement);
+      }
+      content.appendChild(item);
+    });
+    const footer = document.createElement("div");
+    footer.className = "settings-panel-footer";
+    modal.appendChild(header);
+    modal.appendChild(content);
+    modal.appendChild(footer);
+    return modal;
+  }
+  var filterIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M440-160q-17 0-28.5-11.5T400-200v-240L168-736q-15-20-4.5-42t36.5-22h560q26 0 36.5 22t-4.5 42L560-440v240q0 17-11.5 28.5T520-160h-80Zm40-308 198-252H282l198 252Zm0 0Z"/></svg>`;
+  var saveIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z"/></svg>`;
+  var relatedSettingsIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M320-280h320v-400H320v400Zm80-80v-240h160v240H400Zm40-120h80v-80h-80v80ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/></svg>`;
+  var settingsPanel = null;
+  var selectComponents = {};
+  var isTooltipVisible = false;
+  var saveBtn = null;
+  var unsubscribeTooltipShow = null;
+  var unsubscribeTooltipHide = null;
+  var handleKeyDown2 = (event) => {
+    if (isTooltipVisible) return;
+    if (event.key === "Escape") {
+      hideSettingsPanel();
+    }
+  };
+  function showSettingsPanel(currentSettings, onSave) {
+    log(t("log.settings.panel.opening"));
+    if (settingsPanel) {
+      setTimeout(() => settingsPanel.classList.add("is-visible"), 10);
+      return;
+    }
+    settingsPanel = document.createElement("div");
+    settingsPanel.className = "settings-panel-overlay";
+    settingsPanel.tabIndex = -1;
+    const panelModal = buildPanelDOM(currentSettings);
+    settingsPanel.appendChild(panelModal);
+    uiContainer.appendChild(settingsPanel);
+    const titleContainer2 = settingsPanel.querySelector("#settings-panel-title-container");
+    titleContainer2.appendChild(createIconTitle(settingsIcon, t("settings.title")));
+    selectComponents = {};
+    selectSettingsDefinitions.forEach((definition) => {
+      const titleContainer3 = settingsPanel.querySelector(`#${definition.id}-title-container`);
+      titleContainer3.appendChild(createIconTitle(definition.icon, t(definition.label)));
+      const selectWrapper = settingsPanel.querySelector(`#${definition.id}-wrapper`);
+      const options = definition.options.map((opt) => ({
+        ...opt,
+        label: t(opt.label),
+        ...definition.key === "theme" && {
+          "system": systemThemeIcon,
+          "light": lightThemeIcon,
+          "dark": darkThemeIcon
+        }[opt.value]
+      }));
+      selectComponents[definition.key] = new CustomSelect(selectWrapper, options, currentSettings[definition.key]);
+    });
+    const relatedTitleContainer = settingsPanel.querySelector("#related-setting-title-container");
+    relatedTitleContainer.appendChild(createIconTitle(relatedSettingsIcon, t("settings.relatedSettings")));
+    const filterTitleContainer = settingsPanel.querySelector("#filter-setting-title-container");
+    filterTitleContainer.appendChild(createIconTitle(filterIcon, t("settings.filterRules")));
+    const footer = settingsPanel.querySelector(".settings-panel-footer");
+    saveBtn = createButton({
+      id: "save-settings-btn",
+      textKey: "common.save",
+      icon: saveIcon,
+      onClick: () => handleSave(onSave)
+    });
+    footer.appendChild(saveBtn);
+    settingsPanel.querySelector(".settings-panel-close").addEventListener("click", hideSettingsPanel);
+    settingsPanel.addEventListener("keydown", handleKeyDown2);
+    unsubscribeTooltipShow = on("infoTooltipWillShow", () => {
+      isTooltipVisible = true;
+    });
+    unsubscribeTooltipHide = on("infoTooltipDidHide", () => {
+      isTooltipVisible = false;
+    });
+    settingsPanel.addEventListener("transitionend", () => {
+      settingsPanel.focus();
+    }, { once: true });
+    setTimeout(() => {
+      if (settingsPanel) settingsPanel.classList.add("is-visible");
+    }, 10);
+  }
+  function hideSettingsPanel() {
+    if (settingsPanel && settingsPanel.classList.contains("is-visible")) {
+      log(t("log.settings.panel.closing"));
+      settingsPanel.removeEventListener("keydown", handleKeyDown2);
+      settingsPanel.classList.remove("is-visible");
+      if (unsubscribeTooltipShow) unsubscribeTooltipShow();
+      if (unsubscribeTooltipHide) unsubscribeTooltipHide();
+      unsubscribeTooltipShow = null;
+      unsubscribeTooltipHide = null;
+      if (saveBtn) {
+        saveBtn.destroy();
+        saveBtn = null;
+      }
+      for (const key in selectComponents) {
+        if (selectComponents[key].destroy) {
+          selectComponents[key].destroy();
+        }
+      }
+      selectComponents = {};
+      setTimeout(() => {
+        if (settingsPanel) {
+          settingsPanel.remove();
+          settingsPanel = null;
+        }
+      }, 300);
+    }
+  }
+  function handleSave(onSave) {
+    log(t("log.settings.panel.saving"));
+    const newSettings = {};
+    for (const key in selectComponents) {
+      newSettings[key] = selectComponents[key].getValue();
+    }
+    const newFilterRules = {};
+    filterDefinitions.forEach((filter) => {
+      const checkbox = settingsPanel.querySelector(`#${filter.id}`);
+      if (checkbox) newFilterRules[filter.key] = checkbox.checked;
+    });
+    newSettings.filterRules = newFilterRules;
+    relatedSettingsDefinitions.forEach((setting) => {
+      if (setting.type === "select") {
+        const selectContainer = settingsPanel.querySelector(`#${setting.id} .custom-select-container`);
+        if (selectContainer) {
+          newSettings[setting.key] = selectContainer.dataset.value;
+        }
+        return;
+      }
+      const checkbox = settingsPanel.querySelector(`#${setting.id}`);
+      if (!checkbox) return;
+      newSettings[setting.key] = checkbox.checked;
+      if (setting.linkedNumeric) {
+        const numericInput = settingsPanel.querySelector(`#${setting.linkedNumeric.id}`);
+        if (numericInput) {
+          let value = parseInt(numericInput.value, 10);
+          if (isNaN(value) || value < 5) {
+            value = 5;
+            numericInput.value = value;
+          }
+          newSettings[setting.linkedNumeric.key] = value;
+        }
+      }
+    });
+    if (onSave) {
+      onSave(newSettings);
+    }
+    hideSettingsPanel();
+  }
+  function initSettingsPanel(onOpen) {
+    if (window.top === window.self) {
+      (async () => {
+        await updateSettingsMenu(onOpen);
+      })();
+      on("languageChanged", async () => {
+        await updateSettingsMenu(onOpen);
+      });
+    }
+  }
+  function openSettingsPanel(settings, onSaveCallback) {
+    showSettingsPanel(settings, onSaveCallback);
+  }
+  function openContextualSettingsPanel({ titleKey, definitions, settings, onSave }) {
+    let contextualPanel = document.createElement("div");
+    contextualPanel.className = "settings-panel-overlay";
+    contextualPanel.tabIndex = -1;
+    const panelModal = buildContextualPanelDOM({ titleKey, definitions, settings });
+    contextualPanel.appendChild(panelModal);
+    uiContainer.appendChild(contextualPanel);
+    const handleKeyDown3 = (event) => {
+      if (event.key === "Escape") {
+        closePanel();
+      }
+    };
+    const closePanel = () => {
+      if (contextualPanel) {
+        document.removeEventListener("keydown", handleKeyDown3, true);
+        contextualPanel.classList.remove("is-visible");
+        setTimeout(() => {
+          contextualPanel.remove();
+          contextualPanel = null;
+        }, 300);
+      }
+    };
+    const handleSave2 = () => {
+      const newSettings = {};
+      definitions.forEach((def) => {
+        if (def.type === "checkbox") {
+          const checkbox = contextualPanel.querySelector(`#${def.id}`);
+          if (checkbox) newSettings[def.key] = checkbox.checked;
+        }
+      });
+      if (onSave) {
+        onSave(newSettings);
+      }
+      closePanel();
+    };
+    const footer = contextualPanel.querySelector(".settings-panel-footer");
+    const saveButton = createButton({
+      id: "save-contextual-settings-btn",
+      textKey: "common.save",
+      icon: saveIcon,
+      onClick: handleSave2
+    });
+    footer.appendChild(saveButton);
+    contextualPanel.querySelector(".settings-panel-close").addEventListener("click", closePanel);
+    document.addEventListener("keydown", handleKeyDown3, true);
+    setTimeout(() => {
+      if (contextualPanel) {
+        contextualPanel.classList.add("is-visible");
+        contextualPanel.focus();
+      }
+    }, 10);
+  }
   var currentSessionCount = 0;
   on("sessionCleared", () => {
     currentSessionCount = 0;
@@ -4977,7 +5651,29 @@ ${result.join(",\n")}
       helpKey: "tutorial.sessionScan",
       onPause: pauseSessionScan,
       onResume: resumeSessionScan,
-      scanType: "SessionScan"
+      scanType: "SessionScan",
+      onSettingsClick: () => {
+        const currentSettings = loadSettings();
+        const definitions = [
+          {
+            id: "persist-data-checkbox-session",
+            key: "sessionScan_persistData",
+            type: "checkbox",
+            label: "settings.contextual.persistData",
+            tooltip: "settings.contextual.persistDataTooltip.sessionScan"
+          }
+        ];
+        openContextualSettingsPanel({
+          titleKey: "settings.contextual.sessionScanTitle",
+          definitions,
+          settings: currentSettings,
+          onSave: (newSettings) => {
+            const updatedSettings = { ...currentSettings, ...newSettings };
+            saveSettings(updatedSettings);
+            applySettings(updatedSettings, currentSettings);
+          }
+        });
+      }
     });
     showCounterWithHelp();
   }
@@ -5053,6 +5749,31 @@ ${result.join(",\n")}
       document.addEventListener("keydown", handleEscForSessionScan, true);
     }
   }
+  on("resumeScanSession", async (state) => {
+    if (state.mode === "session-scan") {
+      log("Resuming session-scan from previous page...");
+      const dynamicFab2 = getDynamicFab();
+      const settings = await loadSettings();
+      if (dynamicFab2 && !isSessionRecording()) {
+        const resumedData = settings.sessionScan_persistData && state.data ? state.data : null;
+        start((count) => {
+          updateCounterValue(count);
+          currentSessionCount = count;
+        }, resumedData);
+        setFabIcon(dynamicFab2, stopIcon);
+        dynamicFab2.classList.add("is-recording");
+        updateFabTooltip(dynamicFab2, "scan.stopSession");
+        showTopCenterUI();
+        const elementScanFab2 = getElementScanFab();
+        if (elementScanFab2) {
+          elementScanFab2.dataset.originalTooltipKey = elementScanFab2.dataset.tooltipKey;
+          updateFabTooltip(elementScanFab2, "tooltip.disabled.scan_in_progress");
+          elementScanFab2.classList.add("fab-disabled");
+        }
+        showNotification(t("notifications.sessionScanResumed"), { type: "info" });
+      }
+    }
+  });
   var reselectIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v280h-80v-200H160v400h320v80H160ZM760 0q-73 0-127.5-45.5T564-160h62q13 44 49.5 72T760-60q58 0 99-41t41-99q0-58-41-99t-99-41q-29 0-54 10.5T662-300h58v60H560v-160h60v57q27-26 63-41.5t77-15.5q83 0 141.5 58.5T960-200q0 83-58.5 141.5T760 0Z"/></svg>`;
   var stashIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M360-600v-80h360v80H360Zm0 120v-80h360v80H360Zm120 320H200h280Zm0 80H240q-50 0-85-35t-35-85v-120h120v-560h600v361q-20-2-40.5 1.5T760-505v-295H320v480h240l-80 80H200v40q0 17 11.5 28.5T240-160h240v80Zm80 0v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q8 9 12.5 20t4.5 22q0 11-4 22.5T903-300L683-80H560Zm300-263-37-37 37 37ZM620-140h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z"/></svg>`;
   var CustomSlider = class {
@@ -5464,7 +6185,29 @@ ${result.join(",\n")}
       helpKey: "tutorial.elementScan",
       onPause: pauseElementScan,
       onResume: resumeElementScan,
-      scanType: "ElementScan"
+      scanType: "ElementScan",
+      onSettingsClick: () => {
+        const currentSettings = loadSettings();
+        const definitions = [
+          {
+            id: "persist-data-checkbox",
+            key: "elementScan_persistData",
+            type: "checkbox",
+            label: "settings.contextual.persistData",
+            tooltip: "settings.contextual.persistDataTooltip.elementScan"
+          }
+        ];
+        openContextualSettingsPanel({
+          titleKey: "settings.contextual.elementScanTitle",
+          definitions,
+          settings: currentSettings,
+          onSave: (newSettings) => {
+            const updatedSettings = { ...currentSettings, ...newSettings };
+            saveSettings(updatedSettings);
+            applySettings(updatedSettings, currentSettings);
+          }
+        });
+      }
     });
     showCounterWithHelp();
     if (!unsubscribeStagedCountChanged) {
@@ -5494,6 +6237,25 @@ ${result.join(",\n")}
   on("clearElementScan", () => {
     stagedTexts.clear();
     updateStagedCount();
+  });
+  on("resumeScanSession", async (state) => {
+    if (state.mode === "element-scan") {
+      log("Resuming element-scan from previous page...");
+      const elementScanFab2 = getElementScanFab();
+      const settings = await loadSettings();
+      if (elementScanFab2 && !isElementScanActive()) {
+        if (settings.elementScan_persistData && state.data && Array.isArray(state.data)) {
+          stagedTexts = new Set(state.data);
+          log(`Restored ${stagedTexts.size} staged items.`);
+        } else {
+          stagedTexts.clear();
+          log("Skipping data restoration based on settings.");
+        }
+        startElementScan(elementScanFab2);
+        updateStagedCount();
+        showNotification(t("notifications.elementScanResumed"), { type: "info" });
+      }
+    }
   });
   on("modalClosed", () => {
     if (isElementScanActive() && getShouldResumeAfterModalClose()) {
@@ -5573,7 +6335,13 @@ ${result.join(",\n")}
     document.addEventListener("click", handleElementClick, true);
     document.addEventListener("keydown", handleElementScanKeyDown);
     document.addEventListener("contextmenu", handleContextMenu, true);
+    window.addEventListener("beforeunload", handleElementScanUnload);
     log(t("log.elementScan.listenersAdded"));
+  }
+  function handleElementScanUnload() {
+    if (isElementScanActive()) {
+      saveActiveSession("element-scan", Array.from(stagedTexts));
+    }
   }
   function stopElementScan(fabElement) {
     if (!isActive) return;
@@ -5599,6 +6367,8 @@ ${result.join(",\n")}
     document.removeEventListener("click", handleElementClick, true);
     document.removeEventListener("keydown", handleElementScanKeyDown);
     document.removeEventListener("contextmenu", handleContextMenu, true);
+    window.removeEventListener("beforeunload", handleElementScanUnload);
+    clearActiveSession();
     log(t("log.elementScan.listenersRemoved"));
     cleanupUI();
     cleanupToolbar();
@@ -5880,451 +6650,6 @@ ${result.join(",\n")}
       isVisible: settings.showFab
     });
   }
-  var arrowDownIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>`;
-  var CustomSelect = class {
-        constructor(parentElement, options, initialValue) {
-      this.parentElement = parentElement;
-      this.options = options;
-      this.currentValue = initialValue;
-      this.isOpen = false;
-      this.render();
-      this.bindEvents();
-    }
-        render() {
-      this.container = document.createElement("div");
-      this.container.className = "custom-select-container";
-      this.container.dataset.value = this.currentValue;
-      this.trigger = document.createElement("div");
-      this.trigger.className = "custom-select-trigger";
-      this.selectedContent = document.createElement("div");
-      this.selectedContent.className = "selected-option-content";
-      const arrowDiv = document.createElement("div");
-      arrowDiv.className = "custom-select-arrow";
-      const arrowSVG = createSVGFromString(arrowDownIcon);
-      if (arrowSVG) {
-        arrowDiv.appendChild(arrowSVG);
-      }
-      this.trigger.appendChild(this.selectedContent);
-      this.trigger.appendChild(arrowDiv);
-      this.optionsContainer = document.createElement("div");
-      this.optionsContainer.className = "custom-select-options";
-      this.container.appendChild(this.trigger);
-      this.container.appendChild(this.optionsContainer);
-      this.parentElement.appendChild(this.container);
-      let initialOption = this.options.find((opt) => opt.value === this.currentValue);
-      if (!initialOption && this.options.length > 0) {
-        console.warn(`CustomSelect: \u521D\u59CB\u503C "${this.currentValue}" \u5728\u9009\u9879\u4E2D\u672A\u627E\u5230\u3002\u5C06\u9ED8\u8BA4\u9009\u62E9\u7B2C\u4E00\u4E2A\u9009\u9879\u3002`);
-        initialOption = this.options[0];
-        this.currentValue = initialOption.value;
-      }
-      this.populateOptions();
-      this.updateSelectedContent(initialOption);
-    }
-        populateOptions() {
-      this.options.forEach((option) => {
-        const optionEl = document.createElement("div");
-        optionEl.className = "custom-select-option";
-        optionEl.dataset.value = option.value;
-        optionEl.setAttribute("role", "option");
-        if (option.value === this.currentValue) {
-          optionEl.classList.add("selected");
-        }
-        const optionContent = createIconTitle(option.icon, option.label);
-        optionEl.appendChild(optionContent);
-        this.optionsContainer.appendChild(optionEl);
-      });
-    }
-        updateSelectedContent(option) {
-      while (this.selectedContent.firstChild) {
-        this.selectedContent.removeChild(this.selectedContent.firstChild);
-      }
-      const content = createIconTitle(option.icon, option.label);
-      this.selectedContent.appendChild(content);
-    }
-        bindEvents() {
-      this.handleTriggerClick = this.toggle.bind(this);
-      this.handleOptionClick = (e) => {
-        const optionEl = e.target.closest(".custom-select-option");
-        if (optionEl) {
-          this.select(optionEl.dataset.value);
-        }
-      };
-      this.trigger.addEventListener("click", this.handleTriggerClick);
-      this.optionsContainer.addEventListener("click", this.handleOptionClick);
-    }
-        handleDocumentClick = (e) => {
-      const path = e.composedPath();
-      if (!path.includes(this.container)) {
-        this.close();
-      }
-    };
-        toggle() {
-      this.isOpen = !this.isOpen;
-      this.container.classList.toggle("open", this.isOpen);
-      if (this.isOpen) {
-        document.addEventListener("click", this.handleDocumentClick, true);
-      } else {
-        document.removeEventListener("click", this.handleDocumentClick, true);
-      }
-    }
-        close() {
-      if (this.isOpen) {
-        this.isOpen = false;
-        this.container.classList.remove("open");
-        document.removeEventListener("click", this.handleDocumentClick, true);
-      }
-    }
-        select(value) {
-      if (value === this.currentValue) {
-        this.close();
-        return;
-      }
-      this.currentValue = value;
-      this.container.dataset.value = value;
-      const selectedOption = this.options.find((opt) => opt.value === value);
-      this.updateSelectedContent(selectedOption);
-      this.optionsContainer.querySelector(".custom-select-option.selected")?.classList.remove("selected");
-      const newSelectedOptionEl = this.optionsContainer.querySelector(`[data-value="${value}"]`);
-      if (newSelectedOptionEl) {
-        newSelectedOptionEl.classList.add("selected");
-      }
-      this.close();
-    }
-        getValue() {
-      return this.currentValue;
-    }
-        updateOptions(newOptions) {
-      this.options = newOptions;
-      while (this.optionsContainer.firstChild) {
-        this.optionsContainer.removeChild(this.optionsContainer.firstChild);
-      }
-      this.populateOptions();
-      const currentSelectedOption = this.options.find((opt) => opt.value === this.currentValue);
-      if (currentSelectedOption) {
-        this.updateSelectedContent(currentSelectedOption);
-      }
-    }
-        destroy() {
-      this.close();
-      if (this.trigger && this.handleTriggerClick) {
-        this.trigger.removeEventListener("click", this.handleTriggerClick);
-      }
-      if (this.optionsContainer && this.handleOptionClick) {
-        this.optionsContainer.removeEventListener("click", this.handleOptionClick);
-      }
-    }
-  };
-  var systemThemeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M320-120v-80h80v-80H160q-33 0-56.5-23.5T80-360v-400q0-33 23.5-56.5T160-840h640q33 0 56.5 23.5T880-760v400q0 33-23.5 56.5T800-280H560v80h80v80H320ZM160-360h640v-400H160v400Zm0 0v-400 400Z"/></svg>`;
-  var lightThemeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm0 80q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Zm326-268Z"/></svg>`;
-  var darkThemeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Zm0-80q88 0 158-48.5T740-375q-20 5-40 8t-40 3q-123 0-209.5-86.5T364-660q0-20 3-40t8-40q-78 32-126.5 102T200-480q0 116 82 198t198 82Zm-10-270Z"/></svg>`;
-  function createCheckbox(id, labelText, isChecked, tooltipConfig) {
-    const label = document.createElement("label");
-    label.className = "checkbox-group";
-    label.htmlFor = id;
-    label.appendChild(document.createTextNode(labelText));
-    if (tooltipConfig && tooltipConfig.text) {
-      const infoIconElement = document.createElement("span");
-      infoIconElement.className = "info-icon";
-      infoIconElement.appendChild(createSVGFromString(infoIcon));
-      infoIconElement.addEventListener("click", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const translatedConfig = {
-          ...tooltipConfig,
-          title: t(tooltipConfig.title),
-          text: t(tooltipConfig.text)
-        };
-        infoTooltip.show(translatedConfig);
-      });
-      label.appendChild(infoIconElement);
-    }
-    const input = document.createElement("input");
-    input.type = "checkbox";
-    input.id = id;
-    if (isChecked) {
-      input.checked = true;
-    }
-    const checkmark = document.createElement("span");
-    checkmark.className = "checkmark";
-    label.appendChild(input);
-    label.appendChild(checkmark);
-    return label;
-  }
-  function createNumericInput(id, labelText, value, options = {}) {
-    const { min, max, disabled = false } = options;
-    const container = document.createElement("div");
-    container.className = "numeric-input-group";
-    const label = document.createElement("label");
-    label.className = "numeric-input-label";
-    label.htmlFor = id;
-    if (labelText) {
-      label.textContent = labelText;
-    }
-    const input = document.createElement("input");
-    input.type = "number";
-    input.id = id;
-    input.value = value;
-    input.className = "numeric-input";
-    if (typeof min !== "undefined") {
-      input.min = min;
-    }
-    if (typeof max !== "undefined") {
-      input.max = max;
-    }
-    if (disabled) {
-      input.disabled = true;
-    }
-    container.appendChild(label);
-    container.appendChild(input);
-    return container;
-  }
-  function buildPanelDOM(settings) {
-    const modal = document.createElement("div");
-    modal.className = "settings-panel-modal";
-    const header = document.createElement("div");
-    header.className = "settings-panel-header";
-    const titleContainer2 = document.createElement("div");
-    titleContainer2.id = "settings-panel-title-container";
-    const closeBtn2 = document.createElement("span");
-    closeBtn2.className = "tc-close-button settings-panel-close";
-    closeBtn2.appendChild(createSVGFromString(closeIcon));
-    header.appendChild(titleContainer2);
-    header.appendChild(closeBtn2);
-    const content = document.createElement("div");
-    content.className = "settings-panel-content";
-    selectSettingsDefinitions.forEach((definition) => {
-      const selectItem = document.createElement("div");
-      selectItem.className = "setting-item";
-      const titleContainer3 = document.createElement("div");
-      titleContainer3.id = `${definition.id}-title-container`;
-      titleContainer3.className = "setting-title-container";
-      const selectWrapper = document.createElement("div");
-      selectWrapper.id = `${definition.id}-wrapper`;
-      selectItem.appendChild(titleContainer3);
-      selectItem.appendChild(selectWrapper);
-      content.appendChild(selectItem);
-    });
-    const relatedItem = document.createElement("div");
-    relatedItem.className = "setting-item";
-    const relatedTitleContainer = document.createElement("div");
-    relatedTitleContainer.id = "related-setting-title-container";
-    relatedTitleContainer.className = "setting-title-container";
-    relatedItem.appendChild(relatedTitleContainer);
-    relatedSettingsDefinitions.forEach((setting) => {
-      if (setting.linkedNumeric) {
-        const compositeContainer = document.createElement("div");
-        compositeContainer.className = "composite-setting-container";
-        const checkboxElement = createCheckbox(setting.id, t(setting.label), settings[setting.key], setting.tooltip);
-        compositeContainer.appendChild(checkboxElement);
-        const numericConfig = setting.linkedNumeric;
-        const numericValue = settings[numericConfig.key];
-        const numericLabel = t("settings.display.character_limit");
-        const numericInputElement = createNumericInput(
-          numericConfig.id,
-          numericLabel,
-          numericValue,
-          {
-            min: 5,
-            disabled: !settings[setting.key]
-          }
-        );
-        numericInputElement.classList.add("linked-numeric-input");
-        compositeContainer.appendChild(numericInputElement);
-        const checkbox = checkboxElement.querySelector('input[type="checkbox"]');
-        const numericInput = numericInputElement.querySelector('input[type="number"]');
-        checkbox.addEventListener("change", (event) => {
-          numericInput.disabled = !event.target.checked;
-        });
-        relatedItem.appendChild(compositeContainer);
-      } else if (setting.type === "select") {
-        const selectContainer = document.createElement("div");
-        selectContainer.className = "setting-item-select";
-        const selectTitle = document.createElement("div");
-        selectTitle.className = "setting-label";
-        selectTitle.textContent = t(setting.label);
-        const selectWrapper = document.createElement("div");
-        selectWrapper.id = setting.id;
-        new CustomSelect(selectWrapper, setting.options.map((opt) => ({ ...opt, label: t(opt.label) })), settings[setting.key]);
-        selectContainer.appendChild(selectTitle);
-        selectContainer.appendChild(selectWrapper);
-        relatedItem.appendChild(selectContainer);
-      } else {
-        const checkboxElement = createCheckbox(setting.id, t(setting.label), settings[setting.key], setting.tooltip);
-        relatedItem.appendChild(checkboxElement);
-      }
-    });
-    const filterItem = document.createElement("div");
-    filterItem.className = "setting-item";
-    const filterTitleContainer = document.createElement("div");
-    filterTitleContainer.id = "filter-setting-title-container";
-    filterTitleContainer.className = "setting-title-container";
-    filterItem.appendChild(filterTitleContainer);
-    filterDefinitions.forEach((filter) => {
-      const checkboxElement = createCheckbox(filter.id, t(filter.label), settings.filterRules[filter.key], filter.tooltip);
-      filterItem.appendChild(checkboxElement);
-    });
-    content.appendChild(relatedItem);
-    content.appendChild(filterItem);
-    const footer = document.createElement("div");
-    footer.className = "settings-panel-footer";
-    modal.appendChild(header);
-    modal.appendChild(content);
-    modal.appendChild(footer);
-    return modal;
-  }
-  var settingsIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z"/></svg>`;
-  var filterIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M440-160q-17 0-28.5-11.5T400-200v-240L168-736q-15-20-4.5-42t36.5-22h560q26 0 36.5 22t-4.5 42L560-440v240q0 17-11.5 28.5T520-160h-80Zm40-308 198-252H282l198 252Zm0 0Z"/></svg>`;
-  var saveIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z"/></svg>`;
-  var relatedSettingsIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M320-280h320v-400H320v400Zm80-80v-240h160v240H400Zm40-120h80v-80h-80v80ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/></svg>`;
-  var settingsPanel = null;
-  var selectComponents = {};
-  var isTooltipVisible = false;
-  var saveBtn = null;
-  var unsubscribeTooltipShow = null;
-  var unsubscribeTooltipHide = null;
-  var handleKeyDown2 = (event) => {
-    if (isTooltipVisible) return;
-    if (event.key === "Escape") {
-      hideSettingsPanel();
-    }
-  };
-  function showSettingsPanel(currentSettings, onSave) {
-    log(t("log.settings.panel.opening"));
-    if (settingsPanel) {
-      setTimeout(() => settingsPanel.classList.add("is-visible"), 10);
-      return;
-    }
-    settingsPanel = document.createElement("div");
-    settingsPanel.className = "settings-panel-overlay";
-    settingsPanel.tabIndex = -1;
-    const panelModal = buildPanelDOM(currentSettings);
-    settingsPanel.appendChild(panelModal);
-    uiContainer.appendChild(settingsPanel);
-    const titleContainer2 = settingsPanel.querySelector("#settings-panel-title-container");
-    titleContainer2.appendChild(createIconTitle(settingsIcon, t("settings.title")));
-    selectComponents = {};
-    selectSettingsDefinitions.forEach((definition) => {
-      const titleContainer3 = settingsPanel.querySelector(`#${definition.id}-title-container`);
-      titleContainer3.appendChild(createIconTitle(definition.icon, t(definition.label)));
-      const selectWrapper = settingsPanel.querySelector(`#${definition.id}-wrapper`);
-      const options = definition.options.map((opt) => ({
-        ...opt,
-        label: t(opt.label),
-        ...definition.key === "theme" && {
-          "system": systemThemeIcon,
-          "light": lightThemeIcon,
-          "dark": darkThemeIcon
-        }[opt.value]
-      }));
-      selectComponents[definition.key] = new CustomSelect(selectWrapper, options, currentSettings[definition.key]);
-    });
-    const relatedTitleContainer = settingsPanel.querySelector("#related-setting-title-container");
-    relatedTitleContainer.appendChild(createIconTitle(relatedSettingsIcon, t("settings.relatedSettings")));
-    const filterTitleContainer = settingsPanel.querySelector("#filter-setting-title-container");
-    filterTitleContainer.appendChild(createIconTitle(filterIcon, t("settings.filterRules")));
-    const footer = settingsPanel.querySelector(".settings-panel-footer");
-    saveBtn = createButton({
-      id: "save-settings-btn",
-      textKey: "common.save",
-      icon: saveIcon,
-      onClick: () => handleSave(onSave)
-    });
-    footer.appendChild(saveBtn);
-    settingsPanel.querySelector(".settings-panel-close").addEventListener("click", hideSettingsPanel);
-    settingsPanel.addEventListener("keydown", handleKeyDown2);
-    unsubscribeTooltipShow = on("infoTooltipWillShow", () => {
-      isTooltipVisible = true;
-    });
-    unsubscribeTooltipHide = on("infoTooltipDidHide", () => {
-      isTooltipVisible = false;
-    });
-    settingsPanel.addEventListener("transitionend", () => {
-      settingsPanel.focus();
-    }, { once: true });
-    setTimeout(() => {
-      if (settingsPanel) settingsPanel.classList.add("is-visible");
-    }, 10);
-  }
-  function hideSettingsPanel() {
-    if (settingsPanel && settingsPanel.classList.contains("is-visible")) {
-      log(t("log.settings.panel.closing"));
-      settingsPanel.removeEventListener("keydown", handleKeyDown2);
-      settingsPanel.classList.remove("is-visible");
-      if (unsubscribeTooltipShow) unsubscribeTooltipShow();
-      if (unsubscribeTooltipHide) unsubscribeTooltipHide();
-      unsubscribeTooltipShow = null;
-      unsubscribeTooltipHide = null;
-      if (saveBtn) {
-        saveBtn.destroy();
-        saveBtn = null;
-      }
-      for (const key in selectComponents) {
-        if (selectComponents[key].destroy) {
-          selectComponents[key].destroy();
-        }
-      }
-      selectComponents = {};
-      setTimeout(() => {
-        if (settingsPanel) {
-          settingsPanel.remove();
-          settingsPanel = null;
-        }
-      }, 300);
-    }
-  }
-  function handleSave(onSave) {
-    log(t("log.settings.panel.saving"));
-    const newSettings = {};
-    for (const key in selectComponents) {
-      newSettings[key] = selectComponents[key].getValue();
-    }
-    const newFilterRules = {};
-    filterDefinitions.forEach((filter) => {
-      const checkbox = settingsPanel.querySelector(`#${filter.id}`);
-      if (checkbox) newFilterRules[filter.key] = checkbox.checked;
-    });
-    newSettings.filterRules = newFilterRules;
-    relatedSettingsDefinitions.forEach((setting) => {
-      if (setting.type === "select") {
-        const selectContainer = settingsPanel.querySelector(`#${setting.id} .custom-select-container`);
-        if (selectContainer) {
-          newSettings[setting.key] = selectContainer.dataset.value;
-        }
-        return;
-      }
-      const checkbox = settingsPanel.querySelector(`#${setting.id}`);
-      if (!checkbox) return;
-      newSettings[setting.key] = checkbox.checked;
-      if (setting.linkedNumeric) {
-        const numericInput = settingsPanel.querySelector(`#${setting.linkedNumeric.id}`);
-        if (numericInput) {
-          let value = parseInt(numericInput.value, 10);
-          if (isNaN(value) || value < 5) {
-            value = 5;
-            numericInput.value = value;
-          }
-          newSettings[setting.linkedNumeric.key] = value;
-        }
-      }
-    });
-    if (onSave) {
-      onSave(newSettings);
-    }
-    hideSettingsPanel();
-  }
-  function initSettingsPanel(onOpen) {
-    if (window.top === window.self) {
-      (async () => {
-        await updateSettingsMenu(onOpen);
-      })();
-      on("languageChanged", async () => {
-        await updateSettingsMenu(onOpen);
-      });
-    }
-  }
-  function openSettingsPanel(settings, onSaveCallback) {
-    showSettingsPanel(settings, onSaveCallback);
-  }
   function handleOpenSettings() {
     const currentSettings = loadSettings();
     openSettingsPanel(currentSettings, (newSettings) => {
@@ -6424,7 +6749,7 @@ ${result.join(",\n")}
   function initializeExporter() {
     on("exportToFile", exportToFile);
   }
-  function initialize2() {
+  async function initialize2() {
     if (window.top !== window.self) {
       log(t("log.main.inIframe"));
       return;
@@ -6441,6 +6766,11 @@ ${result.join(",\n")}
     initialize();
     initUI();
     initializeExporter();
+    try {
+      await loadAndResumeSession();
+    } catch (e) {
+      log("Failed to resume session", e);
+    }
   }
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", initialize2);

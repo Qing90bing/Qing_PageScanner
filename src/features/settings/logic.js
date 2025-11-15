@@ -47,6 +47,11 @@ const defaultSettings = {
   textTruncationLength: 50000,
   // 是否启用调试日志
   enableDebugLogging: false,
+  // -- 以下为特定扫描模式的设置 --
+  // 在元素扫描中跨页时是否保留已暂存的数据
+  elementScan_persistData: true,
+  // 在动态扫描中跨页时是否保留已扫描的数据
+  sessionScan_persistData: true,
   // 过滤规则设置
   filterRules: {
     // 是否过滤纯数字和货币符号组成的字符串
