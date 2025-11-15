@@ -247,7 +247,11 @@ export function createAdjustmentToolbar(elementPath) {
     const toolbarRect = toolbar.getBoundingClientRect();
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
-    const margin = 10; // 工具栏与元素/屏幕边缘的最小间距
+    
+    // 检查顶部计数器UI是否存在且可见，如果是，则为其高度保留空间
+    const topCounter = uiContainer.querySelector('.counter-with-help-container.is-visible');
+    const topOffset = topCounter ? topCounter.getBoundingClientRect().height + 5 : 0;
+    const margin = 10 + topOffset; // 工具栏与元素/屏幕边缘的最小间距
 
     let top, left;
 
@@ -262,11 +266,11 @@ export function createAdjustmentToolbar(elementPath) {
     };
     
     // 优先尝试将工具栏放在目标元素的上方或下方
-    const topAbove = initialRect.top - toolbarRect.height - margin;
-    const topBelow = initialRect.bottom + margin;
+    const topAbove = initialRect.top - toolbarRect.height - 10;
+    const topBelow = initialRect.bottom + 10;
 
     const canPlaceAbove = topAbove > margin;
-    const canPlaceBelow = topBelow + toolbarRect.height < viewportHeight - margin;
+    const canPlaceBelow = topBelow + toolbarRect.height < viewportHeight - 10;
 
     if (canPlaceAbove) {
         top = topAbove;

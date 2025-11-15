@@ -9,7 +9,7 @@
     position: fixed;
     top: 20px;
     left: 50%;
-    z-index: 9999999;
+    z-index: 10001;
 
     /* 初始动画状态: 在屏幕上方且不可见 */
     opacity: 0;
