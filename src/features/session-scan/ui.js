@@ -157,3 +157,19 @@ export function handleDynamicExtractClick(dynamicFab) {
         document.addEventListener('keydown', handleEscForSessionScan, true);
     }
 }
+
+// 新增：监听会话恢复事件
+on('resumeScanSession', (state) => {
+    if (state.mode === 'session-scan') {
+        log('Resuming session-scan from previous page...');
+        const dynamicFab = getDynamicFab();
+
+        // 确保按钮存在且当前未在扫描
+        if (dynamicFab && !sessionExtractor.isSessionRecording()) {
+            // 动态扫描不需要恢复数据，只需自动点击“开始”按钮
+            handleDynamicExtractClick(dynamicFab);
+            // （可选）显示一个通知
+            showNotification(t('notifications.sessionScanResumed'), { type: 'info' });
+        }
+    }
+});

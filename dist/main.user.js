@@ -259,9 +259,9 @@ var TextExtractor = (() => {
       scanFailed: "Scan failed.",
       elementScanStarted: "Element scan started.",
       elementScanPaused: "Element scan paused.",
-      elementScanResumed: "Element scan resumed.",
+      elementScanResumed: "Element scan session resumed from previous page.",
       sessionScanPaused: "Dynamic scan paused.",
-      sessionScanResumed: "Dynamic scan resumed.",
+      sessionScanResumed: "Dynamic scan session resumed from previous page.",
       cspWorkerWarning: "Switched to compatibility scan mode due to website security restrictions."
     },
     placeholders: {
@@ -623,9 +623,9 @@ var TextExtractor = (() => {
       scanFailed: "\u626B\u63CF\u5931\u8D25\u3002",
       elementScanStarted: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5DF2\u5F00\u59CB\u3002",
       elementScanPaused: "\u5143\u7D20\u626B\u63CF\u5DF2\u6682\u505C\u3002",
-      elementScanResumed: "\u5143\u7D20\u626B\u63CF\u5DF2\u6062\u590D\u3002",
       sessionScanPaused: "\u52A8\u6001\u626B\u63CF\u5DF2\u6682\u505C\u3002",
-      sessionScanResumed: "\u52A8\u6001\u626B\u63CF\u5DF2\u6062\u590D\u3002",
+      sessionScanResumed: "\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD\u5DF2\u4ECE\u4E0A\u4E00\u9875\u6062\u590D\u3002",
+      elementScanResumed: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u4F1A\u8BDD\u5DF2\u4ECE\u4E0A\u4E00\u9875\u6062\u590D\u3002",
       cspWorkerWarning: "\u56E0\u7F51\u7AD9\u5B89\u5168\u9650\u5236\uFF0C\u5DF2\u5207\u6362\u81F3\u517C\u5BB9\u626B\u63CF\u6A21\u5F0F\u3002"
     },
     placeholders: {
@@ -987,9 +987,9 @@ var TextExtractor = (() => {
       scanFailed: "\u6383\u63CF\u5931\u6557\u3002",
       elementScanStarted: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5DF2\u958B\u59CB\u3002",
       elementScanPaused: "\u5143\u7D20\u6383\u63CF\u5DF2\u66AB\u505C\u3002",
-      elementScanResumed: "\u5143\u7D20\u6383\u63CF\u5DF2\u6062\u5FA9\u3002",
       sessionScanPaused: "\u52D5\u614B\u6383\u63CF\u5DF2\u66AB\u505C\u3002",
-      sessionScanResumed: "\u52D5\u614B\u6383\u63CF\u5DF2\u6062\u5FA9\u3002",
+      sessionScanResumed: "\u52D5\u614B\u6383\u63CF\u6703\u8A71\u5DF2\u5F9E\u4E0A\u4E00\u9801\u6062\u5FA9\u3002",
+      elementScanResumed: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u6703\u8A71\u5DF2\u5F9E\u4E0A\u4E00\u9801\u6062\u5FA9\u3002",
       cspWorkerWarning: "\u56E0\u7DB2\u7AD9\u5B89\u5168\u9650\u5236\uFF0C\u5DF2\u5207\u63DB\u81F3\u76F8\u5BB9\u6383\u63CF\u6A21\u5F0F\u3002"
     },
     placeholders: {
@@ -1726,9 +1726,9 @@ ${result.join(",\n")}
       scanFailed: "Scan failed.",
       elementScanStarted: "Element scan started.",
       elementScanPaused: "Element scan paused.",
-      elementScanResumed: "Element scan resumed.",
+      elementScanResumed: "Element scan session resumed from previous page.",
       sessionScanPaused: "Dynamic scan paused.",
-      sessionScanResumed: "Dynamic scan resumed.",
+      sessionScanResumed: "Dynamic scan session resumed from previous page.",
       cspWorkerWarning: "Switched to compatibility scan mode due to website security restrictions."
     },
     placeholders: {
@@ -2091,9 +2091,9 @@ ${result.join(",\n")}
       scanFailed: "\\u626B\\u63CF\\u5931\\u8D25\\u3002",
       elementScanStarted: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5DF2\\u5F00\\u59CB\\u3002",
       elementScanPaused: "\\u5143\\u7D20\\u626B\\u63CF\\u5DF2\\u6682\\u505C\\u3002",
-      elementScanResumed: "\\u5143\\u7D20\\u626B\\u63CF\\u5DF2\\u6062\\u590D\\u3002",
       sessionScanPaused: "\\u52A8\\u6001\\u626B\\u63CF\\u5DF2\\u6682\\u505C\\u3002",
-      sessionScanResumed: "\\u52A8\\u6001\\u626B\\u63CF\\u5DF2\\u6062\\u590D\\u3002",
+      sessionScanResumed: "\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD\\u5DF2\\u4ECE\\u4E0A\\u4E00\\u9875\\u6062\\u590D\\u3002",
+      elementScanResumed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u4F1A\\u8BDD\\u5DF2\\u4ECE\\u4E0A\\u4E00\\u9875\\u6062\\u590D\\u3002",
       cspWorkerWarning: "\\u56E0\\u7F51\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u6362\\u81F3\\u517C\\u5BB9\\u626B\\u63CF\\u6A21\\u5F0F\\u3002"
     },
     placeholders: {
@@ -2456,9 +2456,9 @@ ${result.join(",\n")}
       scanFailed: "\\u6383\\u63CF\\u5931\\u6557\\u3002",
       elementScanStarted: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5DF2\\u958B\\u59CB\\u3002",
       elementScanPaused: "\\u5143\\u7D20\\u6383\\u63CF\\u5DF2\\u66AB\\u505C\\u3002",
-      elementScanResumed: "\\u5143\\u7D20\\u6383\\u63CF\\u5DF2\\u6062\\u5FA9\\u3002",
       sessionScanPaused: "\\u52D5\\u614B\\u6383\\u63CF\\u5DF2\\u66AB\\u505C\\u3002",
-      sessionScanResumed: "\\u52D5\\u614B\\u6383\\u63CF\\u5DF2\\u6062\\u5FA9\\u3002",
+      sessionScanResumed: "\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71\\u5DF2\\u5F9E\\u4E0A\\u4E00\\u9801\\u6062\\u5FA9\\u3002",
+      elementScanResumed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u6703\\u8A71\\u5DF2\\u5F9E\\u4E0A\\u4E00\\u9801\\u6062\\u5FA9\\u3002",
       cspWorkerWarning: "\\u56E0\\u7DB2\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u63DB\\u81F3\\u76F8\\u5BB9\\u6383\\u63CF\\u6A21\\u5F0F\\u3002"
     },
     placeholders: {
@@ -3562,6 +3562,37 @@ ${result.join(",\n")}
     sessionTexts.clear();
     log(t("log.sessionScan.fallback.cleared"));
   }
+  var SESSION_KEY = "qing_pagescanner_session";
+  var RESUME_TIMEOUT_MS = 15e3;
+  async function saveActiveSession(mode, data = null) {
+    const sessionState = {
+      mode,
+      data,
+      timestamp: Date.now()
+    };
+    await setValue(SESSION_KEY, JSON.stringify(sessionState));
+  }
+  async function clearActiveSession() {
+    await setValue(SESSION_KEY, null);
+  }
+  async function loadAndResumeSession() {
+    const savedSessionJSON = await getValue(SESSION_KEY, null);
+    if (!savedSessionJSON) {
+      return;
+    }
+    await setValue(SESSION_KEY, null);
+    try {
+      const state = JSON.parse(savedSessionJSON);
+      if (Date.now() - state.timestamp > RESUME_TIMEOUT_MS) {
+        log("Stale session found, ignoring.");
+        return;
+      }
+      fire("resumeScanSession", state);
+    } catch (e) {
+      log("Failed to parse saved session, clearing.", e);
+      await clearActiveSession();
+    }
+  }
   var isRecording = false;
   var isPaused = false;
   var observer = null;
@@ -3698,7 +3729,11 @@ ${result.join(",\n")}
     }
     observer = new MutationObserver(handleMutations);
     observer.observe(document.body, { childList: true, subtree: true });
+    window.addEventListener("beforeunload", handleSessionScanUnload);
     log(t("log.sessionScan.domObserver.started"));
+  };
+  var handleSessionScanUnload = () => {
+    saveActiveSession("session-scan");
   };
   var stop = (onStopped) => {
     if (!isRecording) {
@@ -3710,6 +3745,8 @@ ${result.join(",\n")}
       observer.disconnect();
       observer = null;
     }
+    window.removeEventListener("beforeunload", handleSessionScanUnload);
+    clearActiveSession();
     isRecording = false;
     isPaused = false;
     onUpdateCallback = null;
@@ -5053,6 +5090,16 @@ ${result.join(",\n")}
       document.addEventListener("keydown", handleEscForSessionScan, true);
     }
   }
+  on("resumeScanSession", (state) => {
+    if (state.mode === "session-scan") {
+      log("Resuming session-scan from previous page...");
+      const dynamicFab2 = getDynamicFab();
+      if (dynamicFab2 && !isSessionRecording()) {
+        handleDynamicExtractClick(dynamicFab2);
+        showNotification(t("notifications.sessionScanResumed"), { type: "info" });
+      }
+    }
+  });
   var reselectIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v280h-80v-200H160v400h320v80H160ZM760 0q-73 0-127.5-45.5T564-160h62q13 44 49.5 72T760-60q58 0 99-41t41-99q0-58-41-99t-99-41q-29 0-54 10.5T662-300h58v60H560v-160h60v57q27-26 63-41.5t77-15.5q83 0 141.5 58.5T960-200q0 83-58.5 141.5T760 0Z"/></svg>`;
   var stashIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M360-600v-80h360v80H360Zm0 120v-80h360v80H360Zm120 320H200h280Zm0 80H240q-50 0-85-35t-35-85v-120h120v-560h600v361q-20-2-40.5 1.5T760-505v-295H320v480h240l-80 80H200v40q0 17 11.5 28.5T240-160h240v80Zm80 0v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q8 9 12.5 20t4.5 22q0 11-4 22.5T903-300L683-80H560Zm300-263-37-37 37 37ZM620-140h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z"/></svg>`;
   var CustomSlider = class {
@@ -5495,6 +5542,21 @@ ${result.join(",\n")}
     stagedTexts.clear();
     updateStagedCount();
   });
+  on("resumeScanSession", (state) => {
+    if (state.mode === "element-scan") {
+      log("Resuming element-scan from previous page...");
+      const elementScanFab2 = getElementScanFab();
+      if (elementScanFab2 && !isElementScanActive()) {
+        if (state.data && Array.isArray(state.data)) {
+          stagedTexts = new Set(state.data);
+          log(`Restored ${stagedTexts.size} staged items.`);
+        }
+        startElementScan(elementScanFab2);
+        updateStagedCount();
+        showNotification(t("notifications.elementScanResumed"), { type: "info" });
+      }
+    }
+  });
   on("modalClosed", () => {
     if (isElementScanActive() && getShouldResumeAfterModalClose()) {
       setShouldResumeAfterModalClose(false);
@@ -5573,7 +5635,13 @@ ${result.join(",\n")}
     document.addEventListener("click", handleElementClick, true);
     document.addEventListener("keydown", handleElementScanKeyDown);
     document.addEventListener("contextmenu", handleContextMenu, true);
+    window.addEventListener("beforeunload", handleElementScanUnload);
     log(t("log.elementScan.listenersAdded"));
+  }
+  function handleElementScanUnload() {
+    if (isElementScanActive()) {
+      saveActiveSession("element-scan", Array.from(stagedTexts));
+    }
   }
   function stopElementScan(fabElement) {
     if (!isActive) return;
@@ -5599,6 +5667,8 @@ ${result.join(",\n")}
     document.removeEventListener("click", handleElementClick, true);
     document.removeEventListener("keydown", handleElementScanKeyDown);
     document.removeEventListener("contextmenu", handleContextMenu, true);
+    window.removeEventListener("beforeunload", handleElementScanUnload);
+    clearActiveSession();
     log(t("log.elementScan.listenersRemoved"));
     cleanupUI();
     cleanupToolbar();
@@ -6424,7 +6494,7 @@ ${result.join(",\n")}
   function initializeExporter() {
     on("exportToFile", exportToFile);
   }
-  function initialize2() {
+  async function initialize2() {
     if (window.top !== window.self) {
       log(t("log.main.inIframe"));
       return;
@@ -6441,6 +6511,11 @@ ${result.join(",\n")}
     initialize();
     initUI();
     initializeExporter();
+    try {
+      await loadAndResumeSession();
+    } catch (e) {
+      log("Failed to resume session", e);
+    }
   }
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", initialize2);

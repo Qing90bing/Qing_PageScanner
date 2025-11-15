@@ -16,6 +16,7 @@ import { fire, on } from '../../shared/utils/eventBus.js';
 import * as fallback from './fallback.js';
 import { trustedWorkerUrl } from '../../shared/workers/worker-url.js';
 import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
+import { saveActiveSession, clearActiveSession } from '../../shared/services/sessionPersistence.js';
 
 // --- 模块级变量 ---
 let isRecording = false;
@@ -188,7 +189,12 @@ export const start = async (onUpdate) => {
     // 都在这里统一、安全地启动 DOM 监听。
     observer = new MutationObserver(handleMutations);
     observer.observe(document.body, { childList: true, subtree: true });
+    window.addEventListener('beforeunload', handleSessionScanUnload);
     log(t('log.sessionScan.domObserver.started'));
+};
+
+const handleSessionScanUnload = () => {
+    saveActiveSession('session-scan');
 };
 
 export const stop = (onStopped) => {
@@ -202,6 +208,8 @@ export const stop = (onStopped) => {
         observer.disconnect();
         observer = null;
     }
+    window.removeEventListener('beforeunload', handleSessionScanUnload);
+    clearActiveSession();
     isRecording = false;
     isPaused = false;
     onUpdateCallback = null;

@@ -5,7 +5,7 @@ import { extractRawTextFromElement } from '../../shared/utils/textProcessor.js';
 import { formatTextsForTranslation } from '../../shared/utils/formatting.js';
 import { updateModalContent } from '../../shared/ui/mainModal.js';
 import { uiContainer } from '../../shared/ui/uiContainer.js';
-import { getDynamicFab, updateFabTooltip } from '../../shared/ui/components/fab.js';
+import { getDynamicFab, getElementScanFab, updateFabTooltip } from '../../shared/ui/components/fab.js';
 import { showNotification } from '../../shared/ui/components/notification.js';
 import { t, getTranslationObject } from '../../shared/i18n/index.js';
 import { simpleTemplate } from '../../shared/utils/templating.js';
@@ -16,6 +16,7 @@ import { filterAndNormalizeTexts } from '../../shared/utils/textProcessor.js';
 import { trustedWorkerUrl } from '../../shared/workers/worker-url.js';
 import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
 import { on, fire } from '../../shared/utils/eventBus.js';
+import { saveActiveSession, clearActiveSession } from '../../shared/services/sessionPersistence.js';
 
 // --- 模块级状态变量 ---
 
@@ -38,6 +39,32 @@ let scrollUpdateQueued = false;
 on('clearElementScan', () => {
     stagedTexts.clear();
     updateStagedCount();
+});
+
+// 新增：监听会话恢复事件
+on('resumeScanSession', (state) => {
+    if (state.mode === 'element-scan') {
+        log('Resuming element-scan from previous page...');
+        const elementScanFab = getElementScanFab();
+
+        // 确保按钮存在且当前未在扫描
+        if (elementScanFab && !isElementScanActive()) {
+            // **关键**：恢复暂存的数据
+            if (state.data && Array.isArray(state.data)) {
+                stagedTexts = new Set(state.data);
+                log(`Restored ${stagedTexts.size} staged items.`);
+            }
+
+            // 自动点击“开始”按钮
+            startElementScan(elementScanFab); // 注意：不是 handleElementScanClick，直接调用 start
+
+            // 手动更新计数器UI
+            updateStagedCount();
+
+            // （可选）显示一个通知
+            showNotification(t('notifications.elementScanResumed'), { type: 'info' });
+        }
+    }
 });
 
 // 当模态框关闭后，如果需要，则恢复元素扫描模式
@@ -142,7 +169,14 @@ function startElementScan(fabElement) {
     document.addEventListener('click', handleElementClick, true);
     document.addEventListener('keydown', handleElementScanKeyDown);
     document.addEventListener('contextmenu', handleContextMenu, true);
+    window.addEventListener('beforeunload', handleElementScanUnload);
     log(t('log.elementScan.listenersAdded'));
+}
+
+function handleElementScanUnload() {
+    if (isElementScanActive()) {
+        saveActiveSession('element-scan', Array.from(stagedTexts));
+    }
 }
 
 export function stopElementScan(fabElement) {
@@ -173,6 +207,8 @@ export function stopElementScan(fabElement) {
     document.removeEventListener('click', handleElementClick, true);
     document.removeEventListener('keydown', handleElementScanKeyDown);
     document.removeEventListener('contextmenu', handleContextMenu, true);
+    window.removeEventListener('beforeunload', handleElementScanUnload);
+    clearActiveSession();
     log(t('log.elementScan.listenersRemoved'));
 
     cleanupUI();

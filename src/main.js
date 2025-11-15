@@ -9,13 +9,14 @@ import { loadSettings } from './features/settings/logic.js';
 import { initializeExporter } from './features/export/exporter.js';
 import { t } from './shared/i18n/index.js';
 import { initializeLanguage } from './shared/i18n/management/languageManager.js';
+import { loadAndResumeSession } from './shared/services/sessionPersistence.js';
 export { initUI };
 
 /**
  * 应用程序的主入口点。
  */
 // 导出 main 函数以供测试和全局访问
-export function initialize() {
+export async function initialize() {
   // 将顶层窗口检查移入函数内部
   if (window.top !== window.self) {
     log(t('log.main.inIframe'));
@@ -52,6 +53,13 @@ export function initialize() {
 
   // 初始化导出器
   initializeExporter();
+
+  // 在所有UI都初始化完毕后，检查并恢复会话
+  try {
+      await loadAndResumeSession();
+  } catch (e) {
+      log('Failed to resume session', e);
+  }
 }
 
 // --- 初始化脚本 ---
