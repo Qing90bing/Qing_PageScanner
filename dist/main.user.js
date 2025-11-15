@@ -3068,28 +3068,43 @@ ${result.join(",\n")}
        */
       case "session-start":
         const { initialData } = payload;
-        sessionTexts = new Set(initialData || []);
+        sessionTexts.clear();
+        const newTexts = [];
+        if (Array.isArray(initialData)) {
+          initialData.forEach((text) => {
+            if (processText(text, sessionTexts)) {
+              newTexts.push(text);
+            }
+          });
+        }
         log2(\`Session started with \${sessionTexts.size} initial items.\`);
+        self.postMessage({
+          type: "countUpdated",
+          payload: {
+            count: sessionTexts.size,
+            newTexts
+          }
+        });
         break;
       /**
        * \u4F1A\u8BDD\u6A21\u5F0F\uFF1A\u6DFB\u52A0\u6587\u672C
        */
       case "session-add-texts": {
         const { texts } = payload;
-        const newTexts = [];
+        const newTexts2 = [];
         if (Array.isArray(texts)) {
           texts.forEach((text) => {
             if (processText(text, sessionTexts)) {
-              newTexts.push(text);
+              newTexts2.push(text);
             }
           });
         }
-        if (newTexts.length > 0) {
+        if (newTexts2.length > 0) {
           self.postMessage({
             type: "countUpdated",
             payload: {
               count: sessionTexts.size,
-              newTexts
+              newTexts: newTexts2
             }
           });
         }
@@ -3110,13 +3125,13 @@ ${result.join(",\n")}
       case "session-clear":
         sessionTexts.clear();
         log2("Session cleared.");
-        self.postMessage({ type: "countUpdated", payload: 0 });
+        self.postMessage({ type: "countUpdated", payload: { count: 0, newTexts: [] } });
         break;
       /**
        * \u4F1A\u8BDD\u6A21\u5F0F\uFF1A\u83B7\u53D6\u5F53\u524D\u8BA1\u6570\u503C
        */
       case "session-get-count":
-        self.postMessage({ type: "countUpdated", payload: sessionTexts.size });
+        self.postMessage({ type: "countUpdated", payload: { count: sessionTexts.size } });
         break;
     }
   };
@@ -3834,8 +3849,9 @@ ${result.join(",\n")}
         onStopped(getCountInFallback());
       } else if (worker) {
         const finalCountListener = (event) => {
-          if (event.data.type === "countUpdated") {
-            onStopped(event.data.payload);
+          const { type, payload } = event.data;
+          if (type === "countUpdated" && typeof payload.count !== "undefined") {
+            onStopped(payload.count);
             worker.removeEventListener("message", finalCountListener);
           }
         };

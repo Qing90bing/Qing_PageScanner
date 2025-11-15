@@ -234,8 +234,9 @@ export const stop = (onStopped) => {
             onStopped(fallback.getCountInFallback());
         } else if (worker) {
             const finalCountListener = (event) => {
-                if (event.data.type === 'countUpdated') {
-                    onStopped(event.data.payload);
+                const { type, payload } = event.data;
+                if (type === 'countUpdated' && typeof payload.count !== 'undefined') {
+                    onStopped(payload.count);
                     worker.removeEventListener('message', finalCountListener);
                 }
             };

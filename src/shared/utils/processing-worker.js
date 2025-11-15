@@ -144,9 +144,24 @@ self.onmessage = (event) => {
          */
         case 'session-start':
             const { initialData } = payload;
-            sessionTexts = new Set(initialData || []);
-            // filterRules 和 translations 已在顶层处理
+            sessionTexts.clear();
+            const newTexts = [];
+            if (Array.isArray(initialData)) {
+                initialData.forEach(text => {
+                    if (processText(text, sessionTexts)) {
+                        newTexts.push(text);
+                    }
+                });
+            }
             log(`Session started with ${sessionTexts.size} initial items.`);
+            // After processing initial data, send an immediate count update
+            self.postMessage({
+                type: 'countUpdated',
+                payload: {
+                    count: sessionTexts.size,
+                    newTexts: newTexts,
+                },
+            });
             break;
 
         /**
@@ -192,14 +207,14 @@ self.onmessage = (event) => {
         case 'session-clear':
             sessionTexts.clear();
             log('Session cleared.');
-            self.postMessage({ type: 'countUpdated', payload: 0 });
+            self.postMessage({ type: 'countUpdated', payload: { count: 0, newTexts: [] } });
             break;
 
         /**
          * 会话模式：获取当前计数值
          */
         case 'session-get-count':
-            self.postMessage({ type: 'countUpdated', payload: sessionTexts.size });
+            self.postMessage({ type: 'countUpdated', payload: { count: sessionTexts.size } });
             break;
     }
 };
