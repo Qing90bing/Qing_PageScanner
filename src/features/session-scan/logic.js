@@ -27,6 +27,7 @@ let useFallback = false;
 let onSummaryCallback = null;
 let onUpdateCallback = null;
 let currentCount = 0; // 新增：在模块级别跟踪计数值
+let sessionTextsMirror = new Set(); // 主线程数据镜像
 
 // --- 事件监听 ---
 on('clearSessionScan', () => {
@@ -74,6 +75,7 @@ const handleMutations = (mutations) => {
  */
 function clearSessionData() {
     currentCount = 0; // 重置计数值
+    sessionTextsMirror.clear();
     if (useFallback) {
         fallback.clearInFallback();
         if (onUpdateCallback) onUpdateCallback(0);
@@ -87,7 +89,7 @@ function clearSessionData() {
 
 // --- 公开函数 ---
 
-export const start = async (onUpdate) => {
+export const start = async (onUpdate, resumedData = null) => {
     if (isRecording) return;
 
     // --- 1. 彻底清理旧状态 ---
@@ -103,6 +105,7 @@ export const start = async (onUpdate) => {
     
     // --- 2. 初始化本次会话的状态 ---
     currentCount = 0;
+    sessionTextsMirror.clear();
     onUpdateCallback = onUpdate;
     useFallback = false;
     isRecording = true;
@@ -113,6 +116,13 @@ export const start = async (onUpdate) => {
         loadSettings(),
         isWorkerAllowed()
     ]);
+
+    if (resumedData && Array.isArray(resumedData)) {
+        resumedData.forEach(text => {
+            initialTexts.push(text);
+            sessionTextsMirror.add(text);
+        });
+    }
     const { filterRules, enableDebugLogging } = settings;
 
     // --- 4. 定义后备模式激活函数 ---
@@ -142,9 +152,13 @@ export const start = async (onUpdate) => {
             worker.onmessage = (event) => {
                 const { type, payload } = event.data;
                 if (type === 'countUpdated') {
-                    currentCount = payload;
-                    if (onUpdateCallback) onUpdateCallback(payload);
-                    updateScanCount(payload, 'session');
+                    currentCount = payload.count;
+                    if (onUpdateCallback) onUpdateCallback(payload.count);
+                    updateScanCount(payload.count, 'session');
+
+                    if (payload.newTexts && Array.isArray(payload.newTexts)) {
+                        payload.newTexts.forEach(text => sessionTextsMirror.add(text));
+                    }
                 } else if (type === 'summaryReady' && onSummaryCallback) {
                     onSummaryCallback(payload, currentCount);
                     onSummaryCallback = null;
@@ -168,9 +182,9 @@ export const start = async (onUpdate) => {
                         textFiltered: t('log.textProcessor.filtered'),
                         filterReasons: getTranslationObject('filterReasons'),
                     },
+                    initialData: initialTexts
                 },
             });
-            worker.postMessage({ type: 'session-add-texts', payload: { texts: initialTexts } });
             log(t('log.sessionScan.worker.initialized', { count: initialTexts.length }));
 
         } catch (e) {
@@ -212,6 +226,7 @@ export const stop = (onStopped) => {
     clearActiveSession();
     isRecording = false;
     isPaused = false;
+    sessionTextsMirror.clear();
     onUpdateCallback = null;
 
     if (onStopped) {
@@ -230,6 +245,10 @@ export const stop = (onStopped) => {
             onStopped(0);
         }
     }
+};
+
+export const getSessionTexts = () => {
+    return sessionTextsMirror;
 };
 
 export const requestSummary = (onReady) => {

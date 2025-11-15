@@ -7,6 +7,7 @@ import { createSVGFromString } from '../../shared/utils/dom.js';
 import { closeIcon } from '../../assets/icons/closeIcon.js';
 import { filterDefinitions, relatedSettingsDefinitions, selectSettingsDefinitions } from './config.js';
 import { t } from '../../shared/i18n/index.js';
+import { createHelpIcon } from '../../shared/ui/components/helpIcon.js';
 
 /**
  * @private
@@ -129,6 +130,57 @@ export function buildPanelDOM(settings) {
 
     content.appendChild(relatedItem);
     content.appendChild(filterItem);
+
+    // --- Footer ---
+    const footer = document.createElement('div');
+    footer.className = 'settings-panel-footer';
+
+    modal.appendChild(header);
+    modal.appendChild(content);
+    modal.appendChild(footer);
+
+    return modal;
+}
+
+/**
+ * @public
+ * @description 创建并构建一个上下文相关的、临时的设置面板。
+ * @param {object} options - 面板的配置选项。
+ * @param {string} options.titleKey - 用于面板标题的 i18n key。
+ * @param {Array<object>} options.definitions - 定义了要显示哪些设置项的数组。
+ * @param {object} options.settings - 当前的设置值对象。
+ * @returns {HTMLElement} - 构建好的设置面板模态框元素。
+ */
+export function buildContextualPanelDOM({ titleKey, definitions, settings }) {
+    const modal = document.createElement('div');
+    modal.className = 'settings-panel-modal contextual-settings-modal';
+
+    // --- Header ---
+    const header = document.createElement('div');
+    header.className = 'settings-panel-header';
+    const titleContainer = document.createElement('div');
+    titleContainer.textContent = t(titleKey);
+    const closeBtn = document.createElement('span');
+    closeBtn.className = 'tc-close-button settings-panel-close';
+    closeBtn.appendChild(createSVGFromString(closeIcon));
+    header.appendChild(titleContainer);
+    header.appendChild(closeBtn);
+
+    // --- Content ---
+    const content = document.createElement('div');
+    content.className = 'settings-panel-content';
+
+    definitions.forEach(setting => {
+        const item = document.createElement('div');
+        item.className = 'setting-item';
+
+        if (setting.type === 'checkbox') {
+            const checkboxElement = createCheckbox(setting.id, t(setting.label), settings[setting.key], setting.tooltip);
+            item.appendChild(checkboxElement);
+        }
+
+        content.appendChild(item);
+    });
 
     // --- Footer ---
     const footer = document.createElement('div');

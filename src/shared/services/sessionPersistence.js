@@ -4,6 +4,7 @@ import { getValue, setValue } from './tampermonkey.js';
 import { fire } from '../utils/eventBus.js';
 import { log } from '../utils/logger.js';
 import { t } from '../i18n/index.js';
+import { getSessionTexts } from '../../features/session-scan/logic.js';
 
 // 用于存储会话的唯一键
 const SESSION_KEY = 'qing_pagescanner_session';
@@ -17,9 +18,16 @@ const RESUME_TIMEOUT_MS = 15000;
  * @param {Array<string>} [data=null] - 需要一同保存的数据 (例如，元素扫描中已暂存的文本)。
  */
 export async function saveActiveSession(mode, data = null) {
+    let sessionData = data;
+    if (mode === 'session-scan') {
+        // 对于动态扫描，我们从 logic 模块获取主线程的数据镜像
+        const textsMirror = getSessionTexts();
+        sessionData = Array.from(textsMirror);
+    }
+
     const sessionState = {
         mode,
-        data,
+        data: sessionData,
         timestamp: Date.now(),
     };
     await setValue(SESSION_KEY, JSON.stringify(sessionState));

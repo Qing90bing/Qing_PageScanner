@@ -143,9 +143,10 @@ self.onmessage = (event) => {
          * 会话模式：开始一个新的会话
          */
         case 'session-start':
-            sessionTexts.clear();
+            const { initialData } = payload;
+            sessionTexts = new Set(initialData || []);
             // filterRules 和 translations 已在顶层处理
-            log('Session started and cleared.');
+            log(`Session started with ${sessionTexts.size} initial items.`);
             break;
 
         /**
@@ -153,16 +154,24 @@ self.onmessage = (event) => {
          */
         case 'session-add-texts': {
             const { texts } = payload;
-            let changed = false;
+            const newTexts = [];
             if (Array.isArray(texts)) {
                 texts.forEach(text => {
+                    // processText 的副作用是将文本添加到 sessionTexts
                     if (processText(text, sessionTexts)) {
-                        changed = true;
+                        // 如果文本被成功添加（是新的），则也将其添加到 newTexts
+                        newTexts.push(text);
                     }
                 });
             }
-            if (changed) {
-                self.postMessage({ type: 'countUpdated', payload: sessionTexts.size });
+            if (newTexts.length > 0) {
+                self.postMessage({
+                    type: 'countUpdated',
+                    payload: {
+                        count: sessionTexts.size,
+                        newTexts: newTexts
+                    }
+                });
             }
             break;
         }

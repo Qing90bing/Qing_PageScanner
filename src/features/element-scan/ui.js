@@ -14,6 +14,8 @@ import { simpleTemplate } from '../../shared/utils/templating.js';
 import { on } from '../../shared/utils/eventBus.js';
 import { createCounterWithHelp, showCounterWithHelp, hideCounterWithHelp, updateCounterValue } from '../../shared/ui/components/counterWithHelp.js';
 import { CustomSlider } from '../../shared/ui/components/customSlider.js';
+import { openContextualSettingsPanel } from '../settings/ui.js';
+import { loadSettings, saveSettings, applySettings } from '../settings/logic.js';
 
 // --- 模块级变量 ---
 let unsubscribeStagedCountChanged = null;
@@ -402,7 +404,29 @@ export function showTopCenterUI() {
         helpKey: 'tutorial.elementScan',
         onPause: pauseElementScan,
         onResume: resumeElementScan,
-        scanType: 'ElementScan'
+        scanType: 'ElementScan',
+        onSettingsClick: () => {
+            const currentSettings = loadSettings();
+            const definitions = [
+                {
+                    id: 'persist-data-checkbox',
+                    key: 'elementScan_persistData',
+                    type: 'checkbox',
+                    label: 'settings.contextual.persistData',
+                    tooltip: 'settings.contextual.persistDataTooltip.elementScan'
+                }
+            ];
+            openContextualSettingsPanel({
+                titleKey: 'settings.contextual.elementScanTitle',
+                definitions: definitions,
+                settings: currentSettings,
+                onSave: (newSettings) => {
+                    const updatedSettings = { ...currentSettings, ...newSettings };
+                    saveSettings(updatedSettings);
+                    applySettings(updatedSettings, currentSettings);
+                }
+            });
+        }
     });
     showCounterWithHelp();
 

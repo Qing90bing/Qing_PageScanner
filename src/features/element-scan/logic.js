@@ -42,26 +42,30 @@ on('clearElementScan', () => {
 });
 
 // 新增：监听会话恢复事件
-on('resumeScanSession', (state) => {
+on('resumeScanSession', async (state) => {
     if (state.mode === 'element-scan') {
         log('Resuming element-scan from previous page...');
         const elementScanFab = getElementScanFab();
+        const settings = await loadSettings();
 
         // 确保按钮存在且当前未在扫描
         if (elementScanFab && !isElementScanActive()) {
-            // **关键**：恢复暂存的数据
-            if (state.data && Array.isArray(state.data)) {
+            // 根据设置决定是否恢复暂存的数据
+            if (settings.elementScan_persistData && state.data && Array.isArray(state.data)) {
                 stagedTexts = new Set(state.data);
                 log(`Restored ${stagedTexts.size} staged items.`);
+            } else {
+                stagedTexts.clear();
+                log('Skipping data restoration based on settings.');
             }
 
-            // 自动点击“开始”按钮
-            startElementScan(elementScanFab); // 注意：不是 handleElementScanClick，直接调用 start
+            // 自动启动扫描
+            startElementScan(elementScanFab);
 
             // 手动更新计数器UI
             updateStagedCount();
 
-            // （可选）显示一个通知
+            // 显示一个通知
             showNotification(t('notifications.elementScanResumed'), { type: 'info' });
         }
     }

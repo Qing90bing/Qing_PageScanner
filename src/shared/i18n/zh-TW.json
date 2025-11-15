@@ -72,6 +72,15 @@
     "panel": {
       "title": "設定面板"
     },
+    "contextual": {
+      "elementScanTitle": "選取元素掃描設定",
+      "sessionScanTitle": "動態掃描設定",
+      "persistData": "跨頁面時保留掃描數據",
+      "persistDataTooltip": {
+        "elementScan": "開啟後，當點擊鏈接跳轉到新頁面時，會自動恢復當前已暫存的所有文本。關閉此選項，則只恢復掃描模式，但暫存區會是空的。",
+        "sessionScan": "開啟後，當點擊鏈接跳轉到新頁面時，會自動恢復並繼續累加上一頁的掃描結果。關閉此選項，則只恢復掃描模式，但會開始一次全新的掃描。"
+      }
+    },
     "languages": {
       "en": "English",
       "zh_CN": "简体中文",
