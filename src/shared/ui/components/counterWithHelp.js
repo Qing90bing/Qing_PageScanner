@@ -32,11 +32,15 @@ function handleSpacebarPauseResume(event) {
         return;
     }
 
-    // 3. 检查当前焦点元素，防止在输入时触发
-    const activeElement = document.activeElement;
-    if (activeElement) {
-        const tagName = activeElement.tagName.toUpperCase();
-        const isContentEditable = activeElement.isContentEditable;
+    // 3. 检查当前焦点元素，防止在输入时触发（支持穿透 Shadow DOM）
+    let finalActiveElement = document.activeElement;
+    while (finalActiveElement && finalActiveElement.shadowRoot && finalActiveElement.shadowRoot.activeElement) {
+        finalActiveElement = finalActiveElement.shadowRoot.activeElement;
+    }
+
+    if (finalActiveElement) {
+        const tagName = finalActiveElement.tagName.toUpperCase();
+        const isContentEditable = finalActiveElement.isContentEditable;
 
         // 如果是输入框、文本域或任何可编辑元素，则不执行操作
         if (tagName === 'INPUT' || tagName === 'TEXTAREA' || isContentEditable) {

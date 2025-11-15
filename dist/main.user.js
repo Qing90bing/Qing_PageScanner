@@ -5030,10 +5030,13 @@ ${result.join(",\n")}
     if (!pauseResumeButton || !counterWithHelpContainer || !counterWithHelpContainer.classList.contains("is-visible")) {
       return;
     }
-    const activeElement = document.activeElement;
-    if (activeElement) {
-      const tagName = activeElement.tagName.toUpperCase();
-      const isContentEditable = activeElement.isContentEditable;
+    let finalActiveElement = document.activeElement;
+    while (finalActiveElement && finalActiveElement.shadowRoot && finalActiveElement.shadowRoot.activeElement) {
+      finalActiveElement = finalActiveElement.shadowRoot.activeElement;
+    }
+    if (finalActiveElement) {
+      const tagName = finalActiveElement.tagName.toUpperCase();
+      const isContentEditable = finalActiveElement.isContentEditable;
       if (tagName === "INPUT" || tagName === "TEXTAREA" || isContentEditable) {
         return;
       }
