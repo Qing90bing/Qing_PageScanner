@@ -211,11 +211,7 @@ var TextExtractor = (() => {
       contextual: {
         elementScanTitle: "Element Scan Settings",
         sessionScanTitle: "Dynamic Scan Settings",
-        persistData: "Persist data across pages",
-        persistDataTooltip: {
-          elementScan: "When enabled, automatically restores all currently staged text when you navigate to a new page. If disabled, only the scan mode is restored, and the staged area will be empty.",
-          sessionScan: "When enabled, automatically resumes and continues accumulating results from the previous page when you navigate to a new one. If disabled, only the scan mode is restored, and a new scan session begins."
-        }
+        persistData: "Persist data across pages"
       },
       languages: {
         en: "English",
@@ -293,6 +289,13 @@ var TextExtractor = (() => {
       pauseSessionScan: "Pause Dynamic Scan",
       resumeSessionScan: "Resume Dynamic Scan",
       tooltipHelp: "Help",
+      persistData: {
+        title: "Data Persistence Explanation",
+        text: {
+          sessionScan: "When enabled, automatically resumes and continues accumulating results from the previous page when you navigate to a new one. If disabled, only the scan mode is restored, and a new scan session begins.",
+          elementScan: "When enabled, automatically restores all currently staged text when you navigate to a new page. If disabled, only the scan mode is restored, and the staged area will be empty."
+        }
+      },
       disabled: {
         scan_in_progress: "Another scan is in progress"
       },
@@ -584,11 +587,7 @@ var TextExtractor = (() => {
       contextual: {
         elementScanTitle: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u8BBE\u7F6E",
         sessionScanTitle: "\u52A8\u6001\u626B\u63CF\u8BBE\u7F6E",
-        persistData: "\u8DE8\u9875\u9762\u65F6\u4FDD\u7559\u626B\u63CF\u6570\u636E",
-        persistDataTooltip: {
-          elementScan: "\u5F00\u542F\u540E\uFF0C\u5F53\u70B9\u51FB\u94FE\u63A5\u8DF3\u8F6C\u5230\u65B0\u9875\u9762\u65F6\uFF0C\u4F1A\u81EA\u52A8\u6062\u590D\u5F53\u524D\u5DF2\u6682\u5B58\u7684\u6240\u6709\u6587\u672C\u3002\u5173\u95ED\u6B64\u9009\u9879\uFF0C\u5219\u53EA\u6062\u590D\u626B\u63CF\u6A21\u5F0F\uFF0C\u4F46\u6682\u5B58\u533A\u4F1A\u662F\u7A7A\u7684\u3002",
-          sessionScan: "\u5F00\u542F\u540E\uFF0C\u5F53\u70B9\u51FB\u94FE\u63A5\u8DF3\u8F6C\u5230\u65B0\u9875\u9762\u65F6\uFF0C\u4F1A\u81EA\u52A8\u6062\u590D\u5E76\u7EE7\u7EED\u7D2F\u52A0\u4E0A\u4E00\u9875\u7684\u626B\u63CF\u7ED3\u679C\u3002\u5173\u95ED\u6B64\u9009\u9879\uFF0C\u5219\u53EA\u6062\u590D\u626B\u63CF\u6A21\u5F0F\uFF0C\u4F46\u4F1A\u5F00\u59CB\u4E00\u6B21\u5168\u65B0\u7684\u626B\u63CF\u3002"
-        }
+        persistData: "\u8DE8\u9875\u9762\u65F6\u4FDD\u7559\u626B\u63CF\u6570\u636E"
       },
       languages: {
         en: "English",
@@ -666,6 +665,13 @@ var TextExtractor = (() => {
       pauseSessionScan: "\u6682\u505C\u52A8\u6001\u626B\u63CF",
       resumeSessionScan: "\u6062\u590D\u52A8\u6001\u626B\u63CF",
       tooltipHelp: "\u5E2E\u52A9",
+      persistData: {
+        title: "\u6570\u636E\u6301\u4E45\u5316\u8BF4\u660E",
+        text: {
+          sessionScan: "\u5F00\u542F\u540E\uFF0C\u5F53\u70B9\u51FB\u94FE\u63A5\u8DF3\u8F6C\u5230\u65B0\u9875\u9762\u65F6\uFF0C\u4F1A\u81EA\u52A8\u6062\u590D\u5E76\u7EE7\u7EED\u7D2F\u52A0\u4E0A\u4E00\u9875\u7684\u626B\u63CF\u7ED3\u679C\u3002\u5173\u95ED\u6B64\u9009\u9879\uFF0C\u5219\u53EA\u6062\u590D\u626B\u63CF\u6A21\u5F0F\uFF0C\u4F46\u4F1A\u5F00\u59CB\u4E00\u6B21\u5168\u65B0\u7684\u626B\u63CF\u3002",
+          elementScan: "\u5F00\u542F\u540E\uFF0C\u5F53\u70B9\u51FB\u94FE\u63A5\u8DF3\u8F6C\u5230\u65B0\u9875\u9762\u65F6\uFF0C\u4F1A\u81EA\u52A8\u6062\u590D\u5F53\u524D\u5DF2\u6682\u5B58\u7684\u6240\u6709\u6587\u672C\u3002\u5173\u95ED\u6B64\u9009\u9879\uFF0C\u5219\u53EA\u6062\u590D\u626B\u63CF\u6A21\u5F0F\uFF0C\u4F46\u6682\u5B58\u533A\u4F1A\u662F\u7A7A\u7684\u3002"
+        }
+      },
       disabled: {
         scan_in_progress: "\u53E6\u4E00\u9879\u626B\u63CF\u6B63\u5728\u8FDB\u884C\u4E2D"
       },
@@ -957,11 +963,7 @@ var TextExtractor = (() => {
       contextual: {
         elementScanTitle: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u8A2D\u5B9A",
         sessionScanTitle: "\u52D5\u614B\u6383\u63CF\u8A2D\u5B9A",
-        persistData: "\u8DE8\u9801\u9762\u6642\u4FDD\u7559\u6383\u63CF\u6578\u64DA",
-        persistDataTooltip: {
-          elementScan: "\u958B\u555F\u5F8C\uFF0C\u7576\u9EDE\u64CA\u93C8\u63A5\u8DF3\u8F49\u5230\u65B0\u9801\u9762\u6642\uFF0C\u6703\u81EA\u52D5\u6062\u5FA9\u7576\u524D\u5DF2\u66AB\u5B58\u7684\u6240\u6709\u6587\u672C\u3002\u95DC\u9589\u6B64\u9078\u9805\uFF0C\u5247\u53EA\u6062\u5FA9\u6383\u63CF\u6A21\u5F0F\uFF0C\u4F46\u66AB\u5B58\u5340\u6703\u662F\u7A7A\u7684\u3002",
-          sessionScan: "\u958B\u555F\u5F8C\uFF0C\u7576\u9EDE\u64CA\u93C8\u63A5\u8DF3\u8F49\u5230\u65B0\u9801\u9762\u6642\uFF0C\u6703\u81EA\u52D5\u6062\u5FA9\u4E26\u7E7C\u7E8C\u7D2F\u52A0\u4E0A\u4E00\u9801\u7684\u6383\u63CF\u7D50\u679C\u3002\u95DC\u9589\u6B64\u9078\u9805\uFF0C\u5247\u53EA\u6062\u5FA9\u6383\u63CF\u6A21\u5F0F\uFF0C\u4F46\u6703\u958B\u59CB\u4E00\u6B21\u5168\u65B0\u7684\u6383\u63CF\u3002"
-        }
+        persistData: "\u8DE8\u9801\u9762\u6642\u4FDD\u7559\u6383\u63CF\u6578\u64DA"
       },
       languages: {
         en: "English",
@@ -1039,6 +1041,13 @@ var TextExtractor = (() => {
       pauseSessionScan: "\u66AB\u505C\u52D5\u614B\u6383\u63CF",
       resumeSessionScan: "\u6062\u5FA9\u52D5\u614B\u6383\u63CF",
       tooltipHelp: "\u5E6B\u52A9",
+      persistData: {
+        title: "\u8CC7\u6599\u6301\u4E45\u5316\u8AAA\u660E",
+        text: {
+          sessionScan: "\u958B\u555F\u5F8C\uFF0C\u7576\u9EDE\u64CA\u93C8\u63A5\u8DF3\u8F49\u5230\u65B0\u9801\u9762\u6642\uFF0C\u6703\u81EA\u52D5\u6062\u5FA9\u4E26\u7E7C\u7E8C\u7D2F\u52A0\u4E0A\u4E00\u9801\u7684\u6383\u63CF\u7D50\u679C\u3002\u95DC\u9589\u6B64\u9078\u9805\uFF0C\u5247\u53EA\u6062\u5FA9\u6383\u63CF\u6A21\u5F0F\uFF0C\u4F46\u6703\u958B\u59CB\u4E00\u6B21\u5168\u65B0\u7684\u6383\u63CF\u3002",
+          elementScan: "\u958B\u555F\u5F8C\uFF0C\u7576\u9EDE\u64CA\u93C8\u63A5\u8DF3\u8F49\u5230\u65B0\u9801\u9762\u6642\uFF0C\u6703\u81EA\u52D5\u6062\u5FA9\u7576\u524D\u5DF2\u66AB\u5B58\u7684\u6240\u6709\u6587\u672C\u3002\u95DC\u9589\u6B64\u9078\u9805\uFF0C\u5247\u53EA\u6062\u5FA9\u6383\u63CF\u6A21\u5F0F\uFF0C\u4F46\u66AB\u5B58\u5340\u6703\u662F\u7A7A\u7684\u3002"
+        }
+      },
       disabled: {
         scan_in_progress: "\u53E6\u4E00\u9805\u6383\u63CF\u6B63\u5728\u9032\u884C\u4E2D"
       },
@@ -1705,11 +1714,7 @@ ${result.join(",\n")}
       contextual: {
         elementScanTitle: "Element Scan Settings",
         sessionScanTitle: "Dynamic Scan Settings",
-        persistData: "Persist data across pages",
-        persistDataTooltip: {
-          elementScan: "When enabled, automatically restores all currently staged text when you navigate to a new page. If disabled, only the scan mode is restored, and the staged area will be empty.",
-          sessionScan: "When enabled, automatically resumes and continues accumulating results from the previous page when you navigate to a new one. If disabled, only the scan mode is restored, and a new scan session begins."
-        }
+        persistData: "Persist data across pages"
       },
       languages: {
         en: "English",
@@ -1787,6 +1792,13 @@ ${result.join(",\n")}
       pauseSessionScan: "Pause Dynamic Scan",
       resumeSessionScan: "Resume Dynamic Scan",
       tooltipHelp: "Help",
+      persistData: {
+        title: "Data Persistence Explanation",
+        text: {
+          sessionScan: "When enabled, automatically resumes and continues accumulating results from the previous page when you navigate to a new one. If disabled, only the scan mode is restored, and a new scan session begins.",
+          elementScan: "When enabled, automatically restores all currently staged text when you navigate to a new page. If disabled, only the scan mode is restored, and the staged area will be empty."
+        }
+      },
       disabled: {
         scan_in_progress: "Another scan is in progress"
       },
@@ -2079,11 +2091,7 @@ ${result.join(",\n")}
       contextual: {
         elementScanTitle: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u8BBE\\u7F6E",
         sessionScanTitle: "\\u52A8\\u6001\\u626B\\u63CF\\u8BBE\\u7F6E",
-        persistData: "\\u8DE8\\u9875\\u9762\\u65F6\\u4FDD\\u7559\\u626B\\u63CF\\u6570\\u636E",
-        persistDataTooltip: {
-          elementScan: "\\u5F00\\u542F\\u540E\\uFF0C\\u5F53\\u70B9\\u51FB\\u94FE\\u63A5\\u8DF3\\u8F6C\\u5230\\u65B0\\u9875\\u9762\\u65F6\\uFF0C\\u4F1A\\u81EA\\u52A8\\u6062\\u590D\\u5F53\\u524D\\u5DF2\\u6682\\u5B58\\u7684\\u6240\\u6709\\u6587\\u672C\\u3002\\u5173\\u95ED\\u6B64\\u9009\\u9879\\uFF0C\\u5219\\u53EA\\u6062\\u590D\\u626B\\u63CF\\u6A21\\u5F0F\\uFF0C\\u4F46\\u6682\\u5B58\\u533A\\u4F1A\\u662F\\u7A7A\\u7684\\u3002",
-          sessionScan: "\\u5F00\\u542F\\u540E\\uFF0C\\u5F53\\u70B9\\u51FB\\u94FE\\u63A5\\u8DF3\\u8F6C\\u5230\\u65B0\\u9875\\u9762\\u65F6\\uFF0C\\u4F1A\\u81EA\\u52A8\\u6062\\u590D\\u5E76\\u7EE7\\u7EED\\u7D2F\\u52A0\\u4E0A\\u4E00\\u9875\\u7684\\u626B\\u63CF\\u7ED3\\u679C\\u3002\\u5173\\u95ED\\u6B64\\u9009\\u9879\\uFF0C\\u5219\\u53EA\\u6062\\u590D\\u626B\\u63CF\\u6A21\\u5F0F\\uFF0C\\u4F46\\u4F1A\\u5F00\\u59CB\\u4E00\\u6B21\\u5168\\u65B0\\u7684\\u626B\\u63CF\\u3002"
-        }
+        persistData: "\\u8DE8\\u9875\\u9762\\u65F6\\u4FDD\\u7559\\u626B\\u63CF\\u6570\\u636E"
       },
       languages: {
         en: "English",
@@ -2161,6 +2169,13 @@ ${result.join(",\n")}
       pauseSessionScan: "\\u6682\\u505C\\u52A8\\u6001\\u626B\\u63CF",
       resumeSessionScan: "\\u6062\\u590D\\u52A8\\u6001\\u626B\\u63CF",
       tooltipHelp: "\\u5E2E\\u52A9",
+      persistData: {
+        title: "\\u6570\\u636E\\u6301\\u4E45\\u5316\\u8BF4\\u660E",
+        text: {
+          sessionScan: "\\u5F00\\u542F\\u540E\\uFF0C\\u5F53\\u70B9\\u51FB\\u94FE\\u63A5\\u8DF3\\u8F6C\\u5230\\u65B0\\u9875\\u9762\\u65F6\\uFF0C\\u4F1A\\u81EA\\u52A8\\u6062\\u590D\\u5E76\\u7EE7\\u7EED\\u7D2F\\u52A0\\u4E0A\\u4E00\\u9875\\u7684\\u626B\\u63CF\\u7ED3\\u679C\\u3002\\u5173\\u95ED\\u6B64\\u9009\\u9879\\uFF0C\\u5219\\u53EA\\u6062\\u590D\\u626B\\u63CF\\u6A21\\u5F0F\\uFF0C\\u4F46\\u4F1A\\u5F00\\u59CB\\u4E00\\u6B21\\u5168\\u65B0\\u7684\\u626B\\u63CF\\u3002",
+          elementScan: "\\u5F00\\u542F\\u540E\\uFF0C\\u5F53\\u70B9\\u51FB\\u94FE\\u63A5\\u8DF3\\u8F6C\\u5230\\u65B0\\u9875\\u9762\\u65F6\\uFF0C\\u4F1A\\u81EA\\u52A8\\u6062\\u590D\\u5F53\\u524D\\u5DF2\\u6682\\u5B58\\u7684\\u6240\\u6709\\u6587\\u672C\\u3002\\u5173\\u95ED\\u6B64\\u9009\\u9879\\uFF0C\\u5219\\u53EA\\u6062\\u590D\\u626B\\u63CF\\u6A21\\u5F0F\\uFF0C\\u4F46\\u6682\\u5B58\\u533A\\u4F1A\\u662F\\u7A7A\\u7684\\u3002"
+        }
+      },
       disabled: {
         scan_in_progress: "\\u53E6\\u4E00\\u9879\\u626B\\u63CF\\u6B63\\u5728\\u8FDB\\u884C\\u4E2D"
       },
@@ -2453,11 +2468,7 @@ ${result.join(",\n")}
       contextual: {
         elementScanTitle: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u8A2D\\u5B9A",
         sessionScanTitle: "\\u52D5\\u614B\\u6383\\u63CF\\u8A2D\\u5B9A",
-        persistData: "\\u8DE8\\u9801\\u9762\\u6642\\u4FDD\\u7559\\u6383\\u63CF\\u6578\\u64DA",
-        persistDataTooltip: {
-          elementScan: "\\u958B\\u555F\\u5F8C\\uFF0C\\u7576\\u9EDE\\u64CA\\u93C8\\u63A5\\u8DF3\\u8F49\\u5230\\u65B0\\u9801\\u9762\\u6642\\uFF0C\\u6703\\u81EA\\u52D5\\u6062\\u5FA9\\u7576\\u524D\\u5DF2\\u66AB\\u5B58\\u7684\\u6240\\u6709\\u6587\\u672C\\u3002\\u95DC\\u9589\\u6B64\\u9078\\u9805\\uFF0C\\u5247\\u53EA\\u6062\\u5FA9\\u6383\\u63CF\\u6A21\\u5F0F\\uFF0C\\u4F46\\u66AB\\u5B58\\u5340\\u6703\\u662F\\u7A7A\\u7684\\u3002",
-          sessionScan: "\\u958B\\u555F\\u5F8C\\uFF0C\\u7576\\u9EDE\\u64CA\\u93C8\\u63A5\\u8DF3\\u8F49\\u5230\\u65B0\\u9801\\u9762\\u6642\\uFF0C\\u6703\\u81EA\\u52D5\\u6062\\u5FA9\\u4E26\\u7E7C\\u7E8C\\u7D2F\\u52A0\\u4E0A\\u4E00\\u9801\\u7684\\u6383\\u63CF\\u7D50\\u679C\\u3002\\u95DC\\u9589\\u6B64\\u9078\\u9805\\uFF0C\\u5247\\u53EA\\u6062\\u5FA9\\u6383\\u63CF\\u6A21\\u5F0F\\uFF0C\\u4F46\\u6703\\u958B\\u59CB\\u4E00\\u6B21\\u5168\\u65B0\\u7684\\u6383\\u63CF\\u3002"
-        }
+        persistData: "\\u8DE8\\u9801\\u9762\\u6642\\u4FDD\\u7559\\u6383\\u63CF\\u6578\\u64DA"
       },
       languages: {
         en: "English",
@@ -2535,6 +2546,13 @@ ${result.join(",\n")}
       pauseSessionScan: "\\u66AB\\u505C\\u52D5\\u614B\\u6383\\u63CF",
       resumeSessionScan: "\\u6062\\u5FA9\\u52D5\\u614B\\u6383\\u63CF",
       tooltipHelp: "\\u5E6B\\u52A9",
+      persistData: {
+        title: "\\u8CC7\\u6599\\u6301\\u4E45\\u5316\\u8AAA\\u660E",
+        text: {
+          sessionScan: "\\u958B\\u555F\\u5F8C\\uFF0C\\u7576\\u9EDE\\u64CA\\u93C8\\u63A5\\u8DF3\\u8F49\\u5230\\u65B0\\u9801\\u9762\\u6642\\uFF0C\\u6703\\u81EA\\u52D5\\u6062\\u5FA9\\u4E26\\u7E7C\\u7E8C\\u7D2F\\u52A0\\u4E0A\\u4E00\\u9801\\u7684\\u6383\\u63CF\\u7D50\\u679C\\u3002\\u95DC\\u9589\\u6B64\\u9078\\u9805\\uFF0C\\u5247\\u53EA\\u6062\\u5FA9\\u6383\\u63CF\\u6A21\\u5F0F\\uFF0C\\u4F46\\u6703\\u958B\\u59CB\\u4E00\\u6B21\\u5168\\u65B0\\u7684\\u6383\\u63CF\\u3002",
+          elementScan: "\\u958B\\u555F\\u5F8C\\uFF0C\\u7576\\u9EDE\\u64CA\\u93C8\\u63A5\\u8DF3\\u8F49\\u5230\\u65B0\\u9801\\u9762\\u6642\\uFF0C\\u6703\\u81EA\\u52D5\\u6062\\u5FA9\\u7576\\u524D\\u5DF2\\u66AB\\u5B58\\u7684\\u6240\\u6709\\u6587\\u672C\\u3002\\u95DC\\u9589\\u6B64\\u9078\\u9805\\uFF0C\\u5247\\u53EA\\u6062\\u5FA9\\u6383\\u63CF\\u6A21\\u5F0F\\uFF0C\\u4F46\\u66AB\\u5B58\\u5340\\u6703\\u662F\\u7A7A\\u7684\\u3002"
+        }
+      },
       disabled: {
         scan_in_progress: "\\u53E6\\u4E00\\u9805\\u6383\\u63CF\\u6B63\\u5728\\u9032\\u884C\\u4E2D"
       },
@@ -5407,13 +5425,18 @@ ${result.join(",\n")}
     modal.appendChild(footer);
     return modal;
   }
-  function buildContextualPanelDOM({ titleKey, definitions, settings }) {
+  function buildContextualPanelDOM({ titleKey, icon, definitions, settings }) {
     const modal = document.createElement("div");
     modal.className = "settings-panel-modal contextual-settings-modal";
     const header = document.createElement("div");
     header.className = "settings-panel-header";
     const titleContainer2 = document.createElement("div");
-    titleContainer2.textContent = t(titleKey);
+    titleContainer2.id = "contextual-settings-title-container";
+    if (icon) {
+      titleContainer2.appendChild(createIconTitle(icon, t(titleKey)));
+    } else {
+      titleContainer2.textContent = t(titleKey);
+    }
     const closeBtn2 = document.createElement("span");
     closeBtn2.className = "tc-close-button settings-panel-close";
     closeBtn2.appendChild(createSVGFromString(closeIcon));
@@ -5660,11 +5683,15 @@ ${result.join(",\n")}
             key: "sessionScan_persistData",
             type: "checkbox",
             label: "settings.contextual.persistData",
-            tooltip: "settings.contextual.persistDataTooltip.sessionScan"
+            tooltip: {
+              title: "tooltip.persistData.title",
+              text: "tooltip.persistData.text.sessionScan"
+            }
           }
         ];
         openContextualSettingsPanel({
           titleKey: "settings.contextual.sessionScanTitle",
+          icon: settingsIcon,
           definitions,
           settings: currentSettings,
           onSave: (newSettings) => {
@@ -6196,11 +6223,15 @@ ${result.join(",\n")}
             key: "elementScan_persistData",
             type: "checkbox",
             label: "settings.contextual.persistData",
-            tooltip: "settings.contextual.persistDataTooltip.elementScan"
+            tooltip: {
+              title: "tooltip.persistData.title",
+              text: "tooltip.persistData.text.elementScan"
+            }
           }
         ];
         openContextualSettingsPanel({
           titleKey: "settings.contextual.elementScanTitle",
+          icon: settingsIcon,
           definitions,
           settings: currentSettings,
           onSave: (newSettings) => {

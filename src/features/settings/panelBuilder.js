@@ -8,6 +8,7 @@ import { closeIcon } from '../../assets/icons/closeIcon.js';
 import { filterDefinitions, relatedSettingsDefinitions, selectSettingsDefinitions } from './config.js';
 import { t } from '../../shared/i18n/index.js';
 import { createHelpIcon } from '../../shared/ui/components/helpIcon.js';
+import { createIconTitle } from '../../shared/ui/iconTitle.js';
 
 /**
  * @private
@@ -147,11 +148,12 @@ export function buildPanelDOM(settings) {
  * @description 创建并构建一个上下文相关的、临时的设置面板。
  * @param {object} options - 面板的配置选项。
  * @param {string} options.titleKey - 用于面板标题的 i18n key。
+ * @param {string} [options.icon] - (可选) 用于面板标题的 SVG 图标字符串。
  * @param {Array<object>} options.definitions - 定义了要显示哪些设置项的数组。
  * @param {object} options.settings - 当前的设置值对象。
  * @returns {HTMLElement} - 构建好的设置面板模态框元素。
  */
-export function buildContextualPanelDOM({ titleKey, definitions, settings }) {
+export function buildContextualPanelDOM({ titleKey, icon, definitions, settings }) {
     const modal = document.createElement('div');
     modal.className = 'settings-panel-modal contextual-settings-modal';
 
@@ -159,7 +161,15 @@ export function buildContextualPanelDOM({ titleKey, definitions, settings }) {
     const header = document.createElement('div');
     header.className = 'settings-panel-header';
     const titleContainer = document.createElement('div');
-    titleContainer.textContent = t(titleKey);
+    titleContainer.id = 'contextual-settings-title-container';
+
+    // 如果提供了图标，则创建带图标的标题，否则只显示文本
+    if (icon) {
+        titleContainer.appendChild(createIconTitle(icon, t(titleKey)));
+    } else {
+        titleContainer.textContent = t(titleKey);
+    }
+
     const closeBtn = document.createElement('span');
     closeBtn.className = 'tc-close-button settings-panel-close';
     closeBtn.appendChild(createSVGFromString(closeIcon));

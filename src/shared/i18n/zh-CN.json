@@ -75,11 +75,7 @@
     "contextual": {
       "elementScanTitle": "选取元素扫描设置",
       "sessionScanTitle": "动态扫描设置",
-      "persistData": "跨页面时保留扫描数据",
-      "persistDataTooltip": {
-        "elementScan": "开启后，当点击链接跳转到新页面时，会自动恢复当前已暂存的所有文本。关闭此选项，则只恢复扫描模式，但暂存区会是空的。",
-        "sessionScan": "开启后，当点击链接跳转到新页面时，会自动恢复并继续累加上一页的扫描结果。关闭此选项，则只恢复扫描模式，但会开始一次全新的扫描。"
-      }
+      "persistData": "跨页面时保留扫描数据"
     },
     "languages": {
       "en": "English",
@@ -157,6 +153,13 @@
     "pauseSessionScan": "暂停动态扫描",
     "resumeSessionScan": "恢复动态扫描",
     "tooltipHelp": "帮助",
+    "persistData": {
+        "title": "数据持久化说明",
+        "text": {
+            "sessionScan": "开启后，当点击链接跳转到新页面时，会自动恢复并继续累加上一页的扫描结果。关闭此选项，则只恢复扫描模式，但会开始一次全新的扫描。",
+            "elementScan": "开启后，当点击链接跳转到新页面时，会自动恢复当前已暂存的所有文本。关闭此选项，则只恢复扫描模式，但暂存区会是空的。"
+        }
+    },
     "disabled": {
       "scan_in_progress": "另一项扫描正在进行中"
     },

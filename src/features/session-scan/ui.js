@@ -15,6 +15,7 @@ import { on } from '../../shared/utils/eventBus.js';
 import { log } from '../../shared/utils/logger.js';
 import { openContextualSettingsPanel } from '../settings/ui.js';
 import { loadSettings, saveSettings, applySettings } from '../settings/logic.js';
+import { settingsIcon } from '../../assets/icons/settingsIcon.js';
 
 let currentSessionCount = 0;
 
@@ -43,11 +44,15 @@ function showTopCenterUI() {
                     key: 'sessionScan_persistData',
                     type: 'checkbox',
                     label: 'settings.contextual.persistData',
-                    tooltip: 'settings.contextual.persistDataTooltip.sessionScan'
+                    tooltip: {
+                        title: 'tooltip.persistData.title',
+                        text: 'tooltip.persistData.text.sessionScan'
+                    }
                 }
             ];
             openContextualSettingsPanel({
                 titleKey: 'settings.contextual.sessionScanTitle',
+                icon: settingsIcon,
                 definitions: definitions,
                 settings: currentSettings,
                 onSave: (newSettings) => {
