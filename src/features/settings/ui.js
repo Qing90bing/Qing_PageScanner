@@ -251,12 +251,12 @@ export function openSettingsPanel(settings, onSaveCallback) {
     showSettingsPanel(settings, onSaveCallback);
 }
 
-export function openContextualSettingsPanel({ titleKey, definitions, settings, onSave }) {
+export function openContextualSettingsPanel({ titleKey, icon, definitions, settings, onSave }) {
     let contextualPanel = document.createElement('div');
     contextualPanel.className = 'settings-panel-overlay';
     contextualPanel.tabIndex = -1;
 
-    const panelModal = buildContextualPanelDOM({ titleKey, definitions, settings });
+    const panelModal = buildContextualPanelDOM({ titleKey, icon, definitions, settings });
     contextualPanel.appendChild(panelModal);
     uiContainer.appendChild(contextualPanel);
 
