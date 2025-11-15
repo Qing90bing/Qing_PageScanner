@@ -17,6 +17,7 @@ import { CustomSlider } from '../../shared/ui/components/customSlider.js';
 import { openContextualSettingsPanel } from '../settings/ui.js';
 import { loadSettings, saveSettings, applySettings } from '../settings/logic.js';
 import { settingsIcon } from '../../assets/icons/settingsIcon.js';
+import { infoIcon } from '../../assets/icons/infoIcon.js';
 
 // --- 模块级变量 ---
 let unsubscribeStagedCountChanged = null;
@@ -419,6 +420,7 @@ export function showTopCenterUI() {
                     type: 'checkbox',
                     label: 'settings.contextual.persistData',
                     tooltip: {
+                        titleIcon: infoIcon,
                         title: 'tooltip.persistData.title',
                         text: 'tooltip.persistData.text.elementScan'
                     }

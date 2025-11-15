@@ -5684,6 +5684,7 @@ ${result.join(",\n")}
             type: "checkbox",
             label: "settings.contextual.persistData",
             tooltip: {
+              titleIcon: infoIcon,
               title: "tooltip.persistData.title",
               text: "tooltip.persistData.text.sessionScan"
             }
@@ -6224,6 +6225,7 @@ ${result.join(",\n")}
             type: "checkbox",
             label: "settings.contextual.persistData",
             tooltip: {
+              titleIcon: infoIcon,
               title: "tooltip.persistData.title",
               text: "tooltip.persistData.text.elementScan"
             }
