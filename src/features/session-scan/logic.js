@@ -28,6 +28,8 @@ let onSummaryCallback = null;
 let onUpdateCallback = null;
 let currentCount = 0; // 新增：在模块级别跟踪计数值
 let sessionTextsMirror = new Set(); // 主线程数据镜像
+let autoSaveInterval = null; // 自动保存定时器
+const AUTO_SAVE_INTERVAL_MS = 5000; // 5秒
 
 // --- 事件监听 ---
 on('clearSessionScan', () => {
@@ -59,6 +61,7 @@ const handleMutations = (mutations) => {
                 const count = fallback.getCountInFallback();
                 if (onUpdateCallback) onUpdateCallback(count);
                 updateScanCount(count, 'session');
+                saveActiveSession('session-scan'); // 立即保存变更
             }
         } else if (worker) {
             worker.postMessage({
@@ -76,6 +79,8 @@ const handleMutations = (mutations) => {
 function clearSessionData() {
     currentCount = 0; // 重置计数值
     sessionTextsMirror.clear();
+    saveActiveSession('session-scan'); // 保存清空后的状态
+
     if (useFallback) {
         fallback.clearInFallback();
         if (onUpdateCallback) onUpdateCallback(0);
@@ -140,6 +145,7 @@ export const start = async (onUpdate, resumedData = null) => {
             const count = fallback.getCountInFallback();
             if (onUpdateCallback) onUpdateCallback(count);
             updateScanCount(count, 'session');
+            saveActiveSession('session-scan'); // 初始化后保存
         }
     };
 
@@ -204,6 +210,18 @@ export const start = async (onUpdate, resumedData = null) => {
     observer = new MutationObserver(handleMutations);
     observer.observe(document.body, { childList: true, subtree: true });
     window.addEventListener('beforeunload', handleSessionScanUnload);
+
+    // 启动自动保存心跳，确保时间戳刷新
+    if (autoSaveInterval) clearInterval(autoSaveInterval);
+    autoSaveInterval = setInterval(() => {
+        if (isRecording) {
+            saveActiveSession('session-scan');
+        }
+    }, AUTO_SAVE_INTERVAL_MS);
+
+    // 立即保存一次以初始化会话
+    saveActiveSession('session-scan');
+
     log(t('log.sessionScan.domObserver.started'));
 };
 
@@ -223,6 +241,12 @@ export const stop = (onStopped) => {
         observer = null;
     }
     window.removeEventListener('beforeunload', handleSessionScanUnload);
+
+    if (autoSaveInterval) {
+        clearInterval(autoSaveInterval);
+        autoSaveInterval = null;
+    }
+
     clearActiveSession();
     isRecording = false;
     isPaused = false;

@@ -8,8 +8,9 @@ import { getSessionTexts } from '../../features/session-scan/logic.js';
 
 // 用于存储会话的唯一键
 const SESSION_KEY = 'qing_pagescanner_session';
-// 会话恢复的有效时间（例如：15秒），防止加载过慢或意外关闭后依然恢复
-const RESUME_TIMEOUT_MS = 15000;
+// 会话恢复的有效时间（例如：5分钟），防止加载过慢或意外关闭后依然恢复
+// 增加到 5 分钟以解决跨站跳转或网络加载慢导致的数据丢失问题
+const RESUME_TIMEOUT_MS = 300000;
 
 /**
  * @public

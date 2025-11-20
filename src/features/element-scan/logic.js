@@ -30,6 +30,10 @@ let shouldResumeAfterModalClose = false;
 let fallbackNotificationShown = false; // 用于跟踪兼容模式通知是否已显示
 let isHighlightUpdateQueued = false; // 用于 requestAnimationFrame 节流
 
+// 自动保存（心跳）定时器
+let autoSaveInterval = null;
+const AUTO_SAVE_INTERVAL_MS = 5000; // 5秒
+
 // 用于跟踪滚动监听
 let scrollableParents = [];
 let scrollUpdateQueued = false;
@@ -64,6 +68,9 @@ on('resumeScanSession', async (state) => {
 
             // 手动更新计数器UI
             updateStagedCount();
+
+            // 立即保存状态以刷新时间戳
+            saveSessionState();
 
             // 显示一个通知
             if (settings.elementScan_persistData) {
@@ -180,12 +187,29 @@ function startElementScan(fabElement, options = {}) {
     document.addEventListener('keydown', handleElementScanKeyDown);
     document.addEventListener('contextmenu', handleContextMenu, true);
     window.addEventListener('beforeunload', handleElementScanUnload);
+
+    // 启动自动保存心跳
+    if (autoSaveInterval) clearInterval(autoSaveInterval);
+    autoSaveInterval = setInterval(() => {
+        if (isElementScanActive()) {
+            saveSessionState();
+        }
+    }, AUTO_SAVE_INTERVAL_MS);
+
     log(t('log.elementScan.listenersAdded'));
+}
+
+/**
+ * 保存当前会话状态的辅助函数。
+ * 这确保了在页面刷新、跳转或意外关闭时，数据和时间戳都是最新的。
+ */
+function saveSessionState() {
+    saveActiveSession('element-scan', Array.from(stagedTexts));
 }
 
 function handleElementScanUnload() {
     if (isElementScanActive()) {
-        saveActiveSession('element-scan', Array.from(stagedTexts));
+        saveSessionState();
     }
 }
 
@@ -218,6 +242,12 @@ export function stopElementScan(fabElement) {
     document.removeEventListener('keydown', handleElementScanKeyDown);
     document.removeEventListener('contextmenu', handleContextMenu, true);
     window.removeEventListener('beforeunload', handleElementScanUnload);
+
+    if (autoSaveInterval) {
+        clearInterval(autoSaveInterval);
+        autoSaveInterval = null;
+    }
+
     clearActiveSession();
     log(t('log.elementScan.listenersRemoved'));
 
@@ -389,6 +419,10 @@ export async function stageCurrentElement() {
 function updateStagedCount() {
     // 通过全局事件总线发出事件，将新的计数值作为载荷传递出去。
     fire('stagedCountChanged', stagedTexts.size);
+    // 每次计数变化（数据变化）时，触发保存
+    if (isActive) {
+        saveSessionState();
+    }
 }
 
 /**

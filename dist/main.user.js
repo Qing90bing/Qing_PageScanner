@@ -3675,7 +3675,7 @@ ${result.join(",\n")}
     log(t("log.sessionScan.fallback.cleared"));
   }
   var SESSION_KEY = "qing_pagescanner_session";
-  var RESUME_TIMEOUT_MS = 15e3;
+  var RESUME_TIMEOUT_MS = 3e5;
   async function saveActiveSession(mode, data = null) {
     let sessionData = data;
     if (mode === "session-scan") {
@@ -3719,6 +3719,8 @@ ${result.join(",\n")}
   var onUpdateCallback = null;
   var currentCount = 0;
   var sessionTextsMirror =  new Set();
+  var autoSaveInterval = null;
+  var AUTO_SAVE_INTERVAL_MS = 5e3;
   on("clearSessionScan", () => {
     clearSessionData();
   });
@@ -3743,6 +3745,7 @@ ${result.join(",\n")}
           const count = getCountInFallback();
           if (onUpdateCallback) onUpdateCallback(count);
           updateScanCount(count, "session");
+          saveActiveSession("session-scan");
         }
       } else if (worker) {
         worker.postMessage({
@@ -3755,6 +3758,7 @@ ${result.join(",\n")}
   function clearSessionData() {
     currentCount = 0;
     sessionTextsMirror.clear();
+    saveActiveSession("session-scan");
     if (useFallback) {
       clearInFallback();
       if (onUpdateCallback) onUpdateCallback(0);
@@ -3806,6 +3810,7 @@ ${result.join(",\n")}
         const count = getCountInFallback();
         if (onUpdateCallback) onUpdateCallback(count);
         updateScanCount(count, "session");
+        saveActiveSession("session-scan");
       }
     };
     if (workerAllowed) {
@@ -3859,6 +3864,13 @@ ${result.join(",\n")}
     observer = new MutationObserver(handleMutations);
     observer.observe(document.body, { childList: true, subtree: true });
     window.addEventListener("beforeunload", handleSessionScanUnload);
+    if (autoSaveInterval) clearInterval(autoSaveInterval);
+    autoSaveInterval = setInterval(() => {
+      if (isRecording) {
+        saveActiveSession("session-scan");
+      }
+    }, AUTO_SAVE_INTERVAL_MS);
+    saveActiveSession("session-scan");
     log(t("log.sessionScan.domObserver.started"));
   };
   var handleSessionScanUnload = () => {
@@ -3875,6 +3887,10 @@ ${result.join(",\n")}
       observer = null;
     }
     window.removeEventListener("beforeunload", handleSessionScanUnload);
+    if (autoSaveInterval) {
+      clearInterval(autoSaveInterval);
+      autoSaveInterval = null;
+    }
     clearActiveSession();
     isRecording = false;
     isPaused = false;
@@ -6292,6 +6308,8 @@ ${result.join(",\n")}
   var shouldResumeAfterModalClose = false;
   var fallbackNotificationShown = false;
   var isHighlightUpdateQueued = false;
+  var autoSaveInterval2 = null;
+  var AUTO_SAVE_INTERVAL_MS2 = 5e3;
   var scrollableParents = [];
   var scrollUpdateQueued = false;
   on("clearElementScan", () => {
@@ -6313,6 +6331,7 @@ ${result.join(",\n")}
         }
         startElementScan(elementScanFab2, { silent: true });
         updateStagedCount();
+        saveSessionState();
         if (settings.elementScan_persistData) {
           showNotification(t("notifications.elementScanResumed"), { type: "info" });
         } else {
@@ -6402,11 +6421,20 @@ ${result.join(",\n")}
     document.addEventListener("keydown", handleElementScanKeyDown);
     document.addEventListener("contextmenu", handleContextMenu, true);
     window.addEventListener("beforeunload", handleElementScanUnload);
+    if (autoSaveInterval2) clearInterval(autoSaveInterval2);
+    autoSaveInterval2 = setInterval(() => {
+      if (isElementScanActive()) {
+        saveSessionState();
+      }
+    }, AUTO_SAVE_INTERVAL_MS2);
     log(t("log.elementScan.listenersAdded"));
+  }
+  function saveSessionState() {
+    saveActiveSession("element-scan", Array.from(stagedTexts));
   }
   function handleElementScanUnload() {
     if (isElementScanActive()) {
-      saveActiveSession("element-scan", Array.from(stagedTexts));
+      saveSessionState();
     }
   }
   function stopElementScan(fabElement) {
@@ -6434,6 +6462,10 @@ ${result.join(",\n")}
     document.removeEventListener("keydown", handleElementScanKeyDown);
     document.removeEventListener("contextmenu", handleContextMenu, true);
     window.removeEventListener("beforeunload", handleElementScanUnload);
+    if (autoSaveInterval2) {
+      clearInterval(autoSaveInterval2);
+      autoSaveInterval2 = null;
+    }
     clearActiveSession();
     log(t("log.elementScan.listenersRemoved"));
     cleanupUI();
@@ -6565,6 +6597,9 @@ ${result.join(",\n")}
   }
   function updateStagedCount() {
     fire("stagedCountChanged", stagedTexts.size);
+    if (isActive) {
+      saveSessionState();
+    }
   }
   function scheduledHighlightUpdate() {
     if (currentTarget) {
