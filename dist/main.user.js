@@ -265,8 +265,11 @@ var TextExtractor = (() => {
       elementScanStarted: "Element scan started.",
       elementScanPaused: "Element scan paused.",
       elementScanResumed: "Element scan session resumed from previous page.",
+      elementScanContinued: "Element scan continued.",
+      sessionScanStarted: "Session scan started.",
       sessionScanPaused: "Dynamic scan paused.",
       sessionScanResumed: "Dynamic scan session resumed from previous page.",
+      sessionScanContinued: "Dynamic scan continued.",
       cspWorkerWarning: "Switched to compatibility scan mode due to website security restrictions."
     },
     placeholders: {
@@ -640,9 +643,12 @@ var TextExtractor = (() => {
       scanFailed: "\u626B\u63CF\u5931\u8D25\u3002",
       elementScanStarted: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5DF2\u5F00\u59CB\u3002",
       elementScanPaused: "\u5143\u7D20\u626B\u63CF\u5DF2\u6682\u505C\u3002",
+      elementScanResumed: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u4F1A\u8BDD\u5DF2\u4ECE\u4E0A\u4E00\u9875\u6062\u590D\u3002",
+      elementScanContinued: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5DF2\u7EE7\u7EED\u3002",
+      sessionScanStarted: "\u52A8\u6001\u626B\u63CF\u5DF2\u5F00\u59CB\u3002",
       sessionScanPaused: "\u52A8\u6001\u626B\u63CF\u5DF2\u6682\u505C\u3002",
       sessionScanResumed: "\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD\u5DF2\u4ECE\u4E0A\u4E00\u9875\u6062\u590D\u3002",
-      elementScanResumed: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u4F1A\u8BDD\u5DF2\u4ECE\u4E0A\u4E00\u9875\u6062\u590D\u3002",
+      sessionScanContinued: "\u52A8\u6001\u626B\u63CF\u5DF2\u7EE7\u7EED\u3002",
       cspWorkerWarning: "\u56E0\u7F51\u7AD9\u5B89\u5168\u9650\u5236\uFF0C\u5DF2\u5207\u6362\u81F3\u517C\u5BB9\u626B\u63CF\u6A21\u5F0F\u3002"
     },
     placeholders: {
@@ -1016,9 +1022,12 @@ var TextExtractor = (() => {
       scanFailed: "\u6383\u63CF\u5931\u6557\u3002",
       elementScanStarted: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5DF2\u958B\u59CB\u3002",
       elementScanPaused: "\u5143\u7D20\u6383\u63CF\u5DF2\u66AB\u505C\u3002",
+      elementScanResumed: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u6703\u8A71\u5DF2\u5F9E\u4E0A\u4E00\u9801\u6062\u5FA9\u3002",
+      elementScanContinued: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5DF2\u7E7C\u7E8C\u3002",
+      sessionScanStarted: "\u52D5\u614B\u6383\u63CF\u5DF2\u958B\u59CB\u3002",
       sessionScanPaused: "\u52D5\u614B\u6383\u63CF\u5DF2\u66AB\u505C\u3002",
       sessionScanResumed: "\u52D5\u614B\u6383\u63CF\u6703\u8A71\u5DF2\u5F9E\u4E0A\u4E00\u9801\u6062\u5FA9\u3002",
-      elementScanResumed: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u6703\u8A71\u5DF2\u5F9E\u4E0A\u4E00\u9801\u6062\u5FA9\u3002",
+      sessionScanContinued: "\u52D5\u614B\u6383\u63CF\u5DF2\u7E7C\u7E8C\u3002",
       cspWorkerWarning: "\u56E0\u7DB2\u7AD9\u5B89\u5168\u9650\u5236\uFF0C\u5DF2\u5207\u63DB\u81F3\u76F8\u5BB9\u6383\u63CF\u6A21\u5F0F\u3002"
     },
     placeholders: {
@@ -1768,8 +1777,11 @@ ${result.join(",\n")}
       elementScanStarted: "Element scan started.",
       elementScanPaused: "Element scan paused.",
       elementScanResumed: "Element scan session resumed from previous page.",
+      elementScanContinued: "Element scan continued.",
+      sessionScanStarted: "Session scan started.",
       sessionScanPaused: "Dynamic scan paused.",
       sessionScanResumed: "Dynamic scan session resumed from previous page.",
+      sessionScanContinued: "Dynamic scan continued.",
       cspWorkerWarning: "Switched to compatibility scan mode due to website security restrictions."
     },
     placeholders: {
@@ -2144,9 +2156,12 @@ ${result.join(",\n")}
       scanFailed: "\\u626B\\u63CF\\u5931\\u8D25\\u3002",
       elementScanStarted: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5DF2\\u5F00\\u59CB\\u3002",
       elementScanPaused: "\\u5143\\u7D20\\u626B\\u63CF\\u5DF2\\u6682\\u505C\\u3002",
+      elementScanResumed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u4F1A\\u8BDD\\u5DF2\\u4ECE\\u4E0A\\u4E00\\u9875\\u6062\\u590D\\u3002",
+      elementScanContinued: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5DF2\\u7EE7\\u7EED\\u3002",
+      sessionScanStarted: "\\u52A8\\u6001\\u626B\\u63CF\\u5DF2\\u5F00\\u59CB\\u3002",
       sessionScanPaused: "\\u52A8\\u6001\\u626B\\u63CF\\u5DF2\\u6682\\u505C\\u3002",
       sessionScanResumed: "\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD\\u5DF2\\u4ECE\\u4E0A\\u4E00\\u9875\\u6062\\u590D\\u3002",
-      elementScanResumed: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u4F1A\\u8BDD\\u5DF2\\u4ECE\\u4E0A\\u4E00\\u9875\\u6062\\u590D\\u3002",
+      sessionScanContinued: "\\u52A8\\u6001\\u626B\\u63CF\\u5DF2\\u7EE7\\u7EED\\u3002",
       cspWorkerWarning: "\\u56E0\\u7F51\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u6362\\u81F3\\u517C\\u5BB9\\u626B\\u63CF\\u6A21\\u5F0F\\u3002"
     },
     placeholders: {
@@ -2521,9 +2536,12 @@ ${result.join(",\n")}
       scanFailed: "\\u6383\\u63CF\\u5931\\u6557\\u3002",
       elementScanStarted: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5DF2\\u958B\\u59CB\\u3002",
       elementScanPaused: "\\u5143\\u7D20\\u6383\\u63CF\\u5DF2\\u66AB\\u505C\\u3002",
+      elementScanResumed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u6703\\u8A71\\u5DF2\\u5F9E\\u4E0A\\u4E00\\u9801\\u6062\\u5FA9\\u3002",
+      elementScanContinued: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5DF2\\u7E7C\\u7E8C\\u3002",
+      sessionScanStarted: "\\u52D5\\u614B\\u6383\\u63CF\\u5DF2\\u958B\\u59CB\\u3002",
       sessionScanPaused: "\\u52D5\\u614B\\u6383\\u63CF\\u5DF2\\u66AB\\u505C\\u3002",
       sessionScanResumed: "\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71\\u5DF2\\u5F9E\\u4E0A\\u4E00\\u9801\\u6062\\u5FA9\\u3002",
-      elementScanResumed: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u6703\\u8A71\\u5DF2\\u5F9E\\u4E0A\\u4E00\\u9801\\u6062\\u5FA9\\u3002",
+      sessionScanContinued: "\\u52D5\\u614B\\u6383\\u63CF\\u5DF2\\u7E7C\\u7E8C\\u3002",
       cspWorkerWarning: "\\u56E0\\u7DB2\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u63DB\\u81F3\\u76F8\\u5BB9\\u6383\\u63CF\\u6A21\\u5F0F\\u3002"
     },
     placeholders: {
@@ -3908,7 +3926,7 @@ ${result.join(",\n")}
   var resumeSessionScan = () => {
     if (!isRecording || !isPaused) return;
     isPaused = false;
-    showNotification(t("notifications.sessionScanResumed"), { type: "success" });
+    showNotification(t("notifications.sessionScanContinued"), { type: "success" });
     if (observer) {
       observer.observe(document.body, { childList: true, subtree: true });
     }
@@ -5801,7 +5819,11 @@ ${result.join(",\n")}
           updateFabTooltip(elementScanFab2, "tooltip.disabled.scan_in_progress");
           elementScanFab2.classList.add("fab-disabled");
         }
-        showNotification(t("notifications.sessionScanResumed"), { type: "info" });
+        if (settings.sessionScan_persistData) {
+          showNotification(t("notifications.sessionScanResumed"), { type: "info" });
+        } else {
+          showNotification(t("notifications.sessionScanStarted"), { type: "info" });
+        }
       }
     }
   });
@@ -6289,9 +6311,13 @@ ${result.join(",\n")}
           stagedTexts.clear();
           log("Skipping data restoration based on settings.");
         }
-        startElementScan(elementScanFab2);
+        startElementScan(elementScanFab2, { silent: true });
         updateStagedCount();
-        showNotification(t("notifications.elementScanResumed"), { type: "info" });
+        if (settings.elementScan_persistData) {
+          showNotification(t("notifications.elementScanResumed"), { type: "info" });
+        } else {
+          showNotification(t("notifications.elementScanStarted"), { type: "info" });
+        }
       }
     }
   });
@@ -6351,9 +6377,11 @@ ${result.join(",\n")}
       startElementScan(fabElement);
     }
   }
-  function startElementScan(fabElement) {
+  function startElementScan(fabElement, options = {}) {
     log(t("log.elementScan.starting"));
-    showNotification(t("notifications.elementScanStarted"), { type: "info" });
+    if (!options.silent) {
+      showNotification(t("notifications.elementScanStarted"), { type: "info" });
+    }
     isActive = true;
     isAdjusting = false;
     fallbackNotificationShown = false;
@@ -6433,7 +6461,7 @@ ${result.join(",\n")}
   function resumeElementScan() {
     if (!isActive || !isPaused2) return;
     isPaused2 = false;
-    showNotification(t("notifications.elementScanResumed"), { type: "success" });
+    showNotification(t("notifications.elementScanContinued"), { type: "success" });
     reselectElement();
   }
   function reselectElement() {

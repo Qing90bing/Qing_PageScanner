@@ -281,7 +281,7 @@ export const pauseSessionScan = () => {
 export const resumeSessionScan = () => {
     if (!isRecording || !isPaused) return;
     isPaused = false;
-    showNotification(t('notifications.sessionScanResumed'), { type: 'success' });
+    showNotification(t('notifications.sessionScanContinued'), { type: 'success' });
     if (observer) {
         observer.observe(document.body, { childList: true, subtree: true });
     }

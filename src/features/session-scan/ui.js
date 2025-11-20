@@ -220,7 +220,11 @@ on('resumeScanSession', async (state) => {
                 elementScanFab.classList.add('fab-disabled');
             }
 
-            showNotification(t('notifications.sessionScanResumed'), { type: 'info' });
+            if (settings.sessionScan_persistData) {
+                showNotification(t('notifications.sessionScanResumed'), { type: 'info' });
+            } else {
+                showNotification(t('notifications.sessionScanStarted'), { type: 'info' });
+            }
         }
     }
 });

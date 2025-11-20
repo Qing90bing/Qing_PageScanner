@@ -129,8 +129,11 @@
     "elementScanStarted": "Element scan started.",
     "elementScanPaused": "Element scan paused.",
     "elementScanResumed": "Element scan session resumed from previous page.",
+    "elementScanContinued": "Element scan continued.",
+    "sessionScanStarted": "Session scan started.",
     "sessionScanPaused": "Dynamic scan paused.",
     "sessionScanResumed": "Dynamic scan session resumed from previous page.",
+    "sessionScanContinued": "Dynamic scan continued.",
     "cspWorkerWarning": "Switched to compatibility scan mode due to website security restrictions."
   },
   "placeholders": {

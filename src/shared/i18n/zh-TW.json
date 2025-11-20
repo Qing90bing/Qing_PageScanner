@@ -128,9 +128,12 @@
     "scanFailed": "掃描失敗。",
     "elementScanStarted": "選取元素掃描已開始。",
     "elementScanPaused": "元素掃描已暫停。",
+    "elementScanResumed": "選取元素掃描會話已從上一頁恢復。",
+    "elementScanContinued": "選取元素掃描已繼續。",
+    "sessionScanStarted": "動態掃描已開始。",
     "sessionScanPaused": "動態掃描已暫停。",
     "sessionScanResumed": "動態掃描會話已從上一頁恢復。",
-    "elementScanResumed": "選取元素掃描會話已從上一頁恢復。",
+    "sessionScanContinued": "動態掃描已繼續。",
     "cspWorkerWarning": "因網站安全限制，已切換至相容掃描模式。"
   },
   "placeholders": {

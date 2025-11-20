@@ -60,13 +60,17 @@ on('resumeScanSession', async (state) => {
             }
 
             // 自动启动扫描
-            startElementScan(elementScanFab);
+            startElementScan(elementScanFab, { silent: true });
 
             // 手动更新计数器UI
             updateStagedCount();
 
             // 显示一个通知
-            showNotification(t('notifications.elementScanResumed'), { type: 'info' });
+            if (settings.elementScan_persistData) {
+                showNotification(t('notifications.elementScanResumed'), { type: 'info' });
+            } else {
+                showNotification(t('notifications.elementScanStarted'), { type: 'info' });
+            }
         }
     }
 });
@@ -148,9 +152,11 @@ export function handleElementScanClick(fabElement) {
     }
 }
 
-function startElementScan(fabElement) {
+function startElementScan(fabElement, options = {}) {
     log(t('log.elementScan.starting'));
-    showNotification(t('notifications.elementScanStarted'), { type: 'info' });
+    if (!options.silent) {
+        showNotification(t('notifications.elementScanStarted'), { type: 'info' });
+    }
     isActive = true;
     isAdjusting = false;
     fallbackNotificationShown = false; // 重置通知状态
@@ -243,7 +249,7 @@ export function pauseElementScan() {
 export function resumeElementScan() {
     if (!isActive || !isPaused) return;
     isPaused = false;
-    showNotification(t('notifications.elementScanResumed'), { type: 'success' });
+    showNotification(t('notifications.elementScanContinued'), { type: 'success' });
     reselectElement();
 }
 
