@@ -18,19 +18,22 @@ import * as state from './modalState.js';
 function calcStringLines(sentence, width) {
     if (!width || !state.canvasContext) return 1;
 
-    const words = sentence.split('');
+    // 优化：移除 sentence.split('')。
+    // 直接遍历字符串不仅代码更少，而且避免了为每个段落创建大量的临时字符数组，
+    // 这在大文本量下能显著减少内存占用和垃圾回收压力。
     let lineCount = 0;
     let currentLine = '';
 
-    for (let i = 0; i < words.length; i++) {
-        const wordWidth = state.canvasContext.measureText(words[i]).width;
+    for (let i = 0; i < sentence.length; i++) {
+        const char = sentence[i]; // 直接通过索引访问字符
+        const wordWidth = state.canvasContext.measureText(char).width;
         const lineWidth = state.canvasContext.measureText(currentLine).width;
 
         if (lineWidth + wordWidth > width) {
             lineCount++;
-            currentLine = words[i];
+            currentLine = char;
         } else {
-            currentLine += words[i];
+            currentLine += char;
         }
     }
     if (currentLine.trim() !== '' || sentence === '') {
@@ -115,6 +118,7 @@ function _performActiveLineUpdate() {
         let visualLineOffset = 0;
         let currentLine = '';
 
+        // 同样优化：这里也直接遍历字符串，移除 split('')
         for (let i = 0; i < lineContent.length; i++) {
             const char = lineContent[i];
             const nextLine = currentLine + char;
