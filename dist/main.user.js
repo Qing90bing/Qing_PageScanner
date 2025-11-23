@@ -3175,10 +3175,10 @@ ${result.join(",\n")}
 `], { type: "application/javascript" });
   var workerUrl = URL.createObjectURL(workerBlob);
   var trustedWorkerUrl = createTrustedWorkerUrl(workerUrl);
+  var parser = new DOMParser();
   function createSVGFromString(svgString) {
     if (!svgString || typeof svgString !== "string") return null;
     const sanitizedSVG = createTrustedHTML(svgString.trim());
-    const parser = new DOMParser();
     const doc = parser.parseFromString(sanitizedSVG, "image/svg+xml");
     const svgNode = doc.documentElement;
     if (!svgNode || svgNode.nodeName.toLowerCase() !== "svg" || svgNode.querySelector("parsererror")) {
