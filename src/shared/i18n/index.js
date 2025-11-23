@@ -70,12 +70,15 @@ export function t(key, replacements) {
         return key; // 如果找不到翻译，返回原始键
     }
 
-    // 如果提供了替换对象，则进行占位符替换
+    // 优化：使用单次正则扫描进行替换
+    // 相比于之前的遍历 keys 并创建多个 RegExp，这种方式只需要扫描一次字符串。
+    // 同时也自动处理了 key 周围可能存在的空格，更健壮。
     if (replacements) {
-        Object.keys(replacements).forEach(placeholder => {
-            // 使用正则表达式进行全局替换，以处理同一占位符多次出现的情况
-            const regex = new RegExp(`{{${placeholder}}}`, 'g');
-            value = value.replace(regex, replacements[placeholder]);
+        return value.replace(/{{\s*(\w+)\s*}}/g, (match, key) => {
+            // 如果 replacements 中有这个 key，就替换，否则保留原样
+            return Object.prototype.hasOwnProperty.call(replacements, key) 
+                ? replacements[key] 
+                : match;
         });
     }
 
@@ -108,4 +111,3 @@ export function getAvailableLanguages() {
         label: lang.name,
     }));
 }
-

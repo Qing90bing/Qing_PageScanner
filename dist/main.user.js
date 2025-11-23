@@ -1288,9 +1288,8 @@ var TextExtractor = (() => {
       return key;
     }
     if (replacements) {
-      Object.keys(replacements).forEach((placeholder3) => {
-        const regex = new RegExp(`{{${placeholder3}}}`, "g");
-        value = value.replace(regex, replacements[placeholder3]);
+      return value.replace(/{{\s*(\w+)\s*}}/g, (match, key2) => {
+        return Object.prototype.hasOwnProperty.call(replacements, key2) ? replacements[key2] : match;
       });
     }
     return value;
@@ -3022,9 +3021,8 @@ ${result.join(",\n")}
       return key;
     }
     if (replacements) {
-      Object.keys(replacements).forEach((placeholder) => {
-        const regex = new RegExp(\`{{\${placeholder}}}\`, "g");
-        value = value.replace(regex, replacements[placeholder]);
+      return value.replace(/{{\\s*(\\w+)\\s*}}/g, (match, key2) => {
+        return Object.prototype.hasOwnProperty.call(replacements, key2) ? replacements[key2] : match;
       });
     }
     return value;
