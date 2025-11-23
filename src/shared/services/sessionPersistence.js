@@ -1,6 +1,6 @@
 // src/shared/services/sessionPersistence.js
 
-import { getValue, setValue } from './tampermonkey.js';
+import { getValue, setValue, deleteValue } from './tampermonkey.js';
 import { fire } from '../utils/eventBus.js';
 import { log } from '../utils/logger.js';
 import { t } from '../i18n/index.js';
@@ -12,6 +12,17 @@ const SESSION_KEY = 'qing_pagescanner_session';
 // 增加到 5 分钟以解决跨站跳转或网络加载慢导致的数据丢失问题
 const RESUME_TIMEOUT_MS = 300000;
 
+// 模块级锁，防止在用户手动停止后，由于异步或延迟操作导致的“僵尸”保存
+let isPersistenceEnabled = false;
+
+/**
+ * @public
+ * @description 显式启用会话持久化。在启动新会话时必须调用此函数。
+ */
+export function enablePersistence() {
+    isPersistenceEnabled = true;
+}
+
 /**
  * @public
  * @description 在页面即将卸载时，保存当前激活的扫描会话。
@@ -19,6 +30,12 @@ const RESUME_TIMEOUT_MS = 300000;
  * @param {Array<string>} [data=null] - 需要一同保存的数据 (例如，元素扫描中已暂存的文本)。
  */
 export async function saveActiveSession(mode, data = null) {
+    // 关键锁：如果持久化已被禁用（例如用户已点击停止），则拦截任何保存尝试
+    if (!isPersistenceEnabled) {
+        log('Save blocked because persistence is disabled.');
+        return;
+    }
+
     let sessionData = data;
     if (mode === 'session-scan') {
         // 对于动态扫描，我们从 logic 模块获取主线程的数据镜像
@@ -40,7 +57,9 @@ export async function saveActiveSession(mode, data = null) {
  * 这可以防止用户手动停止后，下次刷新依然自动恢复。
  */
 export async function clearActiveSession() {
-    await setValue(SESSION_KEY, null);
+    // 立即禁用持久化，阻止任何后续的保存操作
+    isPersistenceEnabled = false;
+    await deleteValue(SESSION_KEY);
 }
 
 /**
@@ -54,7 +73,7 @@ export async function loadAndResumeSession() {
     }
 
     // 关键：立即清除会话，防止刷新页面时重复恢复
-    await setValue(SESSION_KEY, null);
+    await deleteValue(SESSION_KEY);
 
     try {
         const state = JSON.parse(savedSessionJSON);

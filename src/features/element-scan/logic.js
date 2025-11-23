@@ -16,7 +16,7 @@ import { filterAndNormalizeTexts } from '../../shared/utils/textProcessor.js';
 import { trustedWorkerUrl } from '../../shared/workers/worker-url.js';
 import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
 import { on, fire } from '../../shared/utils/eventBus.js';
-import { saveActiveSession, clearActiveSession } from '../../shared/services/sessionPersistence.js';
+import { saveActiveSession, clearActiveSession, enablePersistence } from '../../shared/services/sessionPersistence.js';
 
 // --- 模块级状态变量 ---
 
@@ -161,6 +161,10 @@ export function handleElementScanClick(fabElement) {
 
 function startElementScan(fabElement, options = {}) {
     log(t('log.elementScan.starting'));
+
+    // 在启动流程开始时启用持久化
+    enablePersistence();
+
     if (!options.silent) {
         showNotification(t('notifications.elementScanStarted'), { type: 'info' });
     }

@@ -51,3 +51,11 @@ export const setValue = (key, value) => {
   return GM_setValue(key, value);
 };
 
+/**
+ * 从油猴存储中删除一个值。
+ * @param {string} key - 值的键名。
+ * @returns {Promise<void>} 返回一个Promise，在值删除后解析。
+ */
+export const deleteValue = (key) => {
+  return GM_deleteValue(key);
+};

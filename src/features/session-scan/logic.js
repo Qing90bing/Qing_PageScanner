@@ -16,7 +16,7 @@ import { fire, on } from '../../shared/utils/eventBus.js';
 import * as fallback from './fallback.js';
 import { trustedWorkerUrl } from '../../shared/workers/worker-url.js';
 import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
-import { saveActiveSession, clearActiveSession } from '../../shared/services/sessionPersistence.js';
+import { saveActiveSession, clearActiveSession, enablePersistence } from '../../shared/services/sessionPersistence.js';
 
 // --- 模块级变量 ---
 let isRecording = false;
@@ -38,6 +38,7 @@ on('clearSessionScan', () => {
 
 // --- MutationObserver 回调 ---
 const handleMutations = (mutations) => {
+    if (!isRecording) return; // 防止停止后处理残留的 mutation
     const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(', ');
     const textsBatch = [];
 
@@ -121,6 +122,9 @@ export const start = async (onUpdate, resumedData = null) => {
         loadSettings(),
         isWorkerAllowed()
     ]);
+
+    // 在数据加载和初始保存之前，明确启用持久化
+    enablePersistence();
 
     if (resumedData && Array.isArray(resumedData)) {
         resumedData.forEach(text => {

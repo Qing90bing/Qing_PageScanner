@@ -16,6 +16,7 @@
 // @grant        GM_setClipboard
 // @grant        GM_getValue
 // @grant        GM_setValue
+// @grant        GM_deleteValue
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
 // ==/UserScript==
@@ -1702,6 +1703,9 @@ var TextExtractor = (() => {
   };
   var setValue = (key, value) => {
     return GM_setValue(key, value);
+  };
+  var deleteValue = (key) => {
+    return GM_deleteValue(key);
   };
   init_logger();
   init_i18n();
@@ -3793,7 +3797,15 @@ ${result.join(",\n")}
   init_i18n();
   var SESSION_KEY = "qing_pagescanner_session";
   var RESUME_TIMEOUT_MS = 3e5;
+  var isPersistenceEnabled = false;
+  function enablePersistence() {
+    isPersistenceEnabled = true;
+  }
   async function saveActiveSession(mode, data = null) {
+    if (!isPersistenceEnabled) {
+      log("Save blocked because persistence is disabled.");
+      return;
+    }
     let sessionData = data;
     if (mode === "session-scan") {
       const textsMirror = getSessionTexts();
@@ -3807,14 +3819,15 @@ ${result.join(",\n")}
     await setValue(SESSION_KEY, JSON.stringify(sessionState));
   }
   async function clearActiveSession() {
-    await setValue(SESSION_KEY, null);
+    isPersistenceEnabled = false;
+    await deleteValue(SESSION_KEY);
   }
   async function loadAndResumeSession() {
     const savedSessionJSON = await getValue(SESSION_KEY, null);
     if (!savedSessionJSON) {
       return;
     }
-    await setValue(SESSION_KEY, null);
+    await deleteValue(SESSION_KEY);
     try {
       const state = JSON.parse(savedSessionJSON);
       if (Date.now() - state.timestamp > RESUME_TIMEOUT_MS) {
@@ -3842,6 +3855,7 @@ ${result.join(",\n")}
     clearSessionData();
   });
   var handleMutations = (mutations) => {
+    if (!isRecording) return;
     const ignoredSelectorString2 = appConfig.scanner.ignoredSelectors.join(", ");
     const textsBatch = [];
     mutations.forEach((mutation) => {
@@ -3907,6 +3921,7 @@ ${result.join(",\n")}
       loadSettings(),
       isWorkerAllowed()
     ]);
+    enablePersistence();
     if (resumedData && Array.isArray(resumedData)) {
       resumedData.forEach((text) => {
         initialTexts.push(text);
@@ -6556,6 +6571,7 @@ ${result.join(",\n")}
   }
   function startElementScan(fabElement, options = {}) {
     log(t("log.elementScan.starting"));
+    enablePersistence();
     if (!options.silent) {
       showNotification(t("notifications.elementScanStarted"), { type: "info" });
     }
