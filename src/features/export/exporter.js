@@ -7,7 +7,8 @@
 
 import { log } from '../../shared/utils/logger.js';
 import { on } from '../../shared/utils/eventBus.js';
-import { getCurrentMode } from '../../shared/ui/mainModal/modalState.js';
+// 新增：导入 outputTextarea 以便获取用户编辑后的内容
+import { getCurrentMode, outputTextarea } from '../../shared/ui/mainModal/modalState.js';
 import { fullQuickScanContent } from '../../shared/ui/mainModal.js';
 import { t } from '../../shared/i18n/index.js';
 import { requestSummary } from '../session-scan/logic.js';
@@ -15,29 +16,25 @@ import { requestSummary } from '../session-scan/logic.js';
 /**
  * @private
  * @description 获取当前网页标题，并清理文件名中不允许的字符。
- * @returns {string} 清理后的网页标题。
  */
 function getPageTitle() {
-    return document.title.replace(/[\\/:*?"<>|]/g, '_');
+    return document.title.replace(/[\\/:*?"<>|]/g, '_').trim() || 'Exported_Text';
 }
 
 /**
  * @private
  * @description 生成带时间戳的标准化文件名。
- * @param {string} format - 文件格式扩展名 (e.g., 'txt', 'json', 'csv')。
- * @returns {string} 完整的文件名。
  */
 function generateFilename(format) {
     const title = getPageTitle();
-    const timestamp = new Date().toLocaleString('sv').replace(/ /g, '_').replace(/:/g, '-');
+    const now = new Date();
+    const timestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}`;
     return `${title}_${timestamp}.${format}`;
 }
 
 /**
  * @private
  * @description 直接获取文本框的原始内容。
- * @param {string} text - 从文本区提取的原始文本。
- * @returns {string} 原始文本内容。
  */
 function getRawContent(text) {
     return text;
@@ -46,8 +43,6 @@ function getRawContent(text) {
 /**
  * @private
  * @description 将文本数据格式化为 CSV 格式。
- * @param {string} text - 从文本区提取的原始文本。
- * @returns {string} CSV 格式的字符串。
  */
 function formatAsCsv(text) {
     const header = `"${t('export.csv.id')}","${t('export.csv.original')}","${t('export.csv.translation')}"\n`;
@@ -62,12 +57,20 @@ function formatAsCsv(text) {
 
         let csvContent = header;
         parsedData.forEach((row, index) => {
-            // 确保 row 是一个数组并且至少有一个元素
             if (Array.isArray(row) && row.length > 0) {
-                const originalText = String(row[0]); // 确保是字符串
-                // 为了 CSV 格式的正确性，转义文本中的双引号
-                const escapedLine = `"${originalText.replace(/"/g, '""')}"`;
-                csvContent += `${index + 1},${escapedLine},""\n`;
+                // 处理原文
+                let originalText = String(row[0] || '');
+                originalText = originalText.replace(/"/g, '""'); // CSV 转义双引号
+
+                // 处理译文 (关键修复：读取数组的第二个元素)
+                let translationText = '';
+                if (row.length > 1) {
+                    translationText = String(row[1] || '');
+                    translationText = translationText.replace(/"/g, '""'); // CSV 转义双引号
+                }
+
+                // 拼接 CSV 行：ID, 原文, 译文
+                csvContent += `${index + 1},"${originalText}","${translationText}"\n`;
             }
         });
         
@@ -75,7 +78,6 @@ function formatAsCsv(text) {
 
     } catch (error) {
         log(t('log.exporter.csvError'), error);
-        // 在 JSON 解析失败时，返回只包含表头的 CSV 以保持健壮性
         return header;
     }
 }
@@ -83,12 +85,11 @@ function formatAsCsv(text) {
 /**
  * @private
  * @description 触发浏览器下载文件。
- * @param {string} filename - 要保存的文件名。
- * @param {string} content - 文件内容。
- * @param {string} mimeType - 文件的 MIME 类型。
  */
 function downloadFile(filename, content, mimeType) {
-    const blob = new Blob([content], { type: mimeType });
+    // 添加 BOM 解决 Excel 中文乱码
+    const blobContent = filename.endsWith('.csv') ? ['\uFEFF', content] : [content];
+    const blob = new Blob(blobContent, { type: mimeType });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -102,12 +103,11 @@ function downloadFile(filename, content, mimeType) {
 
 /**
  * @description 根据所选格式导出文本。
- * @param {object} detail - 包含导出格式的对象。
- * @param {string} detail.format - 目标文件格式 ('txt', 'json', 'csv')。
  */
 function exportToFile({ format }) {
     const currentMode = getCurrentMode();
 
+    // 定义核心处理函数
     const processAndDownload = (text) => {
         if (!text || text.trim() === '' || text.trim() === '[]') {
             log(t('log.exporter.noContent'));
@@ -140,6 +140,25 @@ function exportToFile({ format }) {
         downloadFile(filename, content, mimeType);
     };
 
+    // --- 优先使用用户编辑过的内容 ---
+    
+    // 1. 获取当前 UI 文本框里的内容
+    const currentUiContent = outputTextarea ? outputTextarea.value : null;
+    
+    // 2. 检查是否有截断警告
+    const truncationWarning = t('scan.truncationWarning');
+    const isTruncated = currentUiContent && currentUiContent.includes(truncationWarning);
+
+    // 3. 如果 UI 里有内容，且没有被截断，直接导出 UI 里的内容
+    if (currentUiContent && !isTruncated && currentUiContent.trim() !== '') {
+        log('Exporting user-edited content from UI.');
+        processAndDownload(currentUiContent);
+        return;
+    }
+
+    // 4. 回退到使用内存中的原始数据
+    log('Exporting original raw data (UI content invalid or truncated).');
+    
     if (currentMode === 'session-scan') {
         log(t('log.main.requestingSessionScanData'));
         requestSummary(processAndDownload);

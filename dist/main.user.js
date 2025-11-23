@@ -6927,11 +6927,12 @@ ${result.join(",\n")}
   init_eventBus();
   init_i18n();
   function getPageTitle() {
-    return document.title.replace(/[\\/:*?"<>|]/g, "_");
+    return document.title.replace(/[\\/:*?"<>|]/g, "_").trim() || "Exported_Text";
   }
   function generateFilename(format) {
     const title = getPageTitle();
-    const timestamp = ( new Date()).toLocaleString("sv").replace(/ /g, "_").replace(/:/g, "-");
+    const now =  new Date();
+    const timestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}_${String(now.getHours()).padStart(2, "0")}-${String(now.getMinutes()).padStart(2, "0")}`;
     return `${title}_${timestamp}.${format}`;
   }
   function getRawContent(text) {
@@ -6949,9 +6950,14 @@ ${result.join(",\n")}
       let csvContent = header;
       parsedData.forEach((row, index) => {
         if (Array.isArray(row) && row.length > 0) {
-          const originalText = String(row[0]);
-          const escapedLine = `"${originalText.replace(/"/g, '""')}"`;
-          csvContent += `${index + 1},${escapedLine},""
+          let originalText = String(row[0] || "");
+          originalText = originalText.replace(/"/g, '""');
+          let translationText = "";
+          if (row.length > 1) {
+            translationText = String(row[1] || "");
+            translationText = translationText.replace(/"/g, '""');
+          }
+          csvContent += `${index + 1},"${originalText}","${translationText}"
 `;
         }
       });
@@ -6962,7 +6968,8 @@ ${result.join(",\n")}
     }
   }
   function downloadFile(filename, content, mimeType) {
-    const blob = new Blob([content], { type: mimeType });
+    const blobContent = filename.endsWith(".csv") ? ["\uFEFF", content] : [content];
+    const blob = new Blob(blobContent, { type: mimeType });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -7003,6 +7010,15 @@ ${result.join(",\n")}
       }
       downloadFile(filename, content, mimeType);
     };
+    const currentUiContent = outputTextarea ? outputTextarea.value : null;
+    const truncationWarning = t("scan.truncationWarning");
+    const isTruncated = currentUiContent && currentUiContent.includes(truncationWarning);
+    if (currentUiContent && !isTruncated && currentUiContent.trim() !== "") {
+      log("Exporting user-edited content from UI.");
+      processAndDownload(currentUiContent);
+      return;
+    }
+    log("Exporting original raw data (UI content invalid or truncated).");
     if (currentMode2 === "session-scan") {
       log(t("log.main.requestingSessionScanData"));
       requestSummary(processAndDownload);
