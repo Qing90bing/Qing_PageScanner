@@ -13,32 +13,41 @@ import { isWorkerAllowed } from '../../shared/utils/csp-checker.js';
 import { showNotification } from '../../shared/ui/components/notification.js';
 import { t, getTranslationObject } from '../../shared/i18n/index.js';
 import { fire, on } from '../../shared/utils/eventBus.js';
+import { debounce } from '../../shared/utils/debounce.js';
+import { EVENT_BUS, WORKER_MESSAGES } from '../../shared/constants/events.js';
 import * as fallback from './fallback.js';
 import { trustedWorkerUrl } from '../../shared/workers/worker-url.js';
 import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
 import { saveActiveSession, clearActiveSession, enablePersistence } from '../../shared/services/sessionPersistence.js';
 
 // --- 模块级变量 ---
-let isRecording = false;
-let isPaused = false;
-let observer = null;
-let worker = null;
-let useFallback = false;
-let onSummaryCallback = null;
-let onUpdateCallback = null;
-let currentCount = 0; // 新增：在模块级别跟踪计数值
-let sessionTextsMirror = new Set(); // 主线程数据镜像
+const STATE = {
+    IDLE: 'idle',
+    RECORDING: 'recording',
+    PAUSED: 'paused',
+};
+
+const sessionState = {
+    status: STATE.IDLE,
+    observer: null,
+    worker: null,
+    useFallback: false,
+    onSummaryCallback: null,
+    onUpdateCallback: null,
+    currentCount: 0,
+    cachedTexts: [],
+};
+
 let autoSaveInterval = null; // 自动保存定时器
-const AUTO_SAVE_INTERVAL_MS = 5000; // 5秒
 
 // --- 事件监听 ---
-on('clearSessionScan', () => {
+on(EVENT_BUS.CLEAR_SESSION_SCAN, () => {
     clearSessionData();
 });
 
 // --- MutationObserver 回调 ---
-const handleMutations = (mutations) => {
-    if (!isRecording) return; // 防止停止后处理残留的 mutation
+const handleMutations = debounce((mutations) => {
+    if (sessionState.status !== STATE.RECORDING) return; // 防止停止后处理残留的 mutation
     const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(', ');
     const textsBatch = [];
 
@@ -57,38 +66,37 @@ const handleMutations = (mutations) => {
 
     if (textsBatch.length > 0) {
         const logPrefix = '动态新发现';
-        if (useFallback) {
+        if (sessionState.useFallback) {
             if (fallback.processTextsInFallback(textsBatch, logPrefix)) {
                 const count = fallback.getCountInFallback();
-                if (onUpdateCallback) onUpdateCallback(count);
+                if (sessionState.onUpdateCallback) sessionState.onUpdateCallback(count);
                 updateScanCount(count, 'session');
                 saveActiveSession('session-scan'); // 立即保存变更
             }
-        } else if (worker) {
-            worker.postMessage({
-                type: 'session-add-texts',
+        } else if (sessionState.worker) {
+            sessionState.worker.postMessage({
+                type: WORKER_MESSAGES.SESSION_ADD_TEXTS,
                 payload: { texts: textsBatch }
             });
         }
     }
-};
+}, appConfig.session.mutationDebounceMs);
 
 /**
  * @private
  * @description 清空会话期间收集的所有文本。
  */
 function clearSessionData() {
-    currentCount = 0; // 重置计数值
-    sessionTextsMirror.clear();
-    saveActiveSession('session-scan'); // 保存清空后的状态
+    sessionState.currentCount = 0; // 重置计数值
+    saveActiveSession('session-scan', []); // 保存清空后的状态
 
-    if (useFallback) {
+    if (sessionState.useFallback) {
         fallback.clearInFallback();
-        if (onUpdateCallback) onUpdateCallback(0);
+        if (sessionState.onUpdateCallback) sessionState.onUpdateCallback(0);
         updateScanCount(0, 'session');
-        fire('sessionCleared'); // 触发事件
-    } else if (worker) {
-        worker.postMessage({ type: 'session-clear' });
+        fire(EVENT_BUS.SESSION_CLEARED); // 触发事件
+    } else if (sessionState.worker) {
+        sessionState.worker.postMessage({ type: WORKER_MESSAGES.SESSION_CLEAR });
         log(t('log.sessionScan.worker.clearCommandSent'));
     }
 }
@@ -96,25 +104,24 @@ function clearSessionData() {
 // --- 公开函数 ---
 
 export const start = async (onUpdate, resumedData = null) => {
-    if (isRecording) return;
+    if (sessionState.status !== STATE.IDLE) return;
 
     // --- 1. 彻底清理旧状态 ---
-    isPaused = false;
-    if (worker) {
-        worker.terminate();
-        worker = null;
+    if (sessionState.worker) {
+        sessionState.worker.terminate();
+        sessionState.worker = null;
     }
-    if (observer) {
-        observer.disconnect();
-        observer = null;
+    if (sessionState.observer) {
+        sessionState.observer.disconnect();
+        sessionState.observer = null;
     }
     
     // --- 2. 初始化本次会话的状态 ---
-    currentCount = 0;
-    sessionTextsMirror.clear();
-    onUpdateCallback = onUpdate;
-    useFallback = false;
-    isRecording = true;
+    sessionState.currentCount = 0;
+    sessionState.onUpdateCallback = onUpdate;
+    sessionState.useFallback = false;
+    sessionState.status = STATE.RECORDING;
+    sessionState.cachedTexts = [];
 
     // --- 3. 加载初始数据和设置 ---
     const [initialTexts, settings, workerAllowed] = await Promise.all([
@@ -129,7 +136,6 @@ export const start = async (onUpdate, resumedData = null) => {
     if (resumedData && Array.isArray(resumedData)) {
         resumedData.forEach(text => {
             initialTexts.push(text);
-            sessionTextsMirror.add(text);
         });
     }
     const { filterRules, enableDebugLogging } = settings;
@@ -137,17 +143,17 @@ export const start = async (onUpdate, resumedData = null) => {
     // --- 4. 定义后备模式激活函数 ---
     const activateFallbackMode = () => {
         log(t('log.sessionScan.switchToFallback'), 'warn');
-        if (worker) {
-            worker.terminate();
-            worker = null;
+        if (sessionState.worker) {
+            sessionState.worker.terminate();
+            sessionState.worker = null;
         }
-        useFallback = true;
+        sessionState.useFallback = true;
         
         fallback.initFallback(filterRules);
         if (initialTexts.length > 0) {
             fallback.processTextsInFallback(initialTexts);
             const count = fallback.getCountInFallback();
-            if (onUpdateCallback) onUpdateCallback(count);
+            if (sessionState.onUpdateCallback) sessionState.onUpdateCallback(count);
             updateScanCount(count, 'session');
             saveActiveSession('session-scan'); // 初始化后保存
         }
@@ -157,33 +163,31 @@ export const start = async (onUpdate, resumedData = null) => {
     if (workerAllowed) {
         try {
             log(t('log.sessionScan.worker.starting'));
-            worker = new Worker(trustedWorkerUrl);
+            sessionState.worker = new Worker(trustedWorkerUrl);
 
-            worker.onmessage = (event) => {
+            sessionState.worker.onmessage = (event) => {
                 const { type, payload } = event.data;
-                if (type === 'countUpdated') {
-                    currentCount = payload.count;
-                    if (onUpdateCallback) onUpdateCallback(payload.count);
+                if (type === WORKER_MESSAGES.COUNT_UPDATED) {
+                    sessionState.currentCount = payload.count;
+                    if (sessionState.onUpdateCallback) sessionState.onUpdateCallback(payload.count);
                     updateScanCount(payload.count, 'session');
-
-                    if (payload.newTexts && Array.isArray(payload.newTexts)) {
-                        payload.newTexts.forEach(text => sessionTextsMirror.add(text));
-                    }
-                } else if (type === 'summaryReady' && onSummaryCallback) {
-                    onSummaryCallback(payload, currentCount);
-                    onSummaryCallback = null;
+                } else if (type === WORKER_MESSAGES.SESSION_SYNC_DATA) {
+                    sessionState.cachedTexts = payload.texts;
+                } else if (type === WORKER_MESSAGES.SUMMARY_READY && sessionState.onSummaryCallback) {
+                    sessionState.onSummaryCallback(payload, sessionState.currentCount);
+                    sessionState.onSummaryCallback = null;
                 }
             };
 
-            worker.onerror = (error) => {
+            sessionState.worker.onerror = (error) => {
                 log(t('log.sessionScan.worker.initFailed'), 'warn');
                 log(t('log.sessionScan.worker.originalError', { error: error.message }), 'debug');
                 showNotification(t('notifications.cspWorkerWarning'), { type: 'info', duration: 5000 });
                 activateFallbackMode();
             };
 
-            worker.postMessage({
-                type: 'session-start',
+            sessionState.worker.postMessage({
+                type: WORKER_MESSAGES.SESSION_START,
                 payload: {
                     filterRules,
                     enableDebugLogging,
@@ -211,38 +215,49 @@ export const start = async (onUpdate, resumedData = null) => {
     // --- 6. 统一启动 MutationObserver ---
     // 无论之前的路径如何（成功、CSP阻塞、同步/异步失败），
     // 都在这里统一、安全地启动 DOM 监听。
-    observer = new MutationObserver(handleMutations);
-    observer.observe(document.body, { childList: true, subtree: true });
+    sessionState.observer = new MutationObserver(handleMutations);
+    sessionState.observer.observe(document.body, { childList: true, subtree: true });
     window.addEventListener('beforeunload', handleSessionScanUnload);
 
     // 启动自动保存心跳，确保时间戳刷新
     if (autoSaveInterval) clearInterval(autoSaveInterval);
     autoSaveInterval = setInterval(() => {
-        if (isRecording) {
-            saveActiveSession('session-scan');
+        if (sessionState.status === STATE.RECORDING) {
+            const dataToSave = sessionState.useFallback
+                ? fallback.getAllTextsInFallback()
+                : sessionState.cachedTexts;
+            saveActiveSession('session-scan', dataToSave);
         }
-    }, AUTO_SAVE_INTERVAL_MS);
+    }, appConfig.session.autoSaveIntervalMs);
 
     // 立即保存一次以初始化会话
-    saveActiveSession('session-scan');
+    const initialDataToSave = sessionState.useFallback
+        ? fallback.getAllTextsInFallback()
+        : sessionState.cachedTexts;
+    saveActiveSession('session-scan', initialDataToSave);
 
     log(t('log.sessionScan.domObserver.started'));
 };
 
 const handleSessionScanUnload = () => {
-    saveActiveSession('session-scan');
+    if (sessionState.status !== STATE.IDLE) {
+        const dataToSave = sessionState.useFallback
+            ? fallback.getAllTextsInFallback()
+            : sessionState.cachedTexts;
+        saveActiveSession('session-scan', dataToSave);
+    }
 };
 
 export const stop = (onStopped) => {
-    if (!isRecording) {
+    if (sessionState.status === STATE.IDLE) {
         if (onStopped) onStopped(0);
         return;
     }
 
     log(t('log.sessionScan.domObserver.stopped'));
-    if (observer) {
-        observer.disconnect();
-        observer = null;
+    if (sessionState.observer) {
+        sessionState.observer.disconnect();
+        sessionState.observer = null;
     }
     window.removeEventListener('beforeunload', handleSessionScanUnload);
 
@@ -252,65 +267,59 @@ export const stop = (onStopped) => {
     }
 
     clearActiveSession();
-    isRecording = false;
-    isPaused = false;
-    sessionTextsMirror.clear();
-    onUpdateCallback = null;
+    sessionState.status = STATE.IDLE;
+    sessionState.onUpdateCallback = null;
 
     if (onStopped) {
-        if (useFallback) {
+        if (sessionState.useFallback) {
             onStopped(fallback.getCountInFallback());
-        } else if (worker) {
+        } else if (sessionState.worker) {
             const finalCountListener = (event) => {
                 const { type, payload } = event.data;
-                if (type === 'countUpdated' && typeof payload.count !== 'undefined') {
+                if (type === WORKER_MESSAGES.COUNT_UPDATED && typeof payload.count !== 'undefined') {
                     onStopped(payload.count);
-                    worker.removeEventListener('message', finalCountListener);
+                    sessionState.worker.removeEventListener('message', finalCountListener);
                 }
             };
-            worker.addEventListener('message', finalCountListener);
-            worker.postMessage({ type: 'session-get-count' });
+            sessionState.worker.addEventListener('message', finalCountListener);
+            sessionState.worker.postMessage({ type: WORKER_MESSAGES.SESSION_GET_COUNT });
         } else {
             onStopped(0);
         }
     }
 };
 
-export const getSessionTexts = () => {
-    return sessionTextsMirror;
-};
-
 export const requestSummary = (onReady) => {
     if (!onReady) return;
 
-    if (useFallback) {
+    if (sessionState.useFallback) {
         const summaryText = fallback.getSummaryInFallback();
         const summaryCount = fallback.getCountInFallback();
         onReady(summaryText, summaryCount);
-    } else if (worker) {
-        onSummaryCallback = onReady;
-        worker.postMessage({ type: 'session-get-summary' });
+    } else if (sessionState.worker) {
+        sessionState.onSummaryCallback = onReady;
+        sessionState.worker.postMessage({ type: WORKER_MESSAGES.SESSION_GET_SUMMARY });
     } else {
         onReady("[]", 0);
     }
 };
 
-export const isSessionRecording = () => isRecording;
+export const isSessionRecording = () => sessionState.status === STATE.RECORDING || sessionState.status === STATE.PAUSED;
 
 export const pauseSessionScan = () => {
-    if (!isRecording || isPaused) return;
-    isPaused = true;
+    if (sessionState.status !== STATE.RECORDING) return;
+    sessionState.status = STATE.PAUSED;
     showNotification(t('notifications.sessionScanPaused'), { type: 'info' });
-    if (observer) {
-        observer.disconnect();
+    if (sessionState.observer) {
+        sessionState.observer.disconnect();
     }
 };
 
 export const resumeSessionScan = () => {
-    if (!isRecording || !isPaused) return;
-    isPaused = false;
+    if (sessionState.status !== STATE.PAUSED) return;
+    sessionState.status = STATE.RECORDING;
     showNotification(t('notifications.sessionScanContinued'), { type: 'success' });
-    if (observer) {
-        observer.observe(document.body, { childList: true, subtree: true });
+    if (sessionState.observer) {
+        sessionState.observer.observe(document.body, { childList: true, subtree: true });
     }
 };

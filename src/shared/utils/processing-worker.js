@@ -1,5 +1,7 @@
 // src/shared/utils/processing-worker.js
 
+import { WORKER_MESSAGES } from '../constants/events.js';
+
 /**
  * @module ProcessingWorker
  * @description 一个通用的 Web Worker，负责在后台处理文本，
@@ -18,6 +20,7 @@ let sessionTexts = new Set();
 let filterRules = {};
 let translations = {};
 let enableDebugLogging = false;
+let syncInterval = null;
 
 // --- 辅助函数 ---
 
@@ -142,7 +145,8 @@ self.onmessage = (event) => {
         /**
          * 会话模式：开始一个新的会话
          */
-        case 'session-start':
+        case WORKER_MESSAGES.SESSION_START:
+            if (syncInterval) clearInterval(syncInterval);
             const { initialData } = payload;
             sessionTexts.clear();
             const newTexts = [];
@@ -156,18 +160,24 @@ self.onmessage = (event) => {
             log(`Session started with ${sessionTexts.size} initial items.`);
             // After processing initial data, send an immediate count update
             self.postMessage({
-                type: 'countUpdated',
+                type: WORKER_MESSAGES.COUNT_UPDATED,
                 payload: {
                     count: sessionTexts.size,
                     newTexts: newTexts,
                 },
             });
+            syncInterval = setInterval(() => {
+                self.postMessage({
+                    type: WORKER_MESSAGES.SESSION_SYNC_DATA,
+                    payload: { texts: Array.from(sessionTexts) },
+                });
+            }, 1000);
             break;
 
         /**
          * 会话模式：添加文本
          */
-        case 'session-add-texts': {
+        case WORKER_MESSAGES.SESSION_ADD_TEXTS: {
             const { texts } = payload;
             const newTexts = [];
             if (Array.isArray(texts)) {
@@ -181,7 +191,7 @@ self.onmessage = (event) => {
             }
             if (newTexts.length > 0) {
                 self.postMessage({
-                    type: 'countUpdated',
+                    type: WORKER_MESSAGES.COUNT_UPDATED,
                     payload: {
                         count: sessionTexts.size,
                         newTexts: newTexts
@@ -194,27 +204,28 @@ self.onmessage = (event) => {
         /**
          * 会话模式：请求总结
          */
-        case 'session-get-summary': {
+        case WORKER_MESSAGES.SESSION_GET_SUMMARY: {
             const sessionTextsArray = Array.from(sessionTexts);
             const formattedText = formatTextsForTranslation(sessionTextsArray);
-            self.postMessage({ type: 'summaryReady', payload: formattedText });
+            self.postMessage({ type: WORKER_MESSAGES.SUMMARY_READY, payload: formattedText });
             break;
         }
 
         /**
          * 会话模式：清空会话
          */
-        case 'session-clear':
+        case WORKER_MESSAGES.SESSION_CLEAR:
+            if (syncInterval) clearInterval(syncInterval);
             sessionTexts.clear();
             log('Session cleared.');
-            self.postMessage({ type: 'countUpdated', payload: { count: 0, newTexts: [] } });
+            self.postMessage({ type: WORKER_MESSAGES.COUNT_UPDATED, payload: { count: 0, newTexts: [] } });
             break;
 
         /**
          * 会话模式：获取当前计数值
          */
-        case 'session-get-count':
-            self.postMessage({ type: 'countUpdated', payload: { count: sessionTexts.size } });
+        case WORKER_MESSAGES.SESSION_GET_COUNT:
+            self.postMessage({ type: WORKER_MESSAGES.COUNT_UPDATED, payload: { count: sessionTexts.size } });
             break;
     }
 };

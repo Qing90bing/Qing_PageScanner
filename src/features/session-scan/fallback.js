@@ -73,3 +73,7 @@ export function clearInFallback() {
     sessionTexts.clear();
     log(t('log.sessionScan.fallback.cleared'));
 }
+
+export function getAllTextsInFallback() {
+    return Array.from(sessionTexts);
+}

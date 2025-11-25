@@ -121,4 +121,11 @@ export const appConfig = {
             '.no-translate','.view-line',
         ],
     },
+    // 会话管理相关的常量
+    session: {
+        // 会话自动保存的时间间隔（毫秒）
+        autoSaveIntervalMs: 5000,
+        // MutationObserver 的防抖延迟（毫秒）
+        mutationDebounceMs: 300,
+    },
 };

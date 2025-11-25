@@ -12,6 +12,7 @@ import { dynamicIcon } from '../../assets/icons/dynamicIcon.js';
 import { stopIcon } from '../../assets/icons/stopIcon.js';
 import { simpleTemplate } from '../../shared/utils/templating.js';
 import { on } from '../../shared/utils/eventBus.js';
+import { EVENT_BUS } from '../../shared/constants/events.js';
 import { log } from '../../shared/utils/logger.js';
 import { openContextualSettingsPanel } from '../settings/ui.js';
 import { loadSettings, saveSettings, applySettings } from '../settings/logic.js';
@@ -22,7 +23,7 @@ import { uiContainer } from '../../shared/ui/uiContainer.js';
 let currentSessionCount = 0;
 
 // 监听会话清空事件，以重置本地计数器
-on('sessionCleared', () => {
+on(EVENT_BUS.SESSION_CLEARED, () => {
     currentSessionCount = 0;
 });
 

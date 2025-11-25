@@ -16,6 +16,7 @@ import { filterAndNormalizeTexts } from '../../shared/utils/textProcessor.js';
 import { trustedWorkerUrl } from '../../shared/workers/worker-url.js';
 import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
 import { on, fire } from '../../shared/utils/eventBus.js';
+import { EVENT_BUS } from '../../shared/constants/events.js';
 import { saveActiveSession, clearActiveSession, enablePersistence } from '../../shared/services/sessionPersistence.js';
 
 // --- 模块级状态变量 ---
@@ -40,7 +41,7 @@ let scrollUpdateQueued = false;
 
 
 // --- 事件监听 ---
-on('clearElementScan', () => {
+on(EVENT_BUS.CLEAR_ELEMENT_SCAN, () => {
     stagedTexts.clear();
     updateStagedCount();
 });

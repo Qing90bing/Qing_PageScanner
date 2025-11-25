@@ -4,7 +4,6 @@ import { getValue, setValue, deleteValue } from './tampermonkey.js';
 import { fire } from '../utils/eventBus.js';
 import { log } from '../utils/logger.js';
 import { t } from '../i18n/index.js';
-import { getSessionTexts } from '../../features/session-scan/logic.js';
 
 // 用于存储会话的唯一键
 const SESSION_KEY = 'qing_pagescanner_session';
@@ -36,16 +35,9 @@ export async function saveActiveSession(mode, data = null) {
         return;
     }
 
-    let sessionData = data;
-    if (mode === 'session-scan') {
-        // 对于动态扫描，我们从 logic 模块获取主线程的数据镜像
-        const textsMirror = getSessionTexts();
-        sessionData = Array.from(textsMirror);
-    }
-
     const sessionState = {
         mode,
-        data: sessionData,
+        data: data,
         timestamp: Date.now(),
     };
     await setValue(SESSION_KEY, JSON.stringify(sessionState));
