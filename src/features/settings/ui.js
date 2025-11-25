@@ -37,6 +37,7 @@ const handleKeyDown = (event) => {
   if (isTooltipVisible) return; // 如果提示窗口已打开，则不执行任何操作
 
   if (event.key === 'Escape') {
+    event.stopPropagation();
     hideSettingsPanel();
   }
 };
@@ -262,6 +263,10 @@ export function openContextualSettingsPanel({ titleKey, icon, definitions, setti
 
     const handleKeyDown = (event) => {
         if (event.key === 'Escape') {
+            // 关键修复：阻止事件继续传播。
+            // 这样，当这个监听器处理了 ESC 键后，就不会再触发
+            // 其他（如下层的“选取元素扫描”）全局监听器了。
+            event.stopPropagation();
             closePanel();
         }
     };

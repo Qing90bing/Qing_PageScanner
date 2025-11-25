@@ -377,6 +377,9 @@ var TextExtractor = (() => {
             reselecting: "Returning to element reselection mode.",
             hovering: "Hovering over <{{tagName}}>.",
             escapePressed: "Escape key pressed, stopping element scan.",
+            escapeIgnoredForSettings: "Escape key pressed, but ignored because a settings panel is open.",
+            escapeIgnoredForModal: "Escape key pressed, but ignored because a modal or tooltip is open.",
+            escapePressedInAdjust: "Escape key pressed in adjustment mode, returning to reselection.",
             clickedEnteringAdjust: "Element <{{tagName}}> clicked, entering adjustment mode.",
             pathBuilt: "Element path built, depth: {{depth}}.",
             adjustingLevel: "Adjusting selection level to {{level}} ({{tagName}}).",
@@ -761,6 +764,9 @@ var TextExtractor = (() => {
             reselecting: "\u6B63\u5728\u8FD4\u56DE\u5143\u7D20\u91CD\u65B0\u9009\u62E9\u6A21\u5F0F\u3002",
             hovering: "\u6B63\u5728\u60AC\u505C\u4E8E <{{tagName}}>\u3002",
             escapePressed: "\u6309\u4E0B Escape \u952E\uFF0C\u6B63\u5728\u505C\u6B62\u9009\u53D6\u5143\u7D20\u626B\u63CF\u3002",
+            escapeIgnoredForSettings: "\u6309\u4E0B\u4E86Escape\u952E\uFF0C\u4F46\u56E0\u8BBE\u7F6E\u9762\u677F\u6253\u5F00\u800C\u88AB\u5FFD\u7565\u3002",
+            escapeIgnoredForModal: "\u6309\u4E0B\u4E86Escape\u952E\uFF0C\u4F46\u56E0\u6A21\u6001\u6846\u6216\u63D0\u793A\u7A97\u53E3\u6253\u5F00\u800C\u88AB\u5FFD\u7565\u3002",
+            escapePressedInAdjust: "\u5728\u8C03\u6574\u6A21\u5F0F\u4E0B\u6309\u4E0B\u4E86Escape\u952E\uFF0C\u8FD4\u56DE\u91CD\u65B0\u9009\u62E9\u6A21\u5F0F\u3002",
             clickedEnteringAdjust: "\u5143\u7D20 <{{tagName}}> \u5DF2\u88AB\u70B9\u51FB\uFF0C\u6B63\u5728\u8FDB\u5165\u8C03\u6574\u6A21\u5F0F\u3002",
             pathBuilt: "\u5143\u7D20\u5C42\u7EA7\u8DEF\u5F84\u5DF2\u6784\u5EFA\uFF0C\u6DF1\u5EA6\u4E3A\uFF1A{{depth}}\u3002",
             adjustingLevel: "\u6B63\u5728\u8C03\u6574\u9009\u62E9\u5C42\u7EA7\u81F3 {{level}} ({{tagName}})\u3002",
@@ -1145,6 +1151,9 @@ var TextExtractor = (() => {
             reselecting: "\u6B63\u5728\u8FD4\u56DE\u5143\u7D20\u91CD\u65B0\u9078\u64C7\u6A21\u5F0F\u3002",
             hovering: "\u6B63\u5728\u61F8\u505C\u65BC <{{tagName}}>\u3002",
             escapePressed: "\u6309\u4E0B Escape \u9375\uFF0C\u6B63\u5728\u505C\u6B62\u9078\u53D6\u5143\u7D20\u6383\u63CF\u3002",
+            escapeIgnoredForSettings: "\u6309\u4E0B\u4E86Escape\u9375\uFF0C\u4F46\u56E0\u8A2D\u5B9A\u9762\u677F\u958B\u555F\u800C\u88AB\u5FFD\u7565\u3002",
+            escapeIgnoredForModal: "\u6309\u4E0B\u4E86Escape\u9375\uFF0C\u4F46\u56E0\u6A21\u614B\u6846\u6216\u63D0\u793A\u7A97\u53E3\u958B\u555F\u800C\u88AB\u5FFD\u7565\u3002",
+            escapePressedInAdjust: "\u5728\u8ABF\u6574\u6A21\u5F0F\u4E0B\u6309\u4E0B\u4E86Escape\u9375\uFF0C\u8FD4\u56DE\u91CD\u65B0\u9078\u64C7\u6A21\u5F0F\u3002",
             clickedEnteringAdjust: "\u5143\u7D20 <{{tagName}}> \u5DF2\u88AB\u9EDE\u64CA\uFF0C\u6B63\u5728\u9032\u5165\u8ABF\u6574\u6A21\u5F0F\u3002",
             pathBuilt: "\u5143\u7D20\u5C64\u7D1A\u8DEF\u5F91\u5DF2\u69CB\u5EFA\uFF0C\u6DF1\u5EA6\u70BA\uFF1A{{depth}}\u3002",
             adjustingLevel: "\u6B63\u5728\u8ABF\u6574\u9078\u64C7\u5C64\u7D1A\u81F3 {{level}} ({{tagName}})\u3002",
@@ -2169,6 +2178,9 @@ ${result.join(",\n")}
         reselecting: "Returning to element reselection mode.",
         hovering: "Hovering over <{{tagName}}>.",
         escapePressed: "Escape key pressed, stopping element scan.",
+        escapeIgnoredForSettings: "Escape key pressed, but ignored because a settings panel is open.",
+        escapeIgnoredForModal: "Escape key pressed, but ignored because a modal or tooltip is open.",
+        escapePressedInAdjust: "Escape key pressed in adjustment mode, returning to reselection.",
         clickedEnteringAdjust: "Element <{{tagName}}> clicked, entering adjustment mode.",
         pathBuilt: "Element path built, depth: {{depth}}.",
         adjustingLevel: "Adjusting selection level to {{level}} ({{tagName}}).",
@@ -2549,6 +2561,9 @@ ${result.join(",\n")}
         reselecting: "\\u6B63\\u5728\\u8FD4\\u56DE\\u5143\\u7D20\\u91CD\\u65B0\\u9009\\u62E9\\u6A21\\u5F0F\\u3002",
         hovering: "\\u6B63\\u5728\\u60AC\\u505C\\u4E8E <{{tagName}}>\\u3002",
         escapePressed: "\\u6309\\u4E0B Escape \\u952E\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u3002",
+        escapeIgnoredForSettings: "\\u6309\\u4E0B\\u4E86Escape\\u952E\\uFF0C\\u4F46\\u56E0\\u8BBE\\u7F6E\\u9762\\u677F\\u6253\\u5F00\\u800C\\u88AB\\u5FFD\\u7565\\u3002",
+        escapeIgnoredForModal: "\\u6309\\u4E0B\\u4E86Escape\\u952E\\uFF0C\\u4F46\\u56E0\\u6A21\\u6001\\u6846\\u6216\\u63D0\\u793A\\u7A97\\u53E3\\u6253\\u5F00\\u800C\\u88AB\\u5FFD\\u7565\\u3002",
+        escapePressedInAdjust: "\\u5728\\u8C03\\u6574\\u6A21\\u5F0F\\u4E0B\\u6309\\u4E0B\\u4E86Escape\\u952E\\uFF0C\\u8FD4\\u56DE\\u91CD\\u65B0\\u9009\\u62E9\\u6A21\\u5F0F\\u3002",
         clickedEnteringAdjust: "\\u5143\\u7D20 <{{tagName}}> \\u5DF2\\u88AB\\u70B9\\u51FB\\uFF0C\\u6B63\\u5728\\u8FDB\\u5165\\u8C03\\u6574\\u6A21\\u5F0F\\u3002",
         pathBuilt: "\\u5143\\u7D20\\u5C42\\u7EA7\\u8DEF\\u5F84\\u5DF2\\u6784\\u5EFA\\uFF0C\\u6DF1\\u5EA6\\u4E3A\\uFF1A{{depth}}\\u3002",
         adjustingLevel: "\\u6B63\\u5728\\u8C03\\u6574\\u9009\\u62E9\\u5C42\\u7EA7\\u81F3 {{level}} ({{tagName}})\\u3002",
@@ -2929,6 +2944,9 @@ ${result.join(",\n")}
         reselecting: "\\u6B63\\u5728\\u8FD4\\u56DE\\u5143\\u7D20\\u91CD\\u65B0\\u9078\\u64C7\\u6A21\\u5F0F\\u3002",
         hovering: "\\u6B63\\u5728\\u61F8\\u505C\\u65BC <{{tagName}}>\\u3002",
         escapePressed: "\\u6309\\u4E0B Escape \\u9375\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u3002",
+        escapeIgnoredForSettings: "\\u6309\\u4E0B\\u4E86Escape\\u9375\\uFF0C\\u4F46\\u56E0\\u8A2D\\u5B9A\\u9762\\u677F\\u958B\\u555F\\u800C\\u88AB\\u5FFD\\u7565\\u3002",
+        escapeIgnoredForModal: "\\u6309\\u4E0B\\u4E86Escape\\u9375\\uFF0C\\u4F46\\u56E0\\u6A21\\u614B\\u6846\\u6216\\u63D0\\u793A\\u7A97\\u53E3\\u958B\\u555F\\u800C\\u88AB\\u5FFD\\u7565\\u3002",
+        escapePressedInAdjust: "\\u5728\\u8ABF\\u6574\\u6A21\\u5F0F\\u4E0B\\u6309\\u4E0B\\u4E86Escape\\u9375\\uFF0C\\u8FD4\\u56DE\\u91CD\\u65B0\\u9078\\u64C7\\u6A21\\u5F0F\\u3002",
         clickedEnteringAdjust: "\\u5143\\u7D20 <{{tagName}}> \\u5DF2\\u88AB\\u9EDE\\u64CA\\uFF0C\\u6B63\\u5728\\u9032\\u5165\\u8ABF\\u6574\\u6A21\\u5F0F\\u3002",
         pathBuilt: "\\u5143\\u7D20\\u5C64\\u7D1A\\u8DEF\\u5F91\\u5DF2\\u69CB\\u5EFA\\uFF0C\\u6DF1\\u5EA6\\u70BA\\uFF1A{{depth}}\\u3002",
         adjustingLevel: "\\u6B63\\u5728\\u8ABF\\u6574\\u9078\\u64C7\\u5C64\\u7D1A\\u81F3 {{level}} ({{tagName}})\\u3002",
@@ -5673,6 +5691,7 @@ ${result.join(",\n")}
   var handleKeyDown2 = (event) => {
     if (isTooltipVisible) return;
     if (event.key === "Escape") {
+      event.stopPropagation();
       hideSettingsPanel();
     }
   };
@@ -5822,6 +5841,7 @@ ${result.join(",\n")}
     uiContainer.appendChild(contextualPanel);
     const handleKeyDown3 = (event) => {
       if (event.key === "Escape") {
+        event.stopPropagation();
         closePanel();
       }
     };
@@ -5929,7 +5949,16 @@ ${result.join(",\n")}
     }, 50);
   }
   var handleEscForSessionScan = (event) => {
-    if (event.key === "Escape" && isSessionRecording() && !modalOverlay.classList.contains("is-visible")) {
+    if (event.key !== "Escape") {
+      return;
+    }
+    const isSettingsPanelOpen = uiContainer.querySelector(".settings-panel-overlay.is-visible");
+    const isHelpTooltipOpen = uiContainer.querySelector(".info-tooltip-overlay.is-visible");
+    const isMainModalOpen = modalOverlay.classList.contains("is-visible");
+    if (isSettingsPanelOpen || isHelpTooltipOpen || isMainModalOpen) {
+      return;
+    }
+    if (isSessionRecording()) {
       event.preventDefault();
       event.stopPropagation();
       const dynamicFab2 = getDynamicFab();
@@ -6806,7 +6835,19 @@ ${result.join(",\n")}
     }
   }
   function handleElementScanKeyDown(event) {
-    if (isActive && event.key === "Escape") {
+    if (!isActive || event.key !== "Escape") {
+      return;
+    }
+    const isSettingsPanelOpen = uiContainer.querySelector(".settings-panel-overlay.is-visible");
+    const isHelpTooltipOpen = uiContainer.querySelector(".info-tooltip-overlay.is-visible");
+    if (isSettingsPanelOpen || isHelpTooltipOpen) {
+      log(t("log.elementScan.escapeIgnoredForModal"));
+      return;
+    }
+    if (isAdjusting) {
+      log(t("log.elementScan.escapePressedInAdjust"));
+      reselectElement();
+    } else {
       log(t("log.elementScan.escapePressed"));
       const fabElement = uiContainer.querySelector(".fab-element-scan");
       stopElementScan(fabElement);

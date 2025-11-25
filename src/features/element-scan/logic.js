@@ -475,7 +475,27 @@ function handleMouseOut(event) {
 }
 
 function handleElementScanKeyDown(event) {
-    if (isActive && event.key === 'Escape') {
+    if (!isActive || event.key !== 'Escape') {
+        return;
+    }
+
+    // 检查是否有任何设置面板（主面板或上下文面板）处于打开状态。
+    // 如果有，则不执行任何操作，让面板自己的 ESC 逻辑处理事件。
+    const isSettingsPanelOpen = uiContainer.querySelector('.settings-panel-overlay.is-visible');
+    const isHelpTooltipOpen = uiContainer.querySelector('.info-tooltip-overlay.is-visible');
+    if (isSettingsPanelOpen || isHelpTooltipOpen) {
+        log(t('log.elementScan.escapeIgnoredForModal'));
+        return;
+    }
+
+    // 如果调整工具栏是可见的 (isAdjusting is true),
+    // 按 ESC 应该返回到元素选择模式，而不是完全停止。
+    if (isAdjusting) {
+        log(t('log.elementScan.escapePressedInAdjust'));
+        reselectElement();
+    } else {
+        // 只有在既没有打开设置面板，也没有显示调整工具栏时，
+        // 按 ESC 才应停止整个元素扫描功能。
         log(t('log.elementScan.escapePressed'));
         const fabElement = uiContainer.querySelector('.fab-element-scan');
         stopElementScan(fabElement);

@@ -17,6 +17,7 @@ import { openContextualSettingsPanel } from '../settings/ui.js';
 import { loadSettings, saveSettings, applySettings } from '../settings/logic.js';
 import { settingsIcon } from '../../assets/icons/settingsIcon.js';
 import { infoIcon } from '../../assets/icons/infoIcon.js';
+import { uiContainer } from '../../shared/ui/uiContainer.js';
 
 let currentSessionCount = 0;
 
@@ -110,13 +111,24 @@ export function showSessionSummary() {
  * @param {KeyboardEvent} event - 键盘事件。
  */
 const handleEscForSessionScan = (event) => {
-    // 仅当按下 Escape 键、会话正在录制且模态框不可见时才执行
-    if (
-        event.key === 'Escape' &&
-        sessionExtractor.isSessionRecording() &&
-        !modalOverlay.classList.contains('is-visible')
-    ) {
-        // 阻止事件传播，以避免与其他 Escape 键监听器（如模态框的）冲突
+    // 仅在按下 Escape 键时才继续
+    if (event.key !== 'Escape') {
+        return;
+    }
+
+    // 新增：检查是否有任何模态框或提示窗口处于打开状态。
+    // 如果有，则不执行任何操作，让它们自己的 ESC 逻辑处理事件。
+    const isSettingsPanelOpen = uiContainer.querySelector('.settings-panel-overlay.is-visible');
+    const isHelpTooltipOpen = uiContainer.querySelector('.info-tooltip-overlay.is-visible');
+    const isMainModalOpen = modalOverlay.classList.contains('is-visible');
+
+    if (isSettingsPanelOpen || isHelpTooltipOpen || isMainModalOpen) {
+        return;
+    }
+
+    // 只有在没有其他UI层打开且会话正在录制时，才停止会话
+    if (sessionExtractor.isSessionRecording()) {
+        // 阻止事件传播，以避免与其他 Escape 键监听器冲突
         event.preventDefault();
         event.stopPropagation();
         
