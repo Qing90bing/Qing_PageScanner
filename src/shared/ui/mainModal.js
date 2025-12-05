@@ -184,8 +184,7 @@ export function updateModalContent(content, shouldOpen = false, mode = 'quick-sc
     const setButtonsDisabled = (disabled) => {
         if (copyBtn) copyBtn.disabled = disabled;
         if (clearBtn) {
-            // 如果会话正在录制，则强制禁用清空按钮
-            clearBtn.disabled = isSessionRecording() || disabled;
+            clearBtn.disabled = disabled;
         }
         updateExportButtonState(!disabled);
     };

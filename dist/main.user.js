@@ -4834,7 +4834,7 @@ ${result.join(",\n")}
     const setButtonsDisabled = (disabled) => {
       if (copyBtn2) copyBtn2.disabled = disabled;
       if (clearBtn2) {
-        clearBtn2.disabled = isSessionRecording() || disabled;
+        clearBtn2.disabled = disabled;
       }
       updateExportButtonState(!disabled);
     };
