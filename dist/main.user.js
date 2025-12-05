@@ -1620,7 +1620,47 @@ var TextExtractor = (() => {
   function createUIContainer() {
     const container = document.createElement("div");
     container.id = "text-extractor-container";
-    document.body.appendChild(container);
+    const attachToBody = () => {
+      if (document.body && !container.isConnected) {
+        document.body.appendChild(container);
+      }
+    };
+    if (document.body) {
+      attachToBody();
+    } else {
+      document.addEventListener("DOMContentLoaded", attachToBody);
+    }
+    const observer2 = new MutationObserver((mutations) => {
+      let needsReattach = false;
+      if (!container.isConnected) {
+        needsReattach = true;
+      } else {
+        for (const mutation of mutations) {
+          if (mutation.type === "childList") {
+            for (const removedNode of mutation.removedNodes) {
+              if (removedNode === container) {
+                needsReattach = true;
+                break;
+              }
+            }
+          }
+          if (needsReattach) break;
+        }
+      }
+      if (needsReattach) {
+        attachToBody();
+      }
+    });
+    const startObserving = () => {
+      if (document.body) {
+        observer2.observe(document.body, { childList: true });
+      }
+    };
+    if (document.body) {
+      startObserving();
+    } else {
+      document.addEventListener("DOMContentLoaded", startObserving);
+    }
     updateScrollbarWidth(container);
     window.addEventListener("resize", () => updateScrollbarWidth(container));
     const shadowRoot = container.attachShadow({ mode: "open" });
