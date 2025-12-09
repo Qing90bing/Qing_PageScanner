@@ -19,6 +19,7 @@
 // @grant        GM_deleteValue
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
+// @run-at       document-start
 // ==/UserScript==
 
 
