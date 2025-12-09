@@ -3648,8 +3648,9 @@ ${result.join(",\n")}
     for (const child of node.childNodes) {
       traverseDOMAndExtract(child, textCallback);
     }
-    if (node.nodeType === Node.ELEMENT_NODE && node.shadowRoot) {
-      traverseDOMAndExtract(node.shadowRoot, textCallback);
+    const shadowRoot = node.shadowRoot || node._shadowRoot;
+    if (node.nodeType === Node.ELEMENT_NODE && shadowRoot) {
+      traverseDOMAndExtract(shadowRoot, textCallback);
     }
   };
   var extractAndProcessText = () => {

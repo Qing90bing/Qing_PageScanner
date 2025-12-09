@@ -78,9 +78,10 @@ const traverseDOMAndExtract = (node, textCallback) => {
         traverseDOMAndExtract(child, textCallback);
     }
     
-    // 3. 如果存在 Shadow DOM，则递归遍历它
-    if (node.nodeType === Node.ELEMENT_NODE && node.shadowRoot) {
-        traverseDOMAndExtract(node.shadowRoot, textCallback);
+    // 3. 如果存在 Shadow DOM（无论是开放还是封闭模式），都递归遍历它
+    const shadowRoot = node.shadowRoot || node._shadowRoot;
+    if (node.nodeType === Node.ELEMENT_NODE && shadowRoot) {
+        traverseDOMAndExtract(shadowRoot, textCallback);
     }
 };
 
