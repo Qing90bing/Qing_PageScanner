@@ -105,8 +105,9 @@ function createHighlightElements() {
  * @function updateHighlight
  * @description 根据目标元素的位置和尺寸，更新高亮边框和标签的位置。
  * @param {HTMLElement} targetElement - 需要高亮显示的目标元素。
+ * @param {object} [offset={x:0, y:0}] - 可选的坐标偏移量，用于校正 iframe 内元素的相对位置。
  */
-export function updateHighlight(targetElement) {
+export function updateHighlight(targetElement, offset = { x: 0, y: 0 }) {
     if (!targetElement) return;
 
     // 确保高亮UI元素已创建
@@ -127,10 +128,12 @@ export function updateHighlight(targetElement) {
     log(simpleTemplate(t('log.elementScanUI.updatingHighlight'), { tagName: elementSelector }), coordinates);
 
     // 所有的定位和尺寸变化都只应用于容器，内部元素相对静态，以实现同步动画
+    // 注意：如果是 iframe 内的元素，rect 是相对于 iframe 视口的。
+    // 我们需要加上 iframe 在主页面中的偏移量 (offset.x, offset.y)。
     const newWidth = rect.width + padding * 2;
     const newHeight = rect.height + padding * 2;
-    const newX = rect.left + scrollX - padding;
-    const newY = rect.top + scrollY - padding;
+    const newX = rect.left + offset.x + scrollX - padding;
+    const newY = rect.top + offset.y + scrollY - padding;
 
     scanContainer.style.width = `${newWidth}px`;
     scanContainer.style.height = `${newHeight}px`;
@@ -174,8 +177,9 @@ function updateToolbarTagAnimated(newText) {
  * @function createAdjustmentToolbar
  * @description 创建并显示层级调整工具栏。
  * @param {HTMLElement[]} elementPath - 从选中元素到 body 的 DOM 路径数组。
+ * @param {object} [offset={x:0, y:0}] - 坐标偏移量，用于校正 iframe 内元素的相对位置。
  */
-export function createAdjustmentToolbar(elementPath) {
+export function createAdjustmentToolbar(elementPath, offset = { x: 0, y: 0 }) {
     if (toolbar) cleanupToolbar(); // 如果已存在旧的工具栏，先清理掉
 
     log(t('log.elementScanUI.creatingToolbar'));
@@ -257,9 +261,17 @@ export function createAdjustmentToolbar(elementPath) {
 
     let top, left;
 
+    // 校正后的元素坐标（相对于主窗口可视区域）
+    const absRect = {
+        top: initialRect.top + offset.y,
+        bottom: initialRect.bottom + offset.y,
+        left: initialRect.left + offset.x,
+        right: initialRect.right + offset.x
+    };
+
     // 水平方向的默认对齐方式：与目标元素右对齐，并确保不超出视口边界
     const alignRight = () => {
-        let l = initialRect.right - toolbarRect.width;
+        let l = absRect.right - toolbarRect.width;
         if (l < margin) l = margin;
         if (l + toolbarRect.width > viewportWidth - margin) {
             l = viewportWidth - toolbarRect.width - margin;
@@ -268,8 +280,8 @@ export function createAdjustmentToolbar(elementPath) {
     };
     
     // 优先尝试将工具栏放在目标元素的上方或下方
-    const topAbove = initialRect.top - toolbarRect.height - 10;
-    const topBelow = initialRect.bottom + 10;
+    const topAbove = absRect.top - toolbarRect.height - 10;
+    const topBelow = absRect.bottom + 10;
 
     const canPlaceAbove = topAbove > margin;
     const canPlaceBelow = topBelow + toolbarRect.height < viewportHeight - 10;

@@ -3632,6 +3632,15 @@ ${result.join(",\n")}
             textCallback(value);
           }
         }
+        if (node.tagName === "IFRAME") {
+          try {
+            const iframeDoc = node.contentDocument || node.contentWindow && node.contentWindow.document;
+            if (iframeDoc) {
+              traverseDOMAndExtract(iframeDoc, textCallback);
+            }
+          } catch (e) {
+          }
+        }
         break;
       }
       case Node.TEXT_NODE: {
@@ -6293,7 +6302,7 @@ ${result.join(",\n")}
       scanContainer.classList.add("is-visible");
     });
   }
-  function updateHighlight(targetElement) {
+  function updateHighlight(targetElement, offset = { x: 0, y: 0 }) {
     if (!targetElement) return;
     createHighlightElements();
     const rect = targetElement.getBoundingClientRect();
@@ -6310,8 +6319,8 @@ ${result.join(",\n")}
     log(simpleTemplate(t("log.elementScanUI.updatingHighlight"), { tagName: elementSelector }), coordinates);
     const newWidth = rect.width + padding * 2;
     const newHeight = rect.height + padding * 2;
-    const newX = rect.left + scrollX - padding;
-    const newY = rect.top + scrollY - padding;
+    const newX = rect.left + offset.x + scrollX - padding;
+    const newY = rect.top + offset.y + scrollY - padding;
     scanContainer.style.width = `${newWidth}px`;
     scanContainer.style.height = `${newHeight}px`;
     scanContainer.style.transform = `translate(${newX}px, ${newY}px)`;
@@ -6330,7 +6339,7 @@ ${result.join(",\n")}
       toolbarTag.style.opacity = "1";
     }, 100);
   }
-  function createAdjustmentToolbar(elementPath2) {
+  function createAdjustmentToolbar(elementPath2, offset = { x: 0, y: 0 }) {
     if (toolbar) cleanupToolbar();
     log(t("log.elementScanUI.creatingToolbar"));
     toolbar = document.createElement("div");
@@ -6393,16 +6402,22 @@ ${result.join(",\n")}
     const topOffset = topCounter ? topCounter.getBoundingClientRect().height + 5 : 0;
     const margin = 10 + topOffset;
     let top, left;
+    const absRect = {
+      top: initialRect.top + offset.y,
+      bottom: initialRect.bottom + offset.y,
+      left: initialRect.left + offset.x,
+      right: initialRect.right + offset.x
+    };
     const alignRight = () => {
-      let l = initialRect.right - toolbarRect.width;
+      let l = absRect.right - toolbarRect.width;
       if (l < margin) l = margin;
       if (l + toolbarRect.width > viewportWidth - margin) {
         l = viewportWidth - toolbarRect.width - margin;
       }
       return l;
     };
-    const topAbove = initialRect.top - toolbarRect.height - 10;
-    const topBelow = initialRect.bottom + 10;
+    const topAbove = absRect.top - toolbarRect.height - 10;
+    const topBelow = absRect.bottom + 10;
     const canPlaceAbove = topAbove > margin;
     const canPlaceBelow = topBelow + toolbarRect.height < viewportHeight - 10;
     if (canPlaceAbove) {
@@ -6659,11 +6674,8 @@ ${result.join(",\n")}
     } else {
       log(t("log.elementScan.dynamicFabNotFound"), "warn");
     }
-    document.addEventListener("mouseover", handleMouseOver);
-    document.addEventListener("mouseout", handleMouseOut);
-    document.addEventListener("click", handleElementClick, true);
-    document.addEventListener("keydown", handleElementScanKeyDown);
-    document.addEventListener("contextmenu", handleContextMenu, true);
+    addListenersToDocument(document);
+    addListenersToIframes();
     window.addEventListener("beforeunload", handleElementScanUnload);
     if (autoSaveInterval2) clearInterval(autoSaveInterval2);
     autoSaveInterval2 = setInterval(() => {
@@ -6672,6 +6684,53 @@ ${result.join(",\n")}
       }
     }, AUTO_SAVE_INTERVAL_MS2);
     log(t("log.elementScan.listenersAdded"));
+  }
+  function addListenersToDocument(doc) {
+    try {
+      doc.addEventListener("mouseover", handleMouseOver);
+      doc.addEventListener("mouseout", handleMouseOut);
+      doc.addEventListener("click", handleElementClick, true);
+      doc.addEventListener("keydown", handleElementScanKeyDown);
+      doc.addEventListener("contextmenu", handleContextMenu, true);
+    } catch (e) {
+      log(t("log.elementScan.addListenersFailed", { error: e.message }), "warn");
+    }
+  }
+  function removeListenersFromDocument(doc) {
+    try {
+      doc.removeEventListener("mouseover", handleMouseOver);
+      doc.removeEventListener("mouseout", handleMouseOut);
+      doc.removeEventListener("click", handleElementClick, true);
+      doc.removeEventListener("keydown", handleElementScanKeyDown);
+      doc.removeEventListener("contextmenu", handleContextMenu, true);
+    } catch (e) {
+    }
+  }
+  function addListenersToIframes() {
+    const iframes = document.querySelectorAll("iframe");
+    iframes.forEach((iframe) => {
+      try {
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow && iframe.contentWindow.document;
+        if (iframeDoc) {
+          iframeDoc._frameElement = iframe;
+          addListenersToDocument(iframeDoc);
+        }
+      } catch (e) {
+      }
+    });
+  }
+  function removeListenersFromIframes() {
+    const iframes = document.querySelectorAll("iframe");
+    iframes.forEach((iframe) => {
+      try {
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow && iframe.contentWindow.document;
+        if (iframeDoc) {
+          removeListenersFromDocument(iframeDoc);
+          delete iframeDoc._frameElement;
+        }
+      } catch (e) {
+      }
+    });
   }
   function saveSessionState() {
     saveActiveSession("element-scan", Array.from(stagedTexts));
@@ -6700,11 +6759,8 @@ ${result.join(",\n")}
     } else {
       log(t("log.elementScan.dynamicFabNotFound"), "warn");
     }
-    document.removeEventListener("mouseover", handleMouseOver);
-    document.removeEventListener("mouseout", handleMouseOut);
-    document.removeEventListener("click", handleElementClick, true);
-    document.removeEventListener("keydown", handleElementScanKeyDown);
-    document.removeEventListener("contextmenu", handleContextMenu, true);
+    removeListenersFromDocument(document);
+    removeListenersFromIframes();
     window.removeEventListener("beforeunload", handleElementScanUnload);
     if (autoSaveInterval2) {
       clearInterval(autoSaveInterval2);
@@ -6730,9 +6786,8 @@ ${result.join(",\n")}
     cleanupUI();
     cleanupToolbar();
     removeScrollListeners();
-    document.removeEventListener("mouseover", handleMouseOver);
-    document.removeEventListener("mouseout", handleMouseOut);
-    document.removeEventListener("click", handleElementClick, true);
+    removeListenersFromDocument(document);
+    removeListenersFromIframes();
   }
   function resumeElementScan() {
     if (!isActive || !isPaused2) return;
@@ -6747,9 +6802,8 @@ ${result.join(",\n")}
     cleanupUI();
     cleanupToolbar();
     removeScrollListeners();
-    document.addEventListener("mouseover", handleMouseOver);
-    document.addEventListener("mouseout", handleMouseOut);
-    document.addEventListener("click", handleElementClick, true);
+    addListenersToDocument(document);
+    addListenersToIframes();
   }
   function filterTextsWithWorker(texts, settings) {
     return new Promise(async (resolve) => {
@@ -6847,19 +6901,28 @@ ${result.join(",\n")}
   }
   function scheduledHighlightUpdate() {
     if (currentTarget) {
-      updateHighlight(currentTarget);
+      let offset = { x: 0, y: 0 };
+      const doc = currentTarget.ownerDocument;
+      if (doc && doc !== document && doc._frameElement) {
+        const rect = doc._frameElement.getBoundingClientRect();
+        offset.x = rect.left;
+        offset.y = rect.top;
+      }
+      updateHighlight(currentTarget, offset);
     }
     isHighlightUpdateQueued = false;
   }
   function handleMouseOver(event) {
     if (!isActive || isAdjusting || isPaused2) return;
     const target = event.target;
-    if (target.closest(".text-extractor-fab-container") || target.closest("#text-extractor-container")) {
-      if (currentTarget) {
-        cleanupUI();
-        currentTarget = null;
+    if (target.ownerDocument === document) {
+      if (target.closest(".text-extractor-fab-container") || target.closest("#text-extractor-container")) {
+        if (currentTarget) {
+          cleanupUI();
+          currentTarget = null;
+        }
+        return;
       }
-      return;
     }
     if (target !== currentTarget) {
       currentTarget = target;
@@ -6912,17 +6975,25 @@ ${result.join(",\n")}
     const tagName = currentTarget.tagName.toLowerCase();
     log(simpleTemplate(t("log.elementScan.clickedEnteringAdjust"), { tagName }));
     isAdjusting = true;
-    document.removeEventListener("mouseover", handleMouseOver);
-    document.removeEventListener("mouseout", handleMouseOut);
+    removeListenersFromDocument(document);
+    removeListenersFromIframes();
     elementPath = [];
     let el = currentTarget;
-    while (el && el.tagName !== "BODY") {
+    const ownerDoc = currentTarget.ownerDocument;
+    const body = ownerDoc.body;
+    while (el && el !== body) {
       elementPath.push(el);
       el = el.parentElement;
     }
-    elementPath.push(document.body);
+    elementPath.push(body);
     log(simpleTemplate(t("log.elementScan.pathBuilt"), { depth: elementPath.length }));
-    createAdjustmentToolbar(elementPath);
+    let offset = { x: 0, y: 0 };
+    if (ownerDoc !== document && ownerDoc._frameElement) {
+      const rect = ownerDoc._frameElement.getBoundingClientRect();
+      offset.x = rect.left;
+      offset.y = rect.top;
+    }
+    createAdjustmentToolbar(elementPath, offset);
     addScrollListeners();
   }
   function updateSelectionLevel(level) {
@@ -6931,7 +7002,14 @@ ${result.join(",\n")}
       currentTarget = targetElement;
       const tagName = targetElement.tagName.toLowerCase();
       log(simpleTemplate(t("log.elementScan.adjustingLevel"), { level, tagName }));
-      updateHighlight(targetElement);
+      let offset = { x: 0, y: 0 };
+      const doc = targetElement.ownerDocument;
+      if (doc !== document && doc._frameElement) {
+        const rect = doc._frameElement.getBoundingClientRect();
+        offset.x = rect.left;
+        offset.y = rect.top;
+      }
+      updateHighlight(targetElement, offset);
     }
   }
   async function confirmSelectionAndExtract() {
@@ -6956,8 +7034,8 @@ ${result.join(",\n")}
     const totalToProcess = stagedTexts.size;
     log(simpleTemplate(t("log.elementScan.confirmingStaged"), { count: totalToProcess }));
     isAdjusting = true;
-    document.removeEventListener("mouseover", handleMouseOver);
-    document.removeEventListener("mouseout", handleMouseOut);
+    removeListenersFromDocument(document);
+    removeListenersFromIframes();
     cleanupUI();
     cleanupToolbar();
     removeScrollListeners();

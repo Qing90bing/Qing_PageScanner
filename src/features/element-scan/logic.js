@@ -185,11 +185,12 @@ function startElementScan(fabElement, options = {}) {
         log(t('log.elementScan.dynamicFabNotFound'), 'warn');
     }
 
-    document.addEventListener('mouseover', handleMouseOver);
-    document.addEventListener('mouseout', handleMouseOut);
-    document.addEventListener('click', handleElementClick, true);
-    document.addEventListener('keydown', handleElementScanKeyDown);
-    document.addEventListener('contextmenu', handleContextMenu, true);
+    // 添加主文档监听器
+    addListenersToDocument(document);
+
+    // 添加 Iframe 监听器
+    addListenersToIframes();
+
     window.addEventListener('beforeunload', handleElementScanUnload);
 
     // 启动自动保存心跳
@@ -201,6 +202,75 @@ function startElementScan(fabElement, options = {}) {
     }, AUTO_SAVE_INTERVAL_MS);
 
     log(t('log.elementScan.listenersAdded'));
+}
+
+/**
+ * 为指定文档对象添加必要的事件监听器。
+ * @param {Document} doc - 目标文档对象
+ */
+function addListenersToDocument(doc) {
+    try {
+        doc.addEventListener('mouseover', handleMouseOver);
+        doc.addEventListener('mouseout', handleMouseOut);
+        doc.addEventListener('click', handleElementClick, true);
+        doc.addEventListener('keydown', handleElementScanKeyDown);
+        doc.addEventListener('contextmenu', handleContextMenu, true);
+    } catch (e) {
+        log(t('log.elementScan.addListenersFailed', { error: e.message }), 'warn');
+    }
+}
+
+/**
+ * 移除指定文档对象的事件监听器。
+ * @param {Document} doc - 目标文档对象
+ */
+function removeListenersFromDocument(doc) {
+    try {
+        doc.removeEventListener('mouseover', handleMouseOver);
+        doc.removeEventListener('mouseout', handleMouseOut);
+        doc.removeEventListener('click', handleElementClick, true);
+        doc.removeEventListener('keydown', handleElementScanKeyDown);
+        doc.removeEventListener('contextmenu', handleContextMenu, true);
+    } catch (e) {
+        // 忽略移除时的错误（例如 iframe 已经卸载）
+    }
+}
+
+/**
+ * 查找并为所有同源 Iframe 添加监听器。
+ */
+function addListenersToIframes() {
+    const iframes = document.querySelectorAll('iframe');
+    iframes.forEach(iframe => {
+        try {
+            const iframeDoc = iframe.contentDocument || (iframe.contentWindow && iframe.contentWindow.document);
+            if (iframeDoc) {
+                // 将 iframe 元素自身附加到文档对象上，以便在事件处理中反查偏移量
+                iframeDoc._frameElement = iframe;
+                addListenersToDocument(iframeDoc);
+            }
+        } catch (e) {
+            // 忽略跨域 iframe
+        }
+    });
+}
+
+/**
+ * 移除所有 Iframe 的监听器。
+ */
+function removeListenersFromIframes() {
+    const iframes = document.querySelectorAll('iframe');
+    iframes.forEach(iframe => {
+        try {
+            const iframeDoc = iframe.contentDocument || (iframe.contentWindow && iframe.contentWindow.document);
+            if (iframeDoc) {
+                removeListenersFromDocument(iframeDoc);
+                delete iframeDoc._frameElement;
+            }
+        } catch (e) {
+            // 忽略跨域
+        }
+    });
 }
 
 /**
@@ -240,11 +310,8 @@ export function stopElementScan(fabElement) {
         log(t('log.elementScan.dynamicFabNotFound'), 'warn');
     }
 
-    document.removeEventListener('mouseover', handleMouseOver);
-    document.removeEventListener('mouseout', handleMouseOut);
-    document.removeEventListener('click', handleElementClick, true);
-    document.removeEventListener('keydown', handleElementScanKeyDown);
-    document.removeEventListener('contextmenu', handleContextMenu, true);
+    removeListenersFromDocument(document);
+    removeListenersFromIframes();
     window.removeEventListener('beforeunload', handleElementScanUnload);
 
     if (autoSaveInterval) {
@@ -275,9 +342,9 @@ export function pauseElementScan() {
     cleanupUI();
     cleanupToolbar();
     removeScrollListeners();
-    document.removeEventListener('mouseover', handleMouseOver);
-    document.removeEventListener('mouseout', handleMouseOut);
-    document.removeEventListener('click', handleElementClick, true);
+    
+    removeListenersFromDocument(document);
+    removeListenersFromIframes();
 }
 
 export function resumeElementScan() {
@@ -295,9 +362,8 @@ export function reselectElement() {
     cleanupToolbar();
     removeScrollListeners();
 
-    document.addEventListener('mouseover', handleMouseOver);
-    document.addEventListener('mouseout', handleMouseOut);
-    document.addEventListener('click', handleElementClick, true);
+    addListenersToDocument(document);
+    addListenersToIframes();
 }
 
 /**
@@ -437,7 +503,15 @@ function updateStagedCount() {
  */
 function scheduledHighlightUpdate() {
     if (currentTarget) {
-        updateHighlight(currentTarget);
+        // 计算 iframe 偏移量
+        let offset = { x: 0, y: 0 };
+        const doc = currentTarget.ownerDocument;
+        if (doc && doc !== document && doc._frameElement) {
+            const rect = doc._frameElement.getBoundingClientRect();
+            offset.x = rect.left;
+            offset.y = rect.top;
+        }
+        updateHighlight(currentTarget, offset);
     }
     isHighlightUpdateQueued = false;
 }
@@ -447,13 +521,18 @@ function handleMouseOver(event) {
     if (!isActive || isAdjusting || isPaused) return;
 
     const target = event.target;
-    // 忽略 FAB 容器内的元素
-    if (target.closest('.text-extractor-fab-container') || target.closest('#text-extractor-container')) {
-        if (currentTarget) { // 如果之前有高亮的元素，则清理
-            cleanupUI();
-            currentTarget = null;
+    
+    // 忽略 FAB 容器内的元素 (需考虑 Shadow DOM 或不同 document 的情况)
+    // 简单检查类名或 ID，不使用 closest 跨越 document 边界（除非 polyfilled）
+    // 在 iframe 内部，这些 UI 元素通常不存在，所以这个检查主要针对主文档
+    if (target.ownerDocument === document) {
+         if (target.closest('.text-extractor-fab-container') || target.closest('#text-extractor-container')) {
+            if (currentTarget) { 
+                cleanupUI();
+                currentTarget = null;
+            }
+            return;
         }
-        return;
     }
 
     // 只有当目标元素改变时才记录日志和请求更新
@@ -528,19 +607,36 @@ function handleElementClick(event) {
     log(simpleTemplate(t('log.elementScan.clickedEnteringAdjust'), { tagName }));
     isAdjusting = true;
 
-    document.removeEventListener('mouseover', handleMouseOver);
-    document.removeEventListener('mouseout', handleMouseOut);
+    removeListenersFromDocument(document);
+    removeListenersFromIframes();
 
     elementPath = [];
     let el = currentTarget;
-    while (el && el.tagName !== 'BODY') {
+    // 修改：支持 iframe 内部元素的路径构建。
+    // 如果元素在 iframe 中，我们需要一直向上遍历到 iframe 的 body，
+    // 然后可能还需要继续向上遍历主文档（可选，视需求而定）。
+    // 目前的逻辑是：工具栏只调整当前文档内的层级。
+    // 如果选中的是 iframe 内的元素，调整范围就是 iframe 内。
+    
+    const ownerDoc = currentTarget.ownerDocument;
+    const body = ownerDoc.body;
+
+    while (el && el !== body) {
         elementPath.push(el);
         el = el.parentElement;
     }
-    elementPath.push(document.body);
+    elementPath.push(body);
     log(simpleTemplate(t('log.elementScan.pathBuilt'), { depth: elementPath.length }));
 
-    createAdjustmentToolbar(elementPath);
+    // 计算工具栏需要的初始偏移量
+    let offset = { x: 0, y: 0 };
+    if (ownerDoc !== document && ownerDoc._frameElement) {
+        const rect = ownerDoc._frameElement.getBoundingClientRect();
+        offset.x = rect.left;
+        offset.y = rect.top;
+    }
+
+    createAdjustmentToolbar(elementPath, offset);
     addScrollListeners();
 }
 
@@ -550,7 +646,16 @@ export function updateSelectionLevel(level) {
         currentTarget = targetElement;
         const tagName = targetElement.tagName.toLowerCase();
         log(simpleTemplate(t('log.elementScan.adjustingLevel'), { level, tagName }));
-        updateHighlight(targetElement);
+        
+        let offset = { x: 0, y: 0 };
+        const doc = targetElement.ownerDocument;
+        if (doc !== document && doc._frameElement) {
+            const rect = doc._frameElement.getBoundingClientRect();
+            offset.x = rect.left;
+            offset.y = rect.top;
+        }
+
+        updateHighlight(targetElement, offset);
     }
 }
 
@@ -583,8 +688,8 @@ export async function confirmSelectionAndExtract() {
 
     // 2. 清理UI并为显示模态框做准备
     isAdjusting = true;
-    document.removeEventListener('mouseover', handleMouseOver);
-    document.removeEventListener('mouseout', handleMouseOut);
+    removeListenersFromDocument(document);
+    removeListenersFromIframes();
     cleanupUI();
     cleanupToolbar();
     removeScrollListeners();

@@ -53,6 +53,21 @@ const traverseDOMAndExtract = (node, textCallback) => {
                     textCallback(value);
                 }
             }
+
+            // 特殊处理 IFRAME 元素
+            // 尝试进入 iframe 内部提取内容。
+            // 注意：这仅适用于同源 iframe。跨域 iframe 会抛出安全错误，我们将其捕获并忽略。
+            if (node.tagName === 'IFRAME') {
+                try {
+                    const iframeDoc = node.contentDocument || (node.contentWindow && node.contentWindow.document);
+                    if (iframeDoc) {
+                        traverseDOMAndExtract(iframeDoc, textCallback);
+                    }
+                } catch (e) {
+                    // 忽略跨域访问错误 (SecurityError)
+                }
+            }
+
             // 元素节点处理完毕后，继续向下遍历其子节点和 Shadow DOM
             break;
         }
