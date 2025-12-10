@@ -15,11 +15,16 @@ import { appConfig } from '../../features/settings/config.js';
 const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(', ');
 const ourUiSelector = '#text-extractor-container';
 
+// 定义一个包含所有块级元素的 Set，用于高效查找。
+// 列表参考了 MDN 的块级元素列表。
+const blockElements = new Set(['ADDRESS', 'ARTICLE', 'ASIDE', 'BLOCKQUOTE', 'DETAILS', 'DIALOG', 'DD', 'DIV', 'DL', 'DT', 'FIELDSET', 'FIGCAPTION', 'FIGURE', 'FOOTER', 'FORM', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'HEADER', 'HGROUP', 'HR', 'LI', 'MAIN', 'NAV', 'OL', 'P', 'PRE', 'SECTION', 'TABLE', 'UL']);
+
 // --- 私有函数 ---
 
 /**
  * @private
  * @description 递归地遍历一个 DOM 节点及其后代（包括 Shadow DOM），提取属性和文本节点中的文本内容。
+ *              此函数经过重构，能够识别块级元素和 <br> 标签，并在提取的文本中智能地插入换行符。
  * @param {Node} node - 开始遍历的节点（可以是 Element, ShadowRoot, 或其他 Node 类型）。
  * @param {function(string): void} textCallback - 每当提取到一个原始文本字符串时，就会调用此回调函数。
  */
@@ -35,6 +40,12 @@ const traverseDOMAndExtract = (node, textCallback) => {
             // 使用外部缓存的 selector 字符串，显著减少内存分配和 CPU 消耗
             if (node.closest(ignoredSelectorString) || node.closest(ourUiSelector)) {
                 return;
+            }
+
+            // 特殊处理 <br> 标签，它代表一个换行
+            if (node.tagName === 'BR') {
+                textCallback('\n');
+                return; // <br> 是一个空元素，没有子节点，直接返回
             }
             
             // 1. 首先提取当前元素自身的属性文本
@@ -67,8 +78,7 @@ const traverseDOMAndExtract = (node, textCallback) => {
                     // 忽略跨域访问错误 (SecurityError)
                 }
             }
-
-            // 元素节点处理完毕后，继续向下遍历其子节点和 Shadow DOM
+            // 元素节点的处理并没有在这里结束，下面还会继续遍历其子节点
             break;
         }
         
@@ -98,6 +108,12 @@ const traverseDOMAndExtract = (node, textCallback) => {
     if (node.nodeType === Node.ELEMENT_NODE && shadowRoot) {
         traverseDOMAndExtract(shadowRoot, textCallback);
     }
+    
+    // 4. 在处理完一个元素的所有子节点（和 Shadow DOM）之后，检查它是否是块级元素。
+    // 如果是，我们就在其内容后面追加一个换行符，以模拟其在布局中的换行效果。
+    if (node.nodeType === Node.ELEMENT_NODE && blockElements.has(node.tagName)) {
+        textCallback('\n');
+    }
 };
 
 
@@ -114,9 +130,15 @@ export const extractAndProcessText = () => {
 
     const processAndAddText = (rawText) => {
         if (!rawText) return;
+        // 规范化文本，但不再合并多个换行符
         const normalizedText = rawText.normalize('NFC');
-        let text = normalizedText.replace(/(\r\n|\n|\r)+/g, '\n');
-        if (text.trim() === '') {
+        // 此处的修改至关重要：
+        // 1. 我们将 \r\n (Windows) 和 \r (旧 Mac) 统一为 \n (Unix)。
+        // 2. 我们不使用 `+` 量词，因此不会将多个 `\n` 合并为一个。
+        let text = normalizedText.replace(/\r\n|\r/g, '\n');
+        
+        // 我们仍然需要移除纯粹由不可见空格组成的字符串，但要保留包含换行符的字符串。
+        if (text.trim() === '' && !text.includes('\n')) {
             return;
         }
         uniqueTexts.add(text);
@@ -165,9 +187,11 @@ export const filterAndNormalizeTexts = (texts, filterRules, enableDebugLogging, 
         texts.forEach(rawText => {
             if (!rawText || typeof rawText !== 'string') return;
 
-            // 规范化文本，统一换行符并移除首尾空格
-            const normalizedText = rawText.normalize('NFC');
-            const textForFiltering = normalizedText.replace(/(\r\n|\n|\r)+/g, '\n').trim();
+            // 规范化文本（仅统一换行符类型，不合并），并移除首尾的空白字符（非换行符）。
+            // 注意：trim() 会移除首尾的换行符，所以我们用一个更安全的 trim 方式。
+            const normalizedText = rawText.normalize('NFC').replace(/\r\n|\r/g, '\n');
+            const textForFiltering = normalizedText.replace(/^[ \t]+|[ \t]+$/gm, '');
+
             if (textForFiltering === '') return;
 
             // 应用过滤规则
@@ -180,7 +204,7 @@ export const filterAndNormalizeTexts = (texts, filterRules, enableDebugLogging, 
             }
 
             // 将处理过的、符合条件的文本添加到结果集
-            uniqueTexts.add(normalizedText.replace(/(\r\n|\n|\r)+/g, '\n'));
+            uniqueTexts.add(normalizedText);
         });
     }
 

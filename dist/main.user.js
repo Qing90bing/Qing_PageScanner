@@ -3611,6 +3611,7 @@ ${result.join(",\n")}
   init_filterLogic();
   var ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(", ");
   var ourUiSelector = "#text-extractor-container";
+  var blockElements =  new Set(["ADDRESS", "ARTICLE", "ASIDE", "BLOCKQUOTE", "DETAILS", "DIALOG", "DD", "DIV", "DL", "DT", "FIELDSET", "FIGCAPTION", "FIGURE", "FOOTER", "FORM", "H1", "H2", "H3", "H4", "H5", "H6", "HEADER", "HGROUP", "HR", "LI", "MAIN", "NAV", "OL", "P", "PRE", "SECTION", "TABLE", "UL"]);
   var traverseDOMAndExtract = (node, textCallback) => {
     if (!node) {
       return;
@@ -3618,6 +3619,10 @@ ${result.join(",\n")}
     switch (node.nodeType) {
       case Node.ELEMENT_NODE: {
         if (node.closest(ignoredSelectorString) || node.closest(ourUiSelector)) {
+          return;
+        }
+        if (node.tagName === "BR") {
+          textCallback("\n");
           return;
         }
         const attributesToExtract = appConfig.scanner.attributesToExtract;
@@ -3662,14 +3667,17 @@ ${result.join(",\n")}
     if (node.nodeType === Node.ELEMENT_NODE && shadowRoot) {
       traverseDOMAndExtract(shadowRoot, textCallback);
     }
+    if (node.nodeType === Node.ELEMENT_NODE && blockElements.has(node.tagName)) {
+      textCallback("\n");
+    }
   };
   var extractAndProcessText = () => {
     const uniqueTexts =  new Set();
     const processAndAddText = (rawText) => {
       if (!rawText) return;
       const normalizedText = rawText.normalize("NFC");
-      let text = normalizedText.replace(/(\r\n|\n|\r)+/g, "\n");
-      if (text.trim() === "") {
+      let text = normalizedText.replace(/\r\n|\r/g, "\n");
+      if (text.trim() === "" && !text.includes("\n")) {
         return;
       }
       uniqueTexts.add(text);
@@ -3682,12 +3690,12 @@ ${result.join(",\n")}
   };
   var filterAndNormalizeTexts = (texts, filterRules2, enableDebugLogging, logFiltered) => {
     const { shouldFilter: shouldFilter2 } = (init_filterLogic(), __toCommonJS(filterLogic_exports));
-    const uniqueTexts = /* @__PURE__ */ new Set();
+    const uniqueTexts =  new Set();
     if (Array.isArray(texts)) {
       texts.forEach((rawText) => {
         if (!rawText || typeof rawText !== "string") return;
-        const normalizedText = rawText.normalize("NFC");
-        const textForFiltering = normalizedText.replace(/(\r\n|\n|\r)+/g, "\n").trim();
+        const normalizedText = rawText.normalize("NFC").replace(/\r\n|\r/g, "\n");
+        const textForFiltering = normalizedText.replace(/^[ \t]+|[ \t]+$/gm, "");
         if (textForFiltering === "") return;
         const filterResult = shouldFilter2(textForFiltering, filterRules2);
         if (filterResult) {
@@ -3696,7 +3704,7 @@ ${result.join(",\n")}
           }
           return;
         }
-        uniqueTexts.add(normalizedText.replace(/(\r\n|\n|\r)+/g, "\n"));
+        uniqueTexts.add(normalizedText);
       });
     }
     return Array.from(uniqueTexts);
@@ -3709,6 +3717,7 @@ ${result.join(",\n")}
     });
     return texts;
   };
+  // src/features/quick-scan/logic.js
   var performQuickScan = () => {
     return new Promise(async (resolve, reject) => {
       const { filterRules: filterRules2, enableDebugLogging } = loadSettings();
