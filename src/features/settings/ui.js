@@ -59,6 +59,7 @@ function showSettingsPanel(currentSettings, onSave) {
     settingsPanel.className = 'settings-panel-overlay';
     settingsPanel.tabIndex = -1;
 
+    // 构建双栏布局的 DOM
     const panelModal = buildPanelDOM(currentSettings);
     settingsPanel.appendChild(panelModal);
 
@@ -72,27 +73,35 @@ function showSettingsPanel(currentSettings, onSave) {
     selectComponents = {};
     selectSettingsDefinitions.forEach(definition => {
         const titleContainer = settingsPanel.querySelector(`#${definition.id}-title-container`);
-        titleContainer.appendChild(createIconTitle(definition.icon, t(definition.label)));
+        if (titleContainer) {
+             titleContainer.appendChild(createIconTitle(definition.icon, t(definition.label)));
+        }
 
         const selectWrapper = settingsPanel.querySelector(`#${definition.id}-wrapper`);
-        const options = definition.options.map(opt => ({
-            ...opt,
-            label: t(opt.label),
-            // 为主题选项动态添加图标
-            ...(definition.key === 'theme' && {
-                'system': systemThemeIcon,
-                'light': lightThemeIcon,
-                'dark': darkThemeIcon
-            }[opt.value]),
-        }));
-        selectComponents[definition.key] = new CustomSelect(selectWrapper, options, currentSettings[definition.key]);
+        if (selectWrapper) {
+            const options = definition.options.map(opt => ({
+                ...opt,
+                label: t(opt.label),
+                // 为主题选项动态添加图标
+                ...(definition.key === 'theme' && {
+                    'system': systemThemeIcon,
+                    'light': lightThemeIcon,
+                    'dark': darkThemeIcon
+                }[opt.value]),
+            }));
+            selectComponents[definition.key] = new CustomSelect(selectWrapper, options, currentSettings[definition.key]);
+        }
     });
 
     const relatedTitleContainer = settingsPanel.querySelector('#related-setting-title-container');
-    relatedTitleContainer.appendChild(createIconTitle(relatedSettingsIcon, t('settings.relatedSettings')));
+    if (relatedTitleContainer) {
+        relatedTitleContainer.appendChild(createIconTitle(relatedSettingsIcon, t('settings.relatedSettings')));
+    }
 
     const filterTitleContainer = settingsPanel.querySelector('#filter-setting-title-container');
-    filterTitleContainer.appendChild(createIconTitle(filterIcon, t('settings.filterRules')));
+    if (filterTitleContainer) {
+        filterTitleContainer.appendChild(createIconTitle(filterIcon, t('settings.filterRules')));
+    }
 
     const footer = settingsPanel.querySelector('.settings-panel-footer');
     saveBtn = createButton({
@@ -106,6 +115,57 @@ function showSettingsPanel(currentSettings, onSave) {
     // --- 绑定事件 ---
     settingsPanel.querySelector('.settings-panel-close').addEventListener('click', hideSettingsPanel);
     settingsPanel.addEventListener('keydown', handleKeyDown);
+
+    // 获取侧边栏元素和高亮块
+    const sidebarItems = settingsPanel.querySelectorAll('.settings-sidebar-item');
+    const highlight = settingsPanel.querySelector('.sidebar-highlight');
+
+    /**
+     * @private
+     * @description 移动滑动高亮块到目标元素位置
+     * @param {HTMLElement} targetItem - 目标侧边栏项
+     */
+    const moveHighlight = (targetItem) => {
+        if (!targetItem || !highlight) return;
+        
+        // 计算目标元素相对于父容器的位置
+        const offsetTop = targetItem.offsetTop;
+        const offsetHeight = targetItem.offsetHeight;
+
+        // 应用位置和高度变化 (使用 transform 提高性能)
+        highlight.style.transform = `translateY(${offsetTop}px)`;
+        highlight.style.height = `${offsetHeight}px`;
+    };
+
+    // 初始化高亮位置（对应第一个激活项）
+    const initialActiveItem = settingsPanel.querySelector('.settings-sidebar-item.active');
+    if (initialActiveItem) {
+        // 使用 setTimeout 确保 DOM 布局已准备好，避免首次计算高度为 0
+        setTimeout(() => moveHighlight(initialActiveItem), 0);
+    }
+
+    // 绑定侧边栏切换事件
+    sidebarItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const targetId = item.dataset.target;
+            
+            // 更新侧边栏激活状态
+            sidebarItems.forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
+
+            // 移动高亮块
+            moveHighlight(item);
+
+            // 切换内容区域显示
+            const contents = settingsPanel.querySelectorAll('.settings-tab-content');
+            contents.forEach(content => {
+                content.classList.remove('active');
+                if (content.id === targetId) {
+                    content.classList.add('active');
+                }
+            });
+        });
+    });
 
     // 监听 tooltip 事件以暂停/恢复 ESC 键的处理
     unsubscribeTooltipShow = on('infoTooltipWillShow', () => { isTooltipVisible = true; });
