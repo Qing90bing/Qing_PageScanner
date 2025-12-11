@@ -38,6 +38,19 @@
   overflow: hidden; /* 防止圆角被子元素遮挡 */
 }
 
+/* 关键修复：移除上下文面板的特定尺寸覆盖，使其与主设置面板大小保持一致 (800x600) */
+/* .settings-panel-modal.contextual-settings-modal { ... } 已移除 */
+
+/* 关键修复：确保内容区域填充剩余空间，使 Footer 沉底 */
+.settings-panel-content {
+    padding: 20px;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+/* 移除上下文面板内容的特定样式覆盖 */
+/* .contextual-settings-modal .settings-panel-content { ... } 已移除 */
+
 /* 新增：可见状态下的模态框样式 */
 .settings-panel-overlay.is-visible .settings-panel-modal {
     transform: scale(1);
@@ -94,6 +107,7 @@
     font-size: 14px;
     font-weight: 500;
     color: var(--main-text);
+    /* 关键修复：添加 background-color 到 transition 列表中 */
     transition: color 0.2s, background-color 0.2s;
     display: flex;
     align-items: center;
