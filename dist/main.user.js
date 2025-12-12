@@ -139,10 +139,10 @@ var TextExtractor = (() => {
             show_fab: "Show Floating Button",
             fab_position: "Floating Button Position",
             fab_positions: {
-              bottom_right: "Bottom Right",
-              top_right: "Top Right",
-              bottom_left: "Bottom Left",
-              top_left: "Top Left"
+              bottom_right: "\u2198 Bottom Right",
+              top_right: "\u2197 Top Right",
+              bottom_left: "\u2199 Bottom Left",
+              top_left: "\u2196 Top Left"
             },
             show_line_numbers: "Show Line Numbers",
             show_statistics: "Show Statistics",
@@ -526,10 +526,10 @@ var TextExtractor = (() => {
             show_fab: "\u663E\u793A\u60AC\u6D6E\u6309\u94AE",
             fab_position: "\u60AC\u6D6E\u6309\u94AE\u4F4D\u7F6E",
             fab_positions: {
-              bottom_right: "\u53F3\u4E0B\u89D2",
-              top_right: "\u53F3\u4E0A\u89D2",
-              bottom_left: "\u5DE6\u4E0B\u89D2",
-              top_left: "\u5DE6\u4E0A\u89D2"
+              bottom_right: "\u2198 \u53F3\u4E0B\u89D2",
+              top_right: "\u2197 \u53F3\u4E0A\u89D2",
+              bottom_left: "\u2199 \u5DE6\u4E0B\u89D2",
+              top_left: "\u2196 \u5DE6\u4E0A\u89D2"
             },
             show_line_numbers: "\u663E\u793A\u884C\u53F7",
             show_statistics: "\u663E\u793A\u7EDF\u8BA1\u4FE1\u606F",
@@ -913,10 +913,10 @@ var TextExtractor = (() => {
             show_fab: "\u986F\u793A\u61F8\u6D6E\u6309\u9215",
             fab_position: "\u61F8\u6D6E\u6309\u9215\u4F4D\u7F6E",
             fab_positions: {
-              bottom_right: "\u53F3\u4E0B\u89D2",
-              top_right: "\u53F3\u4E0A\u89D2",
-              bottom_left: "\u5DE6\u4E0B\u89D2",
-              top_left: "\u5DE6\u4E0A\u89D2"
+              bottom_right: "\u2198 \u53F3\u4E0B\u89D2",
+              top_right: "\u2197 \u53F3\u4E0A\u89D2",
+              bottom_left: "\u2199 \u5DE6\u4E0B\u89D2",
+              top_left: "\u2196 \u5DE6\u4E0A\u89D2"
             },
             show_line_numbers: "\u986F\u793A\u884C\u865F",
             show_statistics: "\u986F\u793A\u7D71\u8A08\u8CC7\u8A0A",
@@ -1984,10 +1984,10 @@ ${result.join(",\n")}
         show_fab: "Show Floating Button",
         fab_position: "Floating Button Position",
         fab_positions: {
-          bottom_right: "Bottom Right",
-          top_right: "Top Right",
-          bottom_left: "Bottom Left",
-          top_left: "Top Left"
+          bottom_right: "\\u2198 Bottom Right",
+          top_right: "\\u2197 Top Right",
+          bottom_left: "\\u2199 Bottom Left",
+          top_left: "\\u2196 Top Left"
         },
         show_line_numbers: "Show Line Numbers",
         show_statistics: "Show Statistics",
@@ -2367,10 +2367,10 @@ ${result.join(",\n")}
         show_fab: "\\u663E\\u793A\\u60AC\\u6D6E\\u6309\\u94AE",
         fab_position: "\\u60AC\\u6D6E\\u6309\\u94AE\\u4F4D\\u7F6E",
         fab_positions: {
-          bottom_right: "\\u53F3\\u4E0B\\u89D2",
-          top_right: "\\u53F3\\u4E0A\\u89D2",
-          bottom_left: "\\u5DE6\\u4E0B\\u89D2",
-          top_left: "\\u5DE6\\u4E0A\\u89D2"
+          bottom_right: "\\u2198 \\u53F3\\u4E0B\\u89D2",
+          top_right: "\\u2197 \\u53F3\\u4E0A\\u89D2",
+          bottom_left: "\\u2199 \\u5DE6\\u4E0B\\u89D2",
+          top_left: "\\u2196 \\u5DE6\\u4E0A\\u89D2"
         },
         show_line_numbers: "\\u663E\\u793A\\u884C\\u53F7",
         show_statistics: "\\u663E\\u793A\\u7EDF\\u8BA1\\u4FE1\\u606F",
@@ -2750,10 +2750,10 @@ ${result.join(",\n")}
         show_fab: "\\u986F\\u793A\\u61F8\\u6D6E\\u6309\\u9215",
         fab_position: "\\u61F8\\u6D6E\\u6309\\u9215\\u4F4D\\u7F6E",
         fab_positions: {
-          bottom_right: "\\u53F3\\u4E0B\\u89D2",
-          top_right: "\\u53F3\\u4E0A\\u89D2",
-          bottom_left: "\\u5DE6\\u4E0B\\u89D2",
-          top_left: "\\u5DE6\\u4E0A\\u89D2"
+          bottom_right: "\\u2198 \\u53F3\\u4E0B\\u89D2",
+          top_right: "\\u2197 \\u53F3\\u4E0A\\u89D2",
+          bottom_left: "\\u2199 \\u5DE6\\u4E0B\\u89D2",
+          top_left: "\\u2196 \\u5DE6\\u4E0A\\u89D2"
         },
         show_line_numbers: "\\u986F\\u793A\\u884C\\u865F",
         show_statistics: "\\u986F\\u793A\\u7D71\\u8A08\\u8CC7\\u8A0A",
