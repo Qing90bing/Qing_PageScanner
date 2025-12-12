@@ -2,6 +2,9 @@
 import { themeIcon } from '../../assets/icons/themeIcon.js';
 import languageIcon from '../../assets/icons/languageIcon.js';
 import { infoIcon } from '../../assets/icons/infoIcon.js';
+import { lightThemeIcon } from '../../assets/icons/lightThemeIcon.js';
+import { darkThemeIcon } from '../../assets/icons/darkThemeIcon.js';
+import { systemThemeIcon } from '../../assets/icons/systemThemeIcon.js';
 import { getAvailableLanguages } from '../../shared/i18n/index.js';
 
 export const selectSettingsDefinitions = [
@@ -9,11 +12,13 @@ export const selectSettingsDefinitions = [
         id: 'theme-select',
         key: 'theme',
         label: 'settings.theme',
+        type: 'image-card-select',
         icon: themeIcon,
         options: [
-            { value: 'light', label: 'settings.themes.light' },
-            { value: 'dark', label: 'settings.themes.dark' },
-            { value: 'system', label: 'settings.themes.system' },
+            // previewIcon removed, using schematic rendering
+            { value: 'light', label: 'settings.themes.light', icon: lightThemeIcon },
+            { value: 'dark', label: 'settings.themes.dark', icon: darkThemeIcon },
+            { value: 'system', label: 'settings.themes.system', icon: systemThemeIcon },
         ],
     },
     {

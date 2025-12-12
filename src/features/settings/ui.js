@@ -3,9 +3,7 @@
 import { log } from '../../shared/utils/logger.js';
 import { createIconTitle } from '../../shared/ui/iconTitle.js';
 import { CustomSelect } from '../../shared/ui/components/customSelect.js';
-import { systemThemeIcon } from '../../assets/icons/systemThemeIcon.js';
-import { lightThemeIcon } from '../../assets/icons/lightThemeIcon.js';
-import { darkThemeIcon } from '../../assets/icons/darkThemeIcon.js';
+import { ImageCardSelect } from '../../shared/ui/components/imageCardSelect.js'; // Import new component
 import { uiContainer } from '../../shared/ui/uiContainer.js';
 import { buildPanelDOM, buildContextualPanelDOM } from './panelBuilder.js';
 import { filterDefinitions, relatedSettingsDefinitions, selectSettingsDefinitions } from './config.js';
@@ -69,7 +67,7 @@ function showSettingsPanel(currentSettings, onSave) {
     const titleContainer = settingsPanel.querySelector('#settings-panel-title-container');
     titleContainer.appendChild(createIconTitle(settingsIcon, t('settings.title')));
 
-    // 动态创建下拉菜单
+    // 动态创建选择组件（CustomSelect 或 ImageCardSelect）
     selectComponents = {};
     selectSettingsDefinitions.forEach(definition => {
         const titleContainer = settingsPanel.querySelector(`#${definition.id}-title-container`);
@@ -82,14 +80,14 @@ function showSettingsPanel(currentSettings, onSave) {
             const options = definition.options.map(opt => ({
                 ...opt,
                 label: t(opt.label),
-                // 为主题选项动态添加图标
-                ...(definition.key === 'theme' && {
-                    'system': systemThemeIcon,
-                    'light': lightThemeIcon,
-                    'dark': darkThemeIcon
-                }[opt.value]),
+                // 如果 config.js 中已经定义了 icon，这里会直接透传
             }));
-            selectComponents[definition.key] = new CustomSelect(selectWrapper, options, currentSettings[definition.key]);
+
+            if (definition.type === 'image-card-select') {
+                selectComponents[definition.key] = new ImageCardSelect(selectWrapper, options, currentSettings[definition.key]);
+            } else {
+                selectComponents[definition.key] = new CustomSelect(selectWrapper, options, currentSettings[definition.key]);
+            }
         }
     });
 
@@ -228,7 +226,7 @@ function handleSave(onSave) {
     log(t('log.settings.panel.saving'));
     const newSettings = {};
 
-    // 1. 从所有下拉菜单收集值
+    // 1. 从所有选择组件收集值 (CustomSelect 和 ImageCardSelect)
     for (const key in selectComponents) {
         newSettings[key] = selectComponents[key].getValue();
     }
