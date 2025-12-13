@@ -1,7 +1,6 @@
-// src/shared/i18n/languageManager.js
+// src/shared/i18n/management/languageManager.js
 
-import { supportedLanguages } from './languages.js';
-import { setLanguage as setI18nLanguage, t } from '../index.js';
+import { setLanguage as setI18nLanguage, t, supportedLanguages } from '../index.js';
 import {
     registerMenuCommand,
     unregisterMenuCommand,
@@ -47,6 +46,7 @@ export async function updateSettingsMenu(onClick) {
  * @returns {boolean}
  */
 function isLanguageSupported(langCode) {
+    // 'auto' is now in supportedLanguages
     return supportedLanguages.some(lang => lang.code === langCode);
 }
 
@@ -58,21 +58,42 @@ function isLanguageSupported(langCode) {
 export function initializeLanguage(settings) {
     let langToSet = 'en'; // 默认语言
 
-    const savedLang = settings.language;
+    // 确定用户意图使用的语言
+    let targetLang = 'auto'; // 默认为自动检测
 
-    if (savedLang && savedLang !== 'auto') {
-        // 如果保存了语言且不是'auto'，进行严格匹配
-        if (isLanguageSupported(savedLang)) {
-            langToSet = savedLang;
+    if (settings && settings.language) {
+        targetLang = settings.language;
+    }
+
+    // 如果是自动检测
+    if (targetLang === 'auto') {
+        const browserLang = navigator.language;
+        // 尝试完全匹配 (e.g., 'zh-CN')
+        if (isLanguageSupported(browserLang) && browserLang !== 'auto') {
+            langToSet = browserLang;
+        } else {
+            // 尝试模糊匹配 (e.g., 'zh-Hans-CN' -> 'zh-CN')
+            // 这里我们需要更智能的匹配逻辑，或者简单地尝试匹配前缀
+            // 目前项目中只有 'zh-CN', 'zh-TW', 'en'
+            // 常见的浏览器语言代码: 'zh-CN', 'zh', 'en-US', 'en'
+
+            if (browserLang.startsWith('zh')) {
+                // 偏好简体中文，除非明确是繁体
+                if (browserLang.toLowerCase().includes('tw') || browserLang.toLowerCase().includes('hk') || browserLang.toLowerCase().includes('hant')) {
+                    langToSet = 'zh-TW';
+                } else {
+                    langToSet = 'zh-CN';
+                }
+            } else if (browserLang.startsWith('en')) {
+                langToSet = 'en';
+            }
         }
     } else {
-        // 如果是 'auto' 或没有设置，则使用浏览器语言进行严格匹配
-        const browserLang = navigator.language;
-        if (isLanguageSupported(browserLang)) {
-            langToSet = browserLang;
+        // 用户手动选择了特定语言
+        if (isLanguageSupported(targetLang)) {
+            langToSet = targetLang;
         }
     }
-    // 对于任何不匹配的情况，langToSet 将保持为 'en'
 
     setI18nLanguage(langToSet);
 }
@@ -80,13 +101,20 @@ export function initializeLanguage(settings) {
 
 /**
  * 切换并保存当前语言。
- * @param {string} langCode - 要切换到的语言代码 (例如 'zh-CN')。
+ * @param {string} langCode - 要切换到的语言代码 (例如 'zh-CN' 或 'auto')。
  */
 export function switchLanguage(langCode) {
+    // 即使切换到 'auto'，我们也需要计算出当前实际应该显示什么语言
+    // 但在 UI 设置中，我们只需要保存 'auto' 即可
+    // 这里我们复用 initializeLanguage 的逻辑，但需要一种方式来只更新内存中的语言而不依赖 settings 对象的当前状态
+
+    // 为了简单起见，我们先更新设置，然后重新初始化
     if (isLanguageSupported(langCode)) {
-        setI18nLanguage(langCode);
         const settings = loadSettings();
         settings.language = langCode;
         saveSettings(settings);
+
+        // 重新调用初始化逻辑来应用正确的语言显示
+        initializeLanguage(settings);
     }
 }

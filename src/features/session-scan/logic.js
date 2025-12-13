@@ -132,7 +132,7 @@ export const start = async (onUpdate, resumedData = null) => {
             sessionTextsMirror.add(text);
         });
     }
-    const { filterRules, enableDebugLogging } = settings;
+    const { filterRules, enableDebugLogging, outputFormat } = settings;
 
     // --- 4. 定义后备模式激活函数 ---
     const activateFallbackMode = () => {
@@ -187,6 +187,7 @@ export const start = async (onUpdate, resumedData = null) => {
                 payload: {
                     filterRules,
                     enableDebugLogging,
+                    outputFormat, // Pass format setting
                     translations: {
                         workerLogPrefix: t('log.sessionScan.worker.logPrefix'),
                         textFiltered: t('log.textProcessor.filtered'),
@@ -291,7 +292,7 @@ export const requestSummary = (onReady) => {
         onSummaryCallback = onReady;
         worker.postMessage({ type: 'session-get-summary' });
     } else {
-        onReady("[]", 0);
+        onReady("[]", 0); // Or "{}" depending on default but this is empty anyway
     }
 };
 

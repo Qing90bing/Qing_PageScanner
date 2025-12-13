@@ -1,6 +1,7 @@
 // src/shared/ui/components/imageCardSelect.js
 
 import { createSVGFromString } from '../../utils/dom.js';
+import { createTrustedHTML } from '../../utils/trustedTypes.js';
 
 /**
  * @class ImageCardSelect
@@ -9,7 +10,7 @@ import { createSVGFromString } from '../../utils/dom.js';
 export class ImageCardSelect {
     /**
      * @param {HTMLElement} parentElement - 组件将被附加到的父容器。
-     * @param {Array<Object>} options - 选项数组，每个对象包含 { value, label, icon }。
+     * @param {Array<Object>} options - 选项数组，每个对象包含 { value, label, icon, previewType }。
      * @param {string} initialValue - 初始选中的值。
      */
     constructor(parentElement, options, initialValue) {
@@ -40,33 +41,17 @@ export class ImageCardSelect {
             const preview = document.createElement('div');
             preview.className = 'image-card-preview';
             
-            // 构建示意图结构
-            const schematicContainer = document.createElement('div');
-            schematicContainer.className = 'schematic-container';
-            
-            const schematicCard = document.createElement('div');
-            schematicCard.className = 'schematic-card';
-            
-            const iconBox = document.createElement('div');
-            iconBox.className = 'schematic-icon-box';
-            
-            const linesContainer = document.createElement('div');
-            linesContainer.className = 'schematic-lines';
-            
-            const line1 = document.createElement('div');
-            line1.className = 'schematic-line primary';
-            
-            const line2 = document.createElement('div');
-            line2.className = 'schematic-line secondary';
-            
-            linesContainer.appendChild(line1);
-            linesContainer.appendChild(line2);
-            
-            schematicCard.appendChild(iconBox);
-            schematicCard.appendChild(linesContainer);
-            schematicContainer.appendChild(schematicCard);
-            
-            preview.appendChild(schematicContainer);
+            if (option.previewType === 'code-array') {
+                preview.appendChild(this.createCodePreview('array'));
+            } else if (option.previewType === 'code-object') {
+                preview.appendChild(this.createCodePreview('object'));
+            } else if (option.previewType === 'code-csv') {
+                preview.appendChild(this.createCodePreview('csv'));
+            } else {
+                // Default Theme Schematic
+                preview.appendChild(this.createThemeSchematic());
+            }
+
             card.appendChild(preview);
 
             // 2. 标签区域 (Radio + Text + Icon)
@@ -98,6 +83,79 @@ export class ImageCardSelect {
         });
 
         this.parentElement.appendChild(this.container);
+    }
+
+    /**
+     * @private
+     * @description 创建默认的主题示意图。
+     */
+    createThemeSchematic() {
+        const container = document.createElement('div');
+        container.className = 'schematic-container';
+
+        const schematicCard = document.createElement('div');
+        schematicCard.className = 'schematic-card';
+
+        const iconBox = document.createElement('div');
+        iconBox.className = 'schematic-icon-box';
+
+        const linesContainer = document.createElement('div');
+        linesContainer.className = 'schematic-lines';
+
+        const line1 = document.createElement('div');
+        line1.className = 'schematic-line primary';
+
+        const line2 = document.createElement('div');
+        line2.className = 'schematic-line secondary';
+
+        linesContainer.appendChild(line1);
+        linesContainer.appendChild(line2);
+
+        schematicCard.appendChild(iconBox);
+        schematicCard.appendChild(linesContainer);
+        container.appendChild(schematicCard);
+
+        return container;
+    }
+
+    /**
+     * @private
+     * @description 创建代码格式预览示意图 (文本模式)。
+     * @param {string} type - 'array', 'object', or 'csv'
+     */
+    createCodePreview(type) {
+        const container = document.createElement('div');
+        container.className = `code-preview ${type}`;
+
+        const codeBlock = document.createElement('div');
+        codeBlock.className = 'code-text-preview';
+
+        if (type === 'array') {
+            // Updated to be more detailed as requested
+            codeBlock.innerHTML = createTrustedHTML(`
+                <span class="punct">[</span><br>
+                &nbsp;&nbsp;<span class="punct">[</span><span class="str">"Hello"</span><span class="punct">,</span> <span class="str">""</span><span class="punct">],</span><br>
+                &nbsp;&nbsp;<span class="punct">[</span><span class="str">"World"</span><span class="punct">,</span> <span class="str">""</span><span class="punct">]</span><br>
+                <span class="punct">]</span>
+            `);
+        } else if (type === 'object') {
+            // { "Hello": "", "World": "" }
+            codeBlock.innerHTML = createTrustedHTML(`
+                <span class="punct">{</span><br>
+                &nbsp;&nbsp;<span class="str">"Hello"</span><span class="punct">:</span> <span class="str">""</span><span class="punct">,</span><br>
+                &nbsp;&nbsp;<span class="str">"World"</span><span class="punct">:</span> <span class="str">""</span><br>
+                <span class="punct">}</span>
+            `);
+        } else if (type === 'csv') {
+            // "Hello",""
+            codeBlock.innerHTML = createTrustedHTML(`
+                <span class="str">"Hello"</span><span class="punct">,</span><span class="str">""</span><br>
+                <span class="str">"World"</span><span class="punct">,</span><span class="str">""</span>
+            `);
+        }
+
+        container.appendChild(codeBlock);
+        return container;
     }
 
     /**

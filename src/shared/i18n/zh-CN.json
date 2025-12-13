@@ -1,4 +1,7 @@
 {
+  "_meta": {
+    "name": "简体中文"
+  },
   "common": {
     "scan": "扫描",
     "stop": "停止",
@@ -29,6 +32,12 @@
     "title": "设置",
     "theme": "主题",
     "language": "语言",
+    "format": "输出格式",
+    "formats": {
+        "array": "嵌套数组",
+        "object": "键值对对象",
+        "csv": "CSV 字符串"
+    },
     "relatedSettings": "相关设置",
     "filterRules": "内容过滤规则",
     "filters": {
@@ -78,9 +87,10 @@
       "persistData": "跨页面时保留扫描数据"
     },
     "languages": {
-      "en": "English",
-      "zh_CN": "简体中文",
-      "zh_TW": "繁體中文"
+      "auto": "自动检测",
+      "en": "英文 (美国)",
+      "zh-CN": "简体中文",
+      "zh-TW": "繁体中文"
     },
     "themes": {
       "light": "浅色",

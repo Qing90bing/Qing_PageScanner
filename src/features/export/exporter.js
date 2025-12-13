@@ -7,11 +7,11 @@
 
 import { log } from '../../shared/utils/logger.js';
 import { on } from '../../shared/utils/eventBus.js';
-// 新增：导入 outputTextarea 以便获取用户编辑后的内容
 import { getCurrentMode, outputTextarea } from '../../shared/ui/mainModal/modalState.js';
 import { fullQuickScanContent } from '../../shared/ui/mainModal.js';
 import { t } from '../../shared/i18n/index.js';
 import { requestSummary } from '../session-scan/logic.js';
+import { loadSettings } from '../../features/settings/logic.js';
 
 /**
  * @private
@@ -25,61 +25,11 @@ function getPageTitle() {
  * @private
  * @description 生成带时间戳的标准化文件名。
  */
-function generateFilename(format) {
+function generateFilename(extension) {
     const title = getPageTitle();
     const now = new Date();
     const timestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}`;
-    return `${title}_${timestamp}.${format}`;
-}
-
-/**
- * @private
- * @description 直接获取文本框的原始内容。
- */
-function getRawContent(text) {
-    return text;
-}
-
-/**
- * @private
- * @description 将文本数据格式化为 CSV 格式。
- */
-function formatAsCsv(text) {
-    const header = `"${t('export.csv.id')}","${t('export.csv.original')}","${t('export.csv.translation')}"\n`;
-
-    try {
-        const parsedData = JSON.parse(text);
-
-        if (!Array.isArray(parsedData)) {
-            log(t('log.exporter.csvError'), new Error('Parsed JSON is not an array.'));
-            return header;
-        }
-
-        let csvContent = header;
-        parsedData.forEach((row, index) => {
-            if (Array.isArray(row) && row.length > 0) {
-                // 处理原文
-                let originalText = String(row[0] || '');
-                originalText = originalText.replace(/"/g, '""'); // CSV 转义双引号
-
-                // 处理译文 (关键修复：读取数组的第二个元素)
-                let translationText = '';
-                if (row.length > 1) {
-                    translationText = String(row[1] || '');
-                    translationText = translationText.replace(/"/g, '""'); // CSV 转义双引号
-                }
-
-                // 拼接 CSV 行：ID, 原文, 译文
-                csvContent += `${index + 1},"${originalText}","${translationText}"\n`;
-            }
-        });
-        
-        return csvContent;
-
-    } catch (error) {
-        log(t('log.exporter.csvError'), error);
-        return header;
-    }
+    return `${title}_${timestamp}.${extension}`;
 }
 
 /**
@@ -102,42 +52,42 @@ function downloadFile(filename, content, mimeType) {
 }
 
 /**
- * @description 根据所选格式导出文本。
+ * @description 根据设置中的输出格式导出文本。
  */
-function exportToFile({ format }) {
+function exportToFile() {
     const currentMode = getCurrentMode();
+    const settings = loadSettings();
+    const outputFormat = settings.outputFormat || 'array';
 
     // 定义核心处理函数
     const processAndDownload = (text) => {
-        if (!text || text.trim() === '' || text.trim() === '[]') {
+        if (!text || text.trim() === '' || text.trim() === '[]' || text.trim() === '{}') {
             log(t('log.exporter.noContent'));
             return;
         }
 
-        let filename, content, mimeType;
+        let filename, mimeType;
 
-        switch (format) {
-            case 'txt':
+        switch (outputFormat) {
+            case 'array':
                 filename = generateFilename('txt');
-                content = getRawContent(text);
                 mimeType = 'text/plain;charset=utf-8;';
                 break;
-            case 'json':
+            case 'object':
                 filename = generateFilename('json');
-                content = getRawContent(text);
                 mimeType = 'application/json;charset=utf-8;';
                 break;
             case 'csv':
                 filename = generateFilename('csv');
-                content = formatAsCsv(text);
                 mimeType = 'text/csv;charset=utf-8;';
                 break;
             default:
-                log(t('log.exporter.unknownFormat', { format }));
-                return;
+                filename = generateFilename('txt');
+                mimeType = 'text/plain;charset=utf-8;';
         }
 
-        downloadFile(filename, content, mimeType);
+        // 此时 text 已经是符合 outputFormat 的格式字符串（因为 Worker 已经处理过了）
+        downloadFile(filename, text, mimeType);
     };
 
     // --- 优先使用用户编辑过的内容 ---

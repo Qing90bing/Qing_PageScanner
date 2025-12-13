@@ -82,7 +82,10 @@
 .text-extractor-modal {
   background-color: var(--main-bg);
   color: var(--main-text);
-  width: 80%; max-width: 700px; max-height: 80vh;
+  width: 90%;
+  max-width: 800px; /* 增加宽度以适应侧边栏布局 */
+  height: 600px; /* 设置固定高度或最大高度 */
+  max-height: 85vh;
   border-radius: 16px; /* 增大了圆角 */
   box-shadow: 0 5px 15px var(--main-shadow);
   display: flex;

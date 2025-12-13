@@ -10,6 +10,7 @@ import { filterAndNormalizeTexts } from '../../shared/utils/textProcessor.js';
 import { log } from '../../shared/utils/logger.js';
 import { t } from '../../shared/i18n/index.js';
 import { formatTextsForTranslation } from '../../shared/utils/formatting.js';
+import { loadSettings } from '../settings/logic.js';
 
 // --- 状态变量 (模拟 Worker 的内部状态) ---
 let sessionTexts = new Set();
@@ -63,7 +64,8 @@ export function getCountInFallback() {
  */
 export function getSummaryInFallback() {
     const textsArray = Array.from(sessionTexts);
-    return formatTextsForTranslation(textsArray);
+    const { outputFormat } = loadSettings();
+    return formatTextsForTranslation(textsArray, outputFormat);
 }
 
 /**

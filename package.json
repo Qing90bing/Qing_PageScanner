@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/Qing90bing/Qing_PageScanner#readme",
   "devDependencies": {
+    "@playwright/test": "^1.57.0",
     "cssnano": "^7.1.2",
     "esbuild": "^0.25.10",
     "postcss": "^8.5.6",

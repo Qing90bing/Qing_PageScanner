@@ -1,4 +1,7 @@
 {
+  "_meta": {
+    "name": "English"
+  },
   "common": {
     "scan": "Scan",
     "stop": "Stop",
@@ -29,6 +32,12 @@
     "title": "Settings",
     "theme": "Theme",
     "language": "Language",
+    "format": "Output Format",
+    "formats": {
+        "array": "Nested Array",
+        "object": "Key-Value Object",
+        "csv": "CSV String"
+    },
     "relatedSettings": "Related Settings",
     "filterRules": "Content Filtering Rules",
     "filters": {
@@ -78,9 +87,10 @@
         "persistData": "Persist data across pages"
     },
     "languages": {
-      "en": "English",
-      "zh_CN": "简体中文",
-      "zh_TW": "繁體中文"
+      "auto": "Auto",
+      "en": "English (United States)",
+      "zh-CN": "Chinese (Simplified)",
+      "zh-TW": "Chinese (Traditional)"
     },
     "themes": {
       "light": "Light",

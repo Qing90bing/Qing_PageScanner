@@ -7,16 +7,18 @@ import { createSVGFromString } from '../../shared/utils/dom.js';
 import { closeIcon } from '../../assets/icons/closeIcon.js';
 import { themeIcon } from '../../assets/icons/themeIcon.js';
 import languageIcon from '../../assets/icons/languageIcon.js';
+import { formatIcon } from '../../assets/icons/formatIcon.js'; // Import
 import { relatedSettingsIcon } from '../../assets/icons/relatedSettingsIcon.js';
 import { filterIcon } from '../../assets/icons/filterIcon.js';
 import { filterDefinitions, relatedSettingsDefinitions, selectSettingsDefinitions } from './config.js';
 import { t } from '../../shared/i18n/index.js';
 import { createIconTitle } from '../../shared/ui/iconTitle.js';
 
-// 定义侧边栏标签配置（重新排序：相关设置、过滤规则、语言、主题）
+// 定义侧边栏标签配置（重新排序：相关设置、过滤规则、格式、语言、主题）
 const TABS = [
     { id: 'tab-related', label: 'settings.relatedSettings', icon: relatedSettingsIcon },
     { id: 'tab-filters', label: 'settings.filterRules', icon: filterIcon },
+    { id: 'tab-format', label: 'settings.format', icon: formatIcon },
     { id: 'tab-language', label: 'settings.language', icon: languageIcon },
     { id: 'tab-theme', label: 'settings.theme', icon: themeIcon }
 ];
@@ -100,7 +102,15 @@ export function buildPanelDOM(settings) {
     });
     contentArea.appendChild(filterTab);
 
-    // 3. Language Tab Content
+    // 3. Format Tab Content
+    const formatTab = createTabContent('tab-format', false);
+    const formatDef = selectSettingsDefinitions.find(d => d.key === 'outputFormat');
+    if (formatDef) {
+        formatTab.appendChild(createSelectSettingDOM(formatDef));
+    }
+    contentArea.appendChild(formatTab);
+
+    // 4. Language Tab Content
     const languageTab = createTabContent('tab-language', false);
     const langDef = selectSettingsDefinitions.find(d => d.key === 'language');
     if (langDef) {
@@ -108,7 +118,7 @@ export function buildPanelDOM(settings) {
     }
     contentArea.appendChild(languageTab);
 
-    // 4. Theme Tab Content
+    // 5. Theme Tab Content
     const themeTab = createTabContent('tab-theme', false);
     // 查找配置中的 theme 定义
     const themeDef = selectSettingsDefinitions.find(d => d.key === 'theme');

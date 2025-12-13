@@ -18,6 +18,7 @@ let sessionTexts = new Set();
 let filterRules = {};
 let translations = {};
 let enableDebugLogging = false;
+let outputFormat = 'array'; // 新增：输出格式状态
 
 // --- 辅助函数 ---
 
@@ -92,6 +93,9 @@ self.onmessage = (event) => {
     if (payload && payload.filterRules) {
         filterRules = payload.filterRules;
     }
+    if (payload && typeof payload.outputFormat !== 'undefined') {
+        outputFormat = payload.outputFormat;
+    }
 
     switch (type) {
         /**
@@ -106,7 +110,7 @@ self.onmessage = (event) => {
             }
 
             const textsArray = Array.from(uniqueTexts);
-            const formattedText = formatTextsForTranslation(textsArray);
+            const formattedText = formatTextsForTranslation(textsArray, outputFormat);
 
             log(t('scanComplete', { count: textsArray.length }));
             self.postMessage({
@@ -196,7 +200,7 @@ self.onmessage = (event) => {
          */
         case 'session-get-summary': {
             const sessionTextsArray = Array.from(sessionTexts);
-            const formattedText = formatTextsForTranslation(sessionTextsArray);
+            const formattedText = formatTextsForTranslation(sessionTextsArray, outputFormat);
             self.postMessage({ type: 'summaryReady', payload: formattedText });
             break;
         }

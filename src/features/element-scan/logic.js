@@ -702,7 +702,8 @@ export async function confirmSelectionAndExtract() {
         log(simpleTemplate(t('log.elementScan.extractedCount'), { count: allTexts.length }));
 
         // 由于所有文本在暂存时已经过过滤，现在只需格式化即可
-        const formattedText = formatTextsForTranslation(allTexts);
+        const { outputFormat } = settings; // Get format setting
+        const formattedText = formatTextsForTranslation(allTexts, outputFormat);
         const count = allTexts.length;
 
         updateModalContent(formattedText, true, 'element-scan');

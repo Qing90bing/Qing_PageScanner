@@ -1,0 +1,47 @@
+/* src/assets/styles/format-preview.css */
+
+/* Generic Code Preview Container */
+.code-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center the code block horizontally */
+  height: 100%;
+  width: 100%;
+  padding: 10px; /* Add some padding around the code block */
+}
+
+/* Code Text Container */
+.code-text-preview {
+  font-family: 'Menlo', 'Monaco', 'Consolas', 'Courier New', monospace;
+  font-size: 14px; /* Increased to 14px as requested */
+  line-height: 1.4;
+  color: var(--main-text-secondary);
+  text-align: left; /* Align text to left inside the centered block */
+  white-space: nowrap; /* Prevent wrapping */
+  overflow: hidden; /* Hide overflow */
+}
+
+/* Selected State */
+.image-card-option.selected .code-text-preview {
+  color: var(--main-text); /* Highlight text when selected */
+}
+
+/* Syntax Highlighting (Simulated) */
+.code-text-preview .punct {
+  color: var(--main-text-secondary);
+  font-weight: bold;
+}
+
+.code-text-preview .str {
+  color: var(--main-primary); /* Use primary color for strings */
+}
+
+/* Selected State overrides */
+.image-card-option.selected .code-text-preview .punct {
+    color: var(--main-text);
+}
+
+/* Specific Adjustments per type if needed */
+.code-preview.csv .code-text-preview {
+    /* CSV specific tweaks */
+}

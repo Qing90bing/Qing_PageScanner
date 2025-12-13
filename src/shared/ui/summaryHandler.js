@@ -7,7 +7,7 @@ import { log } from '../utils/logger.js';
 import { isElementScanActive, getStagedTexts } from '../../features/element-scan/logic.js';
 import { showSessionSummary } from '../../features/session-scan/ui.js';
 import { formatTextsForTranslation } from '../utils/formatting.js';
-
+import { loadSettings } from '../../features/settings/logic.js';
 
 /**
  * @public
@@ -22,7 +22,8 @@ export function handleSummaryClick() {
     if (isElementScanActive()) {
         // 如果是，则显示暂存的文本
         const stagedTexts = getStagedTexts();
-        const formattedText = formatTextsForTranslation(Array.from(stagedTexts));
+        const { outputFormat } = loadSettings();
+        const formattedText = formatTextsForTranslation(Array.from(stagedTexts), outputFormat);
 
         updateScanCount(stagedTexts.size, 'element-scan');
 

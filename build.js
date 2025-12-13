@@ -8,6 +8,70 @@ import postcss from 'postcss';
 import discardComments from 'postcss-discard-comments';
 import cssnano from 'cssnano';
 
+// --- esbuild 插件：虚拟语言模块 ---
+const localesPlugin = {
+    name: 'locales-plugin',
+    setup(build) {
+        // 拦截 'virtual:locales' 导入
+        build.onResolve({ filter: /^virtual:locales$/ }, args => ({
+            path: args.path,
+            namespace: 'locales-ns',
+        }));
+
+        // 加载虚拟模块内容
+        build.onLoad({ filter: /.*/, namespace: 'locales-ns' }, async () => {
+            const i18nDir = 'src/shared/i18n';
+            // 使用 path.resolve 确保绝对路径，以便 esbuild 正确解析内部的相对导入
+            const absI18nDir = path.resolve(i18nDir);
+
+            const files = await fs.readdir(i18nDir);
+            const jsonFiles = files.filter(file => path.extname(file) === '.json');
+
+            const imports = [];
+            const exports = [];
+            const languageList = [];
+
+            for (const file of jsonFiles) {
+                const langCode = path.basename(file, '.json');
+                const identifier = langCode.replace(/[^a-zA-Z0-9]/g, '_');
+
+                // 读取 metadata
+                const content = await fs.readFile(path.join(i18nDir, file), 'utf-8');
+                let name = langCode;
+                try {
+                    const json = JSON.parse(content);
+                    if (json._meta && json._meta.name) {
+                        name = json._meta.name;
+                    }
+                } catch (e) {
+                    console.warn(`Warning: Failed to parse ${file}`);
+                }
+
+                // 这里的导入路径是相对于 resolveDir (即 i18n 目录) 的
+                imports.push(`import ${identifier} from './${file}';`);
+                exports.push(`    '${langCode}': ${identifier},`);
+                languageList.push({ code: langCode, name: name });
+            }
+
+            const contents = `
+${imports.join('\n')}
+
+export const locales = {
+${exports.join('\n')}
+};
+
+export const resourceLanguages = ${JSON.stringify(languageList, null, 4)};
+            `;
+
+            return {
+                contents,
+                loader: 'js',
+                resolveDir: absI18nDir, // 关键：告诉 esbuild 如何解析生成的 import
+            };
+        });
+    },
+};
+
 // --- 主构建函数 ---
 async function build() {
     try {
@@ -48,14 +112,15 @@ async function build() {
         const cleanedCss = postcssResult.css;
         console.log('CSS 清理和压缩完成。');
 
-        // 3. 【重构】打包通用的 Web Worker 脚本
+        // 3. 打包通用的 Web Worker 脚本
         console.log('正在打包通用 Web Worker...');
         const workerBuildResult = await esbuild.build({
             entryPoints: ['src/shared/utils/processing-worker.js'],
             bundle: true,
             write: false,
-            outfile: 'dist/processing-worker.js', // 虚拟输出文件
+            outfile: 'dist/processing-worker.js',
             format: 'iife',
+            plugins: [localesPlugin], // Worker 也需要解析 virtual:locales
         });
         const processingWorkerCode = workerBuildResult.outputFiles[0].text;
         console.log('通用 Web Worker 打包完成。');
@@ -68,11 +133,10 @@ async function build() {
             write: false,
             outfile: 'dist/main.user.js',
             format: 'iife',
-            globalName: 'TextExtractor', // 暴露 IIFE 的全局变量名
+            plugins: [localesPlugin], // 添加虚拟模块插件
+            globalName: 'TextExtractor',
             define: {
-                // 将所有合并后的 CSS 作为单个字符串注入
                 '__INJECTED_CSS__': JSON.stringify(cleanedCss),
-                // 将打包好的、无依赖的通用 Worker 代码注入
                 '__PROCESSING_WORKER_STRING__': JSON.stringify(processingWorkerCode),
             }
         });

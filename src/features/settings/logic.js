@@ -27,6 +27,8 @@ import { showNotification } from '../../shared/ui/components/notification.js';
 const defaultSettings = {
   // 语言设置, 'auto' 表示自动检测
   language: 'auto',
+  // 输出格式设置, 'array' 或 'object'
+  outputFormat: 'array',
   // 主题设置, 可选值: 'light', 'dark', 'system'
   theme: 'system',
   // 是否显示悬浮按钮

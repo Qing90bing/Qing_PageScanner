@@ -5,6 +5,7 @@ import { infoIcon } from '../../assets/icons/infoIcon.js';
 import { lightThemeIcon } from '../../assets/icons/lightThemeIcon.js';
 import { darkThemeIcon } from '../../assets/icons/darkThemeIcon.js';
 import { systemThemeIcon } from '../../assets/icons/systemThemeIcon.js';
+import { formatIcon } from '../../assets/icons/formatIcon.js'; // New Icon
 import { getAvailableLanguages } from '../../shared/i18n/index.js';
 
 export const selectSettingsDefinitions = [
@@ -15,10 +16,21 @@ export const selectSettingsDefinitions = [
         type: 'image-card-select',
         icon: themeIcon,
         options: [
-            // previewIcon removed, using schematic rendering
             { value: 'light', label: 'settings.themes.light', icon: lightThemeIcon },
             { value: 'dark', label: 'settings.themes.dark', icon: darkThemeIcon },
             { value: 'system', label: 'settings.themes.system', icon: systemThemeIcon },
+        ],
+    },
+    {
+        id: 'format-select',
+        key: 'outputFormat', // Match defaultSettings
+        label: 'settings.format',
+        type: 'image-card-select',
+        icon: formatIcon,
+        options: [
+            { value: 'array', label: 'settings.formats.array', previewType: 'code-array' },
+            { value: 'object', label: 'settings.formats.object', previewType: 'code-object' },
+            { value: 'csv', label: 'settings.formats.csv', previewType: 'code-csv' },
         ],
     },
     {
@@ -26,8 +38,12 @@ export const selectSettingsDefinitions = [
         key: 'language',
         label: 'settings.language',
         icon: languageIcon,
-    // 直接从 i18n 模块获取语言列表，其标签已经是原生名称，无需再翻译。
-    options: getAvailableLanguages(),
+        options: getAvailableLanguages().map(lang => ({
+            ...lang,
+            // 对于 'auto'，我们需要翻译（例如 '自动检测'）。
+            // 对于具体语言，我们使用其原生名称（来自 _meta.name），无需翻译。
+            label: lang.value === 'auto' ? 'settings.languages.auto' : lang.label
+        })),
     },
 ];
 
