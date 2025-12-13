@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "name": "English"
+    "name": "English (UK)"
   },
   "common": {
     "scan": "Scan",
@@ -50,7 +50,7 @@
       "single_letter": "Filter Single English Letters",
       "repeating_chars": "Filter Repeating Characters",
       "file_paths": "Filter File Paths",
-      "hex_color_codes": "Filter Hex Color Codes",
+      "hex_color_codes": "Filter Hex Colour Codes",
       "email_addresses": "Filter Email Addresses",
       "uuids": "Filter UUIDs",
       "git_commit_hashes": "Filter Git Commit Hashes",
@@ -188,7 +188,7 @@
       "single_letter": "This rule filters out text consisting of a <strong>single</strong> English letter, case-insensitive.<br><br><strong>Examples:</strong><br>• \"A\" (will be filtered)<br>• \"b\" (will be filtered)<br>• \"AB\" (will not be filtered)",
       "repeating_chars": "This rule filters out text composed of the <strong>same character</strong> repeating 2 or more times consecutively.<br><br><strong>Examples:</strong><br>• \"aa\"<br>• \"======\"<br>• \"bbbbb\"",
       "file_paths": "This rule attempts to identify and filter out text that resembles an operating system file path and <strong>includes a file extension</strong>. It does not match URLs.<br><br><strong>More Examples:</strong><br>• \"/path/to/file.js\"<br>• \"C:\\Users\\Test\\document.docx\"<br>• \"./config.json\"",
-      "hex_color_codes": "This rule filters out standard CSS hexadecimal color codes (3, 4, 6, or 8 digits, the latter including an alpha channel).<br><br><strong>Examples:</strong><br>• \"#FFFFFF\"<br>• \"#ff0000\"<br>• \"#f0c\"<br>• \"#f0c8\" (4-digit)<br>• \"#ff000080\" (8-digit)",
+      "hex_color_codes": "This rule filters out standard CSS hexadecimal colour codes (3, 4, 6, or 8 digits, the latter including an alpha channel).<br><br><strong>Examples:</strong><br>• \"#FFFFFF\"<br>• \"#ff0000\"<br>• \"#f0c\"<br>• \"#f0c8\" (4-digit)<br>• \"#ff000080\" (8-digit)",
       "email_addresses": "This rule filters out text that matches the standard format of an email address.<br><br><strong>Examples:</strong><br>• \"example@domain.com\"<br>• \"user.name@sub.domain.org\"",
       "uuids": "This rule filters out Universally Unique Identifiers (UUIDs).<br><br><strong>Example:</strong><br>• \"123e4567-e89b-12d3-a456-426614174000\"",
       "git_commit_hashes": "This rule filters out standard Git commit hashes (long or short).<br><br><strong>Examples:</strong><br>• \"a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2\"<br>• \"a1b2c3d\"",
@@ -311,7 +311,7 @@
     },
     "dom": {
       "ttpCreationError": "Failed to create Trusted Type policy:",
-      "svgParseError": "Invalid or failed to parse SVG string:"
+      "svgParseError": "Failed to parse SVG string or string is invalid:"
     },
     "elementScan": {
       "starting": "Element Scan started.",

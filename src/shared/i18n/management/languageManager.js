@@ -112,7 +112,10 @@ export function switchLanguage(langCode) {
     if (isLanguageSupported(langCode)) {
         const settings = loadSettings();
         settings.language = langCode;
-        saveSettings(settings);
+        // 注意：我们这里不需要调用 saveSettings(settings)，因为 switchLanguage
+        // 通常是由 logic.js 中的 applySettings 调用的，而 applySettings
+        // 之前通常已经保存了设置。重复保存是多余的，但无害。
+        // 关键是调用 initializeLanguage 来计算并设置正确的 i18n 语言。
 
         // 重新调用初始化逻辑来应用正确的语言显示
         initializeLanguage(settings);

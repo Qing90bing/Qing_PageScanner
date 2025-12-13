@@ -51,7 +51,8 @@ export function createButton({ id, className, textKey, tooltipKey, icon, onClick
         button.appendChild(createIconTitle(icon, t(textKey)));
 
         button.updateText = (newTextKey) => {
-            const textElement = button.querySelector('.tc-icon-title-text');
+            // 修复：类名必须匹配 iconTitle.js 中定义的类名 'icon-title-text'
+            const textElement = button.querySelector('.icon-title-text');
             if (textElement) {
                 textElement.textContent = t(newTextKey);
             }

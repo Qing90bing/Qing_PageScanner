@@ -111,8 +111,18 @@ export function applySettings(newSettings, oldSettings) {
         fabContainer.classList.toggle('fab-container-visible', newSettings.showFab);
     }
     updateModalAddonsVisibility();
-    fire('settingsSaved');
-    showNotification(t('notifications.settingsSaved'), { type: 'success' });
+
+    // 关键修复：确保在语言切换逻辑完全执行并更新了 UI 之后再显示通知。
+    // 如果语言发生了变化，switchLanguage 会触发 'languageChanged' 事件。
+    // 监听 'languageChanged' 事件的组件（如按钮）会更新其文本。
+    // 我们稍微延迟显示通知，以确保通知本身使用的是最新的语言。
+
+    // 另外，fire('settingsSaved') 可能会被某些组件监听以进行重新渲染。
+    // 确保它也在语言切换后触发。
+    setTimeout(() => {
+        fire('settingsSaved');
+        showNotification(t('notifications.settingsSaved'), { type: 'success' });
+    }, 50);
 }
 
 /**

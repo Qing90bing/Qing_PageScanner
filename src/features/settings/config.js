@@ -40,9 +40,7 @@ export const selectSettingsDefinitions = [
         icon: languageIcon,
         options: getAvailableLanguages().map(lang => ({
             ...lang,
-            // 对于 'auto'，我们需要翻译（例如 '自动检测'）。
-            // 对于具体语言，我们使用其原生名称（来自 _meta.name），无需翻译。
-            label: lang.value === 'auto' ? 'settings.languages.auto' : lang.label
+            label: lang.value === 'auto' ? 'settings.languages.auto' : `settings.languages.${lang.value}`
         })),
     },
 ];

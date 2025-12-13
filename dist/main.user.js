@@ -86,6 +86,404 @@ var TextExtractor = (() => {
       formatIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M600-160v-80h120v-480H600v-80h200v640H600Zm-440 0v-640h200v80H240v480h120v80H160Z"/></svg>`;
     }
   });
+  var en_GB_default;
+  var init_en_GB = __esm({
+    "src/shared/i18n/en-GB.json"() {
+      en_GB_default = {
+        _meta: {
+          name: "English (UK)"
+        },
+        common: {
+          scan: "Scan",
+          stop: "Stop",
+          pause: "Pause",
+          resume: "Resume",
+          clear: "Clear",
+          copy: "Copy",
+          save: "Save",
+          discovered: "Discovered:",
+          confirm: "Confirm",
+          cancel: "Cancel",
+          export: "Export",
+          reselect: "Reselect",
+          stage: "Stage",
+          processingElement: "Processing Element"
+        },
+        export: {
+          exportAsTxt: "Export as TXT",
+          exportAsJson: "Export as JSON",
+          exportAsCsv: "Export as CSV",
+          csv: {
+            id: "ID",
+            original: "Original",
+            translation: "Translation"
+          }
+        },
+        settings: {
+          title: "Settings",
+          theme: "Theme",
+          language: "Language",
+          format: "Output Format",
+          formats: {
+            array: "Nested Array",
+            object: "Key-Value Object",
+            csv: "CSV String"
+          },
+          relatedSettings: "Related Settings",
+          filterRules: "Content Filtering Rules",
+          filters: {
+            numbers: "Filter Numbers/Currency",
+            chinese: "Filter Chinese-Only Text",
+            contains_chinese: "Filter Text Containing Chinese",
+            emoji_only: "Filter Emoji-Only Text",
+            symbols: "Filter Symbol-Only Text",
+            term: "Filter Specific Terms",
+            single_letter: "Filter Single English Letters",
+            repeating_chars: "Filter Repeating Characters",
+            file_paths: "Filter File Paths",
+            hex_color_codes: "Filter Hex Colour Codes",
+            email_addresses: "Filter Email Addresses",
+            uuids: "Filter UUIDs",
+            git_commit_hashes: "Filter Git Commit Hashes",
+            website_urls: "Filter Website URLs",
+            website_urls_title: "Filter Website URLs",
+            shorthand_numbers: "Filter Shorthand Numbers",
+            shorthand_numbers_title: "Filter Shorthand Numbers"
+          },
+          display: {
+            show_fab: "Show Floating Button",
+            fab_position: "Floating Button Position",
+            fab_positions: {
+              bottom_right: "\u2198 Bottom Right",
+              top_right: "\u2197 Top Right",
+              bottom_left: "\u2199 Bottom Left",
+              top_left: "\u2196 Top Left"
+            },
+            show_line_numbers: "Show Line Numbers",
+            show_statistics: "Show Statistics",
+            enable_word_wrap: "Enable Word Wrap",
+            text_truncation_limit: "Enable Text Truncation Limit",
+            character_limit: "Character Limit",
+            show_scan_count: "Enable Scan Count in Title"
+          },
+          advanced: {
+            enable_debug_logging: "Enable Debug Logging"
+          },
+          panel: {
+            title: "Settings Panel"
+          },
+          contextual: {
+            elementScanTitle: "Element Scan Settings",
+            sessionScanTitle: "Dynamic Scan Settings",
+            persistData: "Persist data across pages"
+          },
+          languages: {
+            auto: "Auto",
+            en: "English (United States)",
+            "en-GB": "English (United Kingdom)",
+            "zh-CN": "Chinese (Simplified)",
+            "zh-TW": "Chinese (Traditional)"
+          },
+          themes: {
+            light: "Light",
+            dark: "Dark",
+            system: "System"
+          }
+        },
+        scan: {
+          quick: "Quick Scan",
+          session: "Dynamic Scan",
+          stagedCount: "Staged:",
+          elementFinished: "Element scan finished, found {{count}} items.",
+          startSession: "Start Dynamic Scan Session",
+          stopSession: "Stop Dynamic Scan Session",
+          finished: "Scan finished, found {{count}} items.",
+          quickFinished: "Quick scan finished, found {{count}} items.",
+          sessionStarted: "Session scan started.",
+          sessionInProgress: "Scan in progress...",
+          truncationWarning: "To maintain UI fluency, only a portion of the text is displayed here. The full content will be available upon export."
+        },
+        slider: {
+          adjustFrameSize: "Move slider to adjust frame size",
+          minLabel: "Min",
+          maxLabel: "Max"
+        },
+        results: {
+          title: "Extracted Text",
+          scanCountSession: "Scanned {{count}} items",
+          scanCountStatic: "Total {{count}} items scanned",
+          totalCharacters: "Total Characters",
+          totalLines: "Total Lines",
+          noSummary: "No summary available",
+          stats: {
+            lines: "Lines",
+            chars: "Chars"
+          }
+        },
+        notifications: {
+          copiedToClipboard: "Copied to clipboard!",
+          settingsSaved: "Settings saved!",
+          modalInitError: "Modal not initialized.",
+          nothingToCopy: "Nothing to copy.",
+          contentCleared: "Content cleared.",
+          noTextSelected: "No text selected.",
+          scanFailed: "Scan failed.",
+          elementScanStarted: "Element scan started.",
+          elementScanPaused: "Element scan paused.",
+          elementScanResumed: "Element scan session resumed from previous page.",
+          elementScanContinued: "Element scan continued.",
+          sessionScanStarted: "Session scan started.",
+          sessionScanPaused: "Dynamic scan paused.",
+          sessionScanResumed: "Dynamic scan session resumed from previous page.",
+          sessionScanContinued: "Dynamic scan continued.",
+          cspWorkerWarning: "Switched to compatibility scan mode due to website security restrictions."
+        },
+        placeholders: {
+          click: "Click ",
+          dynamicScan: "[Dynamic Scan]",
+          startNewScanSession: " to start a new scan session",
+          staticScan: "[Static Scan]",
+          performOneTimeScan: " to perform a one-time quick extraction"
+        },
+        confirmation: {
+          clear: "Are you sure you want to clear the content? This action cannot be undone."
+        },
+        tooltip: {
+          summary: "View Summary",
+          dynamic_scan: "Dynamic Scan",
+          static_scan: "Static Scan",
+          element_scan: "Element Scan",
+          pauseElementScan: "Pause Element Scan",
+          resumeElementScan: "Resume Element Scan",
+          pauseSessionScan: "Pause Dynamic Scan",
+          resumeSessionScan: "Resume Dynamic Scan",
+          tooltipHelp: "Help",
+          persistData: {
+            title: "Data Persistence Explanation",
+            text: {
+              sessionScan: "When enabled, automatically resumes and continues accumulating results from the previous page when you navigate to a new one. If disabled, only the scan mode is restored, and a new scan session begins.",
+              elementScan: "When enabled, automatically restores all currently staged text when you navigate to a new page. If disabled, only the scan mode is restored, and the staged area will be empty."
+            }
+          },
+          disabled: {
+            scan_in_progress: "Another scan is in progress"
+          },
+          filters: {
+            title: "Content Filter Explanation",
+            numbers: 'This rule filters out text that consists <strong>entirely</strong> of numbers, spaces, thousand separators (.), decimal points (,), and some currency symbols ($, \u20AC, \xA3, \xA5).<br><br><strong>More Examples:</strong><br>\u2022 "1,234.56"<br>\u2022 "\xA5999"<br>\u2022 "\u20AC200"<br>\u2022 "$ 100"',
+            chinese: 'This rule filters out text that consists <strong>entirely</strong> of Chinese characters and spaces, excluding any punctuation.<br><br><strong>Examples:</strong><br>\u2022 "\u4F60\u597D \u4E16\u754C" (will be filtered)<br>\u2022 "\u4F60\u597D\uFF0C\u4E16\u754C" (will not be filtered)',
+            contains_chinese: `This rule filters out <strong>any</strong> text that contains at least one Chinese character, regardless of other characters.<br><br><strong>Examples:</strong><br>\u2022 "\u4F60\u597D World" (will be filtered)<br>\u2022 "Chapter 1" (will be filtered, as '\u7B2C 1 \u7AE0' contains '\u7B2C' and '\u7AE0')`,
+            emoji_only: 'This rule filters out text that consists <strong>entirely</strong> of one or more emoji characters and spaces.<br><br><strong>Examples:</strong><br>\u2022 "\u{1F44D}"<br>\u2022 "\u{1F60A} \u{1F389} \u{1F680}"',
+            symbols: 'This rule filters out text that consists <strong>entirely</strong> of various punctuation and symbols.<br><br><strong>More Examples:</strong><br>\u2022 "@#*&^%"<br>\u2022 "()[]{}"<br>\u2022 "---...---"',
+            term: 'This rule filters out common UI terms that typically do not require translation.<br><br><strong>More Examples:</strong><br>\u2022 "OK", "Cancel", "Submit"<br>\u2022 "Login", "Settings", "Help"',
+            single_letter: 'This rule filters out text consisting of a <strong>single</strong> English letter, case-insensitive.<br><br><strong>Examples:</strong><br>\u2022 "A" (will be filtered)<br>\u2022 "b" (will be filtered)<br>\u2022 "AB" (will not be filtered)',
+            repeating_chars: 'This rule filters out text composed of the <strong>same character</strong> repeating 2 or more times consecutively.<br><br><strong>Examples:</strong><br>\u2022 "aa"<br>\u2022 "======"<br>\u2022 "bbbbb"',
+            file_paths: 'This rule attempts to identify and filter out text that resembles an operating system file path and <strong>includes a file extension</strong>. It does not match URLs.<br><br><strong>More Examples:</strong><br>\u2022 "/path/to/file.js"<br>\u2022 "C:\\Users\\Test\\document.docx"<br>\u2022 "./config.json"',
+            hex_color_codes: 'This rule filters out standard CSS hexadecimal colour codes (3, 4, 6, or 8 digits, the latter including an alpha channel).<br><br><strong>Examples:</strong><br>\u2022 "#FFFFFF"<br>\u2022 "#ff0000"<br>\u2022 "#f0c"<br>\u2022 "#f0c8" (4-digit)<br>\u2022 "#ff000080" (8-digit)',
+            email_addresses: 'This rule filters out text that matches the standard format of an email address.<br><br><strong>Examples:</strong><br>\u2022 "example@domain.com"<br>\u2022 "user.name@sub.domain.org"',
+            uuids: 'This rule filters out Universally Unique Identifiers (UUIDs).<br><br><strong>Example:</strong><br>\u2022 "123e4567-e89b-12d3-a456-426614174000"',
+            git_commit_hashes: 'This rule filters out standard Git commit hashes (long or short).<br><br><strong>Examples:</strong><br>\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\u2022 "a1b2c3d"',
+            website_urls: 'This rule filters out text that is a <strong>standalone URL</strong>. It is designed to be strict to avoid accidentally removing text that is not a link.<br><br><strong>More Examples:</strong><br>\u2022 "https://www.example.com"<br>\u2022 "http://test.co.uk"<br>\u2022 "www.google.com"<br>\u2022 "example.org"',
+            shorthand_numbers: 'This rule filters out numbers that use <strong>common shorthand suffixes</strong> for thousands (k), millions (m), or billions (b), case-insensitive.<br><br><strong>More Examples:</strong><br>\u2022 "1.2k"<br>\u2022 "15M"<br>\u2022 "2.5b"<br>\u2022 "100K"'
+          },
+          display: {
+            title: "Display Settings Explanation",
+            show_fab: "Control whether to display the <strong>Floating Action Button (FAB)</strong> in the bottom-right corner of webpages. This serves as the primary entry point for both static and dynamic text extraction. <br><br>If you disable this button, you can re-enable it via the settings panel in the Tampermonkey extension menu.",
+            show_scan_count: "When enabled, the title bar of the results window will show a <strong>real-time count</strong> of the total text items found in the current scan. This is especially useful for monitoring the progress of a long-running <strong>Dynamic Scan</strong>.",
+            show_line_numbers: "Displays line numbers to the left of the text area in the results window. This provides a <strong>precise reference point</strong> when you need to discuss or note a specific line of text.",
+            show_statistics: "Displays <strong>real-time statistics</strong> about the extracted content in the status bar at the bottom of the results window, including <strong>total lines</strong> and <strong>total characters</strong>. This helps you quickly assess the volume of the content.",
+            enable_word_wrap: "Controls how long lines of text are displayed in the results window.<br><br>\u2022 <strong>Enabled:</strong> Long lines will wrap to fit the window's width.<br>\u2022 <strong>Disabled:</strong> Long lines will remain on a single line, causing a horizontal scrollbar to appear.",
+            text_truncation_limit: "This is a <strong>performance-saving</strong> feature. If the script extracts an <strong>extremely long single line of text</strong> (e.g., a base64 encoded image), it could cause the browser to <strong>lag or become unresponsive</strong>.<br><br>This setting truncates any single line exceeding the specified length to ensure the UI remains smooth. <strong>Note: This only affects the display; the exported file will still contain the full, untruncated content.</strong>"
+          },
+          advanced: {
+            title: "Advanced Settings Explanation",
+            enable_debug_logging: "When enabled, the script will output detailed internal status, execution steps, and error messages to the browser's <strong>Developer Tools Console</strong> (usually opened with F12). This is primarily for developers or users who need to submit detailed bug reports."
+          }
+        },
+        log: {
+          prefix: "[Text Extractor Script-Debug]",
+          language: {
+            switched: "Language switched to: {{lang}}",
+            notFound: "Language '{{lang}}' not found, falling back to 'en'."
+          },
+          settings: {
+            changed: "Setting '{{key}}' changed from '{{oldValue}}' to '{{newValue}}'",
+            filterRuleChanged: {
+              enabled: "Filter rule '{{key}}' has been enabled",
+              disabled: "Filter rule '{{key}}' has been disabled"
+            },
+            panel: {
+              opening: "Opening settings panel...",
+              closing: "Closing settings panel...",
+              saving: "Saving settings..."
+            },
+            parseError: "Error parsing saved settings:",
+            invalidObject: "Attempted to save an invalid object for settings:"
+          },
+          textProcessor: {
+            filtered: 'Text filtered: "{{text}}" (Reason: {{reason}})'
+          },
+          quickScan: {
+            switchToFallback: "[Quick Scan] Switching to main thread fallback.",
+            fallbackFailed: "[Quick Scan] Main thread fallback failed: {{error}}",
+            fallback: {
+              starting: "[Quick Scan - Fallback] Starting processing in main thread...",
+              completed: "[Quick Scan - Fallback] Processing complete, found {{count}} unique texts."
+            },
+            worker: {
+              logPrefix: "[Quick Scan Worker]",
+              starting: "[Quick Scan] Starting execution, attempting to use Web Worker...",
+              completed: "[Quick Scan] Worker processing successful, received {{count}} texts.",
+              scanComplete: "[Quick Scan Worker] Processing complete, found {{count}} unique texts. Sending back to main thread...",
+              initFailed: "[Quick Scan] Worker initialization failed. This is likely due to the website's Content Security Policy (CSP).",
+              originalError: "[Quick Scan] Original error: {{error}}",
+              sendingData: "[Quick Scan] Web Worker created, sending {{count}} texts for processing...",
+              initSyncError: "[Quick Scan] Synchronous error during Worker initialization: {{error}}",
+              cspBlocked: "[Quick Scan] CSP check failed. Worker creation is not allowed."
+            }
+          },
+          sessionScan: {
+            switchToFallback: "[Dynamic Scan] Switching to main thread fallback.",
+            domObserver: {
+              stopped: "[Dynamic Scan] Stopped listening for DOM changes."
+            },
+            fallback: {
+              initialized: "[Dynamic Scan - Fallback] Initialized.",
+              cleared: "[Dynamic Scan - Fallback] Data cleared."
+            },
+            worker: {
+              logPrefix: "[Dynamic Scan Worker]",
+              starting: "Dynamic Scan: Attempting to start Web Worker...",
+              initFailed: "[Dynamic Scan] Worker initialization failed. This is likely due to the website's Content Security Policy (CSP).",
+              originalError: "[Dynamic Scan] Original error: {{error}}",
+              initialized: "[Dynamic Scan] Worker initialized successfully, sent {{count}} initial texts to start the session.",
+              initSyncError: "[Dynamic Scan] Synchronous error during Worker initialization: {{error}}",
+              clearCommandSent: "[Dynamic Scan] Clear command sent to worker.",
+              cspBlocked: "[Dynamic Scan] CSP check failed. Worker creation is not allowed."
+            }
+          },
+          ui: {
+            copyButton: {
+              copied: "Copy button clicked, copied {{count}} characters.",
+              nothingToCopy: "Copy button clicked, but there was no content to copy or the button was disabled."
+            },
+            confirmationModal: {
+              sessionScan: {
+                confirmed: "User confirmed clearing session scan texts, invoking callback..."
+              },
+              quickScan: {
+                confirmed: "User confirmed clearing quick scan texts."
+              },
+              cancelled: "User cancelled the clear operation."
+            },
+            modal: {
+              opening: "Opening main modal...",
+              closing: "Closing main modal...",
+              scanFailed: "Static scan failed: {{error}}",
+              clearContent: "Clear content button clicked."
+            },
+            helpIcon: {
+              clicked: "Help icon clicked, displaying content for key: {{contentKey}}"
+            }
+          },
+          exporter: {
+            buttonClicked: "Export button clicked, format: {{format}}.",
+            csvError: "Error while parsing text and generating CSV: {{error}}",
+            fileExported: "File exported: {{filename}}",
+            noContent: "No content to export.",
+            unknownFormat: "Unknown export format: {{format}}"
+          },
+          main: {
+            requestingSessionScanData: "Requesting full data from session-scan mode...",
+            exportingQuickScanData: "Exporting full data from quick-scan mode's memory...",
+            inIframe: "Script is in an iframe, skipping initialization.",
+            initializing: "Script initialization started...",
+            initialSettingsLoaded: "Initial settings loaded:"
+          },
+          dom: {
+            ttpCreationError: "Failed to create Trusted Type policy:",
+            svgParseError: "Failed to parse SVG string or string is invalid:"
+          },
+          elementScan: {
+            starting: "Element Scan started.",
+            stopping: "Element Scan stopped.",
+            listenersAdded: "Global event listeners for element scan added.",
+            listenersRemoved: "Global event listeners for element scan removed.",
+            stateReset: "Element scan state has been reset.",
+            reselecting: "Returning to element reselection mode.",
+            hovering: "Hovering over <{{tagName}}>.",
+            escapePressed: "Escape key pressed, stopping element scan.",
+            escapeIgnoredForSettings: "Escape key pressed, but ignored because a settings panel is open.",
+            escapeIgnoredForModal: "Escape key pressed, but ignored because a modal or tooltip is open.",
+            escapePressedInAdjust: "Escape key pressed in adjustment mode, returning to reselection.",
+            clickedEnteringAdjust: "Element <{{tagName}}> clicked, entering adjustment mode.",
+            pathBuilt: "Element path built, depth: {{depth}}.",
+            adjustingLevel: "Adjusting selection level to {{level}} ({{tagName}}).",
+            confirmExtracting: "Selection confirmed, extracting text from <{{tagName}}>.",
+            staged: "Element staged. Total staged: {{count}}.",
+            confirmingStaged: "Confirming selection. Processing {{count}} staged elements.",
+            extractedCount: "Extracted {{count}} raw text fragments from element.",
+            confirmFailedNoTarget: "Confirmation failed: no target element selected.",
+            rightClickExit: "Right-click detected, stopping element scan.",
+            processingError: "An error occurred during text processing: {{error}}",
+            scrollListenersAdded: "Added {{count}} scroll listeners to parent elements.",
+            scrollListenersRemoved: "Removed all scroll listeners.",
+            worker: {
+              logPrefix: "[ES Worker]",
+              starting: "Element Scan Worker is starting...",
+              sendingData: "Sending {{count}} text fragments to Element Scan Worker.",
+              completed: "Element Scan Worker completed, found {{count}} unique texts.",
+              initFailed: "Element Scan Worker initialization failed. The browser's CSP might be blocking data: URLs.",
+              initSyncError: "Synchronous error during Element Scan Worker initialization: {{error}}",
+              originalError: "Original worker error: {{error}}",
+              cspBlocked: "Element Scan CSP check failed. Worker creation is not allowed.",
+              attemping: "Attempting to use Web Worker for filtering...",
+              fallback: "Switched to main thread for filtering.",
+              cspHint: "This may be due to the site's Content Security Policy (CSP)."
+            },
+            switchToFallback: "Switching to main thread fallback for Element Scan.",
+            fallbackFailed: "Element Scan fallback mode failed: {{error}}",
+            stagingStarted: "Staging started for element: <{{tagName}}>",
+            stagedNothingNew: "No new unique text was staged from this element.",
+            stagingFinished: "Staging finished.",
+            confirmStarted: "Confirmation process started...",
+            confirmFinished: "Confirmation process finished successfully.",
+            confirmFailed: "Confirmation process failed. Error: {{error}}"
+          },
+          elementScanUI: {
+            creatingHighlights: "Element Scan UI: Creating highlight elements for the first time.",
+            updatingHighlight: "Element Scan UI: Updating highlight for <{{tagName}}>.",
+            creatingToolbar: "Element Scan UI: Creating adjustment toolbar.",
+            toolbarPositioned: "Element Scan UI: Toolbar positioned.",
+            sliderChanged: "Element Scan UI: Slider changed to level {{level}}",
+            reselectClicked: "Element Scan UI: 'Reselect' button clicked.",
+            stageClicked: "Element Scan UI: 'Stage' button clicked.",
+            cancelClicked: "Element Scan UI: 'Cancel' button clicked.",
+            confirmClicked: "Element Scan UI: 'Confirm' button clicked.",
+            dragStarted: "Element Scan UI: Drag started.",
+            dragEnded: "Element Scan UI: Drag ended.",
+            cleaningHighlights: "Element Scan UI: Cleaning up highlight elements.",
+            cleaningToolbar: "Element Scan UI: Cleaning up toolbar."
+          },
+          eventBus: {
+            callbackError: "Error in callback for event '{{eventName}}':"
+          },
+          trustedTypes: {
+            workerPolicyError: "Failed to create Trusted Types worker policy:",
+            htmlPolicyError: "Failed to create Trusted Types HTML policy:",
+            defaultWorkerPolicyWarning: "Trusted Types default policy failed for worker URL, falling back to raw URL.",
+            defaultHtmlPolicyWarning: "Trusted Types default policy failed for HTML, falling back to raw string."
+          }
+        },
+        tutorial: {
+          elementScanTitle: "Element Scan Tutorial",
+          elementScan: '<p><strong>What it does:</strong></p><p>Element Scan allows you to precisely select one or more areas on a webpage (e.g., a paragraph, a list, a sidebar) and extract text only from those areas.</p><p><strong>How to use:</strong></p><ol><li><strong>Start:</strong> Click the "Element Scan" icon <span class="help-icon-placeholder element-scan-icon"></span> in the floating button to enter scan mode.</li><li><strong>Select:</strong> Move your mouse over the page. The area you want to scan will be highlighted. Click to select it.</li><li><strong>Adjust:</strong> A toolbar will appear after selection. You can use the <strong>slider</strong> to expand or shrink the selection area.</li><li><strong>Stage:</strong> If you want to select multiple unrelated areas, click the <span class="action-key">Stage</span> button to save the current selection and continue selecting other areas.</li><li><strong>Confirm:</strong> Once you have finished all selections, click the <span class="action-key">Confirm</span> button to start extracting text from all your chosen areas.</li></ol><p><strong>How to exit:</strong></p><ul><li>While the highlight box is visible, <strong>right-click</strong> anywhere on the page.</li><li>Press the <kbd>ESC</kbd> key at any time.</li><li>Click the "Element Scan" icon again at any time.</li></ul>',
+          sessionScanTitle: "Dynamic Scan Tutorial",
+          sessionScan: '<p><strong>What it does:</strong></p><p>Dynamic Scan continuously monitors and automatically records all text that dynamically loads or changes on a webpage. It is especially useful for capturing live chats, infinite scrolling content, or notifications.</p><p><strong>How to use:</strong></p><ul><li><strong>Start Scan:</strong> Click the "Dynamic Scan" icon <span class="help-icon-placeholder dynamic-scan-icon"></span> in the floating button to start scanning immediately.</li><li><strong>Stop Scan:</strong> Click the icon again <span class="help-icon-placeholder stop-icon"></span> to stop.</li><li><strong>View Results:</strong> After stopping, click the main floating button <span class="help-icon-placeholder summary-icon"></span> to open the results window.</li></ul><p><strong>How to exit:</strong></p><ul><li>Click the "Dynamic Scan" icon again during the scan.</li><li>Press the <kbd>ESC</kbd> key at any time to quickly stop the scan.</li></ul>'
+        }
+      };
+    }
+  });
   var en_default;
   var init_en = __esm({
     "src/shared/i18n/en.json"() {
@@ -180,6 +578,7 @@ var TextExtractor = (() => {
           languages: {
             auto: "Auto",
             en: "English (United States)",
+            "en-GB": "English (United Kingdom)",
             "zh-CN": "Chinese (Simplified)",
             "zh-TW": "Chinese (Traditional)"
           },
@@ -577,6 +976,7 @@ var TextExtractor = (() => {
           languages: {
             auto: "\u81EA\u52A8\u68C0\u6D4B",
             en: "\u82F1\u6587 (\u7F8E\u56FD)",
+            "en-GB": "\u82F1\u6587 (\u82F1\u56FD)",
             "zh-CN": "\u7B80\u4F53\u4E2D\u6587",
             "zh-TW": "\u7E41\u4F53\u4E2D\u6587"
           },
@@ -974,6 +1374,7 @@ var TextExtractor = (() => {
           languages: {
             auto: "\u81EA\u52D5\u6AA2\u6E2C",
             en: "\u82F1\u6587 (\u7F8E\u570B)",
+            "en-GB": "\u82F1\u6587 (\u82F1\u570B)",
             "zh-CN": "\u7C21\u9AD4\u4E2D\u6587",
             "zh-TW": "\u7E41\u9AD4\u4E2D\u6587"
           },
@@ -1280,15 +1681,21 @@ var TextExtractor = (() => {
   var locales, resourceLanguages;
   var init_virtual_locales = __esm({
     "locales-ns:virtual:locales"() {
+      init_en_GB();
       init_en();
       init_zh_CN();
       init_zh_TW();
       locales = {
+        "en-GB": en_GB_default,
         "en": en_default,
         "zh-CN": zh_CN_default,
         "zh-TW": zh_TW_default
       };
       resourceLanguages = [
+        {
+          "code": "en-GB",
+          "name": "English (UK)"
+        },
         {
           "code": "en",
           "name": "English"
@@ -1454,7 +1861,7 @@ var TextExtractor = (() => {
           icon: languageIcon_default,
           options: getAvailableLanguages().map((lang) => ({
             ...lang,
-            label: lang.value === "auto" ? "settings.languages.auto" : lang.label
+            label: lang.value === "auto" ? "settings.languages.auto" : `settings.languages.${lang.value}`
           }))
         }
       ];
@@ -1910,7 +2317,6 @@ var TextExtractor = (() => {
     if (isLanguageSupported(langCode)) {
       const settings = loadSettings();
       settings.language = langCode;
-      saveSettings(settings);
       initializeLanguage(settings);
     }
   }
@@ -2022,6 +2428,400 @@ ${result.join(",\n")}
     }
   };
   var workerBlob = new Blob([`(() => {
+  // src/shared/i18n/en-GB.json
+  var en_GB_default = {
+    _meta: {
+      name: "English (UK)"
+    },
+    common: {
+      scan: "Scan",
+      stop: "Stop",
+      pause: "Pause",
+      resume: "Resume",
+      clear: "Clear",
+      copy: "Copy",
+      save: "Save",
+      discovered: "Discovered:",
+      confirm: "Confirm",
+      cancel: "Cancel",
+      export: "Export",
+      reselect: "Reselect",
+      stage: "Stage",
+      processingElement: "Processing Element"
+    },
+    export: {
+      exportAsTxt: "Export as TXT",
+      exportAsJson: "Export as JSON",
+      exportAsCsv: "Export as CSV",
+      csv: {
+        id: "ID",
+        original: "Original",
+        translation: "Translation"
+      }
+    },
+    settings: {
+      title: "Settings",
+      theme: "Theme",
+      language: "Language",
+      format: "Output Format",
+      formats: {
+        array: "Nested Array",
+        object: "Key-Value Object",
+        csv: "CSV String"
+      },
+      relatedSettings: "Related Settings",
+      filterRules: "Content Filtering Rules",
+      filters: {
+        numbers: "Filter Numbers/Currency",
+        chinese: "Filter Chinese-Only Text",
+        contains_chinese: "Filter Text Containing Chinese",
+        emoji_only: "Filter Emoji-Only Text",
+        symbols: "Filter Symbol-Only Text",
+        term: "Filter Specific Terms",
+        single_letter: "Filter Single English Letters",
+        repeating_chars: "Filter Repeating Characters",
+        file_paths: "Filter File Paths",
+        hex_color_codes: "Filter Hex Colour Codes",
+        email_addresses: "Filter Email Addresses",
+        uuids: "Filter UUIDs",
+        git_commit_hashes: "Filter Git Commit Hashes",
+        website_urls: "Filter Website URLs",
+        website_urls_title: "Filter Website URLs",
+        shorthand_numbers: "Filter Shorthand Numbers",
+        shorthand_numbers_title: "Filter Shorthand Numbers"
+      },
+      display: {
+        show_fab: "Show Floating Button",
+        fab_position: "Floating Button Position",
+        fab_positions: {
+          bottom_right: "\\u2198 Bottom Right",
+          top_right: "\\u2197 Top Right",
+          bottom_left: "\\u2199 Bottom Left",
+          top_left: "\\u2196 Top Left"
+        },
+        show_line_numbers: "Show Line Numbers",
+        show_statistics: "Show Statistics",
+        enable_word_wrap: "Enable Word Wrap",
+        text_truncation_limit: "Enable Text Truncation Limit",
+        character_limit: "Character Limit",
+        show_scan_count: "Enable Scan Count in Title"
+      },
+      advanced: {
+        enable_debug_logging: "Enable Debug Logging"
+      },
+      panel: {
+        title: "Settings Panel"
+      },
+      contextual: {
+        elementScanTitle: "Element Scan Settings",
+        sessionScanTitle: "Dynamic Scan Settings",
+        persistData: "Persist data across pages"
+      },
+      languages: {
+        auto: "Auto",
+        en: "English (United States)",
+        "en-GB": "English (United Kingdom)",
+        "zh-CN": "Chinese (Simplified)",
+        "zh-TW": "Chinese (Traditional)"
+      },
+      themes: {
+        light: "Light",
+        dark: "Dark",
+        system: "System"
+      }
+    },
+    scan: {
+      quick: "Quick Scan",
+      session: "Dynamic Scan",
+      stagedCount: "Staged:",
+      elementFinished: "Element scan finished, found {{count}} items.",
+      startSession: "Start Dynamic Scan Session",
+      stopSession: "Stop Dynamic Scan Session",
+      finished: "Scan finished, found {{count}} items.",
+      quickFinished: "Quick scan finished, found {{count}} items.",
+      sessionStarted: "Session scan started.",
+      sessionInProgress: "Scan in progress...",
+      truncationWarning: "To maintain UI fluency, only a portion of the text is displayed here. The full content will be available upon export."
+    },
+    slider: {
+      adjustFrameSize: "Move slider to adjust frame size",
+      minLabel: "Min",
+      maxLabel: "Max"
+    },
+    results: {
+      title: "Extracted Text",
+      scanCountSession: "Scanned {{count}} items",
+      scanCountStatic: "Total {{count}} items scanned",
+      totalCharacters: "Total Characters",
+      totalLines: "Total Lines",
+      noSummary: "No summary available",
+      stats: {
+        lines: "Lines",
+        chars: "Chars"
+      }
+    },
+    notifications: {
+      copiedToClipboard: "Copied to clipboard!",
+      settingsSaved: "Settings saved!",
+      modalInitError: "Modal not initialized.",
+      nothingToCopy: "Nothing to copy.",
+      contentCleared: "Content cleared.",
+      noTextSelected: "No text selected.",
+      scanFailed: "Scan failed.",
+      elementScanStarted: "Element scan started.",
+      elementScanPaused: "Element scan paused.",
+      elementScanResumed: "Element scan session resumed from previous page.",
+      elementScanContinued: "Element scan continued.",
+      sessionScanStarted: "Session scan started.",
+      sessionScanPaused: "Dynamic scan paused.",
+      sessionScanResumed: "Dynamic scan session resumed from previous page.",
+      sessionScanContinued: "Dynamic scan continued.",
+      cspWorkerWarning: "Switched to compatibility scan mode due to website security restrictions."
+    },
+    placeholders: {
+      click: "Click ",
+      dynamicScan: "[Dynamic Scan]",
+      startNewScanSession: " to start a new scan session",
+      staticScan: "[Static Scan]",
+      performOneTimeScan: " to perform a one-time quick extraction"
+    },
+    confirmation: {
+      clear: "Are you sure you want to clear the content? This action cannot be undone."
+    },
+    tooltip: {
+      summary: "View Summary",
+      dynamic_scan: "Dynamic Scan",
+      static_scan: "Static Scan",
+      element_scan: "Element Scan",
+      pauseElementScan: "Pause Element Scan",
+      resumeElementScan: "Resume Element Scan",
+      pauseSessionScan: "Pause Dynamic Scan",
+      resumeSessionScan: "Resume Dynamic Scan",
+      tooltipHelp: "Help",
+      persistData: {
+        title: "Data Persistence Explanation",
+        text: {
+          sessionScan: "When enabled, automatically resumes and continues accumulating results from the previous page when you navigate to a new one. If disabled, only the scan mode is restored, and a new scan session begins.",
+          elementScan: "When enabled, automatically restores all currently staged text when you navigate to a new page. If disabled, only the scan mode is restored, and the staged area will be empty."
+        }
+      },
+      disabled: {
+        scan_in_progress: "Another scan is in progress"
+      },
+      filters: {
+        title: "Content Filter Explanation",
+        numbers: 'This rule filters out text that consists <strong>entirely</strong> of numbers, spaces, thousand separators (.), decimal points (,), and some currency symbols ($, \\u20AC, \\xA3, \\xA5).<br><br><strong>More Examples:</strong><br>\\u2022 "1,234.56"<br>\\u2022 "\\xA5999"<br>\\u2022 "\\u20AC200"<br>\\u2022 "$ 100"',
+        chinese: 'This rule filters out text that consists <strong>entirely</strong> of Chinese characters and spaces, excluding any punctuation.<br><br><strong>Examples:</strong><br>\\u2022 "\\u4F60\\u597D \\u4E16\\u754C" (will be filtered)<br>\\u2022 "\\u4F60\\u597D\\uFF0C\\u4E16\\u754C" (will not be filtered)',
+        contains_chinese: \`This rule filters out <strong>any</strong> text that contains at least one Chinese character, regardless of other characters.<br><br><strong>Examples:</strong><br>\\u2022 "\\u4F60\\u597D World" (will be filtered)<br>\\u2022 "Chapter 1" (will be filtered, as '\\u7B2C 1 \\u7AE0' contains '\\u7B2C' and '\\u7AE0')\`,
+        emoji_only: 'This rule filters out text that consists <strong>entirely</strong> of one or more emoji characters and spaces.<br><br><strong>Examples:</strong><br>\\u2022 "\\u{1F44D}"<br>\\u2022 "\\u{1F60A} \\u{1F389} \\u{1F680}"',
+        symbols: 'This rule filters out text that consists <strong>entirely</strong> of various punctuation and symbols.<br><br><strong>More Examples:</strong><br>\\u2022 "@#*&^%"<br>\\u2022 "()[]{}"<br>\\u2022 "---...---"',
+        term: 'This rule filters out common UI terms that typically do not require translation.<br><br><strong>More Examples:</strong><br>\\u2022 "OK", "Cancel", "Submit"<br>\\u2022 "Login", "Settings", "Help"',
+        single_letter: 'This rule filters out text consisting of a <strong>single</strong> English letter, case-insensitive.<br><br><strong>Examples:</strong><br>\\u2022 "A" (will be filtered)<br>\\u2022 "b" (will be filtered)<br>\\u2022 "AB" (will not be filtered)',
+        repeating_chars: 'This rule filters out text composed of the <strong>same character</strong> repeating 2 or more times consecutively.<br><br><strong>Examples:</strong><br>\\u2022 "aa"<br>\\u2022 "======"<br>\\u2022 "bbbbb"',
+        file_paths: 'This rule attempts to identify and filter out text that resembles an operating system file path and <strong>includes a file extension</strong>. It does not match URLs.<br><br><strong>More Examples:</strong><br>\\u2022 "/path/to/file.js"<br>\\u2022 "C:\\\\Users\\\\Test\\\\document.docx"<br>\\u2022 "./config.json"',
+        hex_color_codes: 'This rule filters out standard CSS hexadecimal colour codes (3, 4, 6, or 8 digits, the latter including an alpha channel).<br><br><strong>Examples:</strong><br>\\u2022 "#FFFFFF"<br>\\u2022 "#ff0000"<br>\\u2022 "#f0c"<br>\\u2022 "#f0c8" (4-digit)<br>\\u2022 "#ff000080" (8-digit)',
+        email_addresses: 'This rule filters out text that matches the standard format of an email address.<br><br><strong>Examples:</strong><br>\\u2022 "example@domain.com"<br>\\u2022 "user.name@sub.domain.org"',
+        uuids: 'This rule filters out Universally Unique Identifiers (UUIDs).<br><br><strong>Example:</strong><br>\\u2022 "123e4567-e89b-12d3-a456-426614174000"',
+        git_commit_hashes: 'This rule filters out standard Git commit hashes (long or short).<br><br><strong>Examples:</strong><br>\\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\\u2022 "a1b2c3d"',
+        website_urls: 'This rule filters out text that is a <strong>standalone URL</strong>. It is designed to be strict to avoid accidentally removing text that is not a link.<br><br><strong>More Examples:</strong><br>\\u2022 "https://www.example.com"<br>\\u2022 "http://test.co.uk"<br>\\u2022 "www.google.com"<br>\\u2022 "example.org"',
+        shorthand_numbers: 'This rule filters out numbers that use <strong>common shorthand suffixes</strong> for thousands (k), millions (m), or billions (b), case-insensitive.<br><br><strong>More Examples:</strong><br>\\u2022 "1.2k"<br>\\u2022 "15M"<br>\\u2022 "2.5b"<br>\\u2022 "100K"'
+      },
+      display: {
+        title: "Display Settings Explanation",
+        show_fab: "Control whether to display the <strong>Floating Action Button (FAB)</strong> in the bottom-right corner of webpages. This serves as the primary entry point for both static and dynamic text extraction. <br><br>If you disable this button, you can re-enable it via the settings panel in the Tampermonkey extension menu.",
+        show_scan_count: "When enabled, the title bar of the results window will show a <strong>real-time count</strong> of the total text items found in the current scan. This is especially useful for monitoring the progress of a long-running <strong>Dynamic Scan</strong>.",
+        show_line_numbers: "Displays line numbers to the left of the text area in the results window. This provides a <strong>precise reference point</strong> when you need to discuss or note a specific line of text.",
+        show_statistics: "Displays <strong>real-time statistics</strong> about the extracted content in the status bar at the bottom of the results window, including <strong>total lines</strong> and <strong>total characters</strong>. This helps you quickly assess the volume of the content.",
+        enable_word_wrap: "Controls how long lines of text are displayed in the results window.<br><br>\\u2022 <strong>Enabled:</strong> Long lines will wrap to fit the window's width.<br>\\u2022 <strong>Disabled:</strong> Long lines will remain on a single line, causing a horizontal scrollbar to appear.",
+        text_truncation_limit: "This is a <strong>performance-saving</strong> feature. If the script extracts an <strong>extremely long single line of text</strong> (e.g., a base64 encoded image), it could cause the browser to <strong>lag or become unresponsive</strong>.<br><br>This setting truncates any single line exceeding the specified length to ensure the UI remains smooth. <strong>Note: This only affects the display; the exported file will still contain the full, untruncated content.</strong>"
+      },
+      advanced: {
+        title: "Advanced Settings Explanation",
+        enable_debug_logging: "When enabled, the script will output detailed internal status, execution steps, and error messages to the browser's <strong>Developer Tools Console</strong> (usually opened with F12). This is primarily for developers or users who need to submit detailed bug reports."
+      }
+    },
+    log: {
+      prefix: "[Text Extractor Script-Debug]",
+      language: {
+        switched: "Language switched to: {{lang}}",
+        notFound: "Language '{{lang}}' not found, falling back to 'en'."
+      },
+      settings: {
+        changed: "Setting '{{key}}' changed from '{{oldValue}}' to '{{newValue}}'",
+        filterRuleChanged: {
+          enabled: "Filter rule '{{key}}' has been enabled",
+          disabled: "Filter rule '{{key}}' has been disabled"
+        },
+        panel: {
+          opening: "Opening settings panel...",
+          closing: "Closing settings panel...",
+          saving: "Saving settings..."
+        },
+        parseError: "Error parsing saved settings:",
+        invalidObject: "Attempted to save an invalid object for settings:"
+      },
+      textProcessor: {
+        filtered: 'Text filtered: "{{text}}" (Reason: {{reason}})'
+      },
+      quickScan: {
+        switchToFallback: "[Quick Scan] Switching to main thread fallback.",
+        fallbackFailed: "[Quick Scan] Main thread fallback failed: {{error}}",
+        fallback: {
+          starting: "[Quick Scan - Fallback] Starting processing in main thread...",
+          completed: "[Quick Scan - Fallback] Processing complete, found {{count}} unique texts."
+        },
+        worker: {
+          logPrefix: "[Quick Scan Worker]",
+          starting: "[Quick Scan] Starting execution, attempting to use Web Worker...",
+          completed: "[Quick Scan] Worker processing successful, received {{count}} texts.",
+          scanComplete: "[Quick Scan Worker] Processing complete, found {{count}} unique texts. Sending back to main thread...",
+          initFailed: "[Quick Scan] Worker initialization failed. This is likely due to the website's Content Security Policy (CSP).",
+          originalError: "[Quick Scan] Original error: {{error}}",
+          sendingData: "[Quick Scan] Web Worker created, sending {{count}} texts for processing...",
+          initSyncError: "[Quick Scan] Synchronous error during Worker initialization: {{error}}",
+          cspBlocked: "[Quick Scan] CSP check failed. Worker creation is not allowed."
+        }
+      },
+      sessionScan: {
+        switchToFallback: "[Dynamic Scan] Switching to main thread fallback.",
+        domObserver: {
+          stopped: "[Dynamic Scan] Stopped listening for DOM changes."
+        },
+        fallback: {
+          initialized: "[Dynamic Scan - Fallback] Initialized.",
+          cleared: "[Dynamic Scan - Fallback] Data cleared."
+        },
+        worker: {
+          logPrefix: "[Dynamic Scan Worker]",
+          starting: "Dynamic Scan: Attempting to start Web Worker...",
+          initFailed: "[Dynamic Scan] Worker initialization failed. This is likely due to the website's Content Security Policy (CSP).",
+          originalError: "[Dynamic Scan] Original error: {{error}}",
+          initialized: "[Dynamic Scan] Worker initialized successfully, sent {{count}} initial texts to start the session.",
+          initSyncError: "[Dynamic Scan] Synchronous error during Worker initialization: {{error}}",
+          clearCommandSent: "[Dynamic Scan] Clear command sent to worker.",
+          cspBlocked: "[Dynamic Scan] CSP check failed. Worker creation is not allowed."
+        }
+      },
+      ui: {
+        copyButton: {
+          copied: "Copy button clicked, copied {{count}} characters.",
+          nothingToCopy: "Copy button clicked, but there was no content to copy or the button was disabled."
+        },
+        confirmationModal: {
+          sessionScan: {
+            confirmed: "User confirmed clearing session scan texts, invoking callback..."
+          },
+          quickScan: {
+            confirmed: "User confirmed clearing quick scan texts."
+          },
+          cancelled: "User cancelled the clear operation."
+        },
+        modal: {
+          opening: "Opening main modal...",
+          closing: "Closing main modal...",
+          scanFailed: "Static scan failed: {{error}}",
+          clearContent: "Clear content button clicked."
+        },
+        helpIcon: {
+          clicked: "Help icon clicked, displaying content for key: {{contentKey}}"
+        }
+      },
+      exporter: {
+        buttonClicked: "Export button clicked, format: {{format}}.",
+        csvError: "Error while parsing text and generating CSV: {{error}}",
+        fileExported: "File exported: {{filename}}",
+        noContent: "No content to export.",
+        unknownFormat: "Unknown export format: {{format}}"
+      },
+      main: {
+        requestingSessionScanData: "Requesting full data from session-scan mode...",
+        exportingQuickScanData: "Exporting full data from quick-scan mode's memory...",
+        inIframe: "Script is in an iframe, skipping initialization.",
+        initializing: "Script initialization started...",
+        initialSettingsLoaded: "Initial settings loaded:"
+      },
+      dom: {
+        ttpCreationError: "Failed to create Trusted Type policy:",
+        svgParseError: "Failed to parse SVG string or string is invalid:"
+      },
+      elementScan: {
+        starting: "Element Scan started.",
+        stopping: "Element Scan stopped.",
+        listenersAdded: "Global event listeners for element scan added.",
+        listenersRemoved: "Global event listeners for element scan removed.",
+        stateReset: "Element scan state has been reset.",
+        reselecting: "Returning to element reselection mode.",
+        hovering: "Hovering over <{{tagName}}>.",
+        escapePressed: "Escape key pressed, stopping element scan.",
+        escapeIgnoredForSettings: "Escape key pressed, but ignored because a settings panel is open.",
+        escapeIgnoredForModal: "Escape key pressed, but ignored because a modal or tooltip is open.",
+        escapePressedInAdjust: "Escape key pressed in adjustment mode, returning to reselection.",
+        clickedEnteringAdjust: "Element <{{tagName}}> clicked, entering adjustment mode.",
+        pathBuilt: "Element path built, depth: {{depth}}.",
+        adjustingLevel: "Adjusting selection level to {{level}} ({{tagName}}).",
+        confirmExtracting: "Selection confirmed, extracting text from <{{tagName}}>.",
+        staged: "Element staged. Total staged: {{count}}.",
+        confirmingStaged: "Confirming selection. Processing {{count}} staged elements.",
+        extractedCount: "Extracted {{count}} raw text fragments from element.",
+        confirmFailedNoTarget: "Confirmation failed: no target element selected.",
+        rightClickExit: "Right-click detected, stopping element scan.",
+        processingError: "An error occurred during text processing: {{error}}",
+        scrollListenersAdded: "Added {{count}} scroll listeners to parent elements.",
+        scrollListenersRemoved: "Removed all scroll listeners.",
+        worker: {
+          logPrefix: "[ES Worker]",
+          starting: "Element Scan Worker is starting...",
+          sendingData: "Sending {{count}} text fragments to Element Scan Worker.",
+          completed: "Element Scan Worker completed, found {{count}} unique texts.",
+          initFailed: "Element Scan Worker initialization failed. The browser's CSP might be blocking data: URLs.",
+          initSyncError: "Synchronous error during Element Scan Worker initialization: {{error}}",
+          originalError: "Original worker error: {{error}}",
+          cspBlocked: "Element Scan CSP check failed. Worker creation is not allowed.",
+          attemping: "Attempting to use Web Worker for filtering...",
+          fallback: "Switched to main thread for filtering.",
+          cspHint: "This may be due to the site's Content Security Policy (CSP)."
+        },
+        switchToFallback: "Switching to main thread fallback for Element Scan.",
+        fallbackFailed: "Element Scan fallback mode failed: {{error}}",
+        stagingStarted: "Staging started for element: <{{tagName}}>",
+        stagedNothingNew: "No new unique text was staged from this element.",
+        stagingFinished: "Staging finished.",
+        confirmStarted: "Confirmation process started...",
+        confirmFinished: "Confirmation process finished successfully.",
+        confirmFailed: "Confirmation process failed. Error: {{error}}"
+      },
+      elementScanUI: {
+        creatingHighlights: "Element Scan UI: Creating highlight elements for the first time.",
+        updatingHighlight: "Element Scan UI: Updating highlight for <{{tagName}}>.",
+        creatingToolbar: "Element Scan UI: Creating adjustment toolbar.",
+        toolbarPositioned: "Element Scan UI: Toolbar positioned.",
+        sliderChanged: "Element Scan UI: Slider changed to level {{level}}",
+        reselectClicked: "Element Scan UI: 'Reselect' button clicked.",
+        stageClicked: "Element Scan UI: 'Stage' button clicked.",
+        cancelClicked: "Element Scan UI: 'Cancel' button clicked.",
+        confirmClicked: "Element Scan UI: 'Confirm' button clicked.",
+        dragStarted: "Element Scan UI: Drag started.",
+        dragEnded: "Element Scan UI: Drag ended.",
+        cleaningHighlights: "Element Scan UI: Cleaning up highlight elements.",
+        cleaningToolbar: "Element Scan UI: Cleaning up toolbar."
+      },
+      eventBus: {
+        callbackError: "Error in callback for event '{{eventName}}':"
+      },
+      trustedTypes: {
+        workerPolicyError: "Failed to create Trusted Types worker policy:",
+        htmlPolicyError: "Failed to create Trusted Types HTML policy:",
+        defaultWorkerPolicyWarning: "Trusted Types default policy failed for worker URL, falling back to raw URL.",
+        defaultHtmlPolicyWarning: "Trusted Types default policy failed for HTML, falling back to raw string."
+      }
+    },
+    tutorial: {
+      elementScanTitle: "Element Scan Tutorial",
+      elementScan: '<p><strong>What it does:</strong></p><p>Element Scan allows you to precisely select one or more areas on a webpage (e.g., a paragraph, a list, a sidebar) and extract text only from those areas.</p><p><strong>How to use:</strong></p><ol><li><strong>Start:</strong> Click the "Element Scan" icon <span class="help-icon-placeholder element-scan-icon"></span> in the floating button to enter scan mode.</li><li><strong>Select:</strong> Move your mouse over the page. The area you want to scan will be highlighted. Click to select it.</li><li><strong>Adjust:</strong> A toolbar will appear after selection. You can use the <strong>slider</strong> to expand or shrink the selection area.</li><li><strong>Stage:</strong> If you want to select multiple unrelated areas, click the <span class="action-key">Stage</span> button to save the current selection and continue selecting other areas.</li><li><strong>Confirm:</strong> Once you have finished all selections, click the <span class="action-key">Confirm</span> button to start extracting text from all your chosen areas.</li></ol><p><strong>How to exit:</strong></p><ul><li>While the highlight box is visible, <strong>right-click</strong> anywhere on the page.</li><li>Press the <kbd>ESC</kbd> key at any time.</li><li>Click the "Element Scan" icon again at any time.</li></ul>',
+      sessionScanTitle: "Dynamic Scan Tutorial",
+      sessionScan: '<p><strong>What it does:</strong></p><p>Dynamic Scan continuously monitors and automatically records all text that dynamically loads or changes on a webpage. It is especially useful for capturing live chats, infinite scrolling content, or notifications.</p><p><strong>How to use:</strong></p><ul><li><strong>Start Scan:</strong> Click the "Dynamic Scan" icon <span class="help-icon-placeholder dynamic-scan-icon"></span> in the floating button to start scanning immediately.</li><li><strong>Stop Scan:</strong> Click the icon again <span class="help-icon-placeholder stop-icon"></span> to stop.</li><li><strong>View Results:</strong> After stopping, click the main floating button <span class="help-icon-placeholder summary-icon"></span> to open the results window.</li></ul><p><strong>How to exit:</strong></p><ul><li>Click the "Dynamic Scan" icon again during the scan.</li><li>Press the <kbd>ESC</kbd> key at any time to quickly stop the scan.</li></ul>'
+    }
+  };
   // src/shared/i18n/en.json
   var en_default = {
     _meta: {
@@ -2114,6 +2914,7 @@ ${result.join(",\n")}
       languages: {
         auto: "Auto",
         en: "English (United States)",
+        "en-GB": "English (United Kingdom)",
         "zh-CN": "Chinese (Simplified)",
         "zh-TW": "Chinese (Traditional)"
       },
@@ -2507,6 +3308,7 @@ ${result.join(",\n")}
       languages: {
         auto: "\\u81EA\\u52A8\\u68C0\\u6D4B",
         en: "\\u82F1\\u6587 (\\u7F8E\\u56FD)",
+        "en-GB": "\\u82F1\\u6587 (\\u82F1\\u56FD)",
         "zh-CN": "\\u7B80\\u4F53\\u4E2D\\u6587",
         "zh-TW": "\\u7E41\\u4F53\\u4E2D\\u6587"
       },
@@ -2900,6 +3702,7 @@ ${result.join(",\n")}
       languages: {
         auto: "\\u81EA\\u52D5\\u6AA2\\u6E2C",
         en: "\\u82F1\\u6587 (\\u7F8E\\u570B)",
+        "en-GB": "\\u82F1\\u6587 (\\u82F1\\u570B)",
         "zh-CN": "\\u7C21\\u9AD4\\u4E2D\\u6587",
         "zh-TW": "\\u7E41\\u9AD4\\u4E2D\\u6587"
       },
@@ -3203,11 +4006,16 @@ ${result.join(",\n")}
   };
   // locales-ns:virtual:locales
   var locales = {
+    "en-GB": en_GB_default,
     "en": en_default,
     "zh-CN": zh_CN_default,
     "zh-TW": zh_TW_default
   };
   var resourceLanguages = [
+    {
+      "code": "en-GB",
+      "name": "English (UK)"
+    },
     {
       "code": "en",
       "name": "English"
@@ -3342,9 +4150,7 @@ ${result.join(",\n")}
       icon: languageIcon_default,
       options: getAvailableLanguages().map((lang) => ({
         ...lang,
-        // \u5BF9\u4E8E 'auto'\uFF0C\u6211\u4EEC\u9700\u8981\u7FFB\u8BD1\uFF08\u4F8B\u5982 '\u81EA\u52A8\u68C0\u6D4B'\uFF09\u3002
-        // \u5BF9\u4E8E\u5177\u4F53\u8BED\u8A00\uFF0C\u6211\u4EEC\u4F7F\u7528\u5176\u539F\u751F\u540D\u79F0\uFF08\u6765\u81EA _meta.name\uFF09\uFF0C\u65E0\u9700\u7FFB\u8BD1\u3002
-        label: lang.value === "auto" ? "settings.languages.auto" : lang.label
+        label: lang.value === "auto" ? "settings.languages.auto" : \`settings.languages.\${lang.value}\`
       }))
     }
   ];
@@ -4516,7 +5322,7 @@ ${result.join(",\n")}
       }
       button.appendChild(createIconTitle(icon, t(textKey)));
       button.updateText = (newTextKey) => {
-        const textElement = button.querySelector(".tc-icon-title-text");
+        const textElement = button.querySelector(".icon-title-text");
         if (textElement) {
           textElement.textContent = t(newTextKey);
         }
@@ -5079,8 +5885,10 @@ ${result.join(",\n")}
       fabContainer.classList.toggle("fab-container-visible", newSettings.showFab);
     }
     updateModalAddonsVisibility();
-    fire("settingsSaved");
-    showNotification(t("notifications.settingsSaved"), { type: "success" });
+    setTimeout(() => {
+      fire("settingsSaved");
+      showNotification(t("notifications.settingsSaved"), { type: "success" });
+    }, 50);
   }
   function loadSettings() {
     const savedSettings = getValue("script_settings", null);
