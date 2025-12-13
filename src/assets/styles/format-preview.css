@@ -40,8 +40,3 @@
 .image-card-option.selected .code-text-preview .punct {
     color: var(--main-text);
 }
-
-/* Specific Adjustments per type if needed */
-.code-preview.csv .code-text-preview {
-    /* CSV specific tweaks */
-}
