@@ -2,6 +2,15 @@
 /* 这个文件只定义颜色变量和主题切换逻辑 */
 
 :host {
+  /* Global Reset Properties */
+  font-size: 16px;
+  line-height: 1.5;
+  font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC', monospace, sans-serif;
+  box-sizing: border-box;
+  text-align: left;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
   /* 浅色模式颜色变量 */
   --color-bg: #ffffff;
   --color-text: #333333;
@@ -47,6 +56,20 @@
   --dark-color-scrollbar-thumb: #555555;
   --dark-color-scrollbar-thumb-hover: #777777;
   --dark-color-scrollbar-border: #2d2d2d;
+}
+
+/* Inherit box-sizing globally within Shadow DOM */
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+/* Reset form elements to inherit font properties */
+button, input, optgroup, select, textarea {
+  font-family: inherit;
+  font-size: 100%;
+  line-height: 1.15;
+  color: inherit;
+  margin: 0;
 }
 
 /* 根据 data-theme 属性应用浅色主题 */

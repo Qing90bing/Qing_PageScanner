@@ -104,7 +104,7 @@
 .settings-sidebar-item {
     padding: 12px 20px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 500;
     color: var(--main-text);
     /* 关键修复：添加 background-color 到 transition 列表中 */
@@ -131,8 +131,8 @@
 }
 
 .settings-sidebar-item svg {
-    width: 18px;
-    height: 18px;
+    width: 22px;
+    height: 22px;
     fill: currentColor;
 }
 
@@ -361,7 +361,7 @@
 
 /* 1. Preview Area - Schematic Container */
 .image-card-preview {
-    height: 80px;
+    height: 110px;
     display: flex;
     align-items: center;
     justify-content: center;
