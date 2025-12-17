@@ -93,5 +93,8 @@ export function createButton({ id, className, textKey, tooltipKey, icon, onClick
     // 添加 destroy 方法来移除所有事件监听器
     button.destroy = () => controller.abort();
 
+    // 确保按钮可交互，覆盖 uiContainer 的 pointer-events: none
+    button.style.pointerEvents = 'auto';
+
     return button;
 }

@@ -61,6 +61,8 @@
 /* Inherit box-sizing globally within Shadow DOM */
 *, *::before, *::after {
   box-sizing: inherit;
+  /* 确保内部元素默认不拦截点击，特定交互组件需显式设置为 auto */
+  /* pointer-events: auto; (已在具体组件CSS中设置) */
 }
 
 /* Reset form elements to inherit font properties */

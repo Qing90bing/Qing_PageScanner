@@ -132,8 +132,11 @@ export function updateHighlight(targetElement, offset = { x: 0, y: 0 }) {
     // 我们需要加上 iframe 在主页面中的偏移量 (offset.x, offset.y)。
     const newWidth = rect.width + padding * 2;
     const newHeight = rect.height + padding * 2;
-    const newX = rect.left + offset.x + scrollX - padding;
-    const newY = rect.top + offset.y + scrollY - padding;
+    // 修正：uiContainer 是 position: fixed (相对视口定位)，因此不应加上 window.scrollX/Y。
+    // 加上 scroll 会导致滚动时高亮框相对视口移动（即看起来固定在文档某处），而元素在视口中移动，产生分离。
+    // 使用 rect (视口坐标) + offset (iframe 相对视口) 即可。
+    const newX = rect.left + offset.x - padding;
+    const newY = rect.top + offset.y - padding;
 
     scanContainer.style.width = `${newWidth}px`;
     scanContainer.style.height = `${newHeight}px`;
@@ -185,6 +188,7 @@ export function createAdjustmentToolbar(elementPath, offset = { x: 0, y: 0 }) {
     log(t('log.elementScanUI.creatingToolbar'));
     toolbar = document.createElement('div');
     toolbar.id = 'element-scan-toolbar';
+    toolbar.style.pointerEvents = 'auto'; // 确保工具栏本身可交互，覆盖 uiContainer 的 pointer-events: none
 
     // 创建静态部分（移除滑块的硬编码HTML）
     const staticContent = `

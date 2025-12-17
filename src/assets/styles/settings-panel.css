@@ -3,7 +3,7 @@
 .settings-panel-overlay {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   background-color: var(--main-overlay-bg);
-  z-index: 2147483646; /* 降低 z-index 以允许 info-tooltip 显示在其上 */
+  z-index: 2147483648; /* High z-index to stay above page content but below tooltips */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -11,12 +11,14 @@
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease, visibility 0.3s;
+  pointer-events: none; /* 默认不拦截，避免不可见时阻挡 */
 }
 
 /* 新增：可见状态 */
 .settings-panel-overlay.is-visible {
     opacity: 1;
     visibility: visible;
+    pointer-events: auto; /* 关键：模态框显示时恢复交互 */
 }
 
 .settings-panel-modal {

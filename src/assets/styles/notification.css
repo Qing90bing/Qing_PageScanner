@@ -4,10 +4,11 @@
     position: fixed;
     top: 20px;
     right: 20px;
-    z-index: 2147483647;
+    z-index: 2147483647; /* Top level priority */
     display: flex;
     flex-direction: column;
     gap: 10px;
+    pointer-events: none; /* 容器本身不拦截 */
 }
 
 .tc-notification {
@@ -25,6 +26,7 @@
     transform: translateX(100%);
     animation: tc-notification-fade-in 0.5s forwards;
     transition: box-shadow 0.3s;
+    pointer-events: auto; /* 关键：恢复单个通知的可点击性 */
 }
 
 .tc-notification:hover {

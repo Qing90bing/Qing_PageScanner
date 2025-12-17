@@ -58,6 +58,9 @@ function createSingleFab(className, iconSVGString, titleKey, onClick) {
         hideTooltip();
     });
 
+    // 确保按钮可交互，覆盖 uiContainer 的 pointer-events: none
+    fab.style.pointerEvents = 'auto';
+
     return fab;
 }
 

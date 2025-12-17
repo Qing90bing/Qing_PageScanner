@@ -52,7 +52,7 @@
   border: 1px solid var(--main-border);
   border-radius: 12px;
   box-shadow: 0 4px 12px var(--main-shadow);
-  z-index: 10003; /* 比设置面板高一级 */
+  z-index: 2147483647; /* 确保它显示在所有其他UI元素之上 */
   max-height: 0;
   overflow: hidden;
   opacity: 0;

@@ -74,6 +74,8 @@ export function createCounterWithHelp({ counterKey, helpKey, onPause, onResume, 
 
     counterWithHelpContainer = document.createElement('div');
     counterWithHelpContainer.className = 'counter-with-help-container';
+    // 确保容器可交互，覆盖 uiContainer 的 pointer-events: none
+    counterWithHelpContainer.style.pointerEvents = 'auto';
 
     counterElement = createTopCenterCounter(counterKey);
     helpIcon = createHelpIcon(helpKey);

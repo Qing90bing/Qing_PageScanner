@@ -3,7 +3,7 @@
 /* 新的扫描容器，负责定位和动画 */
 #element-scan-container {
     position: absolute;
-    z-index: 10000;
+    z-index: 2147483644;
     pointer-events: none; /* 允许鼠标事件穿透 */
     transition: all 0.1s ease-in-out, opacity 0.2s ease-in-out, visibility 0s linear 0.2s; /* 位置和透明度动画 */
     opacity: 0;
@@ -39,7 +39,7 @@
 #element-scan-toolbar {
     font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
     position: fixed;
-    z-index: 10001;
+    z-index: 2147483645;
     background-color: var(--main-bg);
     border: 1px solid var(--main-border);
     border-radius: 16px;
@@ -52,6 +52,7 @@
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.2s ease-in-out, visibility 0s linear 0.2s;
+    pointer-events: auto; /* 关键：确保工具栏本身可点击/拖动 */
 }
 
 /* 通用的可见状态，用于触发过渡 */

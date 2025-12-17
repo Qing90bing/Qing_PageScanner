@@ -6,30 +6,90 @@
  * @param {HTMLElement} container - UI容器元素。
  */
 function updateScrollbarWidth(container) {
-    // 关键：滚动条宽度 = 整个窗口的宽度 - 客户端区域（即可见区域）的宽度
     const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-    // 将计算出的宽度（例如 '17px'）设置为容器的CSS变量
     container.style.setProperty('--scrollbar-width', `${scrollbarWidth}px`);
 }
 
 /**
  * @function createUIContainer
  * @description 创建一个用于承载所有脚本UI的容器元素，并为其附加一个Shadow DOM。
- * 这样做可以完全隔离UI的样式和行为，防止被所在页面的CSS污染。
- * 同时，包含持久化逻辑以应对现代前端框架（如React/Next.js）的Hydration过程。
- * @returns {ShadowRoot} 返回创建好的Shadow DOM的根节点，所有UI元素都应被添加到此节点下。
+ * 包含“强制置顶”逻辑，以应对网页使用 Top Layer (dialog/popover) 导致的遮挡问题。
+ * @returns {ShadowRoot} 返回创建好的Shadow DOM的根节点。
  */
 function createUIContainer() {
     const container = document.createElement('div');
     container.id = 'text-extractor-container';
 
-    // --- 挂载与持久化逻辑 ---
-    // 目的：确保容器在页面生命周期内（包括框架重渲染后）始终存在于DOM中
+    // --- Popover API 检测 ---
+    const supportsPopover = HTMLElement.prototype.hasOwnProperty('popover');
+    if (supportsPopover) {
+        container.popover = 'manual';
+    }
 
+    // --- 基础样式 ---
+    container.style.position = 'fixed';
+    container.style.top = '0';
+    container.style.left = '0';
+    container.style.width = '100%';
+    container.style.height = '0';
+    container.style.zIndex = '2147483647';
+    container.style.pointerEvents = 'none';
+
+    // --- Popover 样式覆盖 ---
+    container.style.backgroundColor = 'transparent';
+    container.style.border = 'none';
+    container.style.margin = '0';
+    container.style.padding = '0';
+    container.style.overflow = 'visible';
+
+    // --- 强制置顶逻辑 (Re-promote) ---
+    // 当检测到其他元素进入 Top Layer 时，通过“移除-再追加”的方式刷新我们的顺序。
+    let promoteTimeout = null;
+    const rePromoteToTop = () => {
+        if (promoteTimeout) clearTimeout(promoteTimeout);
+
+        promoteTimeout = setTimeout(() => {
+            if (!container.isConnected || !supportsPopover) return;
+
+            // 1. 尝试隐藏 Popover (清理 Top Layer 状态)
+            try {
+                container.hidePopover();
+            } catch (e) {
+                // 如果已经是 hidden 状态，忽略
+            }
+
+            // 2. 强制浏览器回流 (Reflow)，确保状态更新
+            void container.offsetHeight;
+
+            // 3. 异步重新显示
+            // 使用 requestAnimationFrame 确保在下一帧执行，避免浏览器合并操作
+            requestAnimationFrame(() => {
+                try {
+                    // 物理移动 DOM 节点 (确保在 DOM 顺序中也是最后的，虽然对 Top Layer 不是必须的，但有备无患)
+                    if (container.parentElement === document.body) {
+                        document.body.removeChild(container);
+                    } else if (container.parentElement) {
+                        container.remove();
+                    }
+                    document.body.appendChild(container);
+
+                    // 再次显示 (推入 Top Layer 栈顶)
+                    container.showPopover();
+                } catch (e) {
+                    // 忽略错误
+                }
+            });
+        }, 100); // 增加延迟到 100ms，以确保在复杂的弹窗动画后执行
+    };
+
+    // --- 挂载逻辑 ---
+    // 始终挂载到 document.body 以确保最大的兼容性和层级控制
     const attachToBody = () => {
-        // 只有当 container 确实不在 DOM 中时才追加，避免移动已存在的元素
         if (document.body && !container.isConnected) {
             document.body.appendChild(container);
+            if (supportsPopover) {
+                try { container.showPopover(); } catch (e) {}
+            }
         }
     };
 
@@ -40,56 +100,73 @@ function createUIContainer() {
         document.addEventListener('DOMContentLoaded', attachToBody);
     }
 
-    // 2. 启动观察者
-    // 监视 document.body 的子节点变化，一旦发现我们的容器被移除，立即重新挂载
+    // 2. 深度观察者 (Persistent Watcher)
     const observer = new MutationObserver((mutations) => {
         let needsReattach = false;
-        
-        // 快速检查：如果容器断开了连接，必定需要重新挂载
-        if (!container.isConnected) {
-            needsReattach = true;
-        } else {
-            // 详细检查 mutations（虽然 isConnected 通常足够，但为了健壮性保留）
-            for (const mutation of mutations) {
-                if (mutation.type === 'childList') {
-                    for (const removedNode of mutation.removedNodes) {
-                        if (removedNode === container) {
-                            needsReattach = true;
-                            break;
+        let potentialOcclusion = false;
+
+        for (const mutation of mutations) {
+            // 检查自身是否被移除
+            if (mutation.type === 'childList') {
+                for (const node of mutation.removedNodes) {
+                    if (node === container) {
+                        needsReattach = true;
+                    }
+                }
+
+                // 检查是否有新的 Top Layer 候选者加入
+                if (!needsReattach) {
+                    for (const node of mutation.addedNodes) {
+                        if (node.nodeType === 1 && node !== container) {
+                            const tagName = node.tagName;
+                            if (tagName === 'DIALOG' || node.hasAttribute('popover')) {
+                                potentialOcclusion = true;
+                            }
                         }
                     }
                 }
-                if (needsReattach) break;
+            }
+
+            // 检查现有元素的属性变化
+            if (mutation.type === 'attributes' && mutation.target !== container) {
+                const tagName = mutation.target.tagName;
+                if (tagName === 'DIALOG' && mutation.attributeName === 'open' && mutation.target.hasAttribute('open')) {
+                    potentialOcclusion = true;
+                }
             }
         }
 
         if (needsReattach) {
             attachToBody();
+        } else if (potentialOcclusion && supportsPopover) {
+            rePromoteToTop();
         }
     });
 
-    const startObserving = () => {
-        if (document.body) {
-            observer.observe(document.body, { childList: true });
-        }
-    };
-
     if (document.body) {
-        startObserving();
+         observer.observe(document.body, {
+            childList: true,
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['open', 'popover']
+        });
     } else {
-        document.addEventListener('DOMContentLoaded', startObserving);
+        window.addEventListener('DOMContentLoaded', () => {
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true,
+                attributes: true,
+                attributeFilter: ['open', 'popover']
+            });
+        });
     }
 
     // --- 滚动条宽度计算 ---
-    // 初始计算一次
     updateScrollbarWidth(container);
-    // 监听窗口大小变化，以便在滚动条出现/消失时重新计算
     window.addEventListener('resize', () => updateScrollbarWidth(container));
 
     const shadowRoot = container.attachShadow({ mode: 'open' });
-
     return shadowRoot;
 }
 
-// 创建并导出一个单例，确保整个脚本只使用一个UI容器。
 export const uiContainer = createUIContainer();

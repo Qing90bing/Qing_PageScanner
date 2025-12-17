@@ -10,16 +10,18 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 2147483647; /* 确保它显示在所有其他UI元素之上 */
+    z-index: 2147483647; /* Ensure it overlays everything */
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease, visibility 0.3s;
     font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC'; /* 统一字体 */
+    pointer-events: none;
 }
 
 .info-tooltip-overlay.is-visible {
     opacity: 1;
     visibility: visible;
+    pointer-events: auto; /* 关键：恢复交互 */
 }
 
 .info-tooltip-modal {

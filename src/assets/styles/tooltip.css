@@ -3,7 +3,7 @@
 .text-extractor-tooltip {
     font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
     position: fixed;
-    z-index: 10001; /* 比悬浮按钮更高 */
+    z-index: 2147483647; /* 确保它显示在所有其他UI元素之上 */
     background-color: var(--main-tooltip-bg);
     color: var(--main-tooltip-text);
     padding: 8px 12px;
