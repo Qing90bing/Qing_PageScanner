@@ -2225,7 +2225,81 @@ var TextExtractor = (() => {
     }
     updateScrollbarWidth(container);
     window.addEventListener("resize", () => updateScrollbarWidth(container));
-    const shadowRoot = container.attachShadow({ mode: "open" });
+    const restoreFocus = (originalElement) => {
+      setTimeout(() => {
+        const current = document.activeElement;
+        if ((current === document.body || current === container) && originalElement && originalElement.isConnected) {
+          try {
+            originalElement.focus();
+          } catch (err) {
+          }
+        }
+      }, 0);
+    };
+    const handleGlobalCapture = (e) => {
+      let shouldBlock = false;
+      if (e.target === container || container.contains(e.target)) {
+        if (["pointerdown", "pointerup", "touchstart", "touchend", "focusin", "focusout"].includes(e.type)) {
+          shouldBlock = true;
+        }
+      }
+      if (e.relatedTarget && (e.relatedTarget === container || container.contains(e.relatedTarget))) {
+        shouldBlock = true;
+      }
+      if (shouldBlock) {
+        e.stopImmediatePropagation();
+        e.stopPropagation();
+      }
+    };
+    const captureEvents = [
+      "pointerdown",
+      "pointerup",
+      "touchstart",
+      "touchend",
+      "focusin",
+      "focusout",
+      "mouseout",
+      "mouseleave",
+      "pointerout",
+      "pointerleave",
+      "blur"
+    ];
+    captureEvents.forEach((evt) => window.addEventListener(evt, handleGlobalCapture, { capture: true }));
+    const shadowRoot = container.attachShadow({ mode: "closed" });
+    const handleInternalBubble = (e) => {
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      if (e.type === "mousedown") {
+        const target = e.target;
+        const tagName = target.tagName;
+        const isInput = tagName === "INPUT" || tagName === "TEXTAREA" || tagName === "SELECT" || target.isContentEditable;
+        const isLabel = tagName === "LABEL";
+        if (!isInput && !isLabel) {
+          const originalFocus = document.activeElement;
+          e.preventDefault();
+          restoreFocus(originalFocus);
+        }
+      }
+    };
+    const bubbleEvents = [
+      "click",
+      "dblclick",
+      "contextmenu",
+      "mouseup",
+      "mousedown",
+      "keydown",
+      "keyup",
+      "keypress",
+      "pointerdown",
+      "pointerup",
+      "touchstart",
+      "touchend",
+      "focusin",
+      "focusout"
+    ];
+    bubbleEvents.forEach((evt) => {
+      shadowRoot.addEventListener(evt, handleInternalBubble, { capture: false });
+    });
     return shadowRoot;
   }
   var uiContainer = createUIContainer();
