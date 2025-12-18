@@ -323,6 +323,9 @@ function makeDraggable(element) {
     let offsetX, offsetY;
 
     const onMouseDown = (e) => {
+        // 仅允许左键拖动 (button 0)
+        if (e.button !== 0) return;
+
         // 检查点击的是否是交互式元素（按钮、滑块本身或滑块的拖动点）
         // .closest() 方法会从当前元素开始向上遍历DOM树
         const isInteractive = e.target.closest('button, .custom-slider-thumb, .custom-slider-track');
@@ -340,6 +343,13 @@ function makeDraggable(element) {
     };
 
     const onMouseMove = (e) => {
+        // 如果左键没有被按下（例如被右键菜单中断后），则停止拖动
+        // e.buttons 是一个掩码，1 表示左键
+        if ((e.buttons & 1) === 0) {
+            onMouseUp();
+            return;
+        }
+
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
         const rect = element.getBoundingClientRect();
@@ -363,7 +373,14 @@ function makeDraggable(element) {
         log(t('log.elementScanUI.dragEnded'));
     };
 
+    // 添加 contextmenu 监听器，确保右键菜单打开时取消拖动状态
+    const onContextMenu = () => {
+        // 如果正在拖动中被右键打断，则清理拖动状态
+        onMouseUp();
+    };
+
     element.addEventListener('mousedown', onMouseDown);
+    element.addEventListener('contextmenu', onContextMenu);
 }
 
 /**

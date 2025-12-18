@@ -7742,6 +7742,7 @@ ${result.join(",\n")}
   function makeDraggable(element) {
     let offsetX, offsetY;
     const onMouseDown = (e) => {
+      if (e.button !== 0) return;
       const isInteractive = e.target.closest("button, .custom-slider-thumb, .custom-slider-track");
       if (!isInteractive) {
         e.preventDefault();
@@ -7754,6 +7755,10 @@ ${result.join(",\n")}
       }
     };
     const onMouseMove = (e) => {
+      if ((e.buttons & 1) === 0) {
+        onMouseUp();
+        return;
+      }
       const viewportWidth = window.innerWidth;
       const viewportHeight = window.innerHeight;
       const rect = element.getBoundingClientRect();
@@ -7771,7 +7776,11 @@ ${result.join(",\n")}
       document.removeEventListener("mouseup", onMouseUp);
       log(t("log.elementScanUI.dragEnded"));
     };
+    const onContextMenu = () => {
+      onMouseUp();
+    };
     element.addEventListener("mousedown", onMouseDown);
+    element.addEventListener("contextmenu", onContextMenu);
   }
   function cleanupUI() {
     if (scanContainer) {
