@@ -197,7 +197,8 @@ function createUIContainer() {
         // 情况 A: 事件目标是脚本 UI (e.target)
         // 针对 pointerdown, focusin 等，如果目标是脚本，说明用户在与脚本交互，
         // 我们要阻止网页知道这件事。
-        if (e.target === container || container.contains(e.target)) {
+        // Fix: 检查 e.target 是否为 Node，防止 window blur 事件导致 TypeError
+        if (e.target === container || (e.target instanceof Node && container.contains(e.target))) {
             // 注意：不要拦截 mousedown/click，否则 input 无法输入。
             // 这些事件会在 Internal Bubble 阶段处理。
             if (['pointerdown', 'pointerup', 'touchstart', 'touchend', 'focusin', 'focusout'].includes(e.type)) {
@@ -210,7 +211,8 @@ function createUIContainer() {
         // 如果用户从网页元素“离开”并“进入”了脚本 UI (relatedTarget)，
         // 我们要阻止这个“离开”事件通知网页，让网页以为鼠标/焦点还在原地。
         // 注意：e.relatedTarget 如果是 Shadow Host，说明进入了 Shadow DOM。
-        if (e.relatedTarget && (e.relatedTarget === container || container.contains(e.relatedTarget))) {
+        // Fix: 检查 e.relatedTarget 是否为 Node
+        if (e.relatedTarget && (e.relatedTarget === container || (e.relatedTarget instanceof Node && container.contains(e.relatedTarget)))) {
             // 拦截所有离开型事件，如果它们是因为进入我们的 UI 而触发的。
             shouldBlock = true;
         }

@@ -2238,12 +2238,12 @@ var TextExtractor = (() => {
     };
     const handleGlobalCapture = (e) => {
       let shouldBlock = false;
-      if (e.target === container || container.contains(e.target)) {
+      if (e.target === container || e.target instanceof Node && container.contains(e.target)) {
         if (["pointerdown", "pointerup", "touchstart", "touchend", "focusin", "focusout"].includes(e.type)) {
           shouldBlock = true;
         }
       }
-      if (e.relatedTarget && (e.relatedTarget === container || container.contains(e.relatedTarget))) {
+      if (e.relatedTarget && (e.relatedTarget === container || e.relatedTarget instanceof Node && container.contains(e.relatedTarget))) {
         shouldBlock = true;
       }
       if (shouldBlock) {
