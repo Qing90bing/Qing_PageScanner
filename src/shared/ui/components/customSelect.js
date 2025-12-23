@@ -129,11 +129,23 @@ export class CustomSelect {
 
     /**
      * @private
-     * @description 处理点击组件外部的事件。
+     * @description 处理点击组件外部的事件（通用处理）。
      */
-    handleDocumentClick = (e) => {
-        // e.composedPath() 可以跨越 Shadow DOM 的边界
+    handleOutsideClick = (e) => {
         const path = e.composedPath();
+        const root = this.container.getRootNode();
+
+        // 如果我们在 Shadow DOM 中
+        if (root instanceof ShadowRoot) {
+            // 情况1：事件来自 document (Shadow Host 外部)
+            // 如果点击的是 Shadow Host (即点击了 Shadow DOM 内部)，则忽略 document 级别的判断，
+            // 交给 Shadow Root 级别的监听器去处理。
+            if (e.currentTarget === document && e.target === root.host) {
+                return;
+            }
+        }
+
+        // 常规检查：如果点击路径中不包含组件容器，则关闭
         if (!path.includes(this.container)) {
             this.close();
         }
@@ -146,10 +158,20 @@ export class CustomSelect {
     toggle() {
         this.isOpen = !this.isOpen;
         this.container.classList.toggle('open', this.isOpen);
+
+        const root = this.container.getRootNode();
+        this.shadowRootRef = (root instanceof ShadowRoot) ? root : null;
+
         if (this.isOpen) {
-            document.addEventListener('click', this.handleDocumentClick, true);
+            // 总是监听 document（处理外部点击）
+            document.addEventListener('click', this.handleOutsideClick, true);
+
+            // 如果在 Shadow DOM 中，也要监听 Shadow Root（处理内部点击）
+            if (this.shadowRootRef) {
+                this.shadowRootRef.addEventListener('click', this.handleOutsideClick, true);
+            }
         } else {
-            document.removeEventListener('click', this.handleDocumentClick, true);
+            this.removeOutsideListeners();
         }
     }
 
@@ -161,7 +183,20 @@ export class CustomSelect {
         if (this.isOpen) {
             this.isOpen = false;
             this.container.classList.remove('open');
-            document.removeEventListener('click', this.handleDocumentClick, true);
+            this.removeOutsideListeners();
+        }
+    }
+
+    /**
+     * @private
+     * @description 移除所有外部点击监听器。
+     */
+    removeOutsideListeners() {
+        document.removeEventListener('click', this.handleOutsideClick, true);
+
+        if (this.shadowRootRef) {
+            this.shadowRootRef.removeEventListener('click', this.handleOutsideClick, true);
+            this.shadowRootRef = null;
         }
     }
 

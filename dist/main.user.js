@@ -2008,7 +2008,46 @@ var TextExtractor = (() => {
         "Wi-Fi",
         "Bluetooth",
         "VPN",
-        "AI"
+        "Modrinth",
+        "Minecraft",
+        "Modrinth+",
+        "AI",
+        "Bilibili",
+        "QQ",
+        "WeChat",
+        "Discord",
+        "Telegram",
+        "WhatsApp",
+        "Line",
+        "Slack",
+        "Zoom",
+        "Skype",
+        "TikTok",
+        "Douyin",
+        "Weibo",
+        "Zhihu",
+        "Xiaohongshu",
+        "Steam",
+        "Epic Games",
+        "Spotify",
+        "Apple Music",
+        "NetEase Cloud Music",
+        "Adobe Photoshop",
+        "Adobe Premiere",
+        "Microsoft Office",
+        "WPS Office",
+        "Modrinth",
+        "CurseForge",
+        "Thunder",
+        "Baidu Netdisk",
+        "Quark",
+        "Alipay",
+        "WeChat Pay",
+        "Taobao",
+        "JD.com",
+        "Tmall",
+        "Amazon",
+        "eBay"
       ];
       IGNORED_TERMS_SET = new Set(IGNORED_TERMS_ARRAY);
       ignoredTerms_default = IGNORED_TERMS_SET;
@@ -4238,7 +4277,46 @@ ${result.join(",\n")}
     "Wi-Fi",
     "Bluetooth",
     "VPN",
-    "AI"
+    "Modrinth",
+    "Minecraft",
+    "Modrinth+",
+    "AI",
+    "Bilibili",
+    "QQ",
+    "WeChat",
+    "Discord",
+    "Telegram",
+    "WhatsApp",
+    "Line",
+    "Slack",
+    "Zoom",
+    "Skype",
+    "TikTok",
+    "Douyin",
+    "Weibo",
+    "Zhihu",
+    "Xiaohongshu",
+    "Steam",
+    "Epic Games",
+    "Spotify",
+    "Apple Music",
+    "NetEase Cloud Music",
+    "Adobe Photoshop",
+    "Adobe Premiere",
+    "Microsoft Office",
+    "WPS Office",
+    "Modrinth",
+    "CurseForge",
+    "Thunder",
+    "Baidu Netdisk",
+    "Quark",
+    "Alipay",
+    "WeChat Pay",
+    "Taobao",
+    "JD.com",
+    "Tmall",
+    "Amazon",
+    "eBay"
   ];
   var IGNORED_TERMS_SET = new Set(IGNORED_TERMS_ARRAY);
   var ignoredTerms_default = IGNORED_TERMS_SET;
@@ -6546,8 +6624,14 @@ ${result.join(",\n")}
       this.trigger.addEventListener("click", this.handleTriggerClick);
       this.optionsContainer.addEventListener("click", this.handleOptionClick);
     }
-        handleDocumentClick = (e) => {
+        handleOutsideClick = (e) => {
       const path = e.composedPath();
+      const root = this.container.getRootNode();
+      if (root instanceof ShadowRoot) {
+        if (e.currentTarget === document && e.target === root.host) {
+          return;
+        }
+      }
       if (!path.includes(this.container)) {
         this.close();
       }
@@ -6555,17 +6639,29 @@ ${result.join(",\n")}
         toggle() {
       this.isOpen = !this.isOpen;
       this.container.classList.toggle("open", this.isOpen);
+      const root = this.container.getRootNode();
+      this.shadowRootRef = root instanceof ShadowRoot ? root : null;
       if (this.isOpen) {
-        document.addEventListener("click", this.handleDocumentClick, true);
+        document.addEventListener("click", this.handleOutsideClick, true);
+        if (this.shadowRootRef) {
+          this.shadowRootRef.addEventListener("click", this.handleOutsideClick, true);
+        }
       } else {
-        document.removeEventListener("click", this.handleDocumentClick, true);
+        this.removeOutsideListeners();
       }
     }
         close() {
       if (this.isOpen) {
         this.isOpen = false;
         this.container.classList.remove("open");
-        document.removeEventListener("click", this.handleDocumentClick, true);
+        this.removeOutsideListeners();
+      }
+    }
+        removeOutsideListeners() {
+      document.removeEventListener("click", this.handleOutsideClick, true);
+      if (this.shadowRootRef) {
+        this.shadowRootRef.removeEventListener("click", this.handleOutsideClick, true);
+        this.shadowRootRef = null;
       }
     }
         select(value) {
