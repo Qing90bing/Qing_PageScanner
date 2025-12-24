@@ -12,8 +12,9 @@
 
 /* --- 行号区域 --- */
 .tc-line-numbers {
-    width: 40px;
-    padding: 10px 0; /* 移除左右padding，由max-width控制 */
+    width: var(--line-number-width, 40px);
+    padding: 10px 0;
+    /* 移除左右padding，由max-width控制 */
     text-align: right;
     max-width: 0;
     opacity: 0;
@@ -21,24 +22,30 @@
     transition: max-width 0.3s ease, opacity 0.3s ease, padding 0.3s ease, margin-right 0.3s ease;
     color: var(--main-line-number-text);
     background-color: var(--tc-secondary-bg-color);
-    overflow: hidden; /* 隐藏自身的滚动条 */
-    user-select: none; /* 防止用户选中行号 */
-    font-family: Menlo, Monaco,'Cascadia Code','PingFang SC';
-    font-size: 14px; /* 与文本框字体大小一致 */
-    line-height: 1.5; /* 与文本框行高一致 */
+    overflow: hidden;
+    /* 隐藏自身的滚动条 */
+    user-select: none;
+    /* 防止用户选中行号 */
+    font-family: Menlo, Monaco, 'Cascadia Code', 'PingFang SC';
+    font-size: 14px;
+    /* 与文本框字体大小一致 */
+    line-height: 1.5;
+    /* 与文本框行高一致 */
     border-right: 1px solid var(--tc-border-color);
     box-sizing: border-box;
-    padding-bottom: 8px; /* 为水平滚动条预留空间 */
+    padding-bottom: 8px;
+    /* 为水平滚动条预留空间 */
 }
 
-.tc-line-numbers > div {
+.tc-line-numbers>div {
     white-space: nowrap;
     padding: 0 4px;
     box-sizing: border-box;
-    transition: color 0.2s ease-in-out; /* 为 active 状态的颜色变化添加过渡 */
+    transition: color 0.2s ease-in-out;
+    /* 为 active 状态的颜色变化添加过渡 */
 }
 
-.tc-line-numbers > div.is-active {
+.tc-line-numbers>div.is-active {
     font-weight: bold;
     color: var(--main-line-number-active-text);
 }
@@ -53,12 +60,15 @@
     font-size: 14px;
     padding: 10px;
     box-sizing: border-box;
-    padding-bottom: 8px; /* 为水平滚动条预留空间 */
-    scrollbar-gutter: stable; /* 始终为滚动条保留空间，防止布局跳动 */
+    padding-bottom: 8px;
+    /* 为水平滚动条预留空间 */
+    scrollbar-gutter: stable;
+    /* 始终为滚动条保留空间，防止布局跳动 */
 }
 
 .tc-textarea-container .tc-textarea:focus {
-    outline: none; /* 移除默认的聚焦轮廓 */
+    outline: none;
+    /* 移除默认的聚焦轮廓 */
     box-shadow: none;
 }
 
@@ -68,16 +78,17 @@
 }
 
 .tc-line-numbers.is-visible {
-    max-width: 40px;
+    max-width: var(--line-number-width, 40px);
     opacity: 1;
     padding: 10px 4px;
-    margin-right: 4px; /* 添加一些间距 */
+    margin-right: 4px;
+    /* 添加一些间距 */
 }
 
 /* --- 统计信息容器 --- */
 .tc-stats-container {
     font-size: 14px;
-    font-family: Menlo, Monaco,'Cascadia Code','PingFang SC';
+    font-family: Menlo, Monaco, 'Cascadia Code', 'PingFang SC';
     color: var(--tc-secondary-text-color);
     display: flex;
     align-items: center;
@@ -94,22 +105,28 @@
 
 /* --- 自定义文本区域的滚动条样式 --- */
 .tc-textarea::-webkit-scrollbar {
-    width: 6px; /* 设置滚动条宽度 */
-    height: 6px; /* 设置滚动条高度 */
+    width: 6px;
+    /* 设置滚动条宽度 */
+    height: 6px;
+    /* 设置滚动条高度 */
 }
 
 .tc-textarea::-webkit-scrollbar-track {
-    background: transparent; /* 轨道背景透明 */
+    background: transparent;
+    /* 轨道背景透明 */
 }
 
 .tc-textarea::-webkit-scrollbar-thumb {
-    background: var(--tc-scrollbar-thumb-color); /* 滑块颜色 */
-    border-radius: 3px; /* 滑块圆角 */
+    background: var(--tc-scrollbar-thumb-color);
+    /* 滑块颜色 */
+    border-radius: 3px;
+    /* 滑块圆角 */
     border: 1px solid var(--tc-scrollbar-border-color);
 }
 
 .tc-textarea::-webkit-scrollbar-thumb:hover {
-    background: var(--tc-scrollbar-thumb-hover-color); /* 鼠标悬停时滑块颜色 */
+    background: var(--tc-scrollbar-thumb-hover-color);
+    /* 鼠标悬停时滑块颜色 */
 }
 
 /* --- 行号动画 --- */
@@ -118,6 +135,7 @@
         opacity: 0;
         transform: translateY(5px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);

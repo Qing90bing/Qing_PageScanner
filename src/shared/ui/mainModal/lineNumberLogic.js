@@ -211,6 +211,34 @@ export function updateLineNumbers() {
             }
         }
 
+        // --- 动态计算所需宽度 ---
+        // 只有当行数大于 99（即3位数以上）时才开始调整宽度，避免宽度频繁跳动
+        // 默认宽度 40px 足以容纳 3 位数 + padding
+        if (newLineCount > 0) {
+            const maxLineNumber = lineNumbers[lineNumbers.length - 1];
+            // 确保 maxLineNumber 是数字，因为 lineNumbers 可能包含空字符串（用于折行）
+            // 我们只需要最大的那个真实行号，通常是数组中最后一个非空数字，或者直接用行号数组长度估算
+            let maxNumStr = String(maxLineNumber);
+
+            // 如果最后一个是空字符串（折行情况），我们需要找到最大的真实行号
+            if (maxLineNumber === '') {
+                // 倒序查找第一个非空值
+                for (let k = lineNumbers.length - 1; k >= 0; k--) {
+                    if (lineNumbers[k] !== '') {
+                        maxNumStr = String(lineNumbers[k]);
+                        break;
+                    }
+                }
+            }
+
+            const textWidth = state.canvasContext.measureText(maxNumStr).width;
+            // 基础 padding (4px left + 4px right = 8px) + 额外一点余量 (e.g. 2px) = 10px
+            // 设置最小宽度为 40px
+            const newWidth = Math.max(40, Math.ceil(textWidth + 12));
+
+            state.lineNumbersDiv.style.setProperty('--line-number-width', `${newWidth}px`);
+        }
+
         _performActiveLineUpdate(); // 在更新行号后，立即同步更新活动行
         isThrottled = false;
     });

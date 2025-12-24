@@ -14,7 +14,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 2147483647; /* Max z-index to ensure visibility */
+  z-index: 2147483647;
+  /* Max z-index to ensure visibility */
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease, visibility 0.3s ease;
@@ -24,24 +25,26 @@
 .confirmation-modal-overlay.is-visible {
   opacity: 1;
   visibility: visible;
-  pointer-events: auto; /* 关键：恢复交互 */
+  pointer-events: auto;
+  /* 关键：恢复交互 */
 }
 
 .confirmation-modal-content {
-  font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';;
+  font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
+  ;
   background-color: var(--main-bg);
   color: var(--main-text);
   padding: 30px;
   border-radius: 16px;
   text-align: center;
-  width: 320px;
+  width: 400px;
   box-shadow: 0 10px 30px var(--main-shadow);
   transform: scale(0.95);
   transition: transform 0.3s ease;
 }
 
 .confirmation-modal-overlay.is-visible .confirmation-modal-content {
-    transform: scale(1);
+  transform: scale(1);
 }
 
 .confirmation-modal-icon {
