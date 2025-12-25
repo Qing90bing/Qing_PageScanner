@@ -5774,29 +5774,54 @@ ${result.join(",\n")}
       statsContainer.textContent = `${t("results.stats.lines")}: ${lineCount} | ${t("results.stats.chars")}: ${charCount}`;
     });
   }
+  var stringLinesCache =  new Map();
+  var lastCacheWidth = 0;
+  var lastTextValue = null;
+  var lastSplitLines = [];
   function calcStringLines(sentence, width) {
     if (!width || !canvasContext) return 1;
+    if (width !== lastCacheWidth) {
+      stringLinesCache.clear();
+      lastCacheWidth = width;
+    }
+    const cacheKey = sentence;
+    if (stringLinesCache.has(cacheKey)) {
+      return stringLinesCache.get(cacheKey);
+    }
     let lineCount = 0;
     let currentLine = "";
+    if (canvasContext.measureText(sentence).width <= width) {
+      lineCount = 1;
+      stringLinesCache.set(cacheKey, 1);
+      return 1;
+    }
     for (let i = 0; i < sentence.length; i++) {
       const char = sentence[i];
       const wordWidth = canvasContext.measureText(char).width;
-      const lineWidth = canvasContext.measureText(currentLine).width;
-      if (lineWidth + wordWidth > width) {
+      if (canvasContext.measureText(currentLine + char).width > width) {
         lineCount++;
         currentLine = char;
       } else {
         currentLine += char;
       }
     }
-    if (currentLine.trim() !== "" || sentence === "") {
+    if (currentLine !== "" || sentence === "") {
       lineCount++;
     }
+    stringLinesCache.set(cacheKey, lineCount);
     return lineCount;
   }
   function calcLines() {
     const settings = loadSettings();
-    const lines = outputTextarea.value.split("\n");
+    const currentValue = outputTextarea.value;
+    let lines;
+    if (currentValue === lastTextValue) {
+      lines = lastSplitLines;
+    } else {
+      lines = currentValue.split("\n");
+      lastTextValue = currentValue;
+      lastSplitLines = lines;
+    }
     let lineNumbers = [];
     let lineMap = [];
     if (settings.enableWordWrap) {
@@ -5816,10 +5841,11 @@ ${result.join(",\n")}
         }
       });
     } else {
-      lines.forEach((_, realLineIndex) => {
-        lineNumbers.push(realLineIndex + 1);
-        lineMap.push(realLineIndex);
-      });
+      const totalLines = lines.length;
+      for (let i = 0; i < totalLines; i++) {
+        lineNumbers.push(i + 1);
+        lineMap.push(i);
+      }
     }
     return { lineNumbers, lineMap };
   }
@@ -5829,11 +5855,22 @@ ${result.join(",\n")}
     const textarea = outputTextarea;
     const text = textarea.value;
     const selectionEnd = textarea.selectionEnd;
-    const textBeforeCursor = text.substring(0, selectionEnd);
-    const cursorRealLineIndex = textBeforeCursor.split("\n").length - 1;
+    let cursorRealLineIndex = 0;
+    for (let i = 0; i < selectionEnd; i++) {
+      if (text[i] === "\n") {
+        cursorRealLineIndex++;
+      }
+    }
     let finalVisualLineIndex = -1;
     if (settings.enableWordWrap) {
-      const realLines = text.split("\n");
+      let realLines;
+      if (text === lastTextValue) {
+        realLines = lastSplitLines;
+      } else {
+        realLines = text.split("\n");
+        lastTextValue = text;
+        lastSplitLines = realLines;
+      }
       let positionInRealLine = selectionEnd;
       for (let i = 0; i < cursorRealLineIndex; i++) {
         positionInRealLine -= realLines[i].length + 1;
