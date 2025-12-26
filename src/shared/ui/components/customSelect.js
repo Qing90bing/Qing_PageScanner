@@ -6,6 +6,7 @@
  */
 
 import { createIconTitle } from './iconTitle.js';
+import { listenClickOutside } from '../../utils/dom/clickOutside.js';
 import { createSVGFromString } from '../../utils/dom/dom.js';
 import { arrowDownIcon } from '../../../assets/icons/arrowDownIcon.js';
 
@@ -20,6 +21,7 @@ export class CustomSelect {
         this.options = options;
         this.currentValue = initialValue;
         this.isOpen = false;
+        this.abortController = null;
 
         this.render();
         this.bindEvents();
@@ -131,25 +133,7 @@ export class CustomSelect {
      * @private
      * @description 处理点击组件外部的事件（通用处理）。
      */
-    handleOutsideClick = (e) => {
-        const path = e.composedPath();
-        const root = this.container.getRootNode();
 
-        // 如果我们在 Shadow DOM 中
-        if (root instanceof ShadowRoot) {
-            // 情况1：事件来自 document (Shadow Host 外部)
-            // 如果点击的是 Shadow Host (即点击了 Shadow DOM 内部)，则忽略 document 级别的判断，
-            // 交给 Shadow Root 级别的监听器去处理。
-            if (e.currentTarget === document && e.target === root.host) {
-                return;
-            }
-        }
-
-        // 常规检查：如果点击路径中不包含组件容器，则关闭
-        if (!path.includes(this.container)) {
-            this.close();
-        }
-    };
 
     /**
      * @public
@@ -159,19 +143,16 @@ export class CustomSelect {
         this.isOpen = !this.isOpen;
         this.container.classList.toggle('open', this.isOpen);
 
-        const root = this.container.getRootNode();
-        this.shadowRootRef = (root instanceof ShadowRoot) ? root : null;
-
         if (this.isOpen) {
-            // 总是监听 document（处理外部点击）
-            document.addEventListener('click', this.handleOutsideClick, true);
+            this.abortController = new AbortController();
 
-            // 如果在 Shadow DOM 中，也要监听 Shadow Root（处理内部点击）
-            if (this.shadowRootRef) {
-                this.shadowRootRef.addEventListener('click', this.handleOutsideClick, true);
-            }
+            // 使用通用的 listenClickOutside 工具
+            // 它是 Shadow DOM 安全的，并且自动处理了事件监听器的生命周期
+            listenClickOutside(this.container, () => this.close(), {
+                signal: this.abortController.signal
+            });
         } else {
-            this.removeOutsideListeners();
+            this.close(); // 确保清理
         }
     }
 
@@ -183,7 +164,11 @@ export class CustomSelect {
         if (this.isOpen) {
             this.isOpen = false;
             this.container.classList.remove('open');
-            this.removeOutsideListeners();
+
+            if (this.abortController) {
+                this.abortController.abort();
+                this.abortController = null;
+            }
         }
     }
 
@@ -191,14 +176,7 @@ export class CustomSelect {
      * @private
      * @description 移除所有外部点击监听器。
      */
-    removeOutsideListeners() {
-        document.removeEventListener('click', this.handleOutsideClick, true);
 
-        if (this.shadowRootRef) {
-            this.shadowRootRef.removeEventListener('click', this.handleOutsideClick, true);
-            this.shadowRootRef = null;
-        }
-    }
 
     /**
      * @public
@@ -260,7 +238,7 @@ export class CustomSelect {
      * @description 销毁组件，移除所有事件监听器。
      */
     destroy() {
-        this.close(); // 确保移除 document 上的点击监听器
+        this.close(); // 确保移除监听器
 
         if (this.trigger && this.handleTriggerClick) {
             this.trigger.removeEventListener('click', this.handleTriggerClick);

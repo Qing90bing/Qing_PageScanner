@@ -6603,6 +6603,39 @@ ${result.join(",\n")}
     updateTopCenterCounter(counterElement, newCount);
   }
   var stopIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M280-280v-400h400v400H280Z"/></svg>`;
+  function listenClickOutside(element, onClickOutside, { signal, shouldIgnore } = {}) {
+    const handleDocumentClick = (event) => {
+      if (signal?.aborted) return;
+      const path = event.composedPath();
+      if (path.includes(element)) {
+        return;
+      }
+      const root2 = element.getRootNode();
+      if (root2 instanceof ShadowRoot) {
+        if (event.currentTarget === document && event.target === root2.host) {
+          return;
+        }
+      }
+      if (shouldIgnore) {
+        const shouldIgnoreClick = path.some((node) => {
+          return node instanceof Element && shouldIgnore(node);
+        });
+        if (shouldIgnoreClick) {
+          return;
+        }
+      }
+      onClickOutside(event);
+    };
+    const listenerOptions = { capture: true };
+    if (signal) {
+      listenerOptions.signal = signal;
+    }
+    document.addEventListener("click", handleDocumentClick, listenerOptions);
+    const root = element.getRootNode();
+    if (root instanceof ShadowRoot) {
+      root.addEventListener("click", handleDocumentClick, listenerOptions);
+    }
+  }
   var arrowDownIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>`;
   var CustomSelect = class {
         constructor(parentElement, options, initialValue) {
@@ -6610,6 +6643,7 @@ ${result.join(",\n")}
       this.options = options;
       this.currentValue = initialValue;
       this.isOpen = false;
+      this.abortController = null;
       this.render();
       this.bindEvents();
     }
@@ -6675,47 +6709,29 @@ ${result.join(",\n")}
       this.trigger.addEventListener("click", this.handleTriggerClick);
       this.optionsContainer.addEventListener("click", this.handleOptionClick);
     }
-        handleOutsideClick = (e) => {
-      const path = e.composedPath();
-      const root = this.container.getRootNode();
-      if (root instanceof ShadowRoot) {
-        if (e.currentTarget === document && e.target === root.host) {
-          return;
-        }
-      }
-      if (!path.includes(this.container)) {
-        this.close();
-      }
-    };
-        toggle() {
+            toggle() {
       this.isOpen = !this.isOpen;
       this.container.classList.toggle("open", this.isOpen);
-      const root = this.container.getRootNode();
-      this.shadowRootRef = root instanceof ShadowRoot ? root : null;
       if (this.isOpen) {
-        document.addEventListener("click", this.handleOutsideClick, true);
-        if (this.shadowRootRef) {
-          this.shadowRootRef.addEventListener("click", this.handleOutsideClick, true);
-        }
+        this.abortController = new AbortController();
+        listenClickOutside(this.container, () => this.close(), {
+          signal: this.abortController.signal
+        });
       } else {
-        this.removeOutsideListeners();
+        this.close();
       }
     }
         close() {
       if (this.isOpen) {
         this.isOpen = false;
         this.container.classList.remove("open");
-        this.removeOutsideListeners();
+        if (this.abortController) {
+          this.abortController.abort();
+          this.abortController = null;
+        }
       }
     }
-        removeOutsideListeners() {
-      document.removeEventListener("click", this.handleOutsideClick, true);
-      if (this.shadowRootRef) {
-        this.shadowRootRef.removeEventListener("click", this.handleOutsideClick, true);
-        this.shadowRootRef = null;
-      }
-    }
-        select(value) {
+            select(value) {
       if (value === this.currentValue) {
         this.close();
         return;
