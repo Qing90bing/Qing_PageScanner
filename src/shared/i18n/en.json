@@ -2,6 +2,9 @@
   "_meta": {
     "name": "English"
   },
+  "script": {
+    "name": "Web Text Extraction Tool"
+  },
   "common": {
     "scan": "Scan",
     "stop": "Stop",
@@ -100,6 +103,12 @@
       "light": "Light",
       "dark": "Dark",
       "system": "System"
+    },
+    "about": "About",
+    "aboutPanel": {
+      "title": "About",
+      "version": "Version",
+      "projectUrl": "GitHub"
     }
   },
   "scan": {

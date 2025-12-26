@@ -1,43 +1,53 @@
 /* src/assets/styles/settings-panel.css */
 
 .settings-panel-overlay {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background-color: var(--main-overlay-bg);
-  z-index: 2147483648; /* High z-index to stay above page content but below tooltips */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  /* --- 新增：动画相关属性 --- */
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s;
-  pointer-events: none; /* 默认不拦截，避免不可见时阻挡 */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--main-overlay-bg);
+    z-index: 2147483648;
+    /* High z-index to stay above page content but below tooltips */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* --- 新增：动画相关属性 --- */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s;
+    pointer-events: none;
+    /* 默认不拦截，避免不可见时阻挡 */
 }
 
 /* 新增：可见状态 */
 .settings-panel-overlay.is-visible {
     opacity: 1;
     visibility: visible;
-    pointer-events: auto; /* 关键：模态框显示时恢复交互 */
+    pointer-events: auto;
+    /* 关键：模态框显示时恢复交互 */
 }
 
 .settings-panel-modal {
-  font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
-  background-color: var(--main-bg);
-  color: var(--main-text);
-  border: 1px solid var(--main-border);
-  border-radius: 16px;
-  box-shadow: 0 5px 15px var(--main-shadow);
-  width: 90%;
-  max-width: 800px; /* 增加宽度以适应侧边栏布局 */
-  height: 600px; /* 设置固定高度或最大高度 */
-  max-height: 85vh;
-  display: flex;
-  flex-direction: column;
-  /* --- 新增：动画相关属性 --- */
-  transform: scale(0.95);
-  transition: transform 0.3s ease;
-  overflow: hidden; /* 防止圆角被子元素遮挡 */
+    font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
+    background-color: var(--main-bg);
+    color: var(--main-text);
+    border: 1px solid var(--main-border);
+    border-radius: 16px;
+    box-shadow: 0 5px 15px var(--main-shadow);
+    width: 90%;
+    max-width: 800px;
+    /* 增加宽度以适应侧边栏布局 */
+    height: 600px;
+    /* 设置固定高度或最大高度 */
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    /* --- 新增：动画相关属性 --- */
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+    overflow: hidden;
+    /* 防止圆角被子元素遮挡 */
 }
 
 /* 关键修复：移除上下文面板的特定尺寸覆盖，使其与主设置面板大小保持一致 (800x600) */
@@ -59,48 +69,58 @@
 }
 
 .settings-panel-header {
-  padding: 16px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid var(--main-border);
-  font-weight: bold;
-  font-size: 18px;
-  flex-shrink: 0; /* 防止头部被压缩 */
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--main-border);
+    font-weight: bold;
+    font-size: 18px;
+    flex-shrink: 0;
+    /* 防止头部被压缩 */
 }
 
 /* --- 新增：主体布局（侧边栏 + 内容区） --- */
 .settings-panel-body {
     display: flex;
     flex: 1;
-    overflow: hidden; /* 内部滚动 */
+    overflow: hidden;
+    /* 内部滚动 */
 }
 
 /* --- 新增：侧边栏样式 --- */
 .settings-sidebar {
     width: 200px;
     border-right: 1px solid var(--main-border);
-    background-color: color-mix(in srgb, var(--main-bg) 97%, var(--main-text)); /* 轻微调整背景色 */
+    background-color: color-mix(in srgb, var(--main-bg) 97%, var(--main-text));
+    /* 轻微调整背景色 */
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
-    position: relative; /* 为滑动高亮块提供定位上下文 */
-    box-sizing: border-box; /* 确保盒模型一致 */
+    position: relative;
+    /* 为滑动高亮块提供定位上下文 */
+    box-sizing: border-box;
+    /* 确保盒模型一致 */
 }
 
 /* --- 滑动高亮块样式 --- */
 .sidebar-highlight {
     position: absolute;
     left: 0;
-    top: 0; /* 关键修复：确保从容器顶部开始定位，配合 offsetTop 使用 */
+    top: 0;
+    /* 关键修复：确保从容器顶部开始定位，配合 offsetTop 使用 */
     width: 100%;
     /* 初始高度和位置将在 JS 中动态设置 */
     background-color: color-mix(in srgb, var(--main-primary) 10%, transparent);
     border-left: 3px solid var(--main-primary);
-    transition: transform 0.2s cubic-bezier(0.4, 0.0, 0.2, 1), height 0.2s ease; /* 加快一点速度 */
-    pointer-events: none; /* 确保不阻挡点击事件 */
-    z-index: 0; /* 位于文字下方 */
-    box-sizing: border-box; /* 确保边框计算在内 */
+    transition: transform 0.2s cubic-bezier(0.4, 0.0, 0.2, 1), height 0.2s ease;
+    /* 加快一点速度 */
+    pointer-events: none;
+    /* 确保不阻挡点击事件 */
+    z-index: 0;
+    /* 位于文字下方 */
+    box-sizing: border-box;
+    /* 确保边框计算在内 */
 }
 
 .settings-sidebar-item {
@@ -114,10 +134,14 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    border-left: 3px solid transparent; /* 占位，保持布局一致 */
-    position: relative; /* z-index 上下文 */
-    z-index: 1; /* 确保文字在滑块上方 */
-    background: transparent; /* 移除背景色，由滑块提供 */
+    border-left: 3px solid transparent;
+    /* 占位，保持布局一致 */
+    position: relative;
+    /* z-index 上下文 */
+    z-index: 1;
+    /* 确保文字在滑块上方 */
+    background: transparent;
+    /* 移除背景色，由滑块提供 */
     box-sizing: border-box;
 }
 
@@ -161,112 +185,130 @@
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(5px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* --- 现有样式调整 --- */
 
-.setting-item { margin-bottom: 12px; }
-.setting-item > label { display: block; margin-bottom: 8px; font-weight: 500; }
+.setting-item {
+    margin-bottom: 12px;
+}
+
+.setting-item>label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
 
 .setting-title-container {
-  font-weight: bold;
-  font-size: 16px;
-  margin-bottom: 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 /* 保持滚动条样式 */
 .settings-tab-content::-webkit-scrollbar {
-  width: 6px;
+    width: 6px;
 }
+
 .settings-tab-content::-webkit-scrollbar-track {
-  background: transparent;
+    background: transparent;
 }
+
 .settings-tab-content::-webkit-scrollbar-thumb {
-  background-color: var(--main-border);
-  border-radius: 3px;
+    background-color: var(--main-border);
+    border-radius: 3px;
 }
+
 .settings-tab-content::-webkit-scrollbar-thumb:hover {
-  background-color: var(--main-primary);
+    background-color: var(--main-primary);
 }
+
 .settings-tab-content::-webkit-scrollbar-button {
-  display: none;
+    display: none;
 }
 
 /* 底部按钮区域 - 放置在内容区底部 */
 .settings-panel-footer {
-  padding: 16px 20px;
-  border-top: 1px solid var(--main-border);
-  text-align: right;
-  background-color: var(--main-bg);
-  flex-shrink: 0;
+    padding: 16px 20px;
+    border-top: 1px solid var(--main-border);
+    text-align: right;
+    background-color: var(--main-bg);
+    flex-shrink: 0;
 }
 
 /* -- 复选框和输入框样式保持不变 -- */
 .checkbox-group {
-  display: block;
-  position: relative;
-  padding-left: 30px;
-  margin-top: 12px;
-  margin-left: 2px;
-  cursor: pointer;
-  user-select: none;
-  height: 20px;
-  line-height: 20px;
-  color: var(--main-text);
+    display: block;
+    position: relative;
+    padding-left: 30px;
+    margin-top: 12px;
+    margin-left: 2px;
+    cursor: pointer;
+    user-select: none;
+    height: 20px;
+    line-height: 20px;
+    color: var(--main-text);
 }
 
 .checkbox-group input {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-  height: 0;
-  width: 0;
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
 }
 
 .checkmark {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 18px;
-  width: 18px;
-  background-color: var(--main-textarea-bg);
-  border: 1px solid var(--main-textarea-border);
-  border-radius: 3px;
-  transition: all 0.2s;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 18px;
+    width: 18px;
+    background-color: var(--main-textarea-bg);
+    border: 1px solid var(--main-textarea-border);
+    border-radius: 3px;
+    transition: all 0.2s;
 }
 
-.checkbox-group:hover input ~ .checkmark {
-  border-color: var(--main-primary);
+.checkbox-group:hover input~.checkmark {
+    border-color: var(--main-primary);
 }
 
-.checkbox-group input:checked ~ .checkmark {
-  background-color: var(--main-primary);
-  border-color: var(--main-primary);
+.checkbox-group input:checked~.checkmark {
+    background-color: var(--main-primary);
+    border-color: var(--main-primary);
 }
 
 .checkmark:after {
-  content: "";
-  position: absolute;
-  display: none;
+    content: "";
+    position: absolute;
+    display: none;
 }
 
-.checkbox-group input:checked ~ .checkmark:after {
-  display: block;
+.checkbox-group input:checked~.checkmark:after {
+    display: block;
 }
 
 .checkbox-group .checkmark:after {
-  left: 6px;
-  top: 2px;
-  width: 5px;
-  height: 10px;
-  border: solid var(--main-bg);
-  border-width: 0 2px 2px 0;
-  transform: rotate(45deg);
+    left: 6px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid var(--main-bg);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
 }
 
 .composite-setting-container {
@@ -321,7 +363,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-left: 32px; /* 微调 */
+    margin-left: 32px;
+    /* 微调 */
 }
 
 /* --- Image Card Select Styling: Schematic Version --- */
@@ -342,7 +385,8 @@
     background-color: var(--main-bg);
     cursor: pointer;
     overflow: hidden;
-    transition: border-color 0.2s, box-shadow 0.2s; /* No transform */
+    transition: border-color 0.2s, box-shadow 0.2s;
+    /* No transform */
     padding: 0;
     position: relative;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
@@ -383,14 +427,15 @@
 }
 
 .schematic-card {
-    width: 100px; /* Adjust size to fit */
+    width: 100px;
+    /* Adjust size to fit */
     height: 60px;
     border-radius: 8px;
     display: flex;
     align-items: center;
     padding: 8px;
     gap: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: background-color 0.2s;
 }
 
@@ -422,45 +467,61 @@
 
 /* Light Option */
 .image-card-option[data-value="light"] .image-card-preview {
-    background-color: #f1f5f9; /* Slate 100 */
+    background-color: #f1f5f9;
+    /* Slate 100 */
 }
+
 .image-card-option[data-value="light"] .schematic-card {
     background-color: #ffffff;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
+
 .image-card-option[data-value="light"] .schematic-icon-box {
-    background-color: #e2e8f0; /* Slate 200 */
+    background-color: #e2e8f0;
+    /* Slate 200 */
 }
+
 .image-card-option[data-value="light"] .schematic-line {
-    background-color: #cbd5e1; /* Slate 300 */
+    background-color: #cbd5e1;
+    /* Slate 300 */
 }
 
 /* Dark Option */
 .image-card-option[data-value="dark"] .image-card-preview {
-    background-color: #0f172a; /* Slate 900 */
+    background-color: #0f172a;
+    /* Slate 900 */
 }
+
 .image-card-option[data-value="dark"] .schematic-card {
-    background-color: #1e293b; /* Slate 800 */
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    background-color: #1e293b;
+    /* Slate 800 */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
+
 .image-card-option[data-value="dark"] .schematic-icon-box {
-    background-color: #334155; /* Slate 700 */
+    background-color: #334155;
+    /* Slate 700 */
 }
+
 .image-card-option[data-value="dark"] .schematic-line {
-    background-color: #475569; /* Slate 600 */
+    background-color: #475569;
+    /* Slate 600 */
 }
 
 /* System Option */
 .image-card-option[data-value="system"] .image-card-preview {
     background-color: #1e293b;
 }
+
 .image-card-option[data-value="system"] .schematic-card {
     background-color: #334155;
     border: 1px solid #475569;
 }
+
 .image-card-option[data-value="system"] .schematic-icon-box {
     background-color: #475569;
 }
+
 .image-card-option[data-value="system"] .schematic-line {
     background-color: #64748b;
 }
@@ -530,16 +591,21 @@
 
 @media (prefers-color-scheme: light) {
     .image-card-option[data-value="system"] .image-card-preview {
-        background-color: #f1f5f9; /* Match Light */
+        background-color: #f1f5f9;
+        /* Match Light */
     }
+
     .image-card-option[data-value="system"] .schematic-card {
         background-color: #ffffff;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        border: none; /* Reset system border override */
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        border: none;
+        /* Reset system border override */
     }
+
     .image-card-option[data-value="system"] .schematic-icon-box {
         background-color: #e2e8f0;
     }
+
     .image-card-option[data-value="system"] .schematic-line {
         background-color: #cbd5e1;
     }
@@ -547,17 +613,80 @@
 
 @media (prefers-color-scheme: dark) {
     .image-card-option[data-value="system"] .image-card-preview {
-        background-color: #0f172a; /* Match Dark */
+        background-color: #0f172a;
+        /* Match Dark */
     }
+
     .image-card-option[data-value="system"] .schematic-card {
         background-color: #1e293b;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         border: none;
     }
+
     .image-card-option[data-value="system"] .schematic-icon-box {
         background-color: #334155;
     }
+
     .image-card-option[data-value="system"] .schematic-line {
         background-color: #475569;
     }
+}
+
+/* --- About Tab Styles --- */
+.about-tab-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    /* font-family inherited from modal */
+    padding-bottom: 40px;
+}
+
+.about-logo {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 18px;
+    color: var(--main-primary);
+}
+
+.about-logo svg {
+    width: 100%;
+    height: 100%;
+    fill: currentColor;
+}
+
+.about-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 6px 0;
+    color: var(--main-text);
+    font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
+}
+
+.about-description {
+    font-size: 14px;
+    color: var(--main-text-secondary);
+    margin: 0 0 24px 0;
+    max-width: 400px;
+    line-height: 1.5;
+}
+
+.about-version {
+    font-size: 16px;
+    color: var(--main-text-secondary);
+    margin: 0 0 16px 0;
+    font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
+}
+
+.about-actions {
+    display: flex;
+    gap: 16px;
+}
+
+/* Ensure button icon size matches text */
+#about-github-btn svg {
+    width: 20px;
+    height: 20px;
 }

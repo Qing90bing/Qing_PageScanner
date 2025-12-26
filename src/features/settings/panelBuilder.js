@@ -13,6 +13,10 @@ import { filterIcon } from '../../assets/icons/filterIcon.js';
 import { filterDefinitions, relatedSettingsDefinitions, selectSettingsDefinitions, outputSettingsDefinitions } from './config.js';
 import { t } from '../../shared/i18n/index.js';
 import { createIconTitle } from '../../shared/ui/components/iconTitle.js';
+import { infoIcon } from '../../assets/icons/infoIcon.js';
+import { githubIcon } from '../../assets/icons/githubIcon.js';
+import { translateIcon } from '../../assets/icons/icon.js';
+import { createButton } from '../../shared/ui/components/button.js';
 
 // 定义侧边栏标签配置（重新排序：相关设置、过滤规则、格式、语言、主题）
 const TABS = [
@@ -20,7 +24,8 @@ const TABS = [
     { id: 'tab-filters', label: 'settings.filterRules', icon: filterIcon },
     { id: 'tab-format', label: 'settings.format', icon: formatIcon },
     { id: 'tab-language', label: 'settings.language', icon: languageIcon },
-    { id: 'tab-theme', label: 'settings.theme', icon: themeIcon }
+    { id: 'tab-theme', label: 'settings.theme', icon: themeIcon },
+    { id: 'tab-about', label: 'settings.about', icon: infoIcon }
 ];
 
 /**
@@ -138,6 +143,11 @@ export function buildPanelDOM(settings) {
     }
     contentArea.appendChild(themeTab);
 
+    // 6. About Tab Content
+    const aboutTab = createTabContent('tab-about', false);
+    aboutTab.appendChild(createAboutTabContent());
+    contentArea.appendChild(aboutTab);
+
     // --- Footer ---
     const footer = document.createElement('div');
     footer.className = 'settings-panel-footer';
@@ -234,6 +244,66 @@ function createRelatedSettingDOM(setting, settings) {
         item.appendChild(checkboxElement);
     }
     return item;
+}
+
+
+/**
+ * 辅助函数：创建关于选项卡的内容
+ */
+function createAboutTabContent() {
+    const container = document.createElement('div');
+    container.className = 'about-tab-container';
+
+    // Logo
+    const logoContainer = document.createElement('div');
+    logoContainer.className = 'about-logo';
+    // Use GM_info.script.icon if available
+    const iconSrc = (typeof GM_info !== 'undefined' && GM_info.script && GM_info.script.icon) ? GM_info.script.icon : '';
+    if (iconSrc) {
+        const img = document.createElement('img');
+        img.src = iconSrc;
+        img.alt = 'Script Icon';
+        img.style.width = '100%';
+        img.style.height = '100%';
+        img.style.objectFit = 'contain';
+        logoContainer.appendChild(img);
+    } else {
+        logoContainer.innerHTML = translateIcon; // Fallback
+    }
+    container.appendChild(logoContainer);
+
+    // Title
+    const title = document.createElement('h2');
+    title.className = 'about-title';
+    // Use localized script name
+    title.textContent = t('script.name');
+    container.appendChild(title);
+
+    // Version
+    const version = document.createElement('p');
+    version.className = 'about-version';
+    // 尝试获取版本号
+    const verNum = (typeof GM_info !== 'undefined' && GM_info.script) ? GM_info.script.version : '1.0.0';
+    version.textContent = `v${verNum}`;
+    container.appendChild(version);
+
+    // GitHub Button
+    const btnContainer = document.createElement('div');
+    btnContainer.className = 'about-actions';
+
+    const githubBtn = createButton({
+        id: 'about-github-btn',
+        textKey: 'settings.aboutPanel.projectUrl',
+        icon: githubIcon,
+        onClick: () => {
+            // 使用 window.open 打开新标签页
+            window.open('https://github.com/Qing90bing/Qing_PageScanner', '_blank');
+        }
+    });
+    btnContainer.appendChild(githubBtn);
+    container.appendChild(btnContainer);
+
+    return container;
 }
 
 

@@ -2,6 +2,9 @@
   "_meta": {
     "name": "简体中文"
   },
+  "script": {
+    "name": "网页文本提取工具"
+  },
   "common": {
     "scan": "扫描",
     "stop": "停止",
@@ -102,6 +105,12 @@
       "light": "浅色",
       "dark": "深色",
       "system": "跟随系统"
+    },
+    "about": "关于",
+    "aboutPanel": {
+      "title": "关于",
+      "version": "版本",
+      "projectUrl": "GitHub"
     }
   },
   "scan": {
