@@ -6,7 +6,7 @@ import { CustomSelect } from '../../shared/ui/components/customSelect.js';
 import { ImageCardSelect } from '../../shared/ui/components/imageCardSelect.js'; // Import new component
 import { uiContainer } from '../../shared/ui/uiContainer.js';
 import { buildPanelDOM, buildContextualPanelDOM } from './panelBuilder.js';
-import { filterDefinitions, relatedSettingsDefinitions, selectSettingsDefinitions } from './config.js';
+import { filterDefinitions, relatedSettingsDefinitions, selectSettingsDefinitions, outputSettingsDefinitions } from './config.js';
 import { t } from '../../shared/i18n/index.js';
 import { on } from '../../shared/utils/core/eventBus.js';
 import { settingsIcon } from '../../assets/icons/settingsIcon.js';
@@ -84,12 +84,22 @@ function showSettingsPanel(currentSettings, onSave) {
             }));
 
             if (definition.type === 'image-card-select') {
-                selectComponents[definition.key] = new ImageCardSelect(selectWrapper, options, currentSettings[definition.key]);
+                // 对于输出格式，传入 includeArrayBrackets 设置
+                const includeBrackets = definition.key === 'outputFormat' ? currentSettings.includeArrayBrackets : true;
+                selectComponents[definition.key] = new ImageCardSelect(selectWrapper, options, currentSettings[definition.key], includeBrackets);
             } else {
                 selectComponents[definition.key] = new CustomSelect(selectWrapper, options, currentSettings[definition.key]);
             }
         }
     });
+
+    // 为首尾符号开关勾选框添加 change 事件监听，动态更新预览卡片
+    const bracketsCheckbox = settingsPanel.querySelector('#include-array-brackets');
+    if (bracketsCheckbox && selectComponents.outputFormat) {
+        bracketsCheckbox.addEventListener('change', () => {
+            selectComponents.outputFormat.updateBracketsPreview(bracketsCheckbox.checked);
+        });
+    }
 
     const relatedTitleContainer = settingsPanel.querySelector('#related-setting-title-container');
     if (relatedTitleContainer) {
@@ -267,6 +277,14 @@ function handleSave(onSave) {
                 }
                 newSettings[setting.linkedNumeric.key] = value;
             }
+        }
+    });
+
+    // 4. 收集输出设置（首尾符号开关）
+    outputSettingsDefinitions.forEach(setting => {
+        const checkbox = settingsPanel.querySelector(`#${setting.id}`);
+        if (checkbox) {
+            newSettings[setting.key] = checkbox.checked;
         }
     });
 

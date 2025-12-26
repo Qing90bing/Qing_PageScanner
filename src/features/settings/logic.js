@@ -29,6 +29,8 @@ const defaultSettings = {
   language: 'auto',
   // 输出格式设置, 'array' 或 'object'
   outputFormat: 'array',
+  // 是否在输出中包含首尾符号（如数组的 [] 或对象的 {}）
+  includeArrayBrackets: true,
   // 主题设置, 可选值: 'light', 'dark', 'system'
   theme: 'system',
   // 是否显示悬浮按钮

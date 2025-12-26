@@ -22,7 +22,7 @@ import { extractAndProcessText, filterAndNormalizeTexts } from '../../shared/uti
  */
 export const performQuickScan = () => {
     return new Promise(async (resolve, reject) => {
-        const { filterRules, enableDebugLogging, outputFormat } = loadSettings();
+        const { filterRules, enableDebugLogging, outputFormat, includeArrayBrackets } = loadSettings();
 
         // 并行执行文本提取和CSP检查
         const [texts, workerAllowed] = await Promise.all([
@@ -46,7 +46,7 @@ export const performQuickScan = () => {
                     logFiltered
                 );
 
-                const formattedText = formatTextsForTranslation(filteredTexts, outputFormat);
+                const formattedText = formatTextsForTranslation(filteredTexts, outputFormat, { includeArrayBrackets });
                 const result = {
                     formattedText,
                     count: filteredTexts.length,
@@ -94,7 +94,8 @@ export const performQuickScan = () => {
                     texts,
                     filterRules,
                     enableDebugLogging,
-                    outputFormat, // Pass format to worker
+                    outputFormat,
+                    includeArrayBrackets,
                     translations: {
                         workerLogPrefix: t('log.quickScan.worker.logPrefix'),
                         textFiltered: t('log.textProcessor.filtered'),

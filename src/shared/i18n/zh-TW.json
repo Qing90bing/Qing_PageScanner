@@ -38,6 +38,9 @@
       "object": "鍵值對物件",
       "csv": "CSV 字串"
     },
+    "output": {
+      "include_brackets": "包含首尾符號"
+    },
     "relatedSettings": "相關設定",
     "filterRules": "內容過濾規則",
     "filters": {
@@ -207,6 +210,9 @@
     "advanced": {
       "title": "進階設定說明",
       "enable_debug_logging": "啟用後，腳本會將詳細的內部狀態、執行步驟和錯誤訊息輸出到瀏覽器的<strong>開發者工具控制台</strong>（通常用F12開啟）。這主要供開發者或需要提交詳細錯誤報告的使用者使用。"
+    },
+    "output": {
+      "include_brackets": "控制輸出文字是否包含格式的首尾符號（如陣列格式的 <code>[</code> 和 <code>]</code>，或物件格式的 <code>{</code> 和 <code>}</code>）。<br><br><strong>開啟時:</strong> 包含完整的格式結構。<br><strong>關閉時:</strong> 僅輸出內容行，不含首尾符號。"
     }
   },
   "log": {

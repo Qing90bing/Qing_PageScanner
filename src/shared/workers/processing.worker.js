@@ -18,7 +18,8 @@ let sessionTexts = new Set();
 let filterRules = {};
 let translations = {};
 let enableDebugLogging = false;
-let outputFormat = 'array'; // 新增：输出格式状态
+let outputFormat = 'array'; // 输出格式状态
+let includeArrayBrackets = true; // 是否包含首尾符号
 
 // --- 辅助函数 ---
 
@@ -96,6 +97,9 @@ self.onmessage = (event) => {
     if (payload && typeof payload.outputFormat !== 'undefined') {
         outputFormat = payload.outputFormat;
     }
+    if (payload && typeof payload.includeArrayBrackets !== 'undefined') {
+        includeArrayBrackets = payload.includeArrayBrackets;
+    }
 
     switch (type) {
         /**
@@ -110,7 +114,7 @@ self.onmessage = (event) => {
             }
 
             const textsArray = Array.from(uniqueTexts);
-            const formattedText = formatTextsForTranslation(textsArray, outputFormat);
+            const formattedText = formatTextsForTranslation(textsArray, outputFormat, { includeArrayBrackets });
 
             log(t('scanComplete', { count: textsArray.length }));
             self.postMessage({
@@ -200,7 +204,7 @@ self.onmessage = (event) => {
          */
         case 'session-get-summary': {
             const sessionTextsArray = Array.from(sessionTexts);
-            const formattedText = formatTextsForTranslation(sessionTextsArray, outputFormat);
+            const formattedText = formatTextsForTranslation(sessionTextsArray, outputFormat, { includeArrayBrackets });
             self.postMessage({ type: 'summaryReady', payload: formattedText });
             break;
         }

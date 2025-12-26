@@ -36,6 +36,25 @@ on('clearSessionScan', () => {
     clearSessionData();
 });
 
+// 监听设置保存事件，同步更新 Worker 中的输出格式设置
+on('settingsSaved', () => {
+    if (!isRecording) return; // 如果没有正在运行的扫描，则无需处理
+
+    const settings = loadSettings();
+    if (worker) {
+        // 向 Worker 发送更新消息，Worker 会在接收任何消息时更新这些设置
+        worker.postMessage({
+            type: 'update-settings',
+            payload: {
+                outputFormat: settings.outputFormat,
+                includeArrayBrackets: settings.includeArrayBrackets,
+            }
+        });
+        log(t('log.settings.changed', { key: 'outputFormat', oldValue: '', newValue: settings.outputFormat }));
+    }
+    // 注意：备选模式(fallback)不需要更新，因为它在每次请求 summary 时会重新读取设置
+});
+
 // --- MutationObserver 回调 ---
 const handleMutations = (mutations) => {
     if (!isRecording) return; // 防止停止后处理残留的 mutation
@@ -132,7 +151,7 @@ export const start = async (onUpdate, resumedData = null) => {
             sessionTextsMirror.add(text);
         });
     }
-    const { filterRules, enableDebugLogging, outputFormat } = settings;
+    const { filterRules, enableDebugLogging, outputFormat, includeArrayBrackets } = settings;
 
     // --- 4. 定义后备模式激活函数 ---
     const activateFallbackMode = () => {
@@ -187,7 +206,8 @@ export const start = async (onUpdate, resumedData = null) => {
                 payload: {
                     filterRules,
                     enableDebugLogging,
-                    outputFormat, // Pass format setting
+                    outputFormat,
+                    includeArrayBrackets,
                     translations: {
                         workerLogPrefix: t('log.sessionScan.worker.logPrefix'),
                         textFiltered: t('log.textProcessor.filtered'),

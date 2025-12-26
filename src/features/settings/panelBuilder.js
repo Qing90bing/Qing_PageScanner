@@ -10,7 +10,7 @@ import languageIcon from '../../assets/icons/languageIcon.js';
 import { formatIcon } from '../../assets/icons/formatIcon.js'; // Import
 import { relatedSettingsIcon } from '../../assets/icons/relatedSettingsIcon.js';
 import { filterIcon } from '../../assets/icons/filterIcon.js';
-import { filterDefinitions, relatedSettingsDefinitions, selectSettingsDefinitions } from './config.js';
+import { filterDefinitions, relatedSettingsDefinitions, selectSettingsDefinitions, outputSettingsDefinitions } from './config.js';
 import { t } from '../../shared/i18n/index.js';
 import { createIconTitle } from '../../shared/ui/components/iconTitle.js';
 
@@ -108,6 +108,17 @@ export function buildPanelDOM(settings) {
     if (formatDef) {
         formatTab.appendChild(createSelectSettingDOM(formatDef));
     }
+    // 添加输出设置勾选框（首尾符号开关）
+    outputSettingsDefinitions.forEach(setting => {
+        const checkboxElement = createCheckbox(
+            setting.id,
+            t(setting.label),
+            settings.includeArrayBrackets,
+            setting.tooltip
+        );
+        checkboxElement.classList.add('setting-item');
+        formatTab.appendChild(checkboxElement);
+    });
     contentArea.appendChild(formatTab);
 
     // 4. Language Tab Content

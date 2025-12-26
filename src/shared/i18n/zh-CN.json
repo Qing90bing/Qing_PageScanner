@@ -38,6 +38,9 @@
       "object": "键值对对象",
       "csv": "CSV 字符串"
     },
+    "output": {
+      "include_brackets": "包含首尾符号"
+    },
     "relatedSettings": "相关设置",
     "filterRules": "内容过滤规则",
     "filters": {
@@ -209,6 +212,9 @@
     "advanced": {
       "title": "高级设置说明",
       "enable_debug_logging": "启用后，脚本会将详细的内部状态、执行步骤和错误信息输出到浏览器的<strong>开发者工具控制台</strong>（通常用F12打开）。这主要供开发者或需要提交详细错误报告的用户使用。"
+    },
+    "output": {
+      "include_brackets": "控制输出文本是否包含格式的首尾符号（如数组格式的 <code>[</code> 和 <code>]</code>，或对象格式的 <code>{</code> 和 <code>}</code>）。<br><br><strong>开启时:</strong> 包含完整的格式结构。<br><strong>关闭时:</strong> 仅输出内容行，不含首尾符号。"
     }
   },
   "log": {

@@ -38,6 +38,9 @@
       "object": "Key-Value Object",
       "csv": "CSV String"
     },
+    "output": {
+      "include_brackets": "Include Wrapper Symbols"
+    },
     "relatedSettings": "Related Settings",
     "filterRules": "Content Filtering Rules",
     "filters": {
@@ -207,6 +210,9 @@
     "advanced": {
       "title": "Advanced Settings Explanation",
       "enable_debug_logging": "When enabled, the script will output detailed internal status, execution steps, and error messages to the browser's <strong>Developer Tools Console</strong> (usually opened with F12). This is primarily for developers or users who need to submit detailed bug reports."
+    },
+    "output": {
+      "include_brackets": "Controls whether the output text includes the format's wrapper symbols (e.g., <code>[</code> and <code>]</code> for array format, or <code>{</code> and <code>}</code> for object format).<br><br><strong>Enabled:</strong> Includes the complete format structure.<br><strong>Disabled:</strong> Outputs only the content lines, without wrapper symbols."
     }
   },
   "log": {

@@ -22,8 +22,8 @@ export function handleSummaryClick() {
     if (isElementScanActive()) {
         // 如果是，则显示暂存的文本
         const stagedTexts = getStagedTexts();
-        const { outputFormat } = loadSettings();
-        const formattedText = formatTextsForTranslation(Array.from(stagedTexts), outputFormat);
+        const { outputFormat, includeArrayBrackets } = loadSettings();
+        const formattedText = formatTextsForTranslation(Array.from(stagedTexts), outputFormat, { includeArrayBrackets });
 
         updateScanCount(stagedTexts.size, 'element-scan');
 

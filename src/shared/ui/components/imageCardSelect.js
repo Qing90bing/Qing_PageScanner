@@ -13,10 +13,11 @@ export class ImageCardSelect {
      * @param {Array<Object>} options - 选项数组，每个对象包含 { value, label, icon, previewType }。
      * @param {string} initialValue - 初始选中的值。
      */
-    constructor(parentElement, options, initialValue) {
+    constructor(parentElement, options, initialValue, includeBrackets = true) {
         this.parentElement = parentElement;
         this.options = options;
         this.currentValue = initialValue;
+        this.includeBrackets = includeBrackets;
         this.render();
         this.bindEvents();
     }
@@ -42,11 +43,11 @@ export class ImageCardSelect {
             preview.className = 'image-card-preview';
 
             if (option.previewType === 'code-array') {
-                preview.appendChild(this.createCodePreview('array'));
+                preview.appendChild(this.createCodePreview('array', this.includeBrackets));
             } else if (option.previewType === 'code-object') {
-                preview.appendChild(this.createCodePreview('object'));
+                preview.appendChild(this.createCodePreview('object', this.includeBrackets));
             } else if (option.previewType === 'code-csv') {
-                preview.appendChild(this.createCodePreview('csv'));
+                preview.appendChild(this.createCodePreview('csv', this.includeBrackets));
             } else {
                 // Default Theme Schematic
                 preview.appendChild(this.createThemeSchematic());
@@ -123,31 +124,30 @@ export class ImageCardSelect {
      * @description 创建代码格式预览示意图 (文本模式)。
      * @param {string} type - 'array', 'object', or 'csv'
      */
-    createCodePreview(type) {
+    createCodePreview(type, includeBrackets = true) {
         const container = document.createElement('div');
         container.className = `code-preview ${type}`;
+        // 根据状态添加 class
+        if (!includeBrackets) {
+            container.classList.add('hide-brackets');
+        }
 
         const codeBlock = document.createElement('div');
         codeBlock.className = 'code-text-preview';
 
+        // 用 wrapper-bracket 和 wrapper-indent class 包裹首尾符号和缩进，便于 CSS 控制
         if (type === 'array') {
-            // Updated to be more detailed as requested
             codeBlock.innerHTML = createTrustedHTML(`
-                <span class="punct">[</span><br>
-                &nbsp;&nbsp;<span class="punct">[</span><span class="str">"Hello"</span><span class="punct">,</span> <span class="str">""</span><span class="punct">],</span><br>
-                &nbsp;&nbsp;<span class="punct">[</span><span class="str">"World"</span><span class="punct">,</span> <span class="str">""</span><span class="punct">]</span><br>
-                <span class="punct">]</span>
+                <span class="wrapper-bracket"><span class="punct">[</span><br></span><span class="wrapper-indent">&nbsp;&nbsp;</span><span class="punct">[</span><span class="str">"Hello"</span><span class="punct">,</span> <span class="str">""</span><span class="punct">],</span><br>
+                <span class="wrapper-indent">&nbsp;&nbsp;</span><span class="punct">[</span><span class="str">"World"</span><span class="punct">,</span> <span class="str">""</span><span class="punct">]</span><span class="wrapper-bracket"><br><span class="punct">]</span></span>
             `);
         } else if (type === 'object') {
-            // { "Hello": "", "World": "" }
             codeBlock.innerHTML = createTrustedHTML(`
-                <span class="punct">{</span><br>
-                &nbsp;&nbsp;<span class="str">"Hello"</span><span class="punct">:</span> <span class="str">""</span><span class="punct">,</span><br>
-                &nbsp;&nbsp;<span class="str">"World"</span><span class="punct">:</span> <span class="str">""</span><br>
-                <span class="punct">}</span>
+                <span class="wrapper-bracket"><span class="punct">{</span><br></span><span class="wrapper-indent">&nbsp;&nbsp;</span><span class="str">"Hello"</span><span class="punct">:</span> <span class="str">""</span><span class="punct">,</span><br>
+                <span class="wrapper-indent">&nbsp;&nbsp;</span><span class="str">"World"</span><span class="punct">:</span> <span class="str">""</span><span class="wrapper-bracket"><br><span class="punct">}</span></span>
             `);
         } else if (type === 'csv') {
-            // "Hello",""
+            // CSV 格式不受 includeBrackets 影响
             codeBlock.innerHTML = createTrustedHTML(`
                 <span class="str">"Hello"</span><span class="punct">,</span><span class="str">""</span><br>
                 <span class="str">"World"</span><span class="punct">,</span><span class="str">""</span>
@@ -199,6 +199,32 @@ export class ImageCardSelect {
      */
     getValue() {
         return this.currentValue;
+    }
+
+    /**
+     * @public
+     * @description 更新首尾符号预览状态，并重新渲染代码预览卡片。
+     * @param {boolean} includeBrackets - 是否包含首尾符号。
+     */
+    updateBracketsPreview(includeBrackets) {
+        if (this.includeBrackets === includeBrackets) return;
+        this.includeBrackets = includeBrackets;
+
+        // 找到所有代码预览卡片并通过 class 切换来控制显示/隐藏
+        const cards = this.container.querySelectorAll('.image-card-option');
+        cards.forEach((card, index) => {
+            const option = this.options[index];
+            if (option.previewType && option.previewType.startsWith('code-')) {
+                const codePreview = card.querySelector('.code-preview');
+                if (codePreview) {
+                    if (includeBrackets) {
+                        codePreview.classList.remove('hide-brackets');
+                    } else {
+                        codePreview.classList.add('hide-brackets');
+                    }
+                }
+            }
+        });
     }
 
     /**

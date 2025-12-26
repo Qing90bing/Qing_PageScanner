@@ -4,26 +4,47 @@
 .code-preview {
   display: flex;
   align-items: center;
-  justify-content: center; /* Center the code block horizontally */
+  justify-content: center;
+  /* Center the code block horizontally */
   height: 100%;
   width: 100%;
-  padding: 10px; /* Add some padding around the code block */
+  padding: 10px;
+  /* Add some padding around the code block */
+}
+
+/* 首尾符号包裹器 - 淡入淡出效果 */
+.code-preview .wrapper-bracket,
+.code-preview .wrapper-indent {
+  display: inline;
+  opacity: 1;
+  transition: opacity 0.2s ease-in-out;
+}
+
+/* 隐藏首尾符号时的样式 - 元素保持占位，只是透明 */
+.code-preview.hide-brackets .wrapper-bracket,
+.code-preview.hide-brackets .wrapper-indent {
+  opacity: 0;
 }
 
 /* Code Text Container */
 .code-text-preview {
   font-family: 'Menlo', 'Monaco', 'Consolas', 'Courier New', monospace;
-  font-size: 14px; /* Increased to 14px as requested */
+  font-size: 14px;
+  /* Increased to 14px as requested */
   line-height: 1.4;
   color: var(--main-text-secondary);
-  text-align: left; /* Align text to left inside the centered block */
-  white-space: nowrap; /* Prevent wrapping */
-  overflow: hidden; /* Hide overflow */
+  text-align: left;
+  /* Align text to left inside the centered block */
+  white-space: nowrap;
+  /* Prevent wrapping */
+  overflow: hidden;
+  /* Hide overflow */
 }
 
 /* Selected State */
 .image-card-option.selected .code-text-preview {
-  color: var(--main-text); /* Highlight text when selected */
+  color: var(--main-text);
+  /* Highlight text when selected */
 }
 
 /* Syntax Highlighting (Simulated) */
@@ -33,10 +54,11 @@
 }
 
 .code-text-preview .str {
-  color: var(--main-primary); /* Use primary color for strings */
+  color: var(--main-primary);
+  /* Use primary color for strings */
 }
 
 /* Selected State overrides */
 .image-card-option.selected .code-text-preview .punct {
-    color: var(--main-text);
+  color: var(--main-text);
 }

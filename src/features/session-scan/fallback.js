@@ -64,8 +64,8 @@ export function getCountInFallback() {
  */
 export function getSummaryInFallback() {
     const textsArray = Array.from(sessionTexts);
-    const { outputFormat } = loadSettings();
-    return formatTextsForTranslation(textsArray, outputFormat);
+    const { outputFormat, includeArrayBrackets } = loadSettings();
+    return formatTextsForTranslation(textsArray, outputFormat, { includeArrayBrackets });
 }
 
 /**
