@@ -1,6 +1,6 @@
 // src/shared/ui/components/notification.js
 
-import { createSVGFromString } from '../../utils/dom.js';
+import { createSVGFromString } from '../../utils/dom/dom.js';
 import { appConfig } from '../../../features/settings/config.js';
 import { infoIcon } from '../../../assets/icons/infoIcon.js';
 import { successIcon } from '../../../assets/icons/successIcon.js';

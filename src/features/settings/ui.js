@@ -1,14 +1,14 @@
 // src/features/settings/ui.js
 
-import { log } from '../../shared/utils/logger.js';
-import { createIconTitle } from '../../shared/ui/iconTitle.js';
+import { log } from '../../shared/utils/core/logger.js';
+import { createIconTitle } from '../../shared/ui/components/iconTitle.js';
 import { CustomSelect } from '../../shared/ui/components/customSelect.js';
 import { ImageCardSelect } from '../../shared/ui/components/imageCardSelect.js'; // Import new component
 import { uiContainer } from '../../shared/ui/uiContainer.js';
 import { buildPanelDOM, buildContextualPanelDOM } from './panelBuilder.js';
 import { filterDefinitions, relatedSettingsDefinitions, selectSettingsDefinitions } from './config.js';
 import { t } from '../../shared/i18n/index.js';
-import { on } from '../../shared/utils/eventBus.js';
+import { on } from '../../shared/utils/core/eventBus.js';
 import { settingsIcon } from '../../assets/icons/settingsIcon.js';
 import { filterIcon } from '../../assets/icons/filterIcon.js';
 import { saveIcon } from '../../assets/icons/saveIcon.js';
@@ -32,12 +32,12 @@ let unsubscribeTooltipHide = null;
  * @description 监听全局键盘事件，当按下 "Escape" 键时关闭设置面板。
  */
 const handleKeyDown = (event) => {
-  if (isTooltipVisible) return; // 如果提示窗口已打开，则不执行任何操作
+    if (isTooltipVisible) return; // 如果提示窗口已打开，则不执行任何操作
 
-  if (event.key === 'Escape') {
-    event.stopPropagation();
-    hideSettingsPanel();
-  }
+    if (event.key === 'Escape') {
+        event.stopPropagation();
+        hideSettingsPanel();
+    }
 };
 
 /**
@@ -72,7 +72,7 @@ function showSettingsPanel(currentSettings, onSave) {
     selectSettingsDefinitions.forEach(definition => {
         const titleContainer = settingsPanel.querySelector(`#${definition.id}-title-container`);
         if (titleContainer) {
-             titleContainer.appendChild(createIconTitle(definition.icon, t(definition.label)));
+            titleContainer.appendChild(createIconTitle(definition.icon, t(definition.label)));
         }
 
         const selectWrapper = settingsPanel.querySelector(`#${definition.id}-wrapper`);
@@ -125,7 +125,7 @@ function showSettingsPanel(currentSettings, onSave) {
      */
     const moveHighlight = (targetItem) => {
         if (!targetItem || !highlight) return;
-        
+
         // 计算目标元素相对于父容器的位置
         const offsetTop = targetItem.offsetTop;
         const offsetHeight = targetItem.offsetHeight;
@@ -146,7 +146,7 @@ function showSettingsPanel(currentSettings, onSave) {
     sidebarItems.forEach(item => {
         item.addEventListener('click', () => {
             const targetId = item.dataset.target;
-            
+
             // 更新侧边栏激活状态
             sidebarItems.forEach(i => i.classList.remove('active'));
             item.classList.add('active');

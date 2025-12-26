@@ -1,12 +1,12 @@
-// src/shared/utils/textProcessor.js
+// src/shared/utils/text/textProcessor.js
 
 /**
  * @module core/processor
  * @description 包含了脚本的核心文本处理功能，负责从页面 DOM 中提取、过滤和格式化文本。
  */
 
-import { appConfig } from '../../features/settings/config.js';
-// 这里不再引用应该由 worker 处理的 filterLogic，保持纯净
+import { appConfig } from '../../../features/settings/config.js';
+import { shouldFilter } from './filterLogic.js';
 
 // --- 性能优化 ---
 // 将忽略选择器的拼接移到函数外部。
@@ -47,7 +47,7 @@ const traverseDOMAndExtract = (node, textCallback) => {
                 textCallback('\n');
                 return; // <br> 是一个空元素，没有子节点，直接返回
             }
-            
+
             // 1. 首先提取当前元素自身的属性文本
             const attributesToExtract = appConfig.scanner.attributesToExtract;
             attributesToExtract.forEach(attr => {
@@ -81,7 +81,7 @@ const traverseDOMAndExtract = (node, textCallback) => {
             // 元素节点的处理并没有在这里结束，下面还会继续遍历其子节点
             break;
         }
-        
+
         // 对于文本节点
         case Node.TEXT_NODE: {
             // 再次检查父元素，确保不提取 <script> 或 <style> 标签内的文本
@@ -102,13 +102,13 @@ const traverseDOMAndExtract = (node, textCallback) => {
     for (const child of node.childNodes) {
         traverseDOMAndExtract(child, textCallback);
     }
-    
+
     // 3. 如果存在 Shadow DOM（无论是开放还是封闭模式），都递归遍历它
     const shadowRoot = node.shadowRoot || node._shadowRoot;
     if (node.nodeType === Node.ELEMENT_NODE && shadowRoot) {
         traverseDOMAndExtract(shadowRoot, textCallback);
     }
-    
+
     // 4. 在处理完一个元素的所有子节点（和 Shadow DOM）之后，检查它是否是块级元素。
     // 如果是，我们就在其内容后面追加一个换行符，以模拟其在布局中的换行效果。
     if (node.nodeType === Node.ELEMENT_NODE && blockElements.has(node.tagName)) {
@@ -136,7 +136,7 @@ export const extractAndProcessText = () => {
         // 1. 我们将 \r\n (Windows) 和 \r (旧 Mac) 统一为 \n (Unix)。
         // 2. 我们不使用 `+` 量词，因此不会将多个 `\n` 合并为一个。
         let text = normalizedText.replace(/\r\n|\r/g, '\n');
-        
+
         // 我们仍然需要移除纯粹由不可见空格组成的字符串，但要保留包含换行符的字符串。
         if (text.trim() === '' && !text.includes('\n')) {
             return;
@@ -170,16 +170,9 @@ export const extractAndProcessText = () => {
 export const filterAndNormalizeTexts = (texts, filterRules, enableDebugLogging, logFiltered) => {
     // 这里为了避免循环依赖，我们动态导入或者要求调用者传入 shouldFilter 逻辑。
     // 但鉴于这是微创修改，我们假设 shouldFilter 已经在 processor-worker 中正确处理。
-    // 注意：此文件目前在项目中主要负责“提取”。过滤逻辑实际上主要发生在 processing-worker.js 或 fallback.js 中。
+    // 注意：此文件目前在项目中主要负责“提取”。过滤逻辑实际上主要发生在 workers/processing.worker.js 或 fallback.js 中。
     // 为了保持此文件作为“提取器”的单一职责，我们保持原样，但在 filterAndNormalizeTexts 中
     // 实际需要依赖 filterLogic.js。
-    
-    // 既然本次优化重点是 DOM 遍历性能，这里我们保留原有的逻辑结构，
-    // 只修正了 traverseDOMAndExtract 中的性能问题。
-    
-    // 为了让代码完整运行，这里重新引入 shouldFilter (如果之前被移除了，需要加回来)
-    // 假设 filterLogic.js 就在旁边
-    const { shouldFilter } = require('./filterLogic.js'); // 或者是 import，取决于你的构建环境
 
     const uniqueTexts = new Set();
 
@@ -210,10 +203,6 @@ export const filterAndNormalizeTexts = (texts, filterRules, enableDebugLogging, 
 
     return Array.from(uniqueTexts);
 };
-// (注：上面的 import 是为了展示逻辑，实际上在你的 esbuild 环境中，之前的 import { shouldFilter } 写法是正确的，这里保持你原文件的引用方式即可)
-
-// 恢复原文件的正确引用方式：
-import { shouldFilter } from './filterLogic.js';
 
 /**
  * @public

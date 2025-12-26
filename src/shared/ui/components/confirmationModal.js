@@ -1,5 +1,5 @@
 // src/shared/ui/confirmationModal.js
-import { createSVGFromString } from '../../utils/dom.js';
+import { createSVGFromString } from '../../utils/dom/dom.js';
 import { uiContainer } from '../uiContainer.js'; // 直接导入Shadow DOM根
 import { createButton } from './button.js';
 import { closeIcon } from '../../../assets/icons/closeIcon.js';
@@ -75,7 +75,7 @@ export function showConfirmationModal(text, iconSVG) {
 
     // 延迟添加 is-visible 类以触发CSS动画
     setTimeout(() => {
-        modalContainer.classList.add('is-visible');
+      modalContainer.classList.add('is-visible');
     }, 50);
   });
 }
@@ -88,29 +88,29 @@ function handleConfirmation(confirmed) {
   if (modalContainer) {
     modalContainer.classList.remove('is-visible');
     setTimeout(() => {
-        if (confirmButton) {
-            confirmButton.destroy();
-            confirmButton = null;
-        }
-        if (cancelButton) {
-            cancelButton.destroy();
-            cancelButton = null;
-        }
+      if (confirmButton) {
+        confirmButton.destroy();
+        confirmButton = null;
+      }
+      if (cancelButton) {
+        cancelButton.destroy();
+        cancelButton = null;
+      }
 
-        // 清理事件监听器
-        if (controller) {
-            controller.abort();
-            controller = null;
-        }
+      // 清理事件监听器
+      if (controller) {
+        controller.abort();
+        controller = null;
+      }
 
-        // 清理模态框DOM
-        modalContainer.remove();
-        modalContainer = null;
+      // 清理模态框DOM
+      modalContainer.remove();
+      modalContainer = null;
 
-        if (resolvePromise) {
-            resolvePromise(confirmed);
-            resolvePromise = null;
-        }
+      if (resolvePromise) {
+        resolvePromise(confirmed);
+        resolvePromise = null;
+      }
     }, 300); // 动画时长
   }
 }

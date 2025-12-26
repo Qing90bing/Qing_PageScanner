@@ -1,8 +1,8 @@
 // src/shared/ui/checkbox.js
-import { createSVGFromString } from '../utils/dom.js';
-import { infoIcon } from '../../assets/icons/infoIcon.js';
-import { infoTooltip } from './components/infoTooltip.js';
-import { t } from '../i18n/index.js';
+import { createSVGFromString } from '../../utils/dom/dom.js';
+import { infoIcon } from '../../../assets/icons/infoIcon.js';
+import { infoTooltip } from './infoTooltip.js';
+import { t } from '../../i18n/index.js';
 
 /**
  * @public

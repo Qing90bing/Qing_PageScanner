@@ -6,9 +6,9 @@
  * 这是项目中所有文本过滤规则的唯一真实来源。
  */
 
-import { t } from '../i18n/index.js';
+import { t } from '../../i18n/index.js';
 import IGNORED_TERMS_SET from './ignoredTerms.js';
-import { filterDefinitions } from '../../features/settings/config.js';
+import { filterDefinitions } from '../../../features/settings/config.js';
 
 // 将配置转换为更易于查找的映射
 const filterConfigMap = new Map(filterDefinitions.map(def => [def.key, def.label]));

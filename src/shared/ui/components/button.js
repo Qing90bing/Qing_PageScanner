@@ -1,10 +1,10 @@
 // src/shared/ui/components/button.js
 
-import { createIconTitle } from '../iconTitle.js';
+import { createIconTitle } from './iconTitle.js';
 import { t } from '../../i18n/index.js';
 import { showTooltip, hideTooltip } from './tooltip.js';
-import { createSVGFromString } from '../../utils/dom.js';
-import { createTrustedHTML } from '../../utils/trustedTypes.js';
+import { createSVGFromString } from '../../utils/dom/dom.js';
+import { createTrustedHTML } from '../../utils/dom/trustedTypes.js';
 
 /**
  * 创建一个标准化的、可复用的按钮组件。

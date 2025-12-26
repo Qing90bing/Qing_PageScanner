@@ -1,7 +1,7 @@
 // src/features/quick-scan/ui.js
 
-import { openModal } from '../../shared/ui/mainModal.js';
-import { log } from '../../shared/utils/logger.js';
+import { openModal } from '../../shared/ui/mainModal/index.js';
+import { log } from '../../shared/utils/core/logger.js';
 import { t } from '../../shared/i18n/index.js';
 
 /**

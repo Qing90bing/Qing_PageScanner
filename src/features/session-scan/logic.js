@@ -5,14 +5,14 @@
  * @description 负责管理一个持续的文本提取“会话”，将繁重任务委托给 Web Worker。
  */
 
-import { extractAndProcessText } from '../../shared/utils/textProcessor.js';
+import { extractAndProcessText } from '../../shared/utils/text/textProcessor.js';
 import { loadSettings } from '../settings/logic.js';
 import { appConfig } from '../settings/config.js';
-import { log } from '../../shared/utils/logger.js';
-import { isWorkerAllowed } from '../../shared/utils/csp-checker.js';
+import { log } from '../../shared/utils/core/logger.js';
+import { isWorkerAllowed } from '../../shared/utils/core/csp-checker.js';
 import { showNotification } from '../../shared/ui/components/notification.js';
 import { t, getTranslationObject } from '../../shared/i18n/index.js';
-import { fire, on } from '../../shared/utils/eventBus.js';
+import { fire, on } from '../../shared/utils/core/eventBus.js';
 import * as fallback from './fallback.js';
 import { trustedWorkerUrl } from '../../shared/workers/worker-url.js';
 import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
@@ -47,7 +47,7 @@ const handleMutations = (mutations) => {
             if (node.nodeType !== Node.ELEMENT_NODE || node.closest(ignoredSelectorString)) return;
 
             const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
-            while(walker.nextNode()) {
+            while (walker.nextNode()) {
                 if (walker.currentNode.nodeValue) {
                     textsBatch.push(walker.currentNode.nodeValue);
                 }
@@ -108,7 +108,7 @@ export const start = async (onUpdate, resumedData = null) => {
         observer.disconnect();
         observer = null;
     }
-    
+
     // --- 2. 初始化本次会话的状态 ---
     currentCount = 0;
     sessionTextsMirror.clear();
@@ -142,7 +142,7 @@ export const start = async (onUpdate, resumedData = null) => {
             worker = null;
         }
         useFallback = true;
-        
+
         fallback.initFallback(filterRules);
         if (initialTexts.length > 0) {
             fallback.processTextsInFallback(initialTexts);

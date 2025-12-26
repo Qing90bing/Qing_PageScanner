@@ -6,7 +6,7 @@
  * 这对于在严格内容安全策略（CSP）的网站上优雅地降级至备用方案至关重要。
  */
 
-import { createTrustedWorkerUrl } from './trustedTypes.js';
+import { createTrustedWorkerUrl } from '../dom/trustedTypes.js';
 
 /**
  * @description 缓存CSP检测结果的变量

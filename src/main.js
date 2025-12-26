@@ -4,7 +4,7 @@ import { initUI } from './shared/ui/entry.js';
 import { initTheme } from './shared/ui/theme.js';
 import { initialize as initializeSettings } from './features/settings/index.js';
 import { uiContainer } from './shared/ui/uiContainer.js';
-import { log, updateLoggerState } from './shared/utils/logger.js';
+import { log, updateLoggerState } from './shared/utils/core/logger.js';
 import { loadSettings } from './features/settings/logic.js';
 import { initializeExporter } from './features/export/exporter.js';
 import { t } from './shared/i18n/index.js';
@@ -56,17 +56,17 @@ export async function initialize() {
 
   // 在所有UI都初始化完毕后，检查并恢复会话
   try {
-      await loadAndResumeSession();
+    await loadAndResumeSession();
   } catch (e) {
-      log('Failed to resume session', e);
+    log('Failed to resume session', e);
   }
 }
 
 // --- 初始化脚本 ---
 // 确保 DOM 加载完成后再执行脚本
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initialize);
+  document.addEventListener('DOMContentLoaded', initialize);
 } else {
-    // DOMContentLoaded 已经触发
-    initialize();
+  // DOMContentLoaded 已经触发
+  initialize();
 }

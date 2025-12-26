@@ -1,6 +1,6 @@
 // src/shared/utils/eventBus.js
 import { log } from './logger.js';
-import { t } from '../i18n/index.js';
+import { t } from '../../i18n/index.js';
 
 /**
  * @module eventBus

@@ -1,6 +1,6 @@
 // src/shared/utils/dom.js
-import { log } from './logger.js';
-import { t } from '../i18n/index.js';
+import { log } from '../core/logger.js';
+import { t } from '../../i18n/index.js';
 import { createTrustedHTML } from './trustedTypes.js';
 
 /**

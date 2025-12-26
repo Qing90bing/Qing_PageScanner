@@ -7,7 +7,7 @@
  */
 
 import { createFab } from './components/fab.js';
-import { createMainModal } from './mainModal.js';
+import { createMainModal } from './mainModal/index.js';
 import { handleQuickScanClick } from '../../features/quick-scan/ui.js';
 import { handleDynamicExtractClick } from '../../features/session-scan/ui.js';
 import { handleElementScanClick } from '../../features/element-scan/logic.js';
@@ -27,10 +27,10 @@ export function initUI() {
   // 2. 根据设置创建悬浮操作按钮 (FAB)
   createFab({
     callbacks: {
-        onStaticExtract: handleQuickScanClick,
-        onDynamicExtract: handleDynamicExtractClick,
-        onSummary: handleSummaryClick, // Updated callback
-        onElementScan: handleElementScanClick,
+      onStaticExtract: handleQuickScanClick,
+      onDynamicExtract: handleDynamicExtractClick,
+      onSummary: handleSummaryClick, // Updated callback
+      onElementScan: handleElementScanClick,
     },
     isVisible: settings.showFab,
   });

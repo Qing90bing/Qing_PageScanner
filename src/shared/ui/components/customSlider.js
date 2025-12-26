@@ -1,6 +1,6 @@
 // src/shared/ui/components/customSlider.js
 import { t } from '../../i18n/index.js';
-import { createTrustedHTML } from '../../utils/trustedTypes.js';
+import { createTrustedHTML } from '../../utils/dom/trustedTypes.js';
 
 export class CustomSlider {
     constructor({ min, max, value, onChange }) {

@@ -1,9 +1,9 @@
 // src/features/settings/panelBuilder.js
 
-import { createCheckbox } from '../../shared/ui/checkbox.js';
+import { createCheckbox } from '../../shared/ui/components/checkbox.js';
 import { CustomSelect } from '../../shared/ui/components/customSelect.js';
-import { createNumericInput } from '../../shared/ui/numericInput.js';
-import { createSVGFromString } from '../../shared/utils/dom.js';
+import { createNumericInput } from '../../shared/ui/components/numericInput.js';
+import { createSVGFromString } from '../../shared/utils/dom/dom.js';
 import { closeIcon } from '../../assets/icons/closeIcon.js';
 import { themeIcon } from '../../assets/icons/themeIcon.js';
 import languageIcon from '../../assets/icons/languageIcon.js';
@@ -12,7 +12,7 @@ import { relatedSettingsIcon } from '../../assets/icons/relatedSettingsIcon.js';
 import { filterIcon } from '../../assets/icons/filterIcon.js';
 import { filterDefinitions, relatedSettingsDefinitions, selectSettingsDefinitions } from './config.js';
 import { t } from '../../shared/i18n/index.js';
-import { createIconTitle } from '../../shared/ui/iconTitle.js';
+import { createIconTitle } from '../../shared/ui/components/iconTitle.js';
 
 // 定义侧边栏标签配置（重新排序：相关设置、过滤规则、格式、语言、主题）
 const TABS = [

@@ -5,10 +5,10 @@
  * @description 负责将提取的文本数据格式化并导出为不同文件格式。
  */
 
-import { log } from '../../shared/utils/logger.js';
-import { on } from '../../shared/utils/eventBus.js';
+import { log } from '../../shared/utils/core/logger.js';
+import { on } from '../../shared/utils/core/eventBus.js';
 import { getCurrentMode, outputTextarea } from '../../shared/ui/mainModal/modalState.js';
-import { fullQuickScanContent } from '../../shared/ui/mainModal.js';
+import { fullQuickScanContent } from '../../shared/ui/mainModal/index.js';
 import { t } from '../../shared/i18n/index.js';
 import { requestSummary } from '../session-scan/logic.js';
 import { loadSettings } from '../../features/settings/logic.js';
@@ -91,10 +91,10 @@ function exportToFile() {
     };
 
     // --- 优先使用用户编辑过的内容 ---
-    
+
     // 1. 获取当前 UI 文本框里的内容
     const currentUiContent = outputTextarea ? outputTextarea.value : null;
-    
+
     // 2. 检查是否有截断警告
     const truncationWarning = t('scan.truncationWarning');
     const isTruncated = currentUiContent && currentUiContent.includes(truncationWarning);
@@ -108,7 +108,7 @@ function exportToFile() {
 
     // 4. 回退到使用内存中的原始数据
     log('Exporting original raw data (UI content invalid or truncated).');
-    
+
     if (currentMode === 'session-scan') {
         log(t('log.main.requestingSessionScanData'));
         requestSummary(processAndDownload);

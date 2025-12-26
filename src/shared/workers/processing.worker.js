@@ -1,4 +1,4 @@
-// src/shared/utils/processing-worker.js
+// src/shared/utils/processing.worker.js
 
 /**
  * @module ProcessingWorker
@@ -9,9 +9,9 @@
 // --- 依赖导入 ---
 // esbuild 会在构建时将这些模块内联进来
 // @ts-ignore
-import { shouldFilter } from './filterLogic.js';
+import { shouldFilter } from '../utils/text/filterLogic.js';
 // @ts-ignore
-import { formatTextsForTranslation } from './formatting.js';
+import { formatTextsForTranslation } from '../utils/text/formatting.js';
 
 // --- 状态变量 ---
 let sessionTexts = new Set();

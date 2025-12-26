@@ -1,11 +1,11 @@
 import { getValue, setValue } from '../../shared/services/tampermonkey.js';
-import { log, updateLoggerState } from '../../shared/utils/logger.js';
+import { log, updateLoggerState } from '../../shared/utils/core/logger.js';
 import { t } from '../../shared/i18n/index.js';
 import { applyTheme } from '../../shared/ui/theme.js';
 import { switchLanguage } from '../../shared/i18n/management/languageManager.js';
 import { uiContainer } from '../../shared/ui/uiContainer.js';
-import { updateModalAddonsVisibility } from '../../shared/ui/mainModal.js';
-import { fire } from '../../shared/utils/eventBus.js';
+import { updateModalAddonsVisibility } from '../../shared/ui/mainModal/index.js';
+import { fire } from '../../shared/utils/core/eventBus.js';
 import { showNotification } from '../../shared/ui/components/notification.js';
 // src/core/settings.js
 
@@ -98,31 +98,31 @@ const defaultSettings = {
  * @description 应用所有与设置相关的副作用，例如主题更改、语言切换等。
  */
 export function applySettings(newSettings, oldSettings) {
-    updateLoggerState(newSettings.enableDebugLogging);
-    applyTheme(newSettings.theme);
+  updateLoggerState(newSettings.enableDebugLogging);
+  applyTheme(newSettings.theme);
 
-    const languageChanged = oldSettings.language !== newSettings.language;
-    if (languageChanged) {
-        switchLanguage(newSettings.language);
-    }
+  const languageChanged = oldSettings.language !== newSettings.language;
+  if (languageChanged) {
+    switchLanguage(newSettings.language);
+  }
 
-    const fabContainer = uiContainer.querySelector('.text-extractor-fab-container');
-    if (fabContainer) {
-        fabContainer.classList.toggle('fab-container-visible', newSettings.showFab);
-    }
-    updateModalAddonsVisibility();
+  const fabContainer = uiContainer.querySelector('.text-extractor-fab-container');
+  if (fabContainer) {
+    fabContainer.classList.toggle('fab-container-visible', newSettings.showFab);
+  }
+  updateModalAddonsVisibility();
 
-    // 关键修复：确保在语言切换逻辑完全执行并更新了 UI 之后再显示通知。
-    // 如果语言发生了变化，switchLanguage 会触发 'languageChanged' 事件。
-    // 监听 'languageChanged' 事件的组件（如按钮）会更新其文本。
-    // 我们稍微延迟显示通知，以确保通知本身使用的是最新的语言。
+  // 关键修复：确保在语言切换逻辑完全执行并更新了 UI 之后再显示通知。
+  // 如果语言发生了变化，switchLanguage 会触发 'languageChanged' 事件。
+  // 监听 'languageChanged' 事件的组件（如按钮）会更新其文本。
+  // 我们稍微延迟显示通知，以确保通知本身使用的是最新的语言。
 
-    // 另外，fire('settingsSaved') 可能会被某些组件监听以进行重新渲染。
-    // 确保它也在语言切换后触发。
-    setTimeout(() => {
-        fire('settingsSaved');
-        showNotification(t('notifications.settingsSaved'), { type: 'success' });
-    }, 50);
+  // 另外，fire('settingsSaved') 可能会被某些组件监听以进行重新渲染。
+  // 确保它也在语言切换后触发。
+  setTimeout(() => {
+    fire('settingsSaved');
+    showNotification(t('notifications.settingsSaved'), { type: 'success' });
+  }, 50);
 }
 
 /**

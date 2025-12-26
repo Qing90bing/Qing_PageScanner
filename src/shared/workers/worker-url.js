@@ -1,6 +1,6 @@
 // src/shared/workers/worker-url.js
 
-import { createTrustedWorkerUrl } from '../utils/trustedTypes.js';
+import { createTrustedWorkerUrl } from '../utils/dom/trustedTypes.js';
 
 /**
  * @description 预先计算 Worker 的 Trusted URL。

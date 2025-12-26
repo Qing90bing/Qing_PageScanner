@@ -1,7 +1,7 @@
 // src/shared/ui/components/topCenterCounter.js
 import { t } from '../../i18n/index.js';
-import { animateCount, easeOutQuad } from '../animations.js';
-import { on } from '../../utils/eventBus.js';
+import { animateCount, easeOutQuad } from '../../utils/dom/animations.js';
+import { on } from '../../utils/core/eventBus.js';
 
 /**
  * @file 提供了创建和管理顶部中央计数器UI组件的功能。

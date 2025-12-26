@@ -1,9 +1,9 @@
 // src/shared/ui/components/Tooltip.js
-import { createSVGFromString } from '../../utils/dom.js';
+import { createSVGFromString } from '../../utils/dom/dom.js';
 import { closeIcon } from '../../../assets/icons/closeIcon.js';
 import { uiContainer } from '../uiContainer.js';
-import { fire } from '../../utils/eventBus.js';
-import { createTrustedHTML } from '../../utils/trustedTypes.js';
+import { fire } from '../../utils/core/eventBus.js';
+import { createTrustedHTML } from '../../utils/dom/trustedTypes.js';
 
 /**
  * @class Tooltip

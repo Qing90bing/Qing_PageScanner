@@ -1,7 +1,7 @@
 // src/shared/i18n/index.js
 import { locales, resourceLanguages } from 'virtual:locales';
-import { fire } from '../utils/eventBus.js';
-import { log } from '../utils/logger.js';
+import { fire } from '../utils/core/eventBus.js';
+import { log } from '../utils/core/logger.js';
 
 // 将所有导入的翻译文件映射到一个对象中，以便通过语言代码进行动态访问。
 // 现在使用自动生成的 locales 对象，无需手动导入每个 JSON 文件。
@@ -78,8 +78,8 @@ export function t(key, replacements) {
     if (replacements) {
         return value.replace(/{{\s*(\w+)\s*}}/g, (match, key) => {
             // 如果 replacements 中有这个 key，就替换，否则保留原样
-            return Object.prototype.hasOwnProperty.call(replacements, key) 
-                ? replacements[key] 
+            return Object.prototype.hasOwnProperty.call(replacements, key)
+                ? replacements[key]
                 : match;
         });
     }

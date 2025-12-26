@@ -5,7 +5,7 @@
  * @description 提供一个基于用户设置的条件化日志记录器。
  */
 
-import { t } from '../i18n/index.js';
+import { t } from '../../i18n/index.js';
 
 // 模块级变量，用于缓存调试模式的状态
 let isDebugEnabled = false;

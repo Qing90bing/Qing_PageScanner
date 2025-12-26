@@ -5,8 +5,8 @@
  * @description 创建一个功能丰富、样式现代的自定义下拉选择组件。
  */
 
-import { createIconTitle } from '../iconTitle.js';
-import { createSVGFromString } from '../../utils/dom.js';
+import { createIconTitle } from './iconTitle.js';
+import { createSVGFromString } from '../../utils/dom/dom.js';
 import { arrowDownIcon } from '../../../assets/icons/arrowDownIcon.js';
 
 export class CustomSelect {

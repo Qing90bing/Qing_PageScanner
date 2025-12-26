@@ -115,7 +115,7 @@ async function build() {
         // 3. 打包通用的 Web Worker 脚本
         console.log('正在打包通用 Web Worker...');
         const workerBuildResult = await esbuild.build({
-            entryPoints: ['src/shared/utils/processing-worker.js'],
+            entryPoints: ['src/shared/workers/processing.worker.js'],
             bundle: true,
             write: false,
             outfile: 'dist/processing-worker.js',

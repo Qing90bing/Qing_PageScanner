@@ -11,10 +11,10 @@ import { summaryIcon } from '../../../assets/icons/summaryIcon.js';
 import { elementScanIcon } from '../../../assets/icons/elementScanIcon.js';
 import { showTooltip, hideTooltip } from './tooltip.js';
 import { appConfig } from '../../../features/settings/config.js';
-import { on } from '../../utils/eventBus.js';
+import { on } from '../../utils/core/eventBus.js';
 import { loadSettings } from '../../../features/settings/logic.js';
 import { t } from '../../i18n/index.js';
-import { createSVGFromString } from '../../utils/dom.js';
+import { createSVGFromString } from '../../utils/dom/dom.js';
 import { uiContainer } from '../uiContainer.js';
 
 

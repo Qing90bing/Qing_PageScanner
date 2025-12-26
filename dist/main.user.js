@@ -28,9 +28,6 @@ var TextExtractor = (() => {
   var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
   var __getOwnPropNames = Object.getOwnPropertyNames;
   var __hasOwnProp = Object.prototype.hasOwnProperty;
-  var __esm = (fn, res) => function __init() {
-    return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
-  };
   var __export = (target, all) => {
     for (var name in all)
       __defProp(target, name, { get: all[name], enumerable: true });
@@ -44,2101 +41,6 @@ var TextExtractor = (() => {
     return to;
   };
   var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-  var themeIcon;
-  var init_themeIcon = __esm({
-    "src/assets/icons/themeIcon.js"() {
-      themeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 32.5-156t88-127Q256-817 330-848.5T488-880q80 0 151 27.5t124.5 76q53.5 48.5 85 115T880-518q0 115-70 176.5T640-280h-74q-9 0-12.5 5t-3.5 11q0 12 15 34.5t15 51.5q0 50-27.5 74T480-80Zm0-400Zm-220 40q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120-160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm200 0q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120 160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17ZM480-160q9 0 14.5-5t5.5-13q0-14-15-33t-15-57q0-42 29-67t71-25h70q66 0 113-38.5T800-518q0-121-92.5-201.5T488-800q-136 0-232 93t-96 227q0 133 93.5 226.5T480-160Z"/></svg>`;
-    }
-  });
-  var languageIcon_default;
-  var init_languageIcon = __esm({
-    "src/assets/icons/languageIcon.js"() {
-      languageIcon_default = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-155.5t86-127Q252-817 325-848.5T480-880q83 0 155.5 31.5t127 86q54.5 54.5 86 127T880-480q0 82-31.5 155t-86 127.5q-54.5 54.5-127 86T480-80Zm0-82q26-36 45-75t31-83H404q12 44 31 83t45 75Zm-104-16q-18-33-31.5-68.5T322-320H204q29 50 72.5 87t99.5 55Zm208 0q56-18 99.5-55t72.5-87H638q-9 38-22.5 73.5T584-178ZM170-400h136q-3-20-4.5-39.5T300-480q0-21 1.5-40.5T306-560H170q-5 20-7.5 39.5T160-480q0 21 2.5 40.5T170-400Zm216 0h188q3-20 4.5-39.5T580-480q0-21-1.5-40.5T574-560H386q-3 20-4.5 39.5T380-480q0 21 1.5 40.5T386-400Zm268 0h136q5-20 7.5-39.5T800-480q0-21-2.5-40.5T790-560H654q3 20 4.5 39.5T660-480q0 21-1.5 40.5T654-400Zm-16-240h118q-29-50-72.5-87T584-782q18 33 31.5 68.5T638-640Zm-234 0h152q-12-44-31-83t-45-75q-26 36-45 75t-31 83Zm-200 0h118q9-38 22.5-73.5T376-782q-56 18-99.5 55T204-640Z"/></svg>`;
-    }
-  });
-  var infoIcon;
-  var init_infoIcon = __esm({
-    "src/assets/icons/infoIcon.js"() {
-      infoIcon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>';
-    }
-  });
-  var lightThemeIcon;
-  var init_lightThemeIcon = __esm({
-    "src/assets/icons/lightThemeIcon.js"() {
-      lightThemeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm0 80q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Zm326-268Z"/></svg>`;
-    }
-  });
-  var darkThemeIcon;
-  var init_darkThemeIcon = __esm({
-    "src/assets/icons/darkThemeIcon.js"() {
-      darkThemeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Zm0-80q88 0 158-48.5T740-375q-20 5-40 8t-40 3q-123 0-209.5-86.5T364-660q0-20 3-40t8-40q-78 32-126.5 102T200-480q0 116 82 198t198 82Zm-10-270Z"/></svg>`;
-    }
-  });
-  var systemThemeIcon;
-  var init_systemThemeIcon = __esm({
-    "src/assets/icons/systemThemeIcon.js"() {
-      systemThemeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M320-120v-80h80v-80H160q-33 0-56.5-23.5T80-360v-400q0-33 23.5-56.5T160-840h640q33 0 56.5 23.5T880-760v400q0 33-23.5 56.5T800-280H560v80h80v80H320ZM160-360h640v-400H160v400Zm0 0v-400 400Z"/></svg>`;
-    }
-  });
-  var formatIcon;
-  var init_formatIcon = __esm({
-    "src/assets/icons/formatIcon.js"() {
-      formatIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M600-160v-80h120v-480H600v-80h200v640H600Zm-440 0v-640h200v80H240v480h120v80H160Z"/></svg>`;
-    }
-  });
-  var en_GB_default;
-  var init_en_GB = __esm({
-    "src/shared/i18n/en-GB.json"() {
-      en_GB_default = {
-        _meta: {
-          name: "English (UK)"
-        },
-        common: {
-          scan: "Scan",
-          stop: "Stop",
-          pause: "Pause",
-          resume: "Resume",
-          clear: "Clear",
-          copy: "Copy",
-          save: "Save",
-          discovered: "Discovered:",
-          confirm: "Confirm",
-          cancel: "Cancel",
-          export: "Export",
-          reselect: "Reselect",
-          stage: "Stage",
-          processingElement: "Processing Element"
-        },
-        export: {
-          exportAsTxt: "Export as TXT",
-          exportAsJson: "Export as JSON",
-          exportAsCsv: "Export as CSV",
-          csv: {
-            id: "ID",
-            original: "Original",
-            translation: "Translation"
-          }
-        },
-        settings: {
-          title: "Settings",
-          theme: "Theme",
-          language: "Language",
-          format: "Output Format",
-          formats: {
-            array: "Nested Array",
-            object: "Key-Value Object",
-            csv: "CSV String"
-          },
-          relatedSettings: "Related Settings",
-          filterRules: "Content Filtering Rules",
-          filters: {
-            numbers: "Filter Numbers/Currency",
-            chinese: "Filter Chinese-Only Text",
-            contains_chinese: "Filter Text Containing Chinese",
-            emoji_only: "Filter Emoji-Only Text",
-            symbols: "Filter Symbol-Only Text",
-            term: "Filter Specific Terms",
-            single_letter: "Filter Single English Letters",
-            repeating_chars: "Filter Repeating Characters",
-            file_paths: "Filter File Paths",
-            hex_color_codes: "Filter Hex Colour Codes",
-            email_addresses: "Filter Email Addresses",
-            uuids: "Filter UUIDs",
-            git_commit_hashes: "Filter Git Commit Hashes",
-            website_urls: "Filter Website URLs",
-            website_urls_title: "Filter Website URLs",
-            shorthand_numbers: "Filter Shorthand Numbers",
-            shorthand_numbers_title: "Filter Shorthand Numbers"
-          },
-          display: {
-            show_fab: "Show Floating Button",
-            fab_position: "Floating Button Position",
-            fab_positions: {
-              bottom_right: "\u2198 Bottom Right",
-              top_right: "\u2197 Top Right",
-              bottom_left: "\u2199 Bottom Left",
-              top_left: "\u2196 Top Left"
-            },
-            show_line_numbers: "Show Line Numbers",
-            show_statistics: "Show Statistics",
-            enable_word_wrap: "Enable Word Wrap",
-            text_truncation_limit: "Enable Text Truncation Limit",
-            character_limit: "Character Limit",
-            show_scan_count: "Enable Scan Count in Title"
-          },
-          advanced: {
-            enable_debug_logging: "Enable Debug Logging"
-          },
-          panel: {
-            title: "Settings Panel"
-          },
-          contextual: {
-            elementScanTitle: "Element Scan Settings",
-            sessionScanTitle: "Dynamic Scan Settings",
-            persistData: "Persist data across pages"
-          },
-          languages: {
-            auto: "Auto",
-            en: "English (United States)",
-            "en-GB": "English (United Kingdom)",
-            "zh-CN": "Chinese (Simplified)",
-            "zh-TW": "Chinese (Traditional)"
-          },
-          themes: {
-            light: "Light",
-            dark: "Dark",
-            system: "System"
-          }
-        },
-        scan: {
-          quick: "Quick Scan",
-          session: "Dynamic Scan",
-          stagedCount: "Staged:",
-          elementFinished: "Element scan finished, found {{count}} items.",
-          startSession: "Start Dynamic Scan Session",
-          stopSession: "Stop Dynamic Scan Session",
-          finished: "Scan finished, found {{count}} items.",
-          quickFinished: "Quick scan finished, found {{count}} items.",
-          sessionStarted: "Session scan started.",
-          sessionInProgress: "Scan in progress...",
-          truncationWarning: "To maintain UI fluency, only a portion of the text is displayed here. The full content will be available upon export."
-        },
-        slider: {
-          adjustFrameSize: "Move slider to adjust frame size",
-          minLabel: "Min",
-          maxLabel: "Max"
-        },
-        results: {
-          title: "Extracted Text",
-          scanCountSession: "Scanned {{count}} items",
-          scanCountStatic: "Total {{count}} items scanned",
-          totalCharacters: "Total Characters",
-          totalLines: "Total Lines",
-          noSummary: "No summary available",
-          stats: {
-            lines: "Lines",
-            chars: "Chars"
-          }
-        },
-        notifications: {
-          copiedToClipboard: "Copied to clipboard!",
-          settingsSaved: "Settings saved!",
-          modalInitError: "Modal not initialized.",
-          nothingToCopy: "Nothing to copy.",
-          contentCleared: "Content cleared.",
-          noTextSelected: "No text selected.",
-          scanFailed: "Scan failed.",
-          elementScanStarted: "Element scan started.",
-          elementScanPaused: "Element scan paused.",
-          elementScanResumed: "Element scan session resumed from previous page.",
-          elementScanContinued: "Element scan continued.",
-          sessionScanStarted: "Session scan started.",
-          sessionScanPaused: "Dynamic scan paused.",
-          sessionScanResumed: "Dynamic scan session resumed from previous page.",
-          sessionScanContinued: "Dynamic scan continued.",
-          cspWorkerWarning: "Switched to compatibility scan mode due to website security restrictions."
-        },
-        placeholders: {
-          click: "Click ",
-          dynamicScan: "[Dynamic Scan]",
-          startNewScanSession: " to start a new scan session",
-          staticScan: "[Static Scan]",
-          performOneTimeScan: " to perform a one-time quick extraction"
-        },
-        confirmation: {
-          clear: "Are you sure you want to clear the content? This action cannot be undone."
-        },
-        tooltip: {
-          summary: "View Summary",
-          dynamic_scan: "Dynamic Scan",
-          static_scan: "Static Scan",
-          element_scan: "Element Scan",
-          pauseElementScan: "Pause Element Scan",
-          resumeElementScan: "Resume Element Scan",
-          pauseSessionScan: "Pause Dynamic Scan",
-          resumeSessionScan: "Resume Dynamic Scan",
-          tooltipHelp: "Help",
-          persistData: {
-            title: "Data Persistence Explanation",
-            text: {
-              sessionScan: "When enabled, automatically resumes and continues accumulating results from the previous page when you navigate to a new one. If disabled, only the scan mode is restored, and a new scan session begins.",
-              elementScan: "When enabled, automatically restores all currently staged text when you navigate to a new page. If disabled, only the scan mode is restored, and the staged area will be empty."
-            }
-          },
-          disabled: {
-            scan_in_progress: "Another scan is in progress"
-          },
-          filters: {
-            title: "Content Filter Explanation",
-            numbers: 'This rule filters out text that consists <strong>entirely</strong> of numbers, spaces, thousand separators (.), decimal points (,), and some currency symbols ($, \u20AC, \xA3, \xA5).<br><br><strong>More Examples:</strong><br>\u2022 "1,234.56"<br>\u2022 "\xA5999"<br>\u2022 "\u20AC200"<br>\u2022 "$ 100"',
-            chinese: 'This rule filters out text that consists <strong>entirely</strong> of Chinese characters and spaces, excluding any punctuation.<br><br><strong>Examples:</strong><br>\u2022 "\u4F60\u597D \u4E16\u754C" (will be filtered)<br>\u2022 "\u4F60\u597D\uFF0C\u4E16\u754C" (will not be filtered)',
-            contains_chinese: `This rule filters out <strong>any</strong> text that contains at least one Chinese character, regardless of other characters.<br><br><strong>Examples:</strong><br>\u2022 "\u4F60\u597D World" (will be filtered)<br>\u2022 "Chapter 1" (will be filtered, as '\u7B2C 1 \u7AE0' contains '\u7B2C' and '\u7AE0')`,
-            emoji_only: 'This rule filters out text that consists <strong>entirely</strong> of one or more emoji characters and spaces.<br><br><strong>Examples:</strong><br>\u2022 "\u{1F44D}"<br>\u2022 "\u{1F60A} \u{1F389} \u{1F680}"',
-            symbols: 'This rule filters out text that consists <strong>entirely</strong> of various punctuation and symbols.<br><br><strong>More Examples:</strong><br>\u2022 "@#*&^%"<br>\u2022 "()[]{}"<br>\u2022 "---...---"',
-            term: 'This rule filters out common UI terms that typically do not require translation.<br><br><strong>More Examples:</strong><br>\u2022 "OK", "Cancel", "Submit"<br>\u2022 "Login", "Settings", "Help"',
-            single_letter: 'This rule filters out text consisting of a <strong>single</strong> English letter, case-insensitive.<br><br><strong>Examples:</strong><br>\u2022 "A" (will be filtered)<br>\u2022 "b" (will be filtered)<br>\u2022 "AB" (will not be filtered)',
-            repeating_chars: 'This rule filters out text composed of the <strong>same character</strong> repeating 2 or more times consecutively.<br><br><strong>Examples:</strong><br>\u2022 "aa"<br>\u2022 "======"<br>\u2022 "bbbbb"',
-            file_paths: 'This rule attempts to identify and filter out text that resembles an operating system file path and <strong>includes a file extension</strong>. It does not match URLs.<br><br><strong>More Examples:</strong><br>\u2022 "/path/to/file.js"<br>\u2022 "C:\\Users\\Test\\document.docx"<br>\u2022 "./config.json"',
-            hex_color_codes: 'This rule filters out standard CSS hexadecimal colour codes (3, 4, 6, or 8 digits, the latter including an alpha channel).<br><br><strong>Examples:</strong><br>\u2022 "#FFFFFF"<br>\u2022 "#ff0000"<br>\u2022 "#f0c"<br>\u2022 "#f0c8" (4-digit)<br>\u2022 "#ff000080" (8-digit)',
-            email_addresses: 'This rule filters out text that matches the standard format of an email address.<br><br><strong>Examples:</strong><br>\u2022 "example@domain.com"<br>\u2022 "user.name@sub.domain.org"',
-            uuids: 'This rule filters out Universally Unique Identifiers (UUIDs).<br><br><strong>Example:</strong><br>\u2022 "123e4567-e89b-12d3-a456-426614174000"',
-            git_commit_hashes: 'This rule filters out standard Git commit hashes (long or short).<br><br><strong>Examples:</strong><br>\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\u2022 "a1b2c3d"',
-            website_urls: 'This rule filters out text that is a <strong>standalone URL</strong>. It is designed to be strict to avoid accidentally removing text that is not a link.<br><br><strong>More Examples:</strong><br>\u2022 "https://www.example.com"<br>\u2022 "http://test.co.uk"<br>\u2022 "www.google.com"<br>\u2022 "example.org"',
-            shorthand_numbers: 'This rule filters out numbers that use <strong>common shorthand suffixes</strong> for thousands (k), millions (m), or billions (b), case-insensitive.<br><br><strong>More Examples:</strong><br>\u2022 "1.2k"<br>\u2022 "15M"<br>\u2022 "2.5b"<br>\u2022 "100K"'
-          },
-          display: {
-            title: "Display Settings Explanation",
-            show_fab: "Control whether to display the <strong>Floating Action Button (FAB)</strong> in the bottom-right corner of webpages. This serves as the primary entry point for both static and dynamic text extraction. <br><br>If you disable this button, you can re-enable it via the settings panel in the Tampermonkey extension menu.",
-            show_scan_count: "When enabled, the title bar of the results window will show a <strong>real-time count</strong> of the total text items found in the current scan. This is especially useful for monitoring the progress of a long-running <strong>Dynamic Scan</strong>.",
-            show_line_numbers: "Displays line numbers to the left of the text area in the results window. This provides a <strong>precise reference point</strong> when you need to discuss or note a specific line of text.",
-            show_statistics: "Displays <strong>real-time statistics</strong> about the extracted content in the status bar at the bottom of the results window, including <strong>total lines</strong> and <strong>total characters</strong>. This helps you quickly assess the volume of the content.",
-            enable_word_wrap: "Controls how long lines of text are displayed in the results window.<br><br>\u2022 <strong>Enabled:</strong> Long lines will wrap to fit the window's width.<br>\u2022 <strong>Disabled:</strong> Long lines will remain on a single line, causing a horizontal scrollbar to appear.",
-            text_truncation_limit: "This is a <strong>performance-saving</strong> feature. If the script extracts an <strong>extremely long single line of text</strong> (e.g., a base64 encoded image), it could cause the browser to <strong>lag or become unresponsive</strong>.<br><br>This setting truncates any single line exceeding the specified length to ensure the UI remains smooth. <strong>Note: This only affects the display; the exported file will still contain the full, untruncated content.</strong>"
-          },
-          advanced: {
-            title: "Advanced Settings Explanation",
-            enable_debug_logging: "When enabled, the script will output detailed internal status, execution steps, and error messages to the browser's <strong>Developer Tools Console</strong> (usually opened with F12). This is primarily for developers or users who need to submit detailed bug reports."
-          }
-        },
-        log: {
-          prefix: "[Text Extractor Script-Debug]",
-          language: {
-            switched: "Language switched to: {{lang}}",
-            notFound: "Language '{{lang}}' not found, falling back to 'en'."
-          },
-          settings: {
-            changed: "Setting '{{key}}' changed from '{{oldValue}}' to '{{newValue}}'",
-            filterRuleChanged: {
-              enabled: "Filter rule '{{key}}' has been enabled",
-              disabled: "Filter rule '{{key}}' has been disabled"
-            },
-            panel: {
-              opening: "Opening settings panel...",
-              closing: "Closing settings panel...",
-              saving: "Saving settings..."
-            },
-            parseError: "Error parsing saved settings:",
-            invalidObject: "Attempted to save an invalid object for settings:"
-          },
-          textProcessor: {
-            filtered: 'Text filtered: "{{text}}" (Reason: {{reason}})'
-          },
-          quickScan: {
-            switchToFallback: "[Quick Scan] Switching to main thread fallback.",
-            fallbackFailed: "[Quick Scan] Main thread fallback failed: {{error}}",
-            fallback: {
-              starting: "[Quick Scan - Fallback] Starting processing in main thread...",
-              completed: "[Quick Scan - Fallback] Processing complete, found {{count}} unique texts."
-            },
-            worker: {
-              logPrefix: "[Quick Scan Worker]",
-              starting: "[Quick Scan] Starting execution, attempting to use Web Worker...",
-              completed: "[Quick Scan] Worker processing successful, received {{count}} texts.",
-              scanComplete: "[Quick Scan Worker] Processing complete, found {{count}} unique texts. Sending back to main thread...",
-              initFailed: "[Quick Scan] Worker initialization failed. This is likely due to the website's Content Security Policy (CSP).",
-              originalError: "[Quick Scan] Original error: {{error}}",
-              sendingData: "[Quick Scan] Web Worker created, sending {{count}} texts for processing...",
-              initSyncError: "[Quick Scan] Synchronous error during Worker initialization: {{error}}",
-              cspBlocked: "[Quick Scan] CSP check failed. Worker creation is not allowed."
-            }
-          },
-          sessionScan: {
-            switchToFallback: "[Dynamic Scan] Switching to main thread fallback.",
-            domObserver: {
-              stopped: "[Dynamic Scan] Stopped listening for DOM changes."
-            },
-            fallback: {
-              initialized: "[Dynamic Scan - Fallback] Initialized.",
-              cleared: "[Dynamic Scan - Fallback] Data cleared."
-            },
-            worker: {
-              logPrefix: "[Dynamic Scan Worker]",
-              starting: "Dynamic Scan: Attempting to start Web Worker...",
-              initFailed: "[Dynamic Scan] Worker initialization failed. This is likely due to the website's Content Security Policy (CSP).",
-              originalError: "[Dynamic Scan] Original error: {{error}}",
-              initialized: "[Dynamic Scan] Worker initialized successfully, sent {{count}} initial texts to start the session.",
-              initSyncError: "[Dynamic Scan] Synchronous error during Worker initialization: {{error}}",
-              clearCommandSent: "[Dynamic Scan] Clear command sent to worker.",
-              cspBlocked: "[Dynamic Scan] CSP check failed. Worker creation is not allowed."
-            }
-          },
-          ui: {
-            copyButton: {
-              copied: "Copy button clicked, copied {{count}} characters.",
-              nothingToCopy: "Copy button clicked, but there was no content to copy or the button was disabled."
-            },
-            confirmationModal: {
-              sessionScan: {
-                confirmed: "User confirmed clearing session scan texts, invoking callback..."
-              },
-              quickScan: {
-                confirmed: "User confirmed clearing quick scan texts."
-              },
-              cancelled: "User cancelled the clear operation."
-            },
-            modal: {
-              opening: "Opening main modal...",
-              closing: "Closing main modal...",
-              scanFailed: "Static scan failed: {{error}}",
-              clearContent: "Clear content button clicked."
-            },
-            helpIcon: {
-              clicked: "Help icon clicked, displaying content for key: {{contentKey}}"
-            }
-          },
-          exporter: {
-            buttonClicked: "Export button clicked, format: {{format}}.",
-            csvError: "Error while parsing text and generating CSV: {{error}}",
-            fileExported: "File exported: {{filename}}",
-            noContent: "No content to export.",
-            unknownFormat: "Unknown export format: {{format}}"
-          },
-          main: {
-            requestingSessionScanData: "Requesting full data from session-scan mode...",
-            exportingQuickScanData: "Exporting full data from quick-scan mode's memory...",
-            inIframe: "Script is in an iframe, skipping initialization.",
-            initializing: "Script initialization started...",
-            initialSettingsLoaded: "Initial settings loaded:"
-          },
-          dom: {
-            ttpCreationError: "Failed to create Trusted Type policy:",
-            svgParseError: "Failed to parse SVG string or string is invalid:"
-          },
-          elementScan: {
-            starting: "Element Scan started.",
-            stopping: "Element Scan stopped.",
-            listenersAdded: "Global event listeners for element scan added.",
-            listenersRemoved: "Global event listeners for element scan removed.",
-            stateReset: "Element scan state has been reset.",
-            reselecting: "Returning to element reselection mode.",
-            hovering: "Hovering over <{{tagName}}>.",
-            escapePressed: "Escape key pressed, stopping element scan.",
-            escapeIgnoredForSettings: "Escape key pressed, but ignored because a settings panel is open.",
-            escapeIgnoredForModal: "Escape key pressed, but ignored because a modal or tooltip is open.",
-            escapePressedInAdjust: "Escape key pressed in adjustment mode, returning to reselection.",
-            clickedEnteringAdjust: "Element <{{tagName}}> clicked, entering adjustment mode.",
-            pathBuilt: "Element path built, depth: {{depth}}.",
-            adjustingLevel: "Adjusting selection level to {{level}} ({{tagName}}).",
-            confirmExtracting: "Selection confirmed, extracting text from <{{tagName}}>.",
-            staged: "Element staged. Total staged: {{count}}.",
-            confirmingStaged: "Confirming selection. Processing {{count}} staged elements.",
-            extractedCount: "Extracted {{count}} raw text fragments from element.",
-            confirmFailedNoTarget: "Confirmation failed: no target element selected.",
-            rightClickExit: "Right-click detected, stopping element scan.",
-            processingError: "An error occurred during text processing: {{error}}",
-            scrollListenersAdded: "Added {{count}} scroll listeners to parent elements.",
-            scrollListenersRemoved: "Removed all scroll listeners.",
-            worker: {
-              logPrefix: "[ES Worker]",
-              starting: "Element Scan Worker is starting...",
-              sendingData: "Sending {{count}} text fragments to Element Scan Worker.",
-              completed: "Element Scan Worker completed, found {{count}} unique texts.",
-              initFailed: "Element Scan Worker initialization failed. The browser's CSP might be blocking data: URLs.",
-              initSyncError: "Synchronous error during Element Scan Worker initialization: {{error}}",
-              originalError: "Original worker error: {{error}}",
-              cspBlocked: "Element Scan CSP check failed. Worker creation is not allowed.",
-              attemping: "Attempting to use Web Worker for filtering...",
-              fallback: "Switched to main thread for filtering.",
-              cspHint: "This may be due to the site's Content Security Policy (CSP)."
-            },
-            switchToFallback: "Switching to main thread fallback for Element Scan.",
-            fallbackFailed: "Element Scan fallback mode failed: {{error}}",
-            stagingStarted: "Staging started for element: <{{tagName}}>",
-            stagedNothingNew: "No new unique text was staged from this element.",
-            stagingFinished: "Staging finished.",
-            confirmStarted: "Confirmation process started...",
-            confirmFinished: "Confirmation process finished successfully.",
-            confirmFailed: "Confirmation process failed. Error: {{error}}"
-          },
-          elementScanUI: {
-            creatingHighlights: "Element Scan UI: Creating highlight elements for the first time.",
-            updatingHighlight: "Element Scan UI: Updating highlight for <{{tagName}}>.",
-            creatingToolbar: "Element Scan UI: Creating adjustment toolbar.",
-            toolbarPositioned: "Element Scan UI: Toolbar positioned.",
-            sliderChanged: "Element Scan UI: Slider changed to level {{level}}",
-            reselectClicked: "Element Scan UI: 'Reselect' button clicked.",
-            stageClicked: "Element Scan UI: 'Stage' button clicked.",
-            cancelClicked: "Element Scan UI: 'Cancel' button clicked.",
-            confirmClicked: "Element Scan UI: 'Confirm' button clicked.",
-            dragStarted: "Element Scan UI: Drag started.",
-            dragEnded: "Element Scan UI: Drag ended.",
-            cleaningHighlights: "Element Scan UI: Cleaning up highlight elements.",
-            cleaningToolbar: "Element Scan UI: Cleaning up toolbar."
-          },
-          eventBus: {
-            callbackError: "Error in callback for event '{{eventName}}':"
-          },
-          trustedTypes: {
-            workerPolicyError: "Failed to create Trusted Types worker policy:",
-            htmlPolicyError: "Failed to create Trusted Types HTML policy:",
-            defaultWorkerPolicyWarning: "Trusted Types default policy failed for worker URL, falling back to raw URL.",
-            defaultHtmlPolicyWarning: "Trusted Types default policy failed for HTML, falling back to raw string."
-          }
-        },
-        tutorial: {
-          elementScanTitle: "Element Scan Tutorial",
-          elementScan: '<p><strong>What it does:</strong></p><p>Element Scan allows you to precisely select one or more areas on a webpage (e.g., a paragraph, a list, a sidebar) and extract text only from those areas.</p><p><strong>How to use:</strong></p><ol><li><strong>Start:</strong> Click the "Element Scan" icon <span class="help-icon-placeholder element-scan-icon"></span> in the floating button to enter scan mode.</li><li><strong>Select:</strong> Move your mouse over the page. The area you want to scan will be highlighted. Click to select it.</li><li><strong>Adjust:</strong> A toolbar will appear after selection. You can use the <strong>slider</strong> to expand or shrink the selection area.</li><li><strong>Stage:</strong> If you want to select multiple unrelated areas, click the <span class="action-key">Stage</span> button to save the current selection and continue selecting other areas.</li><li><strong>Confirm:</strong> Once you have finished all selections, click the <span class="action-key">Confirm</span> button to start extracting text from all your chosen areas.</li></ol><p><strong>How to exit:</strong></p><ul><li>While the highlight box is visible, <strong>right-click</strong> anywhere on the page.</li><li>Press the <kbd>ESC</kbd> key at any time.</li><li>Click the "Element Scan" icon again at any time.</li></ul>',
-          sessionScanTitle: "Dynamic Scan Tutorial",
-          sessionScan: '<p><strong>What it does:</strong></p><p>Dynamic Scan continuously monitors and automatically records all text that dynamically loads or changes on a webpage. It is especially useful for capturing live chats, infinite scrolling content, or notifications.</p><p><strong>How to use:</strong></p><ul><li><strong>Start Scan:</strong> Click the "Dynamic Scan" icon <span class="help-icon-placeholder dynamic-scan-icon"></span> in the floating button to start scanning immediately.</li><li><strong>Stop Scan:</strong> Click the icon again <span class="help-icon-placeholder stop-icon"></span> to stop.</li><li><strong>View Results:</strong> After stopping, click the main floating button <span class="help-icon-placeholder summary-icon"></span> to open the results window.</li></ul><p><strong>How to exit:</strong></p><ul><li>Click the "Dynamic Scan" icon again during the scan.</li><li>Press the <kbd>ESC</kbd> key at any time to quickly stop the scan.</li></ul>'
-        }
-      };
-    }
-  });
-  var en_default;
-  var init_en = __esm({
-    "src/shared/i18n/en.json"() {
-      en_default = {
-        _meta: {
-          name: "English"
-        },
-        common: {
-          scan: "Scan",
-          stop: "Stop",
-          pause: "Pause",
-          resume: "Resume",
-          clear: "Clear",
-          copy: "Copy",
-          save: "Save",
-          discovered: "Discovered:",
-          confirm: "Confirm",
-          cancel: "Cancel",
-          export: "Export",
-          reselect: "Reselect",
-          stage: "Stage",
-          processingElement: "Processing Element"
-        },
-        export: {
-          exportAsTxt: "Export as TXT",
-          exportAsJson: "Export as JSON",
-          exportAsCsv: "Export as CSV",
-          csv: {
-            id: "ID",
-            original: "Original",
-            translation: "Translation"
-          }
-        },
-        settings: {
-          title: "Settings",
-          theme: "Theme",
-          language: "Language",
-          format: "Output Format",
-          formats: {
-            array: "Nested Array",
-            object: "Key-Value Object",
-            csv: "CSV String"
-          },
-          relatedSettings: "Related Settings",
-          filterRules: "Content Filtering Rules",
-          filters: {
-            numbers: "Filter Numbers/Currency",
-            chinese: "Filter Chinese-Only Text",
-            contains_chinese: "Filter Text Containing Chinese",
-            emoji_only: "Filter Emoji-Only Text",
-            symbols: "Filter Symbol-Only Text",
-            term: "Filter Specific Terms",
-            single_letter: "Filter Single English Letters",
-            repeating_chars: "Filter Repeating Characters",
-            file_paths: "Filter File Paths",
-            hex_color_codes: "Filter Hex Color Codes",
-            email_addresses: "Filter Email Addresses",
-            uuids: "Filter UUIDs",
-            git_commit_hashes: "Filter Git Commit Hashes",
-            website_urls: "Filter Website URLs",
-            website_urls_title: "Filter Website URLs",
-            shorthand_numbers: "Filter Shorthand Numbers",
-            shorthand_numbers_title: "Filter Shorthand Numbers"
-          },
-          display: {
-            show_fab: "Show Floating Button",
-            fab_position: "Floating Button Position",
-            fab_positions: {
-              bottom_right: "\u2198 Bottom Right",
-              top_right: "\u2197 Top Right",
-              bottom_left: "\u2199 Bottom Left",
-              top_left: "\u2196 Top Left"
-            },
-            show_line_numbers: "Show Line Numbers",
-            show_statistics: "Show Statistics",
-            enable_word_wrap: "Enable Word Wrap",
-            text_truncation_limit: "Enable Text Truncation Limit",
-            character_limit: "Character Limit",
-            show_scan_count: "Enable Scan Count in Title"
-          },
-          advanced: {
-            enable_debug_logging: "Enable Debug Logging"
-          },
-          panel: {
-            title: "Settings Panel"
-          },
-          contextual: {
-            elementScanTitle: "Element Scan Settings",
-            sessionScanTitle: "Dynamic Scan Settings",
-            persistData: "Persist data across pages"
-          },
-          languages: {
-            auto: "Auto",
-            en: "English (United States)",
-            "en-GB": "English (United Kingdom)",
-            "zh-CN": "Chinese (Simplified)",
-            "zh-TW": "Chinese (Traditional)"
-          },
-          themes: {
-            light: "Light",
-            dark: "Dark",
-            system: "System"
-          }
-        },
-        scan: {
-          quick: "Quick Scan",
-          session: "Dynamic Scan",
-          stagedCount: "Staged:",
-          elementFinished: "Element scan finished, found {{count}} items.",
-          startSession: "Start Dynamic Scan Session",
-          stopSession: "Stop Dynamic Scan Session",
-          finished: "Scan finished, found {{count}} items.",
-          quickFinished: "Quick scan finished, found {{count}} items.",
-          sessionStarted: "Session scan started.",
-          sessionInProgress: "Scan in progress...",
-          truncationWarning: "To maintain UI fluency, only a portion of the text is displayed here. The full content will be available upon export."
-        },
-        slider: {
-          adjustFrameSize: "Move slider to adjust frame size",
-          minLabel: "Min",
-          maxLabel: "Max"
-        },
-        results: {
-          title: "Extracted Text",
-          scanCountSession: "Scanned {{count}} items",
-          scanCountStatic: "Total {{count}} items scanned",
-          totalCharacters: "Total Characters",
-          totalLines: "Total Lines",
-          noSummary: "No summary available",
-          stats: {
-            lines: "Lines",
-            chars: "Chars"
-          }
-        },
-        notifications: {
-          copiedToClipboard: "Copied to clipboard!",
-          settingsSaved: "Settings saved!",
-          modalInitError: "Modal not initialized.",
-          nothingToCopy: "Nothing to copy.",
-          contentCleared: "Content cleared.",
-          noTextSelected: "No text selected.",
-          scanFailed: "Scan failed.",
-          elementScanStarted: "Element scan started.",
-          elementScanPaused: "Element scan paused.",
-          elementScanResumed: "Element scan session resumed from previous page.",
-          elementScanContinued: "Element scan continued.",
-          sessionScanStarted: "Session scan started.",
-          sessionScanPaused: "Dynamic scan paused.",
-          sessionScanResumed: "Dynamic scan session resumed from previous page.",
-          sessionScanContinued: "Dynamic scan continued.",
-          cspWorkerWarning: "Switched to compatibility scan mode due to website security restrictions."
-        },
-        placeholders: {
-          click: "Click ",
-          dynamicScan: "[Dynamic Scan]",
-          startNewScanSession: " to start a new scan session",
-          staticScan: "[Static Scan]",
-          performOneTimeScan: " to perform a one-time quick extraction"
-        },
-        confirmation: {
-          clear: "Are you sure you want to clear the content? This action cannot be undone."
-        },
-        tooltip: {
-          summary: "View Summary",
-          dynamic_scan: "Dynamic Scan",
-          static_scan: "Static Scan",
-          element_scan: "Element Scan",
-          pauseElementScan: "Pause Element Scan",
-          resumeElementScan: "Resume Element Scan",
-          pauseSessionScan: "Pause Dynamic Scan",
-          resumeSessionScan: "Resume Dynamic Scan",
-          tooltipHelp: "Help",
-          persistData: {
-            title: "Data Persistence Explanation",
-            text: {
-              sessionScan: "When enabled, automatically resumes and continues accumulating results from the previous page when you navigate to a new one. If disabled, only the scan mode is restored, and a new scan session begins.",
-              elementScan: "When enabled, automatically restores all currently staged text when you navigate to a new page. If disabled, only the scan mode is restored, and the staged area will be empty."
-            }
-          },
-          disabled: {
-            scan_in_progress: "Another scan is in progress"
-          },
-          filters: {
-            title: "Content Filter Explanation",
-            numbers: 'This rule filters out text that consists <strong>entirely</strong> of numbers, spaces, thousand separators (.), decimal points (,), and some currency symbols ($, \u20AC, \xA3, \xA5).<br><br><strong>More Examples:</strong><br>\u2022 "1,234.56"<br>\u2022 "\xA5999"<br>\u2022 "\u20AC200"<br>\u2022 "$ 100"',
-            chinese: 'This rule filters out text that consists <strong>entirely</strong> of Chinese characters and spaces, excluding any punctuation.<br><br><strong>Examples:</strong><br>\u2022 "\u4F60\u597D \u4E16\u754C" (will be filtered)<br>\u2022 "\u4F60\u597D\uFF0C\u4E16\u754C" (will not be filtered)',
-            contains_chinese: `This rule filters out <strong>any</strong> text that contains at least one Chinese character, regardless of other characters.<br><br><strong>Examples:</strong><br>\u2022 "\u4F60\u597D World" (will be filtered)<br>\u2022 "Chapter 1" (will be filtered, as '\u7B2C 1 \u7AE0' contains '\u7B2C' and '\u7AE0')`,
-            emoji_only: 'This rule filters out text that consists <strong>entirely</strong> of one or more emoji characters and spaces.<br><br><strong>Examples:</strong><br>\u2022 "\u{1F44D}"<br>\u2022 "\u{1F60A} \u{1F389} \u{1F680}"',
-            symbols: 'This rule filters out text that consists <strong>entirely</strong> of various punctuation and symbols.<br><br><strong>More Examples:</strong><br>\u2022 "@#*&^%"<br>\u2022 "()[]{}"<br>\u2022 "---...---"',
-            term: 'This rule filters out common UI terms that typically do not require translation.<br><br><strong>More Examples:</strong><br>\u2022 "OK", "Cancel", "Submit"<br>\u2022 "Login", "Settings", "Help"',
-            single_letter: 'This rule filters out text consisting of a <strong>single</strong> English letter, case-insensitive.<br><br><strong>Examples:</strong><br>\u2022 "A" (will be filtered)<br>\u2022 "b" (will be filtered)<br>\u2022 "AB" (will not be filtered)',
-            repeating_chars: 'This rule filters out text composed of the <strong>same character</strong> repeating 2 or more times consecutively.<br><br><strong>Examples:</strong><br>\u2022 "aa"<br>\u2022 "======"<br>\u2022 "bbbbb"',
-            file_paths: 'This rule attempts to identify and filter out text that resembles an operating system file path and <strong>includes a file extension</strong>. It does not match URLs.<br><br><strong>More Examples:</strong><br>\u2022 "/path/to/file.js"<br>\u2022 "C:\\Users\\Test\\document.docx"<br>\u2022 "./config.json"',
-            hex_color_codes: 'This rule filters out standard CSS hexadecimal color codes (3, 4, 6, or 8 digits, the latter including an alpha channel).<br><br><strong>Examples:</strong><br>\u2022 "#FFFFFF"<br>\u2022 "#ff0000"<br>\u2022 "#f0c"<br>\u2022 "#f0c8" (4-digit)<br>\u2022 "#ff000080" (8-digit)',
-            email_addresses: 'This rule filters out text that matches the standard format of an email address.<br><br><strong>Examples:</strong><br>\u2022 "example@domain.com"<br>\u2022 "user.name@sub.domain.org"',
-            uuids: 'This rule filters out Universally Unique Identifiers (UUIDs).<br><br><strong>Example:</strong><br>\u2022 "123e4567-e89b-12d3-a456-426614174000"',
-            git_commit_hashes: 'This rule filters out standard Git commit hashes (long or short).<br><br><strong>Examples:</strong><br>\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\u2022 "a1b2c3d"',
-            website_urls: 'This rule filters out text that is a <strong>standalone URL</strong>. It is designed to be strict to avoid accidentally removing text that is not a link.<br><br><strong>More Examples:</strong><br>\u2022 "https://www.example.com"<br>\u2022 "http://test.co.uk"<br>\u2022 "www.google.com"<br>\u2022 "example.org"',
-            shorthand_numbers: 'This rule filters out numbers that use <strong>common shorthand suffixes</strong> for thousands (k), millions (m), or billions (b), case-insensitive.<br><br><strong>More Examples:</strong><br>\u2022 "1.2k"<br>\u2022 "15M"<br>\u2022 "2.5b"<br>\u2022 "100K"'
-          },
-          display: {
-            title: "Display Settings Explanation",
-            show_fab: "Control whether to display the <strong>Floating Action Button (FAB)</strong> in the bottom-right corner of webpages. This serves as the primary entry point for both static and dynamic text extraction. <br><br>If you disable this button, you can re-enable it via the settings panel in the Tampermonkey extension menu.",
-            show_scan_count: "When enabled, the title bar of the results window will show a <strong>real-time count</strong> of the total text items found in the current scan. This is especially useful for monitoring the progress of a long-running <strong>Dynamic Scan</strong>.",
-            show_line_numbers: "Displays line numbers to the left of the text area in the results window. This provides a <strong>precise reference point</strong> when you need to discuss or note a specific line of text.",
-            show_statistics: "Displays <strong>real-time statistics</strong> about the extracted content in the status bar at the bottom of the results window, including <strong>total lines</strong> and <strong>total characters</strong>. This helps you quickly assess the volume of the content.",
-            enable_word_wrap: "Controls how long lines of text are displayed in the results window.<br><br>\u2022 <strong>Enabled:</strong> Long lines will wrap to fit the window's width.<br>\u2022 <strong>Disabled:</strong> Long lines will remain on a single line, causing a horizontal scrollbar to appear.",
-            text_truncation_limit: "This is a <strong>performance-saving</strong> feature. If the script extracts an <strong>extremely long single line of text</strong> (e.g., a base64 encoded image), it could cause the browser to <strong>lag or become unresponsive</strong>.<br><br>This setting truncates any single line exceeding the specified length to ensure the UI remains smooth. <strong>Note: This only affects the display; the exported file will still contain the full, untruncated content.</strong>"
-          },
-          advanced: {
-            title: "Advanced Settings Explanation",
-            enable_debug_logging: "When enabled, the script will output detailed internal status, execution steps, and error messages to the browser's <strong>Developer Tools Console</strong> (usually opened with F12). This is primarily for developers or users who need to submit detailed bug reports."
-          }
-        },
-        log: {
-          prefix: "[Text Extractor Script-Debug]",
-          language: {
-            switched: "Language switched to: {{lang}}",
-            notFound: "Language '{{lang}}' not found, falling back to 'en'."
-          },
-          settings: {
-            changed: "Setting '{{key}}' changed from '{{oldValue}}' to '{{newValue}}'",
-            filterRuleChanged: {
-              enabled: "Filter rule '{{key}}' has been enabled",
-              disabled: "Filter rule '{{key}}' has been disabled"
-            },
-            panel: {
-              opening: "Opening settings panel...",
-              closing: "Closing settings panel...",
-              saving: "Saving settings..."
-            },
-            parseError: "Error parsing saved settings:",
-            invalidObject: "Attempted to save an invalid object for settings:"
-          },
-          textProcessor: {
-            filtered: 'Text filtered: "{{text}}" (Reason: {{reason}})'
-          },
-          quickScan: {
-            switchToFallback: "[Quick Scan] Switching to main thread fallback.",
-            fallbackFailed: "[Quick Scan] Main thread fallback failed: {{error}}",
-            fallback: {
-              starting: "[Quick Scan - Fallback] Starting processing in main thread...",
-              completed: "[Quick Scan - Fallback] Processing complete, found {{count}} unique texts."
-            },
-            worker: {
-              logPrefix: "[Quick Scan Worker]",
-              starting: "[Quick Scan] Starting execution, attempting to use Web Worker...",
-              completed: "[Quick Scan] Worker processing successful, received {{count}} texts.",
-              scanComplete: "[Quick Scan Worker] Processing complete, found {{count}} unique texts. Sending back to main thread...",
-              initFailed: "[Quick Scan] Worker initialization failed. This is likely due to the website's Content Security Policy (CSP).",
-              originalError: "[Quick Scan] Original error: {{error}}",
-              sendingData: "[Quick Scan] Web Worker created, sending {{count}} texts for processing...",
-              initSyncError: "[Quick Scan] Synchronous error during Worker initialization: {{error}}",
-              cspBlocked: "[Quick Scan] CSP check failed. Worker creation is not allowed."
-            }
-          },
-          sessionScan: {
-            switchToFallback: "[Dynamic Scan] Switching to main thread fallback.",
-            domObserver: {
-              stopped: "[Dynamic Scan] Stopped listening for DOM changes."
-            },
-            fallback: {
-              initialized: "[Dynamic Scan - Fallback] Initialized.",
-              cleared: "[Dynamic Scan - Fallback] Data cleared."
-            },
-            worker: {
-              logPrefix: "[Dynamic Scan Worker]",
-              starting: "Dynamic Scan: Attempting to start Web Worker...",
-              initFailed: "[Dynamic Scan] Worker initialization failed. This is likely due to the website's Content Security Policy (CSP).",
-              originalError: "[Dynamic Scan] Original error: {{error}}",
-              initialized: "[Dynamic Scan] Worker initialized successfully, sent {{count}} initial texts to start the session.",
-              initSyncError: "[Dynamic Scan] Synchronous error during Worker initialization: {{error}}",
-              clearCommandSent: "[Dynamic Scan] Clear command sent to worker.",
-              cspBlocked: "[Dynamic Scan] CSP check failed. Worker creation is not allowed."
-            }
-          },
-          ui: {
-            copyButton: {
-              copied: "Copy button clicked, copied {{count}} characters.",
-              nothingToCopy: "Copy button clicked, but there was no content to copy or the button was disabled."
-            },
-            confirmationModal: {
-              sessionScan: {
-                confirmed: "User confirmed clearing session scan texts, invoking callback..."
-              },
-              quickScan: {
-                confirmed: "User confirmed clearing quick scan texts."
-              },
-              cancelled: "User cancelled the clear operation."
-            },
-            modal: {
-              opening: "Opening main modal...",
-              closing: "Closing main modal...",
-              scanFailed: "Static scan failed: {{error}}",
-              clearContent: "Clear content button clicked."
-            },
-            helpIcon: {
-              clicked: "Help icon clicked, displaying content for key: {{contentKey}}"
-            }
-          },
-          exporter: {
-            buttonClicked: "Export button clicked, format: {{format}}.",
-            csvError: "Error while parsing text and generating CSV: {{error}}",
-            fileExported: "File exported: {{filename}}",
-            noContent: "No content to export.",
-            unknownFormat: "Unknown export format: {{format}}"
-          },
-          main: {
-            requestingSessionScanData: "Requesting full data from session-scan mode...",
-            exportingQuickScanData: "Exporting full data from quick-scan mode's memory...",
-            inIframe: "Script is in an iframe, skipping initialization.",
-            initializing: "Script initialization started...",
-            initialSettingsLoaded: "Initial settings loaded:"
-          },
-          dom: {
-            ttpCreationError: "Failed to create Trusted Type policy:",
-            svgParseError: "Invalid or failed to parse SVG string:"
-          },
-          elementScan: {
-            starting: "Element Scan started.",
-            stopping: "Element Scan stopped.",
-            listenersAdded: "Global event listeners for element scan added.",
-            listenersRemoved: "Global event listeners for element scan removed.",
-            stateReset: "Element scan state has been reset.",
-            reselecting: "Returning to element reselection mode.",
-            hovering: "Hovering over <{{tagName}}>.",
-            escapePressed: "Escape key pressed, stopping element scan.",
-            escapeIgnoredForSettings: "Escape key pressed, but ignored because a settings panel is open.",
-            escapeIgnoredForModal: "Escape key pressed, but ignored because a modal or tooltip is open.",
-            escapePressedInAdjust: "Escape key pressed in adjustment mode, returning to reselection.",
-            clickedEnteringAdjust: "Element <{{tagName}}> clicked, entering adjustment mode.",
-            pathBuilt: "Element path built, depth: {{depth}}.",
-            adjustingLevel: "Adjusting selection level to {{level}} ({{tagName}}).",
-            confirmExtracting: "Selection confirmed, extracting text from <{{tagName}}>.",
-            staged: "Element staged. Total staged: {{count}}.",
-            confirmingStaged: "Confirming selection. Processing {{count}} staged elements.",
-            extractedCount: "Extracted {{count}} raw text fragments from element.",
-            confirmFailedNoTarget: "Confirmation failed: no target element selected.",
-            rightClickExit: "Right-click detected, stopping element scan.",
-            processingError: "An error occurred during text processing: {{error}}",
-            scrollListenersAdded: "Added {{count}} scroll listeners to parent elements.",
-            scrollListenersRemoved: "Removed all scroll listeners.",
-            worker: {
-              logPrefix: "[ES Worker]",
-              starting: "Element Scan Worker is starting...",
-              sendingData: "Sending {{count}} text fragments to Element Scan Worker.",
-              completed: "Element Scan Worker completed, found {{count}} unique texts.",
-              initFailed: "Element Scan Worker initialization failed. The browser's CSP might be blocking data: URLs.",
-              initSyncError: "Synchronous error during Element Scan Worker initialization: {{error}}",
-              originalError: "Original worker error: {{error}}",
-              cspBlocked: "Element Scan CSP check failed. Worker creation is not allowed.",
-              attemping: "Attempting to use Web Worker for filtering...",
-              fallback: "Switched to main thread for filtering.",
-              cspHint: "This may be due to the site's Content Security Policy (CSP)."
-            },
-            switchToFallback: "Switching to main thread fallback for Element Scan.",
-            fallbackFailed: "Element Scan fallback mode failed: {{error}}",
-            stagingStarted: "Staging started for element: <{{tagName}}>",
-            stagedNothingNew: "No new unique text was staged from this element.",
-            stagingFinished: "Staging finished.",
-            confirmStarted: "Confirmation process started...",
-            confirmFinished: "Confirmation process finished successfully.",
-            confirmFailed: "Confirmation process failed. Error: {{error}}"
-          },
-          elementScanUI: {
-            creatingHighlights: "Element Scan UI: Creating highlight elements for the first time.",
-            updatingHighlight: "Element Scan UI: Updating highlight for <{{tagName}}>.",
-            creatingToolbar: "Element Scan UI: Creating adjustment toolbar.",
-            toolbarPositioned: "Element Scan UI: Toolbar positioned.",
-            sliderChanged: "Element Scan UI: Slider changed to level {{level}}",
-            reselectClicked: "Element Scan UI: 'Reselect' button clicked.",
-            stageClicked: "Element Scan UI: 'Stage' button clicked.",
-            cancelClicked: "Element Scan UI: 'Cancel' button clicked.",
-            confirmClicked: "Element Scan UI: 'Confirm' button clicked.",
-            dragStarted: "Element Scan UI: Drag started.",
-            dragEnded: "Element Scan UI: Drag ended.",
-            cleaningHighlights: "Element Scan UI: Cleaning up highlight elements.",
-            cleaningToolbar: "Element Scan UI: Cleaning up toolbar."
-          },
-          eventBus: {
-            callbackError: "Error in callback for event '{{eventName}}':"
-          },
-          trustedTypes: {
-            workerPolicyError: "Failed to create Trusted Types worker policy:",
-            htmlPolicyError: "Failed to create Trusted Types HTML policy:",
-            defaultWorkerPolicyWarning: "Trusted Types default policy failed for worker URL, falling back to raw URL.",
-            defaultHtmlPolicyWarning: "Trusted Types default policy failed for HTML, falling back to raw string."
-          }
-        },
-        tutorial: {
-          elementScanTitle: "Element Scan Tutorial",
-          elementScan: '<p><strong>What it does:</strong></p><p>Element Scan allows you to precisely select one or more areas on a webpage (e.g., a paragraph, a list, a sidebar) and extract text only from those areas.</p><p><strong>How to use:</strong></p><ol><li><strong>Start:</strong> Click the "Element Scan" icon <span class="help-icon-placeholder element-scan-icon"></span> in the floating button to enter scan mode.</li><li><strong>Select:</strong> Move your mouse over the page. The area you want to scan will be highlighted. Click to select it.</li><li><strong>Adjust:</strong> A toolbar will appear after selection. You can use the <strong>slider</strong> to expand or shrink the selection area.</li><li><strong>Stage:</strong> If you want to select multiple unrelated areas, click the <span class="action-key">Stage</span> button to save the current selection and continue selecting other areas.</li><li><strong>Confirm:</strong> Once you have finished all selections, click the <span class="action-key">Confirm</span> button to start extracting text from all your chosen areas.</li></ol><p><strong>How to exit:</strong></p><ul><li>While the highlight box is visible, <strong>right-click</strong> anywhere on the page.</li><li>Press the <kbd>ESC</kbd> key at any time.</li><li>Click the "Element Scan" icon again at any time.</li></ul>',
-          sessionScanTitle: "Dynamic Scan Tutorial",
-          sessionScan: '<p><strong>What it does:</strong></p><p>Dynamic Scan continuously monitors and automatically records all text that dynamically loads or changes on a webpage. It is especially useful for capturing live chats, infinite scrolling content, or notifications.</p><p><strong>How to use:</strong></p><ul><li><strong>Start Scan:</strong> Click the "Dynamic Scan" icon <span class="help-icon-placeholder dynamic-scan-icon"></span> in the floating button to start scanning immediately.</li><li><strong>Stop Scan:</strong> Click the icon again <span class="help-icon-placeholder stop-icon"></span> to stop.</li><li><strong>View Results:</strong> After stopping, click the main floating button <span class="help-icon-placeholder summary-icon"></span> to open the results window.</li></ul><p><strong>How to exit:</strong></p><ul><li>Click the "Dynamic Scan" icon again during the scan.</li><li>Press the <kbd>ESC</kbd> key at any time to quickly stop the scan.</li></ul>'
-        }
-      };
-    }
-  });
-  var zh_CN_default;
-  var init_zh_CN = __esm({
-    "src/shared/i18n/zh-CN.json"() {
-      zh_CN_default = {
-        _meta: {
-          name: "\u7B80\u4F53\u4E2D\u6587"
-        },
-        common: {
-          scan: "\u626B\u63CF",
-          stop: "\u505C\u6B62",
-          pause: "\u6682\u505C",
-          resume: "\u6062\u590D",
-          clear: "\u6E05\u7A7A",
-          copy: "\u590D\u5236",
-          save: "\u4FDD\u5B58",
-          discovered: "\u5DF2\u53D1\u73B0:",
-          confirm: "\u786E\u8BA4",
-          cancel: "\u53D6\u6D88",
-          export: "\u5BFC\u51FA",
-          reselect: "\u91CD\u65B0\u9009\u62E9",
-          stage: "\u6682\u5B58",
-          processingElement: "\u5904\u7406\u5143\u7D20"
-        },
-        export: {
-          exportAsTxt: "\u5BFC\u51FA\u4E3A TXT",
-          exportAsJson: "\u5BFC\u51FA\u4E3A JSON",
-          exportAsCsv: "\u5BFC\u51FA\u4E3A CSV",
-          csv: {
-            id: "ID",
-            original: "\u539F\u6587",
-            translation: "\u8BD1\u6587"
-          }
-        },
-        settings: {
-          title: "\u8BBE\u7F6E",
-          theme: "\u4E3B\u9898",
-          language: "\u8BED\u8A00",
-          format: "\u8F93\u51FA\u683C\u5F0F",
-          formats: {
-            array: "\u5D4C\u5957\u6570\u7EC4",
-            object: "\u952E\u503C\u5BF9\u5BF9\u8C61",
-            csv: "CSV \u5B57\u7B26\u4E32"
-          },
-          relatedSettings: "\u76F8\u5173\u8BBE\u7F6E",
-          filterRules: "\u5185\u5BB9\u8FC7\u6EE4\u89C4\u5219",
-          filters: {
-            numbers: "\u8FC7\u6EE4\u6570\u5B57/\u8D27\u5E01",
-            chinese: "\u8FC7\u6EE4\u7EAF\u4E2D\u6587\u6587\u672C",
-            contains_chinese: "\u8FC7\u6EE4\u542B\u4E2D\u6587\u7684\u6587\u672C",
-            emoji_only: "\u8FC7\u6EE4\u7EAF\u8868\u60C5\u7B26\u53F7\u6587\u672C",
-            symbols: "\u8FC7\u6EE4\u7EAF\u7B26\u53F7\u6587\u672C",
-            term: "\u8FC7\u6EE4\u7279\u5B9A\u672F\u8BED",
-            single_letter: "\u8FC7\u6EE4\u5355\u4E2A\u82F1\u6587\u5B57\u6BCD",
-            repeating_chars: "\u8FC7\u6EE4\u91CD\u590D\u5B57\u7B26",
-            file_paths: "\u8FC7\u6EE4\u6587\u4EF6\u8DEF\u5F84",
-            hex_color_codes: "\u8FC7\u6EE4\u5341\u516D\u8FDB\u5236\u989C\u8272\u4EE3\u7801",
-            email_addresses: "\u8FC7\u6EE4\u7535\u5B50\u90AE\u4EF6\u5730\u5740",
-            uuids: "\u8FC7\u6EE4 UUID",
-            git_commit_hashes: "\u8FC7\u6EE4 Git \u63D0\u4EA4\u54C8\u5E0C\u503C",
-            website_urls: "\u8FC7\u6EE4\u7F51\u7AD9\u94FE\u63A5",
-            website_urls_title: "\u8FC7\u6EE4\u7F51\u7AD9\u94FE\u63A5",
-            shorthand_numbers: "\u8FC7\u6EE4\u901F\u8BB0\u6570\u5B57",
-            shorthand_numbers_title: "\u8FC7\u6EE4\u901F\u8BB0\u6570\u5B57"
-          },
-          display: {
-            show_fab: "\u663E\u793A\u60AC\u6D6E\u6309\u94AE",
-            fab_position: "\u60AC\u6D6E\u6309\u94AE\u4F4D\u7F6E",
-            fab_positions: {
-              bottom_right: "\u2198 \u53F3\u4E0B\u89D2",
-              top_right: "\u2197 \u53F3\u4E0A\u89D2",
-              bottom_left: "\u2199 \u5DE6\u4E0B\u89D2",
-              top_left: "\u2196 \u5DE6\u4E0A\u89D2"
-            },
-            show_line_numbers: "\u663E\u793A\u884C\u53F7",
-            show_statistics: "\u663E\u793A\u7EDF\u8BA1\u4FE1\u606F",
-            enable_word_wrap: "\u542F\u7528\u81EA\u52A8\u6362\u884C",
-            text_truncation_limit: "\u542F\u7528\u6587\u672C\u622A\u65AD\u9650\u5236",
-            character_limit: "\u5B57\u7B26\u9650\u5236",
-            show_scan_count: "\u5728\u6807\u9898\u4E2D\u542F\u7528\u626B\u63CF\u8BA1\u6570"
-          },
-          advanced: {
-            enable_debug_logging: "\u542F\u7528\u8C03\u8BD5\u65E5\u5FD7\u8BB0\u5F55"
-          },
-          panel: {
-            title: "\u8BBE\u7F6E\u9762\u677F"
-          },
-          contextual: {
-            elementScanTitle: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u8BBE\u7F6E",
-            sessionScanTitle: "\u52A8\u6001\u626B\u63CF\u8BBE\u7F6E",
-            persistData: "\u8DE8\u9875\u9762\u65F6\u4FDD\u7559\u626B\u63CF\u6570\u636E"
-          },
-          languages: {
-            auto: "\u81EA\u52A8\u68C0\u6D4B",
-            en: "\u82F1\u6587 (\u7F8E\u56FD)",
-            "en-GB": "\u82F1\u6587 (\u82F1\u56FD)",
-            "zh-CN": "\u7B80\u4F53\u4E2D\u6587",
-            "zh-TW": "\u7E41\u4F53\u4E2D\u6587"
-          },
-          themes: {
-            light: "\u6D45\u8272",
-            dark: "\u6DF1\u8272",
-            system: "\u8DDF\u968F\u7CFB\u7EDF"
-          }
-        },
-        scan: {
-          quick: "\u5FEB\u901F\u626B\u63CF",
-          session: "\u52A8\u6001\u626B\u63CF",
-          stagedCount: "\u5DF2\u6682\u5B58:",
-          elementFinished: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5B8C\u6210\uFF0C\u53D1\u73B0 {{count}} \u6761\u6587\u672C\u3002",
-          startSession: "\u5F00\u59CB\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD",
-          stopSession: "\u505C\u6B62\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD",
-          finished: "\u626B\u63CF\u5B8C\u6210\uFF0C\u53D1\u73B0 {{count}} \u6761\u6587\u672C\u3002",
-          quickFinished: "\u5FEB\u901F\u626B\u63CF\u5B8C\u6210\uFF0C\u53D1\u73B0 {{count}} \u6761\u6587\u672C\u3002",
-          sessionStarted: "\u52A8\u6001\u626B\u63CF\u5DF2\u5F00\u59CB\u3002",
-          sessionInProgress: "\u626B\u63CF\u8FDB\u884C\u4E2D...",
-          truncationWarning: "\u4E3A\u4FDD\u6301\u754C\u9762\u6D41\u7545\uFF0C\u6B64\u5904\u4EC5\u663E\u793A\u90E8\u5206\u6587\u672C\u3002\u5BFC\u51FA\u540E\u5C06\u5305\u542B\u5B8C\u6574\u5185\u5BB9\u3002"
-        },
-        slider: {
-          adjustFrameSize: "\u79FB\u52A8\u6ED1\u5757\u4EE5\u8C03\u6574\u6846\u67B6\u5927\u5C0F",
-          minLabel: "\u6700\u5C0F",
-          maxLabel: "\u6700\u5927"
-        },
-        results: {
-          title: "\u63D0\u53D6\u7684\u6587\u672C",
-          scanCountSession: "\u5DF2\u626B\u63CF {{count}} \u4E2A\u9879\u76EE",
-          scanCountStatic: "\u5171\u626B\u63CF {{count}} \u4E2A\u9879\u76EE",
-          totalCharacters: "\u603B\u5B57\u7B26\u6570",
-          totalLines: "\u603B\u884C\u6570",
-          noSummary: "\u65E0\u53EF\u7528\u6458\u8981",
-          stats: {
-            lines: "\u884C",
-            chars: "\u5B57\u7B26"
-          }
-        },
-        notifications: {
-          copiedToClipboard: "\u5DF2\u590D\u5236\u5230\u526A\u8D34\u677F\uFF01",
-          settingsSaved: "\u8BBE\u7F6E\u5DF2\u4FDD\u5B58\uFF01",
-          modalInitError: "\u6A21\u6001\u6846\u672A\u521D\u59CB\u5316\u3002",
-          nothingToCopy: "\u6CA1\u6709\u53EF\u590D\u5236\u7684\u5185\u5BB9\u3002",
-          contentCleared: "\u5185\u5BB9\u5DF2\u6E05\u9664\u3002",
-          noTextSelected: "\u672A\u9009\u62E9\u4EFB\u4F55\u6587\u672C\u3002",
-          scanFailed: "\u626B\u63CF\u5931\u8D25\u3002",
-          elementScanStarted: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5DF2\u5F00\u59CB\u3002",
-          elementScanPaused: "\u5143\u7D20\u626B\u63CF\u5DF2\u6682\u505C\u3002",
-          elementScanResumed: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u4F1A\u8BDD\u5DF2\u4ECE\u4E0A\u4E00\u9875\u6062\u590D\u3002",
-          elementScanContinued: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5DF2\u7EE7\u7EED\u3002",
-          sessionScanStarted: "\u52A8\u6001\u626B\u63CF\u5DF2\u5F00\u59CB\u3002",
-          sessionScanPaused: "\u52A8\u6001\u626B\u63CF\u5DF2\u6682\u505C\u3002",
-          sessionScanResumed: "\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD\u5DF2\u4ECE\u4E0A\u4E00\u9875\u6062\u590D\u3002",
-          sessionScanContinued: "\u52A8\u6001\u626B\u63CF\u5DF2\u7EE7\u7EED\u3002",
-          cspWorkerWarning: "\u56E0\u7F51\u7AD9\u5B89\u5168\u9650\u5236\uFF0C\u5DF2\u5207\u6362\u81F3\u517C\u5BB9\u626B\u63CF\u6A21\u5F0F\u3002"
-        },
-        placeholders: {
-          click: "\u70B9\u51FB ",
-          dynamicScan: "[\u52A8\u6001\u626B\u63CF]",
-          startNewScanSession: " \u5F00\u59CB\u65B0\u7684\u626B\u63CF\u4F1A\u8BDD",
-          staticScan: "[\u9759\u6001\u626B\u63CF]",
-          performOneTimeScan: " \u6267\u884C\u4E00\u6B21\u6027\u5FEB\u901F\u63D0\u53D6"
-        },
-        confirmation: {
-          clear: "\u60A8\u786E\u5B9A\u8981\u6E05\u9664\u5185\u5BB9\u5417\uFF1F\u6B64\u64CD\u4F5C\u65E0\u6CD5\u64A4\u9500\u3002"
-        },
-        tooltip: {
-          summary: "\u67E5\u770B\u6458\u8981",
-          dynamic_scan: "\u52A8\u6001\u626B\u63CF",
-          static_scan: "\u9759\u6001\u626B\u63CF",
-          element_scan: "\u9009\u53D6\u5143\u7D20\u626B\u63CF",
-          pauseElementScan: "\u6682\u505C\u5143\u7D20\u626B\u63CF",
-          resumeElementScan: "\u6062\u590D\u5143\u7D20\u626B\u63CF",
-          pauseSessionScan: "\u6682\u505C\u52A8\u6001\u626B\u63CF",
-          resumeSessionScan: "\u6062\u590D\u52A8\u6001\u626B\u63CF",
-          tooltipHelp: "\u5E2E\u52A9",
-          persistData: {
-            title: "\u6570\u636E\u6301\u4E45\u5316\u8BF4\u660E",
-            text: {
-              sessionScan: "\u5F00\u542F\u540E\uFF0C\u5F53\u70B9\u51FB\u94FE\u63A5\u8DF3\u8F6C\u5230\u65B0\u9875\u9762\u65F6\uFF0C\u4F1A\u81EA\u52A8\u6062\u590D\u5E76\u7EE7\u7EED\u7D2F\u52A0\u4E0A\u4E00\u9875\u7684\u626B\u63CF\u7ED3\u679C\u3002\u5173\u95ED\u6B64\u9009\u9879\uFF0C\u5219\u53EA\u6062\u590D\u626B\u63CF\u6A21\u5F0F\uFF0C\u4F46\u4F1A\u5F00\u59CB\u4E00\u6B21\u5168\u65B0\u7684\u626B\u63CF\u3002",
-              elementScan: "\u5F00\u542F\u540E\uFF0C\u5F53\u70B9\u51FB\u94FE\u63A5\u8DF3\u8F6C\u5230\u65B0\u9875\u9762\u65F6\uFF0C\u4F1A\u81EA\u52A8\u6062\u590D\u5F53\u524D\u5DF2\u6682\u5B58\u7684\u6240\u6709\u6587\u672C\u3002\u5173\u95ED\u6B64\u9009\u9879\uFF0C\u5219\u53EA\u6062\u590D\u626B\u63CF\u6A21\u5F0F\uFF0C\u4F46\u6682\u5B58\u533A\u4F1A\u662F\u7A7A\u7684\u3002"
-            }
-          },
-          disabled: {
-            scan_in_progress: "\u53E6\u4E00\u9879\u626B\u63CF\u6B63\u5728\u8FDB\u884C\u4E2D"
-          },
-          filters: {
-            title: "\u5185\u5BB9\u8FC7\u6EE4\u5668\u8BF4\u660E",
-            numbers: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389<strong>\u5B8C\u5168</strong>\u7531\u6570\u5B57\u3001\u7A7A\u683C\u3001\u5343\u4F4D\u5206\u9694\u7B26(,)\u3001\u5C0F\u6570\u70B9(.)\u4EE5\u53CA\u90E8\u5206\u8D27\u5E01\u7B26\u53F7($, \u20AC, \xA3, \xA5)\u7EC4\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u66F4\u591A\u793A\u4F8B:</strong><br>\u2022 "1,234.56"<br>\u2022 "\xA5999"<br>\u2022 "\u20AC200"<br>\u2022 "$ 100"',
-            chinese: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389<strong>\u5B8C\u5168</strong>\u7531\u6C49\u5B57\u548C\u7A7A\u683C\u7EC4\u6210\uFF0C\u4E14\u4E0D\u542B\u4EFB\u4F55\u6807\u70B9\u7684\u6587\u672C\u3002<br><br><strong>\u793A\u4F8B:</strong><br>\u2022 "\u4F60\u597D \u4E16\u754C" (\u5C06\u88AB\u8FC7\u6EE4)<br>\u2022 "\u4F60\u597D\uFF0C\u4E16\u754C" (\u4E0D\u4F1A\u88AB\u8FC7\u6EE4)',
-            contains_chinese: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389\u4EFB\u4F55\u542B\u6709\u81F3\u5C11\u4E00\u4E2A\u6C49\u5B57\u7684\u6587\u672C\uFF0C\u65E0\u8BBA\u5176\u4ED6\u5B57\u7B26\u662F\u4EC0\u4E48\u3002<br><br><strong>\u793A\u4F8B:</strong><br>\u2022 "\u4F60\u597D World" (\u5C06\u88AB\u8FC7\u6EE4)<br>\u2022 "\u7B2C\u4E00\u7AE0" (\u5C06\u88AB\u8FC7\u6EE4)',
-            emoji_only: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389<strong>\u5B8C\u5168</strong>\u7531\u4E00\u4E2A\u6216\u591A\u4E2A\u8868\u60C5\u7B26\u53F7\u53CA\u7A7A\u683C\u7EC4\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u793A\u4F8B:</strong><br>\u2022 "\u{1F44D}"<br>\u2022 "\u{1F60A} \u{1F389} \u{1F680}"',
-            symbols: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389<strong>\u5B8C\u5168</strong>\u7531\u5404\u79CD\u6807\u70B9\u548C\u7B26\u53F7\u7EC4\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u66F4\u591A\u793A\u4F8B:</strong><br>\u2022 "@#*&^%"<br>\u2022 "()[]{}"<br>\u2022 "---...---"',
-            term: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389\u901A\u5E38\u4E0D\u9700\u8981\u7FFB\u8BD1\u7684\u5E38\u89C1UI\u672F\u8BED\u3002<br><br><strong>\u66F4\u591A\u793A\u4F8B:</strong><br>\u2022 "OK", "Cancel", "Submit"<br>\u2022 "Login", "Settings", "Help"',
-            single_letter: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389\u7531<strong>\u5355\u4E2A</strong>\u82F1\u6587\u5B57\u6BCD\u7EC4\u6210\u7684\u6587\u672C\uFF08\u4E0D\u533A\u5206\u5927\u5C0F\u5199\uFF09\u3002<br><br><strong>\u793A\u4F8B:</strong><br>\u2022 "A" (\u5C06\u88AB\u8FC7\u6EE4)<br>\u2022 "b" (\u5C06\u88AB\u8FC7\u6EE4)<br>\u2022 "AB" (\u4E0D\u4F1A\u88AB\u8FC7\u6EE4)',
-            repeating_chars: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389\u7531<strong>\u540C\u4E00\u4E2A\u5B57\u7B26</strong>\u8FDE\u7EED\u91CD\u590D2\u6B21\u6216\u4EE5\u4E0A\u7684\u6587\u672C\u3002<br><br><strong>\u793A\u4F8B:</strong><br>\u2022 "aa"<br>\u2022 "======"<br>\u2022 "bbbbb"',
-            file_paths: '\u6B64\u89C4\u5219\u5C1D\u8BD5\u8BC6\u522B\u5E76\u8FC7\u6EE4\u6389\u7C7B\u4F3C\u64CD\u4F5C\u7CFB\u7EDF\u6587\u4EF6\u8DEF\u5F84\u4E14<strong>\u5305\u542B\u6587\u4EF6\u6269\u5C55\u540D</strong>\u7684\u6587\u672C\u3002\u5B83\u4E0D\u5339\u914D\u7F51\u5740\u3002<br><br><strong>\u66F4\u591A\u793A\u4F8B:</strong><br>\u2022 "/path/to/file.js"<br>\u2022 "C:\\Users\\Test\\document.docx"<br>\u2022 "./config.json"',
-            hex_color_codes: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389\u6807\u51C6\u7684CSS\u5341\u516D\u8FDB\u5236\u989C\u8272\u4EE3\u7801\uFF083\u30014\u30016\u62168\u4F4D\uFF0C\u540E\u8005\u5305\u542B\u900F\u660E\u5EA6\u901A\u9053\uFF09\u3002<br><br><strong>\u793A\u4F8B:</strong><br>\u2022 "#FFFFFF"<br>\u2022 "#ff0000"<br>\u2022 "#f0c"<br>\u2022 "#f0c8" (4\u4F4D)<br>\u2022 "#ff000080" (8\u4F4D)',
-            email_addresses: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389\u7B26\u5408\u6807\u51C6\u7535\u5B50\u90AE\u4EF6\u5730\u5740\u683C\u5F0F\u7684\u6587\u672C\u3002<br><br><strong>\u793A\u4F8B:</strong><br>\u2022 "example@domain.com"<br>\u2022 "user.name@sub.domain.org"',
-            uuids: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389\u901A\u7528\u552F\u4E00\u6807\u8BC6\u7B26 (UUID)\u3002<br><br><strong>\u793A\u4F8B:</strong><br>\u2022 "123e4567-e89b-12d3-a456-426614174000"',
-            git_commit_hashes: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389\u6807\u51C6\u7684Git\u63D0\u4EA4\u54C8\u5E0C\u503C\uFF08\u957F\u6216\u77ED\uFF09\u3002<br><br><strong>\u793A\u4F8B:</strong><br>\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\u2022 "a1b2c3d"',
-            website_urls: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389<strong>\u72EC\u7ACB\u7684\u7F51\u5740</strong>\u3002\u5B83\u8BBE\u8BA1\u5F97\u6BD4\u8F83\u4E25\u683C\uFF0C\u4EE5\u907F\u514D\u610F\u5916\u79FB\u9664\u4E0D\u662F\u94FE\u63A5\u7684\u6587\u672C\u3002<br><br><strong>\u66F4\u591A\u793A\u4F8B:</strong><br>\u2022 "https://www.example.com"<br>\u2022 "http://test.co.uk"<br>\u2022 "www.google.com"<br>\u2022 "example.org"',
-            shorthand_numbers: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389\u4F7F\u7528<strong>\u5E38\u89C1\u901F\u8BB0\u540E\u7F00</strong>\u8868\u793A\u5343(k)\u3001\u767E\u4E07(m)\u6216\u5341\u4EBF(b)\u7684\u6570\u5B57\uFF08\u4E0D\u533A\u5206\u5927\u5C0F\u5199\uFF09\u3002<br><br><strong>\u66F4\u591A\u793A\u4F8B:</strong><br>\u2022 "1.2k"<br>\u2022 "15M"<br>\u2022 "2.5b"<br>\u2022 "100K"'
-          },
-          display: {
-            title: "\u663E\u793A\u8BBE\u7F6E\u8BF4\u660E",
-            show_fab: "\u63A7\u5236\u662F\u5426\u5728\u7F51\u9875\u53F3\u4E0B\u89D2\u663E\u793A<strong>\u60AC\u6D6E\u64CD\u4F5C\u6309\u94AE(FAB)</strong>\u3002\u8FD9\u662F\u8FDB\u884C\u9759\u6001\u548C\u52A8\u6001\u6587\u672C\u63D0\u53D6\u7684\u4E3B\u8981\u5165\u53E3\u3002<br><br>\u5982\u679C\u60A8\u7981\u7528\u4E86\u6B64\u6309\u94AE\uFF0C\u53EF\u4EE5\u901A\u8FC7\u6CB9\u7334\u6269\u5C55\u83DC\u5355\u4E2D\u7684\u8BBE\u7F6E\u9762\u677F\u91CD\u65B0\u542F\u7528\u5B83\u3002",
-            show_scan_count: "\u542F\u7528\u540E\uFF0C\u7ED3\u679C\u7A97\u53E3\u7684\u6807\u9898\u680F\u5C06<strong>\u5B9E\u65F6\u663E\u793A</strong>\u5F53\u524D\u626B\u63CF\u4E2D\u627E\u5230\u7684\u603B\u6587\u672C\u9879\u76EE\u6570\u3002\u8FD9\u5BF9\u4E8E\u76D1\u63A7\u957F\u65F6\u95F4\u8FD0\u884C\u7684<strong>\u52A8\u6001\u626B\u63CF</strong>\u7684\u8FDB\u5EA6\u7279\u522B\u6709\u7528\u3002",
-            show_line_numbers: "\u5728\u7ED3\u679C\u7A97\u53E3\u7684\u6587\u672C\u533A\u57DF\u5DE6\u4FA7\u663E\u793A\u884C\u53F7\u3002\u5F53\u60A8\u9700\u8981\u8BA8\u8BBA\u6216\u8BB0\u5F55\u7279\u5B9A\u6587\u672C\u884C\u65F6\uFF0C\u8FD9\u63D0\u4F9B\u4E86\u4E00\u4E2A<strong>\u7CBE\u786E\u7684\u53C2\u8003\u70B9</strong>\u3002",
-            show_statistics: "\u5728\u7ED3\u679C\u7A97\u53E3\u5E95\u90E8\u7684\u72B6\u6001\u680F\u4E2D\u663E\u793A\u6709\u5173\u63D0\u53D6\u5185\u5BB9\u7684<strong>\u5B9E\u65F6\u7EDF\u8BA1\u6570\u636E</strong>\uFF0C\u5305\u62EC<strong>\u603B\u884C\u6570</strong>\u548C<strong>\u603B\u5B57\u7B26\u6570</strong>\u3002\u8FD9\u6709\u52A9\u4E8E\u60A8\u5FEB\u901F\u8BC4\u4F30\u5185\u5BB9\u7684\u4F53\u91CF\u3002",
-            enable_word_wrap: "\u63A7\u5236\u7ED3\u679C\u7A97\u53E3\u4E2D\u957F\u6587\u672C\u884C\u7684\u663E\u793A\u65B9\u5F0F\u3002<br><br>\u2022 <strong>\u542F\u7528:</strong> \u957F\u884C\u5C06\u81EA\u52A8\u6362\u884C\u4EE5\u9002\u5E94\u7A97\u53E3\u5BBD\u5EA6\u3002<br>\u2022 <strong>\u7981\u7528:</strong> \u957F\u884C\u5C06\u4FDD\u6301\u5728\u5355\u884C\uFF0C\u5E76\u51FA\u73B0\u6C34\u5E73\u6EDA\u52A8\u6761\u3002",
-            text_truncation_limit: "\u8FD9\u662F\u4E00\u4E2A<strong>\u6027\u80FD\u4F18\u5316</strong>\u529F\u80FD\u3002\u5982\u679C\u811A\u672C\u63D0\u53D6\u5230<strong>\u6781\u957F\u7684\u5355\u884C\u6587\u672C</strong>\uFF08\u4F8B\u5982\uFF0Cbase64\u7F16\u7801\u7684\u56FE\u7247\uFF09\uFF0C\u53EF\u80FD\u4F1A\u5BFC\u81F4\u6D4F\u89C8\u5668<strong>\u5361\u987F\u6216\u65E0\u54CD\u5E94</strong>\u3002<br><br>\u6B64\u8BBE\u7F6E\u4F1A\u622A\u65AD\u4EFB\u4F55\u8D85\u8FC7\u6307\u5B9A\u957F\u5EA6\u7684\u5355\u884C\u6587\u672C\uFF0C\u4EE5\u786E\u4FDDUI\u4FDD\u6301\u6D41\u7545\u3002<strong>\u6CE8\u610F\uFF1A\u8FD9\u4EC5\u5F71\u54CD\u663E\u793A\uFF1B\u5BFC\u51FA\u7684\u6587\u4EF6\u4ECD\u5C06\u5305\u542B\u5B8C\u6574\u7684\u3001\u672A\u622A\u65AD\u7684\u5185\u5BB9\u3002</strong>"
-          },
-          advanced: {
-            title: "\u9AD8\u7EA7\u8BBE\u7F6E\u8BF4\u660E",
-            enable_debug_logging: "\u542F\u7528\u540E\uFF0C\u811A\u672C\u4F1A\u5C06\u8BE6\u7EC6\u7684\u5185\u90E8\u72B6\u6001\u3001\u6267\u884C\u6B65\u9AA4\u548C\u9519\u8BEF\u4FE1\u606F\u8F93\u51FA\u5230\u6D4F\u89C8\u5668\u7684<strong>\u5F00\u53D1\u8005\u5DE5\u5177\u63A7\u5236\u53F0</strong>\uFF08\u901A\u5E38\u7528F12\u6253\u5F00\uFF09\u3002\u8FD9\u4E3B\u8981\u4F9B\u5F00\u53D1\u8005\u6216\u9700\u8981\u63D0\u4EA4\u8BE6\u7EC6\u9519\u8BEF\u62A5\u544A\u7684\u7528\u6237\u4F7F\u7528\u3002"
-          }
-        },
-        log: {
-          prefix: "[\u6587\u672C\u63D0\u53D6\u811A\u672C-\u8C03\u8BD5]",
-          language: {
-            switched: "\u8BED\u8A00\u5DF2\u5207\u6362\u81F3\uFF1A{{lang}}",
-            notFound: "\u672A\u627E\u5230\u8BED\u8A00 '{{lang}}'\uFF0C\u5DF2\u56DE\u9000\u81F3 'en'\u3002"
-          },
-          settings: {
-            changed: "\u8BBE\u7F6E '{{key}}' \u5DF2\u4ECE '{{oldValue}}' \u66F4\u6539\u4E3A '{{newValue}}'",
-            filterRuleChanged: {
-              enabled: "\u8FC7\u6EE4\u89C4\u5219 '{{key}}' \u5DF2\u542F\u7528",
-              disabled: "\u8FC7\u6EE4\u89C4\u5219 '{{key}}' \u5DF2\u7981\u7528"
-            },
-            panel: {
-              opening: "\u6B63\u5728\u6253\u5F00\u8BBE\u7F6E\u9762\u677F...",
-              closing: "\u6B63\u5728\u5173\u95ED\u8BBE\u7F6E\u9762\u677F...",
-              saving: "\u6B63\u5728\u4FDD\u5B58\u8BBE\u7F6E..."
-            },
-            parseError: "\u89E3\u6790\u5DF2\u4FDD\u5B58\u7684\u8BBE\u7F6E\u65F6\u51FA\u9519\uFF1A",
-            invalidObject: "\u8BD5\u56FE\u4E3A\u8BBE\u7F6E\u4FDD\u5B58\u4E00\u4E2A\u65E0\u6548\u5BF9\u8C61\uFF1A"
-          },
-          textProcessor: {
-            filtered: '\u6587\u672C\u5DF2\u8FC7\u6EE4: "{{text}}" (\u539F\u56E0: {{reason}})'
-          },
-          quickScan: {
-            switchToFallback: "[\u5FEB\u901F\u626B\u63CF] \u6B63\u5728\u5207\u6362\u5230\u4E3B\u7EBF\u7A0B\u5907\u9009\u65B9\u6848\u3002",
-            fallbackFailed: "[\u5FEB\u901F\u626B\u63CF] \u4E3B\u7EBF\u7A0B\u5907\u9009\u65B9\u6848\u6267\u884C\u5931\u8D25: {{error}}",
-            fallback: {
-              starting: "[\u5FEB\u901F\u626B\u63CF - \u5907\u9009] \u6B63\u5728\u4E3B\u7EBF\u7A0B\u4E2D\u5F00\u59CB\u5904\u7406...",
-              completed: "[\u5FEB\u901F\u626B\u63CF - \u5907\u9009] \u5904\u7406\u5B8C\u6210\uFF0C\u627E\u5230 {{count}} \u6761\u4E0D\u91CD\u590D\u6587\u672C\u3002"
-            },
-            worker: {
-              logPrefix: "[\u5FEB\u901F\u626B\u63CF Worker]",
-              starting: "[\u5FEB\u901F\u626B\u63CF] \u5F00\u59CB\u6267\u884C\uFF0C\u5C1D\u8BD5\u4F7F\u7528 Web Worker...",
-              completed: "[\u5FEB\u901F\u626B\u63CF] Worker \u5904\u7406\u6210\u529F\uFF0C\u6536\u5230 {{count}} \u6761\u6587\u672C\u3002",
-              scanComplete: "[\u5FEB\u901F\u626B\u63CF Worker] \u5904\u7406\u5B8C\u6210\uFF0C\u627E\u5230 {{count}} \u6761\u4E0D\u91CD\u590D\u6587\u672C\u3002\u6B63\u5728\u53D1\u56DE\u4E3B\u7EBF\u7A0B...",
-              initFailed: "[\u5FEB\u901F\u626B\u63CF] Worker \u521D\u59CB\u5316\u5931\u8D25\u3002\u8FD9\u5F88\u53EF\u80FD\u662F\u7531\u4E8E\u7F51\u7AD9\u7684\u5185\u5BB9\u5B89\u5168\u7B56\u7565 (CSP) \u5BFC\u81F4\u7684\u3002",
-              originalError: "[\u5FEB\u901F\u626B\u63CF] \u539F\u59CB\u9519\u8BEF: {{error}}",
-              sendingData: "[\u5FEB\u901F\u626B\u63CF] Web Worker \u5DF2\u521B\u5EFA\uFF0C\u6B63\u5728\u53D1\u9001 {{count}} \u6761\u6587\u672C\u8FDB\u884C\u5904\u7406...",
-              initSyncError: "[\u5FEB\u901F\u626B\u63CF] Worker \u521D\u59CB\u5316\u671F\u95F4\u53D1\u751F\u540C\u6B65\u9519\u8BEF: {{error}}",
-              cspBlocked: "[\u5FEB\u901F\u626B\u63CF] CSP\u68C0\u67E5\u5931\u8D25\uFF0C\u4E0D\u5141\u8BB8\u521B\u5EFAWorker\u3002"
-            }
-          },
-          sessionScan: {
-            switchToFallback: "[\u52A8\u6001\u626B\u63CF] \u6B63\u5728\u5207\u6362\u5230\u4E3B\u7EBF\u7A0B\u5907\u9009\u65B9\u6848\u3002",
-            domObserver: {
-              stopped: "[\u52A8\u6001\u626B\u63CF] \u5DF2\u505C\u6B62\u76D1\u542C DOM \u53D8\u5316\u3002"
-            },
-            fallback: {
-              initialized: "[\u52A8\u6001\u626B\u63CF - \u5907\u9009] \u5DF2\u521D\u59CB\u5316\u3002",
-              cleared: "[\u52A8\u6001\u626B\u63CF - \u5907\u9009] \u6570\u636E\u5DF2\u6E05\u9664\u3002"
-            },
-            worker: {
-              logPrefix: "[\u52A8\u6001\u626B\u63CF Worker]",
-              starting: "\u52A8\u6001\u626B\u63CF\uFF1A\u6B63\u5728\u5C1D\u8BD5\u542F\u52A8 Web Worker...",
-              initFailed: "[\u52A8\u6001\u626B\u63CF] Worker \u521D\u59CB\u5316\u5931\u8D25\u3002\u8FD9\u5F88\u53EF\u80FD\u662F\u7531\u4E8E\u7F51\u7AD9\u7684\u5185\u5BB9\u5B89\u5168\u7B56\u7565 (CSP) \u5BFC\u81F4\u7684\u3002",
-              originalError: "[\u52A8\u6001\u626B\u63CF] \u539F\u59CB\u9519\u8BEF: {{error}}",
-              initialized: "[\u52A8\u6001\u626B\u63CF] Worker \u521D\u59CB\u5316\u6210\u529F\uFF0C\u5DF2\u53D1\u9001 {{count}} \u6761\u521D\u59CB\u6587\u672C\u4EE5\u5F00\u59CB\u4F1A\u8BDD\u3002",
-              initSyncError: "[\u52A8\u6001\u626B\u63CF] Worker \u521D\u59CB\u5316\u671F\u95F4\u53D1\u751F\u540C\u6B65\u9519\u8BEF: {{error}}",
-              clearCommandSent: "[\u52A8\u6001\u626B\u63CF] \u6E05\u9664\u547D\u4EE4\u5DF2\u53D1\u9001\u81F3 worker\u3002",
-              cspBlocked: "[\u52A8\u6001\u626B\u63CF] CSP\u68C0\u67E5\u5931\u8D25\uFF0C\u4E0D\u5141\u8BB8\u521B\u5EFAWorker\u3002"
-            }
-          },
-          ui: {
-            copyButton: {
-              copied: "\u590D\u5236\u6309\u94AE\u5DF2\u70B9\u51FB\uFF0C\u590D\u5236\u4E86 {{count}} \u4E2A\u5B57\u7B26\u3002",
-              nothingToCopy: "\u590D\u5236\u6309\u94AE\u5DF2\u70B9\u51FB\uFF0C\u4F46\u6CA1\u6709\u5185\u5BB9\u53EF\u590D\u5236\u6216\u6309\u94AE\u88AB\u7981\u7528\u3002"
-            },
-            confirmationModal: {
-              sessionScan: {
-                confirmed: "\u7528\u6237\u5DF2\u786E\u8BA4\u6E05\u9664\u52A8\u6001\u626B\u63CF\u6587\u672C\uFF0C\u6B63\u5728\u8C03\u7528\u56DE\u8C03..."
-              },
-              quickScan: {
-                confirmed: "\u7528\u6237\u5DF2\u786E\u8BA4\u6E05\u9664\u5FEB\u901F\u626B\u63CF\u6587\u672C\u3002"
-              },
-              cancelled: "\u7528\u6237\u5DF2\u53D6\u6D88\u6E05\u9664\u64CD\u4F5C\u3002"
-            },
-            modal: {
-              opening: "\u6B63\u5728\u6253\u5F00\u4E3B\u6A21\u6001\u6846...",
-              closing: "\u6B63\u5728\u5173\u95ED\u4E3B\u6A21\u6001\u6846...",
-              scanFailed: "\u9759\u6001\u626B\u63CF\u5931\u8D25: {{error}}",
-              clearContent: "\u6E05\u7A7A\u5185\u5BB9\u6309\u94AE\u5DF2\u70B9\u51FB\u3002"
-            },
-            helpIcon: {
-              clicked: "\u70B9\u51FB\u4E86\u5E2E\u52A9\u56FE\u6807\uFF0C\u663E\u793A\u5185\u5BB9\u952E\uFF1A{{contentKey}}"
-            }
-          },
-          exporter: {
-            buttonClicked: "\u5BFC\u51FA\u6309\u94AE\u5DF2\u70B9\u51FB\uFF0C\u683C\u5F0F: {{format}}\u3002",
-            csvError: "\u89E3\u6790\u6587\u672C\u5E76\u751F\u6210CSV\u65F6\u51FA\u9519: {{error}}",
-            fileExported: "\u6587\u4EF6\u5DF2\u5BFC\u51FA: {{filename}}",
-            noContent: "\u65E0\u5185\u5BB9\u53EF\u5BFC\u51FA\u3002",
-            unknownFormat: "\u672A\u77E5\u7684\u5BFC\u51FA\u683C\u5F0F: {{format}}"
-          },
-          main: {
-            requestingSessionScanData: "\u6B63\u5728\u8BF7\u6C42\u52A8\u6001\u626B\u63CF\u6A21\u5F0F\u7684\u5B8C\u6574\u6570\u636E...",
-            exportingQuickScanData: "\u6B63\u5728\u5BFC\u51FA\u5FEB\u901F\u626B\u63CF\u6A21\u5F0F\u5185\u5B58\u4E2D\u7684\u5B8C\u6574\u6570\u636E...",
-            inIframe: "\u811A\u672C\u5728 iframe \u4E2D\uFF0C\u5DF2\u8DF3\u8FC7\u521D\u59CB\u5316\u3002",
-            initializing: "\u811A\u672C\u521D\u59CB\u5316\u5F00\u59CB...",
-            initialSettingsLoaded: "\u521D\u59CB\u8BBE\u7F6E\u5DF2\u52A0\u8F7D:"
-          },
-          dom: {
-            ttpCreationError: "\u521B\u5EFA Trusted Type \u7B56\u7565\u5931\u8D25:",
-            svgParseError: "SVG \u5B57\u7B26\u4E32\u65E0\u6548\u6216\u89E3\u6790\u5931\u8D25:"
-          },
-          elementScan: {
-            starting: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5DF2\u5F00\u59CB\u3002",
-            stopping: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5DF2\u505C\u6B62\u3002",
-            listenersAdded: "\u5DF2\u4E3A\u9009\u53D6\u5143\u7D20\u626B\u63CF\u6DFB\u52A0\u5168\u5C40\u4E8B\u4EF6\u76D1\u542C\u5668\u3002",
-            listenersRemoved: "\u5DF2\u4E3A\u9009\u53D6\u5143\u7D20\u626B\u63CF\u79FB\u9664\u5168\u5C40\u4E8B\u4EF6\u76D1\u542C\u5668\u3002",
-            stateReset: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u72B6\u6001\u5DF2\u91CD\u7F6E\u3002",
-            reselecting: "\u6B63\u5728\u8FD4\u56DE\u5143\u7D20\u91CD\u65B0\u9009\u62E9\u6A21\u5F0F\u3002",
-            hovering: "\u6B63\u5728\u60AC\u505C\u4E8E <{{tagName}}>\u3002",
-            escapePressed: "\u6309\u4E0B Escape \u952E\uFF0C\u6B63\u5728\u505C\u6B62\u9009\u53D6\u5143\u7D20\u626B\u63CF\u3002",
-            escapeIgnoredForSettings: "\u6309\u4E0B\u4E86Escape\u952E\uFF0C\u4F46\u56E0\u8BBE\u7F6E\u9762\u677F\u6253\u5F00\u800C\u88AB\u5FFD\u7565\u3002",
-            escapeIgnoredForModal: "\u6309\u4E0B\u4E86Escape\u952E\uFF0C\u4F46\u56E0\u6A21\u6001\u6846\u6216\u63D0\u793A\u7A97\u53E3\u6253\u5F00\u800C\u88AB\u5FFD\u7565\u3002",
-            escapePressedInAdjust: "\u5728\u8C03\u6574\u6A21\u5F0F\u4E0B\u6309\u4E0B\u4E86Escape\u952E\uFF0C\u8FD4\u56DE\u91CD\u65B0\u9009\u62E9\u6A21\u5F0F\u3002",
-            clickedEnteringAdjust: "\u5143\u7D20 <{{tagName}}> \u5DF2\u88AB\u70B9\u51FB\uFF0C\u6B63\u5728\u8FDB\u5165\u8C03\u6574\u6A21\u5F0F\u3002",
-            pathBuilt: "\u5143\u7D20\u5C42\u7EA7\u8DEF\u5F84\u5DF2\u6784\u5EFA\uFF0C\u6DF1\u5EA6\u4E3A\uFF1A{{depth}}\u3002",
-            adjustingLevel: "\u6B63\u5728\u8C03\u6574\u9009\u62E9\u5C42\u7EA7\u81F3 {{level}} ({{tagName}})\u3002",
-            confirmExtracting: "\u9009\u62E9\u5DF2\u786E\u8BA4\uFF0C\u6B63\u5728\u4ECE <{{tagName}}> \u63D0\u53D6\u6587\u672C\u3002",
-            staged: "\u5143\u7D20\u5DF2\u6682\u5B58\u3002\u603B\u6570\uFF1A{{count}}\u3002",
-            confirmingStaged: "\u786E\u8BA4\u9009\u62E9\u3002\u6B63\u5728\u5904\u7406 {{count}} \u4E2A\u5DF2\u6682\u5B58\u7684\u5143\u7D20\u3002",
-            extractedCount: "\u5DF2\u4ECE\u5143\u7D20\u4E2D\u63D0\u53D6 {{count}} \u6761\u539F\u59CB\u6587\u672C\u3002",
-            confirmFailedNoTarget: "\u786E\u8BA4\u5931\u8D25\uFF1A\u672A\u9009\u62E9\u4EFB\u4F55\u76EE\u6807\u5143\u7D20\u3002",
-            rightClickExit: "\u68C0\u6D4B\u5230\u53F3\u952E\u70B9\u51FB\uFF0C\u6B63\u5728\u505C\u6B62\u9009\u53D6\u5143\u7D20\u626B\u63CF\u3002",
-            processingError: "\u6587\u672C\u5904\u7406\u8FC7\u7A0B\u4E2D\u53D1\u751F\u9519\u8BEF: {{error}}",
-            scrollListenersAdded: "\u5DF2\u4E3A {{count}} \u4E2A\u7236\u5143\u7D20\u6DFB\u52A0\u6EDA\u52A8\u76D1\u542C\u5668\u3002",
-            scrollListenersRemoved: "\u5DF2\u79FB\u9664\u6240\u6709\u6EDA\u52A8\u76D1\u542C\u5668\u3002",
-            worker: {
-              logPrefix: "[ES Worker]",
-              starting: "\u9009\u53D6\u5143\u7D20\u626B\u63CF Worker \u6B63\u5728\u542F\u52A8...",
-              sendingData: "\u6B63\u5728\u5411\u9009\u53D6\u5143\u7D20\u626B\u63CF Worker \u53D1\u9001 {{count}} \u6761\u6587\u672C\u7247\u6BB5\u3002",
-              completed: "\u9009\u53D6\u5143\u7D20\u626B\u63CF Worker \u5DF2\u5B8C\u6210\uFF0C\u627E\u5230 {{count}} \u6761\u4E0D\u91CD\u590D\u6587\u672C\u3002",
-              initFailed: "\u9009\u53D6\u5143\u7D20\u626B\u63CF Worker \u521D\u59CB\u5316\u5931\u8D25\u3002\u6D4F\u89C8\u5668\u7684CSP\u53EF\u80FD\u963B\u6B62\u4E86 data: URL\u3002",
-              initSyncError: "\u9009\u53D6\u5143\u7D20\u626B\u63CF Worker \u521D\u59CB\u5316\u671F\u95F4\u53D1\u751F\u540C\u6B65\u9519\u8BEF: {{error}}",
-              originalError: "\u539F\u59CB Worker \u9519\u8BEF: {{error}}",
-              cspBlocked: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u7684CSP\u68C0\u67E5\u5931\u8D25\uFF0C\u4E0D\u5141\u8BB8\u521B\u5EFAWorker\u3002",
-              attemping: "\u6B63\u5728\u5C1D\u8BD5\u4F7F\u7528 Web Worker \u8FDB\u884C\u8FC7\u6EE4...",
-              fallback: "\u5DF2\u5207\u6362\u5230\u4E3B\u7EBF\u7A0B\u8FDB\u884C\u8FC7\u6EE4\u3002",
-              cspHint: "\u8FD9\u53EF\u80FD\u662F\u7531\u4E8E\u7F51\u7AD9\u7684\u5185\u5BB9\u5B89\u5168\u7B56\u7565\uFF08CSP\uFF09\u5BFC\u81F4\u7684\u3002"
-            },
-            switchToFallback: "\u6B63\u5728\u4E3A\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5207\u6362\u5230\u4E3B\u7EBF\u7A0B\u5907\u9009\u65B9\u6848\u3002",
-            fallbackFailed: "\u201C\u9009\u53D6\u5143\u7D20\u626B\u63CF\u201D\u540E\u5907\u6A21\u5F0F\u5931\u8D25\uFF1A{{error}}",
-            stagingStarted: "\u5F00\u59CB\u6682\u5B58\u5143\u7D20\uFF1A<{{tagName}}>",
-            stagedNothingNew: "\u672A\u80FD\u4ECE\u6B64\u5143\u7D20\u4E2D\u6682\u5B58\u4EFB\u4F55\u65B0\u7684\u552F\u4E00\u6587\u672C\u3002",
-            stagingFinished: "\u6682\u5B58\u64CD\u4F5C\u5DF2\u5B8C\u6210\u3002",
-            confirmStarted: "\u786E\u8BA4\u6D41\u7A0B\u5DF2\u5F00\u59CB...",
-            confirmFinished: "\u786E\u8BA4\u6D41\u7A0B\u5DF2\u6210\u529F\u5B8C\u6210\u3002",
-            confirmFailed: "\u786E\u8BA4\u6D41\u7A0B\u5931\u8D25\u3002\u9519\u8BEF\uFF1A{{error}}"
-          },
-          elementScanUI: {
-            creatingHighlights: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u9996\u6B21\u521B\u5EFA\u9AD8\u4EAE\u5143\u7D20\u3002",
-            updatingHighlight: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u6B63\u5728\u4E3A <{{tagName}}> \u66F4\u65B0\u9AD8\u4EAE\u3002",
-            creatingToolbar: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u6B63\u5728\u521B\u5EFA\u8C03\u6574\u5DE5\u5177\u680F\u3002",
-            toolbarPositioned: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u5DE5\u5177\u680F\u5DF2\u5B9A\u4F4D\u3002",
-            sliderChanged: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u6ED1\u5757\u5C42\u7EA7\u53D8\u4E3A {{level}}",
-            reselectClicked: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u201C\u91CD\u65B0\u9009\u62E9\u201D\u6309\u94AE\u88AB\u70B9\u51FB\u3002",
-            stageClicked: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u201C\u6682\u5B58\u201D\u6309\u94AE\u88AB\u70B9\u51FB\u3002",
-            cancelClicked: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u201C\u53D6\u6D88\u201D\u6309\u94AE\u88AB\u70B9\u51FB\u3002",
-            confirmClicked: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u201C\u786E\u8BA4\u201D\u6309\u94AE\u88AB\u70B9\u51FB\u3002",
-            dragStarted: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u62D6\u52A8\u5F00\u59CB\u3002",
-            dragEnded: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u62D6\u52A8\u7ED3\u675F\u3002",
-            cleaningHighlights: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u6B63\u5728\u6E05\u7406\u9AD8\u4EAE\u5143\u7D20\u3002",
-            cleaningToolbar: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u6B63\u5728\u6E05\u7406\u5DE5\u5177\u680F\u3002"
-          },
-          eventBus: {
-            callbackError: "\u4E8B\u4EF6 '{{eventName}}' \u7684\u56DE\u8C03\u51FD\u6570\u51FA\u9519:"
-          },
-          trustedTypes: {
-            workerPolicyError: "\u521B\u5EFA Trusted Types worker \u7B56\u7565\u5931\u8D25:",
-            htmlPolicyError: "\u521B\u5EFA Trusted Types HTML \u7B56\u7565\u5931\u8D25:",
-            defaultWorkerPolicyWarning: "\u7528\u4E8E worker URL \u7684 Trusted Types \u9ED8\u8BA4\u7B56\u7565\u5931\u8D25\uFF0C\u56DE\u9000\u5230\u539F\u59CB URL\u3002",
-            defaultHtmlPolicyWarning: "\u7528\u4E8E HTML \u7684 Trusted Types \u9ED8\u8BA4\u7B56\u7565\u5931\u8D25\uFF0C\u56DE\u9000\u5230\u539F\u59CB\u5B57\u7B26\u4E32\u3002"
-          }
-        },
-        tutorial: {
-          elementScanTitle: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u6559\u7A0B",
-          elementScan: '<p><strong>\u529F\u80FD\u4ECB\u7ECD:</strong></p><p>\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5141\u8BB8\u60A8\u7CBE\u786E\u5730\u9009\u62E9\u7F51\u9875\u4E0A\u7684\u4E00\u4E2A\u6216\u591A\u4E2A\u533A\u57DF\uFF08\u4F8B\u5982\u4E00\u4E2A\u6BB5\u843D\u3001\u4E00\u4E2A\u5217\u8868\u3001\u4E00\u4E2A\u4FA7\u8FB9\u680F\uFF09\uFF0C\u5E76\u4EC5\u4ECE\u8FD9\u4E9B\u533A\u57DF\u4E2D\u63D0\u53D6\u6587\u672C\u3002</p><p><strong>\u5982\u4F55\u4F7F\u7528:</strong></p><ol><li><strong>\u542F\u52A8:</strong> \u70B9\u51FB\u60AC\u6D6E\u6309\u94AE\u4E2D\u7684\u201C\u9009\u53D6\u5143\u7D20\u201D\u56FE\u6807 <span class="help-icon-placeholder element-scan-icon"></span> \u542F\u52A8\u626B\u63CF\u6A21\u5F0F\u3002</li><li><strong>\u9009\u62E9:</strong> \u79FB\u52A8\u9F20\u6807\uFF0C\u60A8\u60F3\u626B\u63CF\u7684\u533A\u57DF\u4F1A\u663E\u793A\u9AD8\u4EAE\u6846\u3002\u5355\u51FB\u4EE5\u9009\u5B9A\u3002</li><li><strong>\u8C03\u6574:</strong> \u9009\u5B9A\u540E\u4F1A\u51FA\u73B0\u5DE5\u5177\u680F\u3002\u60A8\u53EF\u4EE5\u4F7F\u7528<strong>\u6ED1\u5757</strong>\u6765\u6269\u5927\u6216\u7F29\u5C0F\u9009\u62E9\u8303\u56F4\u3002</li><li><strong>\u6682\u5B58:</strong> \u5982\u679C\u60A8\u60F3\u9009\u62E9\u591A\u4E2A\u4E0D\u76F8\u5173\u7684\u533A\u57DF\uFF0C\u53EF\u4EE5\u70B9\u51FB<span class="action-key">\u6682\u5B58</span>\u6309\u94AE\u4FDD\u5B58\u5F53\u524D\u9009\u62E9\uFF0C\u7136\u540E\u7EE7\u7EED\u9009\u62E9\u5176\u4ED6\u533A\u57DF\u3002</li><li><strong>\u786E\u8BA4:</strong> \u5B8C\u6210\u6240\u6709\u9009\u62E9\u540E\uFF0C\u70B9\u51FB<span class="action-key">\u786E\u8BA4</span>\u6309\u94AE\uFF0C\u7CFB\u7EDF\u5C06\u5F00\u59CB\u4ECE\u60A8\u9009\u62E9\u7684\u6240\u6709\u533A\u57DF\u4E2D\u63D0\u53D6\u6587\u672C\u3002</li></ol><p><strong>\u5982\u4F55\u9000\u51FA:</strong></p><ul><li>\u5728\u9009\u62E9\u8FC7\u7A0B\u4E2D\uFF08\u51FA\u73B0\u9AD8\u4EAE\u6846\u65F6\uFF09\uFF0C\u5728\u9875\u9762\u4EFB\u610F\u4F4D\u7F6E<strong>\u53F3\u952E\u5355\u51FB</strong>\u3002</li><li>\u5728\u4EFB\u4F55\u65F6\u5019\uFF0C\u6309\u4E0B<kbd>ESC</kbd>\u952E\u3002</li><li>\u5728\u4EFB\u4F55\u65F6\u5019\uFF0C\u518D\u6B21\u70B9\u51FB\u201C\u9009\u53D6\u5143\u7D20\u626B\u63CF\u201D\u56FE\u6807\u3002</li></ul>',
-          sessionScanTitle: "\u52A8\u6001\u626B\u63CF\u6559\u7A0B",
-          sessionScan: '<p><strong>\u529F\u80FD\u4ECB\u7ECD:</strong></p><p>\u52A8\u6001\u626B\u63CF\u4F1A\u6301\u7EED\u76D1\u63A7\u5E76\u81EA\u52A8\u8BB0\u5F55\u7F51\u9875\u4E0A\u6240\u6709\u52A8\u6001\u52A0\u8F7D\u6216\u53D8\u5316\u7684\u6587\u672C\uFF0C\u7279\u522B\u9002\u7528\u4E8E\u6293\u53D6\u5B9E\u65F6\u804A\u5929\u3001\u6EDA\u52A8\u52A0\u8F7D\u5185\u5BB9\u6216\u901A\u77E5\u7B49\u3002</p><p><strong>\u5982\u4F55\u4F7F\u7528:</strong></p><ul><li><strong>\u5F00\u59CB\u626B\u63CF:</strong> \u70B9\u51FB\u60AC\u6D6E\u6309\u94AE\u4E2D\u7684\u201C\u52A8\u6001\u626B\u63CF\u201D\u56FE\u6807 <span class="help-icon-placeholder dynamic-scan-icon"></span>\uFF0C\u626B\u63CF\u7ACB\u5373\u5F00\u59CB\u3002</li><li><strong>\u505C\u6B62\u626B\u63CF:</strong> \u518D\u6B21\u70B9\u51FB\u8BE5\u56FE\u6807 <span class="help-icon-placeholder stop-icon"></span>\uFF0C\u5373\u53EF\u505C\u6B62\u626B\u63CF\u3002</li><li><strong>\u67E5\u770B\u7ED3\u679C:</strong> \u505C\u6B62\u540E\uFF0C\u70B9\u51FB\u4E3B\u60AC\u6D6E\u6309\u94AE <span class="help-icon-placeholder summary-icon"></span> \u6253\u5F00\u7ED3\u679C\u7A97\u53E3\u3002</li></ul><p><strong>\u5982\u4F55\u9000\u51FA:</strong></p><ul><li>\u5728\u626B\u63CF\u8FC7\u7A0B\u4E2D\uFF0C\u518D\u6B21\u70B9\u51FB\u201C\u52A8\u6001\u626B\u63CF\u201D\u56FE\u6807\u3002</li><li>\u5728\u626B\u63CF\u8FC7\u7A0B\u4E2D\uFF0C\u968F\u65F6\u6309\u4E0B<kbd>ESC</kbd>\u952E\u53EF\u5FEB\u901F\u505C\u6B62\u3002</li></ul>'
-        }
-      };
-    }
-  });
-  var zh_TW_default;
-  var init_zh_TW = __esm({
-    "src/shared/i18n/zh-TW.json"() {
-      zh_TW_default = {
-        _meta: {
-          name: "\u7E41\u9AD4\u4E2D\u6587"
-        },
-        common: {
-          scan: "\u6383\u63CF",
-          stop: "\u505C\u6B62",
-          pause: "\u66AB\u505C",
-          resume: "\u6062\u5FA9",
-          clear: "\u6E05\u7A7A",
-          copy: "\u8907\u88FD",
-          save: "\u5132\u5B58",
-          discovered: "\u5DF2\u767C\u73FE:",
-          confirm: "\u78BA\u8A8D",
-          cancel: "\u53D6\u6D88",
-          export: "\u532F\u51FA",
-          reselect: "\u91CD\u65B0\u9078\u64C7",
-          stage: "\u66AB\u5B58",
-          processingElement: "\u8655\u7406\u5143\u7D20"
-        },
-        export: {
-          exportAsTxt: "\u532F\u51FA\u70BA TXT",
-          exportAsJson: "\u532F\u51FA\u70BA JSON",
-          exportAsCsv: "\u532F\u51FA\u70BA CSV",
-          csv: {
-            id: "ID",
-            original: "\u539F\u6587",
-            translation: "\u8B6F\u6587"
-          }
-        },
-        settings: {
-          title: "\u8A2D\u5B9A",
-          theme: "\u4E3B\u984C",
-          language: "\u8A9E\u8A00",
-          format: "\u8F38\u51FA\u683C\u5F0F",
-          formats: {
-            array: "\u5D4C\u5957\u9663\u5217",
-            object: "\u9375\u503C\u5C0D\u7269\u4EF6",
-            csv: "CSV \u5B57\u4E32"
-          },
-          relatedSettings: "\u76F8\u95DC\u8A2D\u5B9A",
-          filterRules: "\u5167\u5BB9\u904E\u6FFE\u898F\u5247",
-          filters: {
-            numbers: "\u904E\u6FFE\u6578\u5B57/\u8CA8\u5E63",
-            chinese: "\u904E\u6FFE\u7D14\u4E2D\u6587\u6587\u672C",
-            contains_chinese: "\u904E\u6FFE\u542B\u4E2D\u6587\u7684\u6587\u672C",
-            emoji_only: "\u904E\u6FFE\u7D14\u8868\u60C5\u7B26\u865F\u6587\u672C",
-            symbols: "\u904E\u6FFE\u7D14\u7B26\u865F\u6587\u672C",
-            term: "\u904E\u6FFE\u7279\u5B9A\u8853\u8A9E",
-            single_letter: "\u904E\u6FFE\u55AE\u500B\u82F1\u6587\u5B57\u6BCD",
-            repeating_chars: "\u904E\u6FFE\u91CD\u8907\u5B57\u5143",
-            file_paths: "\u904E\u6FFE\u6A94\u6848\u8DEF\u5F91",
-            hex_color_codes: "\u904E\u6FFE\u5341\u516D\u9032\u4F4D\u984F\u8272\u4EE3\u78BC",
-            email_addresses: "\u904E\u6FFE\u96FB\u5B50\u90F5\u4EF6\u5730\u5740",
-            uuids: "\u904E\u6FFE UUID",
-            git_commit_hashes: "\u904E\u6FFE Git \u63D0\u4EA4\u96DC\u6E4A\u503C",
-            website_urls: "\u904E\u6FFE\u7DB2\u7AD9\u9023\u7D50",
-            website_urls_title: "\u904E\u6FFE\u7DB2\u7AD9\u9023\u7D50",
-            shorthand_numbers: "\u904E\u6FFE\u901F\u8A18\u6578\u5B57",
-            shorthand_numbers_title: "\u904E\u6FFE\u901F\u8A18\u6578\u5B57"
-          },
-          display: {
-            show_fab: "\u986F\u793A\u61F8\u6D6E\u6309\u9215",
-            fab_position: "\u61F8\u6D6E\u6309\u9215\u4F4D\u7F6E",
-            fab_positions: {
-              bottom_right: "\u2198 \u53F3\u4E0B\u89D2",
-              top_right: "\u2197 \u53F3\u4E0A\u89D2",
-              bottom_left: "\u2199 \u5DE6\u4E0B\u89D2",
-              top_left: "\u2196 \u5DE6\u4E0A\u89D2"
-            },
-            show_line_numbers: "\u986F\u793A\u884C\u865F",
-            show_statistics: "\u986F\u793A\u7D71\u8A08\u8CC7\u8A0A",
-            enable_word_wrap: "\u555F\u7528\u81EA\u52D5\u63DB\u884C",
-            text_truncation_limit: "\u555F\u7528\u6587\u672C\u622A\u65B7\u9650\u5236",
-            character_limit: "\u5B57\u5143\u9650\u5236",
-            show_scan_count: "\u5728\u6A19\u984C\u4E2D\u555F\u7528\u6383\u63CF\u8A08\u6578"
-          },
-          advanced: {
-            enable_debug_logging: "\u555F\u7528\u5075\u932F\u65E5\u8A8C\u8A18\u9304"
-          },
-          panel: {
-            title: "\u8A2D\u5B9A\u9762\u677F"
-          },
-          contextual: {
-            elementScanTitle: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u8A2D\u5B9A",
-            sessionScanTitle: "\u52D5\u614B\u6383\u63CF\u8A2D\u5B9A",
-            persistData: "\u8DE8\u9801\u9762\u6642\u4FDD\u7559\u6383\u63CF\u6578\u64DA"
-          },
-          languages: {
-            auto: "\u81EA\u52D5\u6AA2\u6E2C",
-            en: "\u82F1\u6587 (\u7F8E\u570B)",
-            "en-GB": "\u82F1\u6587 (\u82F1\u570B)",
-            "zh-CN": "\u7C21\u9AD4\u4E2D\u6587",
-            "zh-TW": "\u7E41\u9AD4\u4E2D\u6587"
-          },
-          themes: {
-            light: "\u6DFA\u8272",
-            dark: "\u6DF1\u8272",
-            system: "\u8DDF\u96A8\u7CFB\u7D71"
-          }
-        },
-        scan: {
-          quick: "\u5FEB\u901F\u6383\u63CF",
-          session: "\u52D5\u614B\u6383\u63CF",
-          stagedCount: "\u5DF2\u66AB\u5B58:",
-          elementFinished: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5B8C\u6210\uFF0C\u767C\u73FE {{count}} \u689D\u6587\u672C\u3002",
-          startSession: "\u958B\u59CB\u52D5\u614B\u6383\u63CF\u6703\u8A71",
-          stopSession: "\u505C\u6B62\u52D5\u614B\u6383\u63CF\u6703\u8A71",
-          finished: "\u6383\u63CF\u5B8C\u6210\uFF0C\u767C\u73FE {{count}} \u689D\u6587\u672C\u3002",
-          quickFinished: "\u5FEB\u901F\u6383\u63CF\u5B8C\u6210\uFF0C\u767C\u73FE {{count}} \u689D\u6587\u672C\u3002",
-          sessionStarted: "\u52D5\u614B\u6383\u63CF\u5DF2\u958B\u59CB\u3002",
-          sessionInProgress: "\u6383\u63CF\u9032\u884C\u4E2D...",
-          truncationWarning: "\u70BA\u4FDD\u6301\u4ECB\u9762\u6D41\u66A2\uFF0C\u6B64\u8655\u50C5\u986F\u793A\u90E8\u5206\u6587\u672C\u3002\u532F\u51FA\u5F8C\u5C07\u5305\u542B\u5B8C\u6574\u5167\u5BB9\u3002"
-        },
-        slider: {
-          adjustFrameSize: "\u79FB\u52D5\u6ED1\u584A\u4EE5\u8ABF\u6574\u6846\u67B6\u5927\u5C0F",
-          minLabel: "\u6700\u5C0F",
-          maxLabel: "\u6700\u5927"
-        },
-        results: {
-          title: "\u63D0\u53D6\u7684\u6587\u672C",
-          scanCountSession: "\u5DF2\u6383\u63CF {{count}} \u500B\u9805\u76EE",
-          scanCountStatic: "\u5171\u6383\u63CF {{count}} \u500B\u9805\u76EE",
-          totalCharacters: "\u7E3D\u5B57\u5143\u6578",
-          totalLines: "\u7E3D\u884C\u6578",
-          noSummary: "\u7121\u53EF\u7528\u6458\u8981",
-          stats: {
-            lines: "\u884C",
-            chars: "\u5B57\u5143"
-          }
-        },
-        notifications: {
-          copiedToClipboard: "\u5DF2\u8907\u88FD\u5230\u526A\u8CBC\u7C3F\uFF01",
-          settingsSaved: "\u8A2D\u5B9A\u5DF2\u5132\u5B58\uFF01",
-          modalInitError: "\u6A21\u614B\u6846\u672A\u521D\u59CB\u5316\u3002",
-          nothingToCopy: "\u6C92\u6709\u53EF\u8907\u88FD\u7684\u5167\u5BB9\u3002",
-          contentCleared: "\u5167\u5BB9\u5DF2\u6E05\u9664\u3002",
-          noTextSelected: "\u672A\u9078\u64C7\u4EFB\u4F55\u6587\u672C\u3002",
-          scanFailed: "\u6383\u63CF\u5931\u6557\u3002",
-          elementScanStarted: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5DF2\u958B\u59CB\u3002",
-          elementScanPaused: "\u5143\u7D20\u6383\u63CF\u5DF2\u66AB\u505C\u3002",
-          elementScanResumed: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u6703\u8A71\u5DF2\u5F9E\u4E0A\u4E00\u9801\u6062\u5FA9\u3002",
-          elementScanContinued: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5DF2\u7E7C\u7E8C\u3002",
-          sessionScanStarted: "\u52D5\u614B\u6383\u63CF\u5DF2\u958B\u59CB\u3002",
-          sessionScanPaused: "\u52D5\u614B\u6383\u63CF\u5DF2\u66AB\u505C\u3002",
-          sessionScanResumed: "\u52D5\u614B\u6383\u63CF\u6703\u8A71\u5DF2\u5F9E\u4E0A\u4E00\u9801\u6062\u5FA9\u3002",
-          sessionScanContinued: "\u52D5\u614B\u6383\u63CF\u5DF2\u7E7C\u7E8C\u3002",
-          cspWorkerWarning: "\u56E0\u7DB2\u7AD9\u5B89\u5168\u9650\u5236\uFF0C\u5DF2\u5207\u63DB\u81F3\u76F8\u5BB9\u6383\u63CF\u6A21\u5F0F\u3002"
-        },
-        placeholders: {
-          click: "\u9EDE\u64CA ",
-          dynamicScan: "[\u52D5\u614B\u6383\u63CF]",
-          startNewScanSession: " \u958B\u59CB\u65B0\u7684\u6383\u63CF\u6703\u8A71",
-          staticScan: "[\u975C\u614B\u6383\u63CF]",
-          performOneTimeScan: " \u57F7\u884C\u4E00\u6B21\u6027\u5FEB\u901F\u63D0\u53D6"
-        },
-        confirmation: {
-          clear: "\u60A8\u78BA\u5B9A\u8981\u6E05\u9664\u5167\u5BB9\u55CE\uFF1F\u6B64\u64CD\u4F5C\u7121\u6CD5\u64A4\u92B7\u3002"
-        },
-        tooltip: {
-          summary: "\u67E5\u770B\u6458\u8981",
-          dynamic_scan: "\u52D5\u614B\u6383\u63CF",
-          static_scan: "\u975C\u614B\u6383\u63CF",
-          element_scan: "\u9078\u53D6\u5143\u7D20\u6383\u63CF",
-          pauseElementScan: "\u66AB\u505C\u5143\u7D20\u6383\u63CF",
-          resumeElementScan: "\u6062\u5FA9\u5143\u7D20\u6383\u63CF",
-          pauseSessionScan: "\u66AB\u505C\u52D5\u614B\u6383\u63CF",
-          resumeSessionScan: "\u6062\u5FA9\u52D5\u614B\u6383\u63CF",
-          tooltipHelp: "\u5E6B\u52A9",
-          persistData: {
-            title: "\u8CC7\u6599\u6301\u4E45\u5316\u8AAA\u660E",
-            text: {
-              sessionScan: "\u958B\u555F\u5F8C\uFF0C\u7576\u9EDE\u64CA\u93C8\u63A5\u8DF3\u8F49\u5230\u65B0\u9801\u9762\u6642\uFF0C\u6703\u81EA\u52D5\u6062\u5FA9\u4E26\u7E7C\u7E8C\u7D2F\u52A0\u4E0A\u4E00\u9801\u7684\u6383\u63CF\u7D50\u679C\u3002\u95DC\u9589\u6B64\u9078\u9805\uFF0C\u5247\u53EA\u6062\u5FA9\u6383\u63CF\u6A21\u5F0F\uFF0C\u4F46\u6703\u958B\u59CB\u4E00\u6B21\u5168\u65B0\u7684\u6383\u63CF\u3002",
-              elementScan: "\u958B\u555F\u5F8C\uFF0C\u7576\u9EDE\u64CA\u93C8\u63A5\u8DF3\u8F49\u5230\u65B0\u9801\u9762\u6642\uFF0C\u6703\u81EA\u52D5\u6062\u5FA9\u7576\u524D\u5DF2\u66AB\u5B58\u7684\u6240\u6709\u6587\u672C\u3002\u95DC\u9589\u6B64\u9078\u9805\uFF0C\u5247\u53EA\u6062\u5FA9\u6383\u63CF\u6A21\u5F0F\uFF0C\u4F46\u66AB\u5B58\u5340\u6703\u662F\u7A7A\u7684\u3002"
-            }
-          },
-          disabled: {
-            scan_in_progress: "\u53E6\u4E00\u9805\u6383\u63CF\u6B63\u5728\u9032\u884C\u4E2D"
-          },
-          filters: {
-            title: "\u5167\u5BB9\u904E\u6FFE\u5668\u8AAA\u660E",
-            numbers: '\u6B64\u898F\u5247\u904E\u6FFE\u6389<strong>\u5B8C\u5168</strong>\u7531\u6578\u5B57\u3001\u7A7A\u683C\u3001\u5343\u4F4D\u5206\u9694\u7B26(,)\u3001\u5C0F\u6578\u9EDE(.)\u4EE5\u53CA\u90E8\u5206\u8CA8\u5E63\u7B26\u865F($, \u20AC, \xA3, \xA5)\u7D44\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u66F4\u591A\u7BC4\u4F8B:</strong><br>\u2022 "1,234.56"<br>\u2022 "\xA5999"<br>\u2022 "\u20AC200"<br>\u2022 "$ 100"',
-            chinese: '\u6B64\u898F\u5247\u904E\u6FFE\u6389<strong>\u5B8C\u5168</strong>\u7531\u6F22\u5B57\u548C\u7A7A\u683C\u7D44\u6210\uFF0C\u4E14\u4E0D\u542B\u4EFB\u4F55\u6A19\u9EDE\u7684\u6587\u672C\u3002<br><br><strong>\u7BC4\u4F8B:</strong><br>\u2022 "\u4F60\u597D \u4E16\u754C" (\u5C07\u88AB\u904E\u6FFE)<br>\u2022 "\u4F60\u597D\uFF0C\u4E16\u754C" (\u4E0D\u6703\u88AB\u904E\u6FFE)',
-            contains_chinese: '\u6B64\u898F\u5247\u904E\u6FFE\u6389\u4EFB\u4F55\u542B\u6709\u81F3\u5C11\u4E00\u500B\u6F22\u5B57\u7684\u6587\u672C\uFF0C\u7121\u8AD6\u5176\u4ED6\u5B57\u5143\u662F\u4EC0\u9EBC\u3002<br><br><strong>\u7BC4\u4F8B:</strong><br>\u2022 "\u4F60\u597D World" (\u5C07\u88AB\u904E\u6FFE)<br>\u2022 "\u7B2C\u4E00\u7AE0" (\u5C07\u88AB\u904E\u6FFE)',
-            emoji_only: '\u6B64\u898F\u5247\u904E\u6FFE\u6389<strong>\u5B8C\u5168</strong>\u7531\u4E00\u500B\u6216\u591A\u500B\u8868\u60C5\u7B26\u865F\u53CA\u7A7A\u683C\u7D44\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u7BC4\u4F8B:</strong><br>\u2022 "\u{1F44D}"<br>\u2022 "\u{1F60A} \u{1F389} \u{1F680}"',
-            symbols: '\u6B64\u898F\u5247\u904E\u6FFE\u6389<strong>\u5B8C\u5168</strong>\u7531\u5404\u7A2E\u6A19\u9EDE\u548C\u7B26\u865F\u7D44\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u66F4\u591A\u7BC4\u4F8B:</strong><br>\u2022 "@#*&^%"<br>\u2022 "()[]{}"<br>\u2022 "---...---"',
-            term: '\u6B64\u898F\u5247\u904E\u6FFE\u6389\u901A\u5E38\u4E0D\u9700\u8981\u7FFB\u8B6F\u7684\u5E38\u898BUI\u8853\u8A9E\u3002<br><br><strong>\u66F4\u591A\u7BC4\u4F8B:</strong><br>\u2022 "OK", "Cancel", "Submit"<br>\u2022 "Login", "Settings", "Help"',
-            single_letter: '\u6B64\u898F\u5247\u904E\u6FFE\u6389\u7531<strong>\u55AE\u500B</strong>\u82F1\u6587\u5B57\u6BCD\u7D44\u6210\u7684\u6587\u672C\uFF08\u4E0D\u5340\u5206\u5927\u5C0F\u5BEB\uFF09\u3002<br><br><strong>\u7BC4\u4F8B:</strong><br>\u2022 "A" (\u5C07\u88AB\u904E\u6FFE)<br>\u2022 "b" (\u5C07\u88AB\u904E\u6FFE)<br>\u2022 "AB" (\u4E0D\u6703\u88AB\u904E\u6FFE)',
-            repeating_chars: '\u6B64\u898F\u5247\u904E\u6FFE\u6389\u7531<strong>\u540C\u4E00\u500B\u5B57\u5143</strong>\u9023\u7E8C\u91CD\u89072\u6B21\u6216\u4EE5\u4E0A\u7684\u6587\u672C\u3002<br><br><strong>\u7BC4\u4F8B:</strong><br>\u2022 "aa"<br>\u2022 "======"<br>\u2022 "bbbbb"',
-            file_paths: '\u6B64\u898F\u5247\u5617\u8A66\u8B58\u5225\u4E26\u904E\u6FFE\u6389\u985E\u4F3C\u4F5C\u696D\u7CFB\u7D71\u6A94\u6848\u8DEF\u5F91\u4E14<strong>\u5305\u542B\u6A94\u6848\u526F\u6A94\u540D</strong>\u7684\u6587\u672C\u3002\u5B83\u4E0D\u5339\u914D\u7DB2\u5740\u3002<br><br><strong>\u66F4\u591A\u7BC4\u4F8B:</strong><br>\u2022 "/path/to/file.js"<br>\u2022 "C:\\Users\\Test\\document.docx"<br>\u2022 "./config.json"',
-            hex_color_codes: '\u6B64\u898F\u5247\u904E\u6FFE\u6389\u6A19\u6E96\u7684CSS\u5341\u516D\u9032\u4F4D\u984F\u8272\u4EE3\u78BC\uFF083\u30014\u30016\u62168\u4F4D\uFF0C\u5F8C\u8005\u5305\u542B\u900F\u660E\u5EA6\u901A\u9053\uFF09\u3002<br><br><strong>\u7BC4\u4F8B:</strong><br>\u2022 "#FFFFFF"<br>\u2022 "#ff0000"<br>\u2022 "#f0c"<br>\u2022 "#f0c8" (4\u4F4D)<br>\u2022 "#ff000080" (8\u4F4D)',
-            email_addresses: '\u6B64\u898F\u5247\u904E\u6FFE\u6389\u7B26\u5408\u6A19\u6E96\u96FB\u5B50\u90F5\u4EF6\u5730\u5740\u683C\u5F0F\u7684\u6587\u672C\u3002<br><br><strong>\u7BC4\u4F8B:</strong><br>\u2022 "example@domain.com"<br>\u2022 "user.name@sub.domain.org"',
-            uuids: '\u6B64\u898F\u5247\u904E\u6FFE\u6389\u901A\u7528\u552F\u4E00\u8B58\u5225\u78BC (UUID)\u3002<br><br><strong>\u7BC4\u4F8B:</strong><br>\u2022 "123e4567-e89b-12d3-a456-426614174000"',
-            git_commit_hashes: '\u6B64\u898F\u5247\u904E\u6FFE\u6389\u6A19\u6E96\u7684Git\u63D0\u4EA4\u96DC\u6E4A\u503C\uFF08\u9577\u6216\u77ED\uFF09\u3002<br><br><strong>\u7BC4\u4F8B:</strong><br>\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\u2022 "a1b2c3d"',
-            website_urls: '\u6B64\u898F\u5247\u904E\u6FFE\u6389<strong>\u7368\u7ACB\u7684\u7DB2\u5740</strong>\u3002\u5B83\u8A2D\u8A08\u5F97\u6BD4\u8F03\u56B4\u683C\uFF0C\u4EE5\u907F\u514D\u610F\u5916\u79FB\u9664\u4E0D\u662F\u9023\u7D50\u7684\u6587\u672C\u3002<br><br><strong>\u66F4\u591A\u7BC4\u4F8B:</strong><br>\u2022 "https://www.example.com"<br>\u2022 "http://test.co.uk"<br>\u2022 "www.google.com"<br>\u2022 "example.org"',
-            shorthand_numbers: '\u6B64\u898F\u5247\u904E\u6FFE\u6389\u4F7F\u7528<strong>\u5E38\u898B\u901F\u8A18\u5F8C\u7DB4</strong>\u8868\u793A\u5343(k)\u3001\u767E\u842C(m)\u6216\u5341\u5104(b)\u7684\u6578\u5B57\uFF08\u4E0D\u5340\u5206\u5927\u5C0F\u5BEB\uFF09\u3002<br><br><strong>\u66F4\u591A\u7BC4\u4F8B:</strong><br>\u2022 "1.2k"<br>\u2022 "15M"<br>\u2022 "2.5b"<br>\u2022 "100K"'
-          },
-          display: {
-            title: "\u986F\u793A\u8A2D\u5B9A\u8AAA\u660E",
-            show_fab: "\u63A7\u5236\u662F\u5426\u5728\u7DB2\u9801\u53F3\u4E0B\u89D2\u986F\u793A<strong>\u61F8\u6D6E\u64CD\u4F5C\u6309\u9215(FAB)</strong>\u3002\u9019\u662F\u9032\u884C\u975C\u614B\u548C\u52D5\u614B\u6587\u672C\u63D0\u53D6\u7684\u4E3B\u8981\u5165\u53E3\u3002<br><br>\u5982\u679C\u60A8\u7981\u7528\u4E86\u6B64\u6309\u9215\uFF0C\u53EF\u4EE5\u900F\u904E\u6CB9\u7334\u64F4\u5145\u5957\u4EF6\u9078\u55AE\u4E2D\u7684\u8A2D\u5B9A\u9762\u677F\u91CD\u65B0\u555F\u7528\u5B83\u3002",
-            show_scan_count: "\u555F\u7528\u5F8C\uFF0C\u7D50\u679C\u8996\u7A97\u7684\u6A19\u984C\u5217\u5C07<strong>\u5373\u6642\u986F\u793A</strong>\u76EE\u524D\u6383\u63CF\u4E2D\u627E\u5230\u7684\u7E3D\u6587\u672C\u9805\u76EE\u6578\u3002\u9019\u5C0D\u65BC\u76E3\u63A7\u9577\u6642\u9593\u57F7\u884C\u7684<strong>\u52D5\u614B\u6383\u63CF</strong>\u7684\u9032\u5EA6\u7279\u5225\u6709\u7528\u3002",
-            show_line_numbers: "\u5728\u7D50\u679C\u8996\u7A97\u7684\u6587\u672C\u5340\u57DF\u5DE6\u5074\u986F\u793A\u884C\u865F\u3002\u7576\u60A8\u9700\u8981\u8A0E\u8AD6\u6216\u8A18\u9304\u7279\u5B9A\u6587\u672C\u884C\u6642\uFF0C\u9019\u63D0\u4F9B\u4E86\u4E00\u500B<strong>\u7CBE\u78BA\u7684\u53C3\u8003\u9EDE</strong>\u3002",
-            show_statistics: "\u5728\u7D50\u679C\u8996\u7A97\u5E95\u90E8\u7684\u72C0\u614B\u5217\u4E2D\u986F\u793A\u6709\u95DC\u63D0\u53D6\u5167\u5BB9\u7684<strong>\u5373\u6642\u7D71\u8A08\u6578\u64DA</strong>\uFF0C\u5305\u62EC<strong>\u7E3D\u884C\u6578</strong>\u548C<strong>\u7E3D\u5B57\u5143\u6578</strong>\u3002\u9019\u6709\u52A9\u65BC\u60A8\u5FEB\u901F\u8A55\u4F30\u5167\u5BB9\u7684\u9AD4\u91CF\u3002",
-            enable_word_wrap: "\u63A7\u5236\u7D50\u679C\u8996\u7A97\u4E2D\u9577\u6587\u672C\u884C\u7684\u986F\u793A\u65B9\u5F0F\u3002<br><br>\u2022 <strong>\u555F\u7528:</strong> \u9577\u884C\u5C07\u81EA\u52D5\u63DB\u884C\u4EE5\u9069\u61C9\u8996\u7A97\u5BEC\u5EA6\u3002<br>\u2022 <strong>\u7981\u7528:</strong> \u9577\u884C\u5C07\u4FDD\u6301\u5728\u55AE\u884C\uFF0C\u4E26\u51FA\u73FE\u6C34\u5E73\u6372\u8EF8\u3002",
-            text_truncation_limit: "\u9019\u662F\u4E00\u500B<strong>\u6548\u80FD\u512A\u5316</strong>\u529F\u80FD\u3002\u5982\u679C\u8173\u672C\u63D0\u53D6\u5230<strong>\u6975\u9577\u7684\u55AE\u884C\u6587\u672C</strong>\uFF08\u4F8B\u5982\uFF0Cbase64\u7DE8\u78BC\u7684\u5716\u7247\uFF09\uFF0C\u53EF\u80FD\u6703\u5C0E\u81F4\u700F\u89BD\u5668<strong>\u5361\u9813\u6216\u7121\u56DE\u61C9</strong>\u3002<br><br>\u6B64\u8A2D\u5B9A\u6703\u622A\u65B7\u4EFB\u4F55\u8D85\u904E\u6307\u5B9A\u9577\u5EA6\u7684\u55AE\u884C\u6587\u672C\uFF0C\u4EE5\u78BA\u4FDDUI\u4FDD\u6301\u6D41\u66A2\u3002<strong>\u6CE8\u610F\uFF1A\u9019\u50C5\u5F71\u97FF\u986F\u793A\uFF1B\u532F\u51FA\u7684\u6A94\u6848\u4ECD\u5C07\u5305\u542B\u5B8C\u6574\u7684\u3001\u672A\u622A\u65B7\u7684\u5167\u5BB9\u3002</strong>"
-          },
-          advanced: {
-            title: "\u9032\u968E\u8A2D\u5B9A\u8AAA\u660E",
-            enable_debug_logging: "\u555F\u7528\u5F8C\uFF0C\u8173\u672C\u6703\u5C07\u8A73\u7D30\u7684\u5167\u90E8\u72C0\u614B\u3001\u57F7\u884C\u6B65\u9A5F\u548C\u932F\u8AA4\u8A0A\u606F\u8F38\u51FA\u5230\u700F\u89BD\u5668\u7684<strong>\u958B\u767C\u8005\u5DE5\u5177\u63A7\u5236\u53F0</strong>\uFF08\u901A\u5E38\u7528F12\u958B\u555F\uFF09\u3002\u9019\u4E3B\u8981\u4F9B\u958B\u767C\u8005\u6216\u9700\u8981\u63D0\u4EA4\u8A73\u7D30\u932F\u8AA4\u5831\u544A\u7684\u4F7F\u7528\u8005\u4F7F\u7528\u3002"
-          }
-        },
-        log: {
-          prefix: "[\u6587\u672C\u63D0\u53D6\u8173\u672C-\u5075\u932F]",
-          language: {
-            switched: "\u8A9E\u8A00\u5DF2\u5207\u63DB\u81F3\uFF1A{{lang}}",
-            notFound: "\u672A\u627E\u5230\u8A9E\u8A00 '{{lang}}'\uFF0C\u5DF2\u56DE\u9000\u81F3 'en'\u3002"
-          },
-          settings: {
-            changed: "\u8A2D\u5B9A '{{key}}' \u5DF2\u5F9E '{{oldValue}}' \u8B8A\u66F4\u70BA '{{newValue}}'",
-            filterRuleChanged: {
-              enabled: "\u904E\u6FFE\u898F\u5247 '{{key}}' \u5DF2\u555F\u7528",
-              disabled: "\u904E\u6FFE\u898F\u5247 '{{key}}' \u5DF2\u7981\u7528"
-            },
-            panel: {
-              opening: "\u6B63\u5728\u958B\u555F\u8A2D\u5B9A\u9762\u677F...",
-              closing: "\u6B63\u5728\u95DC\u9589\u8A2D\u5B9A\u9762\u677F...",
-              saving: "\u6B63\u5728\u5132\u5B58\u8A2D\u5B9A..."
-            },
-            parseError: "\u89E3\u6790\u5DF2\u5132\u5B58\u7684\u8A2D\u5B9A\u6642\u51FA\u932F\uFF1A",
-            invalidObject: "\u8A66\u5716\u70BA\u8A2D\u5B9A\u5132\u5B58\u4E00\u500B\u7121\u6548\u7269\u4EF6\uFF1A"
-          },
-          textProcessor: {
-            filtered: '\u6587\u672C\u5DF2\u904E\u6FFE: "{{text}}" (\u539F\u56E0: {{reason}})'
-          },
-          quickScan: {
-            switchToFallback: "[\u5FEB\u901F\u6383\u63CF] \u6B63\u5728\u5207\u63DB\u5230\u4E3B\u7DDA\u7A0B\u5099\u9078\u65B9\u6848\u3002",
-            fallbackFailed: "[\u5FEB\u901F\u6383\u63CF] \u4E3B\u7DDA\u7A0B\u5099\u9078\u65B9\u6848\u57F7\u884C\u5931\u6557: {{error}}",
-            fallback: {
-              starting: "[\u5FEB\u901F\u6383\u63CF - \u5099\u9078] \u6B63\u5728\u4E3B\u7DDA\u7A0B\u4E2D\u958B\u59CB\u8655\u7406...",
-              completed: "[\u5FEB\u901F\u6383\u63CF - \u5099\u9078] \u8655\u7406\u5B8C\u6210\uFF0C\u627E\u5230 {{count}} \u689D\u4E0D\u91CD\u8907\u6587\u672C\u3002"
-            },
-            worker: {
-              logPrefix: "[\u5FEB\u901F\u6383\u63CF Worker]",
-              starting: "[\u5FEB\u901F\u6383\u63CF] \u958B\u59CB\u57F7\u884C\uFF0C\u5617\u8A66\u4F7F\u7528 Web Worker...",
-              completed: "[\u5FEB\u901F\u6383\u63CF] Worker \u8655\u7406\u6210\u529F\uFF0C\u6536\u5230 {{count}} \u689D\u6587\u672C\u3002",
-              scanComplete: "[\u5FEB\u901F\u6383\u63CF Worker] \u8655\u7406\u5B8C\u6210\uFF0C\u627E\u5230 {{count}} \u689D\u4E0D\u91CD\u8907\u6587\u672C\u3002\u6B63\u5728\u767C\u56DE\u4E3B\u7DDA\u7A0B...",
-              initFailed: "[\u5FEB\u901F\u6383\u63CF] Worker \u521D\u59CB\u5316\u5931\u6557\u3002\u9019\u5F88\u53EF\u80FD\u662F\u7531\u65BC\u7DB2\u7AD9\u7684\u5167\u5BB9\u5B89\u5168\u7B56\u7565 (CSP) \u5C0E\u81F4\u7684\u3002",
-              originalError: "[\u5FEB\u901F\u6383\u63CF] \u539F\u59CB\u932F\u8AA4: {{error}}",
-              sendingData: "[\u5FEB\u901F\u6383\u63CF] Web Worker \u5DF2\u5EFA\u7ACB\uFF0C\u6B63\u5728\u767C\u9001 {{count}} \u689D\u6587\u672C\u9032\u884C\u8655\u7406...",
-              initSyncError: "[\u5FEB\u901F\u6383\u63CF] Worker \u521D\u59CB\u5316\u671F\u9593\u767C\u751F\u540C\u6B65\u932F\u8AA4: {{error}}",
-              cspBlocked: "[\u5FEB\u901F\u6383\u63CF] CSP\u6AA2\u67E5\u5931\u6557\uFF0C\u4E0D\u5141\u8A31\u5EFA\u7ACBWorker\u3002"
-            }
-          },
-          sessionScan: {
-            switchToFallback: "[\u52D5\u614B\u6383\u63CF] \u6B63\u5728\u5207\u63DB\u5230\u4E3B\u7DDA\u7A0B\u5099\u9078\u65B9\u6848\u3002",
-            domObserver: {
-              stopped: "[\u52D5\u614B\u6383\u63CF] \u5DF2\u505C\u6B62\u76E3\u807D DOM \u8B8A\u5316\u3002"
-            },
-            fallback: {
-              initialized: "[\u52D5\u614B\u6383\u63CF - \u5099\u9078] \u5DF2\u521D\u59CB\u5316\u3002",
-              cleared: "[\u52D5\u614B\u6383\u63CF - \u5099\u9078] \u8CC7\u6599\u5DF2\u6E05\u9664\u3002"
-            },
-            worker: {
-              logPrefix: "[\u52D5\u614B\u6383\u63CF Worker]",
-              starting: "\u52D5\u614B\u6383\u63CF\uFF1A\u6B63\u5728\u5617\u8A66\u555F\u52D5 Web Worker...",
-              initFailed: "[\u52D5\u614B\u6383\u63CF] Worker \u521D\u59CB\u5316\u5931\u6557\u3002\u9019\u5F88\u53EF\u80FD\u662F\u7531\u65BC\u7DB2\u7AD9\u7684\u5167\u5BB9\u5B89\u5168\u7B56\u7565 (CSP) \u5C0E\u81F4\u7684\u3002",
-              originalError: "[\u52D5\u614B\u6383\u63CF] \u539F\u59CB\u932F\u8AA4: {{error}}",
-              initialized: "[\u52D5\u614B\u6383\u63CF] Worker \u521D\u59CB\u5316\u6210\u529F\uFF0C\u5DF2\u767C\u9001 {{count}} \u689D\u521D\u59CB\u6587\u672C\u4EE5\u958B\u59CB\u6703\u8A71\u3002",
-              initSyncError: "[\u52D5\u614B\u6383\u63CF] Worker \u521D\u59CB\u5316\u671F\u9593\u767C\u751F\u540C\u6B65\u932F\u8AA4: {{error}}",
-              clearCommandSent: "[\u52D5\u614B\u6383\u63CF] \u6E05\u9664\u547D\u4EE4\u5DF2\u767C\u9001\u81F3 worker\u3002",
-              cspBlocked: "[\u52D5\u614B\u6383\u63CF] CSP\u6AA2\u67E5\u5931\u6557\uFF0C\u4E0D\u5141\u8A31\u5EFA\u7ACBWorker\u3002"
-            }
-          },
-          ui: {
-            copyButton: {
-              copied: "\u8907\u88FD\u6309\u9215\u5DF2\u9EDE\u64CA\uFF0C\u8907\u88FD\u4E86 {{count}} \u500B\u5B57\u5143\u3002",
-              nothingToCopy: "\u8907\u88FD\u6309\u9215\u5DF2\u9EDE\u64CA\uFF0C\u4F46\u6C92\u6709\u5167\u5BB9\u53EF\u8907\u88FD\u6216\u6309\u9215\u88AB\u7981\u7528\u3002"
-            },
-            confirmationModal: {
-              sessionScan: {
-                confirmed: "\u4F7F\u7528\u8005\u5DF2\u78BA\u8A8D\u6E05\u9664\u52D5\u614B\u6383\u63CF\u6587\u672C\uFF0C\u6B63\u5728\u8ABF\u7528\u56DE\u547C..."
-              },
-              quickScan: {
-                confirmed: "\u4F7F\u7528\u8005\u5DF2\u78BA\u8A8D\u6E05\u9664\u5FEB\u901F\u6383\u63CF\u6587\u672C\u3002"
-              },
-              cancelled: "\u4F7F\u7528\u8005\u5DF2\u53D6\u6D88\u6E05\u9664\u64CD\u4F5C\u3002"
-            },
-            modal: {
-              opening: "\u6B63\u5728\u958B\u555F\u4E3B\u6A21\u614B\u6846...",
-              closing: "\u6B63\u5728\u95DC\u9589\u4E3B\u6A21\u614B\u6846...",
-              scanFailed: "\u975C\u614B\u6383\u63CF\u5931\u6557: {{error}}",
-              clearContent: "\u6E05\u7A7A\u5167\u5BB9\u6309\u9215\u5DF2\u9EDE\u64CA\u3002"
-            },
-            helpIcon: {
-              clicked: "\u9EDE\u64CA\u4E86\u5E6B\u52A9\u5716\u793A\uFF0C\u986F\u793A\u5167\u5BB9\u9375\uFF1A{{contentKey}}"
-            }
-          },
-          exporter: {
-            buttonClicked: "\u532F\u51FA\u6309\u9215\u5DF2\u9EDE\u64CA\uFF0C\u683C\u5F0F: {{format}}\u3002",
-            csvError: "\u89E3\u6790\u6587\u672C\u4E26\u7522\u751FCSV\u6642\u51FA\u932F: {{error}}",
-            fileExported: "\u6A94\u6848\u5DF2\u532F\u51FA: {{filename}}",
-            noContent: "\u7121\u5167\u5BB9\u53EF\u532F\u51FA\u3002",
-            unknownFormat: "\u672A\u77E5\u7684\u532F\u51FA\u683C\u5F0F: {{format}}"
-          },
-          main: {
-            requestingSessionScanData: "\u6B63\u5728\u8ACB\u6C42\u52D5\u614B\u6383\u63CF\u6A21\u5F0F\u7684\u5B8C\u6574\u8CC7\u6599...",
-            exportingQuickScanData: "\u6B63\u5728\u532F\u51FA\u5FEB\u901F\u6383\u63CF\u6A21\u5F0F\u8A18\u61B6\u9AD4\u4E2D\u7684\u5B8C\u6574\u8CC7\u6599...",
-            inIframe: "\u8173\u672C\u5728 iframe \u4E2D\uFF0C\u5DF2\u8DF3\u904E\u521D\u59CB\u5316\u3002",
-            initializing: "\u8173\u672C\u521D\u59CB\u5316\u958B\u59CB...",
-            initialSettingsLoaded: "\u521D\u59CB\u8A2D\u5B9A\u5DF2\u8F09\u5165:"
-          },
-          dom: {
-            ttpCreationError: "\u5EFA\u7ACB Trusted Type \u7B56\u7565\u5931\u6557:",
-            svgParseError: "SVG \u5B57\u4E32\u7121\u6548\u6216\u89E3\u6790\u5931\u6557:"
-          },
-          elementScan: {
-            starting: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5DF2\u958B\u59CB\u3002",
-            stopping: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5DF2\u505C\u6B62\u3002",
-            listenersAdded: "\u5DF2\u70BA\u9078\u53D6\u5143\u7D20\u6383\u63CF\u65B0\u589E\u5168\u57DF\u4E8B\u4EF6\u76E3\u807D\u5668\u3002",
-            listenersRemoved: "\u5DF2\u70BA\u9078\u53D6\u5143\u7D20\u6383\u63CF\u79FB\u9664\u5168\u57DF\u4E8B\u4EF6\u76E3\u807D\u5668\u3002",
-            stateReset: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u72C0\u614B\u5DF2\u91CD\u8A2D\u3002",
-            reselecting: "\u6B63\u5728\u8FD4\u56DE\u5143\u7D20\u91CD\u65B0\u9078\u64C7\u6A21\u5F0F\u3002",
-            hovering: "\u6B63\u5728\u61F8\u505C\u65BC <{{tagName}}>\u3002",
-            escapePressed: "\u6309\u4E0B Escape \u9375\uFF0C\u6B63\u5728\u505C\u6B62\u9078\u53D6\u5143\u7D20\u6383\u63CF\u3002",
-            escapeIgnoredForSettings: "\u6309\u4E0B\u4E86Escape\u9375\uFF0C\u4F46\u56E0\u8A2D\u5B9A\u9762\u677F\u958B\u555F\u800C\u88AB\u5FFD\u7565\u3002",
-            escapeIgnoredForModal: "\u6309\u4E0B\u4E86Escape\u9375\uFF0C\u4F46\u56E0\u6A21\u614B\u6846\u6216\u63D0\u793A\u7A97\u53E3\u958B\u555F\u800C\u88AB\u5FFD\u7565\u3002",
-            escapePressedInAdjust: "\u5728\u8ABF\u6574\u6A21\u5F0F\u4E0B\u6309\u4E0B\u4E86Escape\u9375\uFF0C\u8FD4\u56DE\u91CD\u65B0\u9078\u64C7\u6A21\u5F0F\u3002",
-            clickedEnteringAdjust: "\u5143\u7D20 <{{tagName}}> \u5DF2\u88AB\u9EDE\u64CA\uFF0C\u6B63\u5728\u9032\u5165\u8ABF\u6574\u6A21\u5F0F\u3002",
-            pathBuilt: "\u5143\u7D20\u5C64\u7D1A\u8DEF\u5F91\u5DF2\u69CB\u5EFA\uFF0C\u6DF1\u5EA6\u70BA\uFF1A{{depth}}\u3002",
-            adjustingLevel: "\u6B63\u5728\u8ABF\u6574\u9078\u64C7\u5C64\u7D1A\u81F3 {{level}} ({{tagName}})\u3002",
-            confirmExtracting: "\u9078\u64C7\u5DF2\u78BA\u8A8D\uFF0C\u6B63\u5728\u5F9E <{{tagName}}> \u63D0\u53D6\u6587\u672C\u3002",
-            staged: "\u5143\u7D20\u5DF2\u66AB\u5B58\u3002\u7E3D\u6578\uFF1A{{count}}\u3002",
-            confirmingStaged: "\u78BA\u8A8D\u9078\u64C7\u3002\u6B63\u5728\u8655\u7406 {{count}} \u500B\u5DF2\u66AB\u5B58\u7684\u5143\u7D20\u3002",
-            extractedCount: "\u5DF2\u5F9E\u5143\u7D20\u4E2D\u63D0\u53D6 {{count}} \u689D\u539F\u59CB\u6587\u672C\u3002",
-            confirmFailedNoTarget: "\u78BA\u8A8D\u5931\u6557\uFF1A\u672A\u9078\u64C7\u4EFB\u4F55\u76EE\u6A19\u5143\u7D20\u3002",
-            rightClickExit: "\u5075\u6E2C\u5230\u53F3\u9375\u9EDE\u64CA\uFF0C\u6B63\u5728\u505C\u6B62\u9078\u53D6\u5143\u7D20\u6383\u63CF\u3002",
-            processingError: "\u6587\u672C\u8655\u7406\u904E\u7A0B\u4E2D\u767C\u751F\u932F\u8AA4: {{error}}",
-            scrollListenersAdded: "\u5DF2\u70BA {{count}} \u500B\u7236\u5143\u7D20\u65B0\u589E\u6EFE\u52D5\u76E3\u807D\u5668\u3002",
-            scrollListenersRemoved: "\u5DF2\u79FB\u9664\u6240\u6709\u6EFE\u52D5\u76E3\u807D\u5668\u3002",
-            worker: {
-              logPrefix: "[ES Worker]",
-              starting: "\u9078\u53D6\u5143\u7D20\u6383\u63CF Worker \u6B63\u5728\u555F\u52D5...",
-              sendingData: "\u6B63\u5728\u5411\u9078\u53D6\u5143\u7D20\u6383\u63CF Worker \u767C\u9001 {{count}} \u689D\u6587\u672C\u7247\u6BB5\u3002",
-              completed: "\u9078\u53D6\u5143\u7D20\u6383\u63CF Worker \u5DF2\u5B8C\u6210\uFF0C\u627E\u5230 {{count}} \u689D\u4E0D\u91CD\u8907\u6587\u672C\u3002",
-              initFailed: "\u9078\u53D6\u5143\u7D20\u6383\u63CF Worker \u521D\u59CB\u5316\u5931\u6557\u3002\u700F\u89BD\u5668\u7684CSP\u53EF\u80FD\u963B\u6B62\u4E86 data: URL\u3002",
-              initSyncError: "\u9078\u53D6\u5143\u7D20\u6383\u63CF Worker \u521D\u59CB\u5316\u671F\u9593\u767C\u751F\u540C\u6B65\u932F\u8AA4: {{error}}",
-              originalError: "\u539F\u59CB Worker \u932F\u8AA4: {{error}}",
-              cspBlocked: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u7684CSP\u6AA2\u67E5\u5931\u6557\uFF0C\u4E0D\u5141\u8A31\u5EFA\u7ACBWorker\u3002",
-              attemping: "\u6B63\u5728\u5617\u8A66\u4F7F\u7528 Web Worker \u9032\u884C\u904E\u6FFE...",
-              fallback: "\u5DF2\u5207\u63DB\u5230\u4E3B\u57F7\u884C\u7DD2\u9032\u884C\u904E\u6FFE\u3002",
-              cspHint: "\u9019\u53EF\u80FD\u662F\u7531\u65BC\u7DB2\u7AD9\u7684\u5167\u5BB9\u5B89\u5168\u7B56\u7565\uFF08CSP\uFF09\u5C0E\u81F4\u7684\u3002"
-            },
-            switchToFallback: "\u6B63\u5728\u70BA\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5207\u63DB\u5230\u4E3B\u7DDA\u7A0B\u5099\u9078\u65B9\u6848\u3002",
-            fallbackFailed: "\u300C\u9078\u53D6\u5143\u7D20\u6383\u63CF\u300D\u5099\u7528\u6A21\u5F0F\u5931\u6557\uFF1A{{error}}",
-            stagingStarted: "\u958B\u59CB\u66AB\u5B58\u5143\u7D20\uFF1A<{{tagName}}>",
-            stagedNothingNew: "\u672A\u80FD\u5F9E\u6B64\u5143\u7D20\u4E2D\u66AB\u5B58\u4EFB\u4F55\u65B0\u7684\u552F\u4E00\u6587\u672C\u3002",
-            stagingFinished: "\u66AB\u5B58\u64CD\u4F5C\u5DF2\u5B8C\u6210\u3002",
-            confirmStarted: "\u78BA\u8A8D\u6D41\u7A0B\u5DF2\u958B\u59CB...",
-            confirmFinished: "\u78BA\u8A8D\u6D41\u7A0B\u5DF2\u6210\u529F\u5B8C\u6210\u3002",
-            confirmFailed: "\u78BA\u8A8D\u6D41\u7A0B\u5931\u6557\u3002\u932F\u8AA4\uFF1A{{error}}"
-          },
-          elementScanUI: {
-            creatingHighlights: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u9996\u6B21\u5EFA\u7ACB\u9AD8\u4EAE\u5143\u7D20\u3002",
-            updatingHighlight: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u6B63\u5728\u70BA <{{tagName}}> \u66F4\u65B0\u9AD8\u4EAE\u3002",
-            creatingToolbar: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u6B63\u5728\u5EFA\u7ACB\u8ABF\u6574\u5DE5\u5177\u5217\u3002",
-            toolbarPositioned: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u5DE5\u5177\u5217\u5DF2\u5B9A\u4F4D\u3002",
-            sliderChanged: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u6ED1\u687F\u5C64\u7D1A\u8B8A\u70BA {{level}}",
-            reselectClicked: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u300C\u91CD\u65B0\u9078\u64C7\u300D\u6309\u9215\u88AB\u9EDE\u64CA\u3002",
-            stageClicked: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u300C\u66AB\u5B58\u300D\u6309\u9215\u88AB\u9EDE\u64CA\u3002",
-            cancelClicked: "\u5143\u7D20\u6383\u89C0UI\uFF1A\u300C\u53D6\u6D88\u300D\u6309\u9215\u88AB\u9EDE\u64CA\u3002",
-            confirmClicked: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u300C\u78BA\u8A8D\u300D\u6309\u9215\u88AB\u9EDE\u64CA\u3002",
-            dragStarted: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u62D6\u52D5\u958B\u59CB\u3002",
-            dragEnded: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u62D6\u52D5\u7D50\u675F\u3002",
-            cleaningHighlights: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u6B63\u5728\u6E05\u7406\u9AD8\u4EAE\u5143\u7D20\u3002",
-            cleaningToolbar: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u6B63\u5728\u6E05\u7406\u5DE5\u5177\u5217\u3002"
-          },
-          eventBus: {
-            callbackError: "\u4E8B\u4EF6 '{{eventName}}' \u7684\u56DE\u547C\u51FD\u6578\u51FA\u932F:"
-          },
-          trustedTypes: {
-            workerPolicyError: "\u5EFA\u7ACB Trusted Types worker \u7B56\u7565\u5931\u6557:",
-            htmlPolicyError: "\u5EFA\u7ACB Trusted Types HTML \u7B56\u7565\u5931\u6557:",
-            defaultWorkerPolicyWarning: "\u7528\u65BC worker URL \u7684 Trusted Types \u9810\u8A2D\u7B56\u7565\u5931\u6557\uFF0C\u56DE\u9000\u5230\u539F\u59CB URL\u3002",
-            defaultHtmlPolicyWarning: "\u7528\u65BC HTML \u7684 Trusted Types \u9810\u8A2D\u7B56\u7565\u5931\u6557\uFF0C\u56DE\u9000\u5230\u539F\u59CB\u5B57\u4E32\u3002"
-          }
-        },
-        tutorial: {
-          elementScanTitle: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u6559\u7A0B",
-          elementScan: '<p><strong>\u529F\u80FD\u4ECB\u7D39:</strong></p><p>\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5141\u8A31\u60A8\u7CBE\u78BA\u5730\u9078\u64C7\u7DB2\u9801\u4E0A\u7684\u4E00\u500B\u6216\u591A\u500B\u5340\u57DF\uFF08\u4F8B\u5982\u4E00\u500B\u6BB5\u843D\u3001\u4E00\u500B\u5217\u8868\u3001\u4E00\u500B\u5074\u908A\u6B04\uFF09\uFF0C\u4E26\u50C5\u5F9E\u9019\u4E9B\u5340\u57DF\u4E2D\u63D0\u53D6\u6587\u672C\u3002</p><p><strong>\u5982\u4F55\u4F7F\u7528:</strong></p><ol><li><strong>\u555F\u52D5:</strong> \u9EDE\u64CA\u61F8\u6D6E\u6309\u9215\u4E2D\u7684\u300C\u9078\u53D6\u5143\u7D20\u300D\u5716\u6A19 <span class="help-icon-placeholder element-scan-icon"></span> \u555F\u52D5\u6383\u63CF\u6A21\u5F0F\u3002</li><li><strong>\u9078\u64C7:</strong> \u79FB\u52D5\u9F20\u6A19\uFF0C\u60A8\u60F3\u6383\u63CF\u7684\u5340\u57DF\u6703\u986F\u793A\u9AD8\u4EAE\u6846\u3002\u55AE\u64CA\u4EE5\u9078\u5B9A\u3002</li><li><strong>\u8ABF\u6574:</strong> \u9078\u5B9A\u5F8C\u6703\u51FA\u73FE\u5DE5\u5177\u6B04\u3002\u60A8\u53EF\u4EE5\u4F7F\u7528<strong>\u6ED1\u584A</strong>\u4F86\u64F4\u5927\u6216\u7E2E\u5C0F\u9078\u64C7\u7BC4\u570D\u3002</li><li><strong>\u66AB\u5B58:</strong> \u5982\u679C\u60A8\u60F3\u9078\u64C7\u591A\u500B\u4E0D\u76F8\u95DC\u7684\u5340\u57DF\uFF0C\u53EF\u4EE5\u9EDE\u64CA<span class="action-key">\u66AB\u5B58</span>\u6309\u9215\u4FDD\u5B58\u7576\u524D\u9078\u64C7\uFF0C\u7136\u5F8C\u7E7C\u7E8C\u9078\u64C7\u5176\u4ED6\u5340\u57DF\u3002</li><li><strong>\u78BA\u8A8D:</strong> \u5B8C\u6210\u6240\u6709\u9078\u64C7\u5F8C\uFF0C\u9EDE\u64CA<span class="action-key">\u78BA\u8A8D</span>\u6309\u9215\uFF0C\u7CFB\u7D71\u5C07\u958B\u59CB\u5F9E\u60A8\u9078\u64C7\u7684\u6240\u6709\u5340\u57DF\u4E2D\u63D0\u53D6\u6587\u672C\u3002</li></ol><p><strong>\u5982\u4F55\u9000\u51FA:</strong></p><ul><li>\u5728\u9078\u64C7\u904E\u7A0B\u4E2D\uFF08\u51FA\u73FE\u9AD8\u4EAE\u6846\u6642\uFF09\uFF0C\u5728\u9801\u9762\u4EFB\u610F\u4F4D\u7F6E<strong>\u53F3\u9375\u55AE\u64CA</strong>\u3002</li><li>\u5728\u4EFB\u4F55\u6642\u5019\uFF0C\u6309\u4E0B <kbd>ESC</kbd> \u9375\u3002</li><li>\u5728\u4EFB\u4F55\u6642\u5019\uFF0C\u518D\u6B21\u9EDE\u64CA\u300C\u9078\u53D6\u5143\u7D20\u6383\u63CF\u300D\u5716\u6A19\u3002</li></ul>',
-          sessionScanTitle: "\u52D5\u614B\u6383\u63CF\u6559\u7A0B",
-          sessionScan: '<p><strong>\u529F\u80FD\u4ECB\u7D39:</strong></p><p>\u52D5\u614B\u6383\u63CF\u6703\u6301\u7E8C\u76E3\u63A7\u4E26\u81EA\u52D5\u8A18\u9304\u7DB2\u9801\u4E0A\u6240\u6709\u52D5\u614B\u52A0\u8F09\u6216\u8B8A\u5316\u7684\u6587\u672C\uFF0C\u7279\u5225\u9069\u7528\u65BC\u6293\u53D6\u5BE6\u6642\u804A\u5929\u3001\u6EFE\u52D5\u52A0\u8F09\u5167\u5BB9\u6216\u901A\u77E5\u7B49\u3002</p><p><strong>\u5982\u4F55\u4F7F\u7528:</strong></p><ul><li><strong>\u958B\u59CB\u6383\u63CF:</strong> \u9EDE\u64CA\u61F8\u6D6E\u6309\u9215\u4E2D\u7684\u300C\u52D5\u614B\u6383\u63CF\u300D\u5716\u6A19 <span class="help-icon-placeholder dynamic-scan-icon"></span>\uFF0C\u6383\u63CF\u7ACB\u5373\u958B\u59CB\u3002</li><li><strong>\u505C\u6B62\u6383\u63CF:</strong> \u518D\u6B21\u9EDE\u64CA\u8A72\u5716\u6A19 <span class="help-icon-placeholder stop-icon"></span>\uFF0C\u5373\u53EF\u505C\u6B62\u6383\u63CF\u3002</li><li><strong>\u67E5\u770B\u7D50\u679C:</strong> \u505C\u6B62\u5F8C\uFF0C\u9EDE\u64CA\u4E3B\u61F8\u6D6E\u6309\u9215 <span class="help-icon-placeholder summary-icon"></span> \u6253\u958B\u7D50\u679C\u7A97\u53E3\u3002</li></ul><p><strong>\u5982\u4F55\u9000\u51FA:</strong></p><ul><li>\u5728\u6383\u63CF\u904E\u7A0B\u4E2D\uFF0C\u518D\u6B21\u9EDE\u64CA\u300C\u52D5\u614B\u6383\u63CF\u300D\u5716\u6A19\u3002</li><li>\u5728\u6383\u63CF\u904E\u7A0B\u4E2D\uFF0C\u96A8\u6642\u6309\u4E0B <kbd>ESC</kbd> \u9375\u53EF\u5FEB\u901F\u505C\u6B62\u3002</li></ul>'
-        }
-      };
-    }
-  });
-  var locales, resourceLanguages;
-  var init_virtual_locales = __esm({
-    "locales-ns:virtual:locales"() {
-      init_en_GB();
-      init_en();
-      init_zh_CN();
-      init_zh_TW();
-      locales = {
-        "en-GB": en_GB_default,
-        "en": en_default,
-        "zh-CN": zh_CN_default,
-        "zh-TW": zh_TW_default
-      };
-      resourceLanguages = [
-        {
-          "code": "en-GB",
-          "name": "English (UK)"
-        },
-        {
-          "code": "en",
-          "name": "English"
-        },
-        {
-          "code": "zh-CN",
-          "name": "\u7B80\u4F53\u4E2D\u6587"
-        },
-        {
-          "code": "zh-TW",
-          "name": "\u7E41\u9AD4\u4E2D\u6587"
-        }
-      ];
-    }
-  });
-  function updateLoggerState(isEnabled) {
-    isDebugEnabled = isEnabled;
-  }
-  function log(...args) {
-    if (isDebugEnabled) {
-      console.log(t("log.prefix"), ...args);
-    }
-  }
-  var isDebugEnabled;
-  var init_logger = __esm({
-    "src/shared/utils/logger.js"() {
-      init_i18n();
-      isDebugEnabled = false;
-    }
-  });
-  function on(eventName, callback) {
-    if (!events[eventName]) {
-      events[eventName] = [];
-    }
-    events[eventName].push(callback);
-    return () => {
-      events[eventName] = events[eventName].filter((cb) => cb !== callback);
-    };
-  }
-  function fire(eventName, data) {
-    if (events[eventName]) {
-      events[eventName].forEach((callback) => {
-        try {
-          callback(data);
-        } catch (error) {
-          log(t("log.eventBus.callbackError", { eventName }), error);
-        }
-      });
-    }
-  }
-  var events;
-  var init_eventBus = __esm({
-    "src/shared/utils/eventBus.js"() {
-      init_logger();
-      init_i18n();
-      events = {};
-    }
-  });
-  function setLanguage(lang) {
-    if (translations[lang]) {
-      currentLanguage = lang;
-      currentTranslations = translations[lang];
-      log(t("log.language.switched", { lang }));
-      fire("languageChanged", lang);
-    } else {
-      log(t("log.language.notFound", { lang }), "warn");
-      currentLanguage = "en";
-      currentTranslations = translations.en;
-    }
-  }
-  function t(key, replacements) {
-    let value = key.split(".").reduce((obj, k) => {
-      if (typeof obj === "object" && obj !== null && k in obj) {
-        return obj[k];
-      }
-      return void 0;
-    }, currentTranslations);
-    if (value === void 0) {
-      return key;
-    }
-    if (replacements) {
-      return value.replace(/{{\s*(\w+)\s*}}/g, (match, key2) => {
-        return Object.prototype.hasOwnProperty.call(replacements, key2) ? replacements[key2] : match;
-      });
-    }
-    return value;
-  }
-  function getTranslationObject(key) {
-    return key.split(".").reduce((obj, k) => {
-      if (typeof obj === "object" && obj !== null && k in obj) {
-        return obj[k];
-      }
-      return void 0;
-    }, currentTranslations);
-  }
-  function getAvailableLanguages() {
-    return supportedLanguages.map((lang) => ({
-      value: lang.code,
-      label: lang.name
-    }));
-  }
-  var translationModules, supportedLanguages, translations, currentLanguage, currentTranslations;
-  var init_i18n = __esm({
-    "src/shared/i18n/index.js"() {
-      init_virtual_locales();
-      init_eventBus();
-      init_logger();
-      translationModules = locales;
-      supportedLanguages = [
-        { code: "auto", name: "Auto" },
-        ...resourceLanguages
-      ];
-      translations = supportedLanguages.reduce((acc, lang) => {
-        if (translationModules[lang.code]) {
-          acc[lang.code] = translationModules[lang.code];
-        }
-        return acc;
-      }, {});
-      currentLanguage = "en";
-      currentTranslations = translations.en;
-    }
-  });
-  var selectSettingsDefinitions, filterDefinitions, relatedSettingsDefinitions, appConfig;
-  var init_config = __esm({
-    "src/features/settings/config.js"() {
-      init_themeIcon();
-      init_languageIcon();
-      init_infoIcon();
-      init_lightThemeIcon();
-      init_darkThemeIcon();
-      init_systemThemeIcon();
-      init_formatIcon();
-      init_i18n();
-      selectSettingsDefinitions = [
-        {
-          id: "theme-select",
-          key: "theme",
-          label: "settings.theme",
-          type: "image-card-select",
-          icon: themeIcon,
-          options: [
-            { value: "light", label: "settings.themes.light", icon: lightThemeIcon },
-            { value: "dark", label: "settings.themes.dark", icon: darkThemeIcon },
-            { value: "system", label: "settings.themes.system", icon: systemThemeIcon }
-          ]
-        },
-        {
-          id: "format-select",
-          key: "outputFormat",
-          label: "settings.format",
-          type: "image-card-select",
-          icon: formatIcon,
-          options: [
-            { value: "array", label: "settings.formats.array", previewType: "code-array" },
-            { value: "object", label: "settings.formats.object", previewType: "code-object" },
-            { value: "csv", label: "settings.formats.csv", previewType: "code-csv" }
-          ]
-        },
-        {
-          id: "language-select",
-          key: "language",
-          label: "settings.language",
-          icon: languageIcon_default,
-          options: getAvailableLanguages().map((lang) => ({
-            ...lang,
-            label: lang.value === "auto" ? "settings.languages.auto" : `settings.languages.${lang.value}`
-          }))
-        }
-      ];
-      filterDefinitions = [
-        { id: "filter-numbers", key: "numbers", label: "settings.filters.numbers", tooltip: { titleIcon: infoIcon, title: "settings.filters.numbers", text: "tooltip.filters.numbers" } },
-        { id: "filter-chinese", key: "chinese", label: "settings.filters.chinese", tooltip: { titleIcon: infoIcon, title: "settings.filters.chinese", text: "tooltip.filters.chinese" } },
-        { id: "filter-contains-chinese", key: "containsChinese", label: "settings.filters.contains_chinese", tooltip: { titleIcon: infoIcon, title: "settings.filters.contains_chinese", text: "tooltip.filters.contains_chinese" } },
-        { id: "filter-emoji-only", key: "emojiOnly", label: "settings.filters.emoji_only", tooltip: { titleIcon: infoIcon, title: "settings.filters.emoji_only", text: "tooltip.filters.emoji_only" } },
-        { id: "filter-symbols", key: "symbols", label: "settings.filters.symbols", tooltip: { titleIcon: infoIcon, title: "settings.filters.symbols", text: "tooltip.filters.symbols" } },
-        { id: "filter-term", key: "termFilter", label: "settings.filters.term", tooltip: { titleIcon: infoIcon, title: "settings.filters.term", text: "tooltip.filters.term" } },
-        { id: "filter-single-letter", key: "singleLetter", label: "settings.filters.single_letter", tooltip: { titleIcon: infoIcon, title: "settings.filters.single_letter", text: "tooltip.filters.single_letter" } },
-        {
-          id: "filter-repeating-chars",
-          key: "repeatingChars",
-          label: "settings.filters.repeating_chars",
-          tooltip: {
-            titleIcon: infoIcon,
-            title: "settings.filters.repeating_chars",
-            text: "tooltip.filters.repeating_chars"
-          }
-        },
-        { id: "filter-file-paths", key: "filePath", label: "settings.filters.file_paths", tooltip: { titleIcon: infoIcon, title: "settings.filters.file_paths", text: "tooltip.filters.file_paths" } },
-        { id: "filter-hex-colors", key: "hexColor", label: "settings.filters.hex_color_codes", tooltip: { titleIcon: infoIcon, title: "settings.filters.hex_color_codes", text: "tooltip.filters.hex_color_codes" } },
-        { id: "filter-emails", key: "email", label: "settings.filters.email_addresses", tooltip: { titleIcon: infoIcon, title: "settings.filters.email_addresses", text: "tooltip.filters.email_addresses" } },
-        { id: "filter-uuids", key: "uuid", label: "settings.filters.uuids", tooltip: { titleIcon: infoIcon, title: "settings.filters.uuids", text: "tooltip.filters.uuids" } },
-        { id: "filter-git-hashes", key: "gitCommitHash", label: "settings.filters.git_commit_hashes", tooltip: { titleIcon: infoIcon, title: "settings.filters.git_commit_hashes", text: "tooltip.filters.git_commit_hashes" } },
-        { id: "filter-website-urls", key: "websiteUrl", label: "settings.filters.website_urls", tooltip: { titleIcon: infoIcon, title: "settings.filters.website_urls_title", text: "tooltip.filters.website_urls" } },
-        { id: "filter-shorthand-numbers", key: "shorthandNumber", label: "settings.filters.shorthand_numbers", tooltip: { titleIcon: infoIcon, title: "settings.filters.shorthand_numbers_title", text: "tooltip.filters.shorthand_numbers" } }
-      ];
-      relatedSettingsDefinitions = [
-        { id: "show-fab", key: "showFab", label: "settings.display.show_fab", tooltip: { titleIcon: infoIcon, title: "settings.display.show_fab", text: "tooltip.display.show_fab" } },
-        {
-          id: "fab-position",
-          key: "fabPosition",
-          label: "settings.display.fab_position",
-          type: "select",
-          options: [
-            { value: "bottom-right", label: "settings.display.fab_positions.bottom_right" },
-            { value: "top-right", label: "settings.display.fab_positions.top_right" },
-            { value: "bottom-left", label: "settings.display.fab_positions.bottom_left" },
-            { value: "top-left", label: "settings.display.fab_positions.top_left" }
-          ]
-        },
-        { id: "show-scan-count", key: "showScanCount", label: "settings.display.show_scan_count", tooltip: { titleIcon: infoIcon, title: "settings.display.show_scan_count", text: "tooltip.display.show_scan_count" } },
-        { id: "show-line-numbers", key: "showLineNumbers", label: "settings.display.show_line_numbers", tooltip: { titleIcon: infoIcon, title: "settings.display.show_line_numbers", text: "tooltip.display.show_line_numbers" } },
-        { id: "show-statistics", key: "showStatistics", label: "settings.display.show_statistics", tooltip: { titleIcon: infoIcon, title: "settings.display.show_statistics", text: "tooltip.display.show_statistics" } },
-        { id: "enable-word-wrap", key: "enableWordWrap", label: "settings.display.enable_word_wrap", tooltip: { titleIcon: infoIcon, title: "settings.display.enable_word_wrap", text: "tooltip.display.enable_word_wrap" } },
-        {
-          id: "enable-text-truncation",
-          key: "enableTextTruncation",
-          label: "settings.display.text_truncation_limit",
-          linkedNumeric: {
-            id: "text-truncation-length",
-            key: "textTruncationLength"
-          },
-          tooltip: {
-            titleIcon: infoIcon,
-            title: "settings.display.text_truncation_limit",
-            text: "tooltip.display.text_truncation_limit"
-          }
-        },
-        { id: "enable-debug-logging", key: "enableDebugLogging", label: "settings.advanced.enable_debug_logging", tooltip: { titleIcon: infoIcon, title: "settings.advanced.enable_debug_logging", text: "tooltip.advanced.enable_debug_logging" } }
-      ];
-      appConfig = {
-        ui: {
-          fabAnimationDelay: 50,
-          tooltips: {
-            summary: "\u67E5\u770B\u603B\u7ED3\u6587\u672C",
-            dynamicScan: "\u52A8\u6001\u626B\u63CF",
-            staticScan: "\u9759\u6001\u626B\u63CF"
-          },
-          liveCounterPrefix: "\u5DF2\u53D1\u73B0\uFF1A",
-          modalContentHeight: "400px",
-          notificationDuration: 3e3
-        },
-        scanner: {
-          targetSelectors: [
-            "p",
-            "h1",
-            "h2",
-            "h3",
-            "h4",
-            "h5",
-            "h6",
-            "li",
-            "td",
-            "th",
-            "pre",
-            "span",
-            "a",
-            "button",
-            "article",
-            "main",
-            "div",
-            "body *"
-          ],
-          attributesToExtract: ["placeholder", "alt", "title", "aria-label"],
-          ignoredSelectors: [
-            "script",
-            "style",
-            "noscript",
-            "code",
-            "pre",
-            "kbd",
-            ".no-translate",
-            ".view-line"
-          ]
-        }
-      };
-    }
-  });
-  var IGNORED_TERMS_ARRAY, IGNORED_TERMS_SET, ignoredTerms_default;
-  var init_ignoredTerms = __esm({
-    "src/shared/utils/ignoredTerms.js"() {
-      IGNORED_TERMS_ARRAY = [
-        "Github",
-        "Microsoft",
-        "Tampermonkey",
-        "JavaScript",
-        "TypeScript",
-        "Hugging Face",
-        "Google",
-        "Facebook",
-        "Twitter",
-        "LinkedIn",
-        "OpenAI",
-        "ChatGPT",
-        "API",
-        "Glossary of computer science",
-        "HTML",
-        "CSS",
-        "JSON",
-        "XML",
-        "HTTP",
-        "HTTPS",
-        "URL",
-        "IP address",
-        "DNS",
-        "CPU",
-        "GPU",
-        "RAM",
-        "SSD",
-        "USB",
-        "Wi-Fi",
-        "Bluetooth",
-        "VPN",
-        "Modrinth",
-        "Minecraft",
-        "Modrinth+",
-        "AI",
-        "Bilibili",
-        "QQ",
-        "WeChat",
-        "Discord",
-        "Telegram",
-        "WhatsApp",
-        "Line",
-        "Slack",
-        "Zoom",
-        "Skype",
-        "TikTok",
-        "Douyin",
-        "Weibo",
-        "Zhihu",
-        "Xiaohongshu",
-        "Steam",
-        "Epic Games",
-        "Spotify",
-        "Apple Music",
-        "NetEase Cloud Music",
-        "Adobe Photoshop",
-        "Adobe Premiere",
-        "Microsoft Office",
-        "WPS Office",
-        "Modrinth",
-        "CurseForge",
-        "Thunder",
-        "Baidu Netdisk",
-        "Quark",
-        "Alipay",
-        "WeChat Pay",
-        "Taobao",
-        "JD.com",
-        "Tmall",
-        "Amazon",
-        "eBay"
-      ];
-      IGNORED_TERMS_SET = new Set(IGNORED_TERMS_ARRAY);
-      ignoredTerms_default = IGNORED_TERMS_SET;
-    }
-  });
-  var filterLogic_exports = {};
-  __export(filterLogic_exports, {
-    shouldFilter: () => shouldFilter
-  });
-  function shouldFilter(text, filterRules2) {
-    for (const [key, rule] of ruleChecks.entries()) {
-      if (filterRules2[key]) {
-        const isFiltered = rule.regex ? rule.regex.test(text) : rule.test(text);
-        if (isFiltered) {
-          return t(rule.label);
-        }
-      }
-    }
-    return null;
-  }
-  var filterConfigMap, ruleChecks;
-  var init_filterLogic = __esm({
-    "src/shared/utils/filterLogic.js"() {
-      init_i18n();
-      init_ignoredTerms();
-      init_config();
-      filterConfigMap = new Map(filterDefinitions.map((def) => [def.key, def.label]));
-      ruleChecks =  new Map([
-        ["numbers", {
-          regex: /^[$\€\£\¥\d,.\s]+$/,
-          label: filterConfigMap.get("numbers")
-        }],
-        ["chinese", {
-          regex: /^[\u4e00-\u9fa5\s]+$/u,
-          label: filterConfigMap.get("chinese")
-        }],
-        ["containsChinese", {
-          regex: /[\u4e00-\u9fa5]/u,
-          label: filterConfigMap.get("containsChinese")
-        }],
-        ["emojiOnly", {
-          regex: /^[\p{Emoji}\s]+$/u,
-          label: filterConfigMap.get("emojiOnly")
-        }],
-        ["symbols", {
-          test: (text) => !/[\p{L}\p{N}]/u.test(text),
-          label: filterConfigMap.get("symbols")
-        }],
-        ["termFilter", {
-          test: (text) => ignoredTerms_default.has(text),
-          label: filterConfigMap.get("termFilter")
-        }],
-        ["singleLetter", {
-          regex: /^[a-zA-Z]$/,
-          label: filterConfigMap.get("singleLetter")
-        }],
-        ["repeatingChars", {
-          regex: /^\s*(.)\1+\s*$/,
-          label: filterConfigMap.get("repeatingChars")
-        }],
-        ["filePath", {
-          regex: /^(?:[a-zA-Z]:\\|\\\\|~|\.\.?\/)[\w\-\.\/ \\]*[\w\-\.]+\.[\w]{2,4}$/,
-          label: filterConfigMap.get("filePath")
-        }],
-        ["hexColor", {
-          regex: /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3,4}|[A-Fa-f0-9]{8})$/,
-          label: filterConfigMap.get("hexColor")
-        }],
-        ["email", {
-          regex: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/,
-          label: filterConfigMap.get("email")
-        }],
-        ["uuid", {
-          regex: /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/,
-          label: filterConfigMap.get("uuid")
-        }],
-        ["gitCommitHash", {
-          regex: /^[0-9a-f]{7,40}$/i,
-          label: filterConfigMap.get("gitCommitHash")
-        }],
-        ["websiteUrl", {
-          regex: /^(?:(?:https?|ftp):\/\/)?(?:www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(?:\/.*)?$/,
-          label: filterConfigMap.get("websiteUrl")
-        }],
-        ["shorthandNumber", {
-          regex: /^\d+(\.\d+)?\s?[kmb]$/i,
-          label: filterConfigMap.get("shorthandNumber")
-        }]
-      ]);
-    }
-  });
   var main_exports = {};
   __export(main_exports, {
     initUI: () => initUI,
@@ -2411,8 +313,1837 @@ var TextExtractor = (() => {
     if (!tooltipElement) return;
     tooltipElement.classList.remove("is-visible");
   }
-  init_config();
-  init_eventBus();
+  var themeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 32.5-156t88-127Q256-817 330-848.5T488-880q80 0 151 27.5t124.5 76q53.5 48.5 85 115T880-518q0 115-70 176.5T640-280h-74q-9 0-12.5 5t-3.5 11q0 12 15 34.5t15 51.5q0 50-27.5 74T480-80Zm0-400Zm-220 40q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120-160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm200 0q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120 160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17ZM480-160q9 0 14.5-5t5.5-13q0-14-15-33t-15-57q0-42 29-67t71-25h70q66 0 113-38.5T800-518q0-121-92.5-201.5T488-800q-136 0-232 93t-96 227q0 133 93.5 226.5T480-160Z"/></svg>`;
+  var languageIcon_default = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-155.5t86-127Q252-817 325-848.5T480-880q83 0 155.5 31.5t127 86q54.5 54.5 86 127T880-480q0 82-31.5 155t-86 127.5q-54.5 54.5-127 86T480-80Zm0-82q26-36 45-75t31-83H404q12 44 31 83t45 75Zm-104-16q-18-33-31.5-68.5T322-320H204q29 50 72.5 87t99.5 55Zm208 0q56-18 99.5-55t72.5-87H638q-9 38-22.5 73.5T584-178ZM170-400h136q-3-20-4.5-39.5T300-480q0-21 1.5-40.5T306-560H170q-5 20-7.5 39.5T160-480q0 21 2.5 40.5T170-400Zm216 0h188q3-20 4.5-39.5T580-480q0-21-1.5-40.5T574-560H386q-3 20-4.5 39.5T380-480q0 21 1.5 40.5T386-400Zm268 0h136q5-20 7.5-39.5T800-480q0-21-2.5-40.5T790-560H654q3 20 4.5 39.5T660-480q0 21-1.5 40.5T654-400Zm-16-240h118q-29-50-72.5-87T584-782q18 33 31.5 68.5T638-640Zm-234 0h152q-12-44-31-83t-45-75q-26 36-45 75t-31 83Zm-200 0h118q9-38 22.5-73.5T376-782q-56 18-99.5 55T204-640Z"/></svg>`;
+  var infoIcon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>';
+  var lightThemeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm0 80q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Zm326-268Z"/></svg>`;
+  var darkThemeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Zm0-80q88 0 158-48.5T740-375q-20 5-40 8t-40 3q-123 0-209.5-86.5T364-660q0-20 3-40t8-40q-78 32-126.5 102T200-480q0 116 82 198t198 82Zm-10-270Z"/></svg>`;
+  var systemThemeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M320-120v-80h80v-80H160q-33 0-56.5-23.5T80-360v-400q0-33 23.5-56.5T160-840h640q33 0 56.5 23.5T880-760v400q0 33-23.5 56.5T800-280H560v80h80v80H320ZM160-360h640v-400H160v400Zm0 0v-400 400Z"/></svg>`;
+  var formatIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M600-160v-80h120v-480H600v-80h200v640H600Zm-440 0v-640h200v80H240v480h120v80H160Z"/></svg>`;
+  var en_GB_default = {
+    _meta: {
+      name: "English (UK)"
+    },
+    common: {
+      scan: "Scan",
+      stop: "Stop",
+      pause: "Pause",
+      resume: "Resume",
+      clear: "Clear",
+      copy: "Copy",
+      save: "Save",
+      discovered: "Discovered:",
+      confirm: "Confirm",
+      cancel: "Cancel",
+      export: "Export",
+      reselect: "Reselect",
+      stage: "Stage",
+      processingElement: "Processing Element"
+    },
+    export: {
+      exportAsTxt: "Export as TXT",
+      exportAsJson: "Export as JSON",
+      exportAsCsv: "Export as CSV",
+      csv: {
+        id: "ID",
+        original: "Original",
+        translation: "Translation"
+      }
+    },
+    settings: {
+      title: "Settings",
+      theme: "Theme",
+      language: "Language",
+      format: "Output Format",
+      formats: {
+        array: "Nested Array",
+        object: "Key-Value Object",
+        csv: "CSV String"
+      },
+      relatedSettings: "Related Settings",
+      filterRules: "Content Filtering Rules",
+      filters: {
+        numbers: "Filter Numbers/Currency",
+        chinese: "Filter Chinese-Only Text",
+        contains_chinese: "Filter Text Containing Chinese",
+        emoji_only: "Filter Emoji-Only Text",
+        symbols: "Filter Symbol-Only Text",
+        term: "Filter Specific Terms",
+        single_letter: "Filter Single English Letters",
+        repeating_chars: "Filter Repeating Characters",
+        file_paths: "Filter File Paths",
+        hex_color_codes: "Filter Hex Colour Codes",
+        email_addresses: "Filter Email Addresses",
+        uuids: "Filter UUIDs",
+        git_commit_hashes: "Filter Git Commit Hashes",
+        website_urls: "Filter Website URLs",
+        website_urls_title: "Filter Website URLs",
+        shorthand_numbers: "Filter Shorthand Numbers",
+        shorthand_numbers_title: "Filter Shorthand Numbers"
+      },
+      display: {
+        show_fab: "Show Floating Button",
+        fab_position: "Floating Button Position",
+        fab_positions: {
+          bottom_right: "\u2198 Bottom Right",
+          top_right: "\u2197 Top Right",
+          bottom_left: "\u2199 Bottom Left",
+          top_left: "\u2196 Top Left"
+        },
+        show_line_numbers: "Show Line Numbers",
+        show_statistics: "Show Statistics",
+        enable_word_wrap: "Enable Word Wrap",
+        text_truncation_limit: "Enable Text Truncation Limit",
+        character_limit: "Character Limit",
+        show_scan_count: "Enable Scan Count in Title"
+      },
+      advanced: {
+        enable_debug_logging: "Enable Debug Logging"
+      },
+      panel: {
+        title: "Settings Panel"
+      },
+      contextual: {
+        elementScanTitle: "Element Scan Settings",
+        sessionScanTitle: "Dynamic Scan Settings",
+        persistData: "Persist data across pages"
+      },
+      languages: {
+        auto: "Auto",
+        en: "English (United States)",
+        "en-GB": "English (United Kingdom)",
+        "zh-CN": "Chinese (Simplified)",
+        "zh-TW": "Chinese (Traditional)"
+      },
+      themes: {
+        light: "Light",
+        dark: "Dark",
+        system: "System"
+      }
+    },
+    scan: {
+      quick: "Quick Scan",
+      session: "Dynamic Scan",
+      stagedCount: "Staged:",
+      elementFinished: "Element scan finished, found {{count}} items.",
+      startSession: "Start Dynamic Scan Session",
+      stopSession: "Stop Dynamic Scan Session",
+      finished: "Scan finished, found {{count}} items.",
+      quickFinished: "Quick scan finished, found {{count}} items.",
+      sessionStarted: "Session scan started.",
+      sessionInProgress: "Scan in progress...",
+      truncationWarning: "To maintain UI fluency, only a portion of the text is displayed here. The full content will be available upon export."
+    },
+    slider: {
+      adjustFrameSize: "Move slider to adjust frame size",
+      minLabel: "Min",
+      maxLabel: "Max"
+    },
+    results: {
+      title: "Extracted Text",
+      scanCountSession: "Scanned {{count}} items",
+      scanCountStatic: "Total {{count}} items scanned",
+      totalCharacters: "Total Characters",
+      totalLines: "Total Lines",
+      noSummary: "No summary available",
+      stats: {
+        lines: "Lines",
+        chars: "Chars"
+      }
+    },
+    notifications: {
+      copiedToClipboard: "Copied to clipboard!",
+      settingsSaved: "Settings saved!",
+      modalInitError: "Modal not initialized.",
+      nothingToCopy: "Nothing to copy.",
+      contentCleared: "Content cleared.",
+      noTextSelected: "No text selected.",
+      scanFailed: "Scan failed.",
+      elementScanStarted: "Element scan started.",
+      elementScanPaused: "Element scan paused.",
+      elementScanResumed: "Element scan session resumed from previous page.",
+      elementScanContinued: "Element scan continued.",
+      sessionScanStarted: "Session scan started.",
+      sessionScanPaused: "Dynamic scan paused.",
+      sessionScanResumed: "Dynamic scan session resumed from previous page.",
+      sessionScanContinued: "Dynamic scan continued.",
+      cspWorkerWarning: "Switched to compatibility scan mode due to website security restrictions."
+    },
+    placeholders: {
+      click: "Click ",
+      dynamicScan: "[Dynamic Scan]",
+      startNewScanSession: " to start a new scan session",
+      staticScan: "[Static Scan]",
+      performOneTimeScan: " to perform a one-time quick extraction"
+    },
+    confirmation: {
+      clear: "Are you sure you want to clear the content? This action cannot be undone."
+    },
+    tooltip: {
+      summary: "View Summary",
+      dynamic_scan: "Dynamic Scan",
+      static_scan: "Static Scan",
+      element_scan: "Element Scan",
+      pauseElementScan: "Pause Element Scan",
+      resumeElementScan: "Resume Element Scan",
+      pauseSessionScan: "Pause Dynamic Scan",
+      resumeSessionScan: "Resume Dynamic Scan",
+      tooltipHelp: "Help",
+      persistData: {
+        title: "Data Persistence Explanation",
+        text: {
+          sessionScan: "When enabled, automatically resumes and continues accumulating results from the previous page when you navigate to a new one. If disabled, only the scan mode is restored, and a new scan session begins.",
+          elementScan: "When enabled, automatically restores all currently staged text when you navigate to a new page. If disabled, only the scan mode is restored, and the staged area will be empty."
+        }
+      },
+      disabled: {
+        scan_in_progress: "Another scan is in progress"
+      },
+      filters: {
+        title: "Content Filter Explanation",
+        numbers: 'This rule filters out text that consists <strong>entirely</strong> of numbers, spaces, thousand separators (.), decimal points (,), and some currency symbols ($, \u20AC, \xA3, \xA5).<br><br><strong>More Examples:</strong><br>\u2022 "1,234.56"<br>\u2022 "\xA5999"<br>\u2022 "\u20AC200"<br>\u2022 "$ 100"',
+        chinese: 'This rule filters out text that consists <strong>entirely</strong> of Chinese characters and spaces, excluding any punctuation.<br><br><strong>Examples:</strong><br>\u2022 "\u4F60\u597D \u4E16\u754C" (will be filtered)<br>\u2022 "\u4F60\u597D\uFF0C\u4E16\u754C" (will not be filtered)',
+        contains_chinese: `This rule filters out <strong>any</strong> text that contains at least one Chinese character, regardless of other characters.<br><br><strong>Examples:</strong><br>\u2022 "\u4F60\u597D World" (will be filtered)<br>\u2022 "Chapter 1" (will be filtered, as '\u7B2C 1 \u7AE0' contains '\u7B2C' and '\u7AE0')`,
+        emoji_only: 'This rule filters out text that consists <strong>entirely</strong> of one or more emoji characters and spaces.<br><br><strong>Examples:</strong><br>\u2022 "\u{1F44D}"<br>\u2022 "\u{1F60A} \u{1F389} \u{1F680}"',
+        symbols: 'This rule filters out text that consists <strong>entirely</strong> of various punctuation and symbols.<br><br><strong>More Examples:</strong><br>\u2022 "@#*&^%"<br>\u2022 "()[]{}"<br>\u2022 "---...---"',
+        term: 'This rule filters out common UI terms that typically do not require translation.<br><br><strong>More Examples:</strong><br>\u2022 "OK", "Cancel", "Submit"<br>\u2022 "Login", "Settings", "Help"',
+        single_letter: 'This rule filters out text consisting of a <strong>single</strong> English letter, case-insensitive.<br><br><strong>Examples:</strong><br>\u2022 "A" (will be filtered)<br>\u2022 "b" (will be filtered)<br>\u2022 "AB" (will not be filtered)',
+        repeating_chars: 'This rule filters out text composed of the <strong>same character</strong> repeating 2 or more times consecutively.<br><br><strong>Examples:</strong><br>\u2022 "aa"<br>\u2022 "======"<br>\u2022 "bbbbb"',
+        file_paths: 'This rule attempts to identify and filter out text that resembles an operating system file path and <strong>includes a file extension</strong>. It does not match URLs.<br><br><strong>More Examples:</strong><br>\u2022 "/path/to/file.js"<br>\u2022 "C:\\Users\\Test\\document.docx"<br>\u2022 "./config.json"',
+        hex_color_codes: 'This rule filters out standard CSS hexadecimal colour codes (3, 4, 6, or 8 digits, the latter including an alpha channel).<br><br><strong>Examples:</strong><br>\u2022 "#FFFFFF"<br>\u2022 "#ff0000"<br>\u2022 "#f0c"<br>\u2022 "#f0c8" (4-digit)<br>\u2022 "#ff000080" (8-digit)',
+        email_addresses: 'This rule filters out text that matches the standard format of an email address.<br><br><strong>Examples:</strong><br>\u2022 "example@domain.com"<br>\u2022 "user.name@sub.domain.org"',
+        uuids: 'This rule filters out Universally Unique Identifiers (UUIDs).<br><br><strong>Example:</strong><br>\u2022 "123e4567-e89b-12d3-a456-426614174000"',
+        git_commit_hashes: 'This rule filters out standard Git commit hashes (long or short).<br><br><strong>Examples:</strong><br>\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\u2022 "a1b2c3d"',
+        website_urls: 'This rule filters out text that is a <strong>standalone URL</strong>. It is designed to be strict to avoid accidentally removing text that is not a link.<br><br><strong>More Examples:</strong><br>\u2022 "https://www.example.com"<br>\u2022 "http://test.co.uk"<br>\u2022 "www.google.com"<br>\u2022 "example.org"',
+        shorthand_numbers: 'This rule filters out numbers that use <strong>common shorthand suffixes</strong> for thousands (k), millions (m), or billions (b), case-insensitive.<br><br><strong>More Examples:</strong><br>\u2022 "1.2k"<br>\u2022 "15M"<br>\u2022 "2.5b"<br>\u2022 "100K"'
+      },
+      display: {
+        title: "Display Settings Explanation",
+        show_fab: "Control whether to display the <strong>Floating Action Button (FAB)</strong> in the bottom-right corner of webpages. This serves as the primary entry point for both static and dynamic text extraction. <br><br>If you disable this button, you can re-enable it via the settings panel in the Tampermonkey extension menu.",
+        show_scan_count: "When enabled, the title bar of the results window will show a <strong>real-time count</strong> of the total text items found in the current scan. This is especially useful for monitoring the progress of a long-running <strong>Dynamic Scan</strong>.",
+        show_line_numbers: "Displays line numbers to the left of the text area in the results window. This provides a <strong>precise reference point</strong> when you need to discuss or note a specific line of text.",
+        show_statistics: "Displays <strong>real-time statistics</strong> about the extracted content in the status bar at the bottom of the results window, including <strong>total lines</strong> and <strong>total characters</strong>. This helps you quickly assess the volume of the content.",
+        enable_word_wrap: "Controls how long lines of text are displayed in the results window.<br><br>\u2022 <strong>Enabled:</strong> Long lines will wrap to fit the window's width.<br>\u2022 <strong>Disabled:</strong> Long lines will remain on a single line, causing a horizontal scrollbar to appear.",
+        text_truncation_limit: "This is a <strong>performance-saving</strong> feature. If the script extracts an <strong>extremely long single line of text</strong> (e.g., a base64 encoded image), it could cause the browser to <strong>lag or become unresponsive</strong>.<br><br>This setting truncates any single line exceeding the specified length to ensure the UI remains smooth. <strong>Note: This only affects the display; the exported file will still contain the full, untruncated content.</strong>"
+      },
+      advanced: {
+        title: "Advanced Settings Explanation",
+        enable_debug_logging: "When enabled, the script will output detailed internal status, execution steps, and error messages to the browser's <strong>Developer Tools Console</strong> (usually opened with F12). This is primarily for developers or users who need to submit detailed bug reports."
+      }
+    },
+    log: {
+      prefix: "[Text Extractor Script-Debug]",
+      language: {
+        switched: "Language switched to: {{lang}}",
+        notFound: "Language '{{lang}}' not found, falling back to 'en'."
+      },
+      settings: {
+        changed: "Setting '{{key}}' changed from '{{oldValue}}' to '{{newValue}}'",
+        filterRuleChanged: {
+          enabled: "Filter rule '{{key}}' has been enabled",
+          disabled: "Filter rule '{{key}}' has been disabled"
+        },
+        panel: {
+          opening: "Opening settings panel...",
+          closing: "Closing settings panel...",
+          saving: "Saving settings..."
+        },
+        parseError: "Error parsing saved settings:",
+        invalidObject: "Attempted to save an invalid object for settings:"
+      },
+      textProcessor: {
+        filtered: 'Text filtered: "{{text}}" (Reason: {{reason}})'
+      },
+      quickScan: {
+        switchToFallback: "[Quick Scan] Switching to main thread fallback.",
+        fallbackFailed: "[Quick Scan] Main thread fallback failed: {{error}}",
+        fallback: {
+          starting: "[Quick Scan - Fallback] Starting processing in main thread...",
+          completed: "[Quick Scan - Fallback] Processing complete, found {{count}} unique texts."
+        },
+        worker: {
+          logPrefix: "[Quick Scan Worker]",
+          starting: "[Quick Scan] Starting execution, attempting to use Web Worker...",
+          completed: "[Quick Scan] Worker processing successful, received {{count}} texts.",
+          scanComplete: "[Quick Scan Worker] Processing complete, found {{count}} unique texts. Sending back to main thread...",
+          initFailed: "[Quick Scan] Worker initialization failed. This is likely due to the website's Content Security Policy (CSP).",
+          originalError: "[Quick Scan] Original error: {{error}}",
+          sendingData: "[Quick Scan] Web Worker created, sending {{count}} texts for processing...",
+          initSyncError: "[Quick Scan] Synchronous error during Worker initialization: {{error}}",
+          cspBlocked: "[Quick Scan] CSP check failed. Worker creation is not allowed."
+        }
+      },
+      sessionScan: {
+        switchToFallback: "[Dynamic Scan] Switching to main thread fallback.",
+        domObserver: {
+          stopped: "[Dynamic Scan] Stopped listening for DOM changes."
+        },
+        fallback: {
+          initialized: "[Dynamic Scan - Fallback] Initialized.",
+          cleared: "[Dynamic Scan - Fallback] Data cleared."
+        },
+        worker: {
+          logPrefix: "[Dynamic Scan Worker]",
+          starting: "Dynamic Scan: Attempting to start Web Worker...",
+          initFailed: "[Dynamic Scan] Worker initialization failed. This is likely due to the website's Content Security Policy (CSP).",
+          originalError: "[Dynamic Scan] Original error: {{error}}",
+          initialized: "[Dynamic Scan] Worker initialized successfully, sent {{count}} initial texts to start the session.",
+          initSyncError: "[Dynamic Scan] Synchronous error during Worker initialization: {{error}}",
+          clearCommandSent: "[Dynamic Scan] Clear command sent to worker.",
+          cspBlocked: "[Dynamic Scan] CSP check failed. Worker creation is not allowed."
+        }
+      },
+      ui: {
+        copyButton: {
+          copied: "Copy button clicked, copied {{count}} characters.",
+          nothingToCopy: "Copy button clicked, but there was no content to copy or the button was disabled."
+        },
+        confirmationModal: {
+          sessionScan: {
+            confirmed: "User confirmed clearing session scan texts, invoking callback..."
+          },
+          quickScan: {
+            confirmed: "User confirmed clearing quick scan texts."
+          },
+          cancelled: "User cancelled the clear operation."
+        },
+        modal: {
+          opening: "Opening main modal...",
+          closing: "Closing main modal...",
+          scanFailed: "Static scan failed: {{error}}",
+          clearContent: "Clear content button clicked."
+        },
+        helpIcon: {
+          clicked: "Help icon clicked, displaying content for key: {{contentKey}}"
+        }
+      },
+      exporter: {
+        buttonClicked: "Export button clicked, format: {{format}}.",
+        csvError: "Error while parsing text and generating CSV: {{error}}",
+        fileExported: "File exported: {{filename}}",
+        noContent: "No content to export.",
+        unknownFormat: "Unknown export format: {{format}}"
+      },
+      main: {
+        requestingSessionScanData: "Requesting full data from session-scan mode...",
+        exportingQuickScanData: "Exporting full data from quick-scan mode's memory...",
+        inIframe: "Script is in an iframe, skipping initialization.",
+        initializing: "Script initialization started...",
+        initialSettingsLoaded: "Initial settings loaded:"
+      },
+      dom: {
+        ttpCreationError: "Failed to create Trusted Type policy:",
+        svgParseError: "Failed to parse SVG string or string is invalid:"
+      },
+      elementScan: {
+        starting: "Element Scan started.",
+        stopping: "Element Scan stopped.",
+        listenersAdded: "Global event listeners for element scan added.",
+        listenersRemoved: "Global event listeners for element scan removed.",
+        stateReset: "Element scan state has been reset.",
+        reselecting: "Returning to element reselection mode.",
+        hovering: "Hovering over <{{tagName}}>.",
+        escapePressed: "Escape key pressed, stopping element scan.",
+        escapeIgnoredForSettings: "Escape key pressed, but ignored because a settings panel is open.",
+        escapeIgnoredForModal: "Escape key pressed, but ignored because a modal or tooltip is open.",
+        escapePressedInAdjust: "Escape key pressed in adjustment mode, returning to reselection.",
+        clickedEnteringAdjust: "Element <{{tagName}}> clicked, entering adjustment mode.",
+        pathBuilt: "Element path built, depth: {{depth}}.",
+        adjustingLevel: "Adjusting selection level to {{level}} ({{tagName}}).",
+        confirmExtracting: "Selection confirmed, extracting text from <{{tagName}}>.",
+        staged: "Element staged. Total staged: {{count}}.",
+        confirmingStaged: "Confirming selection. Processing {{count}} staged elements.",
+        extractedCount: "Extracted {{count}} raw text fragments from element.",
+        confirmFailedNoTarget: "Confirmation failed: no target element selected.",
+        rightClickExit: "Right-click detected, stopping element scan.",
+        processingError: "An error occurred during text processing: {{error}}",
+        scrollListenersAdded: "Added {{count}} scroll listeners to parent elements.",
+        scrollListenersRemoved: "Removed all scroll listeners.",
+        worker: {
+          logPrefix: "[ES Worker]",
+          starting: "Element Scan Worker is starting...",
+          sendingData: "Sending {{count}} text fragments to Element Scan Worker.",
+          completed: "Element Scan Worker completed, found {{count}} unique texts.",
+          initFailed: "Element Scan Worker initialization failed. The browser's CSP might be blocking data: URLs.",
+          initSyncError: "Synchronous error during Element Scan Worker initialization: {{error}}",
+          originalError: "Original worker error: {{error}}",
+          cspBlocked: "Element Scan CSP check failed. Worker creation is not allowed.",
+          attemping: "Attempting to use Web Worker for filtering...",
+          fallback: "Switched to main thread for filtering.",
+          cspHint: "This may be due to the site's Content Security Policy (CSP)."
+        },
+        switchToFallback: "Switching to main thread fallback for Element Scan.",
+        fallbackFailed: "Element Scan fallback mode failed: {{error}}",
+        stagingStarted: "Staging started for element: <{{tagName}}>",
+        stagedNothingNew: "No new unique text was staged from this element.",
+        stagingFinished: "Staging finished.",
+        confirmStarted: "Confirmation process started...",
+        confirmFinished: "Confirmation process finished successfully.",
+        confirmFailed: "Confirmation process failed. Error: {{error}}"
+      },
+      elementScanUI: {
+        creatingHighlights: "Element Scan UI: Creating highlight elements for the first time.",
+        updatingHighlight: "Element Scan UI: Updating highlight for <{{tagName}}>.",
+        creatingToolbar: "Element Scan UI: Creating adjustment toolbar.",
+        toolbarPositioned: "Element Scan UI: Toolbar positioned.",
+        sliderChanged: "Element Scan UI: Slider changed to level {{level}}",
+        reselectClicked: "Element Scan UI: 'Reselect' button clicked.",
+        stageClicked: "Element Scan UI: 'Stage' button clicked.",
+        cancelClicked: "Element Scan UI: 'Cancel' button clicked.",
+        confirmClicked: "Element Scan UI: 'Confirm' button clicked.",
+        dragStarted: "Element Scan UI: Drag started.",
+        dragEnded: "Element Scan UI: Drag ended.",
+        cleaningHighlights: "Element Scan UI: Cleaning up highlight elements.",
+        cleaningToolbar: "Element Scan UI: Cleaning up toolbar."
+      },
+      eventBus: {
+        callbackError: "Error in callback for event '{{eventName}}':"
+      },
+      trustedTypes: {
+        workerPolicyError: "Failed to create Trusted Types worker policy:",
+        htmlPolicyError: "Failed to create Trusted Types HTML policy:",
+        defaultWorkerPolicyWarning: "Trusted Types default policy failed for worker URL, falling back to raw URL.",
+        defaultHtmlPolicyWarning: "Trusted Types default policy failed for HTML, falling back to raw string."
+      }
+    },
+    tutorial: {
+      elementScanTitle: "Element Scan Tutorial",
+      elementScan: '<p><strong>What it does:</strong></p><p>Element Scan allows you to precisely select one or more areas on a webpage (e.g., a paragraph, a list, a sidebar) and extract text only from those areas.</p><p><strong>How to use:</strong></p><ol><li><strong>Start:</strong> Click the "Element Scan" icon <span class="help-icon-placeholder element-scan-icon"></span> in the floating button to enter scan mode.</li><li><strong>Select:</strong> Move your mouse over the page. The area you want to scan will be highlighted. Click to select it.</li><li><strong>Adjust:</strong> A toolbar will appear after selection. You can use the <strong>slider</strong> to expand or shrink the selection area.</li><li><strong>Stage:</strong> If you want to select multiple unrelated areas, click the <span class="action-key">Stage</span> button to save the current selection and continue selecting other areas.</li><li><strong>Confirm:</strong> Once you have finished all selections, click the <span class="action-key">Confirm</span> button to start extracting text from all your chosen areas.</li></ol><p><strong>How to exit:</strong></p><ul><li>While the highlight box is visible, <strong>right-click</strong> anywhere on the page.</li><li>Press the <kbd>ESC</kbd> key at any time.</li><li>Click the "Element Scan" icon again at any time.</li></ul>',
+      sessionScanTitle: "Dynamic Scan Tutorial",
+      sessionScan: '<p><strong>What it does:</strong></p><p>Dynamic Scan continuously monitors and automatically records all text that dynamically loads or changes on a webpage. It is especially useful for capturing live chats, infinite scrolling content, or notifications.</p><p><strong>How to use:</strong></p><ul><li><strong>Start Scan:</strong> Click the "Dynamic Scan" icon <span class="help-icon-placeholder dynamic-scan-icon"></span> in the floating button to start scanning immediately.</li><li><strong>Stop Scan:</strong> Click the icon again <span class="help-icon-placeholder stop-icon"></span> to stop.</li><li><strong>View Results:</strong> After stopping, click the main floating button <span class="help-icon-placeholder summary-icon"></span> to open the results window.</li></ul><p><strong>How to exit:</strong></p><ul><li>Click the "Dynamic Scan" icon again during the scan.</li><li>Press the <kbd>ESC</kbd> key at any time to quickly stop the scan.</li></ul>'
+    }
+  };
+  var en_default = {
+    _meta: {
+      name: "English"
+    },
+    common: {
+      scan: "Scan",
+      stop: "Stop",
+      pause: "Pause",
+      resume: "Resume",
+      clear: "Clear",
+      copy: "Copy",
+      save: "Save",
+      discovered: "Discovered:",
+      confirm: "Confirm",
+      cancel: "Cancel",
+      export: "Export",
+      reselect: "Reselect",
+      stage: "Stage",
+      processingElement: "Processing Element"
+    },
+    export: {
+      exportAsTxt: "Export as TXT",
+      exportAsJson: "Export as JSON",
+      exportAsCsv: "Export as CSV",
+      csv: {
+        id: "ID",
+        original: "Original",
+        translation: "Translation"
+      }
+    },
+    settings: {
+      title: "Settings",
+      theme: "Theme",
+      language: "Language",
+      format: "Output Format",
+      formats: {
+        array: "Nested Array",
+        object: "Key-Value Object",
+        csv: "CSV String"
+      },
+      relatedSettings: "Related Settings",
+      filterRules: "Content Filtering Rules",
+      filters: {
+        numbers: "Filter Numbers/Currency",
+        chinese: "Filter Chinese-Only Text",
+        contains_chinese: "Filter Text Containing Chinese",
+        emoji_only: "Filter Emoji-Only Text",
+        symbols: "Filter Symbol-Only Text",
+        term: "Filter Specific Terms",
+        single_letter: "Filter Single English Letters",
+        repeating_chars: "Filter Repeating Characters",
+        file_paths: "Filter File Paths",
+        hex_color_codes: "Filter Hex Color Codes",
+        email_addresses: "Filter Email Addresses",
+        uuids: "Filter UUIDs",
+        git_commit_hashes: "Filter Git Commit Hashes",
+        website_urls: "Filter Website URLs",
+        website_urls_title: "Filter Website URLs",
+        shorthand_numbers: "Filter Shorthand Numbers",
+        shorthand_numbers_title: "Filter Shorthand Numbers"
+      },
+      display: {
+        show_fab: "Show Floating Button",
+        fab_position: "Floating Button Position",
+        fab_positions: {
+          bottom_right: "\u2198 Bottom Right",
+          top_right: "\u2197 Top Right",
+          bottom_left: "\u2199 Bottom Left",
+          top_left: "\u2196 Top Left"
+        },
+        show_line_numbers: "Show Line Numbers",
+        show_statistics: "Show Statistics",
+        enable_word_wrap: "Enable Word Wrap",
+        text_truncation_limit: "Enable Text Truncation Limit",
+        character_limit: "Character Limit",
+        show_scan_count: "Enable Scan Count in Title"
+      },
+      advanced: {
+        enable_debug_logging: "Enable Debug Logging"
+      },
+      panel: {
+        title: "Settings Panel"
+      },
+      contextual: {
+        elementScanTitle: "Element Scan Settings",
+        sessionScanTitle: "Dynamic Scan Settings",
+        persistData: "Persist data across pages"
+      },
+      languages: {
+        auto: "Auto",
+        en: "English (United States)",
+        "en-GB": "English (United Kingdom)",
+        "zh-CN": "Chinese (Simplified)",
+        "zh-TW": "Chinese (Traditional)"
+      },
+      themes: {
+        light: "Light",
+        dark: "Dark",
+        system: "System"
+      }
+    },
+    scan: {
+      quick: "Quick Scan",
+      session: "Dynamic Scan",
+      stagedCount: "Staged:",
+      elementFinished: "Element scan finished, found {{count}} items.",
+      startSession: "Start Dynamic Scan Session",
+      stopSession: "Stop Dynamic Scan Session",
+      finished: "Scan finished, found {{count}} items.",
+      quickFinished: "Quick scan finished, found {{count}} items.",
+      sessionStarted: "Session scan started.",
+      sessionInProgress: "Scan in progress...",
+      truncationWarning: "To maintain UI fluency, only a portion of the text is displayed here. The full content will be available upon export."
+    },
+    slider: {
+      adjustFrameSize: "Move slider to adjust frame size",
+      minLabel: "Min",
+      maxLabel: "Max"
+    },
+    results: {
+      title: "Extracted Text",
+      scanCountSession: "Scanned {{count}} items",
+      scanCountStatic: "Total {{count}} items scanned",
+      totalCharacters: "Total Characters",
+      totalLines: "Total Lines",
+      noSummary: "No summary available",
+      stats: {
+        lines: "Lines",
+        chars: "Chars"
+      }
+    },
+    notifications: {
+      copiedToClipboard: "Copied to clipboard!",
+      settingsSaved: "Settings saved!",
+      modalInitError: "Modal not initialized.",
+      nothingToCopy: "Nothing to copy.",
+      contentCleared: "Content cleared.",
+      noTextSelected: "No text selected.",
+      scanFailed: "Scan failed.",
+      elementScanStarted: "Element scan started.",
+      elementScanPaused: "Element scan paused.",
+      elementScanResumed: "Element scan session resumed from previous page.",
+      elementScanContinued: "Element scan continued.",
+      sessionScanStarted: "Session scan started.",
+      sessionScanPaused: "Dynamic scan paused.",
+      sessionScanResumed: "Dynamic scan session resumed from previous page.",
+      sessionScanContinued: "Dynamic scan continued.",
+      cspWorkerWarning: "Switched to compatibility scan mode due to website security restrictions."
+    },
+    placeholders: {
+      click: "Click ",
+      dynamicScan: "[Dynamic Scan]",
+      startNewScanSession: " to start a new scan session",
+      staticScan: "[Static Scan]",
+      performOneTimeScan: " to perform a one-time quick extraction"
+    },
+    confirmation: {
+      clear: "Are you sure you want to clear the content? This action cannot be undone."
+    },
+    tooltip: {
+      summary: "View Summary",
+      dynamic_scan: "Dynamic Scan",
+      static_scan: "Static Scan",
+      element_scan: "Element Scan",
+      pauseElementScan: "Pause Element Scan",
+      resumeElementScan: "Resume Element Scan",
+      pauseSessionScan: "Pause Dynamic Scan",
+      resumeSessionScan: "Resume Dynamic Scan",
+      tooltipHelp: "Help",
+      persistData: {
+        title: "Data Persistence Explanation",
+        text: {
+          sessionScan: "When enabled, automatically resumes and continues accumulating results from the previous page when you navigate to a new one. If disabled, only the scan mode is restored, and a new scan session begins.",
+          elementScan: "When enabled, automatically restores all currently staged text when you navigate to a new page. If disabled, only the scan mode is restored, and the staged area will be empty."
+        }
+      },
+      disabled: {
+        scan_in_progress: "Another scan is in progress"
+      },
+      filters: {
+        title: "Content Filter Explanation",
+        numbers: 'This rule filters out text that consists <strong>entirely</strong> of numbers, spaces, thousand separators (.), decimal points (,), and some currency symbols ($, \u20AC, \xA3, \xA5).<br><br><strong>More Examples:</strong><br>\u2022 "1,234.56"<br>\u2022 "\xA5999"<br>\u2022 "\u20AC200"<br>\u2022 "$ 100"',
+        chinese: 'This rule filters out text that consists <strong>entirely</strong> of Chinese characters and spaces, excluding any punctuation.<br><br><strong>Examples:</strong><br>\u2022 "\u4F60\u597D \u4E16\u754C" (will be filtered)<br>\u2022 "\u4F60\u597D\uFF0C\u4E16\u754C" (will not be filtered)',
+        contains_chinese: `This rule filters out <strong>any</strong> text that contains at least one Chinese character, regardless of other characters.<br><br><strong>Examples:</strong><br>\u2022 "\u4F60\u597D World" (will be filtered)<br>\u2022 "Chapter 1" (will be filtered, as '\u7B2C 1 \u7AE0' contains '\u7B2C' and '\u7AE0')`,
+        emoji_only: 'This rule filters out text that consists <strong>entirely</strong> of one or more emoji characters and spaces.<br><br><strong>Examples:</strong><br>\u2022 "\u{1F44D}"<br>\u2022 "\u{1F60A} \u{1F389} \u{1F680}"',
+        symbols: 'This rule filters out text that consists <strong>entirely</strong> of various punctuation and symbols.<br><br><strong>More Examples:</strong><br>\u2022 "@#*&^%"<br>\u2022 "()[]{}"<br>\u2022 "---...---"',
+        term: 'This rule filters out common UI terms that typically do not require translation.<br><br><strong>More Examples:</strong><br>\u2022 "OK", "Cancel", "Submit"<br>\u2022 "Login", "Settings", "Help"',
+        single_letter: 'This rule filters out text consisting of a <strong>single</strong> English letter, case-insensitive.<br><br><strong>Examples:</strong><br>\u2022 "A" (will be filtered)<br>\u2022 "b" (will be filtered)<br>\u2022 "AB" (will not be filtered)',
+        repeating_chars: 'This rule filters out text composed of the <strong>same character</strong> repeating 2 or more times consecutively.<br><br><strong>Examples:</strong><br>\u2022 "aa"<br>\u2022 "======"<br>\u2022 "bbbbb"',
+        file_paths: 'This rule attempts to identify and filter out text that resembles an operating system file path and <strong>includes a file extension</strong>. It does not match URLs.<br><br><strong>More Examples:</strong><br>\u2022 "/path/to/file.js"<br>\u2022 "C:\\Users\\Test\\document.docx"<br>\u2022 "./config.json"',
+        hex_color_codes: 'This rule filters out standard CSS hexadecimal color codes (3, 4, 6, or 8 digits, the latter including an alpha channel).<br><br><strong>Examples:</strong><br>\u2022 "#FFFFFF"<br>\u2022 "#ff0000"<br>\u2022 "#f0c"<br>\u2022 "#f0c8" (4-digit)<br>\u2022 "#ff000080" (8-digit)',
+        email_addresses: 'This rule filters out text that matches the standard format of an email address.<br><br><strong>Examples:</strong><br>\u2022 "example@domain.com"<br>\u2022 "user.name@sub.domain.org"',
+        uuids: 'This rule filters out Universally Unique Identifiers (UUIDs).<br><br><strong>Example:</strong><br>\u2022 "123e4567-e89b-12d3-a456-426614174000"',
+        git_commit_hashes: 'This rule filters out standard Git commit hashes (long or short).<br><br><strong>Examples:</strong><br>\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\u2022 "a1b2c3d"',
+        website_urls: 'This rule filters out text that is a <strong>standalone URL</strong>. It is designed to be strict to avoid accidentally removing text that is not a link.<br><br><strong>More Examples:</strong><br>\u2022 "https://www.example.com"<br>\u2022 "http://test.co.uk"<br>\u2022 "www.google.com"<br>\u2022 "example.org"',
+        shorthand_numbers: 'This rule filters out numbers that use <strong>common shorthand suffixes</strong> for thousands (k), millions (m), or billions (b), case-insensitive.<br><br><strong>More Examples:</strong><br>\u2022 "1.2k"<br>\u2022 "15M"<br>\u2022 "2.5b"<br>\u2022 "100K"'
+      },
+      display: {
+        title: "Display Settings Explanation",
+        show_fab: "Control whether to display the <strong>Floating Action Button (FAB)</strong> in the bottom-right corner of webpages. This serves as the primary entry point for both static and dynamic text extraction. <br><br>If you disable this button, you can re-enable it via the settings panel in the Tampermonkey extension menu.",
+        show_scan_count: "When enabled, the title bar of the results window will show a <strong>real-time count</strong> of the total text items found in the current scan. This is especially useful for monitoring the progress of a long-running <strong>Dynamic Scan</strong>.",
+        show_line_numbers: "Displays line numbers to the left of the text area in the results window. This provides a <strong>precise reference point</strong> when you need to discuss or note a specific line of text.",
+        show_statistics: "Displays <strong>real-time statistics</strong> about the extracted content in the status bar at the bottom of the results window, including <strong>total lines</strong> and <strong>total characters</strong>. This helps you quickly assess the volume of the content.",
+        enable_word_wrap: "Controls how long lines of text are displayed in the results window.<br><br>\u2022 <strong>Enabled:</strong> Long lines will wrap to fit the window's width.<br>\u2022 <strong>Disabled:</strong> Long lines will remain on a single line, causing a horizontal scrollbar to appear.",
+        text_truncation_limit: "This is a <strong>performance-saving</strong> feature. If the script extracts an <strong>extremely long single line of text</strong> (e.g., a base64 encoded image), it could cause the browser to <strong>lag or become unresponsive</strong>.<br><br>This setting truncates any single line exceeding the specified length to ensure the UI remains smooth. <strong>Note: This only affects the display; the exported file will still contain the full, untruncated content.</strong>"
+      },
+      advanced: {
+        title: "Advanced Settings Explanation",
+        enable_debug_logging: "When enabled, the script will output detailed internal status, execution steps, and error messages to the browser's <strong>Developer Tools Console</strong> (usually opened with F12). This is primarily for developers or users who need to submit detailed bug reports."
+      }
+    },
+    log: {
+      prefix: "[Text Extractor Script-Debug]",
+      language: {
+        switched: "Language switched to: {{lang}}",
+        notFound: "Language '{{lang}}' not found, falling back to 'en'."
+      },
+      settings: {
+        changed: "Setting '{{key}}' changed from '{{oldValue}}' to '{{newValue}}'",
+        filterRuleChanged: {
+          enabled: "Filter rule '{{key}}' has been enabled",
+          disabled: "Filter rule '{{key}}' has been disabled"
+        },
+        panel: {
+          opening: "Opening settings panel...",
+          closing: "Closing settings panel...",
+          saving: "Saving settings..."
+        },
+        parseError: "Error parsing saved settings:",
+        invalidObject: "Attempted to save an invalid object for settings:"
+      },
+      textProcessor: {
+        filtered: 'Text filtered: "{{text}}" (Reason: {{reason}})'
+      },
+      quickScan: {
+        switchToFallback: "[Quick Scan] Switching to main thread fallback.",
+        fallbackFailed: "[Quick Scan] Main thread fallback failed: {{error}}",
+        fallback: {
+          starting: "[Quick Scan - Fallback] Starting processing in main thread...",
+          completed: "[Quick Scan - Fallback] Processing complete, found {{count}} unique texts."
+        },
+        worker: {
+          logPrefix: "[Quick Scan Worker]",
+          starting: "[Quick Scan] Starting execution, attempting to use Web Worker...",
+          completed: "[Quick Scan] Worker processing successful, received {{count}} texts.",
+          scanComplete: "[Quick Scan Worker] Processing complete, found {{count}} unique texts. Sending back to main thread...",
+          initFailed: "[Quick Scan] Worker initialization failed. This is likely due to the website's Content Security Policy (CSP).",
+          originalError: "[Quick Scan] Original error: {{error}}",
+          sendingData: "[Quick Scan] Web Worker created, sending {{count}} texts for processing...",
+          initSyncError: "[Quick Scan] Synchronous error during Worker initialization: {{error}}",
+          cspBlocked: "[Quick Scan] CSP check failed. Worker creation is not allowed."
+        }
+      },
+      sessionScan: {
+        switchToFallback: "[Dynamic Scan] Switching to main thread fallback.",
+        domObserver: {
+          stopped: "[Dynamic Scan] Stopped listening for DOM changes."
+        },
+        fallback: {
+          initialized: "[Dynamic Scan - Fallback] Initialized.",
+          cleared: "[Dynamic Scan - Fallback] Data cleared."
+        },
+        worker: {
+          logPrefix: "[Dynamic Scan Worker]",
+          starting: "Dynamic Scan: Attempting to start Web Worker...",
+          initFailed: "[Dynamic Scan] Worker initialization failed. This is likely due to the website's Content Security Policy (CSP).",
+          originalError: "[Dynamic Scan] Original error: {{error}}",
+          initialized: "[Dynamic Scan] Worker initialized successfully, sent {{count}} initial texts to start the session.",
+          initSyncError: "[Dynamic Scan] Synchronous error during Worker initialization: {{error}}",
+          clearCommandSent: "[Dynamic Scan] Clear command sent to worker.",
+          cspBlocked: "[Dynamic Scan] CSP check failed. Worker creation is not allowed."
+        }
+      },
+      ui: {
+        copyButton: {
+          copied: "Copy button clicked, copied {{count}} characters.",
+          nothingToCopy: "Copy button clicked, but there was no content to copy or the button was disabled."
+        },
+        confirmationModal: {
+          sessionScan: {
+            confirmed: "User confirmed clearing session scan texts, invoking callback..."
+          },
+          quickScan: {
+            confirmed: "User confirmed clearing quick scan texts."
+          },
+          cancelled: "User cancelled the clear operation."
+        },
+        modal: {
+          opening: "Opening main modal...",
+          closing: "Closing main modal...",
+          scanFailed: "Static scan failed: {{error}}",
+          clearContent: "Clear content button clicked."
+        },
+        helpIcon: {
+          clicked: "Help icon clicked, displaying content for key: {{contentKey}}"
+        }
+      },
+      exporter: {
+        buttonClicked: "Export button clicked, format: {{format}}.",
+        csvError: "Error while parsing text and generating CSV: {{error}}",
+        fileExported: "File exported: {{filename}}",
+        noContent: "No content to export.",
+        unknownFormat: "Unknown export format: {{format}}"
+      },
+      main: {
+        requestingSessionScanData: "Requesting full data from session-scan mode...",
+        exportingQuickScanData: "Exporting full data from quick-scan mode's memory...",
+        inIframe: "Script is in an iframe, skipping initialization.",
+        initializing: "Script initialization started...",
+        initialSettingsLoaded: "Initial settings loaded:"
+      },
+      dom: {
+        ttpCreationError: "Failed to create Trusted Type policy:",
+        svgParseError: "Invalid or failed to parse SVG string:"
+      },
+      elementScan: {
+        starting: "Element Scan started.",
+        stopping: "Element Scan stopped.",
+        listenersAdded: "Global event listeners for element scan added.",
+        listenersRemoved: "Global event listeners for element scan removed.",
+        stateReset: "Element scan state has been reset.",
+        reselecting: "Returning to element reselection mode.",
+        hovering: "Hovering over <{{tagName}}>.",
+        escapePressed: "Escape key pressed, stopping element scan.",
+        escapeIgnoredForSettings: "Escape key pressed, but ignored because a settings panel is open.",
+        escapeIgnoredForModal: "Escape key pressed, but ignored because a modal or tooltip is open.",
+        escapePressedInAdjust: "Escape key pressed in adjustment mode, returning to reselection.",
+        clickedEnteringAdjust: "Element <{{tagName}}> clicked, entering adjustment mode.",
+        pathBuilt: "Element path built, depth: {{depth}}.",
+        adjustingLevel: "Adjusting selection level to {{level}} ({{tagName}}).",
+        confirmExtracting: "Selection confirmed, extracting text from <{{tagName}}>.",
+        staged: "Element staged. Total staged: {{count}}.",
+        confirmingStaged: "Confirming selection. Processing {{count}} staged elements.",
+        extractedCount: "Extracted {{count}} raw text fragments from element.",
+        confirmFailedNoTarget: "Confirmation failed: no target element selected.",
+        rightClickExit: "Right-click detected, stopping element scan.",
+        processingError: "An error occurred during text processing: {{error}}",
+        scrollListenersAdded: "Added {{count}} scroll listeners to parent elements.",
+        scrollListenersRemoved: "Removed all scroll listeners.",
+        worker: {
+          logPrefix: "[ES Worker]",
+          starting: "Element Scan Worker is starting...",
+          sendingData: "Sending {{count}} text fragments to Element Scan Worker.",
+          completed: "Element Scan Worker completed, found {{count}} unique texts.",
+          initFailed: "Element Scan Worker initialization failed. The browser's CSP might be blocking data: URLs.",
+          initSyncError: "Synchronous error during Element Scan Worker initialization: {{error}}",
+          originalError: "Original worker error: {{error}}",
+          cspBlocked: "Element Scan CSP check failed. Worker creation is not allowed.",
+          attemping: "Attempting to use Web Worker for filtering...",
+          fallback: "Switched to main thread for filtering.",
+          cspHint: "This may be due to the site's Content Security Policy (CSP)."
+        },
+        switchToFallback: "Switching to main thread fallback for Element Scan.",
+        fallbackFailed: "Element Scan fallback mode failed: {{error}}",
+        stagingStarted: "Staging started for element: <{{tagName}}>",
+        stagedNothingNew: "No new unique text was staged from this element.",
+        stagingFinished: "Staging finished.",
+        confirmStarted: "Confirmation process started...",
+        confirmFinished: "Confirmation process finished successfully.",
+        confirmFailed: "Confirmation process failed. Error: {{error}}"
+      },
+      elementScanUI: {
+        creatingHighlights: "Element Scan UI: Creating highlight elements for the first time.",
+        updatingHighlight: "Element Scan UI: Updating highlight for <{{tagName}}>.",
+        creatingToolbar: "Element Scan UI: Creating adjustment toolbar.",
+        toolbarPositioned: "Element Scan UI: Toolbar positioned.",
+        sliderChanged: "Element Scan UI: Slider changed to level {{level}}",
+        reselectClicked: "Element Scan UI: 'Reselect' button clicked.",
+        stageClicked: "Element Scan UI: 'Stage' button clicked.",
+        cancelClicked: "Element Scan UI: 'Cancel' button clicked.",
+        confirmClicked: "Element Scan UI: 'Confirm' button clicked.",
+        dragStarted: "Element Scan UI: Drag started.",
+        dragEnded: "Element Scan UI: Drag ended.",
+        cleaningHighlights: "Element Scan UI: Cleaning up highlight elements.",
+        cleaningToolbar: "Element Scan UI: Cleaning up toolbar."
+      },
+      eventBus: {
+        callbackError: "Error in callback for event '{{eventName}}':"
+      },
+      trustedTypes: {
+        workerPolicyError: "Failed to create Trusted Types worker policy:",
+        htmlPolicyError: "Failed to create Trusted Types HTML policy:",
+        defaultWorkerPolicyWarning: "Trusted Types default policy failed for worker URL, falling back to raw URL.",
+        defaultHtmlPolicyWarning: "Trusted Types default policy failed for HTML, falling back to raw string."
+      }
+    },
+    tutorial: {
+      elementScanTitle: "Element Scan Tutorial",
+      elementScan: '<p><strong>What it does:</strong></p><p>Element Scan allows you to precisely select one or more areas on a webpage (e.g., a paragraph, a list, a sidebar) and extract text only from those areas.</p><p><strong>How to use:</strong></p><ol><li><strong>Start:</strong> Click the "Element Scan" icon <span class="help-icon-placeholder element-scan-icon"></span> in the floating button to enter scan mode.</li><li><strong>Select:</strong> Move your mouse over the page. The area you want to scan will be highlighted. Click to select it.</li><li><strong>Adjust:</strong> A toolbar will appear after selection. You can use the <strong>slider</strong> to expand or shrink the selection area.</li><li><strong>Stage:</strong> If you want to select multiple unrelated areas, click the <span class="action-key">Stage</span> button to save the current selection and continue selecting other areas.</li><li><strong>Confirm:</strong> Once you have finished all selections, click the <span class="action-key">Confirm</span> button to start extracting text from all your chosen areas.</li></ol><p><strong>How to exit:</strong></p><ul><li>While the highlight box is visible, <strong>right-click</strong> anywhere on the page.</li><li>Press the <kbd>ESC</kbd> key at any time.</li><li>Click the "Element Scan" icon again at any time.</li></ul>',
+      sessionScanTitle: "Dynamic Scan Tutorial",
+      sessionScan: '<p><strong>What it does:</strong></p><p>Dynamic Scan continuously monitors and automatically records all text that dynamically loads or changes on a webpage. It is especially useful for capturing live chats, infinite scrolling content, or notifications.</p><p><strong>How to use:</strong></p><ul><li><strong>Start Scan:</strong> Click the "Dynamic Scan" icon <span class="help-icon-placeholder dynamic-scan-icon"></span> in the floating button to start scanning immediately.</li><li><strong>Stop Scan:</strong> Click the icon again <span class="help-icon-placeholder stop-icon"></span> to stop.</li><li><strong>View Results:</strong> After stopping, click the main floating button <span class="help-icon-placeholder summary-icon"></span> to open the results window.</li></ul><p><strong>How to exit:</strong></p><ul><li>Click the "Dynamic Scan" icon again during the scan.</li><li>Press the <kbd>ESC</kbd> key at any time to quickly stop the scan.</li></ul>'
+    }
+  };
+  var zh_CN_default = {
+    _meta: {
+      name: "\u7B80\u4F53\u4E2D\u6587"
+    },
+    common: {
+      scan: "\u626B\u63CF",
+      stop: "\u505C\u6B62",
+      pause: "\u6682\u505C",
+      resume: "\u6062\u590D",
+      clear: "\u6E05\u7A7A",
+      copy: "\u590D\u5236",
+      save: "\u4FDD\u5B58",
+      discovered: "\u5DF2\u53D1\u73B0:",
+      confirm: "\u786E\u8BA4",
+      cancel: "\u53D6\u6D88",
+      export: "\u5BFC\u51FA",
+      reselect: "\u91CD\u65B0\u9009\u62E9",
+      stage: "\u6682\u5B58",
+      processingElement: "\u5904\u7406\u5143\u7D20"
+    },
+    export: {
+      exportAsTxt: "\u5BFC\u51FA\u4E3A TXT",
+      exportAsJson: "\u5BFC\u51FA\u4E3A JSON",
+      exportAsCsv: "\u5BFC\u51FA\u4E3A CSV",
+      csv: {
+        id: "ID",
+        original: "\u539F\u6587",
+        translation: "\u8BD1\u6587"
+      }
+    },
+    settings: {
+      title: "\u8BBE\u7F6E",
+      theme: "\u4E3B\u9898",
+      language: "\u8BED\u8A00",
+      format: "\u8F93\u51FA\u683C\u5F0F",
+      formats: {
+        array: "\u5D4C\u5957\u6570\u7EC4",
+        object: "\u952E\u503C\u5BF9\u5BF9\u8C61",
+        csv: "CSV \u5B57\u7B26\u4E32"
+      },
+      relatedSettings: "\u76F8\u5173\u8BBE\u7F6E",
+      filterRules: "\u5185\u5BB9\u8FC7\u6EE4\u89C4\u5219",
+      filters: {
+        numbers: "\u8FC7\u6EE4\u6570\u5B57/\u8D27\u5E01",
+        chinese: "\u8FC7\u6EE4\u7EAF\u4E2D\u6587\u6587\u672C",
+        contains_chinese: "\u8FC7\u6EE4\u542B\u4E2D\u6587\u7684\u6587\u672C",
+        emoji_only: "\u8FC7\u6EE4\u7EAF\u8868\u60C5\u7B26\u53F7\u6587\u672C",
+        symbols: "\u8FC7\u6EE4\u7EAF\u7B26\u53F7\u6587\u672C",
+        term: "\u8FC7\u6EE4\u7279\u5B9A\u672F\u8BED",
+        single_letter: "\u8FC7\u6EE4\u5355\u4E2A\u82F1\u6587\u5B57\u6BCD",
+        repeating_chars: "\u8FC7\u6EE4\u91CD\u590D\u5B57\u7B26",
+        file_paths: "\u8FC7\u6EE4\u6587\u4EF6\u8DEF\u5F84",
+        hex_color_codes: "\u8FC7\u6EE4\u5341\u516D\u8FDB\u5236\u989C\u8272\u4EE3\u7801",
+        email_addresses: "\u8FC7\u6EE4\u7535\u5B50\u90AE\u4EF6\u5730\u5740",
+        uuids: "\u8FC7\u6EE4 UUID",
+        git_commit_hashes: "\u8FC7\u6EE4 Git \u63D0\u4EA4\u54C8\u5E0C\u503C",
+        website_urls: "\u8FC7\u6EE4\u7F51\u7AD9\u94FE\u63A5",
+        website_urls_title: "\u8FC7\u6EE4\u7F51\u7AD9\u94FE\u63A5",
+        shorthand_numbers: "\u8FC7\u6EE4\u901F\u8BB0\u6570\u5B57",
+        shorthand_numbers_title: "\u8FC7\u6EE4\u901F\u8BB0\u6570\u5B57"
+      },
+      display: {
+        show_fab: "\u663E\u793A\u60AC\u6D6E\u6309\u94AE",
+        fab_position: "\u60AC\u6D6E\u6309\u94AE\u4F4D\u7F6E",
+        fab_positions: {
+          bottom_right: "\u2198 \u53F3\u4E0B\u89D2",
+          top_right: "\u2197 \u53F3\u4E0A\u89D2",
+          bottom_left: "\u2199 \u5DE6\u4E0B\u89D2",
+          top_left: "\u2196 \u5DE6\u4E0A\u89D2"
+        },
+        show_line_numbers: "\u663E\u793A\u884C\u53F7",
+        show_statistics: "\u663E\u793A\u7EDF\u8BA1\u4FE1\u606F",
+        enable_word_wrap: "\u542F\u7528\u81EA\u52A8\u6362\u884C",
+        text_truncation_limit: "\u542F\u7528\u6587\u672C\u622A\u65AD\u9650\u5236",
+        character_limit: "\u5B57\u7B26\u9650\u5236",
+        show_scan_count: "\u5728\u6807\u9898\u4E2D\u542F\u7528\u626B\u63CF\u8BA1\u6570"
+      },
+      advanced: {
+        enable_debug_logging: "\u542F\u7528\u8C03\u8BD5\u65E5\u5FD7\u8BB0\u5F55"
+      },
+      panel: {
+        title: "\u8BBE\u7F6E\u9762\u677F"
+      },
+      contextual: {
+        elementScanTitle: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u8BBE\u7F6E",
+        sessionScanTitle: "\u52A8\u6001\u626B\u63CF\u8BBE\u7F6E",
+        persistData: "\u8DE8\u9875\u9762\u65F6\u4FDD\u7559\u626B\u63CF\u6570\u636E"
+      },
+      languages: {
+        auto: "\u81EA\u52A8\u68C0\u6D4B",
+        en: "\u82F1\u6587 (\u7F8E\u56FD)",
+        "en-GB": "\u82F1\u6587 (\u82F1\u56FD)",
+        "zh-CN": "\u7B80\u4F53\u4E2D\u6587",
+        "zh-TW": "\u7E41\u4F53\u4E2D\u6587"
+      },
+      themes: {
+        light: "\u6D45\u8272",
+        dark: "\u6DF1\u8272",
+        system: "\u8DDF\u968F\u7CFB\u7EDF"
+      }
+    },
+    scan: {
+      quick: "\u5FEB\u901F\u626B\u63CF",
+      session: "\u52A8\u6001\u626B\u63CF",
+      stagedCount: "\u5DF2\u6682\u5B58:",
+      elementFinished: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5B8C\u6210\uFF0C\u53D1\u73B0 {{count}} \u6761\u6587\u672C\u3002",
+      startSession: "\u5F00\u59CB\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD",
+      stopSession: "\u505C\u6B62\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD",
+      finished: "\u626B\u63CF\u5B8C\u6210\uFF0C\u53D1\u73B0 {{count}} \u6761\u6587\u672C\u3002",
+      quickFinished: "\u5FEB\u901F\u626B\u63CF\u5B8C\u6210\uFF0C\u53D1\u73B0 {{count}} \u6761\u6587\u672C\u3002",
+      sessionStarted: "\u52A8\u6001\u626B\u63CF\u5DF2\u5F00\u59CB\u3002",
+      sessionInProgress: "\u626B\u63CF\u8FDB\u884C\u4E2D...",
+      truncationWarning: "\u4E3A\u4FDD\u6301\u754C\u9762\u6D41\u7545\uFF0C\u6B64\u5904\u4EC5\u663E\u793A\u90E8\u5206\u6587\u672C\u3002\u5BFC\u51FA\u540E\u5C06\u5305\u542B\u5B8C\u6574\u5185\u5BB9\u3002"
+    },
+    slider: {
+      adjustFrameSize: "\u79FB\u52A8\u6ED1\u5757\u4EE5\u8C03\u6574\u6846\u67B6\u5927\u5C0F",
+      minLabel: "\u6700\u5C0F",
+      maxLabel: "\u6700\u5927"
+    },
+    results: {
+      title: "\u63D0\u53D6\u7684\u6587\u672C",
+      scanCountSession: "\u5DF2\u626B\u63CF {{count}} \u4E2A\u9879\u76EE",
+      scanCountStatic: "\u5171\u626B\u63CF {{count}} \u4E2A\u9879\u76EE",
+      totalCharacters: "\u603B\u5B57\u7B26\u6570",
+      totalLines: "\u603B\u884C\u6570",
+      noSummary: "\u65E0\u53EF\u7528\u6458\u8981",
+      stats: {
+        lines: "\u884C",
+        chars: "\u5B57\u7B26"
+      }
+    },
+    notifications: {
+      copiedToClipboard: "\u5DF2\u590D\u5236\u5230\u526A\u8D34\u677F\uFF01",
+      settingsSaved: "\u8BBE\u7F6E\u5DF2\u4FDD\u5B58\uFF01",
+      modalInitError: "\u6A21\u6001\u6846\u672A\u521D\u59CB\u5316\u3002",
+      nothingToCopy: "\u6CA1\u6709\u53EF\u590D\u5236\u7684\u5185\u5BB9\u3002",
+      contentCleared: "\u5185\u5BB9\u5DF2\u6E05\u9664\u3002",
+      noTextSelected: "\u672A\u9009\u62E9\u4EFB\u4F55\u6587\u672C\u3002",
+      scanFailed: "\u626B\u63CF\u5931\u8D25\u3002",
+      elementScanStarted: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5DF2\u5F00\u59CB\u3002",
+      elementScanPaused: "\u5143\u7D20\u626B\u63CF\u5DF2\u6682\u505C\u3002",
+      elementScanResumed: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u4F1A\u8BDD\u5DF2\u4ECE\u4E0A\u4E00\u9875\u6062\u590D\u3002",
+      elementScanContinued: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5DF2\u7EE7\u7EED\u3002",
+      sessionScanStarted: "\u52A8\u6001\u626B\u63CF\u5DF2\u5F00\u59CB\u3002",
+      sessionScanPaused: "\u52A8\u6001\u626B\u63CF\u5DF2\u6682\u505C\u3002",
+      sessionScanResumed: "\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD\u5DF2\u4ECE\u4E0A\u4E00\u9875\u6062\u590D\u3002",
+      sessionScanContinued: "\u52A8\u6001\u626B\u63CF\u5DF2\u7EE7\u7EED\u3002",
+      cspWorkerWarning: "\u56E0\u7F51\u7AD9\u5B89\u5168\u9650\u5236\uFF0C\u5DF2\u5207\u6362\u81F3\u517C\u5BB9\u626B\u63CF\u6A21\u5F0F\u3002"
+    },
+    placeholders: {
+      click: "\u70B9\u51FB ",
+      dynamicScan: "[\u52A8\u6001\u626B\u63CF]",
+      startNewScanSession: " \u5F00\u59CB\u65B0\u7684\u626B\u63CF\u4F1A\u8BDD",
+      staticScan: "[\u9759\u6001\u626B\u63CF]",
+      performOneTimeScan: " \u6267\u884C\u4E00\u6B21\u6027\u5FEB\u901F\u63D0\u53D6"
+    },
+    confirmation: {
+      clear: "\u60A8\u786E\u5B9A\u8981\u6E05\u9664\u5185\u5BB9\u5417\uFF1F\u6B64\u64CD\u4F5C\u65E0\u6CD5\u64A4\u9500\u3002"
+    },
+    tooltip: {
+      summary: "\u67E5\u770B\u6458\u8981",
+      dynamic_scan: "\u52A8\u6001\u626B\u63CF",
+      static_scan: "\u9759\u6001\u626B\u63CF",
+      element_scan: "\u9009\u53D6\u5143\u7D20\u626B\u63CF",
+      pauseElementScan: "\u6682\u505C\u5143\u7D20\u626B\u63CF",
+      resumeElementScan: "\u6062\u590D\u5143\u7D20\u626B\u63CF",
+      pauseSessionScan: "\u6682\u505C\u52A8\u6001\u626B\u63CF",
+      resumeSessionScan: "\u6062\u590D\u52A8\u6001\u626B\u63CF",
+      tooltipHelp: "\u5E2E\u52A9",
+      persistData: {
+        title: "\u6570\u636E\u6301\u4E45\u5316\u8BF4\u660E",
+        text: {
+          sessionScan: "\u5F00\u542F\u540E\uFF0C\u5F53\u70B9\u51FB\u94FE\u63A5\u8DF3\u8F6C\u5230\u65B0\u9875\u9762\u65F6\uFF0C\u4F1A\u81EA\u52A8\u6062\u590D\u5E76\u7EE7\u7EED\u7D2F\u52A0\u4E0A\u4E00\u9875\u7684\u626B\u63CF\u7ED3\u679C\u3002\u5173\u95ED\u6B64\u9009\u9879\uFF0C\u5219\u53EA\u6062\u590D\u626B\u63CF\u6A21\u5F0F\uFF0C\u4F46\u4F1A\u5F00\u59CB\u4E00\u6B21\u5168\u65B0\u7684\u626B\u63CF\u3002",
+          elementScan: "\u5F00\u542F\u540E\uFF0C\u5F53\u70B9\u51FB\u94FE\u63A5\u8DF3\u8F6C\u5230\u65B0\u9875\u9762\u65F6\uFF0C\u4F1A\u81EA\u52A8\u6062\u590D\u5F53\u524D\u5DF2\u6682\u5B58\u7684\u6240\u6709\u6587\u672C\u3002\u5173\u95ED\u6B64\u9009\u9879\uFF0C\u5219\u53EA\u6062\u590D\u626B\u63CF\u6A21\u5F0F\uFF0C\u4F46\u6682\u5B58\u533A\u4F1A\u662F\u7A7A\u7684\u3002"
+        }
+      },
+      disabled: {
+        scan_in_progress: "\u53E6\u4E00\u9879\u626B\u63CF\u6B63\u5728\u8FDB\u884C\u4E2D"
+      },
+      filters: {
+        title: "\u5185\u5BB9\u8FC7\u6EE4\u5668\u8BF4\u660E",
+        numbers: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389<strong>\u5B8C\u5168</strong>\u7531\u6570\u5B57\u3001\u7A7A\u683C\u3001\u5343\u4F4D\u5206\u9694\u7B26(,)\u3001\u5C0F\u6570\u70B9(.)\u4EE5\u53CA\u90E8\u5206\u8D27\u5E01\u7B26\u53F7($, \u20AC, \xA3, \xA5)\u7EC4\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u66F4\u591A\u793A\u4F8B:</strong><br>\u2022 "1,234.56"<br>\u2022 "\xA5999"<br>\u2022 "\u20AC200"<br>\u2022 "$ 100"',
+        chinese: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389<strong>\u5B8C\u5168</strong>\u7531\u6C49\u5B57\u548C\u7A7A\u683C\u7EC4\u6210\uFF0C\u4E14\u4E0D\u542B\u4EFB\u4F55\u6807\u70B9\u7684\u6587\u672C\u3002<br><br><strong>\u793A\u4F8B:</strong><br>\u2022 "\u4F60\u597D \u4E16\u754C" (\u5C06\u88AB\u8FC7\u6EE4)<br>\u2022 "\u4F60\u597D\uFF0C\u4E16\u754C" (\u4E0D\u4F1A\u88AB\u8FC7\u6EE4)',
+        contains_chinese: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389\u4EFB\u4F55\u542B\u6709\u81F3\u5C11\u4E00\u4E2A\u6C49\u5B57\u7684\u6587\u672C\uFF0C\u65E0\u8BBA\u5176\u4ED6\u5B57\u7B26\u662F\u4EC0\u4E48\u3002<br><br><strong>\u793A\u4F8B:</strong><br>\u2022 "\u4F60\u597D World" (\u5C06\u88AB\u8FC7\u6EE4)<br>\u2022 "\u7B2C\u4E00\u7AE0" (\u5C06\u88AB\u8FC7\u6EE4)',
+        emoji_only: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389<strong>\u5B8C\u5168</strong>\u7531\u4E00\u4E2A\u6216\u591A\u4E2A\u8868\u60C5\u7B26\u53F7\u53CA\u7A7A\u683C\u7EC4\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u793A\u4F8B:</strong><br>\u2022 "\u{1F44D}"<br>\u2022 "\u{1F60A} \u{1F389} \u{1F680}"',
+        symbols: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389<strong>\u5B8C\u5168</strong>\u7531\u5404\u79CD\u6807\u70B9\u548C\u7B26\u53F7\u7EC4\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u66F4\u591A\u793A\u4F8B:</strong><br>\u2022 "@#*&^%"<br>\u2022 "()[]{}"<br>\u2022 "---...---"',
+        term: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389\u901A\u5E38\u4E0D\u9700\u8981\u7FFB\u8BD1\u7684\u5E38\u89C1UI\u672F\u8BED\u3002<br><br><strong>\u66F4\u591A\u793A\u4F8B:</strong><br>\u2022 "OK", "Cancel", "Submit"<br>\u2022 "Login", "Settings", "Help"',
+        single_letter: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389\u7531<strong>\u5355\u4E2A</strong>\u82F1\u6587\u5B57\u6BCD\u7EC4\u6210\u7684\u6587\u672C\uFF08\u4E0D\u533A\u5206\u5927\u5C0F\u5199\uFF09\u3002<br><br><strong>\u793A\u4F8B:</strong><br>\u2022 "A" (\u5C06\u88AB\u8FC7\u6EE4)<br>\u2022 "b" (\u5C06\u88AB\u8FC7\u6EE4)<br>\u2022 "AB" (\u4E0D\u4F1A\u88AB\u8FC7\u6EE4)',
+        repeating_chars: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389\u7531<strong>\u540C\u4E00\u4E2A\u5B57\u7B26</strong>\u8FDE\u7EED\u91CD\u590D2\u6B21\u6216\u4EE5\u4E0A\u7684\u6587\u672C\u3002<br><br><strong>\u793A\u4F8B:</strong><br>\u2022 "aa"<br>\u2022 "======"<br>\u2022 "bbbbb"',
+        file_paths: '\u6B64\u89C4\u5219\u5C1D\u8BD5\u8BC6\u522B\u5E76\u8FC7\u6EE4\u6389\u7C7B\u4F3C\u64CD\u4F5C\u7CFB\u7EDF\u6587\u4EF6\u8DEF\u5F84\u4E14<strong>\u5305\u542B\u6587\u4EF6\u6269\u5C55\u540D</strong>\u7684\u6587\u672C\u3002\u5B83\u4E0D\u5339\u914D\u7F51\u5740\u3002<br><br><strong>\u66F4\u591A\u793A\u4F8B:</strong><br>\u2022 "/path/to/file.js"<br>\u2022 "C:\\Users\\Test\\document.docx"<br>\u2022 "./config.json"',
+        hex_color_codes: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389\u6807\u51C6\u7684CSS\u5341\u516D\u8FDB\u5236\u989C\u8272\u4EE3\u7801\uFF083\u30014\u30016\u62168\u4F4D\uFF0C\u540E\u8005\u5305\u542B\u900F\u660E\u5EA6\u901A\u9053\uFF09\u3002<br><br><strong>\u793A\u4F8B:</strong><br>\u2022 "#FFFFFF"<br>\u2022 "#ff0000"<br>\u2022 "#f0c"<br>\u2022 "#f0c8" (4\u4F4D)<br>\u2022 "#ff000080" (8\u4F4D)',
+        email_addresses: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389\u7B26\u5408\u6807\u51C6\u7535\u5B50\u90AE\u4EF6\u5730\u5740\u683C\u5F0F\u7684\u6587\u672C\u3002<br><br><strong>\u793A\u4F8B:</strong><br>\u2022 "example@domain.com"<br>\u2022 "user.name@sub.domain.org"',
+        uuids: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389\u901A\u7528\u552F\u4E00\u6807\u8BC6\u7B26 (UUID)\u3002<br><br><strong>\u793A\u4F8B:</strong><br>\u2022 "123e4567-e89b-12d3-a456-426614174000"',
+        git_commit_hashes: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389\u6807\u51C6\u7684Git\u63D0\u4EA4\u54C8\u5E0C\u503C\uFF08\u957F\u6216\u77ED\uFF09\u3002<br><br><strong>\u793A\u4F8B:</strong><br>\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\u2022 "a1b2c3d"',
+        website_urls: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389<strong>\u72EC\u7ACB\u7684\u7F51\u5740</strong>\u3002\u5B83\u8BBE\u8BA1\u5F97\u6BD4\u8F83\u4E25\u683C\uFF0C\u4EE5\u907F\u514D\u610F\u5916\u79FB\u9664\u4E0D\u662F\u94FE\u63A5\u7684\u6587\u672C\u3002<br><br><strong>\u66F4\u591A\u793A\u4F8B:</strong><br>\u2022 "https://www.example.com"<br>\u2022 "http://test.co.uk"<br>\u2022 "www.google.com"<br>\u2022 "example.org"',
+        shorthand_numbers: '\u6B64\u89C4\u5219\u8FC7\u6EE4\u6389\u4F7F\u7528<strong>\u5E38\u89C1\u901F\u8BB0\u540E\u7F00</strong>\u8868\u793A\u5343(k)\u3001\u767E\u4E07(m)\u6216\u5341\u4EBF(b)\u7684\u6570\u5B57\uFF08\u4E0D\u533A\u5206\u5927\u5C0F\u5199\uFF09\u3002<br><br><strong>\u66F4\u591A\u793A\u4F8B:</strong><br>\u2022 "1.2k"<br>\u2022 "15M"<br>\u2022 "2.5b"<br>\u2022 "100K"'
+      },
+      display: {
+        title: "\u663E\u793A\u8BBE\u7F6E\u8BF4\u660E",
+        show_fab: "\u63A7\u5236\u662F\u5426\u5728\u7F51\u9875\u53F3\u4E0B\u89D2\u663E\u793A<strong>\u60AC\u6D6E\u64CD\u4F5C\u6309\u94AE(FAB)</strong>\u3002\u8FD9\u662F\u8FDB\u884C\u9759\u6001\u548C\u52A8\u6001\u6587\u672C\u63D0\u53D6\u7684\u4E3B\u8981\u5165\u53E3\u3002<br><br>\u5982\u679C\u60A8\u7981\u7528\u4E86\u6B64\u6309\u94AE\uFF0C\u53EF\u4EE5\u901A\u8FC7\u6CB9\u7334\u6269\u5C55\u83DC\u5355\u4E2D\u7684\u8BBE\u7F6E\u9762\u677F\u91CD\u65B0\u542F\u7528\u5B83\u3002",
+        show_scan_count: "\u542F\u7528\u540E\uFF0C\u7ED3\u679C\u7A97\u53E3\u7684\u6807\u9898\u680F\u5C06<strong>\u5B9E\u65F6\u663E\u793A</strong>\u5F53\u524D\u626B\u63CF\u4E2D\u627E\u5230\u7684\u603B\u6587\u672C\u9879\u76EE\u6570\u3002\u8FD9\u5BF9\u4E8E\u76D1\u63A7\u957F\u65F6\u95F4\u8FD0\u884C\u7684<strong>\u52A8\u6001\u626B\u63CF</strong>\u7684\u8FDB\u5EA6\u7279\u522B\u6709\u7528\u3002",
+        show_line_numbers: "\u5728\u7ED3\u679C\u7A97\u53E3\u7684\u6587\u672C\u533A\u57DF\u5DE6\u4FA7\u663E\u793A\u884C\u53F7\u3002\u5F53\u60A8\u9700\u8981\u8BA8\u8BBA\u6216\u8BB0\u5F55\u7279\u5B9A\u6587\u672C\u884C\u65F6\uFF0C\u8FD9\u63D0\u4F9B\u4E86\u4E00\u4E2A<strong>\u7CBE\u786E\u7684\u53C2\u8003\u70B9</strong>\u3002",
+        show_statistics: "\u5728\u7ED3\u679C\u7A97\u53E3\u5E95\u90E8\u7684\u72B6\u6001\u680F\u4E2D\u663E\u793A\u6709\u5173\u63D0\u53D6\u5185\u5BB9\u7684<strong>\u5B9E\u65F6\u7EDF\u8BA1\u6570\u636E</strong>\uFF0C\u5305\u62EC<strong>\u603B\u884C\u6570</strong>\u548C<strong>\u603B\u5B57\u7B26\u6570</strong>\u3002\u8FD9\u6709\u52A9\u4E8E\u60A8\u5FEB\u901F\u8BC4\u4F30\u5185\u5BB9\u7684\u4F53\u91CF\u3002",
+        enable_word_wrap: "\u63A7\u5236\u7ED3\u679C\u7A97\u53E3\u4E2D\u957F\u6587\u672C\u884C\u7684\u663E\u793A\u65B9\u5F0F\u3002<br><br>\u2022 <strong>\u542F\u7528:</strong> \u957F\u884C\u5C06\u81EA\u52A8\u6362\u884C\u4EE5\u9002\u5E94\u7A97\u53E3\u5BBD\u5EA6\u3002<br>\u2022 <strong>\u7981\u7528:</strong> \u957F\u884C\u5C06\u4FDD\u6301\u5728\u5355\u884C\uFF0C\u5E76\u51FA\u73B0\u6C34\u5E73\u6EDA\u52A8\u6761\u3002",
+        text_truncation_limit: "\u8FD9\u662F\u4E00\u4E2A<strong>\u6027\u80FD\u4F18\u5316</strong>\u529F\u80FD\u3002\u5982\u679C\u811A\u672C\u63D0\u53D6\u5230<strong>\u6781\u957F\u7684\u5355\u884C\u6587\u672C</strong>\uFF08\u4F8B\u5982\uFF0Cbase64\u7F16\u7801\u7684\u56FE\u7247\uFF09\uFF0C\u53EF\u80FD\u4F1A\u5BFC\u81F4\u6D4F\u89C8\u5668<strong>\u5361\u987F\u6216\u65E0\u54CD\u5E94</strong>\u3002<br><br>\u6B64\u8BBE\u7F6E\u4F1A\u622A\u65AD\u4EFB\u4F55\u8D85\u8FC7\u6307\u5B9A\u957F\u5EA6\u7684\u5355\u884C\u6587\u672C\uFF0C\u4EE5\u786E\u4FDDUI\u4FDD\u6301\u6D41\u7545\u3002<strong>\u6CE8\u610F\uFF1A\u8FD9\u4EC5\u5F71\u54CD\u663E\u793A\uFF1B\u5BFC\u51FA\u7684\u6587\u4EF6\u4ECD\u5C06\u5305\u542B\u5B8C\u6574\u7684\u3001\u672A\u622A\u65AD\u7684\u5185\u5BB9\u3002</strong>"
+      },
+      advanced: {
+        title: "\u9AD8\u7EA7\u8BBE\u7F6E\u8BF4\u660E",
+        enable_debug_logging: "\u542F\u7528\u540E\uFF0C\u811A\u672C\u4F1A\u5C06\u8BE6\u7EC6\u7684\u5185\u90E8\u72B6\u6001\u3001\u6267\u884C\u6B65\u9AA4\u548C\u9519\u8BEF\u4FE1\u606F\u8F93\u51FA\u5230\u6D4F\u89C8\u5668\u7684<strong>\u5F00\u53D1\u8005\u5DE5\u5177\u63A7\u5236\u53F0</strong>\uFF08\u901A\u5E38\u7528F12\u6253\u5F00\uFF09\u3002\u8FD9\u4E3B\u8981\u4F9B\u5F00\u53D1\u8005\u6216\u9700\u8981\u63D0\u4EA4\u8BE6\u7EC6\u9519\u8BEF\u62A5\u544A\u7684\u7528\u6237\u4F7F\u7528\u3002"
+      }
+    },
+    log: {
+      prefix: "[\u6587\u672C\u63D0\u53D6\u811A\u672C-\u8C03\u8BD5]",
+      language: {
+        switched: "\u8BED\u8A00\u5DF2\u5207\u6362\u81F3\uFF1A{{lang}}",
+        notFound: "\u672A\u627E\u5230\u8BED\u8A00 '{{lang}}'\uFF0C\u5DF2\u56DE\u9000\u81F3 'en'\u3002"
+      },
+      settings: {
+        changed: "\u8BBE\u7F6E '{{key}}' \u5DF2\u4ECE '{{oldValue}}' \u66F4\u6539\u4E3A '{{newValue}}'",
+        filterRuleChanged: {
+          enabled: "\u8FC7\u6EE4\u89C4\u5219 '{{key}}' \u5DF2\u542F\u7528",
+          disabled: "\u8FC7\u6EE4\u89C4\u5219 '{{key}}' \u5DF2\u7981\u7528"
+        },
+        panel: {
+          opening: "\u6B63\u5728\u6253\u5F00\u8BBE\u7F6E\u9762\u677F...",
+          closing: "\u6B63\u5728\u5173\u95ED\u8BBE\u7F6E\u9762\u677F...",
+          saving: "\u6B63\u5728\u4FDD\u5B58\u8BBE\u7F6E..."
+        },
+        parseError: "\u89E3\u6790\u5DF2\u4FDD\u5B58\u7684\u8BBE\u7F6E\u65F6\u51FA\u9519\uFF1A",
+        invalidObject: "\u8BD5\u56FE\u4E3A\u8BBE\u7F6E\u4FDD\u5B58\u4E00\u4E2A\u65E0\u6548\u5BF9\u8C61\uFF1A"
+      },
+      textProcessor: {
+        filtered: '\u6587\u672C\u5DF2\u8FC7\u6EE4: "{{text}}" (\u539F\u56E0: {{reason}})'
+      },
+      quickScan: {
+        switchToFallback: "[\u5FEB\u901F\u626B\u63CF] \u6B63\u5728\u5207\u6362\u5230\u4E3B\u7EBF\u7A0B\u5907\u9009\u65B9\u6848\u3002",
+        fallbackFailed: "[\u5FEB\u901F\u626B\u63CF] \u4E3B\u7EBF\u7A0B\u5907\u9009\u65B9\u6848\u6267\u884C\u5931\u8D25: {{error}}",
+        fallback: {
+          starting: "[\u5FEB\u901F\u626B\u63CF - \u5907\u9009] \u6B63\u5728\u4E3B\u7EBF\u7A0B\u4E2D\u5F00\u59CB\u5904\u7406...",
+          completed: "[\u5FEB\u901F\u626B\u63CF - \u5907\u9009] \u5904\u7406\u5B8C\u6210\uFF0C\u627E\u5230 {{count}} \u6761\u4E0D\u91CD\u590D\u6587\u672C\u3002"
+        },
+        worker: {
+          logPrefix: "[\u5FEB\u901F\u626B\u63CF Worker]",
+          starting: "[\u5FEB\u901F\u626B\u63CF] \u5F00\u59CB\u6267\u884C\uFF0C\u5C1D\u8BD5\u4F7F\u7528 Web Worker...",
+          completed: "[\u5FEB\u901F\u626B\u63CF] Worker \u5904\u7406\u6210\u529F\uFF0C\u6536\u5230 {{count}} \u6761\u6587\u672C\u3002",
+          scanComplete: "[\u5FEB\u901F\u626B\u63CF Worker] \u5904\u7406\u5B8C\u6210\uFF0C\u627E\u5230 {{count}} \u6761\u4E0D\u91CD\u590D\u6587\u672C\u3002\u6B63\u5728\u53D1\u56DE\u4E3B\u7EBF\u7A0B...",
+          initFailed: "[\u5FEB\u901F\u626B\u63CF] Worker \u521D\u59CB\u5316\u5931\u8D25\u3002\u8FD9\u5F88\u53EF\u80FD\u662F\u7531\u4E8E\u7F51\u7AD9\u7684\u5185\u5BB9\u5B89\u5168\u7B56\u7565 (CSP) \u5BFC\u81F4\u7684\u3002",
+          originalError: "[\u5FEB\u901F\u626B\u63CF] \u539F\u59CB\u9519\u8BEF: {{error}}",
+          sendingData: "[\u5FEB\u901F\u626B\u63CF] Web Worker \u5DF2\u521B\u5EFA\uFF0C\u6B63\u5728\u53D1\u9001 {{count}} \u6761\u6587\u672C\u8FDB\u884C\u5904\u7406...",
+          initSyncError: "[\u5FEB\u901F\u626B\u63CF] Worker \u521D\u59CB\u5316\u671F\u95F4\u53D1\u751F\u540C\u6B65\u9519\u8BEF: {{error}}",
+          cspBlocked: "[\u5FEB\u901F\u626B\u63CF] CSP\u68C0\u67E5\u5931\u8D25\uFF0C\u4E0D\u5141\u8BB8\u521B\u5EFAWorker\u3002"
+        }
+      },
+      sessionScan: {
+        switchToFallback: "[\u52A8\u6001\u626B\u63CF] \u6B63\u5728\u5207\u6362\u5230\u4E3B\u7EBF\u7A0B\u5907\u9009\u65B9\u6848\u3002",
+        domObserver: {
+          stopped: "[\u52A8\u6001\u626B\u63CF] \u5DF2\u505C\u6B62\u76D1\u542C DOM \u53D8\u5316\u3002"
+        },
+        fallback: {
+          initialized: "[\u52A8\u6001\u626B\u63CF - \u5907\u9009] \u5DF2\u521D\u59CB\u5316\u3002",
+          cleared: "[\u52A8\u6001\u626B\u63CF - \u5907\u9009] \u6570\u636E\u5DF2\u6E05\u9664\u3002"
+        },
+        worker: {
+          logPrefix: "[\u52A8\u6001\u626B\u63CF Worker]",
+          starting: "\u52A8\u6001\u626B\u63CF\uFF1A\u6B63\u5728\u5C1D\u8BD5\u542F\u52A8 Web Worker...",
+          initFailed: "[\u52A8\u6001\u626B\u63CF] Worker \u521D\u59CB\u5316\u5931\u8D25\u3002\u8FD9\u5F88\u53EF\u80FD\u662F\u7531\u4E8E\u7F51\u7AD9\u7684\u5185\u5BB9\u5B89\u5168\u7B56\u7565 (CSP) \u5BFC\u81F4\u7684\u3002",
+          originalError: "[\u52A8\u6001\u626B\u63CF] \u539F\u59CB\u9519\u8BEF: {{error}}",
+          initialized: "[\u52A8\u6001\u626B\u63CF] Worker \u521D\u59CB\u5316\u6210\u529F\uFF0C\u5DF2\u53D1\u9001 {{count}} \u6761\u521D\u59CB\u6587\u672C\u4EE5\u5F00\u59CB\u4F1A\u8BDD\u3002",
+          initSyncError: "[\u52A8\u6001\u626B\u63CF] Worker \u521D\u59CB\u5316\u671F\u95F4\u53D1\u751F\u540C\u6B65\u9519\u8BEF: {{error}}",
+          clearCommandSent: "[\u52A8\u6001\u626B\u63CF] \u6E05\u9664\u547D\u4EE4\u5DF2\u53D1\u9001\u81F3 worker\u3002",
+          cspBlocked: "[\u52A8\u6001\u626B\u63CF] CSP\u68C0\u67E5\u5931\u8D25\uFF0C\u4E0D\u5141\u8BB8\u521B\u5EFAWorker\u3002"
+        }
+      },
+      ui: {
+        copyButton: {
+          copied: "\u590D\u5236\u6309\u94AE\u5DF2\u70B9\u51FB\uFF0C\u590D\u5236\u4E86 {{count}} \u4E2A\u5B57\u7B26\u3002",
+          nothingToCopy: "\u590D\u5236\u6309\u94AE\u5DF2\u70B9\u51FB\uFF0C\u4F46\u6CA1\u6709\u5185\u5BB9\u53EF\u590D\u5236\u6216\u6309\u94AE\u88AB\u7981\u7528\u3002"
+        },
+        confirmationModal: {
+          sessionScan: {
+            confirmed: "\u7528\u6237\u5DF2\u786E\u8BA4\u6E05\u9664\u52A8\u6001\u626B\u63CF\u6587\u672C\uFF0C\u6B63\u5728\u8C03\u7528\u56DE\u8C03..."
+          },
+          quickScan: {
+            confirmed: "\u7528\u6237\u5DF2\u786E\u8BA4\u6E05\u9664\u5FEB\u901F\u626B\u63CF\u6587\u672C\u3002"
+          },
+          cancelled: "\u7528\u6237\u5DF2\u53D6\u6D88\u6E05\u9664\u64CD\u4F5C\u3002"
+        },
+        modal: {
+          opening: "\u6B63\u5728\u6253\u5F00\u4E3B\u6A21\u6001\u6846...",
+          closing: "\u6B63\u5728\u5173\u95ED\u4E3B\u6A21\u6001\u6846...",
+          scanFailed: "\u9759\u6001\u626B\u63CF\u5931\u8D25: {{error}}",
+          clearContent: "\u6E05\u7A7A\u5185\u5BB9\u6309\u94AE\u5DF2\u70B9\u51FB\u3002"
+        },
+        helpIcon: {
+          clicked: "\u70B9\u51FB\u4E86\u5E2E\u52A9\u56FE\u6807\uFF0C\u663E\u793A\u5185\u5BB9\u952E\uFF1A{{contentKey}}"
+        }
+      },
+      exporter: {
+        buttonClicked: "\u5BFC\u51FA\u6309\u94AE\u5DF2\u70B9\u51FB\uFF0C\u683C\u5F0F: {{format}}\u3002",
+        csvError: "\u89E3\u6790\u6587\u672C\u5E76\u751F\u6210CSV\u65F6\u51FA\u9519: {{error}}",
+        fileExported: "\u6587\u4EF6\u5DF2\u5BFC\u51FA: {{filename}}",
+        noContent: "\u65E0\u5185\u5BB9\u53EF\u5BFC\u51FA\u3002",
+        unknownFormat: "\u672A\u77E5\u7684\u5BFC\u51FA\u683C\u5F0F: {{format}}"
+      },
+      main: {
+        requestingSessionScanData: "\u6B63\u5728\u8BF7\u6C42\u52A8\u6001\u626B\u63CF\u6A21\u5F0F\u7684\u5B8C\u6574\u6570\u636E...",
+        exportingQuickScanData: "\u6B63\u5728\u5BFC\u51FA\u5FEB\u901F\u626B\u63CF\u6A21\u5F0F\u5185\u5B58\u4E2D\u7684\u5B8C\u6574\u6570\u636E...",
+        inIframe: "\u811A\u672C\u5728 iframe \u4E2D\uFF0C\u5DF2\u8DF3\u8FC7\u521D\u59CB\u5316\u3002",
+        initializing: "\u811A\u672C\u521D\u59CB\u5316\u5F00\u59CB...",
+        initialSettingsLoaded: "\u521D\u59CB\u8BBE\u7F6E\u5DF2\u52A0\u8F7D:"
+      },
+      dom: {
+        ttpCreationError: "\u521B\u5EFA Trusted Type \u7B56\u7565\u5931\u8D25:",
+        svgParseError: "SVG \u5B57\u7B26\u4E32\u65E0\u6548\u6216\u89E3\u6790\u5931\u8D25:"
+      },
+      elementScan: {
+        starting: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5DF2\u5F00\u59CB\u3002",
+        stopping: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5DF2\u505C\u6B62\u3002",
+        listenersAdded: "\u5DF2\u4E3A\u9009\u53D6\u5143\u7D20\u626B\u63CF\u6DFB\u52A0\u5168\u5C40\u4E8B\u4EF6\u76D1\u542C\u5668\u3002",
+        listenersRemoved: "\u5DF2\u4E3A\u9009\u53D6\u5143\u7D20\u626B\u63CF\u79FB\u9664\u5168\u5C40\u4E8B\u4EF6\u76D1\u542C\u5668\u3002",
+        stateReset: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u72B6\u6001\u5DF2\u91CD\u7F6E\u3002",
+        reselecting: "\u6B63\u5728\u8FD4\u56DE\u5143\u7D20\u91CD\u65B0\u9009\u62E9\u6A21\u5F0F\u3002",
+        hovering: "\u6B63\u5728\u60AC\u505C\u4E8E <{{tagName}}>\u3002",
+        escapePressed: "\u6309\u4E0B Escape \u952E\uFF0C\u6B63\u5728\u505C\u6B62\u9009\u53D6\u5143\u7D20\u626B\u63CF\u3002",
+        escapeIgnoredForSettings: "\u6309\u4E0B\u4E86Escape\u952E\uFF0C\u4F46\u56E0\u8BBE\u7F6E\u9762\u677F\u6253\u5F00\u800C\u88AB\u5FFD\u7565\u3002",
+        escapeIgnoredForModal: "\u6309\u4E0B\u4E86Escape\u952E\uFF0C\u4F46\u56E0\u6A21\u6001\u6846\u6216\u63D0\u793A\u7A97\u53E3\u6253\u5F00\u800C\u88AB\u5FFD\u7565\u3002",
+        escapePressedInAdjust: "\u5728\u8C03\u6574\u6A21\u5F0F\u4E0B\u6309\u4E0B\u4E86Escape\u952E\uFF0C\u8FD4\u56DE\u91CD\u65B0\u9009\u62E9\u6A21\u5F0F\u3002",
+        clickedEnteringAdjust: "\u5143\u7D20 <{{tagName}}> \u5DF2\u88AB\u70B9\u51FB\uFF0C\u6B63\u5728\u8FDB\u5165\u8C03\u6574\u6A21\u5F0F\u3002",
+        pathBuilt: "\u5143\u7D20\u5C42\u7EA7\u8DEF\u5F84\u5DF2\u6784\u5EFA\uFF0C\u6DF1\u5EA6\u4E3A\uFF1A{{depth}}\u3002",
+        adjustingLevel: "\u6B63\u5728\u8C03\u6574\u9009\u62E9\u5C42\u7EA7\u81F3 {{level}} ({{tagName}})\u3002",
+        confirmExtracting: "\u9009\u62E9\u5DF2\u786E\u8BA4\uFF0C\u6B63\u5728\u4ECE <{{tagName}}> \u63D0\u53D6\u6587\u672C\u3002",
+        staged: "\u5143\u7D20\u5DF2\u6682\u5B58\u3002\u603B\u6570\uFF1A{{count}}\u3002",
+        confirmingStaged: "\u786E\u8BA4\u9009\u62E9\u3002\u6B63\u5728\u5904\u7406 {{count}} \u4E2A\u5DF2\u6682\u5B58\u7684\u5143\u7D20\u3002",
+        extractedCount: "\u5DF2\u4ECE\u5143\u7D20\u4E2D\u63D0\u53D6 {{count}} \u6761\u539F\u59CB\u6587\u672C\u3002",
+        confirmFailedNoTarget: "\u786E\u8BA4\u5931\u8D25\uFF1A\u672A\u9009\u62E9\u4EFB\u4F55\u76EE\u6807\u5143\u7D20\u3002",
+        rightClickExit: "\u68C0\u6D4B\u5230\u53F3\u952E\u70B9\u51FB\uFF0C\u6B63\u5728\u505C\u6B62\u9009\u53D6\u5143\u7D20\u626B\u63CF\u3002",
+        processingError: "\u6587\u672C\u5904\u7406\u8FC7\u7A0B\u4E2D\u53D1\u751F\u9519\u8BEF: {{error}}",
+        scrollListenersAdded: "\u5DF2\u4E3A {{count}} \u4E2A\u7236\u5143\u7D20\u6DFB\u52A0\u6EDA\u52A8\u76D1\u542C\u5668\u3002",
+        scrollListenersRemoved: "\u5DF2\u79FB\u9664\u6240\u6709\u6EDA\u52A8\u76D1\u542C\u5668\u3002",
+        worker: {
+          logPrefix: "[ES Worker]",
+          starting: "\u9009\u53D6\u5143\u7D20\u626B\u63CF Worker \u6B63\u5728\u542F\u52A8...",
+          sendingData: "\u6B63\u5728\u5411\u9009\u53D6\u5143\u7D20\u626B\u63CF Worker \u53D1\u9001 {{count}} \u6761\u6587\u672C\u7247\u6BB5\u3002",
+          completed: "\u9009\u53D6\u5143\u7D20\u626B\u63CF Worker \u5DF2\u5B8C\u6210\uFF0C\u627E\u5230 {{count}} \u6761\u4E0D\u91CD\u590D\u6587\u672C\u3002",
+          initFailed: "\u9009\u53D6\u5143\u7D20\u626B\u63CF Worker \u521D\u59CB\u5316\u5931\u8D25\u3002\u6D4F\u89C8\u5668\u7684CSP\u53EF\u80FD\u963B\u6B62\u4E86 data: URL\u3002",
+          initSyncError: "\u9009\u53D6\u5143\u7D20\u626B\u63CF Worker \u521D\u59CB\u5316\u671F\u95F4\u53D1\u751F\u540C\u6B65\u9519\u8BEF: {{error}}",
+          originalError: "\u539F\u59CB Worker \u9519\u8BEF: {{error}}",
+          cspBlocked: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u7684CSP\u68C0\u67E5\u5931\u8D25\uFF0C\u4E0D\u5141\u8BB8\u521B\u5EFAWorker\u3002",
+          attemping: "\u6B63\u5728\u5C1D\u8BD5\u4F7F\u7528 Web Worker \u8FDB\u884C\u8FC7\u6EE4...",
+          fallback: "\u5DF2\u5207\u6362\u5230\u4E3B\u7EBF\u7A0B\u8FDB\u884C\u8FC7\u6EE4\u3002",
+          cspHint: "\u8FD9\u53EF\u80FD\u662F\u7531\u4E8E\u7F51\u7AD9\u7684\u5185\u5BB9\u5B89\u5168\u7B56\u7565\uFF08CSP\uFF09\u5BFC\u81F4\u7684\u3002"
+        },
+        switchToFallback: "\u6B63\u5728\u4E3A\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5207\u6362\u5230\u4E3B\u7EBF\u7A0B\u5907\u9009\u65B9\u6848\u3002",
+        fallbackFailed: "\u201C\u9009\u53D6\u5143\u7D20\u626B\u63CF\u201D\u540E\u5907\u6A21\u5F0F\u5931\u8D25\uFF1A{{error}}",
+        stagingStarted: "\u5F00\u59CB\u6682\u5B58\u5143\u7D20\uFF1A<{{tagName}}>",
+        stagedNothingNew: "\u672A\u80FD\u4ECE\u6B64\u5143\u7D20\u4E2D\u6682\u5B58\u4EFB\u4F55\u65B0\u7684\u552F\u4E00\u6587\u672C\u3002",
+        stagingFinished: "\u6682\u5B58\u64CD\u4F5C\u5DF2\u5B8C\u6210\u3002",
+        confirmStarted: "\u786E\u8BA4\u6D41\u7A0B\u5DF2\u5F00\u59CB...",
+        confirmFinished: "\u786E\u8BA4\u6D41\u7A0B\u5DF2\u6210\u529F\u5B8C\u6210\u3002",
+        confirmFailed: "\u786E\u8BA4\u6D41\u7A0B\u5931\u8D25\u3002\u9519\u8BEF\uFF1A{{error}}"
+      },
+      elementScanUI: {
+        creatingHighlights: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u9996\u6B21\u521B\u5EFA\u9AD8\u4EAE\u5143\u7D20\u3002",
+        updatingHighlight: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u6B63\u5728\u4E3A <{{tagName}}> \u66F4\u65B0\u9AD8\u4EAE\u3002",
+        creatingToolbar: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u6B63\u5728\u521B\u5EFA\u8C03\u6574\u5DE5\u5177\u680F\u3002",
+        toolbarPositioned: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u5DE5\u5177\u680F\u5DF2\u5B9A\u4F4D\u3002",
+        sliderChanged: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u6ED1\u5757\u5C42\u7EA7\u53D8\u4E3A {{level}}",
+        reselectClicked: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u201C\u91CD\u65B0\u9009\u62E9\u201D\u6309\u94AE\u88AB\u70B9\u51FB\u3002",
+        stageClicked: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u201C\u6682\u5B58\u201D\u6309\u94AE\u88AB\u70B9\u51FB\u3002",
+        cancelClicked: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u201C\u53D6\u6D88\u201D\u6309\u94AE\u88AB\u70B9\u51FB\u3002",
+        confirmClicked: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u201C\u786E\u8BA4\u201D\u6309\u94AE\u88AB\u70B9\u51FB\u3002",
+        dragStarted: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u62D6\u52A8\u5F00\u59CB\u3002",
+        dragEnded: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u62D6\u52A8\u7ED3\u675F\u3002",
+        cleaningHighlights: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u6B63\u5728\u6E05\u7406\u9AD8\u4EAE\u5143\u7D20\u3002",
+        cleaningToolbar: "\u5143\u7D20\u626B\u63CFUI\uFF1A\u6B63\u5728\u6E05\u7406\u5DE5\u5177\u680F\u3002"
+      },
+      eventBus: {
+        callbackError: "\u4E8B\u4EF6 '{{eventName}}' \u7684\u56DE\u8C03\u51FD\u6570\u51FA\u9519:"
+      },
+      trustedTypes: {
+        workerPolicyError: "\u521B\u5EFA Trusted Types worker \u7B56\u7565\u5931\u8D25:",
+        htmlPolicyError: "\u521B\u5EFA Trusted Types HTML \u7B56\u7565\u5931\u8D25:",
+        defaultWorkerPolicyWarning: "\u7528\u4E8E worker URL \u7684 Trusted Types \u9ED8\u8BA4\u7B56\u7565\u5931\u8D25\uFF0C\u56DE\u9000\u5230\u539F\u59CB URL\u3002",
+        defaultHtmlPolicyWarning: "\u7528\u4E8E HTML \u7684 Trusted Types \u9ED8\u8BA4\u7B56\u7565\u5931\u8D25\uFF0C\u56DE\u9000\u5230\u539F\u59CB\u5B57\u7B26\u4E32\u3002"
+      }
+    },
+    tutorial: {
+      elementScanTitle: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u6559\u7A0B",
+      elementScan: '<p><strong>\u529F\u80FD\u4ECB\u7ECD:</strong></p><p>\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5141\u8BB8\u60A8\u7CBE\u786E\u5730\u9009\u62E9\u7F51\u9875\u4E0A\u7684\u4E00\u4E2A\u6216\u591A\u4E2A\u533A\u57DF\uFF08\u4F8B\u5982\u4E00\u4E2A\u6BB5\u843D\u3001\u4E00\u4E2A\u5217\u8868\u3001\u4E00\u4E2A\u4FA7\u8FB9\u680F\uFF09\uFF0C\u5E76\u4EC5\u4ECE\u8FD9\u4E9B\u533A\u57DF\u4E2D\u63D0\u53D6\u6587\u672C\u3002</p><p><strong>\u5982\u4F55\u4F7F\u7528:</strong></p><ol><li><strong>\u542F\u52A8:</strong> \u70B9\u51FB\u60AC\u6D6E\u6309\u94AE\u4E2D\u7684\u201C\u9009\u53D6\u5143\u7D20\u201D\u56FE\u6807 <span class="help-icon-placeholder element-scan-icon"></span> \u542F\u52A8\u626B\u63CF\u6A21\u5F0F\u3002</li><li><strong>\u9009\u62E9:</strong> \u79FB\u52A8\u9F20\u6807\uFF0C\u60A8\u60F3\u626B\u63CF\u7684\u533A\u57DF\u4F1A\u663E\u793A\u9AD8\u4EAE\u6846\u3002\u5355\u51FB\u4EE5\u9009\u5B9A\u3002</li><li><strong>\u8C03\u6574:</strong> \u9009\u5B9A\u540E\u4F1A\u51FA\u73B0\u5DE5\u5177\u680F\u3002\u60A8\u53EF\u4EE5\u4F7F\u7528<strong>\u6ED1\u5757</strong>\u6765\u6269\u5927\u6216\u7F29\u5C0F\u9009\u62E9\u8303\u56F4\u3002</li><li><strong>\u6682\u5B58:</strong> \u5982\u679C\u60A8\u60F3\u9009\u62E9\u591A\u4E2A\u4E0D\u76F8\u5173\u7684\u533A\u57DF\uFF0C\u53EF\u4EE5\u70B9\u51FB<span class="action-key">\u6682\u5B58</span>\u6309\u94AE\u4FDD\u5B58\u5F53\u524D\u9009\u62E9\uFF0C\u7136\u540E\u7EE7\u7EED\u9009\u62E9\u5176\u4ED6\u533A\u57DF\u3002</li><li><strong>\u786E\u8BA4:</strong> \u5B8C\u6210\u6240\u6709\u9009\u62E9\u540E\uFF0C\u70B9\u51FB<span class="action-key">\u786E\u8BA4</span>\u6309\u94AE\uFF0C\u7CFB\u7EDF\u5C06\u5F00\u59CB\u4ECE\u60A8\u9009\u62E9\u7684\u6240\u6709\u533A\u57DF\u4E2D\u63D0\u53D6\u6587\u672C\u3002</li></ol><p><strong>\u5982\u4F55\u9000\u51FA:</strong></p><ul><li>\u5728\u9009\u62E9\u8FC7\u7A0B\u4E2D\uFF08\u51FA\u73B0\u9AD8\u4EAE\u6846\u65F6\uFF09\uFF0C\u5728\u9875\u9762\u4EFB\u610F\u4F4D\u7F6E<strong>\u53F3\u952E\u5355\u51FB</strong>\u3002</li><li>\u5728\u4EFB\u4F55\u65F6\u5019\uFF0C\u6309\u4E0B<kbd>ESC</kbd>\u952E\u3002</li><li>\u5728\u4EFB\u4F55\u65F6\u5019\uFF0C\u518D\u6B21\u70B9\u51FB\u201C\u9009\u53D6\u5143\u7D20\u626B\u63CF\u201D\u56FE\u6807\u3002</li></ul>',
+      sessionScanTitle: "\u52A8\u6001\u626B\u63CF\u6559\u7A0B",
+      sessionScan: '<p><strong>\u529F\u80FD\u4ECB\u7ECD:</strong></p><p>\u52A8\u6001\u626B\u63CF\u4F1A\u6301\u7EED\u76D1\u63A7\u5E76\u81EA\u52A8\u8BB0\u5F55\u7F51\u9875\u4E0A\u6240\u6709\u52A8\u6001\u52A0\u8F7D\u6216\u53D8\u5316\u7684\u6587\u672C\uFF0C\u7279\u522B\u9002\u7528\u4E8E\u6293\u53D6\u5B9E\u65F6\u804A\u5929\u3001\u6EDA\u52A8\u52A0\u8F7D\u5185\u5BB9\u6216\u901A\u77E5\u7B49\u3002</p><p><strong>\u5982\u4F55\u4F7F\u7528:</strong></p><ul><li><strong>\u5F00\u59CB\u626B\u63CF:</strong> \u70B9\u51FB\u60AC\u6D6E\u6309\u94AE\u4E2D\u7684\u201C\u52A8\u6001\u626B\u63CF\u201D\u56FE\u6807 <span class="help-icon-placeholder dynamic-scan-icon"></span>\uFF0C\u626B\u63CF\u7ACB\u5373\u5F00\u59CB\u3002</li><li><strong>\u505C\u6B62\u626B\u63CF:</strong> \u518D\u6B21\u70B9\u51FB\u8BE5\u56FE\u6807 <span class="help-icon-placeholder stop-icon"></span>\uFF0C\u5373\u53EF\u505C\u6B62\u626B\u63CF\u3002</li><li><strong>\u67E5\u770B\u7ED3\u679C:</strong> \u505C\u6B62\u540E\uFF0C\u70B9\u51FB\u4E3B\u60AC\u6D6E\u6309\u94AE <span class="help-icon-placeholder summary-icon"></span> \u6253\u5F00\u7ED3\u679C\u7A97\u53E3\u3002</li></ul><p><strong>\u5982\u4F55\u9000\u51FA:</strong></p><ul><li>\u5728\u626B\u63CF\u8FC7\u7A0B\u4E2D\uFF0C\u518D\u6B21\u70B9\u51FB\u201C\u52A8\u6001\u626B\u63CF\u201D\u56FE\u6807\u3002</li><li>\u5728\u626B\u63CF\u8FC7\u7A0B\u4E2D\uFF0C\u968F\u65F6\u6309\u4E0B<kbd>ESC</kbd>\u952E\u53EF\u5FEB\u901F\u505C\u6B62\u3002</li></ul>'
+    }
+  };
+  var zh_TW_default = {
+    _meta: {
+      name: "\u7E41\u9AD4\u4E2D\u6587"
+    },
+    common: {
+      scan: "\u6383\u63CF",
+      stop: "\u505C\u6B62",
+      pause: "\u66AB\u505C",
+      resume: "\u6062\u5FA9",
+      clear: "\u6E05\u7A7A",
+      copy: "\u8907\u88FD",
+      save: "\u5132\u5B58",
+      discovered: "\u5DF2\u767C\u73FE:",
+      confirm: "\u78BA\u8A8D",
+      cancel: "\u53D6\u6D88",
+      export: "\u532F\u51FA",
+      reselect: "\u91CD\u65B0\u9078\u64C7",
+      stage: "\u66AB\u5B58",
+      processingElement: "\u8655\u7406\u5143\u7D20"
+    },
+    export: {
+      exportAsTxt: "\u532F\u51FA\u70BA TXT",
+      exportAsJson: "\u532F\u51FA\u70BA JSON",
+      exportAsCsv: "\u532F\u51FA\u70BA CSV",
+      csv: {
+        id: "ID",
+        original: "\u539F\u6587",
+        translation: "\u8B6F\u6587"
+      }
+    },
+    settings: {
+      title: "\u8A2D\u5B9A",
+      theme: "\u4E3B\u984C",
+      language: "\u8A9E\u8A00",
+      format: "\u8F38\u51FA\u683C\u5F0F",
+      formats: {
+        array: "\u5D4C\u5957\u9663\u5217",
+        object: "\u9375\u503C\u5C0D\u7269\u4EF6",
+        csv: "CSV \u5B57\u4E32"
+      },
+      relatedSettings: "\u76F8\u95DC\u8A2D\u5B9A",
+      filterRules: "\u5167\u5BB9\u904E\u6FFE\u898F\u5247",
+      filters: {
+        numbers: "\u904E\u6FFE\u6578\u5B57/\u8CA8\u5E63",
+        chinese: "\u904E\u6FFE\u7D14\u4E2D\u6587\u6587\u672C",
+        contains_chinese: "\u904E\u6FFE\u542B\u4E2D\u6587\u7684\u6587\u672C",
+        emoji_only: "\u904E\u6FFE\u7D14\u8868\u60C5\u7B26\u865F\u6587\u672C",
+        symbols: "\u904E\u6FFE\u7D14\u7B26\u865F\u6587\u672C",
+        term: "\u904E\u6FFE\u7279\u5B9A\u8853\u8A9E",
+        single_letter: "\u904E\u6FFE\u55AE\u500B\u82F1\u6587\u5B57\u6BCD",
+        repeating_chars: "\u904E\u6FFE\u91CD\u8907\u5B57\u5143",
+        file_paths: "\u904E\u6FFE\u6A94\u6848\u8DEF\u5F91",
+        hex_color_codes: "\u904E\u6FFE\u5341\u516D\u9032\u4F4D\u984F\u8272\u4EE3\u78BC",
+        email_addresses: "\u904E\u6FFE\u96FB\u5B50\u90F5\u4EF6\u5730\u5740",
+        uuids: "\u904E\u6FFE UUID",
+        git_commit_hashes: "\u904E\u6FFE Git \u63D0\u4EA4\u96DC\u6E4A\u503C",
+        website_urls: "\u904E\u6FFE\u7DB2\u7AD9\u9023\u7D50",
+        website_urls_title: "\u904E\u6FFE\u7DB2\u7AD9\u9023\u7D50",
+        shorthand_numbers: "\u904E\u6FFE\u901F\u8A18\u6578\u5B57",
+        shorthand_numbers_title: "\u904E\u6FFE\u901F\u8A18\u6578\u5B57"
+      },
+      display: {
+        show_fab: "\u986F\u793A\u61F8\u6D6E\u6309\u9215",
+        fab_position: "\u61F8\u6D6E\u6309\u9215\u4F4D\u7F6E",
+        fab_positions: {
+          bottom_right: "\u2198 \u53F3\u4E0B\u89D2",
+          top_right: "\u2197 \u53F3\u4E0A\u89D2",
+          bottom_left: "\u2199 \u5DE6\u4E0B\u89D2",
+          top_left: "\u2196 \u5DE6\u4E0A\u89D2"
+        },
+        show_line_numbers: "\u986F\u793A\u884C\u865F",
+        show_statistics: "\u986F\u793A\u7D71\u8A08\u8CC7\u8A0A",
+        enable_word_wrap: "\u555F\u7528\u81EA\u52D5\u63DB\u884C",
+        text_truncation_limit: "\u555F\u7528\u6587\u672C\u622A\u65B7\u9650\u5236",
+        character_limit: "\u5B57\u5143\u9650\u5236",
+        show_scan_count: "\u5728\u6A19\u984C\u4E2D\u555F\u7528\u6383\u63CF\u8A08\u6578"
+      },
+      advanced: {
+        enable_debug_logging: "\u555F\u7528\u5075\u932F\u65E5\u8A8C\u8A18\u9304"
+      },
+      panel: {
+        title: "\u8A2D\u5B9A\u9762\u677F"
+      },
+      contextual: {
+        elementScanTitle: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u8A2D\u5B9A",
+        sessionScanTitle: "\u52D5\u614B\u6383\u63CF\u8A2D\u5B9A",
+        persistData: "\u8DE8\u9801\u9762\u6642\u4FDD\u7559\u6383\u63CF\u6578\u64DA"
+      },
+      languages: {
+        auto: "\u81EA\u52D5\u6AA2\u6E2C",
+        en: "\u82F1\u6587 (\u7F8E\u570B)",
+        "en-GB": "\u82F1\u6587 (\u82F1\u570B)",
+        "zh-CN": "\u7C21\u9AD4\u4E2D\u6587",
+        "zh-TW": "\u7E41\u9AD4\u4E2D\u6587"
+      },
+      themes: {
+        light: "\u6DFA\u8272",
+        dark: "\u6DF1\u8272",
+        system: "\u8DDF\u96A8\u7CFB\u7D71"
+      }
+    },
+    scan: {
+      quick: "\u5FEB\u901F\u6383\u63CF",
+      session: "\u52D5\u614B\u6383\u63CF",
+      stagedCount: "\u5DF2\u66AB\u5B58:",
+      elementFinished: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5B8C\u6210\uFF0C\u767C\u73FE {{count}} \u689D\u6587\u672C\u3002",
+      startSession: "\u958B\u59CB\u52D5\u614B\u6383\u63CF\u6703\u8A71",
+      stopSession: "\u505C\u6B62\u52D5\u614B\u6383\u63CF\u6703\u8A71",
+      finished: "\u6383\u63CF\u5B8C\u6210\uFF0C\u767C\u73FE {{count}} \u689D\u6587\u672C\u3002",
+      quickFinished: "\u5FEB\u901F\u6383\u63CF\u5B8C\u6210\uFF0C\u767C\u73FE {{count}} \u689D\u6587\u672C\u3002",
+      sessionStarted: "\u52D5\u614B\u6383\u63CF\u5DF2\u958B\u59CB\u3002",
+      sessionInProgress: "\u6383\u63CF\u9032\u884C\u4E2D...",
+      truncationWarning: "\u70BA\u4FDD\u6301\u4ECB\u9762\u6D41\u66A2\uFF0C\u6B64\u8655\u50C5\u986F\u793A\u90E8\u5206\u6587\u672C\u3002\u532F\u51FA\u5F8C\u5C07\u5305\u542B\u5B8C\u6574\u5167\u5BB9\u3002"
+    },
+    slider: {
+      adjustFrameSize: "\u79FB\u52D5\u6ED1\u584A\u4EE5\u8ABF\u6574\u6846\u67B6\u5927\u5C0F",
+      minLabel: "\u6700\u5C0F",
+      maxLabel: "\u6700\u5927"
+    },
+    results: {
+      title: "\u63D0\u53D6\u7684\u6587\u672C",
+      scanCountSession: "\u5DF2\u6383\u63CF {{count}} \u500B\u9805\u76EE",
+      scanCountStatic: "\u5171\u6383\u63CF {{count}} \u500B\u9805\u76EE",
+      totalCharacters: "\u7E3D\u5B57\u5143\u6578",
+      totalLines: "\u7E3D\u884C\u6578",
+      noSummary: "\u7121\u53EF\u7528\u6458\u8981",
+      stats: {
+        lines: "\u884C",
+        chars: "\u5B57\u5143"
+      }
+    },
+    notifications: {
+      copiedToClipboard: "\u5DF2\u8907\u88FD\u5230\u526A\u8CBC\u7C3F\uFF01",
+      settingsSaved: "\u8A2D\u5B9A\u5DF2\u5132\u5B58\uFF01",
+      modalInitError: "\u6A21\u614B\u6846\u672A\u521D\u59CB\u5316\u3002",
+      nothingToCopy: "\u6C92\u6709\u53EF\u8907\u88FD\u7684\u5167\u5BB9\u3002",
+      contentCleared: "\u5167\u5BB9\u5DF2\u6E05\u9664\u3002",
+      noTextSelected: "\u672A\u9078\u64C7\u4EFB\u4F55\u6587\u672C\u3002",
+      scanFailed: "\u6383\u63CF\u5931\u6557\u3002",
+      elementScanStarted: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5DF2\u958B\u59CB\u3002",
+      elementScanPaused: "\u5143\u7D20\u6383\u63CF\u5DF2\u66AB\u505C\u3002",
+      elementScanResumed: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u6703\u8A71\u5DF2\u5F9E\u4E0A\u4E00\u9801\u6062\u5FA9\u3002",
+      elementScanContinued: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5DF2\u7E7C\u7E8C\u3002",
+      sessionScanStarted: "\u52D5\u614B\u6383\u63CF\u5DF2\u958B\u59CB\u3002",
+      sessionScanPaused: "\u52D5\u614B\u6383\u63CF\u5DF2\u66AB\u505C\u3002",
+      sessionScanResumed: "\u52D5\u614B\u6383\u63CF\u6703\u8A71\u5DF2\u5F9E\u4E0A\u4E00\u9801\u6062\u5FA9\u3002",
+      sessionScanContinued: "\u52D5\u614B\u6383\u63CF\u5DF2\u7E7C\u7E8C\u3002",
+      cspWorkerWarning: "\u56E0\u7DB2\u7AD9\u5B89\u5168\u9650\u5236\uFF0C\u5DF2\u5207\u63DB\u81F3\u76F8\u5BB9\u6383\u63CF\u6A21\u5F0F\u3002"
+    },
+    placeholders: {
+      click: "\u9EDE\u64CA ",
+      dynamicScan: "[\u52D5\u614B\u6383\u63CF]",
+      startNewScanSession: " \u958B\u59CB\u65B0\u7684\u6383\u63CF\u6703\u8A71",
+      staticScan: "[\u975C\u614B\u6383\u63CF]",
+      performOneTimeScan: " \u57F7\u884C\u4E00\u6B21\u6027\u5FEB\u901F\u63D0\u53D6"
+    },
+    confirmation: {
+      clear: "\u60A8\u78BA\u5B9A\u8981\u6E05\u9664\u5167\u5BB9\u55CE\uFF1F\u6B64\u64CD\u4F5C\u7121\u6CD5\u64A4\u92B7\u3002"
+    },
+    tooltip: {
+      summary: "\u67E5\u770B\u6458\u8981",
+      dynamic_scan: "\u52D5\u614B\u6383\u63CF",
+      static_scan: "\u975C\u614B\u6383\u63CF",
+      element_scan: "\u9078\u53D6\u5143\u7D20\u6383\u63CF",
+      pauseElementScan: "\u66AB\u505C\u5143\u7D20\u6383\u63CF",
+      resumeElementScan: "\u6062\u5FA9\u5143\u7D20\u6383\u63CF",
+      pauseSessionScan: "\u66AB\u505C\u52D5\u614B\u6383\u63CF",
+      resumeSessionScan: "\u6062\u5FA9\u52D5\u614B\u6383\u63CF",
+      tooltipHelp: "\u5E6B\u52A9",
+      persistData: {
+        title: "\u8CC7\u6599\u6301\u4E45\u5316\u8AAA\u660E",
+        text: {
+          sessionScan: "\u958B\u555F\u5F8C\uFF0C\u7576\u9EDE\u64CA\u93C8\u63A5\u8DF3\u8F49\u5230\u65B0\u9801\u9762\u6642\uFF0C\u6703\u81EA\u52D5\u6062\u5FA9\u4E26\u7E7C\u7E8C\u7D2F\u52A0\u4E0A\u4E00\u9801\u7684\u6383\u63CF\u7D50\u679C\u3002\u95DC\u9589\u6B64\u9078\u9805\uFF0C\u5247\u53EA\u6062\u5FA9\u6383\u63CF\u6A21\u5F0F\uFF0C\u4F46\u6703\u958B\u59CB\u4E00\u6B21\u5168\u65B0\u7684\u6383\u63CF\u3002",
+          elementScan: "\u958B\u555F\u5F8C\uFF0C\u7576\u9EDE\u64CA\u93C8\u63A5\u8DF3\u8F49\u5230\u65B0\u9801\u9762\u6642\uFF0C\u6703\u81EA\u52D5\u6062\u5FA9\u7576\u524D\u5DF2\u66AB\u5B58\u7684\u6240\u6709\u6587\u672C\u3002\u95DC\u9589\u6B64\u9078\u9805\uFF0C\u5247\u53EA\u6062\u5FA9\u6383\u63CF\u6A21\u5F0F\uFF0C\u4F46\u66AB\u5B58\u5340\u6703\u662F\u7A7A\u7684\u3002"
+        }
+      },
+      disabled: {
+        scan_in_progress: "\u53E6\u4E00\u9805\u6383\u63CF\u6B63\u5728\u9032\u884C\u4E2D"
+      },
+      filters: {
+        title: "\u5167\u5BB9\u904E\u6FFE\u5668\u8AAA\u660E",
+        numbers: '\u6B64\u898F\u5247\u904E\u6FFE\u6389<strong>\u5B8C\u5168</strong>\u7531\u6578\u5B57\u3001\u7A7A\u683C\u3001\u5343\u4F4D\u5206\u9694\u7B26(,)\u3001\u5C0F\u6578\u9EDE(.)\u4EE5\u53CA\u90E8\u5206\u8CA8\u5E63\u7B26\u865F($, \u20AC, \xA3, \xA5)\u7D44\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u66F4\u591A\u7BC4\u4F8B:</strong><br>\u2022 "1,234.56"<br>\u2022 "\xA5999"<br>\u2022 "\u20AC200"<br>\u2022 "$ 100"',
+        chinese: '\u6B64\u898F\u5247\u904E\u6FFE\u6389<strong>\u5B8C\u5168</strong>\u7531\u6F22\u5B57\u548C\u7A7A\u683C\u7D44\u6210\uFF0C\u4E14\u4E0D\u542B\u4EFB\u4F55\u6A19\u9EDE\u7684\u6587\u672C\u3002<br><br><strong>\u7BC4\u4F8B:</strong><br>\u2022 "\u4F60\u597D \u4E16\u754C" (\u5C07\u88AB\u904E\u6FFE)<br>\u2022 "\u4F60\u597D\uFF0C\u4E16\u754C" (\u4E0D\u6703\u88AB\u904E\u6FFE)',
+        contains_chinese: '\u6B64\u898F\u5247\u904E\u6FFE\u6389\u4EFB\u4F55\u542B\u6709\u81F3\u5C11\u4E00\u500B\u6F22\u5B57\u7684\u6587\u672C\uFF0C\u7121\u8AD6\u5176\u4ED6\u5B57\u5143\u662F\u4EC0\u9EBC\u3002<br><br><strong>\u7BC4\u4F8B:</strong><br>\u2022 "\u4F60\u597D World" (\u5C07\u88AB\u904E\u6FFE)<br>\u2022 "\u7B2C\u4E00\u7AE0" (\u5C07\u88AB\u904E\u6FFE)',
+        emoji_only: '\u6B64\u898F\u5247\u904E\u6FFE\u6389<strong>\u5B8C\u5168</strong>\u7531\u4E00\u500B\u6216\u591A\u500B\u8868\u60C5\u7B26\u865F\u53CA\u7A7A\u683C\u7D44\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u7BC4\u4F8B:</strong><br>\u2022 "\u{1F44D}"<br>\u2022 "\u{1F60A} \u{1F389} \u{1F680}"',
+        symbols: '\u6B64\u898F\u5247\u904E\u6FFE\u6389<strong>\u5B8C\u5168</strong>\u7531\u5404\u7A2E\u6A19\u9EDE\u548C\u7B26\u865F\u7D44\u6210\u7684\u6587\u672C\u3002<br><br><strong>\u66F4\u591A\u7BC4\u4F8B:</strong><br>\u2022 "@#*&^%"<br>\u2022 "()[]{}"<br>\u2022 "---...---"',
+        term: '\u6B64\u898F\u5247\u904E\u6FFE\u6389\u901A\u5E38\u4E0D\u9700\u8981\u7FFB\u8B6F\u7684\u5E38\u898BUI\u8853\u8A9E\u3002<br><br><strong>\u66F4\u591A\u7BC4\u4F8B:</strong><br>\u2022 "OK", "Cancel", "Submit"<br>\u2022 "Login", "Settings", "Help"',
+        single_letter: '\u6B64\u898F\u5247\u904E\u6FFE\u6389\u7531<strong>\u55AE\u500B</strong>\u82F1\u6587\u5B57\u6BCD\u7D44\u6210\u7684\u6587\u672C\uFF08\u4E0D\u5340\u5206\u5927\u5C0F\u5BEB\uFF09\u3002<br><br><strong>\u7BC4\u4F8B:</strong><br>\u2022 "A" (\u5C07\u88AB\u904E\u6FFE)<br>\u2022 "b" (\u5C07\u88AB\u904E\u6FFE)<br>\u2022 "AB" (\u4E0D\u6703\u88AB\u904E\u6FFE)',
+        repeating_chars: '\u6B64\u898F\u5247\u904E\u6FFE\u6389\u7531<strong>\u540C\u4E00\u500B\u5B57\u5143</strong>\u9023\u7E8C\u91CD\u89072\u6B21\u6216\u4EE5\u4E0A\u7684\u6587\u672C\u3002<br><br><strong>\u7BC4\u4F8B:</strong><br>\u2022 "aa"<br>\u2022 "======"<br>\u2022 "bbbbb"',
+        file_paths: '\u6B64\u898F\u5247\u5617\u8A66\u8B58\u5225\u4E26\u904E\u6FFE\u6389\u985E\u4F3C\u4F5C\u696D\u7CFB\u7D71\u6A94\u6848\u8DEF\u5F91\u4E14<strong>\u5305\u542B\u6A94\u6848\u526F\u6A94\u540D</strong>\u7684\u6587\u672C\u3002\u5B83\u4E0D\u5339\u914D\u7DB2\u5740\u3002<br><br><strong>\u66F4\u591A\u7BC4\u4F8B:</strong><br>\u2022 "/path/to/file.js"<br>\u2022 "C:\\Users\\Test\\document.docx"<br>\u2022 "./config.json"',
+        hex_color_codes: '\u6B64\u898F\u5247\u904E\u6FFE\u6389\u6A19\u6E96\u7684CSS\u5341\u516D\u9032\u4F4D\u984F\u8272\u4EE3\u78BC\uFF083\u30014\u30016\u62168\u4F4D\uFF0C\u5F8C\u8005\u5305\u542B\u900F\u660E\u5EA6\u901A\u9053\uFF09\u3002<br><br><strong>\u7BC4\u4F8B:</strong><br>\u2022 "#FFFFFF"<br>\u2022 "#ff0000"<br>\u2022 "#f0c"<br>\u2022 "#f0c8" (4\u4F4D)<br>\u2022 "#ff000080" (8\u4F4D)',
+        email_addresses: '\u6B64\u898F\u5247\u904E\u6FFE\u6389\u7B26\u5408\u6A19\u6E96\u96FB\u5B50\u90F5\u4EF6\u5730\u5740\u683C\u5F0F\u7684\u6587\u672C\u3002<br><br><strong>\u7BC4\u4F8B:</strong><br>\u2022 "example@domain.com"<br>\u2022 "user.name@sub.domain.org"',
+        uuids: '\u6B64\u898F\u5247\u904E\u6FFE\u6389\u901A\u7528\u552F\u4E00\u8B58\u5225\u78BC (UUID)\u3002<br><br><strong>\u7BC4\u4F8B:</strong><br>\u2022 "123e4567-e89b-12d3-a456-426614174000"',
+        git_commit_hashes: '\u6B64\u898F\u5247\u904E\u6FFE\u6389\u6A19\u6E96\u7684Git\u63D0\u4EA4\u96DC\u6E4A\u503C\uFF08\u9577\u6216\u77ED\uFF09\u3002<br><br><strong>\u7BC4\u4F8B:</strong><br>\u2022 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"<br>\u2022 "a1b2c3d"',
+        website_urls: '\u6B64\u898F\u5247\u904E\u6FFE\u6389<strong>\u7368\u7ACB\u7684\u7DB2\u5740</strong>\u3002\u5B83\u8A2D\u8A08\u5F97\u6BD4\u8F03\u56B4\u683C\uFF0C\u4EE5\u907F\u514D\u610F\u5916\u79FB\u9664\u4E0D\u662F\u9023\u7D50\u7684\u6587\u672C\u3002<br><br><strong>\u66F4\u591A\u7BC4\u4F8B:</strong><br>\u2022 "https://www.example.com"<br>\u2022 "http://test.co.uk"<br>\u2022 "www.google.com"<br>\u2022 "example.org"',
+        shorthand_numbers: '\u6B64\u898F\u5247\u904E\u6FFE\u6389\u4F7F\u7528<strong>\u5E38\u898B\u901F\u8A18\u5F8C\u7DB4</strong>\u8868\u793A\u5343(k)\u3001\u767E\u842C(m)\u6216\u5341\u5104(b)\u7684\u6578\u5B57\uFF08\u4E0D\u5340\u5206\u5927\u5C0F\u5BEB\uFF09\u3002<br><br><strong>\u66F4\u591A\u7BC4\u4F8B:</strong><br>\u2022 "1.2k"<br>\u2022 "15M"<br>\u2022 "2.5b"<br>\u2022 "100K"'
+      },
+      display: {
+        title: "\u986F\u793A\u8A2D\u5B9A\u8AAA\u660E",
+        show_fab: "\u63A7\u5236\u662F\u5426\u5728\u7DB2\u9801\u53F3\u4E0B\u89D2\u986F\u793A<strong>\u61F8\u6D6E\u64CD\u4F5C\u6309\u9215(FAB)</strong>\u3002\u9019\u662F\u9032\u884C\u975C\u614B\u548C\u52D5\u614B\u6587\u672C\u63D0\u53D6\u7684\u4E3B\u8981\u5165\u53E3\u3002<br><br>\u5982\u679C\u60A8\u7981\u7528\u4E86\u6B64\u6309\u9215\uFF0C\u53EF\u4EE5\u900F\u904E\u6CB9\u7334\u64F4\u5145\u5957\u4EF6\u9078\u55AE\u4E2D\u7684\u8A2D\u5B9A\u9762\u677F\u91CD\u65B0\u555F\u7528\u5B83\u3002",
+        show_scan_count: "\u555F\u7528\u5F8C\uFF0C\u7D50\u679C\u8996\u7A97\u7684\u6A19\u984C\u5217\u5C07<strong>\u5373\u6642\u986F\u793A</strong>\u76EE\u524D\u6383\u63CF\u4E2D\u627E\u5230\u7684\u7E3D\u6587\u672C\u9805\u76EE\u6578\u3002\u9019\u5C0D\u65BC\u76E3\u63A7\u9577\u6642\u9593\u57F7\u884C\u7684<strong>\u52D5\u614B\u6383\u63CF</strong>\u7684\u9032\u5EA6\u7279\u5225\u6709\u7528\u3002",
+        show_line_numbers: "\u5728\u7D50\u679C\u8996\u7A97\u7684\u6587\u672C\u5340\u57DF\u5DE6\u5074\u986F\u793A\u884C\u865F\u3002\u7576\u60A8\u9700\u8981\u8A0E\u8AD6\u6216\u8A18\u9304\u7279\u5B9A\u6587\u672C\u884C\u6642\uFF0C\u9019\u63D0\u4F9B\u4E86\u4E00\u500B<strong>\u7CBE\u78BA\u7684\u53C3\u8003\u9EDE</strong>\u3002",
+        show_statistics: "\u5728\u7D50\u679C\u8996\u7A97\u5E95\u90E8\u7684\u72C0\u614B\u5217\u4E2D\u986F\u793A\u6709\u95DC\u63D0\u53D6\u5167\u5BB9\u7684<strong>\u5373\u6642\u7D71\u8A08\u6578\u64DA</strong>\uFF0C\u5305\u62EC<strong>\u7E3D\u884C\u6578</strong>\u548C<strong>\u7E3D\u5B57\u5143\u6578</strong>\u3002\u9019\u6709\u52A9\u65BC\u60A8\u5FEB\u901F\u8A55\u4F30\u5167\u5BB9\u7684\u9AD4\u91CF\u3002",
+        enable_word_wrap: "\u63A7\u5236\u7D50\u679C\u8996\u7A97\u4E2D\u9577\u6587\u672C\u884C\u7684\u986F\u793A\u65B9\u5F0F\u3002<br><br>\u2022 <strong>\u555F\u7528:</strong> \u9577\u884C\u5C07\u81EA\u52D5\u63DB\u884C\u4EE5\u9069\u61C9\u8996\u7A97\u5BEC\u5EA6\u3002<br>\u2022 <strong>\u7981\u7528:</strong> \u9577\u884C\u5C07\u4FDD\u6301\u5728\u55AE\u884C\uFF0C\u4E26\u51FA\u73FE\u6C34\u5E73\u6372\u8EF8\u3002",
+        text_truncation_limit: "\u9019\u662F\u4E00\u500B<strong>\u6548\u80FD\u512A\u5316</strong>\u529F\u80FD\u3002\u5982\u679C\u8173\u672C\u63D0\u53D6\u5230<strong>\u6975\u9577\u7684\u55AE\u884C\u6587\u672C</strong>\uFF08\u4F8B\u5982\uFF0Cbase64\u7DE8\u78BC\u7684\u5716\u7247\uFF09\uFF0C\u53EF\u80FD\u6703\u5C0E\u81F4\u700F\u89BD\u5668<strong>\u5361\u9813\u6216\u7121\u56DE\u61C9</strong>\u3002<br><br>\u6B64\u8A2D\u5B9A\u6703\u622A\u65B7\u4EFB\u4F55\u8D85\u904E\u6307\u5B9A\u9577\u5EA6\u7684\u55AE\u884C\u6587\u672C\uFF0C\u4EE5\u78BA\u4FDDUI\u4FDD\u6301\u6D41\u66A2\u3002<strong>\u6CE8\u610F\uFF1A\u9019\u50C5\u5F71\u97FF\u986F\u793A\uFF1B\u532F\u51FA\u7684\u6A94\u6848\u4ECD\u5C07\u5305\u542B\u5B8C\u6574\u7684\u3001\u672A\u622A\u65B7\u7684\u5167\u5BB9\u3002</strong>"
+      },
+      advanced: {
+        title: "\u9032\u968E\u8A2D\u5B9A\u8AAA\u660E",
+        enable_debug_logging: "\u555F\u7528\u5F8C\uFF0C\u8173\u672C\u6703\u5C07\u8A73\u7D30\u7684\u5167\u90E8\u72C0\u614B\u3001\u57F7\u884C\u6B65\u9A5F\u548C\u932F\u8AA4\u8A0A\u606F\u8F38\u51FA\u5230\u700F\u89BD\u5668\u7684<strong>\u958B\u767C\u8005\u5DE5\u5177\u63A7\u5236\u53F0</strong>\uFF08\u901A\u5E38\u7528F12\u958B\u555F\uFF09\u3002\u9019\u4E3B\u8981\u4F9B\u958B\u767C\u8005\u6216\u9700\u8981\u63D0\u4EA4\u8A73\u7D30\u932F\u8AA4\u5831\u544A\u7684\u4F7F\u7528\u8005\u4F7F\u7528\u3002"
+      }
+    },
+    log: {
+      prefix: "[\u6587\u672C\u63D0\u53D6\u8173\u672C-\u5075\u932F]",
+      language: {
+        switched: "\u8A9E\u8A00\u5DF2\u5207\u63DB\u81F3\uFF1A{{lang}}",
+        notFound: "\u672A\u627E\u5230\u8A9E\u8A00 '{{lang}}'\uFF0C\u5DF2\u56DE\u9000\u81F3 'en'\u3002"
+      },
+      settings: {
+        changed: "\u8A2D\u5B9A '{{key}}' \u5DF2\u5F9E '{{oldValue}}' \u8B8A\u66F4\u70BA '{{newValue}}'",
+        filterRuleChanged: {
+          enabled: "\u904E\u6FFE\u898F\u5247 '{{key}}' \u5DF2\u555F\u7528",
+          disabled: "\u904E\u6FFE\u898F\u5247 '{{key}}' \u5DF2\u7981\u7528"
+        },
+        panel: {
+          opening: "\u6B63\u5728\u958B\u555F\u8A2D\u5B9A\u9762\u677F...",
+          closing: "\u6B63\u5728\u95DC\u9589\u8A2D\u5B9A\u9762\u677F...",
+          saving: "\u6B63\u5728\u5132\u5B58\u8A2D\u5B9A..."
+        },
+        parseError: "\u89E3\u6790\u5DF2\u5132\u5B58\u7684\u8A2D\u5B9A\u6642\u51FA\u932F\uFF1A",
+        invalidObject: "\u8A66\u5716\u70BA\u8A2D\u5B9A\u5132\u5B58\u4E00\u500B\u7121\u6548\u7269\u4EF6\uFF1A"
+      },
+      textProcessor: {
+        filtered: '\u6587\u672C\u5DF2\u904E\u6FFE: "{{text}}" (\u539F\u56E0: {{reason}})'
+      },
+      quickScan: {
+        switchToFallback: "[\u5FEB\u901F\u6383\u63CF] \u6B63\u5728\u5207\u63DB\u5230\u4E3B\u7DDA\u7A0B\u5099\u9078\u65B9\u6848\u3002",
+        fallbackFailed: "[\u5FEB\u901F\u6383\u63CF] \u4E3B\u7DDA\u7A0B\u5099\u9078\u65B9\u6848\u57F7\u884C\u5931\u6557: {{error}}",
+        fallback: {
+          starting: "[\u5FEB\u901F\u6383\u63CF - \u5099\u9078] \u6B63\u5728\u4E3B\u7DDA\u7A0B\u4E2D\u958B\u59CB\u8655\u7406...",
+          completed: "[\u5FEB\u901F\u6383\u63CF - \u5099\u9078] \u8655\u7406\u5B8C\u6210\uFF0C\u627E\u5230 {{count}} \u689D\u4E0D\u91CD\u8907\u6587\u672C\u3002"
+        },
+        worker: {
+          logPrefix: "[\u5FEB\u901F\u6383\u63CF Worker]",
+          starting: "[\u5FEB\u901F\u6383\u63CF] \u958B\u59CB\u57F7\u884C\uFF0C\u5617\u8A66\u4F7F\u7528 Web Worker...",
+          completed: "[\u5FEB\u901F\u6383\u63CF] Worker \u8655\u7406\u6210\u529F\uFF0C\u6536\u5230 {{count}} \u689D\u6587\u672C\u3002",
+          scanComplete: "[\u5FEB\u901F\u6383\u63CF Worker] \u8655\u7406\u5B8C\u6210\uFF0C\u627E\u5230 {{count}} \u689D\u4E0D\u91CD\u8907\u6587\u672C\u3002\u6B63\u5728\u767C\u56DE\u4E3B\u7DDA\u7A0B...",
+          initFailed: "[\u5FEB\u901F\u6383\u63CF] Worker \u521D\u59CB\u5316\u5931\u6557\u3002\u9019\u5F88\u53EF\u80FD\u662F\u7531\u65BC\u7DB2\u7AD9\u7684\u5167\u5BB9\u5B89\u5168\u7B56\u7565 (CSP) \u5C0E\u81F4\u7684\u3002",
+          originalError: "[\u5FEB\u901F\u6383\u63CF] \u539F\u59CB\u932F\u8AA4: {{error}}",
+          sendingData: "[\u5FEB\u901F\u6383\u63CF] Web Worker \u5DF2\u5EFA\u7ACB\uFF0C\u6B63\u5728\u767C\u9001 {{count}} \u689D\u6587\u672C\u9032\u884C\u8655\u7406...",
+          initSyncError: "[\u5FEB\u901F\u6383\u63CF] Worker \u521D\u59CB\u5316\u671F\u9593\u767C\u751F\u540C\u6B65\u932F\u8AA4: {{error}}",
+          cspBlocked: "[\u5FEB\u901F\u6383\u63CF] CSP\u6AA2\u67E5\u5931\u6557\uFF0C\u4E0D\u5141\u8A31\u5EFA\u7ACBWorker\u3002"
+        }
+      },
+      sessionScan: {
+        switchToFallback: "[\u52D5\u614B\u6383\u63CF] \u6B63\u5728\u5207\u63DB\u5230\u4E3B\u7DDA\u7A0B\u5099\u9078\u65B9\u6848\u3002",
+        domObserver: {
+          stopped: "[\u52D5\u614B\u6383\u63CF] \u5DF2\u505C\u6B62\u76E3\u807D DOM \u8B8A\u5316\u3002"
+        },
+        fallback: {
+          initialized: "[\u52D5\u614B\u6383\u63CF - \u5099\u9078] \u5DF2\u521D\u59CB\u5316\u3002",
+          cleared: "[\u52D5\u614B\u6383\u63CF - \u5099\u9078] \u8CC7\u6599\u5DF2\u6E05\u9664\u3002"
+        },
+        worker: {
+          logPrefix: "[\u52D5\u614B\u6383\u63CF Worker]",
+          starting: "\u52D5\u614B\u6383\u63CF\uFF1A\u6B63\u5728\u5617\u8A66\u555F\u52D5 Web Worker...",
+          initFailed: "[\u52D5\u614B\u6383\u63CF] Worker \u521D\u59CB\u5316\u5931\u6557\u3002\u9019\u5F88\u53EF\u80FD\u662F\u7531\u65BC\u7DB2\u7AD9\u7684\u5167\u5BB9\u5B89\u5168\u7B56\u7565 (CSP) \u5C0E\u81F4\u7684\u3002",
+          originalError: "[\u52D5\u614B\u6383\u63CF] \u539F\u59CB\u932F\u8AA4: {{error}}",
+          initialized: "[\u52D5\u614B\u6383\u63CF] Worker \u521D\u59CB\u5316\u6210\u529F\uFF0C\u5DF2\u767C\u9001 {{count}} \u689D\u521D\u59CB\u6587\u672C\u4EE5\u958B\u59CB\u6703\u8A71\u3002",
+          initSyncError: "[\u52D5\u614B\u6383\u63CF] Worker \u521D\u59CB\u5316\u671F\u9593\u767C\u751F\u540C\u6B65\u932F\u8AA4: {{error}}",
+          clearCommandSent: "[\u52D5\u614B\u6383\u63CF] \u6E05\u9664\u547D\u4EE4\u5DF2\u767C\u9001\u81F3 worker\u3002",
+          cspBlocked: "[\u52D5\u614B\u6383\u63CF] CSP\u6AA2\u67E5\u5931\u6557\uFF0C\u4E0D\u5141\u8A31\u5EFA\u7ACBWorker\u3002"
+        }
+      },
+      ui: {
+        copyButton: {
+          copied: "\u8907\u88FD\u6309\u9215\u5DF2\u9EDE\u64CA\uFF0C\u8907\u88FD\u4E86 {{count}} \u500B\u5B57\u5143\u3002",
+          nothingToCopy: "\u8907\u88FD\u6309\u9215\u5DF2\u9EDE\u64CA\uFF0C\u4F46\u6C92\u6709\u5167\u5BB9\u53EF\u8907\u88FD\u6216\u6309\u9215\u88AB\u7981\u7528\u3002"
+        },
+        confirmationModal: {
+          sessionScan: {
+            confirmed: "\u4F7F\u7528\u8005\u5DF2\u78BA\u8A8D\u6E05\u9664\u52D5\u614B\u6383\u63CF\u6587\u672C\uFF0C\u6B63\u5728\u8ABF\u7528\u56DE\u547C..."
+          },
+          quickScan: {
+            confirmed: "\u4F7F\u7528\u8005\u5DF2\u78BA\u8A8D\u6E05\u9664\u5FEB\u901F\u6383\u63CF\u6587\u672C\u3002"
+          },
+          cancelled: "\u4F7F\u7528\u8005\u5DF2\u53D6\u6D88\u6E05\u9664\u64CD\u4F5C\u3002"
+        },
+        modal: {
+          opening: "\u6B63\u5728\u958B\u555F\u4E3B\u6A21\u614B\u6846...",
+          closing: "\u6B63\u5728\u95DC\u9589\u4E3B\u6A21\u614B\u6846...",
+          scanFailed: "\u975C\u614B\u6383\u63CF\u5931\u6557: {{error}}",
+          clearContent: "\u6E05\u7A7A\u5167\u5BB9\u6309\u9215\u5DF2\u9EDE\u64CA\u3002"
+        },
+        helpIcon: {
+          clicked: "\u9EDE\u64CA\u4E86\u5E6B\u52A9\u5716\u793A\uFF0C\u986F\u793A\u5167\u5BB9\u9375\uFF1A{{contentKey}}"
+        }
+      },
+      exporter: {
+        buttonClicked: "\u532F\u51FA\u6309\u9215\u5DF2\u9EDE\u64CA\uFF0C\u683C\u5F0F: {{format}}\u3002",
+        csvError: "\u89E3\u6790\u6587\u672C\u4E26\u7522\u751FCSV\u6642\u51FA\u932F: {{error}}",
+        fileExported: "\u6A94\u6848\u5DF2\u532F\u51FA: {{filename}}",
+        noContent: "\u7121\u5167\u5BB9\u53EF\u532F\u51FA\u3002",
+        unknownFormat: "\u672A\u77E5\u7684\u532F\u51FA\u683C\u5F0F: {{format}}"
+      },
+      main: {
+        requestingSessionScanData: "\u6B63\u5728\u8ACB\u6C42\u52D5\u614B\u6383\u63CF\u6A21\u5F0F\u7684\u5B8C\u6574\u8CC7\u6599...",
+        exportingQuickScanData: "\u6B63\u5728\u532F\u51FA\u5FEB\u901F\u6383\u63CF\u6A21\u5F0F\u8A18\u61B6\u9AD4\u4E2D\u7684\u5B8C\u6574\u8CC7\u6599...",
+        inIframe: "\u8173\u672C\u5728 iframe \u4E2D\uFF0C\u5DF2\u8DF3\u904E\u521D\u59CB\u5316\u3002",
+        initializing: "\u8173\u672C\u521D\u59CB\u5316\u958B\u59CB...",
+        initialSettingsLoaded: "\u521D\u59CB\u8A2D\u5B9A\u5DF2\u8F09\u5165:"
+      },
+      dom: {
+        ttpCreationError: "\u5EFA\u7ACB Trusted Type \u7B56\u7565\u5931\u6557:",
+        svgParseError: "SVG \u5B57\u4E32\u7121\u6548\u6216\u89E3\u6790\u5931\u6557:"
+      },
+      elementScan: {
+        starting: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5DF2\u958B\u59CB\u3002",
+        stopping: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5DF2\u505C\u6B62\u3002",
+        listenersAdded: "\u5DF2\u70BA\u9078\u53D6\u5143\u7D20\u6383\u63CF\u65B0\u589E\u5168\u57DF\u4E8B\u4EF6\u76E3\u807D\u5668\u3002",
+        listenersRemoved: "\u5DF2\u70BA\u9078\u53D6\u5143\u7D20\u6383\u63CF\u79FB\u9664\u5168\u57DF\u4E8B\u4EF6\u76E3\u807D\u5668\u3002",
+        stateReset: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u72C0\u614B\u5DF2\u91CD\u8A2D\u3002",
+        reselecting: "\u6B63\u5728\u8FD4\u56DE\u5143\u7D20\u91CD\u65B0\u9078\u64C7\u6A21\u5F0F\u3002",
+        hovering: "\u6B63\u5728\u61F8\u505C\u65BC <{{tagName}}>\u3002",
+        escapePressed: "\u6309\u4E0B Escape \u9375\uFF0C\u6B63\u5728\u505C\u6B62\u9078\u53D6\u5143\u7D20\u6383\u63CF\u3002",
+        escapeIgnoredForSettings: "\u6309\u4E0B\u4E86Escape\u9375\uFF0C\u4F46\u56E0\u8A2D\u5B9A\u9762\u677F\u958B\u555F\u800C\u88AB\u5FFD\u7565\u3002",
+        escapeIgnoredForModal: "\u6309\u4E0B\u4E86Escape\u9375\uFF0C\u4F46\u56E0\u6A21\u614B\u6846\u6216\u63D0\u793A\u7A97\u53E3\u958B\u555F\u800C\u88AB\u5FFD\u7565\u3002",
+        escapePressedInAdjust: "\u5728\u8ABF\u6574\u6A21\u5F0F\u4E0B\u6309\u4E0B\u4E86Escape\u9375\uFF0C\u8FD4\u56DE\u91CD\u65B0\u9078\u64C7\u6A21\u5F0F\u3002",
+        clickedEnteringAdjust: "\u5143\u7D20 <{{tagName}}> \u5DF2\u88AB\u9EDE\u64CA\uFF0C\u6B63\u5728\u9032\u5165\u8ABF\u6574\u6A21\u5F0F\u3002",
+        pathBuilt: "\u5143\u7D20\u5C64\u7D1A\u8DEF\u5F91\u5DF2\u69CB\u5EFA\uFF0C\u6DF1\u5EA6\u70BA\uFF1A{{depth}}\u3002",
+        adjustingLevel: "\u6B63\u5728\u8ABF\u6574\u9078\u64C7\u5C64\u7D1A\u81F3 {{level}} ({{tagName}})\u3002",
+        confirmExtracting: "\u9078\u64C7\u5DF2\u78BA\u8A8D\uFF0C\u6B63\u5728\u5F9E <{{tagName}}> \u63D0\u53D6\u6587\u672C\u3002",
+        staged: "\u5143\u7D20\u5DF2\u66AB\u5B58\u3002\u7E3D\u6578\uFF1A{{count}}\u3002",
+        confirmingStaged: "\u78BA\u8A8D\u9078\u64C7\u3002\u6B63\u5728\u8655\u7406 {{count}} \u500B\u5DF2\u66AB\u5B58\u7684\u5143\u7D20\u3002",
+        extractedCount: "\u5DF2\u5F9E\u5143\u7D20\u4E2D\u63D0\u53D6 {{count}} \u689D\u539F\u59CB\u6587\u672C\u3002",
+        confirmFailedNoTarget: "\u78BA\u8A8D\u5931\u6557\uFF1A\u672A\u9078\u64C7\u4EFB\u4F55\u76EE\u6A19\u5143\u7D20\u3002",
+        rightClickExit: "\u5075\u6E2C\u5230\u53F3\u9375\u9EDE\u64CA\uFF0C\u6B63\u5728\u505C\u6B62\u9078\u53D6\u5143\u7D20\u6383\u63CF\u3002",
+        processingError: "\u6587\u672C\u8655\u7406\u904E\u7A0B\u4E2D\u767C\u751F\u932F\u8AA4: {{error}}",
+        scrollListenersAdded: "\u5DF2\u70BA {{count}} \u500B\u7236\u5143\u7D20\u65B0\u589E\u6EFE\u52D5\u76E3\u807D\u5668\u3002",
+        scrollListenersRemoved: "\u5DF2\u79FB\u9664\u6240\u6709\u6EFE\u52D5\u76E3\u807D\u5668\u3002",
+        worker: {
+          logPrefix: "[ES Worker]",
+          starting: "\u9078\u53D6\u5143\u7D20\u6383\u63CF Worker \u6B63\u5728\u555F\u52D5...",
+          sendingData: "\u6B63\u5728\u5411\u9078\u53D6\u5143\u7D20\u6383\u63CF Worker \u767C\u9001 {{count}} \u689D\u6587\u672C\u7247\u6BB5\u3002",
+          completed: "\u9078\u53D6\u5143\u7D20\u6383\u63CF Worker \u5DF2\u5B8C\u6210\uFF0C\u627E\u5230 {{count}} \u689D\u4E0D\u91CD\u8907\u6587\u672C\u3002",
+          initFailed: "\u9078\u53D6\u5143\u7D20\u6383\u63CF Worker \u521D\u59CB\u5316\u5931\u6557\u3002\u700F\u89BD\u5668\u7684CSP\u53EF\u80FD\u963B\u6B62\u4E86 data: URL\u3002",
+          initSyncError: "\u9078\u53D6\u5143\u7D20\u6383\u63CF Worker \u521D\u59CB\u5316\u671F\u9593\u767C\u751F\u540C\u6B65\u932F\u8AA4: {{error}}",
+          originalError: "\u539F\u59CB Worker \u932F\u8AA4: {{error}}",
+          cspBlocked: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u7684CSP\u6AA2\u67E5\u5931\u6557\uFF0C\u4E0D\u5141\u8A31\u5EFA\u7ACBWorker\u3002",
+          attemping: "\u6B63\u5728\u5617\u8A66\u4F7F\u7528 Web Worker \u9032\u884C\u904E\u6FFE...",
+          fallback: "\u5DF2\u5207\u63DB\u5230\u4E3B\u57F7\u884C\u7DD2\u9032\u884C\u904E\u6FFE\u3002",
+          cspHint: "\u9019\u53EF\u80FD\u662F\u7531\u65BC\u7DB2\u7AD9\u7684\u5167\u5BB9\u5B89\u5168\u7B56\u7565\uFF08CSP\uFF09\u5C0E\u81F4\u7684\u3002"
+        },
+        switchToFallback: "\u6B63\u5728\u70BA\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5207\u63DB\u5230\u4E3B\u7DDA\u7A0B\u5099\u9078\u65B9\u6848\u3002",
+        fallbackFailed: "\u300C\u9078\u53D6\u5143\u7D20\u6383\u63CF\u300D\u5099\u7528\u6A21\u5F0F\u5931\u6557\uFF1A{{error}}",
+        stagingStarted: "\u958B\u59CB\u66AB\u5B58\u5143\u7D20\uFF1A<{{tagName}}>",
+        stagedNothingNew: "\u672A\u80FD\u5F9E\u6B64\u5143\u7D20\u4E2D\u66AB\u5B58\u4EFB\u4F55\u65B0\u7684\u552F\u4E00\u6587\u672C\u3002",
+        stagingFinished: "\u66AB\u5B58\u64CD\u4F5C\u5DF2\u5B8C\u6210\u3002",
+        confirmStarted: "\u78BA\u8A8D\u6D41\u7A0B\u5DF2\u958B\u59CB...",
+        confirmFinished: "\u78BA\u8A8D\u6D41\u7A0B\u5DF2\u6210\u529F\u5B8C\u6210\u3002",
+        confirmFailed: "\u78BA\u8A8D\u6D41\u7A0B\u5931\u6557\u3002\u932F\u8AA4\uFF1A{{error}}"
+      },
+      elementScanUI: {
+        creatingHighlights: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u9996\u6B21\u5EFA\u7ACB\u9AD8\u4EAE\u5143\u7D20\u3002",
+        updatingHighlight: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u6B63\u5728\u70BA <{{tagName}}> \u66F4\u65B0\u9AD8\u4EAE\u3002",
+        creatingToolbar: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u6B63\u5728\u5EFA\u7ACB\u8ABF\u6574\u5DE5\u5177\u5217\u3002",
+        toolbarPositioned: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u5DE5\u5177\u5217\u5DF2\u5B9A\u4F4D\u3002",
+        sliderChanged: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u6ED1\u687F\u5C64\u7D1A\u8B8A\u70BA {{level}}",
+        reselectClicked: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u300C\u91CD\u65B0\u9078\u64C7\u300D\u6309\u9215\u88AB\u9EDE\u64CA\u3002",
+        stageClicked: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u300C\u66AB\u5B58\u300D\u6309\u9215\u88AB\u9EDE\u64CA\u3002",
+        cancelClicked: "\u5143\u7D20\u6383\u89C0UI\uFF1A\u300C\u53D6\u6D88\u300D\u6309\u9215\u88AB\u9EDE\u64CA\u3002",
+        confirmClicked: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u300C\u78BA\u8A8D\u300D\u6309\u9215\u88AB\u9EDE\u64CA\u3002",
+        dragStarted: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u62D6\u52D5\u958B\u59CB\u3002",
+        dragEnded: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u62D6\u52D5\u7D50\u675F\u3002",
+        cleaningHighlights: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u6B63\u5728\u6E05\u7406\u9AD8\u4EAE\u5143\u7D20\u3002",
+        cleaningToolbar: "\u5143\u7D20\u6383\u63CFUI\uFF1A\u6B63\u5728\u6E05\u7406\u5DE5\u5177\u5217\u3002"
+      },
+      eventBus: {
+        callbackError: "\u4E8B\u4EF6 '{{eventName}}' \u7684\u56DE\u547C\u51FD\u6578\u51FA\u932F:"
+      },
+      trustedTypes: {
+        workerPolicyError: "\u5EFA\u7ACB Trusted Types worker \u7B56\u7565\u5931\u6557:",
+        htmlPolicyError: "\u5EFA\u7ACB Trusted Types HTML \u7B56\u7565\u5931\u6557:",
+        defaultWorkerPolicyWarning: "\u7528\u65BC worker URL \u7684 Trusted Types \u9810\u8A2D\u7B56\u7565\u5931\u6557\uFF0C\u56DE\u9000\u5230\u539F\u59CB URL\u3002",
+        defaultHtmlPolicyWarning: "\u7528\u65BC HTML \u7684 Trusted Types \u9810\u8A2D\u7B56\u7565\u5931\u6557\uFF0C\u56DE\u9000\u5230\u539F\u59CB\u5B57\u4E32\u3002"
+      }
+    },
+    tutorial: {
+      elementScanTitle: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u6559\u7A0B",
+      elementScan: '<p><strong>\u529F\u80FD\u4ECB\u7D39:</strong></p><p>\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5141\u8A31\u60A8\u7CBE\u78BA\u5730\u9078\u64C7\u7DB2\u9801\u4E0A\u7684\u4E00\u500B\u6216\u591A\u500B\u5340\u57DF\uFF08\u4F8B\u5982\u4E00\u500B\u6BB5\u843D\u3001\u4E00\u500B\u5217\u8868\u3001\u4E00\u500B\u5074\u908A\u6B04\uFF09\uFF0C\u4E26\u50C5\u5F9E\u9019\u4E9B\u5340\u57DF\u4E2D\u63D0\u53D6\u6587\u672C\u3002</p><p><strong>\u5982\u4F55\u4F7F\u7528:</strong></p><ol><li><strong>\u555F\u52D5:</strong> \u9EDE\u64CA\u61F8\u6D6E\u6309\u9215\u4E2D\u7684\u300C\u9078\u53D6\u5143\u7D20\u300D\u5716\u6A19 <span class="help-icon-placeholder element-scan-icon"></span> \u555F\u52D5\u6383\u63CF\u6A21\u5F0F\u3002</li><li><strong>\u9078\u64C7:</strong> \u79FB\u52D5\u9F20\u6A19\uFF0C\u60A8\u60F3\u6383\u63CF\u7684\u5340\u57DF\u6703\u986F\u793A\u9AD8\u4EAE\u6846\u3002\u55AE\u64CA\u4EE5\u9078\u5B9A\u3002</li><li><strong>\u8ABF\u6574:</strong> \u9078\u5B9A\u5F8C\u6703\u51FA\u73FE\u5DE5\u5177\u6B04\u3002\u60A8\u53EF\u4EE5\u4F7F\u7528<strong>\u6ED1\u584A</strong>\u4F86\u64F4\u5927\u6216\u7E2E\u5C0F\u9078\u64C7\u7BC4\u570D\u3002</li><li><strong>\u66AB\u5B58:</strong> \u5982\u679C\u60A8\u60F3\u9078\u64C7\u591A\u500B\u4E0D\u76F8\u95DC\u7684\u5340\u57DF\uFF0C\u53EF\u4EE5\u9EDE\u64CA<span class="action-key">\u66AB\u5B58</span>\u6309\u9215\u4FDD\u5B58\u7576\u524D\u9078\u64C7\uFF0C\u7136\u5F8C\u7E7C\u7E8C\u9078\u64C7\u5176\u4ED6\u5340\u57DF\u3002</li><li><strong>\u78BA\u8A8D:</strong> \u5B8C\u6210\u6240\u6709\u9078\u64C7\u5F8C\uFF0C\u9EDE\u64CA<span class="action-key">\u78BA\u8A8D</span>\u6309\u9215\uFF0C\u7CFB\u7D71\u5C07\u958B\u59CB\u5F9E\u60A8\u9078\u64C7\u7684\u6240\u6709\u5340\u57DF\u4E2D\u63D0\u53D6\u6587\u672C\u3002</li></ol><p><strong>\u5982\u4F55\u9000\u51FA:</strong></p><ul><li>\u5728\u9078\u64C7\u904E\u7A0B\u4E2D\uFF08\u51FA\u73FE\u9AD8\u4EAE\u6846\u6642\uFF09\uFF0C\u5728\u9801\u9762\u4EFB\u610F\u4F4D\u7F6E<strong>\u53F3\u9375\u55AE\u64CA</strong>\u3002</li><li>\u5728\u4EFB\u4F55\u6642\u5019\uFF0C\u6309\u4E0B <kbd>ESC</kbd> \u9375\u3002</li><li>\u5728\u4EFB\u4F55\u6642\u5019\uFF0C\u518D\u6B21\u9EDE\u64CA\u300C\u9078\u53D6\u5143\u7D20\u6383\u63CF\u300D\u5716\u6A19\u3002</li></ul>',
+      sessionScanTitle: "\u52D5\u614B\u6383\u63CF\u6559\u7A0B",
+      sessionScan: '<p><strong>\u529F\u80FD\u4ECB\u7D39:</strong></p><p>\u52D5\u614B\u6383\u63CF\u6703\u6301\u7E8C\u76E3\u63A7\u4E26\u81EA\u52D5\u8A18\u9304\u7DB2\u9801\u4E0A\u6240\u6709\u52D5\u614B\u52A0\u8F09\u6216\u8B8A\u5316\u7684\u6587\u672C\uFF0C\u7279\u5225\u9069\u7528\u65BC\u6293\u53D6\u5BE6\u6642\u804A\u5929\u3001\u6EFE\u52D5\u52A0\u8F09\u5167\u5BB9\u6216\u901A\u77E5\u7B49\u3002</p><p><strong>\u5982\u4F55\u4F7F\u7528:</strong></p><ul><li><strong>\u958B\u59CB\u6383\u63CF:</strong> \u9EDE\u64CA\u61F8\u6D6E\u6309\u9215\u4E2D\u7684\u300C\u52D5\u614B\u6383\u63CF\u300D\u5716\u6A19 <span class="help-icon-placeholder dynamic-scan-icon"></span>\uFF0C\u6383\u63CF\u7ACB\u5373\u958B\u59CB\u3002</li><li><strong>\u505C\u6B62\u6383\u63CF:</strong> \u518D\u6B21\u9EDE\u64CA\u8A72\u5716\u6A19 <span class="help-icon-placeholder stop-icon"></span>\uFF0C\u5373\u53EF\u505C\u6B62\u6383\u63CF\u3002</li><li><strong>\u67E5\u770B\u7D50\u679C:</strong> \u505C\u6B62\u5F8C\uFF0C\u9EDE\u64CA\u4E3B\u61F8\u6D6E\u6309\u9215 <span class="help-icon-placeholder summary-icon"></span> \u6253\u958B\u7D50\u679C\u7A97\u53E3\u3002</li></ul><p><strong>\u5982\u4F55\u9000\u51FA:</strong></p><ul><li>\u5728\u6383\u63CF\u904E\u7A0B\u4E2D\uFF0C\u518D\u6B21\u9EDE\u64CA\u300C\u52D5\u614B\u6383\u63CF\u300D\u5716\u6A19\u3002</li><li>\u5728\u6383\u63CF\u904E\u7A0B\u4E2D\uFF0C\u96A8\u6642\u6309\u4E0B <kbd>ESC</kbd> \u9375\u53EF\u5FEB\u901F\u505C\u6B62\u3002</li></ul>'
+    }
+  };
+  var locales = {
+    "en-GB": en_GB_default,
+    "en": en_default,
+    "zh-CN": zh_CN_default,
+    "zh-TW": zh_TW_default
+  };
+  var resourceLanguages = [
+    {
+      "code": "en-GB",
+      "name": "English (UK)"
+    },
+    {
+      "code": "en",
+      "name": "English"
+    },
+    {
+      "code": "zh-CN",
+      "name": "\u7B80\u4F53\u4E2D\u6587"
+    },
+    {
+      "code": "zh-TW",
+      "name": "\u7E41\u9AD4\u4E2D\u6587"
+    }
+  ];
+  var isDebugEnabled = false;
+  function updateLoggerState(isEnabled) {
+    isDebugEnabled = isEnabled;
+  }
+  function log(...args) {
+    if (isDebugEnabled) {
+      console.log(t("log.prefix"), ...args);
+    }
+  }
+  var events = {};
+  function on(eventName, callback) {
+    if (!events[eventName]) {
+      events[eventName] = [];
+    }
+    events[eventName].push(callback);
+    return () => {
+      events[eventName] = events[eventName].filter((cb) => cb !== callback);
+    };
+  }
+  function fire(eventName, data) {
+    if (events[eventName]) {
+      events[eventName].forEach((callback) => {
+        try {
+          callback(data);
+        } catch (error) {
+          log(t("log.eventBus.callbackError", { eventName }), error);
+        }
+      });
+    }
+  }
+  var translationModules = locales;
+  var supportedLanguages = [
+    { code: "auto", name: "Auto" },
+    ...resourceLanguages
+  ];
+  var translations = supportedLanguages.reduce((acc, lang) => {
+    if (translationModules[lang.code]) {
+      acc[lang.code] = translationModules[lang.code];
+    }
+    return acc;
+  }, {});
+  var currentLanguage = "en";
+  var currentTranslations = translations.en;
+  function setLanguage(lang) {
+    if (translations[lang]) {
+      currentLanguage = lang;
+      currentTranslations = translations[lang];
+      log(t("log.language.switched", { lang }));
+      fire("languageChanged", lang);
+    } else {
+      log(t("log.language.notFound", { lang }), "warn");
+      currentLanguage = "en";
+      currentTranslations = translations.en;
+    }
+  }
+  function t(key, replacements) {
+    let value = key.split(".").reduce((obj, k) => {
+      if (typeof obj === "object" && obj !== null && k in obj) {
+        return obj[k];
+      }
+      return void 0;
+    }, currentTranslations);
+    if (value === void 0) {
+      return key;
+    }
+    if (replacements) {
+      return value.replace(/{{\s*(\w+)\s*}}/g, (match, key2) => {
+        return Object.prototype.hasOwnProperty.call(replacements, key2) ? replacements[key2] : match;
+      });
+    }
+    return value;
+  }
+  function getTranslationObject(key) {
+    return key.split(".").reduce((obj, k) => {
+      if (typeof obj === "object" && obj !== null && k in obj) {
+        return obj[k];
+      }
+      return void 0;
+    }, currentTranslations);
+  }
+  function getAvailableLanguages() {
+    return supportedLanguages.map((lang) => ({
+      value: lang.code,
+      label: lang.name
+    }));
+  }
+  var selectSettingsDefinitions = [
+    {
+      id: "theme-select",
+      key: "theme",
+      label: "settings.theme",
+      type: "image-card-select",
+      icon: themeIcon,
+      options: [
+        { value: "light", label: "settings.themes.light", icon: lightThemeIcon },
+        { value: "dark", label: "settings.themes.dark", icon: darkThemeIcon },
+        { value: "system", label: "settings.themes.system", icon: systemThemeIcon }
+      ]
+    },
+    {
+      id: "format-select",
+      key: "outputFormat",
+      label: "settings.format",
+      type: "image-card-select",
+      icon: formatIcon,
+      options: [
+        { value: "array", label: "settings.formats.array", previewType: "code-array" },
+        { value: "object", label: "settings.formats.object", previewType: "code-object" },
+        { value: "csv", label: "settings.formats.csv", previewType: "code-csv" }
+      ]
+    },
+    {
+      id: "language-select",
+      key: "language",
+      label: "settings.language",
+      icon: languageIcon_default,
+      options: getAvailableLanguages().map((lang) => ({
+        ...lang,
+        label: lang.value === "auto" ? "settings.languages.auto" : `settings.languages.${lang.value}`
+      }))
+    }
+  ];
+  var filterDefinitions = [
+    { id: "filter-numbers", key: "numbers", label: "settings.filters.numbers", tooltip: { titleIcon: infoIcon, title: "settings.filters.numbers", text: "tooltip.filters.numbers" } },
+    { id: "filter-chinese", key: "chinese", label: "settings.filters.chinese", tooltip: { titleIcon: infoIcon, title: "settings.filters.chinese", text: "tooltip.filters.chinese" } },
+    { id: "filter-contains-chinese", key: "containsChinese", label: "settings.filters.contains_chinese", tooltip: { titleIcon: infoIcon, title: "settings.filters.contains_chinese", text: "tooltip.filters.contains_chinese" } },
+    { id: "filter-emoji-only", key: "emojiOnly", label: "settings.filters.emoji_only", tooltip: { titleIcon: infoIcon, title: "settings.filters.emoji_only", text: "tooltip.filters.emoji_only" } },
+    { id: "filter-symbols", key: "symbols", label: "settings.filters.symbols", tooltip: { titleIcon: infoIcon, title: "settings.filters.symbols", text: "tooltip.filters.symbols" } },
+    { id: "filter-term", key: "termFilter", label: "settings.filters.term", tooltip: { titleIcon: infoIcon, title: "settings.filters.term", text: "tooltip.filters.term" } },
+    { id: "filter-single-letter", key: "singleLetter", label: "settings.filters.single_letter", tooltip: { titleIcon: infoIcon, title: "settings.filters.single_letter", text: "tooltip.filters.single_letter" } },
+    {
+      id: "filter-repeating-chars",
+      key: "repeatingChars",
+      label: "settings.filters.repeating_chars",
+      tooltip: {
+        titleIcon: infoIcon,
+        title: "settings.filters.repeating_chars",
+        text: "tooltip.filters.repeating_chars"
+      }
+    },
+    { id: "filter-file-paths", key: "filePath", label: "settings.filters.file_paths", tooltip: { titleIcon: infoIcon, title: "settings.filters.file_paths", text: "tooltip.filters.file_paths" } },
+    { id: "filter-hex-colors", key: "hexColor", label: "settings.filters.hex_color_codes", tooltip: { titleIcon: infoIcon, title: "settings.filters.hex_color_codes", text: "tooltip.filters.hex_color_codes" } },
+    { id: "filter-emails", key: "email", label: "settings.filters.email_addresses", tooltip: { titleIcon: infoIcon, title: "settings.filters.email_addresses", text: "tooltip.filters.email_addresses" } },
+    { id: "filter-uuids", key: "uuid", label: "settings.filters.uuids", tooltip: { titleIcon: infoIcon, title: "settings.filters.uuids", text: "tooltip.filters.uuids" } },
+    { id: "filter-git-hashes", key: "gitCommitHash", label: "settings.filters.git_commit_hashes", tooltip: { titleIcon: infoIcon, title: "settings.filters.git_commit_hashes", text: "tooltip.filters.git_commit_hashes" } },
+    { id: "filter-website-urls", key: "websiteUrl", label: "settings.filters.website_urls", tooltip: { titleIcon: infoIcon, title: "settings.filters.website_urls_title", text: "tooltip.filters.website_urls" } },
+    { id: "filter-shorthand-numbers", key: "shorthandNumber", label: "settings.filters.shorthand_numbers", tooltip: { titleIcon: infoIcon, title: "settings.filters.shorthand_numbers_title", text: "tooltip.filters.shorthand_numbers" } }
+  ];
+  var relatedSettingsDefinitions = [
+    { id: "show-fab", key: "showFab", label: "settings.display.show_fab", tooltip: { titleIcon: infoIcon, title: "settings.display.show_fab", text: "tooltip.display.show_fab" } },
+    {
+      id: "fab-position",
+      key: "fabPosition",
+      label: "settings.display.fab_position",
+      type: "select",
+      options: [
+        { value: "bottom-right", label: "settings.display.fab_positions.bottom_right" },
+        { value: "top-right", label: "settings.display.fab_positions.top_right" },
+        { value: "bottom-left", label: "settings.display.fab_positions.bottom_left" },
+        { value: "top-left", label: "settings.display.fab_positions.top_left" }
+      ]
+    },
+    { id: "show-scan-count", key: "showScanCount", label: "settings.display.show_scan_count", tooltip: { titleIcon: infoIcon, title: "settings.display.show_scan_count", text: "tooltip.display.show_scan_count" } },
+    { id: "show-line-numbers", key: "showLineNumbers", label: "settings.display.show_line_numbers", tooltip: { titleIcon: infoIcon, title: "settings.display.show_line_numbers", text: "tooltip.display.show_line_numbers" } },
+    { id: "show-statistics", key: "showStatistics", label: "settings.display.show_statistics", tooltip: { titleIcon: infoIcon, title: "settings.display.show_statistics", text: "tooltip.display.show_statistics" } },
+    { id: "enable-word-wrap", key: "enableWordWrap", label: "settings.display.enable_word_wrap", tooltip: { titleIcon: infoIcon, title: "settings.display.enable_word_wrap", text: "tooltip.display.enable_word_wrap" } },
+    {
+      id: "enable-text-truncation",
+      key: "enableTextTruncation",
+      label: "settings.display.text_truncation_limit",
+      linkedNumeric: {
+        id: "text-truncation-length",
+        key: "textTruncationLength"
+      },
+      tooltip: {
+        titleIcon: infoIcon,
+        title: "settings.display.text_truncation_limit",
+        text: "tooltip.display.text_truncation_limit"
+      }
+    },
+    { id: "enable-debug-logging", key: "enableDebugLogging", label: "settings.advanced.enable_debug_logging", tooltip: { titleIcon: infoIcon, title: "settings.advanced.enable_debug_logging", text: "tooltip.advanced.enable_debug_logging" } }
+  ];
+  var appConfig = {
+    ui: {
+      fabAnimationDelay: 50,
+      tooltips: {
+        summary: "\u67E5\u770B\u603B\u7ED3\u6587\u672C",
+        dynamicScan: "\u52A8\u6001\u626B\u63CF",
+        staticScan: "\u9759\u6001\u626B\u63CF"
+      },
+      liveCounterPrefix: "\u5DF2\u53D1\u73B0\uFF1A",
+      modalContentHeight: "400px",
+      notificationDuration: 3e3
+    },
+    scanner: {
+      targetSelectors: [
+        "p",
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5",
+        "h6",
+        "li",
+        "td",
+        "th",
+        "pre",
+        "span",
+        "a",
+        "button",
+        "article",
+        "main",
+        "div",
+        "body *"
+      ],
+      attributesToExtract: ["placeholder", "alt", "title", "aria-label"],
+      ignoredSelectors: [
+        "script",
+        "style",
+        "noscript",
+        "code",
+        "pre",
+        "kbd",
+        ".no-translate",
+        ".view-line"
+      ]
+    }
+  };
   var registerMenuCommand = (caption, commandFunc) => {
     return GM_registerMenuCommand(caption, commandFunc);
   };
@@ -2431,8 +2162,6 @@ var TextExtractor = (() => {
   var deleteValue = (key) => {
     return GM_deleteValue(key);
   };
-  init_logger();
-  init_i18n();
   function initTheme() {
     const { theme } = loadSettings();
     applyTheme(theme);
@@ -2450,7 +2179,6 @@ var TextExtractor = (() => {
       applyTheme("system");
     }
   });
-  init_i18n();
   var SETTINGS_MENU_ID_KEY = "settings_menu_command_id";
   async function updateSettingsMenu(onClick) {
     const oldCommandId = await getValue(SETTINGS_MENU_ID_KEY, null);
@@ -2499,9 +2227,6 @@ var TextExtractor = (() => {
       initializeLanguage(settings);
     }
   }
-  init_logger();
-  init_logger();
-  init_i18n();
   var workerPolicy;
   var htmlPolicy;
   if (window.trustedTypes && window.trustedTypes.createPolicy) {
@@ -4244,7 +3969,7 @@ ${result.join(",\n")}
       label: lang.name
     }));
   }
-  // src/shared/utils/ignoredTerms.js
+  // src/shared/utils/text/ignoredTerms.js
   var IGNORED_TERMS_ARRAY = [
     "Github",
     "Microsoft",
@@ -4398,7 +4123,7 @@ ${result.join(",\n")}
     { id: "filter-website-urls", key: "websiteUrl", label: "settings.filters.website_urls", tooltip: { titleIcon: infoIcon, title: "settings.filters.website_urls_title", text: "tooltip.filters.website_urls" } },
     { id: "filter-shorthand-numbers", key: "shorthandNumber", label: "settings.filters.shorthand_numbers", tooltip: { titleIcon: infoIcon, title: "settings.filters.shorthand_numbers_title", text: "tooltip.filters.shorthand_numbers" } }
   ];
-  // src/shared/utils/filterLogic.js
+  // src/shared/utils/text/filterLogic.js
   var filterConfigMap = new Map(filterDefinitions.map((def) => [def.key, def.label]));
   var ruleChecks = /* @__PURE__ */ new Map([
     ["numbers", {
@@ -4477,7 +4202,7 @@ ${result.join(",\n")}
     }
     return null;
   }
-  // src/shared/utils/formatting.js
+  // src/shared/utils/text/formatting.js
   var formatTextsForTranslation = (texts, format = "array") => {
     if (!texts || texts.length === 0) {
       if (format === "object") return "{}";
@@ -4506,7 +4231,7 @@ ${result.join(",\n")}
 ]\`;
     }
   };
-  // src/shared/utils/processing-worker.js
+  // src/shared/workers/processing.worker.js
   var sessionTexts = /* @__PURE__ */ new Set();
   var filterRules = {};
   var translations2 = {};
@@ -4675,8 +4400,6 @@ ${result.join(",\n")}
 `], { type: "application/javascript" });
   var workerUrl = URL.createObjectURL(workerBlob);
   var trustedWorkerUrl = createTrustedWorkerUrl(workerUrl);
-  init_logger();
-  init_i18n();
   var parser = new DOMParser();
   function createSVGFromString(svgString) {
     if (!svgString || typeof svgString !== "string") return null;
@@ -4689,8 +4412,6 @@ ${result.join(",\n")}
     }
     return document.importNode(svgNode, true);
   }
-  init_config();
-  init_infoIcon();
   var successIcon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q65 0 123 19t107 53l-58 59q-38-24-81-37.5T480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160q133 0 226.5-93.5T800-480q0-18-2-36t-6-35l65-65q11 32 17 66t6 70q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-56-216L254-466l56-56 114 114 400-401 56 56-456 457Z"/></svg>';
   var closeIcon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>';
   var notificationContainer = null;
@@ -4752,7 +4473,6 @@ ${result.join(",\n")}
       });
     }
   }
-  init_i18n();
   function createIconTitle(iconSVG, text) {
     const container = document.createElement("div");
     container.style.display = "flex";
@@ -4774,8 +4494,6 @@ ${result.join(",\n")}
     container.appendChild(textNode);
     return container;
   }
-  init_i18n();
-  init_eventBus();
   var simpleTemplate = (template, values) => {
     if (!template) return "";
     return template.replace(/{{\s*(\w+)\s*}}/g, (match, key) => {
@@ -4839,8 +4557,155 @@ ${result.join(",\n")}
     currentScanState = { count, type };
     updateScanCountDisplay();
   }
-  init_config();
-  init_filterLogic();
+  var IGNORED_TERMS_ARRAY = [
+    "Github",
+    "Microsoft",
+    "Tampermonkey",
+    "JavaScript",
+    "TypeScript",
+    "Hugging Face",
+    "Google",
+    "Facebook",
+    "Twitter",
+    "LinkedIn",
+    "OpenAI",
+    "ChatGPT",
+    "API",
+    "Glossary of computer science",
+    "HTML",
+    "CSS",
+    "JSON",
+    "XML",
+    "HTTP",
+    "HTTPS",
+    "URL",
+    "IP address",
+    "DNS",
+    "CPU",
+    "GPU",
+    "RAM",
+    "SSD",
+    "USB",
+    "Wi-Fi",
+    "Bluetooth",
+    "VPN",
+    "Modrinth",
+    "Minecraft",
+    "Modrinth+",
+    "AI",
+    "Bilibili",
+    "QQ",
+    "WeChat",
+    "Discord",
+    "Telegram",
+    "WhatsApp",
+    "Line",
+    "Slack",
+    "Zoom",
+    "Skype",
+    "TikTok",
+    "Douyin",
+    "Weibo",
+    "Zhihu",
+    "Xiaohongshu",
+    "Steam",
+    "Epic Games",
+    "Spotify",
+    "Apple Music",
+    "NetEase Cloud Music",
+    "Adobe Photoshop",
+    "Adobe Premiere",
+    "Microsoft Office",
+    "WPS Office",
+    "Modrinth",
+    "CurseForge",
+    "Thunder",
+    "Baidu Netdisk",
+    "Quark",
+    "Alipay",
+    "WeChat Pay",
+    "Taobao",
+    "JD.com",
+    "Tmall",
+    "Amazon",
+    "eBay"
+  ];
+  var IGNORED_TERMS_SET = new Set(IGNORED_TERMS_ARRAY);
+  var ignoredTerms_default = IGNORED_TERMS_SET;
+  var filterConfigMap = new Map(filterDefinitions.map((def) => [def.key, def.label]));
+  var ruleChecks =  new Map([
+    ["numbers", {
+      regex: /^[$\€\£\¥\d,.\s]+$/,
+      label: filterConfigMap.get("numbers")
+    }],
+    ["chinese", {
+      regex: /^[\u4e00-\u9fa5\s]+$/u,
+      label: filterConfigMap.get("chinese")
+    }],
+    ["containsChinese", {
+      regex: /[\u4e00-\u9fa5]/u,
+      label: filterConfigMap.get("containsChinese")
+    }],
+    ["emojiOnly", {
+      regex: /^[\p{Emoji}\s]+$/u,
+      label: filterConfigMap.get("emojiOnly")
+    }],
+    ["symbols", {
+      test: (text) => !/[\p{L}\p{N}]/u.test(text),
+      label: filterConfigMap.get("symbols")
+    }],
+    ["termFilter", {
+      test: (text) => ignoredTerms_default.has(text),
+      label: filterConfigMap.get("termFilter")
+    }],
+    ["singleLetter", {
+      regex: /^[a-zA-Z]$/,
+      label: filterConfigMap.get("singleLetter")
+    }],
+    ["repeatingChars", {
+      regex: /^\s*(.)\1+\s*$/,
+      label: filterConfigMap.get("repeatingChars")
+    }],
+    ["filePath", {
+      regex: /^(?:[a-zA-Z]:\\|\\\\|~|\.\.?\/)[\w\-\.\/ \\]*[\w\-\.]+\.[\w]{2,4}$/,
+      label: filterConfigMap.get("filePath")
+    }],
+    ["hexColor", {
+      regex: /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3,4}|[A-Fa-f0-9]{8})$/,
+      label: filterConfigMap.get("hexColor")
+    }],
+    ["email", {
+      regex: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/,
+      label: filterConfigMap.get("email")
+    }],
+    ["uuid", {
+      regex: /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/,
+      label: filterConfigMap.get("uuid")
+    }],
+    ["gitCommitHash", {
+      regex: /^[0-9a-f]{7,40}$/i,
+      label: filterConfigMap.get("gitCommitHash")
+    }],
+    ["websiteUrl", {
+      regex: /^(?:(?:https?|ftp):\/\/)?(?:www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(?:\/.*)?$/,
+      label: filterConfigMap.get("websiteUrl")
+    }],
+    ["shorthandNumber", {
+      regex: /^\d+(\.\d+)?\s?[kmb]$/i,
+      label: filterConfigMap.get("shorthandNumber")
+    }]
+  ]);
+  function shouldFilter(text, filterRules2) {
+    for (const [key, rule] of ruleChecks.entries()) {
+      if (filterRules2[key]) {
+        const isFiltered = rule.regex ? rule.regex.test(text) : rule.test(text);
+        if (isFiltered) {
+          return t(rule.label);
+        }
+      }
+    }
+    return null;
+  }
   var ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(", ");
   var ourUiSelector = "#text-extractor-container";
   var blockElements =  new Set(["ADDRESS", "ARTICLE", "ASIDE", "BLOCKQUOTE", "DETAILS", "DIALOG", "DD", "DIV", "DL", "DT", "FIELDSET", "FIGCAPTION", "FIGURE", "FOOTER", "FORM", "H1", "H2", "H3", "H4", "H5", "H6", "HEADER", "HGROUP", "HR", "LI", "MAIN", "NAV", "OL", "P", "PRE", "SECTION", "TABLE", "UL"]);
@@ -4921,7 +4786,6 @@ ${result.join(",\n")}
     return Array.from(uniqueTexts);
   };
   var filterAndNormalizeTexts = (texts, filterRules2, enableDebugLogging, logFiltered) => {
-    const { shouldFilter: shouldFilter2 } = (init_filterLogic(), __toCommonJS(filterLogic_exports));
     const uniqueTexts =  new Set();
     if (Array.isArray(texts)) {
       texts.forEach((rawText) => {
@@ -4929,7 +4793,7 @@ ${result.join(",\n")}
         const normalizedText = rawText.normalize("NFC").replace(/\r\n|\r/g, "\n");
         const textForFiltering = normalizedText.replace(/^[ \t]+|[ \t]+$/gm, "");
         if (textForFiltering === "") return;
-        const filterResult = shouldFilter2(textForFiltering, filterRules2);
+        const filterResult = shouldFilter(textForFiltering, filterRules2);
         if (filterResult) {
           if (enableDebugLogging && logFiltered) {
             logFiltered(textForFiltering, filterResult);
@@ -5026,8 +4890,6 @@ ${result.join(",\n")}
       }
     });
   };
-  init_logger();
-  init_i18n();
   var modalOverlay = null;
   var outputTextarea = null;
   var lineNumbersDiv = null;
@@ -5069,13 +4931,6 @@ ${result.join(",\n")}
   function getCurrentMode() {
     return currentMode;
   }
-  init_eventBus();
-  init_config();
-  init_logger();
-  init_i18n();
-  init_eventBus();
-  init_logger();
-  init_i18n();
   var sessionTexts =  new Set();
   var filterRules = {};
   function initFallback(rules) {
@@ -5104,9 +4959,6 @@ ${result.join(",\n")}
     sessionTexts.clear();
     log(t("log.sessionScan.fallback.cleared"));
   }
-  init_eventBus();
-  init_logger();
-  init_i18n();
   var SESSION_KEY = "qing_pagescanner_session";
   var RESUME_TIMEOUT_MS = 3e5;
   var isPersistenceEnabled = false;
@@ -5412,9 +5264,6 @@ ${result.join(",\n")}
     uiContainer.appendChild(modalOverlay2);
     return { modal, modalHeader, modalContent, modalFooter };
   }
-  init_i18n();
-  init_eventBus();
-  init_infoIcon();
   var loadingSpinner = `
   <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
     <path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25"/>
@@ -5423,7 +5272,6 @@ ${result.join(",\n")}
     </path>
   </svg>
 `;
-  init_config();
   var placeholder2;
   var unsubscribeLanguageChanged2;
   function rerenderPlaceholder() {
@@ -5510,10 +5358,6 @@ ${result.join(",\n")}
   }
   var copyIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M120-220v-80h80v80h-80Zm0-140v-80h80v80h-80Zm0-140v-80h80v80h-80ZM260-80v-80h80v80h-80Zm100-160q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480Zm40 240v-80h80v80h-80Zm-200 0q-33 0-56.5-23.5T120-160h80v80Zm340 0v-80h80q0 33-23.5 56.5T540-80ZM120-640q0-33 23.5-56.5T200-720v80h-80Zm420 80Z"/></svg>`;
   var clearIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M120-40v-280q0-83 58.5-141.5T320-520h40v-320q0-33 23.5-56.5T440-920h80q33 0 56.5 23.5T600-840v320h40q83 0 141.5 58.5T840-320v280H120Zm80-80h80v-120q0-17 11.5-28.5T320-280q17 0 28.5 11.5T360-240v120h80v-120q0-17 11.5-28.5T480-280q17 0 28.5 11.5T520-240v120h80v-120q0-17 11.5-28.5T640-280q17 0 28.5 11.5T680-240v120h80v-200q0-50-35-85t-85-35H320q-50 0-85 35t-35 85v200Zm320-400v-320h-80v320h80Zm0 0h-80 80Z"/></svg>`;
-  init_logger();
-  init_i18n();
-  init_eventBus();
-  init_i18n();
   function createButton({ id, className, textKey, tooltipKey, icon, onClick, disabled = false, iconOnly = false }) {
     const button = document.createElement("button");
     const controller2 = new AbortController();
@@ -5648,9 +5492,6 @@ ${result.join(",\n")}
   }
   var warningIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m40-120 440-760 440 760H40Zm138-80h604L480-720 178-200Zm302-40q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Zm40-100Z"/></svg>`;
   var exportIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80 280-280l56-56 104 103v-407h80v407l104-103 56 56L480-80ZM146-260q-32-49-49-105T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 59-17 115t-49 105l-58-58q22-37 33-78t11-84q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 43 11 84t33 78l-58 58Z"/></svg>`;
-  init_i18n();
-  init_eventBus();
-  init_logger();
   var exportBtn;
   var unsubscribeLanguageChanged3;
   function rerenderExportTexts() {
@@ -6110,7 +5951,6 @@ ${result.join(",\n")}
       outputTextarea.classList.toggle("word-wrap-disabled", !settings.enableWordWrap);
     }
   }
-  init_eventBus();
   var defaultSettings = {
     language: "auto",
     outputFormat: "array",
@@ -6210,7 +6050,6 @@ ${result.join(",\n")}
     });
     setValue("script_settings", JSON.stringify(newSettings));
   }
-  init_i18n();
   var summaryFab;
   var dynamicFab;
   var staticFab;
@@ -6307,15 +6146,11 @@ ${result.join(",\n")}
       fabElement.dataset.tooltipKey = newTooltipKey;
     }
   }
-  init_logger();
-  init_i18n();
   function handleQuickScanClick() {
     log(t("scan.quick"));
     openModal();
   }
-  init_i18n();
   var questionMarkIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M478-240q21 0 35.5-14.5T528-290q0-21-14.5-35.5T478-340q-21 0-35.5 14.5T428-290q0 21 14.5 35.5T478-240Zm-36-154h74q0-33 7.5-52t42.5-52q26-26 41-49.5t15-56.5q0-56-41-86t-97-30q-57 0-92.5 30T342-618l66 26q5-18 22.5-39t53.5-21q32 0 48 17.5t16 38.5q0 20-12 37.5T506-526q-44 39-54 59t-10 73Zm38 314q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>`;
-  init_eventBus();
   var Tooltip = class {
     constructor() {
       this.tooltipElement = null;
@@ -6402,8 +6237,6 @@ ${result.join(",\n")}
     }
   };
   var infoTooltip = new Tooltip();
-  init_i18n();
-  init_logger();
   function createHelpIcon(contentKey) {
     const helpButton = document.createElement("button");
     helpButton.className = "tc-icon-button";
@@ -6429,7 +6262,6 @@ ${result.join(",\n")}
     helpButton.destroy = () => controller2.abort();
     return helpButton;
   }
-  init_i18n();
   function animateCount(element, start2, end, duration, easing) {
     const startTime = performance.now();
     function frame(currentTime) {
@@ -6445,7 +6277,6 @@ ${result.join(",\n")}
     requestAnimationFrame(frame);
   }
   var easeOutQuad = (t2) => t2 * (2 - t2);
-  init_eventBus();
   function createTopCenterCounter(labelKey) {
     const counterElement2 = document.createElement("div");
     counterElement2.className = "tc-top-center-counter";
@@ -6599,11 +6430,7 @@ ${result.join(",\n")}
     if (!counterElement) return;
     updateTopCenterCounter(counterElement, newCount);
   }
-  init_i18n();
   var stopIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M280-280v-400h400v400H280Z"/></svg>`;
-  init_eventBus();
-  init_logger();
-  init_logger();
   var arrowDownIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>`;
   var CustomSelect = class {
         constructor(parentElement, options, initialValue) {
@@ -6887,8 +6714,6 @@ ${result.join(",\n")}
       }
     }
   };
-  init_infoIcon();
-  init_i18n();
   function createCheckbox(id, labelText, isChecked, tooltipConfig) {
     const label = document.createElement("label");
     label.className = "checkbox-group";
@@ -6950,13 +6775,8 @@ ${result.join(",\n")}
     container.appendChild(input);
     return container;
   }
-  init_themeIcon();
-  init_languageIcon();
-  init_formatIcon();
   var relatedSettingsIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M320-280h320v-400H320v400Zm80-80v-240h160v240H400Zm40-120h80v-80h-80v80ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/></svg>`;
   var filterIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M440-160q-17 0-28.5-11.5T400-200v-240L168-736q-15-20-4.5-42t36.5-22h560q26 0 36.5 22t-4.5 42L560-440v240q0 17-11.5 28.5T520-160h-80Zm40-308 198-252H282l198 252Zm0 0Z"/></svg>`;
-  init_config();
-  init_i18n();
   var TABS = [
     { id: "tab-related", label: "settings.relatedSettings", icon: relatedSettingsIcon },
     { id: "tab-filters", label: "settings.filterRules", icon: filterIcon },
@@ -7141,9 +6961,6 @@ ${result.join(",\n")}
     modal.appendChild(footer);
     return modal;
   }
-  init_config();
-  init_i18n();
-  init_eventBus();
   var saveIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z"/></svg>`;
   var settingsPanel = null;
   var selectComponents = {};
@@ -7383,7 +7200,6 @@ ${result.join(",\n")}
       }
     }, 10);
   }
-  init_infoIcon();
   var currentSessionCount = 0;
   on("sessionCleared", () => {
     currentSessionCount = 0;
@@ -7535,12 +7351,8 @@ ${result.join(",\n")}
       }
     }
   });
-  init_i18n();
-  init_logger();
   var reselectIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v280h-80v-200H160v400h320v80H160ZM760 0q-73 0-127.5-45.5T564-160h62q13 44 49.5 72T760-60q58 0 99-41t41-99q0-58-41-99t-99-41q-29 0-54 10.5T662-300h58v60H560v-160h60v57q27-26 63-41.5t77-15.5q83 0 141.5 58.5T960-200q0 83-58.5 141.5T760 0Z"/></svg>`;
   var stashIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M360-600v-80h360v80H360Zm0 120v-80h360v80H360Zm120 320H200h280Zm0 80H240q-50 0-85-35t-35-85v-120h120v-560h600v361q-20-2-40.5 1.5T760-505v-295H320v480h240l-80 80H200v40q0 17 11.5 28.5T240-160h240v80Zm80 0v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q8 9 12.5 20t4.5 22q0 11-4 22.5T903-300L683-80H560Zm300-263-37-37 37 37ZM620-140h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z"/></svg>`;
-  init_eventBus();
-  init_i18n();
   var CustomSlider = class {
     constructor({ min, max, value, onChange }) {
       this.min = min;
@@ -7709,7 +7521,6 @@ ${result.join(",\n")}
       this.thumb = null;
     }
   };
-  init_infoIcon();
   var unsubscribeStagedCountChanged = null;
   var sliderInstance = null;
   var scanContainer = null;
@@ -8012,9 +7823,6 @@ ${result.join(",\n")}
       unsubscribeStagedCountChanged = null;
     }
   }
-  init_i18n();
-  init_logger();
-  init_eventBus();
   var isActive = false;
   var isPaused2 = false;
   var isAdjusting = false;
@@ -8516,8 +8324,6 @@ ${result.join(",\n")}
       stopElementScan(fabElement);
     }
   }
-  init_i18n();
-  init_logger();
   function handleSummaryClick() {
     log(t("tooltip.summary"));
     if (isElementScanActive()) {
@@ -8558,10 +8364,6 @@ ${result.join(",\n")}
   function initialize() {
     initSettingsPanel(handleOpenSettings);
   }
-  init_logger();
-  init_logger();
-  init_eventBus();
-  init_i18n();
   function getPageTitle() {
     return document.title.replace(/[\\/:*?"<>|]/g, "_").trim() || "Exported_Text";
   }
@@ -8633,7 +8435,6 @@ ${result.join(",\n")}
   function initializeExporter() {
     on("exportToFile", exportToFile);
   }
-  init_i18n();
   async function initialize2() {
     if (window.top !== window.self) {
       log(t("log.main.inIframe"));

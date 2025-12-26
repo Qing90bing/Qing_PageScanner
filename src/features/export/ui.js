@@ -7,8 +7,8 @@
 
 import { exportIcon } from '../../assets/icons/exportIcon.js';
 import { t } from '../../shared/i18n/index.js';
-import { on, fire } from '../../shared/utils/eventBus.js';
-import { log } from '../../shared/utils/logger.js';
+import { on, fire } from '../../shared/utils/core/eventBus.js';
+import { log } from '../../shared/utils/core/logger.js';
 import { createButton } from '../../shared/ui/components/button.js';
 
 let exportBtn, unsubscribeLanguageChanged;

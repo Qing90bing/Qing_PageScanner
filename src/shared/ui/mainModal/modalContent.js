@@ -5,10 +5,10 @@
  * @description 负责创建和管理主模态框的内容区域。
  */
 
-import { createSVGFromString } from '../../utils/dom.js';
+import { createSVGFromString } from '../../utils/dom/dom.js';
 import * as state from './modalState.js';
 import { t } from '../../i18n/index.js';
-import { on } from '../../utils/eventBus.js';
+import { on } from '../../utils/core/eventBus.js';
 import { infoIcon } from '../../../assets/icons/infoIcon.js';
 import { dynamicIcon } from '../../../assets/icons/dynamicIcon.js';
 import { translateIcon } from '../../../assets/icons/icon.js';

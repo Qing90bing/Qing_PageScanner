@@ -1,21 +1,21 @@
 // src/features/element-scan/logic.js
 
 import { updateHighlight, cleanupUI, createAdjustmentToolbar, cleanupToolbar, showTopCenterUI, hideTopCenterUI } from './ui.js';
-import { extractRawTextFromElement } from '../../shared/utils/textProcessor.js';
-import { formatTextsForTranslation } from '../../shared/utils/formatting.js';
-import { updateModalContent } from '../../shared/ui/mainModal.js';
+import { extractRawTextFromElement } from '../../shared/utils/text/textProcessor.js';
+import { formatTextsForTranslation } from '../../shared/utils/text/formatting.js';
+import { updateModalContent } from '../../shared/ui/mainModal/index.js';
 import { uiContainer } from '../../shared/ui/uiContainer.js';
 import { getDynamicFab, getElementScanFab, updateFabTooltip } from '../../shared/ui/components/fab.js';
 import { showNotification } from '../../shared/ui/components/notification.js';
 import { t, getTranslationObject } from '../../shared/i18n/index.js';
-import { simpleTemplate } from '../../shared/utils/templating.js';
-import { log } from '../../shared/utils/logger.js';
+import { simpleTemplate } from '../../shared/utils/dom/templating.js';
+import { log } from '../../shared/utils/core/logger.js';
 import { loadSettings } from '../settings/logic.js';
-import { isWorkerAllowed } from '../../shared/utils/csp-checker.js';
-import { filterAndNormalizeTexts } from '../../shared/utils/textProcessor.js';
+import { isWorkerAllowed } from '../../shared/utils/core/csp-checker.js';
+import { filterAndNormalizeTexts } from '../../shared/utils/text/textProcessor.js';
 import { trustedWorkerUrl } from '../../shared/workers/worker-url.js';
 import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
-import { on, fire } from '../../shared/utils/eventBus.js';
+import { on, fire } from '../../shared/utils/core/eventBus.js';
 import { saveActiveSession, clearActiveSession, enablePersistence } from '../../shared/services/sessionPersistence.js';
 
 // --- 模块级状态变量 ---
@@ -342,7 +342,7 @@ export function pauseElementScan() {
     cleanupUI();
     cleanupToolbar();
     removeScrollListeners();
-    
+
     removeListenersFromDocument(document);
     removeListenersFromIframes();
 }
@@ -380,7 +380,7 @@ function filterTextsWithWorker(texts, settings) {
                 showNotification(t('notifications.cspWorkerWarning'), { type: 'info', duration: 5000 });
                 fallbackNotificationShown = true;
             }
-            
+
             // 定义一个日志记录函数以传递给核心处理器
             const logFiltered = (text, reason) => {
                 log(t('log.textProcessor.filtered', { text, reason }));
@@ -521,13 +521,13 @@ function handleMouseOver(event) {
     if (!isActive || isAdjusting || isPaused) return;
 
     const target = event.target;
-    
+
     // 忽略 FAB 容器内的元素 (需考虑 Shadow DOM 或不同 document 的情况)
     // 简单检查类名或 ID，不使用 closest 跨越 document 边界（除非 polyfilled）
     // 在 iframe 内部，这些 UI 元素通常不存在，所以这个检查主要针对主文档
     if (target.ownerDocument === document) {
-         if (target.closest('.text-extractor-fab-container') || target.closest('#text-extractor-container')) {
-            if (currentTarget) { 
+        if (target.closest('.text-extractor-fab-container') || target.closest('#text-extractor-container')) {
+            if (currentTarget) {
                 cleanupUI();
                 currentTarget = null;
             }
@@ -602,7 +602,7 @@ function handleElementClick(event) {
     if (!isActive || isAdjusting || !currentTarget || isPaused) return;
     event.preventDefault();
     event.stopPropagation();
-    
+
     const tagName = currentTarget.tagName.toLowerCase();
     log(simpleTemplate(t('log.elementScan.clickedEnteringAdjust'), { tagName }));
     isAdjusting = true;
@@ -617,7 +617,7 @@ function handleElementClick(event) {
     // 然后可能还需要继续向上遍历主文档（可选，视需求而定）。
     // 目前的逻辑是：工具栏只调整当前文档内的层级。
     // 如果选中的是 iframe 内的元素，调整范围就是 iframe 内。
-    
+
     const ownerDoc = currentTarget.ownerDocument;
     const body = ownerDoc.body;
 
@@ -646,7 +646,7 @@ export function updateSelectionLevel(level) {
         currentTarget = targetElement;
         const tagName = targetElement.tagName.toLowerCase();
         log(simpleTemplate(t('log.elementScan.adjustingLevel'), { level, tagName }));
-        
+
         let offset = { x: 0, y: 0 };
         const doc = targetElement.ownerDocument;
         if (doc !== document && doc._frameElement) {

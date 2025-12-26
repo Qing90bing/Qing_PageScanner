@@ -1,6 +1,6 @@
 // src/features/session-scan/ui.js
 
-import { updateModalContent, SHOW_PLACEHOLDER, SHOW_LOADING, closeModal } from '../../shared/ui/mainModal.js';
+import { updateModalContent, SHOW_PLACEHOLDER, SHOW_LOADING, closeModal } from '../../shared/ui/mainModal/index.js';
 import { modalOverlay } from '../../shared/ui/mainModal/modalState.js';
 import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
 import * as sessionExtractor from './logic.js';
@@ -10,9 +10,9 @@ import { t } from '../../shared/i18n/index.js';
 import { setFabIcon, getElementScanFab, updateFabTooltip, getDynamicFab } from '../../shared/ui/components/fab.js';
 import { dynamicIcon } from '../../assets/icons/dynamicIcon.js';
 import { stopIcon } from '../../assets/icons/stopIcon.js';
-import { simpleTemplate } from '../../shared/utils/templating.js';
-import { on } from '../../shared/utils/eventBus.js';
-import { log } from '../../shared/utils/logger.js';
+import { simpleTemplate } from '../../shared/utils/dom/templating.js';
+import { on } from '../../shared/utils/core/eventBus.js';
+import { log } from '../../shared/utils/core/logger.js';
 import { openContextualSettingsPanel } from '../settings/ui.js';
 import { loadSettings, saveSettings, applySettings } from '../settings/logic.js';
 import { settingsIcon } from '../../assets/icons/settingsIcon.js';
@@ -131,7 +131,7 @@ const handleEscForSessionScan = (event) => {
         // 阻止事件传播，以避免与其他 Escape 键监听器冲突
         event.preventDefault();
         event.stopPropagation();
-        
+
         // 获取动态 FAB 的引用并模拟点击以停止会话
         const dynamicFab = getDynamicFab();
         if (dynamicFab) {

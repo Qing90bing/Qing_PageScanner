@@ -1,6 +1,6 @@
 // src/shared/utils/trustedTypes.js
-import { log } from './logger.js';
-import { t } from '../i18n/index.js';
+import { log } from '../core/logger.js';
+import { t } from '../../i18n/index.js';
 
 let workerPolicy;
 let htmlPolicy;
@@ -28,7 +28,7 @@ if (window.trustedTypes && window.trustedTypes.createPolicy) {
     if (!(e.name === 'TypeError' && e.message.includes('Policy already exists'))) {
       log(t('log.trustedTypes.htmlPolicyError'), e);
     }
-     // 如果策略已存在或创建失败，htmlPolicy 将保持 undefined
+    // 如果策略已存在或创建失败，htmlPolicy 将保持 undefined
   }
 }
 
@@ -44,11 +44,11 @@ export function createTrustedWorkerUrl(url) {
   }
   // 作为备用，尝试使用可能存在的默认策略
   if (window.trustedTypes && window.trustedTypes.defaultPolicy) {
-      try {
-          return window.trustedTypes.defaultPolicy.createScriptURL(url);
-      } catch (e) {
-          log(t('log.trustedTypes.defaultWorkerPolicyWarning'), e, true);
-      }
+    try {
+      return window.trustedTypes.defaultPolicy.createScriptURL(url);
+    } catch (e) {
+      log(t('log.trustedTypes.defaultWorkerPolicyWarning'), e, true);
+    }
   }
   return url;
 }
@@ -66,11 +66,11 @@ export function createTrustedHTML(htmlString) {
   }
   // 作为备用，尝试使用可能存在的默认策略
   if (window.trustedTypes && window.trustedTypes.defaultPolicy) {
-      try {
-          return window.trustedTypes.defaultPolicy.createHTML(htmlString);
-      } catch (e) {
-          log(t('log.trustedTypes.defaultHtmlPolicyWarning'), e, true);
-      }
+    try {
+      return window.trustedTypes.defaultPolicy.createHTML(htmlString);
+    } catch (e) {
+      log(t('log.trustedTypes.defaultHtmlPolicyWarning'), e, true);
+    }
   }
   return htmlString;
 }

@@ -3,9 +3,9 @@
 import { questionMarkIcon } from '../../../assets/icons/questionMarkIcon.js';
 import { infoTooltip } from './infoTooltip.js';
 import { t } from '../../i18n/index.js';
-import { createTrustedHTML } from '../../utils/trustedTypes.js';
-import { log } from '../../utils/logger.js';
-import { simpleTemplate } from '../../utils/templating.js';
+import { createTrustedHTML } from '../../utils/dom/trustedTypes.js';
+import { log } from '../../utils/core/logger.js';
+import { simpleTemplate } from '../../utils/dom/templating.js';
 import { showTooltip, hideTooltip } from './tooltip.js';
 
 /**

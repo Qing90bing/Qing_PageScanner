@@ -3,15 +3,15 @@
 import { uiContainer } from '../../shared/ui/uiContainer.js';
 import { updateSelectionLevel, reselectElement, stopElementScan, confirmSelectionAndExtract, stageCurrentElement, pauseElementScan, resumeElementScan } from './logic.js';
 import { t } from '../../shared/i18n/index.js';
-import { createTrustedHTML } from '../../shared/utils/trustedTypes.js';
-import { log } from '../../shared/utils/logger.js';
+import { createTrustedHTML } from '../../shared/utils/dom/trustedTypes.js';
+import { log } from '../../shared/utils/core/logger.js';
 import { createButton } from '../../shared/ui/components/button.js';
 import { reselectIcon } from '../../assets/icons/reselectIcon.js';
 import { stashIcon } from '../../assets/icons/stashIcon.js';
 import { closeIcon } from '../../assets/icons/closeIcon.js';
 import { confirmIcon } from '../../assets/icons/confirmIcon.js';
-import { simpleTemplate } from '../../shared/utils/templating.js';
-import { on } from '../../shared/utils/eventBus.js';
+import { simpleTemplate } from '../../shared/utils/dom/templating.js';
+import { on } from '../../shared/utils/core/eventBus.js';
 import { createCounterWithHelp, showCounterWithHelp, hideCounterWithHelp, updateCounterValue } from '../../shared/ui/components/counterWithHelp.js';
 import { CustomSlider } from '../../shared/ui/components/customSlider.js';
 import { openContextualSettingsPanel } from '../settings/ui.js';
@@ -89,10 +89,10 @@ function createHighlightElements() {
         tagNameTooltip = document.createElement('div');
         tagNameTooltip.id = 'element-scan-tag-name';
         scanContainer.appendChild(tagNameTooltip);
-        
+
         uiContainer.appendChild(scanContainer);
     }
-    
+
     // 每次调用都应该确保元素是可见的，以处理 cleanupUI 后再次显示的情况
     // 使用 requestAnimationFrame 确保在下一帧应用 'is-visible' 类，从而触发 CSS 过渡动画
     requestAnimationFrame(() => {
@@ -141,7 +141,7 @@ export function updateHighlight(targetElement, offset = { x: 0, y: 0 }) {
     scanContainer.style.width = `${newWidth}px`;
     scanContainer.style.height = `${newHeight}px`;
     scanContainer.style.transform = `translate(${newX}px, ${newY}px)`;
-    
+
     tagNameTooltip.textContent = elementSelector;
 
     // 如果工具栏已存在，同时更新工具栏上显示的标签名
@@ -257,7 +257,7 @@ export function createAdjustmentToolbar(elementPath, offset = { x: 0, y: 0 }) {
     const toolbarRect = toolbar.getBoundingClientRect();
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
-    
+
     // 检查顶部计数器UI是否存在且可见，如果是，则为其高度保留空间
     const topCounter = uiContainer.querySelector('.counter-with-help-container.is-visible');
     const topOffset = topCounter ? topCounter.getBoundingClientRect().height + 5 : 0;
@@ -282,7 +282,7 @@ export function createAdjustmentToolbar(elementPath, offset = { x: 0, y: 0 }) {
         }
         return l;
     };
-    
+
     // 优先尝试将工具栏放在目标元素的上方或下方
     const topAbove = absRect.top - toolbarRect.height - 10;
     const topBelow = absRect.bottom + 10;
@@ -301,7 +301,7 @@ export function createAdjustmentToolbar(elementPath, offset = { x: 0, y: 0 }) {
         top = (viewportHeight - toolbarRect.height) / 2;
         left = (viewportWidth - toolbarRect.width) / 2;
     }
-    
+
     toolbar.style.top = `${top}px`;
     toolbar.style.left = `${left}px`;
     log(t('log.elementScanUI.toolbarPositioned'));

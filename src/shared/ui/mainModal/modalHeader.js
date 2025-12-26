@@ -5,14 +5,14 @@
  * @description 负责创建和管理主模态框的头部区域。
  */
 
-import { createIconTitle } from '../iconTitle.js';
-import { createSVGFromString } from '../../utils/dom.js';
+import { createIconTitle } from '../components/iconTitle.js';
+import { createSVGFromString } from '../../utils/dom/dom.js';
 import { t } from '../../i18n/index.js';
-import { on } from '../../utils/eventBus.js';
+import { on } from '../../utils/core/eventBus.js';
 import { summaryIcon } from '../../../assets/icons/summaryIcon.js';
 import { closeIcon } from '../../../assets/icons/closeIcon.js';
 import { loadSettings } from '../../../features/settings/logic.js';
-import { simpleTemplate } from '../../utils/templating.js';
+import { simpleTemplate } from '../../utils/dom/templating.js';
 
 let titleContainer, scanCountDisplay, closeBtn, unsubscribeLanguageChanged, unsubscribeSettingsSaved;
 let currentScanState = { count: 0, type: null };
@@ -63,40 +63,40 @@ function rerenderHeaderTexts() {
  * @param {Function} closeCallback - 点击关闭按钮时调用的回调函数。
  */
 export function populateModalHeader(modalHeader, closeCallback) {
-  // 左侧标题容器
-  titleContainer = document.createElement('div');
-  titleContainer.id = 'main-modal-title-container';
-  const newTitleElement = createIconTitle(summaryIcon, t('results.title'));
-  titleContainer.appendChild(newTitleElement);
+    // 左侧标题容器
+    titleContainer = document.createElement('div');
+    titleContainer.id = 'main-modal-title-container';
+    const newTitleElement = createIconTitle(summaryIcon, t('results.title'));
+    titleContainer.appendChild(newTitleElement);
 
-  // 右侧控件容器
-  const rightControlsContainer = document.createElement('div');
-  rightControlsContainer.className = 'header-right-controls';
+    // 右侧控件容器
+    const rightControlsContainer = document.createElement('div');
+    rightControlsContainer.className = 'header-right-controls';
 
-  // 扫描计数器
-  scanCountDisplay = document.createElement('span');
-  scanCountDisplay.id = 'scan-count-display';
-  // 将计数器直接附加到标题元素后面
-  newTitleElement.appendChild(scanCountDisplay);
+    // 扫描计数器
+    scanCountDisplay = document.createElement('span');
+    scanCountDisplay.id = 'scan-count-display';
+    // 将计数器直接附加到标题元素后面
+    newTitleElement.appendChild(scanCountDisplay);
 
-  // 关闭按钮
-  closeBtn = document.createElement('span');
-  closeBtn.className = 'tc-close-button text-extractor-modal-close';
-  closeBtn.appendChild(createSVGFromString(closeIcon));
+    // 关闭按钮
+    closeBtn = document.createElement('span');
+    closeBtn.className = 'tc-close-button text-extractor-modal-close';
+    closeBtn.appendChild(createSVGFromString(closeIcon));
 
-  // 将关闭按钮添加到右侧容器
-  rightControlsContainer.appendChild(closeBtn);
+    // 将关闭按钮添加到右侧容器
+    rightControlsContainer.appendChild(closeBtn);
 
-  // 将左右容器添加到头部
-  modalHeader.appendChild(titleContainer);
-  modalHeader.appendChild(rightControlsContainer);
+    // 将左右容器添加到头部
+    modalHeader.appendChild(titleContainer);
+    modalHeader.appendChild(rightControlsContainer);
 
-  // 绑定事件
-  closeBtn.addEventListener('click', closeCallback);
+    // 绑定事件
+    closeBtn.addEventListener('click', closeCallback);
 
-  // 监听事件
-  unsubscribeLanguageChanged = on('languageChanged', rerenderHeaderTexts);
-  unsubscribeSettingsSaved = on('settingsSaved', updateScanCountDisplay);
+    // 监听事件
+    unsubscribeLanguageChanged = on('languageChanged', rerenderHeaderTexts);
+    unsubscribeSettingsSaved = on('settingsSaved', updateScanCountDisplay);
 }
 
 /**

@@ -1,12 +1,12 @@
 // src/shared/ui/summaryHandler.js
 
-import { updateModalContent, SHOW_PLACEHOLDER } from './mainModal.js';
+import { updateModalContent, SHOW_PLACEHOLDER } from './mainModal/index.js';
 import { updateScanCount } from './mainModal/modalHeader.js';
 import { t } from '../i18n/index.js';
-import { log } from '../utils/logger.js';
+import { log } from '../utils/core/logger.js';
 import { isElementScanActive, getStagedTexts } from '../../features/element-scan/logic.js';
 import { showSessionSummary } from '../../features/session-scan/ui.js';
-import { formatTextsForTranslation } from '../utils/formatting.js';
+import { formatTextsForTranslation } from '../utils/text/formatting.js';
 import { loadSettings } from '../../features/settings/logic.js';
 
 /**

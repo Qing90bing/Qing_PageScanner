@@ -6,24 +6,24 @@
  *              该模块作为总协调器，整合来自 ./mainModal/ 子模块的功能。
  */
 
-import { performQuickScan } from '../../features/quick-scan/logic.js';
-import { showNotification } from './components/notification.js';
-import { loadSettings } from '../../features/settings/logic.js';
-import { log } from '../utils/logger.js';
-import { t } from '../i18n/index.js';
-import { simpleTemplate } from '../utils/templating.js';
-import * as state from './mainModal/modalState.js';
-import { fire } from '../utils/eventBus.js';
-import { isSessionRecording } from '../../features/session-scan/logic.js';
+import { performQuickScan } from '../../../features/quick-scan/logic.js';
+import { showNotification } from '../components/notification.js';
+import { loadSettings } from '../../../features/settings/logic.js';
+import { log } from '../../utils/core/logger.js';
+import { t } from '../../i18n/index.js';
+import { simpleTemplate } from '../../utils/dom/templating.js';
+import * as state from './modalState.js';
+import { fire } from '../../utils/core/eventBus.js';
+import { isSessionRecording } from '../../../features/session-scan/logic.js';
 
 // 重新导出常量以保持API兼容性
-export { SHOW_PLACEHOLDER, SHOW_LOADING } from './mainModal/modalState.js';
-import { createModalLayout } from './mainModal/modalLayout.js';
-import { populateModalHeader, destroyModalHeader, updateScanCount } from './mainModal/modalHeader.js';
-import { populateModalContent, destroyModalContent, showLoading, hideLoading } from './mainModal/modalContent.js';
-import { populateModalFooter, destroyModalFooter, updateStatistics } from './mainModal/modalFooter.js';
-import { initializeLineNumbers, updateLineNumbers, updateActiveLine } from './mainModal/lineNumberLogic.js';
-import { updateExportButtonState } from '../../features/export/ui.js';
+export { SHOW_PLACEHOLDER, SHOW_LOADING } from './modalState.js';
+import { createModalLayout } from './modalLayout.js';
+import { populateModalHeader, destroyModalHeader, updateScanCount } from './modalHeader.js';
+import { populateModalContent, destroyModalContent, showLoading, hideLoading } from './modalContent.js';
+import { populateModalFooter, destroyModalFooter, updateStatistics } from './modalFooter.js';
+import { initializeLineNumbers, updateLineNumbers, updateActiveLine } from './lineNumberLogic.js';
+import { updateExportButtonState } from '../../../features/export/ui.js';
 
 // 用于存储快速扫描的完整、未经截断的内容
 export let fullQuickScanContent = '';
@@ -156,7 +156,7 @@ export function closeModal() {
         log(t('log.ui.modal.closing'));
         state.modalOverlay.classList.remove('is-visible');
         state.modalOverlay.removeEventListener('keydown', handleKeyDown);
-        
+
         // 触发一个全局事件，通知其他模块模态框已关闭
         fire('modalClosed');
     }

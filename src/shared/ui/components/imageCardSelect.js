@@ -1,7 +1,7 @@
 // src/shared/ui/components/imageCardSelect.js
 
-import { createSVGFromString } from '../../utils/dom.js';
-import { createTrustedHTML } from '../../utils/trustedTypes.js';
+import { createSVGFromString } from '../../utils/dom/dom.js';
+import { createTrustedHTML } from '../../utils/dom/trustedTypes.js';
 
 /**
  * @class ImageCardSelect
@@ -40,7 +40,7 @@ export class ImageCardSelect {
             // 1. 预览区域 (使用 CSS 绘制示意图)
             const preview = document.createElement('div');
             preview.className = 'image-card-preview';
-            
+
             if (option.previewType === 'code-array') {
                 preview.appendChild(this.createCodePreview('array'));
             } else if (option.previewType === 'code-object') {

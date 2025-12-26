@@ -1,8 +1,8 @@
 // src/shared/services/sessionPersistence.js
 
 import { getValue, setValue, deleteValue } from './tampermonkey.js';
-import { fire } from '../utils/eventBus.js';
-import { log } from '../utils/logger.js';
+import { fire } from '../utils/core/eventBus.js';
+import { log } from '../utils/core/logger.js';
 import { t } from '../i18n/index.js';
 import { getSessionTexts } from '../../features/session-scan/logic.js';
 

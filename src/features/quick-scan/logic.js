@@ -6,14 +6,14 @@
  */
 
 import { loadSettings } from '../settings/logic.js';
-import { log } from '../../shared/utils/logger.js';
-import { isWorkerAllowed } from '../../shared/utils/csp-checker.js';
-import { formatTextsForTranslation } from '../../shared/utils/formatting.js';
+import { log } from '../../shared/utils/core/logger.js';
+import { isWorkerAllowed } from '../../shared/utils/core/csp-checker.js';
+import { formatTextsForTranslation } from '../../shared/utils/text/formatting.js';
 import { trustedWorkerUrl } from '../../shared/workers/worker-url.js';
 import { showNotification } from '../../shared/ui/components/notification.js';
 import { t, getTranslationObject } from '../../shared/i18n/index.js';
 import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
-import { extractAndProcessText, filterAndNormalizeTexts } from '../../shared/utils/textProcessor.js';
+import { extractAndProcessText, filterAndNormalizeTexts } from '../../shared/utils/text/textProcessor.js';
 
 /**
  * @description 执行一次性的静态页面扫描。
@@ -45,7 +45,7 @@ export const performQuickScan = () => {
                     enableDebugLogging,
                     logFiltered
                 );
-                
+
                 const formattedText = formatTextsForTranslation(filteredTexts, outputFormat);
                 const result = {
                     formattedText,
