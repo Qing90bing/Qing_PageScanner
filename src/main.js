@@ -58,7 +58,7 @@ export async function initialize() {
   try {
     await loadAndResumeSession();
   } catch (e) {
-    log('Failed to resume session', e);
+    log(t('log.main.resumeFailed'), e);
   }
 }
 

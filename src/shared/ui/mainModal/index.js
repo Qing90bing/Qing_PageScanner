@@ -104,7 +104,7 @@ export function destroyMainModal() {
     // 4. 重置状态
     state.resetState();
     fullQuickScanContent = '';
-    log('Main modal destroyed.');
+    log(t('log.ui.modal.destroyed'));
 }
 
 /**

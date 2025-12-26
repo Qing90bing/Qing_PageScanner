@@ -34,9 +34,9 @@
     "language": "语言",
     "format": "输出格式",
     "formats": {
-        "array": "嵌套数组",
-        "object": "键值对对象",
-        "csv": "CSV 字符串"
+      "array": "嵌套数组",
+      "object": "键值对对象",
+      "csv": "CSV 字符串"
     },
     "relatedSettings": "相关设置",
     "filterRules": "内容过滤规则",
@@ -76,7 +76,9 @@
       "show_scan_count": "在标题中启用扫描计数"
     },
     "advanced": {
-      "enable_debug_logging": "启用调试日志记录"
+      "enable_debug_logging": "启用调试日志记录",
+      "init_i18n": "初始化国际化（i18n）",
+      "init_logger": "根据设置初始化日志记录器"
     },
     "panel": {
       "title": "设置面板"
@@ -168,11 +170,11 @@
     "resumeSessionScan": "恢复动态扫描",
     "tooltipHelp": "帮助",
     "persistData": {
-        "title": "数据持久化说明",
-        "text": {
-            "sessionScan": "开启后，当点击链接跳转到新页面时，会自动恢复并继续累加上一页的扫描结果。关闭此选项，则只恢复扫描模式，但会开始一次全新的扫描。",
-            "elementScan": "开启后，当点击链接跳转到新页面时，会自动恢复当前已暂存的所有文本。关闭此选项，则只恢复扫描模式，但暂存区会是空的。"
-        }
+      "title": "数据持久化说明",
+      "text": {
+        "sessionScan": "开启后，当点击链接跳转到新页面时，会自动恢复并继续累加上一页的扫描结果。关闭此选项，则只恢复扫描模式，但会开始一次全新的扫描。",
+        "elementScan": "开启后，当点击链接跳转到新页面时，会自动恢复当前已暂存的所有文本。关闭此选项，则只恢复扫描模式，但暂存区会是空的。"
+      }
     },
     "disabled": {
       "scan_in_progress": "另一项扫描正在进行中"
@@ -253,6 +255,7 @@
     },
     "sessionScan": {
       "switchToFallback": "[动态扫描] 正在切换到主线程备选方案。",
+      "resuming": "正在从上一页恢复动态扫描...",
       "domObserver": {
         "stopped": "[动态扫描] 已停止监听 DOM 变化。"
       },
@@ -289,7 +292,10 @@
         "opening": "正在打开主模态框...",
         "closing": "正在关闭主模态框...",
         "scanFailed": "静态扫描失败: {{error}}",
-        "clearContent": "清空内容按钮已点击。"
+        "clearContent": "清空内容按钮已点击。",
+        "clearingContent": "正在清除模式的内容: {{mode}}",
+        "footerCleanedUp": "模态框页脚已清理。",
+        "destroyed": "主模态框已销毁。"
       },
       "helpIcon": {
         "clicked": "点击了帮助图标，显示内容键：{{contentKey}}"
@@ -300,18 +306,31 @@
       "csvError": "解析文本并生成CSV时出错: {{error}}",
       "fileExported": "文件已导出: {{filename}}",
       "noContent": "无内容可导出。",
-      "unknownFormat": "未知的导出格式: {{format}}"
+      "unknownFormat": "未知的导出格式: {{format}}",
+      "uiCleanedUp": "导出UI已清理。",
+      "exportingUserContent": "正在导出UI中用户编辑的内容。",
+      "exportingRawData": "正在导出原始数据（UI内容无效或被截断）。"
     },
     "main": {
       "requestingSessionScanData": "正在请求动态扫描模式的完整数据...",
       "exportingQuickScanData": "正在导出快速扫描模式内存中的完整数据...",
       "inIframe": "脚本在 iframe 中，已跳过初始化。",
       "initializing": "脚本初始化开始...",
-      "initialSettingsLoaded": "初始设置已加载:"
+      "initialSettingsLoaded": "初始设置已加载:",
+      "resumeFailed": "恢复会话失败"
     },
     "dom": {
       "ttpCreationError": "创建 Trusted Type 策略失败:",
       "svgParseError": "SVG 字符串无效或解析失败:"
+    },
+    "persistence": {
+      "saveBlocked": "保存被阻止，因为持有化已被禁用。",
+      "staleSession": "发现过期的会话，已忽略。",
+      "parseError": "解析已保存的会话失败，正在清除。"
+    },
+    "worker": {
+      "sessionStarted": "会话已开始，初始包含 {{count}} 个项目。",
+      "sessionCleared": "会话已清除。"
     },
     "elementScan": {
       "starting": "选取元素扫描已开始。",
@@ -319,6 +338,10 @@
       "listenersAdded": "已为选取元素扫描添加全局事件监听器。",
       "listenersRemoved": "已为选取元素扫描移除全局事件监听器。",
       "stateReset": "选取元素扫描状态已重置。",
+      "resuming": "正在从上一页恢复元素扫描...",
+      "restored": "已恢复 {{count}} 个暂存项目。",
+      "skipRestore": "根据设置跳过数据恢复。",
+      "startingNewSession": "开始新的元素扫描会话。",
       "reselecting": "正在返回元素重新选择模式。",
       "hovering": "正在悬停于 <{{tagName}}>。",
       "escapePressed": "按下 Escape 键，正在停止选取元素扫描。",

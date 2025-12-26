@@ -34,9 +34,9 @@
     "language": "語言",
     "format": "輸出格式",
     "formats": {
-        "array": "嵌套陣列",
-        "object": "鍵值對物件",
-        "csv": "CSV 字串"
+      "array": "嵌套陣列",
+      "object": "鍵值對物件",
+      "csv": "CSV 字串"
     },
     "relatedSettings": "相關設定",
     "filterRules": "內容過濾規則",
@@ -168,11 +168,11 @@
     "resumeSessionScan": "恢復動態掃描",
     "tooltipHelp": "幫助",
     "persistData": {
-        "title": "資料持久化說明",
-        "text": {
-            "sessionScan": "開啟後，當點擊鏈接跳轉到新頁面時，會自動恢復並繼續累加上一頁的掃描結果。關閉此選項，則只恢復掃描模式，但會開始一次全新的掃描。",
-            "elementScan": "開啟後，當點擊鏈接跳轉到新頁面時，會自動恢復當前已暫存的所有文本。關閉此選項，則只恢復掃描模式，但暫存區會是空的。"
-        }
+      "title": "資料持久化說明",
+      "text": {
+        "sessionScan": "開啟後，當點擊鏈接跳轉到新頁面時，會自動恢復並繼續累加上一頁的掃描結果。關閉此選項，則只恢復掃描模式，但會開始一次全新的掃描。",
+        "elementScan": "開啟後，當點擊鏈接跳轉到新頁面時，會自動恢復當前已暫存的所有文本。關閉此選項，則只恢復掃描模式，但暫存區會是空的。"
+      }
     },
     "disabled": {
       "scan_in_progress": "另一項掃描正在進行中"
@@ -253,6 +253,7 @@
     },
     "sessionScan": {
       "switchToFallback": "[動態掃描] 正在切換到主線程備選方案。",
+      "resuming": "正在從上一頁恢復動態掃描...",
       "domObserver": {
         "stopped": "[動態掃描] 已停止監聽 DOM 變化。"
       },
@@ -289,7 +290,10 @@
         "opening": "正在開啟主模態框...",
         "closing": "正在關閉主模態框...",
         "scanFailed": "靜態掃描失敗: {{error}}",
-        "clearContent": "清空內容按鈕已點擊。"
+        "clearContent": "清空內容按鈕已點擊。",
+        "clearingContent": "正在清除模式的內容: {{mode}}",
+        "footerCleanedUp": "模態框頁腳已清理。",
+        "destroyed": "主模態框已銷毀。"
       },
       "helpIcon": {
         "clicked": "點擊了幫助圖示，顯示內容鍵：{{contentKey}}"
@@ -300,18 +304,31 @@
       "csvError": "解析文本並產生CSV時出錯: {{error}}",
       "fileExported": "檔案已匯出: {{filename}}",
       "noContent": "無內容可匯出。",
-      "unknownFormat": "未知的匯出格式: {{format}}"
+      "unknownFormat": "未知的匯出格式: {{format}}",
+      "uiCleanedUp": "匯出UI已清理。",
+      "exportingUserContent": "正在匯出UI中使用者編輯的內容。",
+      "exportingRawData": "正在匯出原始資料（UI內容無效或被截斷）。"
     },
     "main": {
       "requestingSessionScanData": "正在請求動態掃描模式的完整資料...",
       "exportingQuickScanData": "正在匯出快速掃描模式記憶體中的完整資料...",
       "inIframe": "腳本在 iframe 中，已跳過初始化。",
       "initializing": "腳本初始化開始...",
-      "initialSettingsLoaded": "初始設定已載入:"
+      "initialSettingsLoaded": "初始設定已載入:",
+      "resumeFailed": "恢復會話失敗"
     },
     "dom": {
       "ttpCreationError": "建立 Trusted Type 策略失敗:",
       "svgParseError": "SVG 字串無效或解析失敗:"
+    },
+    "persistence": {
+      "saveBlocked": "儲存被阻止，因為持久化已被禁用。",
+      "staleSession": "發現過期的會話，已忽略。",
+      "parseError": "解析已儲存的會話失敗，正在清除。"
+    },
+    "worker": {
+      "sessionStarted": "會話已開始，初始包含 {{count}} 個項目。",
+      "sessionCleared": "會話已清除。"
     },
     "elementScan": {
       "starting": "選取元素掃描已開始。",
@@ -319,6 +336,10 @@
       "listenersAdded": "已為選取元素掃描新增全域事件監聽器。",
       "listenersRemoved": "已為選取元素掃描移除全域事件監聽器。",
       "stateReset": "選取元素掃描狀態已重設。",
+      "resuming": "正在從上一頁恢復元素掃描...",
+      "restored": "已恢復 {{count}} 個暫存項目。",
+      "skipRestore": "根據設定跳過資料恢復。",
+      "startingNewSession": "開始新的元素掃描會話。",
       "reselecting": "正在返回元素重新選擇模式。",
       "hovering": "正在懸停於 <{{tagName}}>。",
       "escapePressed": "按下 Escape 鍵，正在停止選取元素掃描。",

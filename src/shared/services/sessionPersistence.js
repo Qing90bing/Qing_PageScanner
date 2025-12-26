@@ -32,7 +32,7 @@ export function enablePersistence() {
 export async function saveActiveSession(mode, data = null) {
     // 关键锁：如果持久化已被禁用（例如用户已点击停止），则拦截任何保存尝试
     if (!isPersistenceEnabled) {
-        log('Save blocked because persistence is disabled.');
+        log(t('log.persistence.saveBlocked'));
         return;
     }
 
@@ -80,7 +80,7 @@ export async function loadAndResumeSession() {
 
         // 检查时间戳，如果页面跳转（或加载）时间过长，则放弃恢复
         if (Date.now() - state.timestamp > RESUME_TIMEOUT_MS) {
-            log('Stale session found, ignoring.');
+            log(t('log.persistence.staleSession'));
             return;
         }
 
@@ -88,7 +88,7 @@ export async function loadAndResumeSession() {
         // 我们在这里不直接调用 startSessionScan 或 startElementScan，以保持解耦
         fire('resumeScanSession', state);
     } catch (e) {
-        log('Failed to parse saved session, clearing.', e);
+        log(t('log.persistence.parseError'), e);
         await clearActiveSession();
     }
 }

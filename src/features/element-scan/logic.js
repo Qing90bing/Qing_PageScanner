@@ -48,19 +48,27 @@ on('clearElementScan', () => {
 // 新增：监听会话恢复事件
 on('resumeScanSession', async (state) => {
     if (state.mode === 'element-scan') {
-        log('Resuming element-scan from previous page...');
         const elementScanFab = getElementScanFab();
         const settings = await loadSettings();
 
         // 确保按钮存在且当前未在扫描
         if (elementScanFab && !isElementScanActive()) {
-            // 根据设置决定是否恢复暂存的数据
-            if (settings.elementScan_persistData && state.data && Array.isArray(state.data)) {
-                stagedTexts = new Set(state.data);
-                log(`Restored ${stagedTexts.size} staged items.`);
+            // Check if there's saved state to restore
+            if (state && state.mode === 'element-scan' && state.data && Array.isArray(state.data)) {
+                log(t('log.elementScan.resuming'));
+
+                // 只有当设置为 true 时才恢复数据
+                if (settings.elementScan_persistData) { // Assuming settings.elementScan_persistData is the equivalent of shouldPersistElementScanData()
+                    state.data.forEach(item => stagedTexts.add(item));
+                    log(t('log.elementScan.restored', { count: stagedTexts.size }));
+                    // 恢复 UI 状态 (如果需要)
+                    // ...
+                } else {
+                    stagedTexts.clear(); // Clear if persistence is off but data was present
+                    log(t('log.elementScan.skipRestore'));
+                }
             } else {
-                stagedTexts.clear();
-                log('Skipping data restoration based on settings.');
+                log(t('log.elementScan.startingNewSession')); // Log for starting a new session if no data to restore
             }
 
             // 自动启动扫描

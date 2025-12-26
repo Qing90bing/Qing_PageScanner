@@ -99,22 +99,29 @@ function exportToFile() {
     const truncationWarning = t('scan.truncationWarning');
     const isTruncated = currentUiContent && currentUiContent.includes(truncationWarning);
 
+    // Determine content to export
+    let contentToExport = null;
+    let contentSource = 'raw'; // 'ui' or 'raw'
+
     // 3. 如果 UI 里有内容，且没有被截断，直接导出 UI 里的内容
     if (currentUiContent && !isTruncated && currentUiContent.trim() !== '') {
-        log('Exporting user-edited content from UI.');
-        processAndDownload(currentUiContent);
-        return;
+        contentSource = 'ui';
+        contentToExport = currentUiContent;
     }
 
-    // 4. 回退到使用内存中的原始数据
-    log('Exporting original raw data (UI content invalid or truncated).');
-
-    if (currentMode === 'session-scan') {
-        log(t('log.main.requestingSessionScanData'));
-        requestSummary(processAndDownload);
+    if (contentSource === 'ui' && contentToExport && contentToExport.length > 0) {
+        log(t('log.exporter.exportingUserContent'));
+        processAndDownload(contentToExport);
     } else {
-        log(t('log.main.exportingQuickScanData'));
-        processAndDownload(fullQuickScanContent);
+        log(t('log.exporter.exportingRawData'));
+        // 回退到原始数据
+        if (currentMode === 'session-scan') { // Changed 'state.mode' to 'currentMode' to match existing variable
+            log(t('log.main.requestingSessionScanData'));
+            requestSummary(processAndDownload);
+        } else {
+            log(t('log.main.exportingQuickScanData'));
+            processAndDownload(fullQuickScanContent);
+        }
     }
 }
 

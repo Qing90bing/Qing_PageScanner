@@ -34,9 +34,9 @@
     "language": "Language",
     "format": "Output Format",
     "formats": {
-        "array": "Nested Array",
-        "object": "Key-Value Object",
-        "csv": "CSV String"
+      "array": "Nested Array",
+      "object": "Key-Value Object",
+      "csv": "CSV String"
     },
     "relatedSettings": "Related Settings",
     "filterRules": "Content Filtering Rules",
@@ -82,9 +82,9 @@
       "title": "Settings Panel"
     },
     "contextual": {
-        "elementScanTitle": "Element Scan Settings",
-        "sessionScanTitle": "Dynamic Scan Settings",
-        "persistData": "Persist data across pages"
+      "elementScanTitle": "Element Scan Settings",
+      "sessionScanTitle": "Dynamic Scan Settings",
+      "persistData": "Persist data across pages"
     },
     "languages": {
       "auto": "Auto",
@@ -168,11 +168,11 @@
     "resumeSessionScan": "Resume Dynamic Scan",
     "tooltipHelp": "Help",
     "persistData": {
-        "title": "Data Persistence Explanation",
-        "text": {
-            "sessionScan": "When enabled, automatically resumes and continues accumulating results from the previous page when you navigate to a new one. If disabled, only the scan mode is restored, and a new scan session begins.",
-            "elementScan": "When enabled, automatically restores all currently staged text when you navigate to a new page. If disabled, only the scan mode is restored, and the staged area will be empty."
-        }
+      "title": "Data Persistence Explanation",
+      "text": {
+        "sessionScan": "When enabled, automatically resumes and continues accumulating results from the previous page when you navigate to a new one. If disabled, only the scan mode is restored, and a new scan session begins.",
+        "elementScan": "When enabled, automatically restores all currently staged text when you navigate to a new page. If disabled, only the scan mode is restored, and the staged area will be empty."
+      }
     },
     "disabled": {
       "scan_in_progress": "Another scan is in progress"
@@ -253,6 +253,7 @@
     },
     "sessionScan": {
       "switchToFallback": "[Dynamic Scan] Switching to main thread fallback.",
+      "resuming": "Resuming session-scan from previous page...",
       "domObserver": {
         "stopped": "[Dynamic Scan] Stopped listening for DOM changes."
       },
@@ -289,7 +290,10 @@
         "opening": "Opening main modal...",
         "closing": "Closing main modal...",
         "scanFailed": "Static scan failed: {{error}}",
-        "clearContent": "Clear content button clicked."
+        "clearContent": "Clear content button clicked.",
+        "clearingContent": "Clearing content for mode: {{mode}}",
+        "footerCleanedUp": "Modal footer cleaned up.",
+        "destroyed": "Main modal destroyed."
       },
       "helpIcon": {
         "clicked": "Help icon clicked, displaying content for key: {{contentKey}}"
@@ -300,18 +304,31 @@
       "csvError": "Error while parsing text and generating CSV: {{error}}",
       "fileExported": "File exported: {{filename}}",
       "noContent": "No content to export.",
-      "unknownFormat": "Unknown export format: {{format}}"
+      "unknownFormat": "Unknown export format: {{format}}",
+      "uiCleanedUp": "Export UI cleaned up.",
+      "exportingUserContent": "Exporting user-edited content from UI.",
+      "exportingRawData": "Exporting original raw data (UI content invalid or truncated)."
     },
     "main": {
       "requestingSessionScanData": "Requesting full data from session-scan mode...",
       "exportingQuickScanData": "Exporting full data from quick-scan mode's memory...",
       "inIframe": "Script is in an iframe, skipping initialization.",
       "initializing": "Script initialization started...",
-      "initialSettingsLoaded": "Initial settings loaded:"
+      "initialSettingsLoaded": "Initial settings loaded:",
+      "resumeFailed": "Failed to resume session"
     },
     "dom": {
       "ttpCreationError": "Failed to create Trusted Type policy:",
       "svgParseError": "Invalid or failed to parse SVG string:"
+    },
+    "persistence": {
+      "saveBlocked": "Save blocked because persistence is disabled.",
+      "staleSession": "Stale session found, ignoring.",
+      "parseError": "Failed to parse saved session, clearing."
+    },
+    "worker": {
+      "sessionStarted": "Session started with {{count}} initial items.",
+      "sessionCleared": "Session cleared."
     },
     "elementScan": {
       "starting": "Element Scan started.",
@@ -319,6 +336,10 @@
       "listenersAdded": "Global event listeners for element scan added.",
       "listenersRemoved": "Global event listeners for element scan removed.",
       "stateReset": "Element scan state has been reset.",
+      "resuming": "Resuming element-scan from previous page...",
+      "restored": "Restored {{count}} staged items.",
+      "skipRestore": "Skipping data restoration based on settings.",
+      "startingNewSession": "Starting new element scan session.",
       "reselecting": "Returning to element reselection mode.",
       "hovering": "Hovering over <{{tagName}}>.",
       "escapePressed": "Escape key pressed, stopping element scan.",

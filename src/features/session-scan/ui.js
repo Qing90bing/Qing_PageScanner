@@ -204,7 +204,7 @@ export function handleDynamicExtractClick(dynamicFab) {
 // 新增：监听会话恢复事件
 on('resumeScanSession', async (state) => {
     if (state.mode === 'session-scan') {
-        log('Resuming session-scan from previous page...');
+        log(t('log.sessionScan.resuming'));
         const dynamicFab = getDynamicFab();
         const settings = await loadSettings();
 

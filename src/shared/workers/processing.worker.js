@@ -157,7 +157,7 @@ self.onmessage = (event) => {
                     }
                 });
             }
-            log(`Session started with ${sessionTexts.size} initial items.`);
+            log(t('log.worker.sessionStarted', { count: sessionTexts.size }));
             // After processing initial data, send an immediate count update
             self.postMessage({
                 type: 'countUpdated',
@@ -210,7 +210,7 @@ self.onmessage = (event) => {
          */
         case 'session-clear':
             sessionTexts.clear();
-            log('Session cleared.');
+            log(t('log.worker.sessionCleared'));
             self.postMessage({ type: 'countUpdated', payload: { count: 0, newTexts: [] } });
             break;
 

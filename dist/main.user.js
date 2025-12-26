@@ -575,6 +575,7 @@ var TextExtractor = (() => {
       },
       sessionScan: {
         switchToFallback: "[Dynamic Scan] Switching to main thread fallback.",
+        resuming: "Resuming session-scan from previous page...",
         domObserver: {
           stopped: "[Dynamic Scan] Stopped listening for DOM changes."
         },
@@ -611,7 +612,10 @@ var TextExtractor = (() => {
           opening: "Opening main modal...",
           closing: "Closing main modal...",
           scanFailed: "Static scan failed: {{error}}",
-          clearContent: "Clear content button clicked."
+          clearContent: "Clear content button clicked.",
+          clearingContent: "Clearing content for mode: {{mode}}",
+          footerCleanedUp: "Modal footer cleaned up.",
+          destroyed: "Main modal destroyed."
         },
         helpIcon: {
           clicked: "Help icon clicked, displaying content for key: {{contentKey}}"
@@ -622,18 +626,31 @@ var TextExtractor = (() => {
         csvError: "Error while parsing text and generating CSV: {{error}}",
         fileExported: "File exported: {{filename}}",
         noContent: "No content to export.",
-        unknownFormat: "Unknown export format: {{format}}"
+        unknownFormat: "Unknown export format: {{format}}",
+        uiCleanedUp: "Export UI cleaned up.",
+        exportingUserContent: "Exporting user-edited content from UI.",
+        exportingRawData: "Exporting original raw data (UI content invalid or truncated)."
       },
       main: {
         requestingSessionScanData: "Requesting full data from session-scan mode...",
         exportingQuickScanData: "Exporting full data from quick-scan mode's memory...",
         inIframe: "Script is in an iframe, skipping initialization.",
         initializing: "Script initialization started...",
-        initialSettingsLoaded: "Initial settings loaded:"
+        initialSettingsLoaded: "Initial settings loaded:",
+        resumeFailed: "Failed to resume session"
       },
       dom: {
         ttpCreationError: "Failed to create Trusted Type policy:",
         svgParseError: "Failed to parse SVG string or string is invalid:"
+      },
+      persistence: {
+        saveBlocked: "Save blocked because persistence is disabled.",
+        staleSession: "Stale session found, ignoring.",
+        parseError: "Failed to parse saved session, clearing."
+      },
+      worker: {
+        sessionStarted: "Session started with {{count}} initial items.",
+        sessionCleared: "Session cleared."
       },
       elementScan: {
         starting: "Element Scan started.",
@@ -641,6 +658,10 @@ var TextExtractor = (() => {
         listenersAdded: "Global event listeners for element scan added.",
         listenersRemoved: "Global event listeners for element scan removed.",
         stateReset: "Element scan state has been reset.",
+        resuming: "Resuming element-scan from previous page...",
+        restored: "Restored {{count}} staged items.",
+        skipRestore: "Skipping data restoration based on settings.",
+        startingNewSession: "Starting new element scan session.",
         reselecting: "Returning to element reselection mode.",
         hovering: "Hovering over <{{tagName}}>.",
         escapePressed: "Escape key pressed, stopping element scan.",
@@ -968,6 +989,7 @@ var TextExtractor = (() => {
       },
       sessionScan: {
         switchToFallback: "[Dynamic Scan] Switching to main thread fallback.",
+        resuming: "Resuming session-scan from previous page...",
         domObserver: {
           stopped: "[Dynamic Scan] Stopped listening for DOM changes."
         },
@@ -1004,7 +1026,10 @@ var TextExtractor = (() => {
           opening: "Opening main modal...",
           closing: "Closing main modal...",
           scanFailed: "Static scan failed: {{error}}",
-          clearContent: "Clear content button clicked."
+          clearContent: "Clear content button clicked.",
+          clearingContent: "Clearing content for mode: {{mode}}",
+          footerCleanedUp: "Modal footer cleaned up.",
+          destroyed: "Main modal destroyed."
         },
         helpIcon: {
           clicked: "Help icon clicked, displaying content for key: {{contentKey}}"
@@ -1015,18 +1040,31 @@ var TextExtractor = (() => {
         csvError: "Error while parsing text and generating CSV: {{error}}",
         fileExported: "File exported: {{filename}}",
         noContent: "No content to export.",
-        unknownFormat: "Unknown export format: {{format}}"
+        unknownFormat: "Unknown export format: {{format}}",
+        uiCleanedUp: "Export UI cleaned up.",
+        exportingUserContent: "Exporting user-edited content from UI.",
+        exportingRawData: "Exporting original raw data (UI content invalid or truncated)."
       },
       main: {
         requestingSessionScanData: "Requesting full data from session-scan mode...",
         exportingQuickScanData: "Exporting full data from quick-scan mode's memory...",
         inIframe: "Script is in an iframe, skipping initialization.",
         initializing: "Script initialization started...",
-        initialSettingsLoaded: "Initial settings loaded:"
+        initialSettingsLoaded: "Initial settings loaded:",
+        resumeFailed: "Failed to resume session"
       },
       dom: {
         ttpCreationError: "Failed to create Trusted Type policy:",
         svgParseError: "Invalid or failed to parse SVG string:"
+      },
+      persistence: {
+        saveBlocked: "Save blocked because persistence is disabled.",
+        staleSession: "Stale session found, ignoring.",
+        parseError: "Failed to parse saved session, clearing."
+      },
+      worker: {
+        sessionStarted: "Session started with {{count}} initial items.",
+        sessionCleared: "Session cleared."
       },
       elementScan: {
         starting: "Element Scan started.",
@@ -1034,6 +1072,10 @@ var TextExtractor = (() => {
         listenersAdded: "Global event listeners for element scan added.",
         listenersRemoved: "Global event listeners for element scan removed.",
         stateReset: "Element scan state has been reset.",
+        resuming: "Resuming element-scan from previous page...",
+        restored: "Restored {{count}} staged items.",
+        skipRestore: "Skipping data restoration based on settings.",
+        startingNewSession: "Starting new element scan session.",
         reselecting: "Returning to element reselection mode.",
         hovering: "Hovering over <{{tagName}}>.",
         escapePressed: "Escape key pressed, stopping element scan.",
@@ -1184,7 +1226,9 @@ var TextExtractor = (() => {
         show_scan_count: "\u5728\u6807\u9898\u4E2D\u542F\u7528\u626B\u63CF\u8BA1\u6570"
       },
       advanced: {
-        enable_debug_logging: "\u542F\u7528\u8C03\u8BD5\u65E5\u5FD7\u8BB0\u5F55"
+        enable_debug_logging: "\u542F\u7528\u8C03\u8BD5\u65E5\u5FD7\u8BB0\u5F55",
+        init_i18n: "\u521D\u59CB\u5316\u56FD\u9645\u5316\uFF08i18n\uFF09",
+        init_logger: "\u6839\u636E\u8BBE\u7F6E\u521D\u59CB\u5316\u65E5\u5FD7\u8BB0\u5F55\u5668"
       },
       panel: {
         title: "\u8BBE\u7F6E\u9762\u677F"
@@ -1361,6 +1405,7 @@ var TextExtractor = (() => {
       },
       sessionScan: {
         switchToFallback: "[\u52A8\u6001\u626B\u63CF] \u6B63\u5728\u5207\u6362\u5230\u4E3B\u7EBF\u7A0B\u5907\u9009\u65B9\u6848\u3002",
+        resuming: "\u6B63\u5728\u4ECE\u4E0A\u4E00\u9875\u6062\u590D\u52A8\u6001\u626B\u63CF...",
         domObserver: {
           stopped: "[\u52A8\u6001\u626B\u63CF] \u5DF2\u505C\u6B62\u76D1\u542C DOM \u53D8\u5316\u3002"
         },
@@ -1397,7 +1442,10 @@ var TextExtractor = (() => {
           opening: "\u6B63\u5728\u6253\u5F00\u4E3B\u6A21\u6001\u6846...",
           closing: "\u6B63\u5728\u5173\u95ED\u4E3B\u6A21\u6001\u6846...",
           scanFailed: "\u9759\u6001\u626B\u63CF\u5931\u8D25: {{error}}",
-          clearContent: "\u6E05\u7A7A\u5185\u5BB9\u6309\u94AE\u5DF2\u70B9\u51FB\u3002"
+          clearContent: "\u6E05\u7A7A\u5185\u5BB9\u6309\u94AE\u5DF2\u70B9\u51FB\u3002",
+          clearingContent: "\u6B63\u5728\u6E05\u9664\u6A21\u5F0F\u7684\u5185\u5BB9: {{mode}}",
+          footerCleanedUp: "\u6A21\u6001\u6846\u9875\u811A\u5DF2\u6E05\u7406\u3002",
+          destroyed: "\u4E3B\u6A21\u6001\u6846\u5DF2\u9500\u6BC1\u3002"
         },
         helpIcon: {
           clicked: "\u70B9\u51FB\u4E86\u5E2E\u52A9\u56FE\u6807\uFF0C\u663E\u793A\u5185\u5BB9\u952E\uFF1A{{contentKey}}"
@@ -1408,18 +1456,31 @@ var TextExtractor = (() => {
         csvError: "\u89E3\u6790\u6587\u672C\u5E76\u751F\u6210CSV\u65F6\u51FA\u9519: {{error}}",
         fileExported: "\u6587\u4EF6\u5DF2\u5BFC\u51FA: {{filename}}",
         noContent: "\u65E0\u5185\u5BB9\u53EF\u5BFC\u51FA\u3002",
-        unknownFormat: "\u672A\u77E5\u7684\u5BFC\u51FA\u683C\u5F0F: {{format}}"
+        unknownFormat: "\u672A\u77E5\u7684\u5BFC\u51FA\u683C\u5F0F: {{format}}",
+        uiCleanedUp: "\u5BFC\u51FAUI\u5DF2\u6E05\u7406\u3002",
+        exportingUserContent: "\u6B63\u5728\u5BFC\u51FAUI\u4E2D\u7528\u6237\u7F16\u8F91\u7684\u5185\u5BB9\u3002",
+        exportingRawData: "\u6B63\u5728\u5BFC\u51FA\u539F\u59CB\u6570\u636E\uFF08UI\u5185\u5BB9\u65E0\u6548\u6216\u88AB\u622A\u65AD\uFF09\u3002"
       },
       main: {
         requestingSessionScanData: "\u6B63\u5728\u8BF7\u6C42\u52A8\u6001\u626B\u63CF\u6A21\u5F0F\u7684\u5B8C\u6574\u6570\u636E...",
         exportingQuickScanData: "\u6B63\u5728\u5BFC\u51FA\u5FEB\u901F\u626B\u63CF\u6A21\u5F0F\u5185\u5B58\u4E2D\u7684\u5B8C\u6574\u6570\u636E...",
         inIframe: "\u811A\u672C\u5728 iframe \u4E2D\uFF0C\u5DF2\u8DF3\u8FC7\u521D\u59CB\u5316\u3002",
         initializing: "\u811A\u672C\u521D\u59CB\u5316\u5F00\u59CB...",
-        initialSettingsLoaded: "\u521D\u59CB\u8BBE\u7F6E\u5DF2\u52A0\u8F7D:"
+        initialSettingsLoaded: "\u521D\u59CB\u8BBE\u7F6E\u5DF2\u52A0\u8F7D:",
+        resumeFailed: "\u6062\u590D\u4F1A\u8BDD\u5931\u8D25"
       },
       dom: {
         ttpCreationError: "\u521B\u5EFA Trusted Type \u7B56\u7565\u5931\u8D25:",
         svgParseError: "SVG \u5B57\u7B26\u4E32\u65E0\u6548\u6216\u89E3\u6790\u5931\u8D25:"
+      },
+      persistence: {
+        saveBlocked: "\u4FDD\u5B58\u88AB\u963B\u6B62\uFF0C\u56E0\u4E3A\u6301\u6709\u5316\u5DF2\u88AB\u7981\u7528\u3002",
+        staleSession: "\u53D1\u73B0\u8FC7\u671F\u7684\u4F1A\u8BDD\uFF0C\u5DF2\u5FFD\u7565\u3002",
+        parseError: "\u89E3\u6790\u5DF2\u4FDD\u5B58\u7684\u4F1A\u8BDD\u5931\u8D25\uFF0C\u6B63\u5728\u6E05\u9664\u3002"
+      },
+      worker: {
+        sessionStarted: "\u4F1A\u8BDD\u5DF2\u5F00\u59CB\uFF0C\u521D\u59CB\u5305\u542B {{count}} \u4E2A\u9879\u76EE\u3002",
+        sessionCleared: "\u4F1A\u8BDD\u5DF2\u6E05\u9664\u3002"
       },
       elementScan: {
         starting: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5DF2\u5F00\u59CB\u3002",
@@ -1427,6 +1488,10 @@ var TextExtractor = (() => {
         listenersAdded: "\u5DF2\u4E3A\u9009\u53D6\u5143\u7D20\u626B\u63CF\u6DFB\u52A0\u5168\u5C40\u4E8B\u4EF6\u76D1\u542C\u5668\u3002",
         listenersRemoved: "\u5DF2\u4E3A\u9009\u53D6\u5143\u7D20\u626B\u63CF\u79FB\u9664\u5168\u5C40\u4E8B\u4EF6\u76D1\u542C\u5668\u3002",
         stateReset: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u72B6\u6001\u5DF2\u91CD\u7F6E\u3002",
+        resuming: "\u6B63\u5728\u4ECE\u4E0A\u4E00\u9875\u6062\u590D\u5143\u7D20\u626B\u63CF...",
+        restored: "\u5DF2\u6062\u590D {{count}} \u4E2A\u6682\u5B58\u9879\u76EE\u3002",
+        skipRestore: "\u6839\u636E\u8BBE\u7F6E\u8DF3\u8FC7\u6570\u636E\u6062\u590D\u3002",
+        startingNewSession: "\u5F00\u59CB\u65B0\u7684\u5143\u7D20\u626B\u63CF\u4F1A\u8BDD\u3002",
         reselecting: "\u6B63\u5728\u8FD4\u56DE\u5143\u7D20\u91CD\u65B0\u9009\u62E9\u6A21\u5F0F\u3002",
         hovering: "\u6B63\u5728\u60AC\u505C\u4E8E <{{tagName}}>\u3002",
         escapePressed: "\u6309\u4E0B Escape \u952E\uFF0C\u6B63\u5728\u505C\u6B62\u9009\u53D6\u5143\u7D20\u626B\u63CF\u3002",
@@ -1754,6 +1819,7 @@ var TextExtractor = (() => {
       },
       sessionScan: {
         switchToFallback: "[\u52D5\u614B\u6383\u63CF] \u6B63\u5728\u5207\u63DB\u5230\u4E3B\u7DDA\u7A0B\u5099\u9078\u65B9\u6848\u3002",
+        resuming: "\u6B63\u5728\u5F9E\u4E0A\u4E00\u9801\u6062\u5FA9\u52D5\u614B\u6383\u63CF...",
         domObserver: {
           stopped: "[\u52D5\u614B\u6383\u63CF] \u5DF2\u505C\u6B62\u76E3\u807D DOM \u8B8A\u5316\u3002"
         },
@@ -1790,7 +1856,10 @@ var TextExtractor = (() => {
           opening: "\u6B63\u5728\u958B\u555F\u4E3B\u6A21\u614B\u6846...",
           closing: "\u6B63\u5728\u95DC\u9589\u4E3B\u6A21\u614B\u6846...",
           scanFailed: "\u975C\u614B\u6383\u63CF\u5931\u6557: {{error}}",
-          clearContent: "\u6E05\u7A7A\u5167\u5BB9\u6309\u9215\u5DF2\u9EDE\u64CA\u3002"
+          clearContent: "\u6E05\u7A7A\u5167\u5BB9\u6309\u9215\u5DF2\u9EDE\u64CA\u3002",
+          clearingContent: "\u6B63\u5728\u6E05\u9664\u6A21\u5F0F\u7684\u5167\u5BB9: {{mode}}",
+          footerCleanedUp: "\u6A21\u614B\u6846\u9801\u8173\u5DF2\u6E05\u7406\u3002",
+          destroyed: "\u4E3B\u6A21\u614B\u6846\u5DF2\u92B7\u6BC0\u3002"
         },
         helpIcon: {
           clicked: "\u9EDE\u64CA\u4E86\u5E6B\u52A9\u5716\u793A\uFF0C\u986F\u793A\u5167\u5BB9\u9375\uFF1A{{contentKey}}"
@@ -1801,18 +1870,31 @@ var TextExtractor = (() => {
         csvError: "\u89E3\u6790\u6587\u672C\u4E26\u7522\u751FCSV\u6642\u51FA\u932F: {{error}}",
         fileExported: "\u6A94\u6848\u5DF2\u532F\u51FA: {{filename}}",
         noContent: "\u7121\u5167\u5BB9\u53EF\u532F\u51FA\u3002",
-        unknownFormat: "\u672A\u77E5\u7684\u532F\u51FA\u683C\u5F0F: {{format}}"
+        unknownFormat: "\u672A\u77E5\u7684\u532F\u51FA\u683C\u5F0F: {{format}}",
+        uiCleanedUp: "\u532F\u51FAUI\u5DF2\u6E05\u7406\u3002",
+        exportingUserContent: "\u6B63\u5728\u532F\u51FAUI\u4E2D\u4F7F\u7528\u8005\u7DE8\u8F2F\u7684\u5167\u5BB9\u3002",
+        exportingRawData: "\u6B63\u5728\u532F\u51FA\u539F\u59CB\u8CC7\u6599\uFF08UI\u5167\u5BB9\u7121\u6548\u6216\u88AB\u622A\u65B7\uFF09\u3002"
       },
       main: {
         requestingSessionScanData: "\u6B63\u5728\u8ACB\u6C42\u52D5\u614B\u6383\u63CF\u6A21\u5F0F\u7684\u5B8C\u6574\u8CC7\u6599...",
         exportingQuickScanData: "\u6B63\u5728\u532F\u51FA\u5FEB\u901F\u6383\u63CF\u6A21\u5F0F\u8A18\u61B6\u9AD4\u4E2D\u7684\u5B8C\u6574\u8CC7\u6599...",
         inIframe: "\u8173\u672C\u5728 iframe \u4E2D\uFF0C\u5DF2\u8DF3\u904E\u521D\u59CB\u5316\u3002",
         initializing: "\u8173\u672C\u521D\u59CB\u5316\u958B\u59CB...",
-        initialSettingsLoaded: "\u521D\u59CB\u8A2D\u5B9A\u5DF2\u8F09\u5165:"
+        initialSettingsLoaded: "\u521D\u59CB\u8A2D\u5B9A\u5DF2\u8F09\u5165:",
+        resumeFailed: "\u6062\u5FA9\u6703\u8A71\u5931\u6557"
       },
       dom: {
         ttpCreationError: "\u5EFA\u7ACB Trusted Type \u7B56\u7565\u5931\u6557:",
         svgParseError: "SVG \u5B57\u4E32\u7121\u6548\u6216\u89E3\u6790\u5931\u6557:"
+      },
+      persistence: {
+        saveBlocked: "\u5132\u5B58\u88AB\u963B\u6B62\uFF0C\u56E0\u70BA\u6301\u4E45\u5316\u5DF2\u88AB\u7981\u7528\u3002",
+        staleSession: "\u767C\u73FE\u904E\u671F\u7684\u6703\u8A71\uFF0C\u5DF2\u5FFD\u7565\u3002",
+        parseError: "\u89E3\u6790\u5DF2\u5132\u5B58\u7684\u6703\u8A71\u5931\u6557\uFF0C\u6B63\u5728\u6E05\u9664\u3002"
+      },
+      worker: {
+        sessionStarted: "\u6703\u8A71\u5DF2\u958B\u59CB\uFF0C\u521D\u59CB\u5305\u542B {{count}} \u500B\u9805\u76EE\u3002",
+        sessionCleared: "\u6703\u8A71\u5DF2\u6E05\u9664\u3002"
       },
       elementScan: {
         starting: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5DF2\u958B\u59CB\u3002",
@@ -1820,6 +1902,10 @@ var TextExtractor = (() => {
         listenersAdded: "\u5DF2\u70BA\u9078\u53D6\u5143\u7D20\u6383\u63CF\u65B0\u589E\u5168\u57DF\u4E8B\u4EF6\u76E3\u807D\u5668\u3002",
         listenersRemoved: "\u5DF2\u70BA\u9078\u53D6\u5143\u7D20\u6383\u63CF\u79FB\u9664\u5168\u57DF\u4E8B\u4EF6\u76E3\u807D\u5668\u3002",
         stateReset: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u72C0\u614B\u5DF2\u91CD\u8A2D\u3002",
+        resuming: "\u6B63\u5728\u5F9E\u4E0A\u4E00\u9801\u6062\u5FA9\u5143\u7D20\u6383\u63CF...",
+        restored: "\u5DF2\u6062\u5FA9 {{count}} \u500B\u66AB\u5B58\u9805\u76EE\u3002",
+        skipRestore: "\u6839\u64DA\u8A2D\u5B9A\u8DF3\u904E\u8CC7\u6599\u6062\u5FA9\u3002",
+        startingNewSession: "\u958B\u59CB\u65B0\u7684\u5143\u7D20\u6383\u63CF\u6703\u8A71\u3002",
         reselecting: "\u6B63\u5728\u8FD4\u56DE\u5143\u7D20\u91CD\u65B0\u9078\u64C7\u6A21\u5F0F\u3002",
         hovering: "\u6B63\u5728\u61F8\u505C\u65BC <{{tagName}}>\u3002",
         escapePressed: "\u6309\u4E0B Escape \u9375\uFF0C\u6B63\u5728\u505C\u6B62\u9078\u53D6\u5143\u7D20\u6383\u63CF\u3002",
@@ -2588,6 +2674,7 @@ ${result.join(",\n")}
       },
       sessionScan: {
         switchToFallback: "[Dynamic Scan] Switching to main thread fallback.",
+        resuming: "Resuming session-scan from previous page...",
         domObserver: {
           stopped: "[Dynamic Scan] Stopped listening for DOM changes."
         },
@@ -2624,7 +2711,10 @@ ${result.join(",\n")}
           opening: "Opening main modal...",
           closing: "Closing main modal...",
           scanFailed: "Static scan failed: {{error}}",
-          clearContent: "Clear content button clicked."
+          clearContent: "Clear content button clicked.",
+          clearingContent: "Clearing content for mode: {{mode}}",
+          footerCleanedUp: "Modal footer cleaned up.",
+          destroyed: "Main modal destroyed."
         },
         helpIcon: {
           clicked: "Help icon clicked, displaying content for key: {{contentKey}}"
@@ -2635,18 +2725,31 @@ ${result.join(",\n")}
         csvError: "Error while parsing text and generating CSV: {{error}}",
         fileExported: "File exported: {{filename}}",
         noContent: "No content to export.",
-        unknownFormat: "Unknown export format: {{format}}"
+        unknownFormat: "Unknown export format: {{format}}",
+        uiCleanedUp: "Export UI cleaned up.",
+        exportingUserContent: "Exporting user-edited content from UI.",
+        exportingRawData: "Exporting original raw data (UI content invalid or truncated)."
       },
       main: {
         requestingSessionScanData: "Requesting full data from session-scan mode...",
         exportingQuickScanData: "Exporting full data from quick-scan mode's memory...",
         inIframe: "Script is in an iframe, skipping initialization.",
         initializing: "Script initialization started...",
-        initialSettingsLoaded: "Initial settings loaded:"
+        initialSettingsLoaded: "Initial settings loaded:",
+        resumeFailed: "Failed to resume session"
       },
       dom: {
         ttpCreationError: "Failed to create Trusted Type policy:",
         svgParseError: "Failed to parse SVG string or string is invalid:"
+      },
+      persistence: {
+        saveBlocked: "Save blocked because persistence is disabled.",
+        staleSession: "Stale session found, ignoring.",
+        parseError: "Failed to parse saved session, clearing."
+      },
+      worker: {
+        sessionStarted: "Session started with {{count}} initial items.",
+        sessionCleared: "Session cleared."
       },
       elementScan: {
         starting: "Element Scan started.",
@@ -2654,6 +2757,10 @@ ${result.join(",\n")}
         listenersAdded: "Global event listeners for element scan added.",
         listenersRemoved: "Global event listeners for element scan removed.",
         stateReset: "Element scan state has been reset.",
+        resuming: "Resuming element-scan from previous page...",
+        restored: "Restored {{count}} staged items.",
+        skipRestore: "Skipping data restoration based on settings.",
+        startingNewSession: "Starting new element scan session.",
         reselecting: "Returning to element reselection mode.",
         hovering: "Hovering over <{{tagName}}>.",
         escapePressed: "Escape key pressed, stopping element scan.",
@@ -2982,6 +3089,7 @@ ${result.join(",\n")}
       },
       sessionScan: {
         switchToFallback: "[Dynamic Scan] Switching to main thread fallback.",
+        resuming: "Resuming session-scan from previous page...",
         domObserver: {
           stopped: "[Dynamic Scan] Stopped listening for DOM changes."
         },
@@ -3018,7 +3126,10 @@ ${result.join(",\n")}
           opening: "Opening main modal...",
           closing: "Closing main modal...",
           scanFailed: "Static scan failed: {{error}}",
-          clearContent: "Clear content button clicked."
+          clearContent: "Clear content button clicked.",
+          clearingContent: "Clearing content for mode: {{mode}}",
+          footerCleanedUp: "Modal footer cleaned up.",
+          destroyed: "Main modal destroyed."
         },
         helpIcon: {
           clicked: "Help icon clicked, displaying content for key: {{contentKey}}"
@@ -3029,18 +3140,31 @@ ${result.join(",\n")}
         csvError: "Error while parsing text and generating CSV: {{error}}",
         fileExported: "File exported: {{filename}}",
         noContent: "No content to export.",
-        unknownFormat: "Unknown export format: {{format}}"
+        unknownFormat: "Unknown export format: {{format}}",
+        uiCleanedUp: "Export UI cleaned up.",
+        exportingUserContent: "Exporting user-edited content from UI.",
+        exportingRawData: "Exporting original raw data (UI content invalid or truncated)."
       },
       main: {
         requestingSessionScanData: "Requesting full data from session-scan mode...",
         exportingQuickScanData: "Exporting full data from quick-scan mode's memory...",
         inIframe: "Script is in an iframe, skipping initialization.",
         initializing: "Script initialization started...",
-        initialSettingsLoaded: "Initial settings loaded:"
+        initialSettingsLoaded: "Initial settings loaded:",
+        resumeFailed: "Failed to resume session"
       },
       dom: {
         ttpCreationError: "Failed to create Trusted Type policy:",
         svgParseError: "Invalid or failed to parse SVG string:"
+      },
+      persistence: {
+        saveBlocked: "Save blocked because persistence is disabled.",
+        staleSession: "Stale session found, ignoring.",
+        parseError: "Failed to parse saved session, clearing."
+      },
+      worker: {
+        sessionStarted: "Session started with {{count}} initial items.",
+        sessionCleared: "Session cleared."
       },
       elementScan: {
         starting: "Element Scan started.",
@@ -3048,6 +3172,10 @@ ${result.join(",\n")}
         listenersAdded: "Global event listeners for element scan added.",
         listenersRemoved: "Global event listeners for element scan removed.",
         stateReset: "Element scan state has been reset.",
+        resuming: "Resuming element-scan from previous page...",
+        restored: "Restored {{count}} staged items.",
+        skipRestore: "Skipping data restoration based on settings.",
+        startingNewSession: "Starting new element scan session.",
         reselecting: "Returning to element reselection mode.",
         hovering: "Hovering over <{{tagName}}>.",
         escapePressed: "Escape key pressed, stopping element scan.",
@@ -3199,7 +3327,9 @@ ${result.join(",\n")}
         show_scan_count: "\\u5728\\u6807\\u9898\\u4E2D\\u542F\\u7528\\u626B\\u63CF\\u8BA1\\u6570"
       },
       advanced: {
-        enable_debug_logging: "\\u542F\\u7528\\u8C03\\u8BD5\\u65E5\\u5FD7\\u8BB0\\u5F55"
+        enable_debug_logging: "\\u542F\\u7528\\u8C03\\u8BD5\\u65E5\\u5FD7\\u8BB0\\u5F55",
+        init_i18n: "\\u521D\\u59CB\\u5316\\u56FD\\u9645\\u5316\\uFF08i18n\\uFF09",
+        init_logger: "\\u6839\\u636E\\u8BBE\\u7F6E\\u521D\\u59CB\\u5316\\u65E5\\u5FD7\\u8BB0\\u5F55\\u5668"
       },
       panel: {
         title: "\\u8BBE\\u7F6E\\u9762\\u677F"
@@ -3376,6 +3506,7 @@ ${result.join(",\n")}
       },
       sessionScan: {
         switchToFallback: "[\\u52A8\\u6001\\u626B\\u63CF] \\u6B63\\u5728\\u5207\\u6362\\u5230\\u4E3B\\u7EBF\\u7A0B\\u5907\\u9009\\u65B9\\u6848\\u3002",
+        resuming: "\\u6B63\\u5728\\u4ECE\\u4E0A\\u4E00\\u9875\\u6062\\u590D\\u52A8\\u6001\\u626B\\u63CF...",
         domObserver: {
           stopped: "[\\u52A8\\u6001\\u626B\\u63CF] \\u5DF2\\u505C\\u6B62\\u76D1\\u542C DOM \\u53D8\\u5316\\u3002"
         },
@@ -3412,7 +3543,10 @@ ${result.join(",\n")}
           opening: "\\u6B63\\u5728\\u6253\\u5F00\\u4E3B\\u6A21\\u6001\\u6846...",
           closing: "\\u6B63\\u5728\\u5173\\u95ED\\u4E3B\\u6A21\\u6001\\u6846...",
           scanFailed: "\\u9759\\u6001\\u626B\\u63CF\\u5931\\u8D25: {{error}}",
-          clearContent: "\\u6E05\\u7A7A\\u5185\\u5BB9\\u6309\\u94AE\\u5DF2\\u70B9\\u51FB\\u3002"
+          clearContent: "\\u6E05\\u7A7A\\u5185\\u5BB9\\u6309\\u94AE\\u5DF2\\u70B9\\u51FB\\u3002",
+          clearingContent: "\\u6B63\\u5728\\u6E05\\u9664\\u6A21\\u5F0F\\u7684\\u5185\\u5BB9: {{mode}}",
+          footerCleanedUp: "\\u6A21\\u6001\\u6846\\u9875\\u811A\\u5DF2\\u6E05\\u7406\\u3002",
+          destroyed: "\\u4E3B\\u6A21\\u6001\\u6846\\u5DF2\\u9500\\u6BC1\\u3002"
         },
         helpIcon: {
           clicked: "\\u70B9\\u51FB\\u4E86\\u5E2E\\u52A9\\u56FE\\u6807\\uFF0C\\u663E\\u793A\\u5185\\u5BB9\\u952E\\uFF1A{{contentKey}}"
@@ -3423,18 +3557,31 @@ ${result.join(",\n")}
         csvError: "\\u89E3\\u6790\\u6587\\u672C\\u5E76\\u751F\\u6210CSV\\u65F6\\u51FA\\u9519: {{error}}",
         fileExported: "\\u6587\\u4EF6\\u5DF2\\u5BFC\\u51FA: {{filename}}",
         noContent: "\\u65E0\\u5185\\u5BB9\\u53EF\\u5BFC\\u51FA\\u3002",
-        unknownFormat: "\\u672A\\u77E5\\u7684\\u5BFC\\u51FA\\u683C\\u5F0F: {{format}}"
+        unknownFormat: "\\u672A\\u77E5\\u7684\\u5BFC\\u51FA\\u683C\\u5F0F: {{format}}",
+        uiCleanedUp: "\\u5BFC\\u51FAUI\\u5DF2\\u6E05\\u7406\\u3002",
+        exportingUserContent: "\\u6B63\\u5728\\u5BFC\\u51FAUI\\u4E2D\\u7528\\u6237\\u7F16\\u8F91\\u7684\\u5185\\u5BB9\\u3002",
+        exportingRawData: "\\u6B63\\u5728\\u5BFC\\u51FA\\u539F\\u59CB\\u6570\\u636E\\uFF08UI\\u5185\\u5BB9\\u65E0\\u6548\\u6216\\u88AB\\u622A\\u65AD\\uFF09\\u3002"
       },
       main: {
         requestingSessionScanData: "\\u6B63\\u5728\\u8BF7\\u6C42\\u52A8\\u6001\\u626B\\u63CF\\u6A21\\u5F0F\\u7684\\u5B8C\\u6574\\u6570\\u636E...",
         exportingQuickScanData: "\\u6B63\\u5728\\u5BFC\\u51FA\\u5FEB\\u901F\\u626B\\u63CF\\u6A21\\u5F0F\\u5185\\u5B58\\u4E2D\\u7684\\u5B8C\\u6574\\u6570\\u636E...",
         inIframe: "\\u811A\\u672C\\u5728 iframe \\u4E2D\\uFF0C\\u5DF2\\u8DF3\\u8FC7\\u521D\\u59CB\\u5316\\u3002",
         initializing: "\\u811A\\u672C\\u521D\\u59CB\\u5316\\u5F00\\u59CB...",
-        initialSettingsLoaded: "\\u521D\\u59CB\\u8BBE\\u7F6E\\u5DF2\\u52A0\\u8F7D:"
+        initialSettingsLoaded: "\\u521D\\u59CB\\u8BBE\\u7F6E\\u5DF2\\u52A0\\u8F7D:",
+        resumeFailed: "\\u6062\\u590D\\u4F1A\\u8BDD\\u5931\\u8D25"
       },
       dom: {
         ttpCreationError: "\\u521B\\u5EFA Trusted Type \\u7B56\\u7565\\u5931\\u8D25:",
         svgParseError: "SVG \\u5B57\\u7B26\\u4E32\\u65E0\\u6548\\u6216\\u89E3\\u6790\\u5931\\u8D25:"
+      },
+      persistence: {
+        saveBlocked: "\\u4FDD\\u5B58\\u88AB\\u963B\\u6B62\\uFF0C\\u56E0\\u4E3A\\u6301\\u6709\\u5316\\u5DF2\\u88AB\\u7981\\u7528\\u3002",
+        staleSession: "\\u53D1\\u73B0\\u8FC7\\u671F\\u7684\\u4F1A\\u8BDD\\uFF0C\\u5DF2\\u5FFD\\u7565\\u3002",
+        parseError: "\\u89E3\\u6790\\u5DF2\\u4FDD\\u5B58\\u7684\\u4F1A\\u8BDD\\u5931\\u8D25\\uFF0C\\u6B63\\u5728\\u6E05\\u9664\\u3002"
+      },
+      worker: {
+        sessionStarted: "\\u4F1A\\u8BDD\\u5DF2\\u5F00\\u59CB\\uFF0C\\u521D\\u59CB\\u5305\\u542B {{count}} \\u4E2A\\u9879\\u76EE\\u3002",
+        sessionCleared: "\\u4F1A\\u8BDD\\u5DF2\\u6E05\\u9664\\u3002"
       },
       elementScan: {
         starting: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5DF2\\u5F00\\u59CB\\u3002",
@@ -3442,6 +3589,10 @@ ${result.join(",\n")}
         listenersAdded: "\\u5DF2\\u4E3A\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u6DFB\\u52A0\\u5168\\u5C40\\u4E8B\\u4EF6\\u76D1\\u542C\\u5668\\u3002",
         listenersRemoved: "\\u5DF2\\u4E3A\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u79FB\\u9664\\u5168\\u5C40\\u4E8B\\u4EF6\\u76D1\\u542C\\u5668\\u3002",
         stateReset: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u72B6\\u6001\\u5DF2\\u91CD\\u7F6E\\u3002",
+        resuming: "\\u6B63\\u5728\\u4ECE\\u4E0A\\u4E00\\u9875\\u6062\\u590D\\u5143\\u7D20\\u626B\\u63CF...",
+        restored: "\\u5DF2\\u6062\\u590D {{count}} \\u4E2A\\u6682\\u5B58\\u9879\\u76EE\\u3002",
+        skipRestore: "\\u6839\\u636E\\u8BBE\\u7F6E\\u8DF3\\u8FC7\\u6570\\u636E\\u6062\\u590D\\u3002",
+        startingNewSession: "\\u5F00\\u59CB\\u65B0\\u7684\\u5143\\u7D20\\u626B\\u63CF\\u4F1A\\u8BDD\\u3002",
         reselecting: "\\u6B63\\u5728\\u8FD4\\u56DE\\u5143\\u7D20\\u91CD\\u65B0\\u9009\\u62E9\\u6A21\\u5F0F\\u3002",
         hovering: "\\u6B63\\u5728\\u60AC\\u505C\\u4E8E <{{tagName}}>\\u3002",
         escapePressed: "\\u6309\\u4E0B Escape \\u952E\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u3002",
@@ -3770,6 +3921,7 @@ ${result.join(",\n")}
       },
       sessionScan: {
         switchToFallback: "[\\u52D5\\u614B\\u6383\\u63CF] \\u6B63\\u5728\\u5207\\u63DB\\u5230\\u4E3B\\u7DDA\\u7A0B\\u5099\\u9078\\u65B9\\u6848\\u3002",
+        resuming: "\\u6B63\\u5728\\u5F9E\\u4E0A\\u4E00\\u9801\\u6062\\u5FA9\\u52D5\\u614B\\u6383\\u63CF...",
         domObserver: {
           stopped: "[\\u52D5\\u614B\\u6383\\u63CF] \\u5DF2\\u505C\\u6B62\\u76E3\\u807D DOM \\u8B8A\\u5316\\u3002"
         },
@@ -3806,7 +3958,10 @@ ${result.join(",\n")}
           opening: "\\u6B63\\u5728\\u958B\\u555F\\u4E3B\\u6A21\\u614B\\u6846...",
           closing: "\\u6B63\\u5728\\u95DC\\u9589\\u4E3B\\u6A21\\u614B\\u6846...",
           scanFailed: "\\u975C\\u614B\\u6383\\u63CF\\u5931\\u6557: {{error}}",
-          clearContent: "\\u6E05\\u7A7A\\u5167\\u5BB9\\u6309\\u9215\\u5DF2\\u9EDE\\u64CA\\u3002"
+          clearContent: "\\u6E05\\u7A7A\\u5167\\u5BB9\\u6309\\u9215\\u5DF2\\u9EDE\\u64CA\\u3002",
+          clearingContent: "\\u6B63\\u5728\\u6E05\\u9664\\u6A21\\u5F0F\\u7684\\u5167\\u5BB9: {{mode}}",
+          footerCleanedUp: "\\u6A21\\u614B\\u6846\\u9801\\u8173\\u5DF2\\u6E05\\u7406\\u3002",
+          destroyed: "\\u4E3B\\u6A21\\u614B\\u6846\\u5DF2\\u92B7\\u6BC0\\u3002"
         },
         helpIcon: {
           clicked: "\\u9EDE\\u64CA\\u4E86\\u5E6B\\u52A9\\u5716\\u793A\\uFF0C\\u986F\\u793A\\u5167\\u5BB9\\u9375\\uFF1A{{contentKey}}"
@@ -3817,18 +3972,31 @@ ${result.join(",\n")}
         csvError: "\\u89E3\\u6790\\u6587\\u672C\\u4E26\\u7522\\u751FCSV\\u6642\\u51FA\\u932F: {{error}}",
         fileExported: "\\u6A94\\u6848\\u5DF2\\u532F\\u51FA: {{filename}}",
         noContent: "\\u7121\\u5167\\u5BB9\\u53EF\\u532F\\u51FA\\u3002",
-        unknownFormat: "\\u672A\\u77E5\\u7684\\u532F\\u51FA\\u683C\\u5F0F: {{format}}"
+        unknownFormat: "\\u672A\\u77E5\\u7684\\u532F\\u51FA\\u683C\\u5F0F: {{format}}",
+        uiCleanedUp: "\\u532F\\u51FAUI\\u5DF2\\u6E05\\u7406\\u3002",
+        exportingUserContent: "\\u6B63\\u5728\\u532F\\u51FAUI\\u4E2D\\u4F7F\\u7528\\u8005\\u7DE8\\u8F2F\\u7684\\u5167\\u5BB9\\u3002",
+        exportingRawData: "\\u6B63\\u5728\\u532F\\u51FA\\u539F\\u59CB\\u8CC7\\u6599\\uFF08UI\\u5167\\u5BB9\\u7121\\u6548\\u6216\\u88AB\\u622A\\u65B7\\uFF09\\u3002"
       },
       main: {
         requestingSessionScanData: "\\u6B63\\u5728\\u8ACB\\u6C42\\u52D5\\u614B\\u6383\\u63CF\\u6A21\\u5F0F\\u7684\\u5B8C\\u6574\\u8CC7\\u6599...",
         exportingQuickScanData: "\\u6B63\\u5728\\u532F\\u51FA\\u5FEB\\u901F\\u6383\\u63CF\\u6A21\\u5F0F\\u8A18\\u61B6\\u9AD4\\u4E2D\\u7684\\u5B8C\\u6574\\u8CC7\\u6599...",
         inIframe: "\\u8173\\u672C\\u5728 iframe \\u4E2D\\uFF0C\\u5DF2\\u8DF3\\u904E\\u521D\\u59CB\\u5316\\u3002",
         initializing: "\\u8173\\u672C\\u521D\\u59CB\\u5316\\u958B\\u59CB...",
-        initialSettingsLoaded: "\\u521D\\u59CB\\u8A2D\\u5B9A\\u5DF2\\u8F09\\u5165:"
+        initialSettingsLoaded: "\\u521D\\u59CB\\u8A2D\\u5B9A\\u5DF2\\u8F09\\u5165:",
+        resumeFailed: "\\u6062\\u5FA9\\u6703\\u8A71\\u5931\\u6557"
       },
       dom: {
         ttpCreationError: "\\u5EFA\\u7ACB Trusted Type \\u7B56\\u7565\\u5931\\u6557:",
         svgParseError: "SVG \\u5B57\\u4E32\\u7121\\u6548\\u6216\\u89E3\\u6790\\u5931\\u6557:"
+      },
+      persistence: {
+        saveBlocked: "\\u5132\\u5B58\\u88AB\\u963B\\u6B62\\uFF0C\\u56E0\\u70BA\\u6301\\u4E45\\u5316\\u5DF2\\u88AB\\u7981\\u7528\\u3002",
+        staleSession: "\\u767C\\u73FE\\u904E\\u671F\\u7684\\u6703\\u8A71\\uFF0C\\u5DF2\\u5FFD\\u7565\\u3002",
+        parseError: "\\u89E3\\u6790\\u5DF2\\u5132\\u5B58\\u7684\\u6703\\u8A71\\u5931\\u6557\\uFF0C\\u6B63\\u5728\\u6E05\\u9664\\u3002"
+      },
+      worker: {
+        sessionStarted: "\\u6703\\u8A71\\u5DF2\\u958B\\u59CB\\uFF0C\\u521D\\u59CB\\u5305\\u542B {{count}} \\u500B\\u9805\\u76EE\\u3002",
+        sessionCleared: "\\u6703\\u8A71\\u5DF2\\u6E05\\u9664\\u3002"
       },
       elementScan: {
         starting: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5DF2\\u958B\\u59CB\\u3002",
@@ -3836,6 +4004,10 @@ ${result.join(",\n")}
         listenersAdded: "\\u5DF2\\u70BA\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u65B0\\u589E\\u5168\\u57DF\\u4E8B\\u4EF6\\u76E3\\u807D\\u5668\\u3002",
         listenersRemoved: "\\u5DF2\\u70BA\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u79FB\\u9664\\u5168\\u57DF\\u4E8B\\u4EF6\\u76E3\\u807D\\u5668\\u3002",
         stateReset: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u72C0\\u614B\\u5DF2\\u91CD\\u8A2D\\u3002",
+        resuming: "\\u6B63\\u5728\\u5F9E\\u4E0A\\u4E00\\u9801\\u6062\\u5FA9\\u5143\\u7D20\\u6383\\u63CF...",
+        restored: "\\u5DF2\\u6062\\u5FA9 {{count}} \\u500B\\u66AB\\u5B58\\u9805\\u76EE\\u3002",
+        skipRestore: "\\u6839\\u64DA\\u8A2D\\u5B9A\\u8DF3\\u904E\\u8CC7\\u6599\\u6062\\u5FA9\\u3002",
+        startingNewSession: "\\u958B\\u59CB\\u65B0\\u7684\\u5143\\u7D20\\u6383\\u63CF\\u6703\\u8A71\\u3002",
         reselecting: "\\u6B63\\u5728\\u8FD4\\u56DE\\u5143\\u7D20\\u91CD\\u65B0\\u9078\\u64C7\\u6A21\\u5F0F\\u3002",
         hovering: "\\u6B63\\u5728\\u61F8\\u505C\\u65BC <{{tagName}}>\\u3002",
         escapePressed: "\\u6309\\u4E0B Escape \\u9375\\uFF0C\\u6B63\\u5728\\u505C\\u6B62\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u3002",
@@ -4338,7 +4510,7 @@ ${result.join(",\n")}
             }
           });
         }
-        log2(\`Session started with \${sessionTexts.size} initial items.\`);
+        log2(t2("log.worker.sessionStarted", { count: sessionTexts.size }));
         self.postMessage({
           type: "countUpdated",
           payload: {
@@ -4385,7 +4557,7 @@ ${result.join(",\n")}
        */
       case "session-clear":
         sessionTexts.clear();
-        log2("Session cleared.");
+        log2(t2("log.worker.sessionCleared"));
         self.postMessage({ type: "countUpdated", payload: { count: 0, newTexts: [] } });
         break;
       /**
@@ -4967,7 +5139,7 @@ ${result.join(",\n")}
   }
   async function saveActiveSession(mode, data = null) {
     if (!isPersistenceEnabled) {
-      log("Save blocked because persistence is disabled.");
+      log(t("log.persistence.saveBlocked"));
       return;
     }
     let sessionData = data;
@@ -4995,12 +5167,12 @@ ${result.join(",\n")}
     try {
       const state = JSON.parse(savedSessionJSON);
       if (Date.now() - state.timestamp > RESUME_TIMEOUT_MS) {
-        log("Stale session found, ignoring.");
+        log(t("log.persistence.staleSession"));
         return;
       }
       fire("resumeScanSession", state);
     } catch (e) {
-      log("Failed to parse saved session, clearing.", e);
+      log(t("log.persistence.parseError"), e);
       await clearActiveSession();
     }
   }
@@ -5523,7 +5695,7 @@ ${result.join(",\n")}
         unsubscribeLanguageChanged3();
         unsubscribeLanguageChanged3 = null;
       }
-      log("Export UI cleaned up.");
+      log(t("log.exporter.uiCleanedUp"));
     };
     return container;
   }
@@ -5571,7 +5743,7 @@ ${result.join(",\n")}
       );
       if (confirmed) {
         const currentMode2 = currentMode;
-        log(`Clearing content for mode: ${currentMode2}`);
+        log(t("log.ui.modal.clearingContent", { mode: currentMode2 }));
         if (currentMode2 === "session-scan") {
           fire("clearSessionScan");
         } else if (currentMode2 === "element-scan") {
@@ -7324,7 +7496,7 @@ ${result.join(",\n")}
   }
   on("resumeScanSession", async (state) => {
     if (state.mode === "session-scan") {
-      log("Resuming session-scan from previous page...");
+      log(t("log.sessionScan.resuming"));
       const dynamicFab2 = getDynamicFab();
       const settings = await loadSettings();
       if (dynamicFab2 && !isSessionRecording()) {
@@ -7842,16 +8014,20 @@ ${result.join(",\n")}
   });
   on("resumeScanSession", async (state) => {
     if (state.mode === "element-scan") {
-      log("Resuming element-scan from previous page...");
       const elementScanFab2 = getElementScanFab();
       const settings = await loadSettings();
       if (elementScanFab2 && !isElementScanActive()) {
-        if (settings.elementScan_persistData && state.data && Array.isArray(state.data)) {
-          stagedTexts = new Set(state.data);
-          log(`Restored ${stagedTexts.size} staged items.`);
+        if (state && state.mode === "element-scan" && state.data && Array.isArray(state.data)) {
+          log(t("log.elementScan.resuming"));
+          if (settings.elementScan_persistData) {
+            state.data.forEach((item) => stagedTexts.add(item));
+            log(t("log.elementScan.restored", { count: stagedTexts.size }));
+          } else {
+            stagedTexts.clear();
+            log(t("log.elementScan.skipRestore"));
+          }
         } else {
-          stagedTexts.clear();
-          log("Skipping data restoration based on settings.");
+          log(t("log.elementScan.startingNewSession"));
         }
         startElementScan(elementScanFab2, { silent: true });
         updateStagedCount();
@@ -8418,18 +8594,24 @@ ${result.join(",\n")}
     const currentUiContent = outputTextarea ? outputTextarea.value : null;
     const truncationWarning = t("scan.truncationWarning");
     const isTruncated = currentUiContent && currentUiContent.includes(truncationWarning);
+    let contentToExport = null;
+    let contentSource = "raw";
     if (currentUiContent && !isTruncated && currentUiContent.trim() !== "") {
-      log("Exporting user-edited content from UI.");
-      processAndDownload(currentUiContent);
-      return;
+      contentSource = "ui";
+      contentToExport = currentUiContent;
     }
-    log("Exporting original raw data (UI content invalid or truncated).");
-    if (currentMode2 === "session-scan") {
-      log(t("log.main.requestingSessionScanData"));
-      requestSummary(processAndDownload);
+    if (contentSource === "ui" && contentToExport && contentToExport.length > 0) {
+      log(t("log.exporter.exportingUserContent"));
+      processAndDownload(contentToExport);
     } else {
-      log(t("log.main.exportingQuickScanData"));
-      processAndDownload(fullQuickScanContent);
+      log(t("log.exporter.exportingRawData"));
+      if (currentMode2 === "session-scan") {
+        log(t("log.main.requestingSessionScanData"));
+        requestSummary(processAndDownload);
+      } else {
+        log(t("log.main.exportingQuickScanData"));
+        processAndDownload(fullQuickScanContent);
+      }
     }
   }
   function initializeExporter() {
@@ -8455,7 +8637,7 @@ ${result.join(",\n")}
     try {
       await loadAndResumeSession();
     } catch (e) {
-      log("Failed to resume session", e);
+      log(t("log.main.resumeFailed"), e);
     }
   }
   if (document.readyState === "loading") {

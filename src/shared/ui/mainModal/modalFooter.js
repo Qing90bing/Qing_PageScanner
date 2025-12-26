@@ -58,7 +58,7 @@ export function populateModalFooter(modalFooter, updateContentCallback) {
 
         if (confirmed) {
             const currentMode = state.currentMode;
-            log(`Clearing content for mode: ${currentMode}`);
+            log(t('log.ui.modal.clearingContent', { mode: currentMode }));
 
             if (currentMode === 'session-scan') {
                 fire('clearSessionScan');
@@ -116,9 +116,11 @@ export function destroyModalFooter() {
     }
     if (unsubscribeLanguageChanged) {
         unsubscribeLanguageChanged();
-        unsubscribeLanguageChanged = null;
+        unsubscribeLanguageChanged = null; // 移除引用
     }
-    log('Modal footer cleaned up.');
+    copyBtn = null;
+    clearBtn = null;
+    log(t('log.ui.modal.footerCleanedUp'));
 }
 
 export function updateStatistics() {

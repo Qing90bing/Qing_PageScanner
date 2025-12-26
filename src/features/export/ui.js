@@ -56,7 +56,7 @@ export function createExportButton() {
             unsubscribeLanguageChanged();
             unsubscribeLanguageChanged = null;
         }
-        log('Export UI cleaned up.');
+        log(t('log.exporter.uiCleanedUp'));
     };
 
     return container;
