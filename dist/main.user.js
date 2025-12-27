@@ -8099,7 +8099,7 @@ ${result.join(",\n")}
     const viewportHeight = window.innerHeight;
     const topCounter = uiContainer.querySelector(".counter-with-help-container.is-visible");
     const topOffset = topCounter ? topCounter.getBoundingClientRect().height + 5 : 0;
-    const margin = 10 + topOffset;
+    const margin = 20 + topOffset;
     let top, left;
     const absRect = {
       top: initialRect.top + offset.y,
@@ -8115,7 +8115,7 @@ ${result.join(",\n")}
       }
       return l;
     };
-    const topAbove = absRect.top - toolbarRect.height - 10;
+    const topAbove = absRect.top - toolbarRect.height - 20;
     const topBelow = absRect.bottom + 10;
     const canPlaceAbove = topAbove > margin;
     const canPlaceBelow = topBelow + toolbarRect.height < viewportHeight - 10;
