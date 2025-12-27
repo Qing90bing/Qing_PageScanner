@@ -1,14 +1,13 @@
 // src/features/element-scan/ui.js
 
 import { uiContainer } from '../../shared/ui/uiContainer.js';
-import { updateSelectionLevel, reselectElement, stopElementScan, confirmSelectionAndExtract, stageCurrentElement, pauseElementScan, resumeElementScan } from './logic.js';
+import { updateSelectionLevel, reselectElement, confirmSelectionAndExtract, stageCurrentElement, pauseElementScan, resumeElementScan } from './logic.js';
 import { t } from '../../shared/i18n/index.js';
 import { createTrustedHTML } from '../../shared/utils/dom/trustedTypes.js';
 import { log } from '../../shared/utils/core/logger.js';
 import { createButton } from '../../shared/ui/components/button.js';
 import { reselectIcon } from '../../assets/icons/reselectIcon.js';
 import { stashIcon } from '../../assets/icons/stashIcon.js';
-import { closeIcon } from '../../assets/icons/closeIcon.js';
 import { confirmIcon } from '../../assets/icons/confirmIcon.js';
 import { simpleTemplate } from '../../shared/utils/dom/templating.js';
 import { on } from '../../shared/utils/core/eventBus.js';

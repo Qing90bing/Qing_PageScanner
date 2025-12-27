@@ -1,3 +1,7 @@
 # 忽略相关文件
 node_modules
 .DS_Store
+dist-archive/
+.vscode/
+*.log
+
