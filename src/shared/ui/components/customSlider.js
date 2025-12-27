@@ -143,8 +143,9 @@ export class CustomSlider {
         this.thumb.classList.add('is-dragging');
         this.boundHandleMouseMove = this.handleMouseMove.bind(this);
         this.boundHandleMouseUp = this.handleMouseUp.bind(this);
-        document.addEventListener('mousemove', this.boundHandleMouseMove);
-        document.addEventListener('mouseup', this.boundHandleMouseUp);
+        // Use capture phase to ensure we catch events even if propagation is stopped by uiContainer
+        document.addEventListener('mousemove', this.boundHandleMouseMove, { capture: true });
+        document.addEventListener('mouseup', this.boundHandleMouseUp, { capture: true });
     }
 
     handleMouseMove(e) {
@@ -164,8 +165,8 @@ export class CustomSlider {
     handleMouseUp() {
         if (!this.isInitialized) return;
         this.thumb.classList.remove('is-dragging');
-        document.removeEventListener('mousemove', this.boundHandleMouseMove);
-        document.removeEventListener('mouseup', this.boundHandleMouseUp);
+        document.removeEventListener('mousemove', this.boundHandleMouseMove, { capture: true });
+        document.removeEventListener('mouseup', this.boundHandleMouseUp, { capture: true });
         this.updateThumbPosition();
     }
 

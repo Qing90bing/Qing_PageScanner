@@ -4,8 +4,10 @@
 #element-scan-container {
     position: absolute;
     z-index: 2147483644;
-    pointer-events: none; /* 允许鼠标事件穿透 */
-    transition: all 0.1s ease-in-out, opacity 0.2s ease-in-out, visibility 0s linear 0.2s; /* 位置和透明度动画 */
+    pointer-events: none;
+    /* 允许鼠标事件穿透 */
+    transition: all 0.2s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.2s ease-in-out, visibility 0s linear 0.2s;
+    /* 位置和透明度动画 */
     opacity: 0;
     visibility: hidden;
 }
@@ -14,25 +16,34 @@
 #element-scan-highlight-border {
     width: 100%;
     height: 100%;
-    border: 4px solid #3498db; /* 活力蓝 */
-    background-color: rgba(52, 152, 219, 0.2); /* 半透明活力蓝背景 */
-    border-radius: 6px 6px 6px 0; /* 左下角为直角，以便与标签拼接 */
-    box-sizing: border-box; /* 确保边框宽度包含在width/height内 */
+    border: 4px solid #3498db;
+    /* 活力蓝 */
+    background-color: rgba(52, 152, 219, 0.2);
+    /* 半透明活力蓝背景 */
+    border-radius: 6px 6px 6px 0;
+    /* 左下角为直角，以便与标签拼接 */
+    box-sizing: border-box;
+    /* 确保边框宽度包含在width/height内 */
 }
 
 /* 元素标签名提示 (相对于容器定位) */
 #element-scan-tag-name {
     position: absolute;
-    top: 100%; /* 定位到父容器的底部 */
+    top: 100%;
+    /* 定位到父容器的底部 */
     background-color: #3498db;
     color: white;
     padding: 4px 8px;
     font-size: 12px;
-    border-radius: 0 0 6px 6px; /* 配合高亮框的拼接处 */
-    z-index: 1; /* 在容器内部，层级高于边框即可 */
+    border-radius: 0 0 6px 6px;
+    /* 配合高亮框的拼接处 */
+    z-index: 1;
+    /* 在容器内部，层级高于边框即可 */
     font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
-    white-space: nowrap; /* 防止标签换行 */
-    transition: all 0.1s ease-in-out; /* 为尺寸和内容变化添加动画 */
+    white-space: nowrap;
+    /* 防止标签换行 */
+    transition: all 0.1s ease-in-out;
+    /* 为尺寸和内容变化添加动画 */
 }
 
 /* 调整工具栏容器 */
@@ -42,17 +53,19 @@
     z-index: 2147483645;
     background-color: var(--main-bg);
     border: 1px solid var(--main-border);
-    border-radius: 16px;
-    padding: 10px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border-radius: 20px;
+    padding: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     cursor: move;
     display: flex;
     flex-direction: column;
-    width: fit-content; /* 自适应宽度 */
+    width: fit-content;
+    /* 自适应宽度 */
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.2s ease-in-out, visibility 0s linear 0.2s;
-    pointer-events: auto; /* 关键：确保工具栏本身可点击/拖动 */
+    pointer-events: auto;
+    /* 关键：确保工具栏本身可点击/拖动 */
 }
 
 /* 通用的可见状态，用于触发过渡 */
@@ -68,16 +81,17 @@
 #element-scan-toolbar-title,
 #element-scan-toolbar-tag,
 .custom-slider-info-text {
-    user-select: none; /* 防止拖动时选中文本 */
+    user-select: none;
+    /* 防止拖动时选中文本 */
 }
 
 #element-scan-toolbar-title {
     font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
-    font-size: 18px;
+    font-size: 20px;
     font-weight: bold;
     color: var(--main-text);
     text-align: center;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
 }
 
 #element-scan-toolbar-tag {
@@ -92,7 +106,7 @@
 }
 
 #element-scan-slider-container {
-    min-width: 320px;
+    min-width: 380px;
 }
 
 /* 滑块样式 */
@@ -105,70 +119,86 @@
     display: flex;
     justify-content: space-between;
     gap: 6px;
-    white-space: nowrap; /* 防止按钮换行 */
+    white-space: nowrap;
+    /* 防止按钮换行 */
 }
 
 /* 工具栏按钮 */
 #element-scan-toolbar-actions button {
     color: var(--main-primary-text);
-    margin: 4px 0;
+    margin: 6px 0 0 0;
     flex-grow: 1;
-    padding: 8px 10px;
+    padding: 10px 16px;
     border: none;
-    border-radius: 16px;
+    border-radius: 20px;
     cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.1s ease-in-out, transform 0.1s ease-in-out; /* 添加颜色和变换的过渡动画 */
+    font-size: 15px;
+    transition: background-color 0.1s ease-in-out, transform 0.1s ease-in-out;
+    /* 添加颜色和变换的过渡动画 */
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px; /* 在图标和文本之间添加间距 */
+    gap: 6px;
+    /* 在图标和文本之间添加间距 */
 }
 
 #element-scan-toolbar-actions button:active {
-    transform: scale(0.95); /* 点击时轻微缩小 */
+    transform: scale(0.95);
+    /* 点击时轻微缩小 */
 }
 
 /* --- 特定按钮颜色 --- */
 
 /* 确认按钮 - 绿色 */
-#element-scan-toolbar-confirm:hover{
-    background-color: #27ae60; /* 翡翠绿 */
+#element-scan-toolbar-confirm:hover {
+    background-color: #27ae60;
+    /* 翡翠绿 */
 }
+
 #element-scan-toolbar-confirm {
-    background-color: #2ecc71; /* 亮一点的翡翠绿 */
+    background-color: #2ecc71;
+    /* 亮一点的翡翠绿 */
 }
 
 /* 取消按钮 - 红色 */
 #element-scan-toolbar-cancel:hover {
-    background-color: #c0392b; /* 石榴红 */
+    background-color: #c0392b;
+    /* 石榴红 */
 }
+
 #element-scan-toolbar-cancel {
-    background-color: #e74c3c; /* 亮一点的石榴红 */
+    background-color: #e74c3c;
+    /* 亮一点的石榴红 */
 }
 
 /* 重新选择按钮 - 蓝色 (主题色) */
 #element-scan-toolbar-reselect {
     background-color: var(--main-primary);
 }
+
 #element-scan-toolbar-reselect:hover {
     background-color: var(--main-primary-hover);
 }
 
 /* 暂存按钮 - 中性色 */
 #element-scan-toolbar-stage:hover {
-    background-color: #7f8c8d; /* 石棉灰 */
+    background-color: #7f8c8d;
+    /* 石棉灰 */
 }
+
 #element-scan-toolbar-stage {
-    background-color: #95a5a6; /* 亮一点的石棉灰 */
+    background-color: #95a5a6;
+    /* 亮一点的石棉灰 */
 }
 
 /* --- FAB按钮的激活状态 --- */
 .text-extractor-fab.is-recording {
-    background-color: #f39c12; /* 橙色 */
+    background-color: #f39c12;
+    /* 橙色 */
     animation: tc-breathing 2s ease-in-out infinite;
 }
 
 .text-extractor-fab.is-recording:hover {
-    background-color: #e67e22; /* 深一点的橙色 */
+    background-color: #e67e22;
+    /* 深一点的橙色 */
 }
