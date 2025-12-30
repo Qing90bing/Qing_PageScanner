@@ -112,6 +112,22 @@ export function updateHighlight(targetElement, offset = { x: 0, y: 0 }) {
     // 确保高亮UI元素已创建
     createHighlightElements();
 
+    // 状态重置：如果之前是确认状态或锁定状态，新的一次高亮应该清除这些状态
+    // 这样可以防止“绿色”状态残留到下一个元素
+    if (scanContainer.classList.contains('is-confirmed')) {
+        scanContainer.classList.remove('is-confirmed');
+        // 强制重绘，防止状态切换带来的动画残留
+        void scanContainer.offsetWidth;
+    }
+    // 清除锁定状态
+    if (scanContainer.classList.contains('is-locked')) {
+        scanContainer.classList.remove('is-locked');
+    }
+    // 修复：同时也必须清除错误状态，防止快速移动时红色残留到下一个元素
+    if (scanContainer.classList.contains('is-error')) {
+        scanContainer.classList.remove('is-error');
+    }
+
     const rect = targetElement.getBoundingClientRect();
     const scrollX = window.scrollX;
     const scrollY = window.scrollY;
@@ -495,4 +511,69 @@ export function hideTopCenterUI() {
         unsubscribeStagedCountChanged();
         unsubscribeStagedCountChanged = null;
     }
+}
+/**
+ * @public
+ * @function playScanConfirmationAnimation
+ * @description 播放确认动画（绿色闪烁+扩散），并在动画结束后执行回调。
+ * @param {Function} [onComplete] - 动画结束后的回调函数
+ */
+export function playScanConfirmationAnimation(onComplete) {
+    if (!scanContainer) {
+        if (onComplete) onComplete();
+        return;
+    }
+
+    // 添加确认状态类，触发 CSS 动画
+    scanContainer.classList.add('is-confirmed');
+
+    // 监听动画结束事件 (0.5s 对应 CSS 中的 animation-duration)
+    setTimeout(() => {
+        // 执行回调（通常是清理 UI 和显示模态框）
+        if (onComplete) onComplete();
+
+        // 延迟移除类，确保淡出动画完成后再重置状态
+        setTimeout(() => {
+            if (scanContainer) scanContainer.classList.remove('is-confirmed');
+        }, 300);
+    }, 500);
+}
+
+/**
+ * @public
+ * @function playScanErrorAnimation
+ * @description 播放错误/空数据动画。
+ */
+export function playScanErrorAnimation() {
+    if (!scanContainer) return;
+
+    scanContainer.classList.remove('is-error');
+    void scanContainer.offsetWidth; // Force reflow
+    scanContainer.classList.add('is-error');
+
+    setTimeout(() => {
+        if (scanContainer) scanContainer.classList.remove('is-error');
+    }, 500);
+}
+
+/**
+ * @public
+ * @function playScanPulseAnimation
+ * @description 播放脉冲动画（用于暂存/锁定提示）。
+ */
+export function playScanPulseAnimation() {
+    if (!scanContainer) return;
+
+    // 移除可能通过其他方式添加的类，以重置动画
+    scanContainer.classList.remove('is-locked');
+
+    // 强制重绘
+    void scanContainer.offsetWidth;
+
+    scanContainer.classList.add('is-locked');
+
+    // 脉冲动画设定为 0.5s
+    setTimeout(() => {
+        if (scanContainer) scanContainer.classList.remove('is-locked');
+    }, 500);
 }

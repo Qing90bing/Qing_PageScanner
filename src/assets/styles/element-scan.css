@@ -31,6 +31,8 @@
     position: absolute;
     top: 100%;
     /* 定位到父容器的底部 */
+    left: 0;
+    /* 改回左对齐 */
     background-color: #3498db;
     color: white;
     padding: 4px 8px;
@@ -42,8 +44,10 @@
     font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
     white-space: nowrap;
     /* 防止标签换行 */
-    transition: all 0.1s ease-in-out;
-    /* 为尺寸和内容变化添加动画 */
+    transition: background-color 0.1s ease-out, opacity 0.2s ease-out;
+    /* 背景色变化需要快速响应，与边框同步 */
+    pointer-events: auto;
+    /* 允许点击标签 */
 }
 
 /* 调整工具栏容器 */
@@ -203,4 +207,143 @@
 .text-extractor-fab.is-recording:hover {
     background-color: #e67e22;
     /* 深一点的橙色 */
+}
+
+/* --- 新增：动态交互动画 --- */
+
+/* 脉冲动画：用于暂存或锁定状态 */
+@keyframes scan-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(243, 156, 18, 0.7);
+        /* 改回橙色 */
+    }
+
+    50% {
+        box-shadow: 0 0 0 4px rgba(243, 156, 18, 0.5);
+    }
+
+    100% {
+        box-shadow: 0 0 0 10px rgba(243, 156, 18, 0);
+    }
+}
+
+/* 确认动画：用于提取完成 - 绿色脉冲 (与暂存保持一致) */
+@keyframes scan-confirm-flash {
+    0% {
+        box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7);
+    }
+
+    50% {
+        box-shadow: 0 0 0 4px rgba(46, 204, 113, 0.5);
+    }
+
+    100% {
+        box-shadow: 0 0 0 10px rgba(46, 204, 113, 0);
+    }
+}
+
+/* 锁定/暂存状态的容器样式 */
+#element-scan-container.is-locked #element-scan-highlight-border {
+    border-color: #f39c12;
+    /* 改回橙色 */
+    background-color: rgba(243, 156, 18, 0.1);
+    animation: scan-pulse 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* 确认状态的容器样式 */
+#element-scan-container.is-confirmed #element-scan-highlight-border {
+    border-color: #2ecc71;
+    /* 绿色 */
+    background-color: rgba(46, 204, 113, 0.1);
+    animation: scan-confirm-flash 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+}
+
+/* 确认状态时隐藏标签 */
+#element-scan-container.is-confirmed #element-scan-tag-name {
+    opacity: 0;
+    transition: opacity 0.2s ease-out;
+    /* 添加过渡，避免标签瞬间消失 */
+}
+
+/* 错误/空数据动画：红色脉冲 (与暂存保持一致的节奏) */
+@keyframes scan-error-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
+    }
+
+    50% {
+        box-shadow: 0 0 0 4px rgba(231, 76, 60, 0.5);
+    }
+
+    100% {
+        box-shadow: 0 0 0 10px rgba(231, 76, 60, 0);
+    }
+}
+
+/* 错误状态的容器样式 */
+#element-scan-container.is-error #element-scan-highlight-border {
+    border-color: #e74c3c;
+    /* 红色 */
+    background-color: rgba(231, 76, 60, 0.1);
+    animation: scan-error-pulse 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* --- 标签与边框颜色同步 --- */
+
+/* 暂存状态：橙色标签 */
+#element-scan-container.is-locked #element-scan-tag-name {
+    background-color: #f39c12;
+}
+
+/* 错误状态：红色标签 */
+#element-scan-container.is-error #element-scan-tag-name {
+    background-color: #e74c3c;
+}
+
+/* 确认状态：绿色标签 (虽然大部分时候是隐藏的，但如果需要显示则同步) */
+#element-scan-container.is-confirmed #element-scan-tag-name {
+    background-color: #2ecc71;
+}
+
+/* 错误/空数据动画：红色脉冲 (与暂存保持一致的节奏) */
+@keyframes scan-error-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.03);
+        box-shadow: 0 0 0 4px rgba(231, 76, 60, 0.5);
+    }
+
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 10px rgba(231, 76, 60, 0);
+    }
+}
+
+/* 错误状态的容器样式 */
+#element-scan-container.is-error #element-scan-highlight-border {
+    border-color: #e74c3c;
+    /* 红色 */
+    background-color: rgba(231, 76, 60, 0.1);
+    animation: scan-error-pulse 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* --- 标签与边框颜色同步 --- */
+
+/* 暂存状态：橙色标签 */
+#element-scan-container.is-locked #element-scan-tag-name {
+    background-color: #f39c12;
+}
+
+/* 错误状态：红色标签 */
+#element-scan-container.is-error #element-scan-tag-name {
+    background-color: #e74c3c;
+}
+
+/* 确认状态：绿色标签 (虽然大部分时候是隐藏的，但如果需要显示则同步) */
+#element-scan-container.is-confirmed #element-scan-tag-name {
+    background-color: #2ecc71;
 }

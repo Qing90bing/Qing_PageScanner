@@ -1,6 +1,6 @@
 // src/features/element-scan/logic.js
 
-import { updateHighlight, cleanupUI, createAdjustmentToolbar, cleanupToolbar, showTopCenterUI, hideTopCenterUI } from './ui.js';
+import { updateHighlight, cleanupUI, createAdjustmentToolbar, cleanupToolbar, showTopCenterUI, hideTopCenterUI, playScanConfirmationAnimation, playScanPulseAnimation, playScanErrorAnimation } from './ui.js';
 import { extractRawTextFromElement } from '../../shared/utils/text/textProcessor.js';
 import { formatTextsForTranslation } from '../../shared/utils/text/formatting.js';
 import { updateModalContent } from '../../shared/ui/mainModal/index.js';
@@ -41,6 +41,8 @@ let scrollUpdateQueued = false;
 // 优化：持久化 Worker 实例和 Iframe 观察者
 let workerInstance = null;
 let iframeObserver = null;
+// 修复：防止暂存动画定时器与手动操作冲突
+let reselectTimer = null;
 
 
 // --- 事件监听 ---
@@ -401,6 +403,12 @@ export function stopElementScan(fabElement) {
     hideTopCenterUI();
     removeScrollListeners();
 
+    // 清理定时器
+    if (reselectTimer) {
+        clearTimeout(reselectTimer);
+        reselectTimer = null;
+    }
+
     // 清理 Worker
     terminateWorker();
 
@@ -441,6 +449,13 @@ export function resumeElementScan() {
 
 export function reselectElement() {
     if (isPaused) return;
+
+    // 清除可能存在的延时重置，防止竞态条件
+    if (reselectTimer) {
+        clearTimeout(reselectTimer);
+        reselectTimer = null;
+    }
+
     log(t('log.elementScan.reselecting'));
     isAdjusting = false;
     cleanupUI();
@@ -557,8 +572,28 @@ export async function stageCurrentElement() {
             filteredTexts.forEach(text => stagedTexts.add(text));
             log(t('log.elementScan.staged', { count: newlyStagedCount, total: stagedTexts.size }));
             updateStagedCount();
+
+            // 播放脉冲动画作为成功反馈
+            playScanPulseAnimation();
+
+            // 延迟一点再恢复选择模式，让动画播放完（提升可视性）
+            // 保存 timer ID 以便在手动操作时取消
+            if (reselectTimer) clearTimeout(reselectTimer);
+            reselectTimer = setTimeout(() => {
+                reselectElement();
+                reselectTimer = null;
+            }, 500);
         } else {
             log(t('log.elementScan.stagedNothingNew'));
+            // 播放错误/虽然空动画
+            playScanErrorAnimation();
+
+            // 同样延迟一点再恢复，让用户看清错误反馈
+            if (reselectTimer) clearTimeout(reselectTimer);
+            reselectTimer = setTimeout(() => {
+                reselectElement();
+                reselectTimer = null;
+            }, 500); // 错误动画也是 400ms 左右，给 600ms 足够了
         }
     } catch (error) {
         log(t('log.elementScan.processingError', { error: error.message }), 'error');
@@ -758,6 +793,9 @@ export async function confirmSelectionAndExtract() {
 
     log(t('log.elementScan.confirmStarted'));
 
+    // 1. 设置调整模式，防止鼠标悬停干扰动画
+    isAdjusting = true; // 关键锁定
+
     // 1. 对最后选定的元素，提取并通过 Worker 过滤文本
     const rawTexts = extractRawTextFromElement(currentTarget);
     const settings = await loadSettings();
@@ -777,38 +815,42 @@ export async function confirmSelectionAndExtract() {
     const totalToProcess = stagedTexts.size;
     log(simpleTemplate(t('log.elementScan.confirmingStaged'), { count: totalToProcess }));
 
-    // 2. 清理UI并为显示模态框做准备
-    isAdjusting = true;
-    removeListenersFromDocument(document);
-    removeListenersFromIframes();
-    cleanupUI();
-    cleanupToolbar();
-    removeScrollListeners();
+    // --- 播放确认动画，等待动画这一视觉反馈完成后，再打开模态框 ---
+    // 这样做可以给用户一个清晰的“操作已完成，正在跳转”的心理预期
+    playScanConfirmationAnimation(() => {
+        // 2. 清理UI并为显示模态框做准备
+        isAdjusting = true;
+        removeListenersFromDocument(document);
+        removeListenersFromIframes();
+        cleanupUI();
+        cleanupToolbar();
+        removeScrollListeners();
 
-    setShouldResumeAfterModalClose(true);
+        setShouldResumeAfterModalClose(true);
 
-    // 3. 处理并显示结果
-    try {
-        const allTexts = Array.from(stagedTexts);
-        log(simpleTemplate(t('log.elementScan.extractedCount'), { count: allTexts.length }));
+        // 3. 处理并显示结果
+        try {
+            const allTexts = Array.from(stagedTexts);
+            log(simpleTemplate(t('log.elementScan.extractedCount'), { count: allTexts.length }));
 
-        // 由于所有文本在暂存时已经过过滤，现在只需格式化即可
-        const { outputFormat, includeArrayBrackets } = settings;
-        const formattedText = formatTextsForTranslation(allTexts, outputFormat, { includeArrayBrackets });
-        const count = allTexts.length;
+            // 由于所有文本在暂存时已经过过滤，现在只需格式化即可
+            const { outputFormat, includeArrayBrackets } = settings;
+            const formattedText = formatTextsForTranslation(allTexts, outputFormat, { includeArrayBrackets });
+            const count = allTexts.length;
 
-        updateModalContent(formattedText, true, 'element-scan');
-        updateScanCount(count, 'element');
+            updateModalContent(formattedText, true, 'element-scan');
+            updateScanCount(count, 'element');
 
-        const notificationText = simpleTemplate(t('scan.elementFinished'), { count });
-        showNotification(notificationText, { type: 'success' });
-        log(t('log.elementScan.confirmFinished'));
+            const notificationText = simpleTemplate(t('scan.elementFinished'), { count });
+            showNotification(notificationText, { type: 'success' });
+            log(t('log.elementScan.confirmFinished'));
 
-    } catch (error) {
-        log(t('log.elementScan.confirmFailed', { error: error.message }), 'error');
-        showNotification(t('notifications.scanFailed'), { type: 'error' });
-        // 即使出错，也要确保停止扫描以清理状态
-        const fabElement = uiContainer.querySelector('.fab-element-scan');
-        stopElementScan(fabElement);
-    }
+        } catch (error) {
+            log(t('log.elementScan.confirmFailed', { error: error.message }), 'error');
+            showNotification(t('notifications.scanFailed'), { type: 'error' });
+            // 即使出错，也要确保停止扫描以清理状态
+            const fabElement = uiContainer.querySelector('.fab-element-scan');
+            stopElementScan(fabElement);
+        }
+    });
 }
