@@ -1949,25 +1949,42 @@ var TextExtractor = (() => {
   }
   var workerPolicy;
   var htmlPolicy;
+  var GLOBAL_WORKER_POLICY_KEY = "__qing_scanner_worker_policy__";
+  var GLOBAL_HTML_POLICY_KEY = "__qing_scanner_html_policy__";
+  var POLICY_CANDIDATES = [
+    "qing-page-scanner",
+    "AGPolicy",
+    "opal",
+    "google#html",
+    "default",
+    "sanitizer",
+    "dompurify",
+    "allow-duplicates"
+  ];
+  function createBestEffortPolicy(typePrefix, policyOptions, globalCacheKey) {
+    if (window[globalCacheKey]) {
+      return window[globalCacheKey];
+    }
+    for (const name of POLICY_CANDIDATES) {
+      try {
+        const policy = window.trustedTypes.createPolicy(name, policyOptions);
+        window[globalCacheKey] = policy;
+        log(t("log.trustedTypes.policyCreated", { name, type: typePrefix }));
+        return policy;
+      } catch (e) {
+        continue;
+      }
+    }
+    log(t("log.trustedTypes.allPoliciesFailed", { type: typePrefix }), null, true);
+    return null;
+  }
   if (window.trustedTypes && window.trustedTypes.createPolicy) {
-    try {
-      workerPolicy = window.trustedTypes.createPolicy("text-extractor-worker", {
-        createScriptURL: (url) => url
-      });
-    } catch (e) {
-      if (!(e.name === "TypeError" && e.message.includes("Policy already exists"))) {
-        log(t("log.trustedTypes.workerPolicyError"), e);
-      }
-    }
-    try {
-      htmlPolicy = window.trustedTypes.createPolicy("text-extractor-html", {
-        createHTML: (htmlString) => htmlString
-      });
-    } catch (e) {
-      if (!(e.name === "TypeError" && e.message.includes("Policy already exists"))) {
-        log(t("log.trustedTypes.htmlPolicyError"), e);
-      }
-    }
+    workerPolicy = createBestEffortPolicy("worker", {
+      createScriptURL: (url) => url
+    }, GLOBAL_WORKER_POLICY_KEY);
+    htmlPolicy = createBestEffortPolicy("html", {
+      createHTML: (htmlString) => htmlString
+    }, GLOBAL_HTML_POLICY_KEY);
   }
   function createTrustedWorkerUrl(url) {
     if (workerPolicy) {
@@ -7401,6 +7418,8 @@ ${result.join(",\n")}
   var AUTO_SAVE_INTERVAL_MS2 = 5e3;
   var scrollableParents = [];
   var scrollUpdateQueued = false;
+  var workerInstance = null;
+  var iframeObserver = null;
   on("clearElementScan", () => {
     stagedTexts.clear();
     updateStagedCount();
@@ -7511,6 +7530,7 @@ ${result.join(",\n")}
     }
     addListenersToDocument(document);
     addListenersToIframes();
+    setupIframeObserver();
     window.addEventListener("beforeunload", handleElementScanUnload);
     if (autoSaveInterval2) clearInterval(autoSaveInterval2);
     autoSaveInterval2 = setInterval(() => {
@@ -7544,17 +7564,57 @@ ${result.join(",\n")}
   function addListenersToIframes() {
     const iframes = document.querySelectorAll("iframe");
     iframes.forEach((iframe) => {
-      try {
-        const iframeDoc = iframe.contentDocument || iframe.contentWindow && iframe.contentWindow.document;
-        if (iframeDoc) {
-          iframeDoc._frameElement = iframe;
-          addListenersToDocument(iframeDoc);
-        }
-      } catch (e) {
-      }
+      attachIframeListeners(iframe);
     });
   }
+  function attachIframeListeners(iframe) {
+    try {
+      const attach = (win) => {
+        try {
+          const doc = win.document;
+          if (doc) {
+            doc._frameElement = iframe;
+            addListenersToDocument(doc);
+          }
+        } catch (e) {
+        }
+      };
+      if (iframe.contentWindow && iframe.contentWindow.document && iframe.contentWindow.document.readyState === "complete") {
+        attach(iframe.contentWindow);
+      } else {
+        iframe.addEventListener("load", () => {
+          if (iframe.contentWindow) {
+            attach(iframe.contentWindow);
+          }
+        }, { once: true });
+      }
+    } catch (e) {
+    }
+  }
+  function setupIframeObserver() {
+    if (iframeObserver) return;
+    iframeObserver = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.addedNodes.length) {
+          mutation.addedNodes.forEach((node) => {
+            if (node.tagName === "IFRAME") {
+              attachIframeListeners(node);
+            } else if (node.nodeType === Node.ELEMENT_NODE && node.querySelectorAll) {
+              const nestedIframes = node.querySelectorAll("iframe");
+              nestedIframes.forEach(attachIframeListeners);
+            }
+          });
+        }
+      });
+    });
+    iframeObserver.observe(document.body, { childList: true, subtree: true });
+    log(t("log.elementScan.iframeObserverStarted"));
+  }
   function removeListenersFromIframes() {
+    if (iframeObserver) {
+      iframeObserver.disconnect();
+      iframeObserver = null;
+    }
     const iframes = document.querySelectorAll("iframe");
     iframes.forEach((iframe) => {
       try {
@@ -7607,12 +7667,20 @@ ${result.join(",\n")}
     cleanupToolbar();
     hideTopCenterUI2();
     removeScrollListeners();
+    terminateWorker();
     elementPath = [];
     currentTarget = null;
     stagedTexts.clear();
     fallbackNotificationShown = false;
     updateStagedCount();
     log(t("log.elementScan.stateReset"));
+  }
+  function terminateWorker() {
+    if (workerInstance) {
+      workerInstance.terminate();
+      workerInstance = null;
+      log(t("log.elementScan.worker.terminated"));
+    }
   }
   function pauseElementScan() {
     if (!isActive || isPaused2) return;
@@ -7666,40 +7734,38 @@ ${result.join(",\n")}
         return;
       }
       try {
-        log(t("log.elementScan.worker.attemping"), "info");
-        const worker2 = new Worker(trustedWorkerUrl);
-        worker2.onmessage = (event) => {
+        if (!workerInstance) {
+          log(t("log.elementScan.worker.initializing"), "info");
+          workerInstance = new Worker(trustedWorkerUrl);
+          workerInstance.onerror = (error) => {
+            log(t("log.elementScan.worker.error"), "error");
+          };
+        }
+        workerInstance.onmessage = (event) => {
           const { type, payload } = event.data;
           if (type === "textsFiltered") {
             resolve(payload.texts);
-            worker2.terminate();
           }
         };
-        worker2.onerror = (error) => {
-          log(t("log.elementScan.worker.initFailed"), "warn");
-          log(t("log.elementScan.worker.cspHint"), "debug");
-          worker2.terminate();
+        workerInstance.onerror = (error) => {
+          log(t("log.elementScan.worker.runtimeError"), "warn");
+          workerInstance.terminate();
+          workerInstance = null;
           handleFallback();
         };
-        try {
-          worker2.postMessage({
-            type: "filter-texts",
-            payload: {
-              texts,
-              filterRules: settings.filterRules,
-              enableDebugLogging: settings.enableDebugLogging,
-              translations: {
-                workerLogPrefix: t("log.elementScan.worker.logPrefix"),
-                textFiltered: t("log.textProcessor.filtered"),
-                filterReasons: getTranslationObject("filterReasons")
-              }
+        workerInstance.postMessage({
+          type: "filter-texts",
+          payload: {
+            texts,
+            filterRules: settings.filterRules,
+            enableDebugLogging: settings.enableDebugLogging,
+            translations: {
+              workerLogPrefix: t("log.elementScan.worker.logPrefix"),
+              textFiltered: t("log.textProcessor.filtered"),
+              filterReasons: getTranslationObject("filterReasons")
             }
-          });
-        } catch (postError) {
-          log(t("log.elementScan.worker.postMessageFailed", { error: postError.message }), "error");
-          worker2.terminate();
-          handleFallback();
-        }
+          }
+        });
       } catch (initError) {
         log(t("log.elementScan.worker.initSyncError", { error: initError.message }), "error");
         handleFallback();

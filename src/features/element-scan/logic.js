@@ -38,6 +38,10 @@ const AUTO_SAVE_INTERVAL_MS = 5000; // 5秒
 let scrollableParents = [];
 let scrollUpdateQueued = false;
 
+// 优化：持久化 Worker 实例和 Iframe 观察者
+let workerInstance = null;
+let iframeObserver = null;
+
 
 // --- 事件监听 ---
 on('clearElementScan', () => {
@@ -196,8 +200,11 @@ function startElementScan(fabElement, options = {}) {
     // 添加主文档监听器
     addListenersToDocument(document);
 
-    // 添加 Iframe 监听器
+    // 添加 Iframe 监听器 (初始扫描)
     addListenersToIframes();
+
+    // 启动动态 Iframe 监听
+    setupIframeObserver();
 
     window.addEventListener('beforeunload', handleElementScanUnload);
 
@@ -250,23 +257,82 @@ function removeListenersFromDocument(doc) {
 function addListenersToIframes() {
     const iframes = document.querySelectorAll('iframe');
     iframes.forEach(iframe => {
-        try {
-            const iframeDoc = iframe.contentDocument || (iframe.contentWindow && iframe.contentWindow.document);
-            if (iframeDoc) {
-                // 将 iframe 元素自身附加到文档对象上，以便在事件处理中反查偏移量
-                iframeDoc._frameElement = iframe;
-                addListenersToDocument(iframeDoc);
-            }
-        } catch (e) {
-            // 忽略跨域 iframe
-        }
+        attachIframeListeners(iframe);
     });
+}
+
+/**
+ * 辅助函数：为单个 Iframe 绑定监听器
+ * 包括处理尚未加载完成的情况
+ * @param {HTMLIFrameElement} iframe
+ */
+function attachIframeListeners(iframe) {
+    try {
+        const attach = (win) => {
+            try {
+                const doc = win.document;
+                if (doc) {
+                    doc._frameElement = iframe;
+                    addListenersToDocument(doc);
+                }
+            } catch (e) {
+                // ignore cross-origin access errors
+            }
+        };
+
+        if (iframe.contentWindow && iframe.contentWindow.document && iframe.contentWindow.document.readyState === 'complete') {
+            attach(iframe.contentWindow);
+        } else {
+            // 如果 iframe 还没加载完，监听 load 事件
+            iframe.addEventListener('load', () => {
+                if (iframe.contentWindow) {
+                    attach(iframe.contentWindow);
+                }
+            }, { once: true });
+        }
+    } catch (e) {
+        // 忽略跨域 iframe
+    }
+}
+
+/**
+ * 设置 MutationObserver 以监听动态添加的 Iframe
+ */
+function setupIframeObserver() {
+    if (iframeObserver) return;
+
+    iframeObserver = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.addedNodes.length) {
+                mutation.addedNodes.forEach((node) => {
+                    // 直接检查 iframe 标签
+                    if (node.tagName === 'IFRAME') {
+                        attachIframeListeners(node);
+                    }
+                    // 检查容器内部是否包含 iframe
+                    else if (node.nodeType === Node.ELEMENT_NODE && node.querySelectorAll) {
+                        const nestedIframes = node.querySelectorAll('iframe');
+                        nestedIframes.forEach(attachIframeListeners);
+                    }
+                });
+            }
+        });
+    });
+
+    iframeObserver.observe(document.body, { childList: true, subtree: true });
+    log(t('log.elementScan.iframeObserverStarted'));
 }
 
 /**
  * 移除所有 Iframe 的监听器。
  */
 function removeListenersFromIframes() {
+    // 停止观察
+    if (iframeObserver) {
+        iframeObserver.disconnect();
+        iframeObserver = null;
+    }
+
     const iframes = document.querySelectorAll('iframe');
     iframes.forEach(iframe => {
         try {
@@ -335,12 +401,23 @@ export function stopElementScan(fabElement) {
     hideTopCenterUI();
     removeScrollListeners();
 
+    // 清理 Worker
+    terminateWorker();
+
     elementPath = [];
     currentTarget = null;
     stagedTexts.clear();
     fallbackNotificationShown = false; // 清理通知状态
     updateStagedCount();
     log(t('log.elementScan.stateReset'));
+}
+
+function terminateWorker() {
+    if (workerInstance) {
+        workerInstance.terminate();
+        workerInstance = null;
+        log(t('log.elementScan.worker.terminated'));
+    }
 }
 
 export function pauseElementScan() {
@@ -381,7 +458,7 @@ export function reselectElement() {
  * @returns {Promise<string[]>} - 一个解析为过滤后文本数组的 Promise。
  */
 function filterTextsWithWorker(texts, settings) {
-    return new Promise(async (resolve) => { // No longer rejects, always resolves
+    return new Promise(async (resolve) => {
         const handleFallback = () => {
             log(t('log.elementScan.worker.fallback'), 'info');
             if (!fallbackNotificationShown) {
@@ -389,7 +466,6 @@ function filterTextsWithWorker(texts, settings) {
                 fallbackNotificationShown = true;
             }
 
-            // 定义一个日志记录函数以传递给核心处理器
             const logFiltered = (text, reason) => {
                 log(t('log.textProcessor.filtered', { text, reason }));
             };
@@ -411,45 +487,52 @@ function filterTextsWithWorker(texts, settings) {
         }
 
         try {
-            log(t('log.elementScan.worker.attemping'), 'info');
-            const worker = new Worker(trustedWorkerUrl);
+            // 如果实例不存在（或者之前被意外销毁），则创建新实例
+            if (!workerInstance) {
+                log(t('log.elementScan.worker.initializing'), 'info');
+                workerInstance = new Worker(trustedWorkerUrl);
 
-            worker.onmessage = (event) => {
+                // 设置通用的错误处理，防止未捕获的异常
+                workerInstance.onerror = (error) => {
+                    log(t('log.elementScan.worker.error'), 'error');
+                    // 注意：这里不 terminate，除非是严重错误。让单次请求的 handler 去处理回调逻辑。
+                    // 但为了稳健，如果 Worker 挂了，我们可能需要重置 workerInstance
+                };
+            }
+
+            // 为本次请求设置 specific handler
+            // 注意：由于 JS 单线程且此处操作通常是串行的（用户点击 -> 处理 -> 结束），
+            // 直接复用 onmessage 是安全的。如果支持并发，需要用 MessageId 映射。
+            workerInstance.onmessage = (event) => {
                 const { type, payload } = event.data;
                 if (type === 'textsFiltered') {
                     resolve(payload.texts);
-                    worker.terminate();
+                    // 不再 terminate worker
                 }
             };
 
-            worker.onerror = (error) => {
-                // error 对象本身可能信息量不大，特别是在CSP场景下
-                log(t('log.elementScan.worker.initFailed'), 'warn');
-                // 添加更具体的日志，解释这可能是CSP问题
-                log(t('log.elementScan.worker.cspHint'), 'debug');
-                worker.terminate();
+            // 覆盖 onerror 以便捕获本次特定的错误并 fallback
+            workerInstance.onerror = (error) => {
+                log(t('log.elementScan.worker.runtimeError'), 'warn');
+                workerInstance.terminate();
+                workerInstance = null; // 销毁并重置，下次会重建
                 handleFallback();
             };
 
-            try {
-                worker.postMessage({
-                    type: 'filter-texts',
-                    payload: {
-                        texts,
-                        filterRules: settings.filterRules,
-                        enableDebugLogging: settings.enableDebugLogging,
-                        translations: { // 确保 worker 有翻译文本
-                            workerLogPrefix: t('log.elementScan.worker.logPrefix'),
-                            textFiltered: t('log.textProcessor.filtered'),
-                            filterReasons: getTranslationObject('filterReasons'),
-                        }
+            workerInstance.postMessage({
+                type: 'filter-texts',
+                payload: {
+                    texts,
+                    filterRules: settings.filterRules,
+                    enableDebugLogging: settings.enableDebugLogging,
+                    translations: {
+                        workerLogPrefix: t('log.elementScan.worker.logPrefix'),
+                        textFiltered: t('log.textProcessor.filtered'),
+                        filterReasons: getTranslationObject('filterReasons'),
                     }
-                });
-            } catch (postError) {
-                log(t('log.elementScan.worker.postMessageFailed', { error: postError.message }), 'error');
-                worker.terminate();
-                handleFallback();
-            }
+                }
+            });
+
         } catch (initError) {
             log(t('log.elementScan.worker.initSyncError', { error: initError.message }), 'error');
             handleFallback();
