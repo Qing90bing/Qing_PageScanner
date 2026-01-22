@@ -53,7 +53,7 @@ var TextExtractor = (() => {
     const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
     container.style.setProperty("--scrollbar-width", `${scrollbarWidth}px`);
   }
-  function createUIContainer() {
+  function createHostElement() {
     const container = document.createElement("div");
     container.id = "text-extractor-container";
     const supportsPopover = HTMLElement.prototype.hasOwnProperty("popover");
@@ -72,47 +72,185 @@ var TextExtractor = (() => {
     container.style.margin = "0";
     container.style.padding = "0";
     container.style.overflow = "visible";
-    let promoteTimeout = null;
-    const rePromoteToTop = () => {
-      if (promoteTimeout) clearTimeout(promoteTimeout);
-      promoteTimeout = setTimeout(() => {
-        if (!container.isConnected || !supportsPopover) return;
+    return container;
+  }
+  function attachToBody(container) {
+    if (document.body && !container.isConnected) {
+      document.body.appendChild(container);
+      if (container.popover === "manual") {
         try {
-          container.hidePopover();
+          container.showPopover();
         } catch (e) {
         }
-        void container.offsetHeight;
+      }
+    }
+  }
+  var TopLayerManager = class {
+    constructor(container) {
+      this.container = container;
+      this.supportsPopover = container.popover === "manual";
+      this.promoteTimeout = null;
+    }
+        rePromote() {
+      if (!this.supportsPopover) return;
+      if (this.promoteTimeout) clearTimeout(this.promoteTimeout);
+      this.promoteTimeout = setTimeout(() => {
+        if (!this.container.isConnected) return;
+        try {
+          this.container.hidePopover();
+        } catch (e) {
+        }
+        void this.container.offsetHeight;
         requestAnimationFrame(() => {
           try {
-            if (container.parentElement === document.body) {
-              document.body.removeChild(container);
-            } else if (container.parentElement) {
-              container.remove();
+            if (this.container.parentElement === document.body) {
+              document.body.removeChild(this.container);
+            } else if (this.container.parentElement) {
+              this.container.remove();
             }
-            document.body.appendChild(container);
-            container.showPopover();
+            document.body.appendChild(this.container);
+            this.container.showPopover();
           } catch (e) {
           }
         });
       }, 100);
-    };
-    const attachToBody = () => {
-      if (document.body && !container.isConnected) {
-        document.body.appendChild(container);
-        if (supportsPopover) {
-          try {
-            container.showPopover();
-          } catch (e) {
-          }
+    }
+  };
+  var EventIsolator = class {
+    constructor(container) {
+      this.container = container;
+      this.shadowRoot = container.attachShadow({ mode: "closed" });
+      this.handleGlobalCapture = this.handleGlobalCapture.bind(this);
+    }
+        getShadowRoot() {
+      return this.shadowRoot;
+    }
+        handleGlobalCapture(e) {
+      let shouldBlock = false;
+      if (e.target === this.container || e.target instanceof Node && this.container.contains(e.target)) {
+        if (["pointerdown", "pointerup", "touchstart", "touchend", "focusin", "focusout"].includes(e.type)) {
+          shouldBlock = true;
         }
       }
-    };
-    if (document.body) {
-      attachToBody();
-    } else {
-      document.addEventListener("DOMContentLoaded", attachToBody);
+      if (e.relatedTarget && (e.relatedTarget === this.container || e.relatedTarget instanceof Node && this.container.contains(e.relatedTarget))) {
+        shouldBlock = true;
+      }
+      if (shouldBlock) {
+        e.stopImmediatePropagation();
+        e.stopPropagation();
+      }
     }
-    const observer2 = new MutationObserver((mutations) => {
+        restoreFocus(originalElement) {
+      setTimeout(() => {
+        const current = document.activeElement;
+        if ((current === document.body || current === this.container) && originalElement && originalElement.isConnected) {
+          try {
+            originalElement.focus();
+          } catch (err) {
+          }
+        }
+      }, 0);
+    }
+        setupInternalIsolation() {
+      const handleInternalBubble = (e) => {
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        if (e.type === "mousedown") {
+          const target = e.target;
+          const tagName = target.tagName;
+          const isInput = tagName === "INPUT" || tagName === "TEXTAREA" || tagName === "SELECT" || target.isContentEditable;
+          const isLabel = tagName === "LABEL";
+          if (!isInput && !isLabel) {
+            const originalFocus = document.activeElement;
+            e.preventDefault();
+            this.restoreFocus(originalFocus);
+          }
+        }
+      };
+      const bubbleEvents = [
+        "click",
+        "dblclick",
+        "contextmenu",
+        "mouseup",
+        "mousedown",
+        "keydown",
+        "keyup",
+        "keypress",
+        "pointerdown",
+        "pointerup",
+        "touchstart",
+        "touchend",
+        "focusin",
+        "focusout"
+      ];
+      bubbleEvents.forEach((evt) => {
+        this.shadowRoot.addEventListener(evt, handleInternalBubble, { capture: false });
+      });
+    }
+        attachGlobalListeners() {
+      const captureEvents = [
+        "pointerdown",
+        "pointerup",
+        "touchstart",
+        "touchend",
+        "focusin",
+        "focusout",
+        "mouseout",
+        "mouseleave",
+        "pointerout",
+        "pointerleave",
+        "blur"
+      ];
+      captureEvents.forEach((evt) => window.addEventListener(evt, this.handleGlobalCapture, { capture: true }));
+    }
+        detachGlobalListeners() {
+      const captureEvents = [
+        "pointerdown",
+        "pointerup",
+        "touchstart",
+        "touchend",
+        "focusin",
+        "focusout",
+        "mouseout",
+        "mouseleave",
+        "pointerout",
+        "pointerleave",
+        "blur"
+      ];
+      captureEvents.forEach((evt) => window.removeEventListener(evt, this.handleGlobalCapture, { capture: true }));
+    }
+  };
+  var LifecycleManager = class {
+        constructor({ onConnect, onDisconnect }) {
+      this.onConnect = onConnect;
+      this.onDisconnect = onDisconnect;
+      this.activeRefs = 0;
+    }
+    acquire() {
+      if (this.activeRefs === 0) {
+        this.onConnect();
+      }
+      this.activeRefs++;
+    }
+    release() {
+      this.activeRefs--;
+      if (this.activeRefs <= 0) {
+        this.activeRefs = 0;
+        this.onDisconnect();
+      } else {
+      }
+    }
+    get refCount() {
+      return this.activeRefs;
+    }
+  };
+  function createUIContainer() {
+    const container = createHostElement();
+    const topLayerMgr = new TopLayerManager(container);
+    const isolator = new EventIsolator(container);
+    isolator.setupInternalIsolation();
+    const resizeHandler = () => updateScrollbarWidth(container);
+    const observerCallback = (mutations) => {
       let needsReattach = false;
       let potentialOcclusion = false;
       for (const mutation of mutations) {
@@ -125,8 +263,7 @@ var TextExtractor = (() => {
           if (!needsReattach) {
             for (const node of mutation.addedNodes) {
               if (node.nodeType === 1 && node !== container) {
-                const tagName = node.tagName;
-                if (tagName === "DIALOG" || node.hasAttribute("popover")) {
+                if (node.tagName === "DIALOG" || node.hasAttribute("popover")) {
                   potentialOcclusion = true;
                 }
               }
@@ -134,115 +271,55 @@ var TextExtractor = (() => {
           }
         }
         if (mutation.type === "attributes" && mutation.target !== container) {
-          const tagName = mutation.target.tagName;
-          if (tagName === "DIALOG" && mutation.attributeName === "open" && mutation.target.hasAttribute("open")) {
+          if (mutation.target.tagName === "DIALOG" && mutation.attributeName === "open" && mutation.target.hasAttribute("open")) {
             potentialOcclusion = true;
           }
         }
       }
       if (needsReattach) {
-        attachToBody();
-      } else if (potentialOcclusion && supportsPopover) {
-        rePromoteToTop();
+        attachToBody(container);
+      } else if (potentialOcclusion) {
+        topLayerMgr.rePromote();
       }
-    });
-    if (document.body) {
-      observer2.observe(document.body, {
-        childList: true,
-        subtree: true,
-        attributes: true,
-        attributeFilter: ["open", "popover"]
-      });
-    } else {
-      window.addEventListener("DOMContentLoaded", () => {
-        observer2.observe(document.body, {
-          childList: true,
-          subtree: true,
-          attributes: true,
-          attributeFilter: ["open", "popover"]
+    };
+    const observer2 = new MutationObserver(observerCallback);
+    const onConnect = () => {
+      attachToBody(container);
+      const startObserver = () => {
+        if (document.body) {
+          observer2.observe(document.body, {
+            childList: true,
+            subtree: true,
+            attributes: true,
+            attributeFilter: ["open", "popover"]
+          });
+        }
+      };
+      if (document.body) {
+        startObserver();
+      } else {
+        window.addEventListener("DOMContentLoaded", () => {
+          attachToBody(container);
+          startObserver();
         });
-      });
-    }
-    updateScrollbarWidth(container);
-    window.addEventListener("resize", () => updateScrollbarWidth(container));
-    const restoreFocus = (originalElement) => {
-      setTimeout(() => {
-        const current = document.activeElement;
-        if ((current === document.body || current === container) && originalElement && originalElement.isConnected) {
-          try {
-            originalElement.focus();
-          } catch (err) {
-          }
-        }
-      }, 0);
+      }
+      isolator.attachGlobalListeners();
+      updateScrollbarWidth(container);
+      window.addEventListener("resize", resizeHandler);
     };
-    const handleGlobalCapture = (e) => {
-      let shouldBlock = false;
-      if (e.target === container || e.target instanceof Node && container.contains(e.target)) {
-        if (["pointerdown", "pointerup", "touchstart", "touchend", "focusin", "focusout"].includes(e.type)) {
-          shouldBlock = true;
-        }
-      }
-      if (e.relatedTarget && (e.relatedTarget === container || e.relatedTarget instanceof Node && container.contains(e.relatedTarget))) {
-        shouldBlock = true;
-      }
-      if (shouldBlock) {
-        e.stopImmediatePropagation();
-        e.stopPropagation();
-      }
+    const onDisconnect = () => {
+      observer2.disconnect();
+      isolator.detachGlobalListeners();
+      window.removeEventListener("resize", resizeHandler);
     };
-    const captureEvents = [
-      "pointerdown",
-      "pointerup",
-      "touchstart",
-      "touchend",
-      "focusin",
-      "focusout",
-      "mouseout",
-      "mouseleave",
-      "pointerout",
-      "pointerleave",
-      "blur"
-    ];
-    captureEvents.forEach((evt) => window.addEventListener(evt, handleGlobalCapture, { capture: true }));
-    const shadowRoot = container.attachShadow({ mode: "closed" });
-    const handleInternalBubble = (e) => {
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-      if (e.type === "mousedown") {
-        const target = e.target;
-        const tagName = target.tagName;
-        const isInput = tagName === "INPUT" || tagName === "TEXTAREA" || tagName === "SELECT" || target.isContentEditable;
-        const isLabel = tagName === "LABEL";
-        if (!isInput && !isLabel) {
-          const originalFocus = document.activeElement;
-          e.preventDefault();
-          restoreFocus(originalFocus);
-        }
-      }
-    };
-    const bubbleEvents = [
-      "click",
-      "dblclick",
-      "contextmenu",
-      "mouseup",
-      "mousedown",
-      "keydown",
-      "keyup",
-      "keypress",
-      "pointerdown",
-      "pointerup",
-      "touchstart",
-      "touchend",
-      "focusin",
-      "focusout"
-    ];
-    bubbleEvents.forEach((evt) => {
-      shadowRoot.addEventListener(evt, handleInternalBubble, { capture: false });
-    });
+    const lifecycle = new LifecycleManager({ onConnect, onDisconnect });
+    lifecycle.acquire();
+    const shadowRoot = isolator.getShadowRoot();
+    shadowRoot.lifecycle = lifecycle;
     return shadowRoot;
   }
   var uiContainer = createUIContainer();
+  var uiLifecycle = uiContainer.lifecycle;
   var tooltipElement = null;
   var hideTimeout = null;
   var MARGIN = 12;
@@ -7285,29 +7362,16 @@ ${result.join(",\n")}
     toolbar.style.top = `${top}px`;
     toolbar.style.left = `${left}px`;
     log(t("log.elementScanUI.toolbarPositioned"));
-    makeDraggable(toolbar);
+    toolbarCleanup = makeDraggable(toolbar);
     requestAnimationFrame(() => {
       toolbar.classList.add("is-visible");
     });
   }
   function makeDraggable(element) {
     let offsetX, offsetY;
-    const onMouseDown = (e) => {
-      if (e.button !== 0) return;
-      const isInteractive = e.target.closest("button, .custom-slider-thumb, .custom-slider-track");
-      if (!isInteractive) {
-        e.preventDefault();
-        const rect = element.getBoundingClientRect();
-        offsetX = e.clientX - rect.left;
-        offsetY = e.clientY - rect.top;
-        document.addEventListener("mousemove", onMouseMove);
-        document.addEventListener("mouseup", onMouseUp);
-        log(t("log.elementScanUI.dragStarted"));
-      }
-    };
     const onMouseMove = (e) => {
       if ((e.buttons & 1) === 0) {
-        onMouseUp();
+        cleanupDrag();
         return;
       }
       const viewportWidth = window.innerWidth;
@@ -7322,16 +7386,34 @@ ${result.join(",\n")}
       element.style.left = `${newLeft}px`;
       element.style.top = `${newTop}px`;
     };
-    const onMouseUp = () => {
+    const cleanupDrag = () => {
       document.removeEventListener("mousemove", onMouseMove);
-      document.removeEventListener("mouseup", onMouseUp);
+      document.removeEventListener("mouseup", cleanupDrag);
       log(t("log.elementScanUI.dragEnded"));
     };
+    const onMouseDown = (e) => {
+      if (e.button !== 0) return;
+      const isInteractive = e.target.closest("button, .custom-slider-thumb, .custom-slider-track");
+      if (!isInteractive) {
+        e.preventDefault();
+        const rect = element.getBoundingClientRect();
+        offsetX = e.clientX - rect.left;
+        offsetY = e.clientY - rect.top;
+        document.addEventListener("mousemove", onMouseMove);
+        document.addEventListener("mouseup", cleanupDrag);
+        log(t("log.elementScanUI.dragStarted"));
+      }
+    };
     const onContextMenu = () => {
-      onMouseUp();
+      cleanupDrag();
     };
     element.addEventListener("mousedown", onMouseDown);
     element.addEventListener("contextmenu", onContextMenu);
+    return () => {
+      element.removeEventListener("mousedown", onMouseDown);
+      element.removeEventListener("contextmenu", onContextMenu);
+      cleanupDrag();
+    };
   }
   function cleanupUI() {
     if (scanContainer) {
@@ -7339,9 +7421,14 @@ ${result.join(",\n")}
       scanContainer.classList.remove("is-visible");
     }
   }
+  var toolbarCleanup = null;
   function cleanupToolbar() {
     if (toolbar) {
       log(t("log.elementScanUI.cleaningToolbar"));
+      if (toolbarCleanup) {
+        toolbarCleanup();
+        toolbarCleanup = null;
+      }
       if (sliderInstance) {
         sliderInstance.destroy();
         sliderInstance = null;
@@ -7552,6 +7639,7 @@ ${result.join(",\n")}
   }
   function startElementScan(fabElement, options = {}) {
     log(t("log.elementScan.starting"));
+    uiLifecycle.acquire();
     enablePersistence();
     if (!options.silent) {
       showNotification(t("notifications.elementScanStarted"), { type: "info" });
@@ -7720,6 +7808,7 @@ ${result.join(",\n")}
     fallbackNotificationShown = false;
     updateStagedCount();
     log(t("log.elementScan.stateReset"));
+    uiLifecycle.release();
   }
   function terminateWorker() {
     if (workerInstance) {

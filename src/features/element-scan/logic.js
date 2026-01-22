@@ -4,7 +4,7 @@ import { updateHighlight, cleanupUI, createAdjustmentToolbar, cleanupToolbar, sh
 import { extractRawTextFromElement } from '../../shared/utils/text/textProcessor.js';
 import { formatTextsForTranslation } from '../../shared/utils/text/formatting.js';
 import { updateModalContent } from '../../shared/ui/mainModal/index.js';
-import { uiContainer } from '../../shared/ui/uiContainer.js';
+import { uiContainer, uiLifecycle } from '../../shared/ui/uiContainer.js';
 import { getDynamicFab, getElementScanFab, updateFabTooltip } from '../../shared/ui/components/fab.js';
 import { showNotification } from '../../shared/ui/components/notification.js';
 import { t, getTranslationObject } from '../../shared/i18n/index.js';
@@ -176,6 +176,9 @@ export function handleElementScanClick(fabElement) {
 function startElementScan(fabElement, options = {}) {
     log(t('log.elementScan.starting'));
 
+    // 1. 激活 UI 容器的全局监听器
+    uiLifecycle.acquire();
+
     // 在启动流程开始时启用持久化
     enablePersistence();
 
@@ -220,6 +223,7 @@ function startElementScan(fabElement, options = {}) {
 
     log(t('log.elementScan.listenersAdded'));
 }
+
 
 /**
  * 为指定文档对象添加必要的事件监听器。
@@ -418,6 +422,9 @@ export function stopElementScan(fabElement) {
     fallbackNotificationShown = false; // 清理通知状态
     updateStagedCount();
     log(t('log.elementScan.stateReset'));
+
+    // 释放 UI 容器的全局监听器
+    uiLifecycle.release();
 }
 
 function terminateWorker() {

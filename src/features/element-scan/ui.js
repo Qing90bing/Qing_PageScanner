@@ -322,7 +322,7 @@ export function createAdjustmentToolbar(elementPath, offset = { x: 0, y: 0 }) {
     toolbar.style.left = `${left}px`;
     log(t('log.elementScanUI.toolbarPositioned'));
 
-    makeDraggable(toolbar);
+    toolbarCleanup = makeDraggable(toolbar);
 
     requestAnimationFrame(() => {
         toolbar.classList.add('is-visible');
@@ -334,35 +334,16 @@ export function createAdjustmentToolbar(elementPath, offset = { x: 0, y: 0 }) {
  * @function makeDraggable
  * @description 使指定的HTML元素可以被拖动。
  * @param {HTMLElement} element - 需要变为可拖动的元素。
+ * @returns {Function} - 一个清理函数，用于移除所有可能的事件监听器。
  */
 function makeDraggable(element) {
     let offsetX, offsetY;
-
-    const onMouseDown = (e) => {
-        // 仅允许左键拖动 (button 0)
-        if (e.button !== 0) return;
-
-        // 检查点击的是否是交互式元素（按钮、滑块本身或滑块的拖动点）
-        // .closest() 方法会从当前元素开始向上遍历DOM树
-        const isInteractive = e.target.closest('button, .custom-slider-thumb, .custom-slider-track');
-
-        // 如果点击的不是交互式元素，则启动拖动
-        if (!isInteractive) {
-            e.preventDefault();
-            const rect = element.getBoundingClientRect();
-            offsetX = e.clientX - rect.left;
-            offsetY = e.clientY - rect.top;
-            document.addEventListener('mousemove', onMouseMove);
-            document.addEventListener('mouseup', onMouseUp);
-            log(t('log.elementScanUI.dragStarted'));
-        }
-    };
 
     const onMouseMove = (e) => {
         // 如果左键没有被按下（例如被右键菜单中断后），则停止拖动
         // e.buttons 是一个掩码，1 表示左键
         if ((e.buttons & 1) === 0) {
-            onMouseUp();
+            cleanupDrag();
             return;
         }
 
@@ -383,20 +364,46 @@ function makeDraggable(element) {
         element.style.top = `${newTop}px`;
     };
 
-    const onMouseUp = () => {
+    const cleanupDrag = () => {
         document.removeEventListener('mousemove', onMouseMove);
-        document.removeEventListener('mouseup', onMouseUp);
+        document.removeEventListener('mouseup', cleanupDrag);
         log(t('log.elementScanUI.dragEnded'));
     };
 
-    // 添加 contextmenu 监听器，确保右键菜单打开时取消拖动状态
+    const onMouseDown = (e) => {
+        // 仅允许左键拖动 (button 0)
+        if (e.button !== 0) return;
+
+        // 检查点击的是否是交互式元素（按钮、滑块本身或滑块的拖动点）
+        // .closest() 方法会从当前元素开始向上遍历DOM树
+        const isInteractive = e.target.closest('button, .custom-slider-thumb, .custom-slider-track');
+
+        // 如果点击的不是交互式元素，则启动拖动
+        if (!isInteractive) {
+            e.preventDefault();
+            const rect = element.getBoundingClientRect();
+            offsetX = e.clientX - rect.left;
+            offsetY = e.clientY - rect.top;
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', cleanupDrag); // 使用 cleanupDrag 作为 mouseup 处理函数
+            log(t('log.elementScanUI.dragStarted'));
+        }
+    };
+
     const onContextMenu = () => {
         // 如果正在拖动中被右键打断，则清理拖动状态
-        onMouseUp();
+        cleanupDrag();
     };
 
     element.addEventListener('mousedown', onMouseDown);
     element.addEventListener('contextmenu', onContextMenu);
+
+    // 返回一个完整的卸载函数，用于在外部强制销毁时调用
+    return () => {
+        element.removeEventListener('mousedown', onMouseDown);
+        element.removeEventListener('contextmenu', onContextMenu);
+        cleanupDrag(); // 确保正在进行的拖动也被取消
+    };
 }
 
 /**
@@ -411,6 +418,8 @@ export function cleanupUI() {
     }
 }
 
+let toolbarCleanup = null;
+
 /**
  * @public
  * @function cleanupToolbar
@@ -419,6 +428,13 @@ export function cleanupUI() {
 export function cleanupToolbar() {
     if (toolbar) {
         log(t('log.elementScanUI.cleaningToolbar'));
+
+        // 关键修复：清理拖拽监听器，防止“僵尸”监听器残留
+        if (toolbarCleanup) {
+            toolbarCleanup();
+            toolbarCleanup = null;
+        }
+
         if (sliderInstance) {
             sliderInstance.destroy();
             sliderInstance = null;
@@ -447,6 +463,7 @@ export function cleanupToolbar() {
         }, 300);
     }
 }
+
 
 /**
  * @public
