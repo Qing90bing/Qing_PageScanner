@@ -17,6 +17,17 @@ import * as fallback from './fallback.js';
 import { trustedWorkerUrl } from '../../shared/workers/worker-url.js';
 import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
 import { saveActiveSession, clearActiveSession, enablePersistence } from '../../shared/services/sessionPersistence.js';
+import {
+    isTranslationBridgeActive,
+    isTranslationBridgeIdle,
+    onTranslationBridgeStateChange,
+    registerTranslationBridgeClient,
+    unregisterTranslationBridgeClient,
+    waitForTranslationBridgeIdle,
+    TRANSLATION_IDLE_STATE,
+    TRANSLATION_BRIDGE_MAX_WAIT_MS,
+    TRANSLATION_BRIDGE_WAIT_TIMEOUT_MS,
+} from '../../shared/services/translationBridge.js';
 
 // --- 模块级变量 ---
 let isRecording = false;
@@ -30,6 +41,99 @@ let currentCount = 0; // 新增：在模块级别跟踪计数值
 let sessionTextsMirror = new Set(); // 主线程数据镜像
 let autoSaveInterval = null; // 自动保存定时器
 const AUTO_SAVE_INTERVAL_MS = 5000; // 5秒
+let pendingDynamicRoots = new Set();
+let pendingDynamicFlushTimeout = null;
+let pendingDynamicWaitStartedAt = null;
+
+function clearPendingDynamicRoots() {
+    pendingDynamicRoots.clear();
+    pendingDynamicWaitStartedAt = null;
+    if (pendingDynamicFlushTimeout !== null) {
+        clearTimeout(pendingDynamicFlushTimeout);
+        pendingDynamicFlushTimeout = null;
+    }
+}
+
+function processDynamicTexts(textsBatch) {
+    if (textsBatch.length === 0) return;
+
+    const logPrefix = '动态新发现';
+    if (useFallback) {
+        if (fallback.processTextsInFallback(textsBatch, logPrefix)) {
+            const count = fallback.getCountInFallback();
+            if (onUpdateCallback) onUpdateCallback(count);
+            updateScanCount(count, 'session');
+            saveActiveSession('session-scan');
+        }
+    } else if (worker) {
+        worker.postMessage({
+            type: 'session-add-texts',
+            payload: { texts: textsBatch }
+        });
+    }
+}
+
+function flushPendingDynamicRoots() {
+    if (!isRecording || pendingDynamicRoots.size === 0) return;
+
+    const pendingRoots = Array.from(pendingDynamicRoots);
+    const pendingRootSet = new Set(pendingRoots);
+    const roots = pendingRoots.filter(root => {
+        let parent = root.parentElement;
+        while (parent) {
+            if (pendingRootSet.has(parent)) return false;
+            parent = parent.parentElement;
+        }
+        return true;
+    });
+    clearPendingDynamicRoots();
+    const textsBatch = [];
+    const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(', ');
+
+    roots.forEach(root => {
+        if (!root.isConnected || root.closest(ignoredSelectorString)) return;
+
+        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+        while (walker.nextNode()) {
+            if (walker.currentNode.nodeValue) {
+                textsBatch.push(walker.currentNode.nodeValue);
+            }
+        }
+    });
+
+    processDynamicTexts(textsBatch);
+}
+
+function scheduleDynamicFlushFallback() {
+    if (pendingDynamicFlushTimeout !== null) return;
+    if (pendingDynamicWaitStartedAt === null) {
+        pendingDynamicWaitStartedAt = performance.now();
+    }
+
+    pendingDynamicFlushTimeout = setTimeout(() => {
+        pendingDynamicFlushTimeout = null;
+
+        // A normal translation batch ends with an idle event. Do not read a
+        // partially translated DOM merely because the watchdog interval ran.
+        const bridgeStillBusy = isTranslationBridgeActive() && !isTranslationBridgeIdle();
+        const waitedTooLong = pendingDynamicWaitStartedAt !== null
+            && performance.now() - pendingDynamicWaitStartedAt >= TRANSLATION_BRIDGE_MAX_WAIT_MS;
+
+        if (!bridgeStillBusy || waitedTooLong) {
+            flushPendingDynamicRoots();
+        } else {
+            scheduleDynamicFlushFallback();
+        }
+    }, TRANSLATION_BRIDGE_WAIT_TIMEOUT_MS);
+}
+
+function handleTranslationBridgeStateChange(state) {
+    if (state === TRANSLATION_IDLE_STATE) {
+        flushPendingDynamicRoots();
+    }
+}
+
+onTranslationBridgeStateChange(handleTranslationBridgeStateChange);
 
 // --- 事件监听 ---
 on('clearSessionScan', () => {
@@ -59,36 +163,23 @@ on('settingsSaved', () => {
 const handleMutations = (mutations) => {
     if (!isRecording) return; // 防止停止后处理残留的 mutation
     const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(', ');
-    const textsBatch = [];
 
     mutations.forEach(mutation => {
         mutation.addedNodes.forEach(node => {
             if (node.nodeType !== Node.ELEMENT_NODE || node.closest(ignoredSelectorString)) return;
 
-            const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
-            while (walker.nextNode()) {
-                if (walker.currentNode.nodeValue) {
-                    textsBatch.push(walker.currentNode.nodeValue);
-                }
-            }
+            pendingDynamicRoots.add(node);
         });
     });
 
-    if (textsBatch.length > 0) {
-        const logPrefix = '动态新发现';
-        if (useFallback) {
-            if (fallback.processTextsInFallback(textsBatch, logPrefix)) {
-                const count = fallback.getCountInFallback();
-                if (onUpdateCallback) onUpdateCallback(count);
-                updateScanCount(count, 'session');
-                saveActiveSession('session-scan'); // 立即保存变更
-            }
-        } else if (worker) {
-            worker.postMessage({
-                type: 'session-add-texts',
-                payload: { texts: textsBatch }
-            });
-        }
+    if (pendingDynamicRoots.size === 0) return;
+
+    if (isTranslationBridgeActive()) {
+        // The translation userscript emits an idle event after its complete
+        // time-sliced queue has drained. Read the nodes only then.
+        scheduleDynamicFlushFallback();
+    } else {
+        flushPendingDynamicRoots();
     }
 };
 
@@ -99,6 +190,7 @@ const handleMutations = (mutations) => {
 function clearSessionData() {
     currentCount = 0; // 重置计数值
     sessionTextsMirror.clear();
+    clearPendingDynamicRoots();
     saveActiveSession('session-scan'); // 保存清空后的状态
 
     if (useFallback) {
@@ -117,6 +209,9 @@ function clearSessionData() {
 export const start = async (onUpdate, resumedData = null) => {
     if (isRecording) return;
 
+    // Opt in to translation coordination only while PageScanner is active.
+    registerTranslationBridgeClient();
+
     // --- 1. 彻底清理旧状态 ---
     isPaused = false;
     if (worker) {
@@ -131,13 +226,14 @@ export const start = async (onUpdate, resumedData = null) => {
     // --- 2. 初始化本次会话的状态 ---
     currentCount = 0;
     sessionTextsMirror.clear();
+    clearPendingDynamicRoots();
     onUpdateCallback = onUpdate;
     useFallback = false;
     isRecording = true;
 
     // --- 3. 加载初始数据和设置 ---
     const [initialTexts, settings, workerAllowed] = await Promise.all([
-        extractAndProcessText(),
+        waitForTranslationBridgeIdle().then(() => extractAndProcessText()),
         loadSettings(),
         isWorkerAllowed()
     ]);
@@ -256,6 +352,7 @@ const handleSessionScanUnload = () => {
 
 export const stop = (onStopped) => {
     if (!isRecording) {
+        unregisterTranslationBridgeClient();
         if (onStopped) onStopped(0);
         return;
     }
@@ -272,6 +369,8 @@ export const stop = (onStopped) => {
         autoSaveInterval = null;
     }
 
+    clearPendingDynamicRoots();
+    unregisterTranslationBridgeClient();
     clearActiveSession();
     isRecording = false;
     isPaused = false;
@@ -321,6 +420,7 @@ export const isSessionRecording = () => isRecording;
 export const pauseSessionScan = () => {
     if (!isRecording || isPaused) return;
     isPaused = true;
+    clearPendingDynamicRoots();
     showNotification(t('notifications.sessionScanPaused'), { type: 'info' });
     if (observer) {
         observer.disconnect();

@@ -3,7 +3,7 @@
 // @name:en-US   Web Text Extraction Tool
 // @namespace    https://github.com/Qing90bing/Qing_PageScanner
 // @namespace    http://tampermonkey.net/
-// @version      1.0.0
+// @version      1.0.1
 // @description  像扫描仪一样快速“扫描”整个网页，智能识别并捕获所有需要翻译的文本片段，提高你的翻译效率。
 // @description:en-US  Scan the entire web page like a scanner, intelligently identify and capture all text fragments that need translation.
 // @license      MIT
@@ -4530,6 +4530,74 @@ ${result.join(",\n")}
       await clearActiveSession();
     }
   }
+  // src/shared/services/translationBridge.js
+  var TRANSLATION_STATE_ATTRIBUTE = "data-qing-web-translate-state";
+  var TRANSLATION_STATE_EVENT = "qing-web-translate:state";
+  var TRANSLATION_IDLE_STATE = "idle";
+  var TRANSLATION_BRIDGE_WAIT_TIMEOUT_MS = 1e4;
+  var TRANSLATION_BRIDGE_MAX_WAIT_MS = 6e4;
+  var TRANSLATION_CLIENT_ATTRIBUTE = "data-qing-page-scanner-client";
+  var TRANSLATION_CLIENT_EVENT = "qing-page-scanner:client-ready";
+  var TRANSLATION_CLIENT_VALUE = "active";
+  function getTranslationBridgeState() {
+    return document.documentElement?.getAttribute(TRANSLATION_STATE_ATTRIBUTE) ?? null;
+  }
+  function isTranslationBridgeActive() {
+    return getTranslationBridgeState() !== null;
+  }
+  function isTranslationBridgeIdle() {
+    const state = getTranslationBridgeState();
+    return state === null || state === TRANSLATION_IDLE_STATE;
+  }
+  function registerTranslationBridgeClient() {
+    const root = document.documentElement;
+    if (!root) return false;
+    root.setAttribute(TRANSLATION_CLIENT_ATTRIBUTE, TRANSLATION_CLIENT_VALUE);
+    document.dispatchEvent(new CustomEvent(TRANSLATION_CLIENT_EVENT));
+    return true;
+  }
+  function unregisterTranslationBridgeClient() {
+    const root = document.documentElement;
+    if (!root) return;
+    root.removeAttribute(TRANSLATION_CLIENT_ATTRIBUTE);
+    root.removeAttribute(TRANSLATION_STATE_ATTRIBUTE);
+  }
+  function onTranslationBridgeStateChange(callback) {
+    const handler = () => callback(getTranslationBridgeState());
+    document.addEventListener(TRANSLATION_STATE_EVENT, handler);
+    return () => {
+      document.removeEventListener(TRANSLATION_STATE_EVENT, handler);
+    };
+  }
+  function waitForTranslationBridgeIdle(timeoutMs = TRANSLATION_BRIDGE_WAIT_TIMEOUT_MS) {
+    if (isTranslationBridgeIdle()) {
+      return Promise.resolve({ timedOut: false });
+    }
+    return new Promise((resolve) => {
+      let timeoutId = null;
+      const cleanup = () => {
+        document.removeEventListener(TRANSLATION_STATE_EVENT, handleStateChange);
+        if (timeoutId !== null) {
+          clearTimeout(timeoutId);
+        }
+      };
+      const finish = (timedOut) => {
+        cleanup();
+        resolve({ timedOut });
+      };
+      const handleStateChange = () => {
+        if (isTranslationBridgeIdle()) {
+          finish(false);
+        }
+      };
+      document.addEventListener(TRANSLATION_STATE_EVENT, handleStateChange);
+      if (isTranslationBridgeIdle()) {
+        finish(false);
+        return;
+      }
+      timeoutId = setTimeout(() => finish(true), timeoutMs);
+    });
+  }
   // src/features/session-scan/logic.js
   var isRecording = false;
   var isPaused = false;
@@ -4542,6 +4610,82 @@ ${result.join(",\n")}
   var sessionTextsMirror = /* @__PURE__ */ new Set();
   var autoSaveInterval = null;
   var AUTO_SAVE_INTERVAL_MS = 5e3;
+  var pendingDynamicRoots = /* @__PURE__ */ new Set();
+  var pendingDynamicFlushTimeout = null;
+  var pendingDynamicWaitStartedAt = null;
+  function clearPendingDynamicRoots() {
+    pendingDynamicRoots.clear();
+    pendingDynamicWaitStartedAt = null;
+    if (pendingDynamicFlushTimeout !== null) {
+      clearTimeout(pendingDynamicFlushTimeout);
+      pendingDynamicFlushTimeout = null;
+    }
+  }
+  function processDynamicTexts(textsBatch) {
+    if (textsBatch.length === 0) return;
+    const logPrefix = "\u52A8\u6001\u65B0\u53D1\u73B0";
+    if (useFallback) {
+      if (processTextsInFallback(textsBatch, logPrefix)) {
+        const count = getCountInFallback();
+        if (onUpdateCallback) onUpdateCallback(count);
+        updateScanCount(count, "session");
+        saveActiveSession("session-scan");
+      }
+    } else if (worker) {
+      worker.postMessage({
+        type: "session-add-texts",
+        payload: { texts: textsBatch }
+      });
+    }
+  }
+  function flushPendingDynamicRoots() {
+    if (!isRecording || pendingDynamicRoots.size === 0) return;
+    const pendingRoots = Array.from(pendingDynamicRoots);
+    const pendingRootSet = new Set(pendingRoots);
+    const roots = pendingRoots.filter((root) => {
+      let parent = root.parentElement;
+      while (parent) {
+        if (pendingRootSet.has(parent)) return false;
+        parent = parent.parentElement;
+      }
+      return true;
+    });
+    clearPendingDynamicRoots();
+    const textsBatch = [];
+    const ignoredSelectorString2 = appConfig.scanner.ignoredSelectors.join(", ");
+    roots.forEach((root) => {
+      if (!root.isConnected || root.closest(ignoredSelectorString2)) return;
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+      while (walker.nextNode()) {
+        if (walker.currentNode.nodeValue) {
+          textsBatch.push(walker.currentNode.nodeValue);
+        }
+      }
+    });
+    processDynamicTexts(textsBatch);
+  }
+  function scheduleDynamicFlushFallback() {
+    if (pendingDynamicFlushTimeout !== null) return;
+    if (pendingDynamicWaitStartedAt === null) {
+      pendingDynamicWaitStartedAt = performance.now();
+    }
+    pendingDynamicFlushTimeout = setTimeout(() => {
+      pendingDynamicFlushTimeout = null;
+      const bridgeStillBusy = isTranslationBridgeActive() && !isTranslationBridgeIdle();
+      const waitedTooLong = pendingDynamicWaitStartedAt !== null && performance.now() - pendingDynamicWaitStartedAt >= TRANSLATION_BRIDGE_MAX_WAIT_MS;
+      if (!bridgeStillBusy || waitedTooLong) {
+        flushPendingDynamicRoots();
+      } else {
+        scheduleDynamicFlushFallback();
+      }
+    }, TRANSLATION_BRIDGE_WAIT_TIMEOUT_MS);
+  }
+  function handleTranslationBridgeStateChange(state) {
+    if (state === TRANSLATION_IDLE_STATE) {
+      flushPendingDynamicRoots();
+    }
+  }
+  onTranslationBridgeStateChange(handleTranslationBridgeStateChange);
   on("clearSessionScan", () => {
     clearSessionData();
   });
@@ -4562,38 +4706,23 @@ ${result.join(",\n")}
   var handleMutations = (mutations) => {
     if (!isRecording) return;
     const ignoredSelectorString2 = appConfig.scanner.ignoredSelectors.join(", ");
-    const textsBatch = [];
     mutations.forEach((mutation) => {
       mutation.addedNodes.forEach((node) => {
         if (node.nodeType !== Node.ELEMENT_NODE || node.closest(ignoredSelectorString2)) return;
-        const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
-        while (walker.nextNode()) {
-          if (walker.currentNode.nodeValue) {
-            textsBatch.push(walker.currentNode.nodeValue);
-          }
-        }
+        pendingDynamicRoots.add(node);
       });
     });
-    if (textsBatch.length > 0) {
-      const logPrefix = "\u52A8\u6001\u65B0\u53D1\u73B0";
-      if (useFallback) {
-        if (processTextsInFallback(textsBatch, logPrefix)) {
-          const count = getCountInFallback();
-          if (onUpdateCallback) onUpdateCallback(count);
-          updateScanCount(count, "session");
-          saveActiveSession("session-scan");
-        }
-      } else if (worker) {
-        worker.postMessage({
-          type: "session-add-texts",
-          payload: { texts: textsBatch }
-        });
-      }
+    if (pendingDynamicRoots.size === 0) return;
+    if (isTranslationBridgeActive()) {
+      scheduleDynamicFlushFallback();
+    } else {
+      flushPendingDynamicRoots();
     }
   };
   function clearSessionData() {
     currentCount = 0;
     sessionTextsMirror.clear();
+    clearPendingDynamicRoots();
     saveActiveSession("session-scan");
     if (useFallback) {
       clearInFallback();
@@ -4607,6 +4736,7 @@ ${result.join(",\n")}
   }
   var start = async (onUpdate, resumedData = null) => {
     if (isRecording) return;
+    registerTranslationBridgeClient();
     isPaused = false;
     if (worker) {
       worker.terminate();
@@ -4618,11 +4748,12 @@ ${result.join(",\n")}
     }
     currentCount = 0;
     sessionTextsMirror.clear();
+    clearPendingDynamicRoots();
     onUpdateCallback = onUpdate;
     useFallback = false;
     isRecording = true;
     const [initialTexts, settings, workerAllowed] = await Promise.all([
-      extractAndProcessText(),
+      waitForTranslationBridgeIdle().then(() => extractAndProcessText()),
       loadSettings(),
       isWorkerAllowed()
     ]);
@@ -4717,6 +4848,7 @@ ${result.join(",\n")}
   };
   var stop = (onStopped) => {
     if (!isRecording) {
+      unregisterTranslationBridgeClient();
       if (onStopped) onStopped(0);
       return;
     }
@@ -4730,6 +4862,8 @@ ${result.join(",\n")}
       clearInterval(autoSaveInterval);
       autoSaveInterval = null;
     }
+    clearPendingDynamicRoots();
+    unregisterTranslationBridgeClient();
     clearActiveSession();
     isRecording = false;
     isPaused = false;
@@ -4773,6 +4907,7 @@ ${result.join(",\n")}
   var pauseSessionScan = () => {
     if (!isRecording || isPaused) return;
     isPaused = true;
+    clearPendingDynamicRoots();
     showNotification(t("notifications.sessionScanPaused"), { type: "info" });
     if (observer) {
       observer.disconnect();
