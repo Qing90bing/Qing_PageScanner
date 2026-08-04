@@ -217,6 +217,39 @@
     gap: 8px;
 }
 
+.settings-info-notice {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 16px;
+    padding: 10px 12px;
+    border: 1px solid color-mix(in srgb, var(--main-primary) 28%, var(--main-border));
+    border-radius: 10px;
+    background-color: color-mix(in srgb, var(--main-primary) 8%, var(--main-bg));
+    color: var(--main-text-secondary);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.settings-info-notice-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    color: var(--main-primary);
+}
+
+.settings-info-notice-icon svg {
+    display: block;
+    width: 20px;
+    height: 20px;
+}
+
+.settings-info-notice .icon-title-text {
+    min-width: 0;
+    margin: 0;
+}
+
 /* 保持滚动条样式 */
 .settings-tab-content::-webkit-scrollbar {
     width: 6px;

@@ -99,6 +99,15 @@ export function buildPanelDOM(settings) {
     filterTitleContainer.id = 'filter-setting-title-container';
     filterTitleContainer.className = 'setting-title-container';
     filterTab.appendChild(filterTitleContainer);
+    const filterNotice = createIconTitle(infoIcon, t('settings.dynamicScanRefreshNotice'));
+    filterNotice.classList.add('settings-info-notice');
+    filterNotice.setAttribute('role', 'note');
+    const filterNoticeIcon = filterNotice.firstElementChild;
+    if (filterNoticeIcon) {
+        filterNoticeIcon.classList.add('settings-info-notice-icon');
+        filterNoticeIcon.setAttribute('aria-hidden', 'true');
+    }
+    filterTab.appendChild(filterNotice);
     // 填充过滤规则项
     filterDefinitions.forEach(filter => {
         const checkboxElement = createCheckbox(filter.id, t(filter.label), settings.filterRules[filter.key], filter.tooltip);

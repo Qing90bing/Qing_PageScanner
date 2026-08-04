@@ -46,6 +46,7 @@
     },
     "relatedSettings": "相關設定",
     "filterRules": "內容過濾規則",
+    "dynamicScanRefreshNotice": "使用動態掃描模式時，儲存過濾規則後需要重新整理網頁才能生效。",
     "filters": {
       "numbers": "過濾數字/貨幣",
       "chinese": "過濾純中文文本",

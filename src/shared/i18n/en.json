@@ -46,6 +46,7 @@
     },
     "relatedSettings": "Related Settings",
     "filterRules": "Content Filtering Rules",
+    "dynamicScanRefreshNotice": "When using Dynamic Scan, refresh the webpage after saving for the new filtering rules to take effect.",
     "filters": {
       "numbers": "Filter Numbers/Currency",
       "chinese": "Filter Chinese-Only Text",

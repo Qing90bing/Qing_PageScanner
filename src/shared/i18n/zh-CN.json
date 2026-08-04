@@ -46,6 +46,7 @@
     },
     "relatedSettings": "相关设置",
     "filterRules": "内容过滤规则",
+    "dynamicScanRefreshNotice": "使用动态扫描模式时，保存过滤规则后需要刷新网页才能生效。",
     "filters": {
       "numbers": "过滤数字/货币",
       "chinese": "过滤纯中文文本",
