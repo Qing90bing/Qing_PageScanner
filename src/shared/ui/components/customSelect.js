@@ -39,6 +39,10 @@ export class CustomSelect {
         // 1. 创建触发器
         this.trigger = document.createElement('div');
         this.trigger.className = 'custom-select-trigger';
+        this.trigger.tabIndex = 0;
+        this.trigger.setAttribute('role', 'combobox');
+        this.trigger.setAttribute('aria-haspopup', 'listbox');
+        this.trigger.setAttribute('aria-expanded', 'false');
 
         this.selectedContent = document.createElement('div');
         this.selectedContent.className = 'selected-option-content';
@@ -56,6 +60,7 @@ export class CustomSelect {
         // 2. 创建选项容器
         this.optionsContainer = document.createElement('div');
         this.optionsContainer.className = 'custom-select-options';
+        this.optionsContainer.setAttribute('role', 'listbox');
 
         // 3. 组装并附加到父元素
         this.container.appendChild(this.trigger);
@@ -63,7 +68,7 @@ export class CustomSelect {
         this.parentElement.appendChild(this.container);
 
         // 4. 填充内容
-        let initialOption = this.options.find(opt => opt.value === this.currentValue);
+        let initialOption = this.options.find((opt) => opt.value === this.currentValue);
         // 如果初始值在选项中不存在，则默认选择第一个选项
         if (!initialOption && this.options.length > 0) {
             console.warn(`CustomSelect: 初始值 "${this.currentValue}" 在选项中未找到。将默认选择第一个选项。`);
@@ -80,7 +85,7 @@ export class CustomSelect {
      * @description 填充选项列表。
      */
     populateOptions() {
-        this.options.forEach(option => {
+        this.options.forEach((option) => {
             const optionEl = document.createElement('div');
             optionEl.className = 'custom-select-option';
             optionEl.dataset.value = option.value;
@@ -118,6 +123,14 @@ export class CustomSelect {
      */
     bindEvents() {
         this.handleTriggerClick = this.toggle.bind(this);
+        this.handleTriggerKeyDown = (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                this.toggle();
+            } else if (event.key === 'Escape') {
+                this.close();
+            }
+        };
         this.handleOptionClick = (e) => {
             const optionEl = e.target.closest('.custom-select-option');
             if (optionEl) {
@@ -126,6 +139,7 @@ export class CustomSelect {
         };
 
         this.trigger.addEventListener('click', this.handleTriggerClick);
+        this.trigger.addEventListener('keydown', this.handleTriggerKeyDown);
         this.optionsContainer.addEventListener('click', this.handleOptionClick);
     }
 
@@ -134,7 +148,6 @@ export class CustomSelect {
      * @description 处理点击组件外部的事件（通用处理）。
      */
 
-
     /**
      * @public
      * @description 切换下拉菜单的打开/关闭状态。
@@ -142,6 +155,7 @@ export class CustomSelect {
     toggle() {
         this.isOpen = !this.isOpen;
         this.container.classList.toggle('open', this.isOpen);
+        this.trigger.setAttribute('aria-expanded', String(this.isOpen));
 
         if (this.isOpen) {
             this.abortController = new AbortController();
@@ -149,7 +163,7 @@ export class CustomSelect {
             // 使用通用的 listenClickOutside 工具
             // 它是 Shadow DOM 安全的，并且自动处理了事件监听器的生命周期
             listenClickOutside(this.container, () => this.close(), {
-                signal: this.abortController.signal
+                signal: this.abortController.signal,
             });
         } else {
             this.close(); // 确保清理
@@ -164,6 +178,7 @@ export class CustomSelect {
         if (this.isOpen) {
             this.isOpen = false;
             this.container.classList.remove('open');
+            this.trigger.setAttribute('aria-expanded', 'false');
 
             if (this.abortController) {
                 this.abortController.abort();
@@ -177,31 +192,52 @@ export class CustomSelect {
      * @description 移除所有外部点击监听器。
      */
 
-
     /**
      * @public
      * @description 选择一个选项。
      * @param {string} value - 要选择的选项的 value。
      */
-    select(value) {
+    select(value, { emit = true } = {}) {
         if (value === this.currentValue) {
             this.close();
             return;
         }
 
+        const selectedOption = this.options.find((opt) => opt.value === value);
+        if (!selectedOption) {
+            return;
+        }
+
         this.currentValue = value;
         this.container.dataset.value = value;
-        const selectedOption = this.options.find(opt => opt.value === value);
         this.updateSelectedContent(selectedOption);
 
         // 更新选项列表中的 'selected' 类
         this.optionsContainer.querySelector('.custom-select-option.selected')?.classList.remove('selected');
-        const newSelectedOptionEl = this.optionsContainer.querySelector(`[data-value="${value}"]`);
+        const newSelectedOptionEl = Array.from(this.optionsContainer.children).find(
+            (option) => option.dataset.value === value
+        );
         if (newSelectedOptionEl) {
             newSelectedOptionEl.classList.add('selected');
         }
 
         this.close();
+        if (emit) {
+            this.container.dispatchEvent(
+                new CustomEvent('custom-select-change', {
+                    detail: { value },
+                })
+            );
+        }
+    }
+
+    /**
+     * @public
+     * @param {string} value
+     * @param {object} [options]
+     */
+    setValue(value, options = { emit: false }) {
+        this.select(value, options);
     }
 
     /**
@@ -220,6 +256,11 @@ export class CustomSelect {
     updateOptions(newOptions) {
         this.options = newOptions;
 
+        if (!this.options.some((option) => option.value === this.currentValue)) {
+            this.currentValue = this.options[0]?.value || '';
+            this.container.dataset.value = this.currentValue;
+        }
+
         // 清空旧的选项
         while (this.optionsContainer.firstChild) {
             this.optionsContainer.removeChild(this.optionsContainer.firstChild);
@@ -227,7 +268,7 @@ export class CustomSelect {
 
         // 填充新选项并更新显示
         this.populateOptions();
-        const currentSelectedOption = this.options.find(opt => opt.value === this.currentValue);
+        const currentSelectedOption = this.options.find((opt) => opt.value === this.currentValue);
         if (currentSelectedOption) {
             this.updateSelectedContent(currentSelectedOption);
         }
@@ -242,6 +283,9 @@ export class CustomSelect {
 
         if (this.trigger && this.handleTriggerClick) {
             this.trigger.removeEventListener('click', this.handleTriggerClick);
+        }
+        if (this.trigger && this.handleTriggerKeyDown) {
+            this.trigger.removeEventListener('keydown', this.handleTriggerKeyDown);
         }
         if (this.optionsContainer && this.handleOptionClick) {
             this.optionsContainer.removeEventListener('click', this.handleOptionClick);

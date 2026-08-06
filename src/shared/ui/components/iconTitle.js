@@ -9,14 +9,12 @@ import { createSVGFromString } from '../../utils/dom/dom.js';
  */
 export function createIconTitle(iconSVG, text) {
     const container = document.createElement('div');
-    container.style.display = 'flex';
-    container.style.alignItems = 'center';
-    container.style.gap = '8px'; // 图标和文字的间距
+    container.className = 'tc-icon-title';
 
     if (iconSVG) {
         const iconWrapper = document.createElement('span');
-        iconWrapper.style.display = 'flex';
-        iconWrapper.style.alignItems = 'center';
+        iconWrapper.className = 'tc-icon-title-icon';
+        iconWrapper.setAttribute('aria-hidden', 'true');
 
         const svgElement = createSVGFromString(iconSVG);
         if (svgElement) {

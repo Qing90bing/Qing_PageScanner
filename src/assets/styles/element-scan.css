@@ -6,7 +6,10 @@
     z-index: 2147483644;
     pointer-events: none;
     /* 允许鼠标事件穿透 */
-    transition: all 0.2s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.2s ease-in-out, visibility 0s linear 0.2s;
+    transition:
+        all 0.2s cubic-bezier(0.19, 1, 0.22, 1),
+        opacity 0.2s ease-in-out,
+        visibility 0s linear 0.2s;
     /* 位置和透明度动画 */
     opacity: 0;
     visibility: hidden;
@@ -44,7 +47,9 @@
     font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
     white-space: nowrap;
     /* 防止标签换行 */
-    transition: background-color 0.1s ease-out, opacity 0.2s ease-out;
+    transition:
+        background-color 0.1s ease-out,
+        opacity 0.2s ease-out;
     /* 背景色变化需要快速响应，与边框同步 */
     pointer-events: auto;
     /* 允许点击标签 */
@@ -68,7 +73,10 @@
     opacity: 0;
     visibility: hidden;
     transform: scale(0.95);
-    transition: opacity 0.2s cubic-bezier(0.19, 1, 0.22, 1), transform 0.2s cubic-bezier(0.19, 1, 0.22, 1), visibility 0s linear 0.2s;
+    transition:
+        opacity 0.2s cubic-bezier(0.19, 1, 0.22, 1),
+        transform 0.2s cubic-bezier(0.19, 1, 0.22, 1),
+        visibility 0s linear 0.2s;
     pointer-events: auto;
     /* 关键：确保工具栏本身可点击/拖动 */
 }
@@ -81,7 +89,6 @@
     transform: scale(1);
     transition-delay: 0s;
 }
-
 
 /* 工具栏标题/当前标签显示 */
 #element-scan-toolbar-title,
@@ -139,7 +146,9 @@
     border-radius: 20px;
     cursor: pointer;
     font-size: 15px;
-    transition: background-color 0.1s ease-in-out, transform 0.1s ease-in-out;
+    transition:
+        background-color 0.1s ease-in-out,
+        transform 0.1s ease-in-out;
     /* 添加颜色和变换的过渡动画 */
     display: flex;
     align-items: center;

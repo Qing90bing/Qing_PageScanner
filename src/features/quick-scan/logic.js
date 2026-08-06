@@ -25,10 +25,7 @@ export const performQuickScan = () => {
         const { filterRules, enableDebugLogging, outputFormat, includeArrayBrackets } = loadSettings();
 
         // 并行执行文本提取和CSP检查
-        const [texts, workerAllowed] = await Promise.all([
-            extractAndProcessText(),
-            isWorkerAllowed()
-        ]);
+        const [texts, workerAllowed] = await Promise.all([extractAndProcessText(), isWorkerAllowed()]);
 
         // 备选方案逻辑
         const runFallback = () => {
@@ -39,12 +36,7 @@ export const performQuickScan = () => {
                     log(t('log.textProcessor.filtered', { text, reason }));
                 };
 
-                const filteredTexts = filterAndNormalizeTexts(
-                    texts,
-                    filterRules,
-                    enableDebugLogging,
-                    logFiltered
-                );
+                const filteredTexts = filterAndNormalizeTexts(texts, filterRules, enableDebugLogging, logFiltered);
 
                 const formattedText = formatTextsForTranslation(filteredTexts, outputFormat, { includeArrayBrackets });
                 const result = {
@@ -104,7 +96,6 @@ export const performQuickScan = () => {
                     },
                 },
             });
-
         } catch (e) {
             // 同步错误（例如，如果浏览器完全不支持 Worker）
             log(t('log.quickScan.worker.initSyncError', { error: e.message }), 'error');

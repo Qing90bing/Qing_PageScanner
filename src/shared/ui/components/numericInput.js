@@ -13,7 +13,7 @@
  * @description 创建一个带有自定义标签、值和属性的数字输入框组件。
  */
 export function createNumericInput(id, labelText, value, options = {}) {
-    const { min, max, disabled = false } = options;
+    const { min, max, step, disabled = false } = options;
 
     const container = document.createElement('div');
     container.className = 'numeric-input-group';
@@ -36,6 +36,9 @@ export function createNumericInput(id, labelText, value, options = {}) {
     }
     if (typeof max !== 'undefined') {
         input.max = max;
+    }
+    if (typeof step !== 'undefined') {
+        input.step = step;
     }
     if (disabled) {
         input.disabled = true;

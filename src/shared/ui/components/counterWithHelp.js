@@ -1,6 +1,5 @@
 // src/shared/ui/components/counterWithHelp.js
 
-import { t } from '../../i18n/index.js';
 import { createHelpIcon } from './helpIcon.js';
 import { createButton } from './button.js';
 import { updateTopCenterCounter, createTopCenterCounter } from './topCenterCounter.js';
@@ -105,7 +104,7 @@ export function createCounterWithHelp({ counterKey, helpKey, onPause, onResume, 
                     pauseResumeButton.updateIcon(pauseIcon);
                     pauseResumeButton.updateText(`tooltip.pause${scanType}`);
                 }
-            }
+            },
         });
         actionsContainer.appendChild(pauseResumeButton);
     }
@@ -117,7 +116,7 @@ export function createCounterWithHelp({ counterKey, helpKey, onPause, onResume, 
             icon: settingsIcon,
             iconOnly: true,
             tooltipKey: 'settings.title',
-            onClick: onSettingsClick
+            onClick: onSettingsClick,
         });
         actionsContainer.appendChild(settingsButton);
     }

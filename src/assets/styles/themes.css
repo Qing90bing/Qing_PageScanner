@@ -2,130 +2,136 @@
 /* 这个文件只定义颜色变量和主题切换逻辑 */
 
 :host {
-  /* Global Reset Properties */
-  font-size: 16px;
-  line-height: 1.5;
-  font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC', monospace, sans-serif;
-  box-sizing: border-box;
-  text-align: left;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    /* Global Reset Properties */
+    font-size: 16px;
+    line-height: 1.5;
+    font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC', monospace, sans-serif;
+    box-sizing: border-box;
+    text-align: left;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 
-  /* 浅色模式颜色变量 */
-  --color-bg: #ffffff;
-  --color-text: #333333;
-  --color-text-secondary: #666666; /* 新增：次要文本颜色 */
-  --color-border: #e0e0e0;
-  --color-overlay-bg: rgba(0,0,0,0.5);
-  --color-shadow: rgba(0,0,0,0.2);
-  --color-primary: #1a73e8;
-  --color-primary-hover: #185abc;
-  --color-primary-text: #ffffff;
-  --color-toast-bg: #333333;
-  --color-toast-text: #ffffff;
-  --color-textarea-bg: #ffffff;
-  --color-textarea-border: #cccccc;
-  --color-tooltip-bg: #333333; /* 提示背景 */
-  --color-tooltip-text: #ffffff; /* 提示文本 */
-  --color-line-number-text: #888888; /* 行号文本 */
-  --color-line-number-active-text: #000000; /* 激活行号文本 */
+    /* 浅色模式颜色变量 */
+    --color-bg: #ffffff;
+    --color-text: #333333;
+    --color-text-secondary: #666666; /* 新增：次要文本颜色 */
+    --color-border: #e0e0e0;
+    --color-overlay-bg: rgba(0, 0, 0, 0.5);
+    --color-shadow: rgba(0, 0, 0, 0.2);
+    --color-primary: #1a73e8;
+    --color-primary-hover: #185abc;
+    --color-primary-text: #ffffff;
+    --color-toast-bg: #333333;
+    --color-toast-text: #ffffff;
+    --color-textarea-bg: #ffffff;
+    --color-textarea-border: #cccccc;
+    --color-tooltip-bg: #333333; /* 提示背景 */
+    --color-tooltip-text: #ffffff; /* 提示文本 */
+    --color-line-number-text: #888888; /* 行号文本 */
+    --color-line-number-active-text: #000000; /* 激活行号文本 */
 
-  /* 深色模式颜色变量 */
-  --dark-color-bg: #2d2d2d;
-  --dark-color-text: #f0f0f0;
-  --dark-color-text-secondary: #aaaaaa; /* 新增：次要文本颜色 */
-  --dark-color-border: #555555;
-  --dark-color-overlay-bg: rgba(0,0,0,0.7);
-  --dark-color-shadow: rgba(0,0,0,0.4);
-  --dark-color-primary: #1e90ff;
-  --dark-color-primary-hover: #1c86ee;
-  --dark-color-primary-text: #ffffff;
-  --dark-color-toast-bg: #eeeeee;
-  --dark-color-toast-text: #111111;
-  --dark-color-textarea-bg: #3a3a3a;
-  --dark-color-textarea-border: #666666;
-  --dark-color-tooltip-bg: #e0e0e0; /* 提示背景 */
-  --dark-color-tooltip-text: #111111; /* 提示文本 */
-  --dark-color-line-number-text: #777777; /* 行号文本 */
-  --dark-color-line-number-active-text: #ffffff; /* 激活行号文本 */
+    /* 深色模式颜色变量 */
+    --dark-color-bg: #2d2d2d;
+    --dark-color-text: #f0f0f0;
+    --dark-color-text-secondary: #aaaaaa; /* 新增：次要文本颜色 */
+    --dark-color-border: #555555;
+    --dark-color-overlay-bg: rgba(0, 0, 0, 0.7);
+    --dark-color-shadow: rgba(0, 0, 0, 0.4);
+    --dark-color-primary: #1e90ff;
+    --dark-color-primary-hover: #1c86ee;
+    --dark-color-primary-text: #ffffff;
+    --dark-color-toast-bg: #eeeeee;
+    --dark-color-toast-text: #111111;
+    --dark-color-textarea-bg: #3a3a3a;
+    --dark-color-textarea-border: #666666;
+    --dark-color-tooltip-bg: #e0e0e0; /* 提示背景 */
+    --dark-color-tooltip-text: #111111; /* 提示文本 */
+    --dark-color-line-number-text: #777777; /* 行号文本 */
+    --dark-color-line-number-active-text: #ffffff; /* 激活行号文本 */
 
-  /* 滚动条颜色变量 */
-  --color-scrollbar-thumb: #c1c1c1;
-  --color-scrollbar-thumb-hover: #a8a8a8;
-  --color-scrollbar-border: #ffffff;
-  --dark-color-scrollbar-thumb: #555555;
-  --dark-color-scrollbar-thumb-hover: #777777;
-  --dark-color-scrollbar-border: #2d2d2d;
+    /* 滚动条颜色变量 */
+    --color-scrollbar-thumb: #c1c1c1;
+    --color-scrollbar-thumb-hover: #a8a8a8;
+    --color-scrollbar-border: #ffffff;
+    --dark-color-scrollbar-thumb: #555555;
+    --dark-color-scrollbar-thumb-hover: #777777;
+    --dark-color-scrollbar-border: #2d2d2d;
 }
 
 /* Inherit box-sizing globally within Shadow DOM */
-*, *::before, *::after {
-  box-sizing: inherit;
-  /* 确保内部元素默认不拦截点击，特定交互组件需显式设置为 auto */
-  /* pointer-events: auto; (已在具体组件CSS中设置) */
+*,
+*::before,
+*::after {
+    box-sizing: inherit;
+    /* 确保内部元素默认不拦截点击，特定交互组件需显式设置为 auto */
+    /* pointer-events: auto; (已在具体组件CSS中设置) */
 }
 
 /* Reset form elements to inherit font properties */
-button, input, optgroup, select, textarea {
-  font-family: inherit;
-  font-size: 100%;
-  line-height: 1.15;
-  color: inherit;
-  margin: 0;
+button,
+input,
+optgroup,
+select,
+textarea {
+    font-family: inherit;
+    font-size: 100%;
+    line-height: 1.15;
+    color: inherit;
+    margin: 0;
 }
 
 /* 根据 data-theme 属性应用浅色主题 */
 :host([data-theme='light']) {
-  --main-bg: var(--color-bg);
-  --main-text: var(--color-text);
-  --main-text-secondary: var(--color-text-secondary);
-  --tc-secondary-text-color: var(--color-text-secondary);
-  --main-border: var(--color-border);
-  --main-overlay-bg: var(--color-overlay-bg);
-  --main-shadow: var(--color-shadow);
-  --main-primary: var(--color-primary);
-  --main-primary-hover: var(--color-primary-hover);
-  --main-primary-text: var(--color-primary-text);
-  --main-toast-bg: var(--color-toast-bg);
-  --main-toast-text: var(--color-toast-text);
-  --main-textarea-bg: var(--color-textarea-bg);
-  --main-textarea-border: var(--color-textarea-border);
-  --main-tooltip-bg: var(--color-tooltip-bg);
-  --main-tooltip-text: var(--color-tooltip-text);
-  --main-disabled: #cccccc;
-  --main-disabled-text: #666666;
-  --main-line-number-text: var(--color-line-number-text);
-  --main-line-number-active-text: var(--color-line-number-active-text);
-  --tc-scrollbar-thumb-color: var(--color-scrollbar-thumb);
-  --tc-scrollbar-thumb-hover-color: var(--color-scrollbar-thumb-hover);
-  --tc-scrollbar-border-color: var(--color-scrollbar-border);
-  --main-bg-a: rgba(255, 255, 255, 0.6);
+    --main-bg: var(--color-bg);
+    --main-text: var(--color-text);
+    --main-text-secondary: var(--color-text-secondary);
+    --tc-secondary-text-color: var(--color-text-secondary);
+    --main-border: var(--color-border);
+    --main-overlay-bg: var(--color-overlay-bg);
+    --main-shadow: var(--color-shadow);
+    --main-primary: var(--color-primary);
+    --main-primary-hover: var(--color-primary-hover);
+    --main-primary-text: var(--color-primary-text);
+    --main-toast-bg: var(--color-toast-bg);
+    --main-toast-text: var(--color-toast-text);
+    --main-textarea-bg: var(--color-textarea-bg);
+    --main-textarea-border: var(--color-textarea-border);
+    --main-tooltip-bg: var(--color-tooltip-bg);
+    --main-tooltip-text: var(--color-tooltip-text);
+    --main-disabled: #cccccc;
+    --main-disabled-text: #666666;
+    --main-line-number-text: var(--color-line-number-text);
+    --main-line-number-active-text: var(--color-line-number-active-text);
+    --tc-scrollbar-thumb-color: var(--color-scrollbar-thumb);
+    --tc-scrollbar-thumb-hover-color: var(--color-scrollbar-thumb-hover);
+    --tc-scrollbar-border-color: var(--color-scrollbar-border);
+    --main-bg-a: rgba(255, 255, 255, 0.6);
 }
 
 /* 根据 data-theme 属性应用深色主题 */
 :host([data-theme='dark']) {
-  --main-bg: var(--dark-color-bg);
-  --main-text: var(--dark-color-text);
-  --main-text-secondary: var(--dark-color-text-secondary);
-  --tc-secondary-text-color: var(--dark-color-text-secondary);
-  --main-border: var(--dark-color-border);
-  --main-overlay-bg: var(--dark-color-overlay-bg);
-  --main-shadow: var(--dark-color-shadow);
-  --main-primary: var(--dark-color-primary);
-  --main-primary-hover: var(--dark-color-primary-hover);
-  --main-primary-text: var(--dark-color-primary-text);
-  --main-toast-bg: var(--dark-color-toast-bg);
-  --main-toast-text: var(--dark-color-toast-text);
-  --main-textarea-bg: var(--dark-color-textarea-bg);
-  --main-textarea-border: var(--dark-color-textarea-border);
-  --main-tooltip-bg: var(--dark-color-tooltip-bg);
-  --main-tooltip-text: var(--dark-color-tooltip-text);
-  --main-disabled: #444444;
-  --main-disabled-text: #888888;
-  --main-line-number-text: var(--dark-color-line-number-text);
-  --main-line-number-active-text: var(--dark-color-line-number-active-text);
-  --tc-scrollbar-thumb-color: var(--dark-color-scrollbar-thumb);
-  --tc-scrollbar-thumb-hover-color: var(--dark-color-scrollbar-thumb-hover);
-  --tc-scrollbar-border-color: var(--dark-color-scrollbar-border);
-  --main-bg-a: rgba(45, 45, 45, 0.6);
+    --main-bg: var(--dark-color-bg);
+    --main-text: var(--dark-color-text);
+    --main-text-secondary: var(--dark-color-text-secondary);
+    --tc-secondary-text-color: var(--dark-color-text-secondary);
+    --main-border: var(--dark-color-border);
+    --main-overlay-bg: var(--dark-color-overlay-bg);
+    --main-shadow: var(--dark-color-shadow);
+    --main-primary: var(--dark-color-primary);
+    --main-primary-hover: var(--dark-color-primary-hover);
+    --main-primary-text: var(--dark-color-primary-text);
+    --main-toast-bg: var(--dark-color-toast-bg);
+    --main-toast-text: var(--dark-color-toast-text);
+    --main-textarea-bg: var(--dark-color-textarea-bg);
+    --main-textarea-border: var(--dark-color-textarea-border);
+    --main-tooltip-bg: var(--dark-color-tooltip-bg);
+    --main-tooltip-text: var(--dark-color-tooltip-text);
+    --main-disabled: #444444;
+    --main-disabled-text: #888888;
+    --main-line-number-text: var(--dark-color-line-number-text);
+    --main-line-number-active-text: var(--dark-color-line-number-active-text);
+    --tc-scrollbar-thumb-color: var(--dark-color-scrollbar-thumb);
+    --tc-scrollbar-thumb-hover-color: var(--dark-color-scrollbar-thumb-hover);
+    --tc-scrollbar-border-color: var(--dark-color-scrollbar-border);
+    --main-bg-a: rgba(45, 45, 45, 0.6);
 }

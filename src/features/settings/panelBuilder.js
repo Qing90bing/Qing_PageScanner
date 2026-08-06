@@ -10,12 +10,18 @@ import languageIcon from '../../assets/icons/languageIcon.js';
 import { formatIcon } from '../../assets/icons/formatIcon.js'; // Import
 import { relatedSettingsIcon } from '../../assets/icons/relatedSettingsIcon.js';
 import { filterIcon } from '../../assets/icons/filterIcon.js';
-import { filterDefinitions, relatedSettingsDefinitions, selectSettingsDefinitions, outputSettingsDefinitions } from './config.js';
+import {
+    filterDefinitions,
+    relatedSettingsDefinitions,
+    selectSettingsDefinitions,
+    outputSettingsDefinitions,
+} from './config.js';
 import { t } from '../../shared/i18n/index.js';
 import { createIconTitle } from '../../shared/ui/components/iconTitle.js';
 import { infoIcon } from '../../assets/icons/infoIcon.js';
 import { githubIcon } from '../../assets/icons/githubIcon.js';
 import { translateIcon } from '../../assets/icons/icon.js';
+import { aiIcon } from '../../assets/icons/aiIcon.js';
 import { createButton } from '../../shared/ui/components/button.js';
 
 // 定义侧边栏标签配置（重新排序：相关设置、过滤规则、格式、语言、主题）
@@ -25,7 +31,8 @@ const TABS = [
     { id: 'tab-format', label: 'settings.format', icon: formatIcon },
     { id: 'tab-language', label: 'settings.language', icon: languageIcon },
     { id: 'tab-theme', label: 'settings.theme', icon: themeIcon },
-    { id: 'tab-about', label: 'settings.about', icon: infoIcon }
+    { id: 'tab-ai', label: 'settings.ai.title', icon: aiIcon },
+    { id: 'tab-about', label: 'settings.about', icon: infoIcon },
 ];
 
 /**
@@ -88,7 +95,7 @@ export function buildPanelDOM(settings) {
     relatedTitleContainer.className = 'setting-title-container';
     relatedTab.appendChild(relatedTitleContainer);
     // 填充相关设置项
-    relatedSettingsDefinitions.forEach(setting => {
+    relatedSettingsDefinitions.forEach((setting) => {
         relatedTab.appendChild(createRelatedSettingDOM(setting, settings));
     });
     contentArea.appendChild(relatedTab);
@@ -109,8 +116,13 @@ export function buildPanelDOM(settings) {
     }
     filterTab.appendChild(filterNotice);
     // 填充过滤规则项
-    filterDefinitions.forEach(filter => {
-        const checkboxElement = createCheckbox(filter.id, t(filter.label), settings.filterRules[filter.key], filter.tooltip);
+    filterDefinitions.forEach((filter) => {
+        const checkboxElement = createCheckbox(
+            filter.id,
+            t(filter.label),
+            settings.filterRules[filter.key],
+            filter.tooltip
+        );
         checkboxElement.classList.add('setting-item');
         filterTab.appendChild(checkboxElement);
     });
@@ -118,12 +130,12 @@ export function buildPanelDOM(settings) {
 
     // 3. Format Tab Content
     const formatTab = createTabContent('tab-format', false);
-    const formatDef = selectSettingsDefinitions.find(d => d.key === 'outputFormat');
+    const formatDef = selectSettingsDefinitions.find((d) => d.key === 'outputFormat');
     if (formatDef) {
         formatTab.appendChild(createSelectSettingDOM(formatDef));
     }
     // 添加输出设置勾选框（首尾符号开关）
-    outputSettingsDefinitions.forEach(setting => {
+    outputSettingsDefinitions.forEach((setting) => {
         const checkboxElement = createCheckbox(
             setting.id,
             t(setting.label),
@@ -137,7 +149,7 @@ export function buildPanelDOM(settings) {
 
     // 4. Language Tab Content
     const languageTab = createTabContent('tab-language', false);
-    const langDef = selectSettingsDefinitions.find(d => d.key === 'language');
+    const langDef = selectSettingsDefinitions.find((d) => d.key === 'language');
     if (langDef) {
         languageTab.appendChild(createSelectSettingDOM(langDef));
     }
@@ -146,13 +158,21 @@ export function buildPanelDOM(settings) {
     // 5. Theme Tab Content
     const themeTab = createTabContent('tab-theme', false);
     // 查找配置中的 theme 定义
-    const themeDef = selectSettingsDefinitions.find(d => d.key === 'theme');
+    const themeDef = selectSettingsDefinitions.find((d) => d.key === 'theme');
     if (themeDef) {
         themeTab.appendChild(createSelectSettingDOM(themeDef));
     }
     contentArea.appendChild(themeTab);
 
-    // 6. About Tab Content
+    // 6. AI Tab Content
+    const aiTab = createTabContent('tab-ai', false);
+    const aiSettingsMount = document.createElement('div');
+    aiSettingsMount.id = 'ai-settings-mount';
+    aiSettingsMount.className = 'ai-settings-mount';
+    aiTab.appendChild(aiSettingsMount);
+    contentArea.appendChild(aiTab);
+
+    // 7. About Tab Content
     const aboutTab = createTabContent('tab-about', false);
     aboutTab.appendChild(createAboutTabContent());
     contentArea.appendChild(aboutTab);
@@ -216,15 +236,10 @@ function createRelatedSettingDOM(setting, settings) {
         const numericValue = settings[numericConfig.key];
         const numericLabel = t('settings.display.character_limit'); // 使用具体的翻译键
 
-        const numericInputElement = createNumericInput(
-            numericConfig.id,
-            numericLabel,
-            numericValue,
-            {
-                min: 5,
-                disabled: !settings[setting.key],
-            }
-        );
+        const numericInputElement = createNumericInput(numericConfig.id, numericLabel, numericValue, {
+            min: 5,
+            disabled: !settings[setting.key],
+        });
         numericInputElement.classList.add('linked-numeric-input');
         compositeContainer.appendChild(numericInputElement);
 
@@ -244,7 +259,11 @@ function createRelatedSettingDOM(setting, settings) {
         const selectWrapper = document.createElement('div');
         selectWrapper.id = setting.id;
         // 直接初始化 select，因为 logic 简单
-        new CustomSelect(selectWrapper, setting.options.map(opt => ({ ...opt, label: t(opt.label) })), settings[setting.key]);
+        new CustomSelect(
+            selectWrapper,
+            setting.options.map((opt) => ({ ...opt, label: t(opt.label) })),
+            settings[setting.key]
+        );
         selectContainer.appendChild(selectTitle);
         selectContainer.appendChild(selectWrapper);
         item.appendChild(selectContainer);
@@ -254,7 +273,6 @@ function createRelatedSettingDOM(setting, settings) {
     }
     return item;
 }
-
 
 /**
  * 辅助函数：创建关于选项卡的内容
@@ -267,7 +285,7 @@ function createAboutTabContent() {
     const logoContainer = document.createElement('div');
     logoContainer.className = 'about-logo';
     // Use GM_info.script.icon if available
-    const iconSrc = (typeof GM_info !== 'undefined' && GM_info.script && GM_info.script.icon) ? GM_info.script.icon : '';
+    const iconSrc = typeof GM_info !== 'undefined' && GM_info.script && GM_info.script.icon ? GM_info.script.icon : '';
     if (iconSrc) {
         const img = document.createElement('img');
         img.src = iconSrc;
@@ -292,7 +310,7 @@ function createAboutTabContent() {
     const version = document.createElement('p');
     version.className = 'about-version';
     // 尝试获取版本号
-    const verNum = (typeof GM_info !== 'undefined' && GM_info.script) ? GM_info.script.version : '1.0.0';
+    const verNum = typeof GM_info !== 'undefined' && GM_info.script ? GM_info.script.version : '1.0.0';
     version.textContent = `v${verNum}`;
     container.appendChild(version);
 
@@ -307,14 +325,13 @@ function createAboutTabContent() {
         onClick: () => {
             // 使用 window.open 打开新标签页
             window.open('https://github.com/Qing90bing/Qing_PageScanner', '_blank');
-        }
+        },
     });
     btnContainer.appendChild(githubBtn);
     container.appendChild(btnContainer);
 
     return container;
 }
-
 
 /**
  * @public
@@ -345,12 +362,17 @@ export function buildContextualPanelDOM({ titleKey, icon, definitions, settings 
     const content = document.createElement('div');
     content.className = 'settings-panel-content'; // 复用旧样式类，因为这是简单面板
 
-    definitions.forEach(setting => {
+    definitions.forEach((setting) => {
         const item = document.createElement('div');
         item.className = 'setting-item';
 
         if (setting.type === 'checkbox') {
-            const checkboxElement = createCheckbox(setting.id, t(setting.label), settings[setting.key], setting.tooltip);
+            const checkboxElement = createCheckbox(
+                setting.id,
+                t(setting.label),
+                settings[setting.key],
+                setting.tooltip
+            );
             item.appendChild(checkboxElement);
         }
 

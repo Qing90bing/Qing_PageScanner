@@ -5,7 +5,7 @@
 
 /**
  * 监听指定元素外部的点击事件。
- * 
+ *
  * @param {HTMLElement} element - 需要监听“外部点击”的目标元素（即点击该元素内部不会触发回调）。
  * @param {Function} onClickOutside - 当检测到点击发生在元素外部时调用的回调函数。
  * @param {Object} [options] - 配置选项。
@@ -47,7 +47,7 @@ export function listenClickOutside(element, onClickOutside, { signal, shouldIgno
         if (shouldIgnore) {
             // 我们检查路径上的每一个元素，看是否满足忽略条件
             // 例如：点击了某个特定的 class 元素
-            const shouldIgnoreClick = path.some(node => {
+            const shouldIgnoreClick = path.some((node) => {
                 // node 可能是 document 或 window，需要判断是否为 Element
                 return node instanceof Element && shouldIgnore(node);
             });

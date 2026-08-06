@@ -14,43 +14,43 @@ import { t } from '../../i18n/index.js';
  * @description 创建一个带有自定义标签和样式的复选框组件，并可选择性地附加一个信息提示图标。
  */
 export function createCheckbox(id, labelText, isChecked, tooltipConfig) {
-  const label = document.createElement('label');
-  label.className = 'checkbox-group';
-  label.htmlFor = id;
-  label.appendChild(document.createTextNode(labelText));
+    const label = document.createElement('label');
+    label.className = 'checkbox-group';
+    label.htmlFor = id;
+    label.appendChild(document.createTextNode(labelText));
 
-  // 如果提供了 tooltip 配置，则创建并附加提示图标
-  if (tooltipConfig && tooltipConfig.text) {
-    const infoIconElement = document.createElement('span');
-    infoIconElement.className = 'info-icon';
-    infoIconElement.appendChild(createSVGFromString(infoIcon));
-    infoIconElement.addEventListener('click', (e) => {
-      e.preventDefault(); // 防止点击图标时触发 checkBox 的选中状态
-      e.stopPropagation(); // 停止事件冒泡
+    // 如果提供了 tooltip 配置，则创建并附加提示图标
+    if (tooltipConfig && tooltipConfig.text) {
+        const infoIconElement = document.createElement('span');
+        infoIconElement.className = 'info-icon';
+        infoIconElement.appendChild(createSVGFromString(infoIcon));
+        infoIconElement.addEventListener('click', (e) => {
+            e.preventDefault(); // 防止点击图标时触发 checkBox 的选中状态
+            e.stopPropagation(); // 停止事件冒泡
 
-      // 在显示 tooltip 前翻译文本
-      const translatedConfig = {
-        ...tooltipConfig,
-        title: t(tooltipConfig.title),
-        text: t(tooltipConfig.text),
-      };
-      infoTooltip.show(translatedConfig);
-    });
-    label.appendChild(infoIconElement);
-  }
+            // 在显示 tooltip 前翻译文本
+            const translatedConfig = {
+                ...tooltipConfig,
+                title: t(tooltipConfig.title),
+                text: t(tooltipConfig.text),
+            };
+            infoTooltip.show(translatedConfig);
+        });
+        label.appendChild(infoIconElement);
+    }
 
-  const input = document.createElement('input');
-  input.type = 'checkbox';
-  input.id = id;
-  if (isChecked) {
-    input.checked = true;
-  }
+    const input = document.createElement('input');
+    input.type = 'checkbox';
+    input.id = id;
+    if (isChecked) {
+        input.checked = true;
+    }
 
-  const checkmark = document.createElement('span');
-  checkmark.className = 'checkmark';
+    const checkmark = document.createElement('span');
+    checkmark.className = 'checkmark';
 
-  label.appendChild(input);
-  label.appendChild(checkmark);
+    label.appendChild(input);
+    label.appendChild(checkmark);
 
-  return label;
+    return label;
 }

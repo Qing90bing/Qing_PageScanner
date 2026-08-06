@@ -70,7 +70,9 @@
     background-color: var(--main-primary);
     border-radius: 50%;
     cursor: grab;
-    transition: transform 0.1s ease-out, left 0.1s ease-out;
+    transition:
+        transform 0.1s ease-out,
+        left 0.1s ease-out;
     will-change: transform, left;
     box-shadow: 0 2px 4px var(--main-shadow);
     border: 2px solid var(--main-bg);

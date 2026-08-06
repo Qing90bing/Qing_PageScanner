@@ -3,7 +3,7 @@
 // @name:en-US   Web Text Extraction Tool
 // @namespace    https://github.com/Qing90bing/Qing_PageScanner
 // @namespace    http://tampermonkey.net/
-// @version      1.0.1
+// @version      1.0.2
 // @description  像扫描仪一样快速“扫描”整个网页，智能识别并捕获所有需要翻译的文本片段，提高你的翻译效率。
 // @description:en-US  Scan the entire web page like a scanner, intelligently identify and capture all text fragments that need translation.
 // @license      MIT
@@ -19,8 +19,11 @@
 // @grant        GM_deleteValue
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
+// @grant        GM_xmlhttpRequest
+// @connect      *
 // @run-at       document-start
 // ==/UserScript==
+
 
 var TextExtractor = (() => {
   var __defProp = Object.defineProperty;
@@ -49,6 +52,10 @@ var TextExtractor = (() => {
   var dynamicIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M200-766v572q-17-17-32-36t-28-39v-422q13-20 28-39t32-36Zm160-96v764q-21-7-41-15.5T280-133v-694q19-11 39-19.5t41-15.5Zm280 749v-734q106 47 173 145t67 222q0 124-67 222T640-113ZM480-80q-10 0-20-.5T440-82v-796q10-1 20-1.5t20-.5q20 0 40 2t40 6v784q-20 4-40 6t-40 2Z"/></svg>`;
   var summaryIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M280-280h280v-80H280v80Zm0-160h400v-80H280v80Zm0-160h400v-80H280v80Zm-80 480q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/></svg>`;
   var elementScanIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M40-480v-80h80v80H40Zm800 0v-80h80v80h-80ZM40-640v-80h80v80H40Zm800 0v-80h80v80h-80ZM40-800v-80h80v80H40Zm160 320v-80h80v80h-80Zm480 0v-80h80v80h-80Zm160-320v-80h80v80h-80Zm-640 0v-80h80v80h-80Zm160 0v-80h80v80h-80Zm160 0v-80h80v80h-80Zm160 0v-80h80v80h-80ZM473-40q-24 0-46-9t-39-26L184-280l33-34q14-14 34-19t40 0l69 20v-327q0-17 11.5-28.5T400-680q17 0 28.5 11.5T440-640v433l-98-28 103 103q6 6 13 9t15 3h167q33 0 56.5-23.5T720-200v-160q0-17 11.5-28.5T760-400q17 0 28.5 11.5T800-360v160q0 66-47 113T640-40H473Zm7-280v-160q0-17 11.5-28.5T520-520q17 0 28.5 11.5T560-480v160h-80Zm120 0v-120q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440v120h-80Zm40 200H445h195Z"/></svg>`;
+  var aiIcon = `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+  <path d="M19 9 20.25 6.25 23 5l-2.75-1.25L19 1l-1.25 2.75L15 5l2.75 1.25L19 9Zm0 14 1.25-2.75L23 19l-2.75-1.25L19 15l-1.25 2.75L15 19l2.75 1.25L19 23ZM11.5 21 14 15.5l5.5-2.5-5.5-2.5L11.5 5 9 10.5 3.5 13 9 15.5 11.5 21Z"/>
+</svg>`;
   function updateScrollbarWidth(container) {
     const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
     container.style.setProperty("--scrollbar-width", `${scrollbarWidth}px`);
@@ -282,12 +289,12 @@ var TextExtractor = (() => {
         topLayerMgr.rePromote();
       }
     };
-    const observer2 = new MutationObserver(observerCallback);
+    const observer3 = new MutationObserver(observerCallback);
     const onConnect = () => {
       attachToBody(container);
       const startObserver = () => {
         if (document.body) {
-          observer2.observe(document.body, {
+          observer3.observe(document.body, {
             childList: true,
             subtree: true,
             attributes: true,
@@ -308,7 +315,7 @@ var TextExtractor = (() => {
       window.addEventListener("resize", resizeHandler);
     };
     const onDisconnect = () => {
-      observer2.disconnect();
+      observer3.disconnect();
       isolator.detachGlobalListeners();
       window.removeEventListener("resize", resizeHandler);
     };
@@ -411,6 +418,8 @@ var TextExtractor = (() => {
       clear: "Clear",
       copy: "Copy",
       save: "Save",
+      reset: "Reset",
+      delete: "Delete",
       discovered: "Discovered:",
       confirm: "Confirm",
       cancel: "Cancel",
@@ -502,6 +511,68 @@ var TextExtractor = (() => {
         dark: "Dark",
         system: "System"
       },
+      ai: {
+        title: "AI Scan",
+        enabled: "Enable AI Features",
+        enabledDescription: "Turning this off stops AI scanning and hides the AI floating button. Normal scans are unaffected.",
+        betaBadge: "Beta",
+        betaNotice: "This feature is currently unstable and has known issues. It is for testing only.",
+        general: "Scan and Translation",
+        processingMode: "Processing Mode",
+        manual: "Manual Submit",
+        automatic: "Automatic",
+        targetLanguage: "Target Language",
+        simplifiedChinese: "Simplified Chinese",
+        traditionalChinese: "Traditional Chinese",
+        confidenceThreshold: "Confidence Threshold",
+        provider: "Provider Configuration",
+        currentProvider: "Current Provider",
+        providerName: "Name",
+        apiUrl: "Full API URL (chat/completions)",
+        model: "Model",
+        responseMode: "Response Mode",
+        jsonMode: "JSON Mode",
+        promptJson: "Prompt JSON",
+        apiKey: "API Key (stored separately)",
+        addProvider: "Add Provider",
+        newProvider: "New Provider",
+        saveProvider: "Save Provider Configuration",
+        testConnection: "Test Processing & Latency",
+        testDescription: "Sends one fixed synthetic phrase and verifies a parseable classification and translation JSON response. No webpage content is sent. A tiny charge may apply.",
+        testing: "Testing classification, translation, and JSON output; a tiny charge may apply\u2026",
+        processingOk: "Processing successful",
+        connectionOk: "Processing successful",
+        connectionFailed: "Processing test failed",
+        costControl: "Cost Controls",
+        maxBatchItems: "Max Items per Batch",
+        maxBatchCharacters: "Max Characters per Batch",
+        maxRequests: "Max Requests per Page",
+        maxPageCharacters: "Max Characters per Page",
+        dailyTokens: "Daily Estimated Token Limit",
+        timeout: "Request Timeout (seconds)",
+        resetDailyUsage: "Reset Today's Usage",
+        siteStyles: "Site Translation Preferences (Optional)",
+        siteStylesDescription: "This is optional. Save directly to use natural Chinese defaults for the current site; fill in more only for fixed terminology or special wording.",
+        styleLibrary: "Saved Preferences",
+        styleEditor: "Current Site Preferences",
+        searchStyles: "Search Site Preferences",
+        sortStyles: "Sort",
+        sortRecent: "Recently Updated",
+        sortOrigin: "By Site",
+        styleOrigin: "Site Origin",
+        stylePath: "Optional Path Prefix",
+        styleTone: "Tone",
+        styleGlossary: "Glossary and Proper Nouns",
+        stylePunctuation: "Punctuation Style",
+        styleInstructions: "Custom Translation Instructions",
+        advancedStyleSettings: "Advanced Matching Settings",
+        defaultStyleTone: "Natural, clear wording suitable for a Chinese website",
+        defaultStylePunctuation: "Use standard Chinese punctuation for the target language",
+        useCurrentSite: "Use Current Site",
+        noStyles: "No matching site preferences",
+        saveStyle: "Save Current Site Preferences",
+        clearStyles: "Clear All Preferences"
+      },
       about: "About",
       aboutPanel: {
         title: "About",
@@ -529,8 +600,25 @@ var TextExtractor = (() => {
     },
     results: {
       title: "Extracted Text",
+      aiTitle: "AI Scan Results",
       scanCountSession: "Scanned {{count}} items",
       scanCountStatic: "Total {{count}} items scanned",
+      scanCountAi: "AI collected {{count}} items",
+      aiRunning: "AI scan is running",
+      aiStopped: "AI scan stopped",
+      aiProcessing: "The provider is processing the current batch\u2026",
+      aiBudgetBlocked: "Sending stopped because a budget limit was reached",
+      aiRequestError: "Most recent request failed",
+      aiReviewItems: "Items to Review",
+      aiReviewRequired: "Manual review required",
+      aiCounts: {
+        pending: "Pending",
+        translated: "Translated",
+        keep: "Kept",
+        removed: "Removed",
+        review: "Review",
+        failed: "Failed"
+      },
       totalCharacters: "Total Characters",
       totalLines: "Total Lines",
       noSummary: "No summary available",
@@ -555,7 +643,21 @@ var TextExtractor = (() => {
       sessionScanPaused: "Dynamic scan paused.",
       sessionScanResumed: "Dynamic scan session resumed from previous page.",
       sessionScanContinued: "Dynamic scan continued.",
-      cspWorkerWarning: "Switched to compatibility scan mode due to website security restrictions."
+      cspWorkerWarning: "Switched to compatibility scan mode due to website security restrictions.",
+      scanModeConflict: "Stop the active scan mode before starting another one.",
+      aiScanStarted: "AI dynamic scan started.",
+      aiScanStopped: "AI dynamic scan stopped.",
+      aiScanStartFailed: "AI scan failed to start.",
+      aiDisabled: "AI features are disabled. Enable them in Settings first.",
+      aiBatchCompleted: "AI batch completed.",
+      aiNothingPending: "There are no pending items to send.",
+      aiRequestFailed: "The AI request failed; affected items require review.",
+      aiBudgetBlocked: "A cost limit was reached; local collection will continue.",
+      aiProviderRequired: "At least one provider is required.",
+      aiProviderSaved: "Provider configuration saved.",
+      aiDailyUsageReset: "Today's estimated usage was reset.",
+      aiStyleOriginRequired: "Site origin is required.",
+      aiStyleSaved: "Site translation preferences saved."
     },
     placeholders: {
       click: "Click ",
@@ -565,10 +667,22 @@ var TextExtractor = (() => {
       performOneTimeScan: " to perform a one-time quick extraction"
     },
     confirmation: {
-      clear: "Are you sure you want to clear the content? This action cannot be undone."
+      clear: "Are you sure you want to clear the content? This action cannot be undone.",
+      deleteProvider: "Delete the current provider configuration?",
+      deleteStyle: "Delete the current site translation preferences?",
+      clearStyles: "Clear all site translation preferences?"
+    },
+    ai: {
+      actions: {
+        submitPending: "Submit Pending",
+        retryReview: "Process Again"
+      }
     },
     tooltip: {
       summary: "View Summary",
+      ai_scan: "AI Dynamic Scan (Beta)",
+      ai_scan_stop: "Stop AI Dynamic Scan",
+      ai_disabled: "AI features are disabled",
       dynamic_scan: "Dynamic Scan",
       static_scan: "Static Scan",
       element_scan: "Element Scan",
@@ -585,7 +699,8 @@ var TextExtractor = (() => {
         }
       },
       disabled: {
-        scan_in_progress: "Another scan is in progress"
+        scan_in_progress: "Another scan is in progress",
+        ai_scan_active: "Regular scans are disabled while AI scan is running"
       },
       filters: {
         title: "Content Filter Explanation",
@@ -822,7 +937,9 @@ var TextExtractor = (() => {
       elementScanTitle: "Element Scan Tutorial",
       elementScan: '<p><strong>What it does:</strong></p><p>Element Scan allows you to precisely select one or more areas on a webpage (e.g., a paragraph, a list, a sidebar) and extract text only from those areas.</p><p><strong>How to use:</strong></p><ol><li><strong>Start:</strong> Click the "Element Scan" icon <span class="help-icon-placeholder element-scan-icon"></span> in the floating button to enter scan mode.</li><li><strong>Select:</strong> Move your mouse over the page. The area you want to scan will be highlighted. Click to select it.</li><li><strong>Adjust:</strong> A toolbar will appear after selection. You can use the <strong>slider</strong> to expand or shrink the selection area.</li><li><strong>Stage:</strong> If you want to select multiple unrelated areas, click the <span class="action-key">Stage</span> button to save the current selection and continue selecting other areas.</li><li><strong>Confirm:</strong> Once you have finished all selections, click the <span class="action-key">Confirm</span> button to start extracting text from all your chosen areas.</li></ol><p><strong>How to exit:</strong></p><ul><li>While the highlight box is visible, <strong>right-click</strong> anywhere on the page.</li><li>Press the <kbd>ESC</kbd> key at any time.</li><li>Click the "Element Scan" icon again at any time.</li></ul>',
       sessionScanTitle: "Dynamic Scan Tutorial",
-      sessionScan: '<p><strong>What it does:</strong></p><p>Dynamic Scan continuously monitors and automatically records all text that dynamically loads or changes on a webpage. It is especially useful for capturing live chats, infinite scrolling content, or notifications.</p><p><strong>How to use:</strong></p><ul><li><strong>Start Scan:</strong> Click the "Dynamic Scan" icon <span class="help-icon-placeholder dynamic-scan-icon"></span> in the floating button to start scanning immediately.</li><li><strong>Stop Scan:</strong> Click the icon again <span class="help-icon-placeholder stop-icon"></span> to stop.</li><li><strong>View Results:</strong> After stopping, click the main floating button <span class="help-icon-placeholder summary-icon"></span> to open the results window.</li></ul><p><strong>How to exit:</strong></p><ul><li>Click the "Dynamic Scan" icon again during the scan.</li><li>Press the <kbd>ESC</kbd> key at any time to quickly stop the scan.</li></ul>'
+      sessionScan: '<p><strong>What it does:</strong></p><p>Dynamic Scan continuously monitors and automatically records all text that dynamically loads or changes on a webpage. It is especially useful for capturing live chats, infinite scrolling content, or notifications.</p><p><strong>How to use:</strong></p><ul><li><strong>Start Scan:</strong> Click the "Dynamic Scan" icon <span class="help-icon-placeholder dynamic-scan-icon"></span> in the floating button to start scanning immediately.</li><li><strong>Stop Scan:</strong> Click the icon again <span class="help-icon-placeholder stop-icon"></span> to stop.</li><li><strong>View Results:</strong> After stopping, click the main floating button <span class="help-icon-placeholder summary-icon"></span> to open the results window.</li></ul><p><strong>How to exit:</strong></p><ul><li>Click the "Dynamic Scan" icon again during the scan.</li><li>Press the <kbd>ESC</kbd> key at any time to quickly stop the scan.</li></ul>',
+      aiScanTitle: "AI Dynamic Scan Guide",
+      aiScan: "<p><strong>What it does:</strong></p><p>AI Scan continuously collects candidate webpage text and either processes it automatically or waits for manual submission. The top counter shows how many candidates have been collected.</p><p><strong>How to use:</strong></p><ul><li>Click the AI floating button again to stop scanning.</li><li>Open View Summary to submit pending items, review results, and copy or export translations.</li><li>Repeated or previously processed text is not submitted again.</li></ul>"
     }
   };
   var zh_CN_default = {
@@ -840,6 +957,8 @@ var TextExtractor = (() => {
       clear: "\u6E05\u7A7A",
       copy: "\u590D\u5236",
       save: "\u4FDD\u5B58",
+      reset: "\u91CD\u7F6E",
+      delete: "\u5220\u9664",
       discovered: "\u5DF2\u53D1\u73B0:",
       confirm: "\u786E\u8BA4",
       cancel: "\u53D6\u6D88",
@@ -933,6 +1052,68 @@ var TextExtractor = (() => {
         dark: "\u6DF1\u8272",
         system: "\u8DDF\u968F\u7CFB\u7EDF"
       },
+      ai: {
+        title: "AI \u626B\u63CF",
+        enabled: "\u542F\u7528 AI \u529F\u80FD",
+        enabledDescription: "\u5173\u95ED\u540E\u4F1A\u505C\u6B62 AI \u626B\u63CF\u5E76\u9690\u85CF AI \u60AC\u6D6E\u6309\u94AE\uFF1B\u666E\u901A\u626B\u63CF\u529F\u80FD\u4E0D\u53D7\u5F71\u54CD\u3002",
+        betaBadge: "Beta",
+        betaNotice: "\u76EE\u524D\u8BE5\u529F\u80FD\u4E0D\u7A33\u5B9A\uFF0C\u95EE\u9898\u8F83\u591A\uFF0C\u4EC5\u505A\u6D4B\u8BD5\u3002",
+        general: "\u626B\u63CF\u4E0E\u7FFB\u8BD1",
+        processingMode: "\u5904\u7406\u6A21\u5F0F",
+        manual: "\u624B\u52A8\u63D0\u4EA4",
+        automatic: "\u81EA\u52A8\u5904\u7406",
+        targetLanguage: "\u76EE\u6807\u8BED\u8A00",
+        simplifiedChinese: "\u4E2D\u6587\u7B80\u4F53",
+        traditionalChinese: "\u4E2D\u6587\u7E41\u4F53",
+        confidenceThreshold: "\u7F6E\u4FE1\u5EA6\u9608\u503C",
+        provider: "\u4F9B\u5E94\u5546\u914D\u7F6E",
+        currentProvider: "\u5F53\u524D\u4F9B\u5E94\u5546",
+        providerName: "\u4F9B\u5E94\u5546\u540D\u79F0",
+        apiUrl: "\u5B8C\u6574 API \u5730\u5740\uFF08chat/completions\uFF09",
+        model: "\u6A21\u578B",
+        responseMode: "\u54CD\u5E94\u6A21\u5F0F",
+        jsonMode: "JSON \u6A21\u5F0F",
+        promptJson: "Prompt JSON",
+        apiKey: "API Key\uFF08\u72EC\u7ACB\u4FDD\u5B58\uFF09",
+        addProvider: "\u65B0\u589E\u4F9B\u5E94\u5546",
+        newProvider: "\u65B0\u4F9B\u5E94\u5546",
+        saveProvider: "\u4FDD\u5B58\u4F9B\u5E94\u5546\u914D\u7F6E",
+        testConnection: "\u6D4B\u8BD5\u5904\u7406\u4E0E\u5EF6\u8FDF",
+        testDescription: "\u53D1\u9001\u4E00\u6761\u56FA\u5B9A\u7684\u5408\u6210\u77ED\u6587\u672C\uFF0C\u9A8C\u8BC1\u4F9B\u5E94\u5546\u80FD\u8FD4\u56DE\u53EF\u89E3\u6790\u7684\u5206\u7C7B\u4E0E\u7FFB\u8BD1 JSON\uFF1B\u4E0D\u4F1A\u53D1\u9001\u7F51\u9875\u5185\u5BB9\u3002\u6D4B\u8BD5\u53EF\u80FD\u4EA7\u751F\u6781\u5C0F\u8D39\u7528\u3002",
+        testing: "\u6B63\u5728\u6D4B\u8BD5\u5206\u7C7B\u3001\u7FFB\u8BD1\u548C JSON \u7ED3\u679C\uFF0C\u53EF\u80FD\u4EA7\u751F\u6781\u5C0F\u8D39\u7528\u2026",
+        processingOk: "\u5904\u7406\u6B63\u5E38",
+        connectionOk: "\u5904\u7406\u6B63\u5E38",
+        connectionFailed: "\u5904\u7406\u6D4B\u8BD5\u5931\u8D25",
+        costControl: "\u6210\u672C\u63A7\u5236",
+        maxBatchItems: "\u5355\u6279\u6700\u591A\u6761\u76EE",
+        maxBatchCharacters: "\u5355\u6279\u6700\u591A\u5B57\u7B26",
+        maxRequests: "\u5355\u9875\u9762\u6700\u591A\u8BF7\u6C42",
+        maxPageCharacters: "\u5355\u9875\u9762\u6700\u591A\u5B57\u7B26",
+        dailyTokens: "\u6BCF\u65E5\u4F30\u7B97 Token \u4E0A\u9650",
+        timeout: "\u8BF7\u6C42\u8D85\u65F6\uFF08\u79D2\uFF09",
+        resetDailyUsage: "\u6E05\u9664\u4ECA\u65E5\u7528\u91CF",
+        siteStyles: "\u7AD9\u70B9\u7FFB\u8BD1\u504F\u597D\uFF08\u53EF\u9009\uFF09",
+        siteStylesDescription: "\u8FD9\u662F\u53EF\u9009\u9879\u3002\u76F4\u63A5\u4FDD\u5B58\u5373\u53EF\u4E3A\u5F53\u524D\u7F51\u7AD9\u4F7F\u7528\u9ED8\u8BA4\u4E2D\u6587\u8868\u8FBE\uFF1B\u53EA\u6709\u9700\u8981\u56FA\u5B9A\u672F\u8BED\u6216\u7279\u6B8A\u8868\u8FBE\u65F6\u624D\u586B\u5199\u66F4\u591A\u5185\u5BB9\u3002",
+        styleLibrary: "\u5DF2\u4FDD\u5B58\u504F\u597D",
+        styleEditor: "\u5F53\u524D\u7F51\u7AD9\u504F\u597D",
+        searchStyles: "\u641C\u7D22\u7AD9\u70B9\u504F\u597D",
+        sortStyles: "\u6392\u5E8F",
+        sortRecent: "\u6700\u8FD1\u66F4\u65B0",
+        sortOrigin: "\u6309\u7AD9\u70B9",
+        styleOrigin: "\u7AD9\u70B9 Origin",
+        stylePath: "\u53EF\u9009\u8DEF\u5F84\u524D\u7F00",
+        styleTone: "\u8BED\u6C14",
+        styleGlossary: "\u672F\u8BED\u8868\u4E0E\u4E13\u6709\u540D\u8BCD",
+        stylePunctuation: "\u6807\u70B9\u4E60\u60EF",
+        styleInstructions: "\u81EA\u5B9A\u4E49\u7FFB\u8BD1\u8981\u6C42",
+        advancedStyleSettings: "\u9AD8\u7EA7\u5339\u914D\u8BBE\u7F6E",
+        defaultStyleTone: "\u81EA\u7136\u3001\u6E05\u6670\uFF0C\u7B26\u5408\u4E2D\u6587\u7F51\u9875\u8868\u8FBE",
+        defaultStylePunctuation: "\u4F7F\u7528\u76EE\u6807\u8BED\u8A00\u7684\u6807\u51C6\u4E2D\u6587\u6807\u70B9",
+        useCurrentSite: "\u4F7F\u7528\u5F53\u524D\u7F51\u7AD9",
+        noStyles: "\u6CA1\u6709\u5339\u914D\u7684\u7AD9\u70B9\u504F\u597D",
+        saveStyle: "\u4FDD\u5B58\u5F53\u524D\u7F51\u7AD9\u504F\u597D",
+        clearStyles: "\u6E05\u7A7A\u5168\u90E8\u504F\u597D"
+      },
       about: "\u5173\u4E8E",
       aboutPanel: {
         title: "\u5173\u4E8E",
@@ -960,8 +1141,25 @@ var TextExtractor = (() => {
     },
     results: {
       title: "\u63D0\u53D6\u7684\u6587\u672C",
+      aiTitle: "AI \u626B\u63CF\u7ED3\u679C",
       scanCountSession: "\u5DF2\u626B\u63CF {{count}} \u4E2A\u9879\u76EE",
       scanCountStatic: "\u5171\u626B\u63CF {{count}} \u4E2A\u9879\u76EE",
+      scanCountAi: "AI \u5DF2\u6536\u96C6 {{count}} \u4E2A\u9879\u76EE",
+      aiRunning: "AI \u626B\u63CF\u8FD0\u884C\u4E2D",
+      aiStopped: "AI \u626B\u63CF\u5DF2\u505C\u6B62",
+      aiProcessing: "\u4F9B\u5E94\u5546\u6B63\u5728\u5904\u7406\u5F53\u524D\u6279\u6B21\u2026",
+      aiBudgetBlocked: "\u5DF2\u505C\u6B62\u53D1\u9001\uFF0C\u8FBE\u5230\u9884\u7B97\u9650\u5236",
+      aiRequestError: "\u6700\u8FD1\u4E00\u6B21\u8BF7\u6C42\u5931\u8D25",
+      aiReviewItems: "\u5F85\u590D\u6838\u5185\u5BB9",
+      aiReviewRequired: "\u9700\u8981\u4EBA\u5DE5\u590D\u6838",
+      aiCounts: {
+        pending: "\u5F85\u5904\u7406",
+        translated: "\u5DF2\u7FFB\u8BD1",
+        keep: "\u4FDD\u7559",
+        removed: "\u79FB\u9664",
+        review: "\u5F85\u590D\u6838",
+        failed: "\u5931\u8D25"
+      },
       totalCharacters: "\u603B\u5B57\u7B26\u6570",
       totalLines: "\u603B\u884C\u6570",
       noSummary: "\u65E0\u53EF\u7528\u6458\u8981",
@@ -986,7 +1184,21 @@ var TextExtractor = (() => {
       sessionScanPaused: "\u52A8\u6001\u626B\u63CF\u5DF2\u6682\u505C\u3002",
       sessionScanResumed: "\u52A8\u6001\u626B\u63CF\u4F1A\u8BDD\u5DF2\u4ECE\u4E0A\u4E00\u9875\u6062\u590D\u3002",
       sessionScanContinued: "\u52A8\u6001\u626B\u63CF\u5DF2\u7EE7\u7EED\u3002",
-      cspWorkerWarning: "\u56E0\u7F51\u7AD9\u5B89\u5168\u9650\u5236\uFF0C\u5DF2\u5207\u6362\u81F3\u517C\u5BB9\u626B\u63CF\u6A21\u5F0F\u3002"
+      cspWorkerWarning: "\u56E0\u7F51\u7AD9\u5B89\u5168\u9650\u5236\uFF0C\u5DF2\u5207\u6362\u81F3\u517C\u5BB9\u626B\u63CF\u6A21\u5F0F\u3002",
+      scanModeConflict: "\u8BF7\u5148\u505C\u6B62\u5F53\u524D\u626B\u63CF\u6A21\u5F0F\uFF0C\u518D\u542F\u52A8\u53E6\u4E00\u79CD\u626B\u63CF\u3002",
+      aiScanStarted: "AI \u52A8\u6001\u626B\u63CF\u5DF2\u5F00\u59CB\u3002",
+      aiScanStopped: "AI \u52A8\u6001\u626B\u63CF\u5DF2\u505C\u6B62\u3002",
+      aiScanStartFailed: "AI \u626B\u63CF\u542F\u52A8\u5931\u8D25\u3002",
+      aiDisabled: "AI \u529F\u80FD\u5DF2\u5173\u95ED\uFF0C\u8BF7\u5148\u5728\u8BBE\u7F6E\u4E2D\u542F\u7528\u3002",
+      aiBatchCompleted: "AI \u6279\u6B21\u5904\u7406\u5B8C\u6210\u3002",
+      aiNothingPending: "\u5F53\u524D\u6CA1\u6709\u5F85\u53D1\u9001\u5185\u5BB9\u3002",
+      aiRequestFailed: "AI \u8BF7\u6C42\u5931\u8D25\uFF0C\u6761\u76EE\u5DF2\u8FDB\u5165\u5F85\u590D\u6838\u3002",
+      aiBudgetBlocked: "\u5DF2\u8FBE\u5230\u6210\u672C\u9650\u5236\uFF1B\u4ECD\u4F1A\u7EE7\u7EED\u5728\u672C\u5730\u6536\u96C6\u3002",
+      aiProviderRequired: "\u81F3\u5C11\u9700\u8981\u4FDD\u7559\u4E00\u4E2A\u4F9B\u5E94\u5546\u3002",
+      aiProviderSaved: "\u4F9B\u5E94\u5546\u914D\u7F6E\u5DF2\u4FDD\u5B58\u3002",
+      aiDailyUsageReset: "\u4ECA\u65E5\u4F30\u7B97\u7528\u91CF\u5DF2\u6E05\u9664\u3002",
+      aiStyleOriginRequired: "\u7AD9\u70B9 Origin \u4E0D\u80FD\u4E3A\u7A7A\u3002",
+      aiStyleSaved: "\u7AD9\u70B9\u7FFB\u8BD1\u504F\u597D\u5DF2\u4FDD\u5B58\u3002"
     },
     placeholders: {
       click: "\u70B9\u51FB ",
@@ -996,10 +1208,22 @@ var TextExtractor = (() => {
       performOneTimeScan: " \u6267\u884C\u4E00\u6B21\u6027\u5FEB\u901F\u63D0\u53D6"
     },
     confirmation: {
-      clear: "\u60A8\u786E\u5B9A\u8981\u6E05\u9664\u5185\u5BB9\u5417\uFF1F\u6B64\u64CD\u4F5C\u65E0\u6CD5\u64A4\u9500\u3002"
+      clear: "\u60A8\u786E\u5B9A\u8981\u6E05\u9664\u5185\u5BB9\u5417\uFF1F\u6B64\u64CD\u4F5C\u65E0\u6CD5\u64A4\u9500\u3002",
+      deleteProvider: "\u786E\u5B9A\u5220\u9664\u5F53\u524D\u4F9B\u5E94\u5546\u914D\u7F6E\u5417\uFF1F",
+      deleteStyle: "\u786E\u5B9A\u5220\u9664\u5F53\u524D\u7AD9\u70B9\u7FFB\u8BD1\u504F\u597D\u5417\uFF1F",
+      clearStyles: "\u786E\u5B9A\u6E05\u7A7A\u5168\u90E8\u7AD9\u70B9\u7FFB\u8BD1\u504F\u597D\u5417\uFF1F"
+    },
+    ai: {
+      actions: {
+        submitPending: "\u63D0\u4EA4\u5F85\u5904\u7406",
+        retryReview: "\u91CD\u65B0\u5904\u7406"
+      }
     },
     tooltip: {
       summary: "\u67E5\u770B\u6458\u8981",
+      ai_scan: "AI \u52A8\u6001\u626B\u63CF\uFF08Beta\uFF09",
+      ai_scan_stop: "\u505C\u6B62 AI \u52A8\u6001\u626B\u63CF",
+      ai_disabled: "AI \u529F\u80FD\u5DF2\u5173\u95ED",
       dynamic_scan: "\u52A8\u6001\u626B\u63CF",
       static_scan: "\u9759\u6001\u626B\u63CF",
       element_scan: "\u9009\u53D6\u5143\u7D20\u626B\u63CF",
@@ -1016,7 +1240,8 @@ var TextExtractor = (() => {
         }
       },
       disabled: {
-        scan_in_progress: "\u53E6\u4E00\u9879\u626B\u63CF\u6B63\u5728\u8FDB\u884C\u4E2D"
+        scan_in_progress: "\u53E6\u4E00\u9879\u626B\u63CF\u6B63\u5728\u8FDB\u884C\u4E2D",
+        ai_scan_active: "AI \u626B\u63CF\u8FD0\u884C\u4E2D\uFF0C\u666E\u901A\u626B\u63CF\u5DF2\u7981\u7528"
       },
       filters: {
         title: "\u5185\u5BB9\u8FC7\u6EE4\u5668\u8BF4\u660E",
@@ -1253,7 +1478,9 @@ var TextExtractor = (() => {
       elementScanTitle: "\u9009\u53D6\u5143\u7D20\u626B\u63CF\u6559\u7A0B",
       elementScan: '<p><strong>\u529F\u80FD\u4ECB\u7ECD:</strong></p><p>\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5141\u8BB8\u60A8\u7CBE\u786E\u5730\u9009\u62E9\u7F51\u9875\u4E0A\u7684\u4E00\u4E2A\u6216\u591A\u4E2A\u533A\u57DF\uFF08\u4F8B\u5982\u4E00\u4E2A\u6BB5\u843D\u3001\u4E00\u4E2A\u5217\u8868\u3001\u4E00\u4E2A\u4FA7\u8FB9\u680F\uFF09\uFF0C\u5E76\u4EC5\u4ECE\u8FD9\u4E9B\u533A\u57DF\u4E2D\u63D0\u53D6\u6587\u672C\u3002</p><p><strong>\u5982\u4F55\u4F7F\u7528:</strong></p><ol><li><strong>\u542F\u52A8:</strong> \u70B9\u51FB\u60AC\u6D6E\u6309\u94AE\u4E2D\u7684\u201C\u9009\u53D6\u5143\u7D20\u201D\u56FE\u6807 <span class="help-icon-placeholder element-scan-icon"></span> \u542F\u52A8\u626B\u63CF\u6A21\u5F0F\u3002</li><li><strong>\u9009\u62E9:</strong> \u79FB\u52A8\u9F20\u6807\uFF0C\u60A8\u60F3\u626B\u63CF\u7684\u533A\u57DF\u4F1A\u663E\u793A\u9AD8\u4EAE\u6846\u3002\u5355\u51FB\u4EE5\u9009\u5B9A\u3002</li><li><strong>\u8C03\u6574:</strong> \u9009\u5B9A\u540E\u4F1A\u51FA\u73B0\u5DE5\u5177\u680F\u3002\u60A8\u53EF\u4EE5\u4F7F\u7528<strong>\u6ED1\u5757</strong>\u6765\u6269\u5927\u6216\u7F29\u5C0F\u9009\u62E9\u8303\u56F4\u3002</li><li><strong>\u6682\u5B58:</strong> \u5982\u679C\u60A8\u60F3\u9009\u62E9\u591A\u4E2A\u4E0D\u76F8\u5173\u7684\u533A\u57DF\uFF0C\u53EF\u4EE5\u70B9\u51FB<span class="action-key">\u6682\u5B58</span>\u6309\u94AE\u4FDD\u5B58\u5F53\u524D\u9009\u62E9\uFF0C\u7136\u540E\u7EE7\u7EED\u9009\u62E9\u5176\u4ED6\u533A\u57DF\u3002</li><li><strong>\u786E\u8BA4:</strong> \u5B8C\u6210\u6240\u6709\u9009\u62E9\u540E\uFF0C\u70B9\u51FB<span class="action-key">\u786E\u8BA4</span>\u6309\u94AE\uFF0C\u7CFB\u7EDF\u5C06\u5F00\u59CB\u4ECE\u60A8\u9009\u62E9\u7684\u6240\u6709\u533A\u57DF\u4E2D\u63D0\u53D6\u6587\u672C\u3002</li></ol><p><strong>\u5982\u4F55\u9000\u51FA:</strong></p><ul><li>\u5728\u9009\u62E9\u8FC7\u7A0B\u4E2D\uFF08\u51FA\u73B0\u9AD8\u4EAE\u6846\u65F6\uFF09\uFF0C\u5728\u9875\u9762\u4EFB\u610F\u4F4D\u7F6E<strong>\u53F3\u952E\u5355\u51FB</strong>\u3002</li><li>\u5728\u4EFB\u4F55\u65F6\u5019\uFF0C\u6309\u4E0B<kbd>ESC</kbd>\u952E\u3002</li><li>\u5728\u4EFB\u4F55\u65F6\u5019\uFF0C\u518D\u6B21\u70B9\u51FB\u201C\u9009\u53D6\u5143\u7D20\u626B\u63CF\u201D\u56FE\u6807\u3002</li></ul>',
       sessionScanTitle: "\u52A8\u6001\u626B\u63CF\u6559\u7A0B",
-      sessionScan: '<p><strong>\u529F\u80FD\u4ECB\u7ECD:</strong></p><p>\u52A8\u6001\u626B\u63CF\u4F1A\u6301\u7EED\u76D1\u63A7\u5E76\u81EA\u52A8\u8BB0\u5F55\u7F51\u9875\u4E0A\u6240\u6709\u52A8\u6001\u52A0\u8F7D\u6216\u53D8\u5316\u7684\u6587\u672C\uFF0C\u7279\u522B\u9002\u7528\u4E8E\u6293\u53D6\u5B9E\u65F6\u804A\u5929\u3001\u6EDA\u52A8\u52A0\u8F7D\u5185\u5BB9\u6216\u901A\u77E5\u7B49\u3002</p><p><strong>\u5982\u4F55\u4F7F\u7528:</strong></p><ul><li><strong>\u5F00\u59CB\u626B\u63CF:</strong> \u70B9\u51FB\u60AC\u6D6E\u6309\u94AE\u4E2D\u7684\u201C\u52A8\u6001\u626B\u63CF\u201D\u56FE\u6807 <span class="help-icon-placeholder dynamic-scan-icon"></span>\uFF0C\u626B\u63CF\u7ACB\u5373\u5F00\u59CB\u3002</li><li><strong>\u505C\u6B62\u626B\u63CF:</strong> \u518D\u6B21\u70B9\u51FB\u8BE5\u56FE\u6807 <span class="help-icon-placeholder stop-icon"></span>\uFF0C\u5373\u53EF\u505C\u6B62\u626B\u63CF\u3002</li><li><strong>\u67E5\u770B\u7ED3\u679C:</strong> \u505C\u6B62\u540E\uFF0C\u70B9\u51FB\u4E3B\u60AC\u6D6E\u6309\u94AE <span class="help-icon-placeholder summary-icon"></span> \u6253\u5F00\u7ED3\u679C\u7A97\u53E3\u3002</li></ul><p><strong>\u5982\u4F55\u9000\u51FA:</strong></p><ul><li>\u5728\u626B\u63CF\u8FC7\u7A0B\u4E2D\uFF0C\u518D\u6B21\u70B9\u51FB\u201C\u52A8\u6001\u626B\u63CF\u201D\u56FE\u6807\u3002</li><li>\u5728\u626B\u63CF\u8FC7\u7A0B\u4E2D\uFF0C\u968F\u65F6\u6309\u4E0B<kbd>ESC</kbd>\u952E\u53EF\u5FEB\u901F\u505C\u6B62\u3002</li></ul>'
+      sessionScan: '<p><strong>\u529F\u80FD\u4ECB\u7ECD:</strong></p><p>\u52A8\u6001\u626B\u63CF\u4F1A\u6301\u7EED\u76D1\u63A7\u5E76\u81EA\u52A8\u8BB0\u5F55\u7F51\u9875\u4E0A\u6240\u6709\u52A8\u6001\u52A0\u8F7D\u6216\u53D8\u5316\u7684\u6587\u672C\uFF0C\u7279\u522B\u9002\u7528\u4E8E\u6293\u53D6\u5B9E\u65F6\u804A\u5929\u3001\u6EDA\u52A8\u52A0\u8F7D\u5185\u5BB9\u6216\u901A\u77E5\u7B49\u3002</p><p><strong>\u5982\u4F55\u4F7F\u7528:</strong></p><ul><li><strong>\u5F00\u59CB\u626B\u63CF:</strong> \u70B9\u51FB\u60AC\u6D6E\u6309\u94AE\u4E2D\u7684\u201C\u52A8\u6001\u626B\u63CF\u201D\u56FE\u6807 <span class="help-icon-placeholder dynamic-scan-icon"></span>\uFF0C\u626B\u63CF\u7ACB\u5373\u5F00\u59CB\u3002</li><li><strong>\u505C\u6B62\u626B\u63CF:</strong> \u518D\u6B21\u70B9\u51FB\u8BE5\u56FE\u6807 <span class="help-icon-placeholder stop-icon"></span>\uFF0C\u5373\u53EF\u505C\u6B62\u626B\u63CF\u3002</li><li><strong>\u67E5\u770B\u7ED3\u679C:</strong> \u505C\u6B62\u540E\uFF0C\u70B9\u51FB\u4E3B\u60AC\u6D6E\u6309\u94AE <span class="help-icon-placeholder summary-icon"></span> \u6253\u5F00\u7ED3\u679C\u7A97\u53E3\u3002</li></ul><p><strong>\u5982\u4F55\u9000\u51FA:</strong></p><ul><li>\u5728\u626B\u63CF\u8FC7\u7A0B\u4E2D\uFF0C\u518D\u6B21\u70B9\u51FB\u201C\u52A8\u6001\u626B\u63CF\u201D\u56FE\u6807\u3002</li><li>\u5728\u626B\u63CF\u8FC7\u7A0B\u4E2D\uFF0C\u968F\u65F6\u6309\u4E0B<kbd>ESC</kbd>\u952E\u53EF\u5FEB\u901F\u505C\u6B62\u3002</li></ul>',
+      aiScanTitle: "AI \u52A8\u6001\u626B\u63CF\u8BF4\u660E",
+      aiScan: "<p><strong>\u529F\u80FD\u4ECB\u7ECD:</strong></p><p>AI \u626B\u63CF\u4F1A\u6301\u7EED\u6536\u96C6\u7F51\u9875\u4E2D\u7684\u5019\u9009\u6587\u672C\uFF0C\u5E76\u6839\u636E\u8BBE\u7F6E\u81EA\u52A8\u5904\u7406\u6216\u7B49\u5F85\u624B\u52A8\u63D0\u4EA4\u3002\u9876\u90E8\u6570\u5B57\u8868\u793A\u672C\u6B21\u5DF2\u6536\u96C6\u7684\u5019\u9009\u9879\u6570\u91CF\u3002</p><p><strong>\u5982\u4F55\u4F7F\u7528:</strong></p><ul><li>\u518D\u6B21\u70B9\u51FB AI \u60AC\u6D6E\u6309\u94AE\u5373\u53EF\u505C\u6B62\u626B\u63CF\u3002</li><li>\u70B9\u51FB\u201C\u67E5\u770B\u6458\u8981\u201D\u53EF\u63D0\u4EA4\u5F85\u5904\u7406\u5185\u5BB9\u3001\u590D\u6838\u7ED3\u679C\u5E76\u590D\u5236\u6216\u5BFC\u51FA\u7FFB\u8BD1\u3002</li><li>\u91CD\u590D\u51FA\u73B0\u6216\u5DF2\u7ECF\u5904\u7406\u8FC7\u7684\u6587\u672C\u4E0D\u4F1A\u518D\u6B21\u63D0\u4EA4\u3002</li></ul>"
     }
   };
   var zh_TW_default = {
@@ -1271,6 +1498,8 @@ var TextExtractor = (() => {
       clear: "\u6E05\u7A7A",
       copy: "\u8907\u88FD",
       save: "\u5132\u5B58",
+      reset: "\u91CD\u8A2D",
+      delete: "\u522A\u9664",
       discovered: "\u5DF2\u767C\u73FE:",
       confirm: "\u78BA\u8A8D",
       cancel: "\u53D6\u6D88",
@@ -1362,6 +1591,68 @@ var TextExtractor = (() => {
         dark: "\u6DF1\u8272",
         system: "\u8DDF\u96A8\u7CFB\u7D71"
       },
+      ai: {
+        title: "AI \u6383\u63CF",
+        enabled: "\u555F\u7528 AI \u529F\u80FD",
+        enabledDescription: "\u95DC\u9589\u5F8C\u6703\u505C\u6B62 AI \u6383\u63CF\u4E26\u96B1\u85CF AI \u61F8\u6D6E\u6309\u9215\uFF1B\u4E00\u822C\u6383\u63CF\u529F\u80FD\u4E0D\u53D7\u5F71\u97FF\u3002",
+        betaBadge: "Beta",
+        betaNotice: "\u76EE\u524D\u8A72\u529F\u80FD\u4E0D\u7A69\u5B9A\uFF0C\u554F\u984C\u8F03\u591A\uFF0C\u50C5\u4F9B\u6E2C\u8A66\u3002",
+        general: "\u6383\u63CF\u8207\u7FFB\u8B6F",
+        processingMode: "\u8655\u7406\u6A21\u5F0F",
+        manual: "\u624B\u52D5\u63D0\u4EA4",
+        automatic: "\u81EA\u52D5\u8655\u7406",
+        targetLanguage: "\u76EE\u6A19\u8A9E\u8A00",
+        simplifiedChinese: "\u4E2D\u6587\u7C21\u9AD4",
+        traditionalChinese: "\u4E2D\u6587\u7E41\u9AD4",
+        confidenceThreshold: "\u4FE1\u5FC3\u5EA6\u95BE\u503C",
+        provider: "\u4F9B\u61C9\u5546\u8A2D\u5B9A",
+        currentProvider: "\u76EE\u524D\u4F9B\u61C9\u5546",
+        providerName: "\u4F9B\u61C9\u5546\u540D\u7A31",
+        apiUrl: "\u5B8C\u6574 API \u4F4D\u5740\uFF08chat/completions\uFF09",
+        model: "\u6A21\u578B",
+        responseMode: "\u56DE\u61C9\u6A21\u5F0F",
+        jsonMode: "JSON \u6A21\u5F0F",
+        promptJson: "Prompt JSON",
+        apiKey: "API Key\uFF08\u7368\u7ACB\u5132\u5B58\uFF09",
+        addProvider: "\u65B0\u589E\u4F9B\u61C9\u5546",
+        newProvider: "\u65B0\u4F9B\u61C9\u5546",
+        saveProvider: "\u5132\u5B58\u4F9B\u61C9\u5546\u8A2D\u5B9A",
+        testConnection: "\u6E2C\u8A66\u8655\u7406\u8207\u5EF6\u9072",
+        testDescription: "\u50B3\u9001\u4E00\u689D\u56FA\u5B9A\u7684\u5408\u6210\u77ED\u6587\u672C\uFF0C\u9A57\u8B49\u4F9B\u61C9\u5546\u80FD\u56DE\u50B3\u53EF\u89E3\u6790\u7684\u5206\u985E\u8207\u7FFB\u8B6F JSON\uFF1B\u4E0D\u6703\u50B3\u9001\u7DB2\u9801\u5167\u5BB9\u3002\u6E2C\u8A66\u53EF\u80FD\u7522\u751F\u6975\u5C0F\u8CBB\u7528\u3002",
+        testing: "\u6B63\u5728\u6E2C\u8A66\u5206\u985E\u3001\u7FFB\u8B6F\u548C JSON \u7D50\u679C\uFF0C\u53EF\u80FD\u7522\u751F\u6975\u5C0F\u8CBB\u7528\u2026",
+        processingOk: "\u8655\u7406\u6B63\u5E38",
+        connectionOk: "\u8655\u7406\u6B63\u5E38",
+        connectionFailed: "\u8655\u7406\u6E2C\u8A66\u5931\u6557",
+        costControl: "\u6210\u672C\u63A7\u5236",
+        maxBatchItems: "\u55AE\u6279\u6700\u591A\u9805\u76EE",
+        maxBatchCharacters: "\u55AE\u6279\u6700\u591A\u5B57\u5143",
+        maxRequests: "\u55AE\u9801\u9762\u6700\u591A\u8ACB\u6C42",
+        maxPageCharacters: "\u55AE\u9801\u9762\u6700\u591A\u5B57\u5143",
+        dailyTokens: "\u6BCF\u65E5\u4F30\u7B97 Token \u4E0A\u9650",
+        timeout: "\u8ACB\u6C42\u903E\u6642\uFF08\u79D2\uFF09",
+        resetDailyUsage: "\u6E05\u9664\u4ECA\u65E5\u7528\u91CF",
+        siteStyles: "\u7AD9\u9EDE\u7FFB\u8B6F\u504F\u597D\uFF08\u53EF\u9078\uFF09",
+        siteStylesDescription: "\u9019\u662F\u53EF\u9078\u9805\u3002\u76F4\u63A5\u5132\u5B58\u5373\u53EF\u70BA\u76EE\u524D\u7DB2\u7AD9\u4F7F\u7528\u9810\u8A2D\u4E2D\u6587\u8868\u9054\uFF1B\u53EA\u6709\u9700\u8981\u56FA\u5B9A\u8853\u8A9E\u6216\u7279\u6B8A\u8868\u9054\u6642\u624D\u586B\u5BEB\u66F4\u591A\u5167\u5BB9\u3002",
+        styleLibrary: "\u5DF2\u5132\u5B58\u504F\u597D",
+        styleEditor: "\u76EE\u524D\u7DB2\u7AD9\u504F\u597D",
+        searchStyles: "\u641C\u5C0B\u7AD9\u9EDE\u504F\u597D",
+        sortStyles: "\u6392\u5E8F",
+        sortRecent: "\u6700\u8FD1\u66F4\u65B0",
+        sortOrigin: "\u6309\u7AD9\u9EDE",
+        styleOrigin: "\u7AD9\u9EDE Origin",
+        stylePath: "\u53EF\u9078\u8DEF\u5F91\u524D\u7DB4",
+        styleTone: "\u8A9E\u6C23",
+        styleGlossary: "\u8853\u8A9E\u8868\u8207\u5C08\u6709\u540D\u8A5E",
+        stylePunctuation: "\u6A19\u9EDE\u7FD2\u6163",
+        styleInstructions: "\u81EA\u8A02\u7FFB\u8B6F\u8981\u6C42",
+        advancedStyleSettings: "\u9032\u968E\u5339\u914D\u8A2D\u5B9A",
+        defaultStyleTone: "\u81EA\u7136\u3001\u6E05\u6670\uFF0C\u7B26\u5408\u4E2D\u6587\u7DB2\u9801\u8868\u9054",
+        defaultStylePunctuation: "\u4F7F\u7528\u76EE\u6A19\u8A9E\u8A00\u7684\u6A19\u6E96\u4E2D\u6587\u6A19\u9EDE",
+        useCurrentSite: "\u4F7F\u7528\u76EE\u524D\u7DB2\u7AD9",
+        noStyles: "\u6C92\u6709\u7B26\u5408\u7684\u7AD9\u9EDE\u504F\u597D",
+        saveStyle: "\u5132\u5B58\u76EE\u524D\u7DB2\u7AD9\u504F\u597D",
+        clearStyles: "\u6E05\u7A7A\u5168\u90E8\u504F\u597D"
+      },
       about: "\u95DC\u65BC",
       aboutPanel: {
         title: "\u95DC\u65BC",
@@ -1389,8 +1680,25 @@ var TextExtractor = (() => {
     },
     results: {
       title: "\u63D0\u53D6\u7684\u6587\u672C",
+      aiTitle: "AI \u6383\u63CF\u7D50\u679C",
       scanCountSession: "\u5DF2\u6383\u63CF {{count}} \u500B\u9805\u76EE",
       scanCountStatic: "\u5171\u6383\u63CF {{count}} \u500B\u9805\u76EE",
+      scanCountAi: "AI \u5DF2\u6536\u96C6 {{count}} \u500B\u9805\u76EE",
+      aiRunning: "AI \u6383\u63CF\u57F7\u884C\u4E2D",
+      aiStopped: "AI \u6383\u63CF\u5DF2\u505C\u6B62",
+      aiProcessing: "\u4F9B\u61C9\u5546\u6B63\u5728\u8655\u7406\u76EE\u524D\u6279\u6B21\u2026",
+      aiBudgetBlocked: "\u5DF2\u505C\u6B62\u50B3\u9001\uFF0C\u9054\u5230\u9810\u7B97\u9650\u5236",
+      aiRequestError: "\u6700\u8FD1\u4E00\u6B21\u8ACB\u6C42\u5931\u6557",
+      aiReviewItems: "\u5F85\u8907\u6838\u5167\u5BB9",
+      aiReviewRequired: "\u9700\u8981\u4EBA\u5DE5\u8907\u6838",
+      aiCounts: {
+        pending: "\u5F85\u8655\u7406",
+        translated: "\u5DF2\u7FFB\u8B6F",
+        keep: "\u4FDD\u7559",
+        removed: "\u79FB\u9664",
+        review: "\u5F85\u8907\u6838",
+        failed: "\u5931\u6557"
+      },
       totalCharacters: "\u7E3D\u5B57\u5143\u6578",
       totalLines: "\u7E3D\u884C\u6578",
       noSummary: "\u7121\u53EF\u7528\u6458\u8981",
@@ -1415,7 +1723,21 @@ var TextExtractor = (() => {
       sessionScanPaused: "\u52D5\u614B\u6383\u63CF\u5DF2\u66AB\u505C\u3002",
       sessionScanResumed: "\u52D5\u614B\u6383\u63CF\u6703\u8A71\u5DF2\u5F9E\u4E0A\u4E00\u9801\u6062\u5FA9\u3002",
       sessionScanContinued: "\u52D5\u614B\u6383\u63CF\u5DF2\u7E7C\u7E8C\u3002",
-      cspWorkerWarning: "\u56E0\u7DB2\u7AD9\u5B89\u5168\u9650\u5236\uFF0C\u5DF2\u5207\u63DB\u81F3\u76F8\u5BB9\u6383\u63CF\u6A21\u5F0F\u3002"
+      cspWorkerWarning: "\u56E0\u7DB2\u7AD9\u5B89\u5168\u9650\u5236\uFF0C\u5DF2\u5207\u63DB\u81F3\u76F8\u5BB9\u6383\u63CF\u6A21\u5F0F\u3002",
+      scanModeConflict: "\u8ACB\u5148\u505C\u6B62\u76EE\u524D\u6383\u63CF\u6A21\u5F0F\uFF0C\u518D\u555F\u52D5\u53E6\u4E00\u7A2E\u6383\u63CF\u3002",
+      aiScanStarted: "AI \u52D5\u614B\u6383\u63CF\u5DF2\u958B\u59CB\u3002",
+      aiScanStopped: "AI \u52D5\u614B\u6383\u63CF\u5DF2\u505C\u6B62\u3002",
+      aiScanStartFailed: "AI \u6383\u63CF\u555F\u52D5\u5931\u6557\u3002",
+      aiDisabled: "AI \u529F\u80FD\u5DF2\u95DC\u9589\uFF0C\u8ACB\u5148\u5728\u8A2D\u5B9A\u4E2D\u555F\u7528\u3002",
+      aiBatchCompleted: "AI \u6279\u6B21\u8655\u7406\u5B8C\u6210\u3002",
+      aiNothingPending: "\u76EE\u524D\u6C92\u6709\u5F85\u50B3\u9001\u5167\u5BB9\u3002",
+      aiRequestFailed: "AI \u8ACB\u6C42\u5931\u6557\uFF0C\u9805\u76EE\u5DF2\u9032\u5165\u5F85\u8907\u6838\u3002",
+      aiBudgetBlocked: "\u5DF2\u9054\u5230\u6210\u672C\u9650\u5236\uFF1B\u4ECD\u6703\u7E7C\u7E8C\u5728\u672C\u6A5F\u6536\u96C6\u3002",
+      aiProviderRequired: "\u81F3\u5C11\u9700\u8981\u4FDD\u7559\u4E00\u500B\u4F9B\u61C9\u5546\u3002",
+      aiProviderSaved: "\u4F9B\u61C9\u5546\u8A2D\u5B9A\u5DF2\u5132\u5B58\u3002",
+      aiDailyUsageReset: "\u4ECA\u65E5\u4F30\u7B97\u7528\u91CF\u5DF2\u6E05\u9664\u3002",
+      aiStyleOriginRequired: "\u7AD9\u9EDE Origin \u4E0D\u53EF\u70BA\u7A7A\u3002",
+      aiStyleSaved: "\u7AD9\u9EDE\u7FFB\u8B6F\u504F\u597D\u5DF2\u5132\u5B58\u3002"
     },
     placeholders: {
       click: "\u9EDE\u64CA ",
@@ -1425,10 +1747,22 @@ var TextExtractor = (() => {
       performOneTimeScan: " \u57F7\u884C\u4E00\u6B21\u6027\u5FEB\u901F\u63D0\u53D6"
     },
     confirmation: {
-      clear: "\u60A8\u78BA\u5B9A\u8981\u6E05\u9664\u5167\u5BB9\u55CE\uFF1F\u6B64\u64CD\u4F5C\u7121\u6CD5\u64A4\u92B7\u3002"
+      clear: "\u60A8\u78BA\u5B9A\u8981\u6E05\u9664\u5167\u5BB9\u55CE\uFF1F\u6B64\u64CD\u4F5C\u7121\u6CD5\u64A4\u92B7\u3002",
+      deleteProvider: "\u78BA\u5B9A\u522A\u9664\u76EE\u524D\u4F9B\u61C9\u5546\u8A2D\u5B9A\u55CE\uFF1F",
+      deleteStyle: "\u78BA\u5B9A\u522A\u9664\u76EE\u524D\u7AD9\u9EDE\u7FFB\u8B6F\u504F\u597D\u55CE\uFF1F",
+      clearStyles: "\u78BA\u5B9A\u6E05\u7A7A\u5168\u90E8\u7AD9\u9EDE\u7FFB\u8B6F\u504F\u597D\u55CE\uFF1F"
+    },
+    ai: {
+      actions: {
+        submitPending: "\u63D0\u4EA4\u5F85\u8655\u7406",
+        retryReview: "\u91CD\u65B0\u8655\u7406"
+      }
     },
     tooltip: {
       summary: "\u67E5\u770B\u6458\u8981",
+      ai_scan: "AI \u52D5\u614B\u6383\u63CF\uFF08Beta\uFF09",
+      ai_scan_stop: "\u505C\u6B62 AI \u52D5\u614B\u6383\u63CF",
+      ai_disabled: "AI \u529F\u80FD\u5DF2\u95DC\u9589",
       dynamic_scan: "\u52D5\u614B\u6383\u63CF",
       static_scan: "\u975C\u614B\u6383\u63CF",
       element_scan: "\u9078\u53D6\u5143\u7D20\u6383\u63CF",
@@ -1445,7 +1779,8 @@ var TextExtractor = (() => {
         }
       },
       disabled: {
-        scan_in_progress: "\u53E6\u4E00\u9805\u6383\u63CF\u6B63\u5728\u9032\u884C\u4E2D"
+        scan_in_progress: "\u53E6\u4E00\u9805\u6383\u63CF\u6B63\u5728\u9032\u884C\u4E2D",
+        ai_scan_active: "AI \u6383\u63CF\u57F7\u884C\u4E2D\uFF0C\u666E\u901A\u6383\u63CF\u5DF2\u505C\u7528"
       },
       filters: {
         title: "\u5167\u5BB9\u904E\u6FFE\u5668\u8AAA\u660E",
@@ -1682,7 +2017,9 @@ var TextExtractor = (() => {
       elementScanTitle: "\u9078\u53D6\u5143\u7D20\u6383\u63CF\u6559\u7A0B",
       elementScan: '<p><strong>\u529F\u80FD\u4ECB\u7D39:</strong></p><p>\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5141\u8A31\u60A8\u7CBE\u78BA\u5730\u9078\u64C7\u7DB2\u9801\u4E0A\u7684\u4E00\u500B\u6216\u591A\u500B\u5340\u57DF\uFF08\u4F8B\u5982\u4E00\u500B\u6BB5\u843D\u3001\u4E00\u500B\u5217\u8868\u3001\u4E00\u500B\u5074\u908A\u6B04\uFF09\uFF0C\u4E26\u50C5\u5F9E\u9019\u4E9B\u5340\u57DF\u4E2D\u63D0\u53D6\u6587\u672C\u3002</p><p><strong>\u5982\u4F55\u4F7F\u7528:</strong></p><ol><li><strong>\u555F\u52D5:</strong> \u9EDE\u64CA\u61F8\u6D6E\u6309\u9215\u4E2D\u7684\u300C\u9078\u53D6\u5143\u7D20\u300D\u5716\u6A19 <span class="help-icon-placeholder element-scan-icon"></span> \u555F\u52D5\u6383\u63CF\u6A21\u5F0F\u3002</li><li><strong>\u9078\u64C7:</strong> \u79FB\u52D5\u9F20\u6A19\uFF0C\u60A8\u60F3\u6383\u63CF\u7684\u5340\u57DF\u6703\u986F\u793A\u9AD8\u4EAE\u6846\u3002\u55AE\u64CA\u4EE5\u9078\u5B9A\u3002</li><li><strong>\u8ABF\u6574:</strong> \u9078\u5B9A\u5F8C\u6703\u51FA\u73FE\u5DE5\u5177\u6B04\u3002\u60A8\u53EF\u4EE5\u4F7F\u7528<strong>\u6ED1\u584A</strong>\u4F86\u64F4\u5927\u6216\u7E2E\u5C0F\u9078\u64C7\u7BC4\u570D\u3002</li><li><strong>\u66AB\u5B58:</strong> \u5982\u679C\u60A8\u60F3\u9078\u64C7\u591A\u500B\u4E0D\u76F8\u95DC\u7684\u5340\u57DF\uFF0C\u53EF\u4EE5\u9EDE\u64CA<span class="action-key">\u66AB\u5B58</span>\u6309\u9215\u4FDD\u5B58\u7576\u524D\u9078\u64C7\uFF0C\u7136\u5F8C\u7E7C\u7E8C\u9078\u64C7\u5176\u4ED6\u5340\u57DF\u3002</li><li><strong>\u78BA\u8A8D:</strong> \u5B8C\u6210\u6240\u6709\u9078\u64C7\u5F8C\uFF0C\u9EDE\u64CA<span class="action-key">\u78BA\u8A8D</span>\u6309\u9215\uFF0C\u7CFB\u7D71\u5C07\u958B\u59CB\u5F9E\u60A8\u9078\u64C7\u7684\u6240\u6709\u5340\u57DF\u4E2D\u63D0\u53D6\u6587\u672C\u3002</li></ol><p><strong>\u5982\u4F55\u9000\u51FA:</strong></p><ul><li>\u5728\u9078\u64C7\u904E\u7A0B\u4E2D\uFF08\u51FA\u73FE\u9AD8\u4EAE\u6846\u6642\uFF09\uFF0C\u5728\u9801\u9762\u4EFB\u610F\u4F4D\u7F6E<strong>\u53F3\u9375\u55AE\u64CA</strong>\u3002</li><li>\u5728\u4EFB\u4F55\u6642\u5019\uFF0C\u6309\u4E0B <kbd>ESC</kbd> \u9375\u3002</li><li>\u5728\u4EFB\u4F55\u6642\u5019\uFF0C\u518D\u6B21\u9EDE\u64CA\u300C\u9078\u53D6\u5143\u7D20\u6383\u63CF\u300D\u5716\u6A19\u3002</li></ul>',
       sessionScanTitle: "\u52D5\u614B\u6383\u63CF\u6559\u7A0B",
-      sessionScan: '<p><strong>\u529F\u80FD\u4ECB\u7D39:</strong></p><p>\u52D5\u614B\u6383\u63CF\u6703\u6301\u7E8C\u76E3\u63A7\u4E26\u81EA\u52D5\u8A18\u9304\u7DB2\u9801\u4E0A\u6240\u6709\u52D5\u614B\u52A0\u8F09\u6216\u8B8A\u5316\u7684\u6587\u672C\uFF0C\u7279\u5225\u9069\u7528\u65BC\u6293\u53D6\u5BE6\u6642\u804A\u5929\u3001\u6EFE\u52D5\u52A0\u8F09\u5167\u5BB9\u6216\u901A\u77E5\u7B49\u3002</p><p><strong>\u5982\u4F55\u4F7F\u7528:</strong></p><ul><li><strong>\u958B\u59CB\u6383\u63CF:</strong> \u9EDE\u64CA\u61F8\u6D6E\u6309\u9215\u4E2D\u7684\u300C\u52D5\u614B\u6383\u63CF\u300D\u5716\u6A19 <span class="help-icon-placeholder dynamic-scan-icon"></span>\uFF0C\u6383\u63CF\u7ACB\u5373\u958B\u59CB\u3002</li><li><strong>\u505C\u6B62\u6383\u63CF:</strong> \u518D\u6B21\u9EDE\u64CA\u8A72\u5716\u6A19 <span class="help-icon-placeholder stop-icon"></span>\uFF0C\u5373\u53EF\u505C\u6B62\u6383\u63CF\u3002</li><li><strong>\u67E5\u770B\u7D50\u679C:</strong> \u505C\u6B62\u5F8C\uFF0C\u9EDE\u64CA\u4E3B\u61F8\u6D6E\u6309\u9215 <span class="help-icon-placeholder summary-icon"></span> \u6253\u958B\u7D50\u679C\u7A97\u53E3\u3002</li></ul><p><strong>\u5982\u4F55\u9000\u51FA:</strong></p><ul><li>\u5728\u6383\u63CF\u904E\u7A0B\u4E2D\uFF0C\u518D\u6B21\u9EDE\u64CA\u300C\u52D5\u614B\u6383\u63CF\u300D\u5716\u6A19\u3002</li><li>\u5728\u6383\u63CF\u904E\u7A0B\u4E2D\uFF0C\u96A8\u6642\u6309\u4E0B <kbd>ESC</kbd> \u9375\u53EF\u5FEB\u901F\u505C\u6B62\u3002</li></ul>'
+      sessionScan: '<p><strong>\u529F\u80FD\u4ECB\u7D39:</strong></p><p>\u52D5\u614B\u6383\u63CF\u6703\u6301\u7E8C\u76E3\u63A7\u4E26\u81EA\u52D5\u8A18\u9304\u7DB2\u9801\u4E0A\u6240\u6709\u52D5\u614B\u52A0\u8F09\u6216\u8B8A\u5316\u7684\u6587\u672C\uFF0C\u7279\u5225\u9069\u7528\u65BC\u6293\u53D6\u5BE6\u6642\u804A\u5929\u3001\u6EFE\u52D5\u52A0\u8F09\u5167\u5BB9\u6216\u901A\u77E5\u7B49\u3002</p><p><strong>\u5982\u4F55\u4F7F\u7528:</strong></p><ul><li><strong>\u958B\u59CB\u6383\u63CF:</strong> \u9EDE\u64CA\u61F8\u6D6E\u6309\u9215\u4E2D\u7684\u300C\u52D5\u614B\u6383\u63CF\u300D\u5716\u6A19 <span class="help-icon-placeholder dynamic-scan-icon"></span>\uFF0C\u6383\u63CF\u7ACB\u5373\u958B\u59CB\u3002</li><li><strong>\u505C\u6B62\u6383\u63CF:</strong> \u518D\u6B21\u9EDE\u64CA\u8A72\u5716\u6A19 <span class="help-icon-placeholder stop-icon"></span>\uFF0C\u5373\u53EF\u505C\u6B62\u6383\u63CF\u3002</li><li><strong>\u67E5\u770B\u7D50\u679C:</strong> \u505C\u6B62\u5F8C\uFF0C\u9EDE\u64CA\u4E3B\u61F8\u6D6E\u6309\u9215 <span class="help-icon-placeholder summary-icon"></span> \u6253\u958B\u7D50\u679C\u7A97\u53E3\u3002</li></ul><p><strong>\u5982\u4F55\u9000\u51FA:</strong></p><ul><li>\u5728\u6383\u63CF\u904E\u7A0B\u4E2D\uFF0C\u518D\u6B21\u9EDE\u64CA\u300C\u52D5\u614B\u6383\u63CF\u300D\u5716\u6A19\u3002</li><li>\u5728\u6383\u63CF\u904E\u7A0B\u4E2D\uFF0C\u96A8\u6642\u6309\u4E0B <kbd>ESC</kbd> \u9375\u53EF\u5FEB\u901F\u505C\u6B62\u3002</li></ul>',
+      aiScanTitle: "AI \u52D5\u614B\u6383\u63CF\u8AAA\u660E",
+      aiScan: "<p><strong>\u529F\u80FD\u4ECB\u7D39:</strong></p><p>AI \u6383\u63CF\u6703\u6301\u7E8C\u6536\u96C6\u7DB2\u9801\u4E2D\u7684\u5019\u9078\u6587\u672C\uFF0C\u4E26\u4F9D\u8A2D\u5B9A\u81EA\u52D5\u8655\u7406\u6216\u7B49\u5F85\u624B\u52D5\u63D0\u4EA4\u3002\u9802\u90E8\u6578\u5B57\u8868\u793A\u672C\u6B21\u5DF2\u6536\u96C6\u7684\u5019\u9078\u9805\u76EE\u6578\u91CF\u3002</p><p><strong>\u5982\u4F55\u4F7F\u7528:</strong></p><ul><li>\u518D\u6B21\u9EDE\u64CA AI \u61F8\u6D6E\u6309\u9215\u5373\u53EF\u505C\u6B62\u6383\u63CF\u3002</li><li>\u9EDE\u64CA\u300C\u67E5\u770B\u6458\u8981\u300D\u53EF\u63D0\u4EA4\u5F85\u8655\u7406\u5167\u5BB9\u3001\u8907\u6838\u7D50\u679C\u4E26\u8907\u88FD\u6216\u532F\u51FA\u7FFB\u8B6F\u3002</li><li>\u91CD\u8907\u51FA\u73FE\u6216\u5DF2\u7D93\u8655\u7406\u904E\u7684\u6587\u672C\u4E0D\u6703\u518D\u6B21\u63D0\u4EA4\u3002</li></ul>"
     }
   };
   var locales = {
@@ -1735,10 +2072,7 @@ var TextExtractor = (() => {
     }
   }
   var translationModules = locales;
-  var supportedLanguages = [
-    { code: "auto", name: "Auto" },
-    ...resourceLanguages
-  ];
+  var supportedLanguages = [{ code: "auto", name: "Auto" }, ...resourceLanguages];
   var translations = supportedLanguages.reduce((acc, lang) => {
     if (translationModules[lang.code]) {
       acc[lang.code] = translationModules[lang.code];
@@ -1839,13 +2173,56 @@ var TextExtractor = (() => {
     }
   ];
   var filterDefinitions = [
-    { id: "filter-numbers", key: "numbers", label: "settings.filters.numbers", tooltip: { titleIcon: infoIcon, title: "settings.filters.numbers", text: "tooltip.filters.numbers" } },
-    { id: "filter-chinese", key: "chinese", label: "settings.filters.chinese", tooltip: { titleIcon: infoIcon, title: "settings.filters.chinese", text: "tooltip.filters.chinese" } },
-    { id: "filter-contains-chinese", key: "containsChinese", label: "settings.filters.contains_chinese", tooltip: { titleIcon: infoIcon, title: "settings.filters.contains_chinese", text: "tooltip.filters.contains_chinese" } },
-    { id: "filter-emoji-only", key: "emojiOnly", label: "settings.filters.emoji_only", tooltip: { titleIcon: infoIcon, title: "settings.filters.emoji_only", text: "tooltip.filters.emoji_only" } },
-    { id: "filter-symbols", key: "symbols", label: "settings.filters.symbols", tooltip: { titleIcon: infoIcon, title: "settings.filters.symbols", text: "tooltip.filters.symbols" } },
-    { id: "filter-term", key: "termFilter", label: "settings.filters.term", tooltip: { titleIcon: infoIcon, title: "settings.filters.term", text: "tooltip.filters.term" } },
-    { id: "filter-single-letter", key: "singleLetter", label: "settings.filters.single_letter", tooltip: { titleIcon: infoIcon, title: "settings.filters.single_letter", text: "tooltip.filters.single_letter" } },
+    {
+      id: "filter-numbers",
+      key: "numbers",
+      label: "settings.filters.numbers",
+      tooltip: { titleIcon: infoIcon, title: "settings.filters.numbers", text: "tooltip.filters.numbers" }
+    },
+    {
+      id: "filter-chinese",
+      key: "chinese",
+      label: "settings.filters.chinese",
+      tooltip: { titleIcon: infoIcon, title: "settings.filters.chinese", text: "tooltip.filters.chinese" }
+    },
+    {
+      id: "filter-contains-chinese",
+      key: "containsChinese",
+      label: "settings.filters.contains_chinese",
+      tooltip: {
+        titleIcon: infoIcon,
+        title: "settings.filters.contains_chinese",
+        text: "tooltip.filters.contains_chinese"
+      }
+    },
+    {
+      id: "filter-emoji-only",
+      key: "emojiOnly",
+      label: "settings.filters.emoji_only",
+      tooltip: { titleIcon: infoIcon, title: "settings.filters.emoji_only", text: "tooltip.filters.emoji_only" }
+    },
+    {
+      id: "filter-symbols",
+      key: "symbols",
+      label: "settings.filters.symbols",
+      tooltip: { titleIcon: infoIcon, title: "settings.filters.symbols", text: "tooltip.filters.symbols" }
+    },
+    {
+      id: "filter-term",
+      key: "termFilter",
+      label: "settings.filters.term",
+      tooltip: { titleIcon: infoIcon, title: "settings.filters.term", text: "tooltip.filters.term" }
+    },
+    {
+      id: "filter-single-letter",
+      key: "singleLetter",
+      label: "settings.filters.single_letter",
+      tooltip: {
+        titleIcon: infoIcon,
+        title: "settings.filters.single_letter",
+        text: "tooltip.filters.single_letter"
+      }
+    },
     {
       id: "filter-repeating-chars",
       key: "repeatingChars",
@@ -1856,16 +2233,76 @@ var TextExtractor = (() => {
         text: "tooltip.filters.repeating_chars"
       }
     },
-    { id: "filter-file-paths", key: "filePath", label: "settings.filters.file_paths", tooltip: { titleIcon: infoIcon, title: "settings.filters.file_paths", text: "tooltip.filters.file_paths" } },
-    { id: "filter-hex-colors", key: "hexColor", label: "settings.filters.hex_color_codes", tooltip: { titleIcon: infoIcon, title: "settings.filters.hex_color_codes", text: "tooltip.filters.hex_color_codes" } },
-    { id: "filter-emails", key: "email", label: "settings.filters.email_addresses", tooltip: { titleIcon: infoIcon, title: "settings.filters.email_addresses", text: "tooltip.filters.email_addresses" } },
-    { id: "filter-uuids", key: "uuid", label: "settings.filters.uuids", tooltip: { titleIcon: infoIcon, title: "settings.filters.uuids", text: "tooltip.filters.uuids" } },
-    { id: "filter-git-hashes", key: "gitCommitHash", label: "settings.filters.git_commit_hashes", tooltip: { titleIcon: infoIcon, title: "settings.filters.git_commit_hashes", text: "tooltip.filters.git_commit_hashes" } },
-    { id: "filter-website-urls", key: "websiteUrl", label: "settings.filters.website_urls", tooltip: { titleIcon: infoIcon, title: "settings.filters.website_urls_title", text: "tooltip.filters.website_urls" } },
-    { id: "filter-shorthand-numbers", key: "shorthandNumber", label: "settings.filters.shorthand_numbers", tooltip: { titleIcon: infoIcon, title: "settings.filters.shorthand_numbers_title", text: "tooltip.filters.shorthand_numbers" } }
+    {
+      id: "filter-file-paths",
+      key: "filePath",
+      label: "settings.filters.file_paths",
+      tooltip: { titleIcon: infoIcon, title: "settings.filters.file_paths", text: "tooltip.filters.file_paths" }
+    },
+    {
+      id: "filter-hex-colors",
+      key: "hexColor",
+      label: "settings.filters.hex_color_codes",
+      tooltip: {
+        titleIcon: infoIcon,
+        title: "settings.filters.hex_color_codes",
+        text: "tooltip.filters.hex_color_codes"
+      }
+    },
+    {
+      id: "filter-emails",
+      key: "email",
+      label: "settings.filters.email_addresses",
+      tooltip: {
+        titleIcon: infoIcon,
+        title: "settings.filters.email_addresses",
+        text: "tooltip.filters.email_addresses"
+      }
+    },
+    {
+      id: "filter-uuids",
+      key: "uuid",
+      label: "settings.filters.uuids",
+      tooltip: { titleIcon: infoIcon, title: "settings.filters.uuids", text: "tooltip.filters.uuids" }
+    },
+    {
+      id: "filter-git-hashes",
+      key: "gitCommitHash",
+      label: "settings.filters.git_commit_hashes",
+      tooltip: {
+        titleIcon: infoIcon,
+        title: "settings.filters.git_commit_hashes",
+        text: "tooltip.filters.git_commit_hashes"
+      }
+    },
+    {
+      id: "filter-website-urls",
+      key: "websiteUrl",
+      label: "settings.filters.website_urls",
+      tooltip: {
+        titleIcon: infoIcon,
+        title: "settings.filters.website_urls_title",
+        text: "tooltip.filters.website_urls"
+      }
+    },
+    {
+      id: "filter-shorthand-numbers",
+      key: "shorthandNumber",
+      label: "settings.filters.shorthand_numbers",
+      tooltip: {
+        titleIcon: infoIcon,
+        title: "settings.filters.shorthand_numbers_title",
+        text: "tooltip.filters.shorthand_numbers"
+      }
+    }
   ];
   var relatedSettingsDefinitions = [
-    { id: "show-fab", key: "showFab", label: "settings.display.show_fab", tooltip: { titleIcon: infoIcon, title: "settings.display.show_fab", text: "tooltip.display.show_fab" } },
+    {
+      id: "show-fab",
+      key: "showFab",
+      label: "settings.display.show_fab",
+      tooltip: { titleIcon: infoIcon, title: "settings.display.show_fab", text: "tooltip.display.show_fab" }
+    },
     {
       id: "fab-position",
       key: "fabPosition",
@@ -1878,10 +2315,46 @@ var TextExtractor = (() => {
         { value: "top-left", label: "settings.display.fab_positions.top_left" }
       ]
     },
-    { id: "show-scan-count", key: "showScanCount", label: "settings.display.show_scan_count", tooltip: { titleIcon: infoIcon, title: "settings.display.show_scan_count", text: "tooltip.display.show_scan_count" } },
-    { id: "show-line-numbers", key: "showLineNumbers", label: "settings.display.show_line_numbers", tooltip: { titleIcon: infoIcon, title: "settings.display.show_line_numbers", text: "tooltip.display.show_line_numbers" } },
-    { id: "show-statistics", key: "showStatistics", label: "settings.display.show_statistics", tooltip: { titleIcon: infoIcon, title: "settings.display.show_statistics", text: "tooltip.display.show_statistics" } },
-    { id: "enable-word-wrap", key: "enableWordWrap", label: "settings.display.enable_word_wrap", tooltip: { titleIcon: infoIcon, title: "settings.display.enable_word_wrap", text: "tooltip.display.enable_word_wrap" } },
+    {
+      id: "show-scan-count",
+      key: "showScanCount",
+      label: "settings.display.show_scan_count",
+      tooltip: {
+        titleIcon: infoIcon,
+        title: "settings.display.show_scan_count",
+        text: "tooltip.display.show_scan_count"
+      }
+    },
+    {
+      id: "show-line-numbers",
+      key: "showLineNumbers",
+      label: "settings.display.show_line_numbers",
+      tooltip: {
+        titleIcon: infoIcon,
+        title: "settings.display.show_line_numbers",
+        text: "tooltip.display.show_line_numbers"
+      }
+    },
+    {
+      id: "show-statistics",
+      key: "showStatistics",
+      label: "settings.display.show_statistics",
+      tooltip: {
+        titleIcon: infoIcon,
+        title: "settings.display.show_statistics",
+        text: "tooltip.display.show_statistics"
+      }
+    },
+    {
+      id: "enable-word-wrap",
+      key: "enableWordWrap",
+      label: "settings.display.enable_word_wrap",
+      tooltip: {
+        titleIcon: infoIcon,
+        title: "settings.display.enable_word_wrap",
+        text: "tooltip.display.enable_word_wrap"
+      }
+    },
     {
       id: "enable-text-truncation",
       key: "enableTextTruncation",
@@ -1896,7 +2369,16 @@ var TextExtractor = (() => {
         text: "tooltip.display.text_truncation_limit"
       }
     },
-    { id: "enable-debug-logging", key: "enableDebugLogging", label: "settings.advanced.enable_debug_logging", tooltip: { titleIcon: infoIcon, title: "settings.advanced.enable_debug_logging", text: "tooltip.advanced.enable_debug_logging" } }
+    {
+      id: "enable-debug-logging",
+      key: "enableDebugLogging",
+      label: "settings.advanced.enable_debug_logging",
+      tooltip: {
+        titleIcon: infoIcon,
+        title: "settings.advanced.enable_debug_logging",
+        text: "tooltip.advanced.enable_debug_logging"
+      }
+    }
   ];
   var appConfig = {
     ui: {
@@ -1961,6 +2443,9 @@ var TextExtractor = (() => {
   };
   var deleteValue = (key) => {
     return GM_deleteValue(key);
+  };
+  var xmlHttpRequest = (details) => {
+    return GM_xmlhttpRequest(details);
   };
   function initTheme() {
     const { theme } = loadSettings();
@@ -2059,12 +2544,20 @@ var TextExtractor = (() => {
     return null;
   }
   if (window.trustedTypes && window.trustedTypes.createPolicy) {
-    workerPolicy = createBestEffortPolicy("worker", {
-      createScriptURL: (url) => url
-    }, GLOBAL_WORKER_POLICY_KEY);
-    htmlPolicy = createBestEffortPolicy("html", {
-      createHTML: (htmlString) => htmlString
-    }, GLOBAL_HTML_POLICY_KEY);
+    workerPolicy = createBestEffortPolicy(
+      "worker",
+      {
+        createScriptURL: (url) => url
+      },
+      GLOBAL_WORKER_POLICY_KEY
+    );
+    htmlPolicy = createBestEffortPolicy(
+      "html",
+      {
+        createHTML: (htmlString) => htmlString
+      },
+      GLOBAL_HTML_POLICY_KEY
+    );
   }
   function createTrustedWorkerUrl(url) {
     if (workerPolicy) {
@@ -2122,42 +2615,49 @@ var TextExtractor = (() => {
   }
   var formatTextsForTranslation = (texts, format = "array", options = {}) => {
     const { includeArrayBrackets = true } = options;
-    if (!texts || texts.length === 0) {
+    const pairs = Array.isArray(texts) ? texts.map((item) => {
+      if (typeof item === "string") {
+        return { sourceText: item, translation: "" };
+      }
+      if (Array.isArray(item)) {
+        return {
+          sourceText: String(item[0] || ""),
+          translation: String(item[1] || "")
+        };
+      }
+      return {
+        sourceText: String(item?.sourceText ?? item?.source ?? ""),
+        translation: String(item?.translation ?? "")
+      };
+    }).filter((pair) => pair.sourceText !== "") : [];
+    if (pairs.length === 0) {
       if (format === "object") return includeArrayBrackets ? "{}" : "";
       if (format === "csv") return "";
       return includeArrayBrackets ? "[]" : "";
     }
     if (format === "object") {
-      const indent = includeArrayBrackets ? "    " : "";
-      const result = texts.map(
-        (text) => `${indent}${JSON.stringify(text)}: ""`
+      const indent2 = includeArrayBrackets ? "    " : "";
+      const result2 = pairs.map(
+        (pair) => `${indent2}${JSON.stringify(pair.sourceText)}: ${JSON.stringify(pair.translation)}`
       );
-      if (includeArrayBrackets) {
-        return `{
-${result.join(",\n")}
-}`;
-      } else {
-        return result.join(",\n");
-      }
-    } else if (format === "csv") {
-      const result = texts.map((text) => {
-        const escaped = text.replace(/"/g, '""');
-        return `"${escaped}",""`;
-      });
-      return result.join("\n");
-    } else {
-      const indent = includeArrayBrackets ? "    " : "";
-      const result = texts.map(
-        (text) => `${indent}[${JSON.stringify(text)}, ""]`
-      );
-      if (includeArrayBrackets) {
-        return `[
-${result.join(",\n")}
-]`;
-      } else {
-        return result.join(",\n");
-      }
+      return includeArrayBrackets ? `{
+${result2.join(",\n")}
+}` : result2.join(",\n");
     }
+    if (format === "csv") {
+      return pairs.map((pair) => {
+        const escapedSource = pair.sourceText.replace(/"/g, '""');
+        const escapedTranslation = pair.translation.replace(/"/g, '""');
+        return `"${escapedSource}","${escapedTranslation}"`;
+      }).join("\n");
+    }
+    const indent = includeArrayBrackets ? "    " : "";
+    const result = pairs.map(
+      (pair) => `${indent}[${JSON.stringify(pair.sourceText)}, ${JSON.stringify(pair.translation)}]`
+    );
+    return includeArrayBrackets ? `[
+${result.join(",\n")}
+]` : result.join(",\n");
   };
   // src/shared/workers/worker-url.js
   var workerBlob = new Blob([`(() => {
@@ -2176,6 +2676,8 @@ ${result.join(",\n")}
       clear: "Clear",
       copy: "Copy",
       save: "Save",
+      reset: "Reset",
+      delete: "Delete",
       discovered: "Discovered:",
       confirm: "Confirm",
       cancel: "Cancel",
@@ -2267,6 +2769,68 @@ ${result.join(",\n")}
         dark: "Dark",
         system: "System"
       },
+      ai: {
+        title: "AI Scan",
+        enabled: "Enable AI Features",
+        enabledDescription: "Turning this off stops AI scanning and hides the AI floating button. Normal scans are unaffected.",
+        betaBadge: "Beta",
+        betaNotice: "This feature is currently unstable and has known issues. It is for testing only.",
+        general: "Scan and Translation",
+        processingMode: "Processing Mode",
+        manual: "Manual Submit",
+        automatic: "Automatic",
+        targetLanguage: "Target Language",
+        simplifiedChinese: "Simplified Chinese",
+        traditionalChinese: "Traditional Chinese",
+        confidenceThreshold: "Confidence Threshold",
+        provider: "Provider Configuration",
+        currentProvider: "Current Provider",
+        providerName: "Name",
+        apiUrl: "Full API URL (chat/completions)",
+        model: "Model",
+        responseMode: "Response Mode",
+        jsonMode: "JSON Mode",
+        promptJson: "Prompt JSON",
+        apiKey: "API Key (stored separately)",
+        addProvider: "Add Provider",
+        newProvider: "New Provider",
+        saveProvider: "Save Provider Configuration",
+        testConnection: "Test Processing & Latency",
+        testDescription: "Sends one fixed synthetic phrase and verifies a parseable classification and translation JSON response. No webpage content is sent. A tiny charge may apply.",
+        testing: "Testing classification, translation, and JSON output; a tiny charge may apply\\u2026",
+        processingOk: "Processing successful",
+        connectionOk: "Processing successful",
+        connectionFailed: "Processing test failed",
+        costControl: "Cost Controls",
+        maxBatchItems: "Max Items per Batch",
+        maxBatchCharacters: "Max Characters per Batch",
+        maxRequests: "Max Requests per Page",
+        maxPageCharacters: "Max Characters per Page",
+        dailyTokens: "Daily Estimated Token Limit",
+        timeout: "Request Timeout (seconds)",
+        resetDailyUsage: "Reset Today's Usage",
+        siteStyles: "Site Translation Preferences (Optional)",
+        siteStylesDescription: "This is optional. Save directly to use natural Chinese defaults for the current site; fill in more only for fixed terminology or special wording.",
+        styleLibrary: "Saved Preferences",
+        styleEditor: "Current Site Preferences",
+        searchStyles: "Search Site Preferences",
+        sortStyles: "Sort",
+        sortRecent: "Recently Updated",
+        sortOrigin: "By Site",
+        styleOrigin: "Site Origin",
+        stylePath: "Optional Path Prefix",
+        styleTone: "Tone",
+        styleGlossary: "Glossary and Proper Nouns",
+        stylePunctuation: "Punctuation Style",
+        styleInstructions: "Custom Translation Instructions",
+        advancedStyleSettings: "Advanced Matching Settings",
+        defaultStyleTone: "Natural, clear wording suitable for a Chinese website",
+        defaultStylePunctuation: "Use standard Chinese punctuation for the target language",
+        useCurrentSite: "Use Current Site",
+        noStyles: "No matching site preferences",
+        saveStyle: "Save Current Site Preferences",
+        clearStyles: "Clear All Preferences"
+      },
       about: "About",
       aboutPanel: {
         title: "About",
@@ -2294,8 +2858,25 @@ ${result.join(",\n")}
     },
     results: {
       title: "Extracted Text",
+      aiTitle: "AI Scan Results",
       scanCountSession: "Scanned {{count}} items",
       scanCountStatic: "Total {{count}} items scanned",
+      scanCountAi: "AI collected {{count}} items",
+      aiRunning: "AI scan is running",
+      aiStopped: "AI scan stopped",
+      aiProcessing: "The provider is processing the current batch\\u2026",
+      aiBudgetBlocked: "Sending stopped because a budget limit was reached",
+      aiRequestError: "Most recent request failed",
+      aiReviewItems: "Items to Review",
+      aiReviewRequired: "Manual review required",
+      aiCounts: {
+        pending: "Pending",
+        translated: "Translated",
+        keep: "Kept",
+        removed: "Removed",
+        review: "Review",
+        failed: "Failed"
+      },
       totalCharacters: "Total Characters",
       totalLines: "Total Lines",
       noSummary: "No summary available",
@@ -2320,7 +2901,21 @@ ${result.join(",\n")}
       sessionScanPaused: "Dynamic scan paused.",
       sessionScanResumed: "Dynamic scan session resumed from previous page.",
       sessionScanContinued: "Dynamic scan continued.",
-      cspWorkerWarning: "Switched to compatibility scan mode due to website security restrictions."
+      cspWorkerWarning: "Switched to compatibility scan mode due to website security restrictions.",
+      scanModeConflict: "Stop the active scan mode before starting another one.",
+      aiScanStarted: "AI dynamic scan started.",
+      aiScanStopped: "AI dynamic scan stopped.",
+      aiScanStartFailed: "AI scan failed to start.",
+      aiDisabled: "AI features are disabled. Enable them in Settings first.",
+      aiBatchCompleted: "AI batch completed.",
+      aiNothingPending: "There are no pending items to send.",
+      aiRequestFailed: "The AI request failed; affected items require review.",
+      aiBudgetBlocked: "A cost limit was reached; local collection will continue.",
+      aiProviderRequired: "At least one provider is required.",
+      aiProviderSaved: "Provider configuration saved.",
+      aiDailyUsageReset: "Today's estimated usage was reset.",
+      aiStyleOriginRequired: "Site origin is required.",
+      aiStyleSaved: "Site translation preferences saved."
     },
     placeholders: {
       click: "Click ",
@@ -2330,10 +2925,22 @@ ${result.join(",\n")}
       performOneTimeScan: " to perform a one-time quick extraction"
     },
     confirmation: {
-      clear: "Are you sure you want to clear the content? This action cannot be undone."
+      clear: "Are you sure you want to clear the content? This action cannot be undone.",
+      deleteProvider: "Delete the current provider configuration?",
+      deleteStyle: "Delete the current site translation preferences?",
+      clearStyles: "Clear all site translation preferences?"
+    },
+    ai: {
+      actions: {
+        submitPending: "Submit Pending",
+        retryReview: "Process Again"
+      }
     },
     tooltip: {
       summary: "View Summary",
+      ai_scan: "AI Dynamic Scan (Beta)",
+      ai_scan_stop: "Stop AI Dynamic Scan",
+      ai_disabled: "AI features are disabled",
       dynamic_scan: "Dynamic Scan",
       static_scan: "Static Scan",
       element_scan: "Element Scan",
@@ -2350,7 +2957,8 @@ ${result.join(",\n")}
         }
       },
       disabled: {
-        scan_in_progress: "Another scan is in progress"
+        scan_in_progress: "Another scan is in progress",
+        ai_scan_active: "Regular scans are disabled while AI scan is running"
       },
       filters: {
         title: "Content Filter Explanation",
@@ -2587,7 +3195,9 @@ ${result.join(",\n")}
       elementScanTitle: "Element Scan Tutorial",
       elementScan: '<p><strong>What it does:</strong></p><p>Element Scan allows you to precisely select one or more areas on a webpage (e.g., a paragraph, a list, a sidebar) and extract text only from those areas.</p><p><strong>How to use:</strong></p><ol><li><strong>Start:</strong> Click the "Element Scan" icon <span class="help-icon-placeholder element-scan-icon"></span> in the floating button to enter scan mode.</li><li><strong>Select:</strong> Move your mouse over the page. The area you want to scan will be highlighted. Click to select it.</li><li><strong>Adjust:</strong> A toolbar will appear after selection. You can use the <strong>slider</strong> to expand or shrink the selection area.</li><li><strong>Stage:</strong> If you want to select multiple unrelated areas, click the <span class="action-key">Stage</span> button to save the current selection and continue selecting other areas.</li><li><strong>Confirm:</strong> Once you have finished all selections, click the <span class="action-key">Confirm</span> button to start extracting text from all your chosen areas.</li></ol><p><strong>How to exit:</strong></p><ul><li>While the highlight box is visible, <strong>right-click</strong> anywhere on the page.</li><li>Press the <kbd>ESC</kbd> key at any time.</li><li>Click the "Element Scan" icon again at any time.</li></ul>',
       sessionScanTitle: "Dynamic Scan Tutorial",
-      sessionScan: '<p><strong>What it does:</strong></p><p>Dynamic Scan continuously monitors and automatically records all text that dynamically loads or changes on a webpage. It is especially useful for capturing live chats, infinite scrolling content, or notifications.</p><p><strong>How to use:</strong></p><ul><li><strong>Start Scan:</strong> Click the "Dynamic Scan" icon <span class="help-icon-placeholder dynamic-scan-icon"></span> in the floating button to start scanning immediately.</li><li><strong>Stop Scan:</strong> Click the icon again <span class="help-icon-placeholder stop-icon"></span> to stop.</li><li><strong>View Results:</strong> After stopping, click the main floating button <span class="help-icon-placeholder summary-icon"></span> to open the results window.</li></ul><p><strong>How to exit:</strong></p><ul><li>Click the "Dynamic Scan" icon again during the scan.</li><li>Press the <kbd>ESC</kbd> key at any time to quickly stop the scan.</li></ul>'
+      sessionScan: '<p><strong>What it does:</strong></p><p>Dynamic Scan continuously monitors and automatically records all text that dynamically loads or changes on a webpage. It is especially useful for capturing live chats, infinite scrolling content, or notifications.</p><p><strong>How to use:</strong></p><ul><li><strong>Start Scan:</strong> Click the "Dynamic Scan" icon <span class="help-icon-placeholder dynamic-scan-icon"></span> in the floating button to start scanning immediately.</li><li><strong>Stop Scan:</strong> Click the icon again <span class="help-icon-placeholder stop-icon"></span> to stop.</li><li><strong>View Results:</strong> After stopping, click the main floating button <span class="help-icon-placeholder summary-icon"></span> to open the results window.</li></ul><p><strong>How to exit:</strong></p><ul><li>Click the "Dynamic Scan" icon again during the scan.</li><li>Press the <kbd>ESC</kbd> key at any time to quickly stop the scan.</li></ul>',
+      aiScanTitle: "AI Dynamic Scan Guide",
+      aiScan: "<p><strong>What it does:</strong></p><p>AI Scan continuously collects candidate webpage text and either processes it automatically or waits for manual submission. The top counter shows how many candidates have been collected.</p><p><strong>How to use:</strong></p><ul><li>Click the AI floating button again to stop scanning.</li><li>Open View Summary to submit pending items, review results, and copy or export translations.</li><li>Repeated or previously processed text is not submitted again.</li></ul>"
     }
   };
   var zh_CN_default = {
@@ -2605,6 +3215,8 @@ ${result.join(",\n")}
       clear: "\\u6E05\\u7A7A",
       copy: "\\u590D\\u5236",
       save: "\\u4FDD\\u5B58",
+      reset: "\\u91CD\\u7F6E",
+      delete: "\\u5220\\u9664",
       discovered: "\\u5DF2\\u53D1\\u73B0:",
       confirm: "\\u786E\\u8BA4",
       cancel: "\\u53D6\\u6D88",
@@ -2698,6 +3310,68 @@ ${result.join(",\n")}
         dark: "\\u6DF1\\u8272",
         system: "\\u8DDF\\u968F\\u7CFB\\u7EDF"
       },
+      ai: {
+        title: "AI \\u626B\\u63CF",
+        enabled: "\\u542F\\u7528 AI \\u529F\\u80FD",
+        enabledDescription: "\\u5173\\u95ED\\u540E\\u4F1A\\u505C\\u6B62 AI \\u626B\\u63CF\\u5E76\\u9690\\u85CF AI \\u60AC\\u6D6E\\u6309\\u94AE\\uFF1B\\u666E\\u901A\\u626B\\u63CF\\u529F\\u80FD\\u4E0D\\u53D7\\u5F71\\u54CD\\u3002",
+        betaBadge: "Beta",
+        betaNotice: "\\u76EE\\u524D\\u8BE5\\u529F\\u80FD\\u4E0D\\u7A33\\u5B9A\\uFF0C\\u95EE\\u9898\\u8F83\\u591A\\uFF0C\\u4EC5\\u505A\\u6D4B\\u8BD5\\u3002",
+        general: "\\u626B\\u63CF\\u4E0E\\u7FFB\\u8BD1",
+        processingMode: "\\u5904\\u7406\\u6A21\\u5F0F",
+        manual: "\\u624B\\u52A8\\u63D0\\u4EA4",
+        automatic: "\\u81EA\\u52A8\\u5904\\u7406",
+        targetLanguage: "\\u76EE\\u6807\\u8BED\\u8A00",
+        simplifiedChinese: "\\u4E2D\\u6587\\u7B80\\u4F53",
+        traditionalChinese: "\\u4E2D\\u6587\\u7E41\\u4F53",
+        confidenceThreshold: "\\u7F6E\\u4FE1\\u5EA6\\u9608\\u503C",
+        provider: "\\u4F9B\\u5E94\\u5546\\u914D\\u7F6E",
+        currentProvider: "\\u5F53\\u524D\\u4F9B\\u5E94\\u5546",
+        providerName: "\\u4F9B\\u5E94\\u5546\\u540D\\u79F0",
+        apiUrl: "\\u5B8C\\u6574 API \\u5730\\u5740\\uFF08chat/completions\\uFF09",
+        model: "\\u6A21\\u578B",
+        responseMode: "\\u54CD\\u5E94\\u6A21\\u5F0F",
+        jsonMode: "JSON \\u6A21\\u5F0F",
+        promptJson: "Prompt JSON",
+        apiKey: "API Key\\uFF08\\u72EC\\u7ACB\\u4FDD\\u5B58\\uFF09",
+        addProvider: "\\u65B0\\u589E\\u4F9B\\u5E94\\u5546",
+        newProvider: "\\u65B0\\u4F9B\\u5E94\\u5546",
+        saveProvider: "\\u4FDD\\u5B58\\u4F9B\\u5E94\\u5546\\u914D\\u7F6E",
+        testConnection: "\\u6D4B\\u8BD5\\u5904\\u7406\\u4E0E\\u5EF6\\u8FDF",
+        testDescription: "\\u53D1\\u9001\\u4E00\\u6761\\u56FA\\u5B9A\\u7684\\u5408\\u6210\\u77ED\\u6587\\u672C\\uFF0C\\u9A8C\\u8BC1\\u4F9B\\u5E94\\u5546\\u80FD\\u8FD4\\u56DE\\u53EF\\u89E3\\u6790\\u7684\\u5206\\u7C7B\\u4E0E\\u7FFB\\u8BD1 JSON\\uFF1B\\u4E0D\\u4F1A\\u53D1\\u9001\\u7F51\\u9875\\u5185\\u5BB9\\u3002\\u6D4B\\u8BD5\\u53EF\\u80FD\\u4EA7\\u751F\\u6781\\u5C0F\\u8D39\\u7528\\u3002",
+        testing: "\\u6B63\\u5728\\u6D4B\\u8BD5\\u5206\\u7C7B\\u3001\\u7FFB\\u8BD1\\u548C JSON \\u7ED3\\u679C\\uFF0C\\u53EF\\u80FD\\u4EA7\\u751F\\u6781\\u5C0F\\u8D39\\u7528\\u2026",
+        processingOk: "\\u5904\\u7406\\u6B63\\u5E38",
+        connectionOk: "\\u5904\\u7406\\u6B63\\u5E38",
+        connectionFailed: "\\u5904\\u7406\\u6D4B\\u8BD5\\u5931\\u8D25",
+        costControl: "\\u6210\\u672C\\u63A7\\u5236",
+        maxBatchItems: "\\u5355\\u6279\\u6700\\u591A\\u6761\\u76EE",
+        maxBatchCharacters: "\\u5355\\u6279\\u6700\\u591A\\u5B57\\u7B26",
+        maxRequests: "\\u5355\\u9875\\u9762\\u6700\\u591A\\u8BF7\\u6C42",
+        maxPageCharacters: "\\u5355\\u9875\\u9762\\u6700\\u591A\\u5B57\\u7B26",
+        dailyTokens: "\\u6BCF\\u65E5\\u4F30\\u7B97 Token \\u4E0A\\u9650",
+        timeout: "\\u8BF7\\u6C42\\u8D85\\u65F6\\uFF08\\u79D2\\uFF09",
+        resetDailyUsage: "\\u6E05\\u9664\\u4ECA\\u65E5\\u7528\\u91CF",
+        siteStyles: "\\u7AD9\\u70B9\\u7FFB\\u8BD1\\u504F\\u597D\\uFF08\\u53EF\\u9009\\uFF09",
+        siteStylesDescription: "\\u8FD9\\u662F\\u53EF\\u9009\\u9879\\u3002\\u76F4\\u63A5\\u4FDD\\u5B58\\u5373\\u53EF\\u4E3A\\u5F53\\u524D\\u7F51\\u7AD9\\u4F7F\\u7528\\u9ED8\\u8BA4\\u4E2D\\u6587\\u8868\\u8FBE\\uFF1B\\u53EA\\u6709\\u9700\\u8981\\u56FA\\u5B9A\\u672F\\u8BED\\u6216\\u7279\\u6B8A\\u8868\\u8FBE\\u65F6\\u624D\\u586B\\u5199\\u66F4\\u591A\\u5185\\u5BB9\\u3002",
+        styleLibrary: "\\u5DF2\\u4FDD\\u5B58\\u504F\\u597D",
+        styleEditor: "\\u5F53\\u524D\\u7F51\\u7AD9\\u504F\\u597D",
+        searchStyles: "\\u641C\\u7D22\\u7AD9\\u70B9\\u504F\\u597D",
+        sortStyles: "\\u6392\\u5E8F",
+        sortRecent: "\\u6700\\u8FD1\\u66F4\\u65B0",
+        sortOrigin: "\\u6309\\u7AD9\\u70B9",
+        styleOrigin: "\\u7AD9\\u70B9 Origin",
+        stylePath: "\\u53EF\\u9009\\u8DEF\\u5F84\\u524D\\u7F00",
+        styleTone: "\\u8BED\\u6C14",
+        styleGlossary: "\\u672F\\u8BED\\u8868\\u4E0E\\u4E13\\u6709\\u540D\\u8BCD",
+        stylePunctuation: "\\u6807\\u70B9\\u4E60\\u60EF",
+        styleInstructions: "\\u81EA\\u5B9A\\u4E49\\u7FFB\\u8BD1\\u8981\\u6C42",
+        advancedStyleSettings: "\\u9AD8\\u7EA7\\u5339\\u914D\\u8BBE\\u7F6E",
+        defaultStyleTone: "\\u81EA\\u7136\\u3001\\u6E05\\u6670\\uFF0C\\u7B26\\u5408\\u4E2D\\u6587\\u7F51\\u9875\\u8868\\u8FBE",
+        defaultStylePunctuation: "\\u4F7F\\u7528\\u76EE\\u6807\\u8BED\\u8A00\\u7684\\u6807\\u51C6\\u4E2D\\u6587\\u6807\\u70B9",
+        useCurrentSite: "\\u4F7F\\u7528\\u5F53\\u524D\\u7F51\\u7AD9",
+        noStyles: "\\u6CA1\\u6709\\u5339\\u914D\\u7684\\u7AD9\\u70B9\\u504F\\u597D",
+        saveStyle: "\\u4FDD\\u5B58\\u5F53\\u524D\\u7F51\\u7AD9\\u504F\\u597D",
+        clearStyles: "\\u6E05\\u7A7A\\u5168\\u90E8\\u504F\\u597D"
+      },
       about: "\\u5173\\u4E8E",
       aboutPanel: {
         title: "\\u5173\\u4E8E",
@@ -2725,8 +3399,25 @@ ${result.join(",\n")}
     },
     results: {
       title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",
+      aiTitle: "AI \\u626B\\u63CF\\u7ED3\\u679C",
       scanCountSession: "\\u5DF2\\u626B\\u63CF {{count}} \\u4E2A\\u9879\\u76EE",
       scanCountStatic: "\\u5171\\u626B\\u63CF {{count}} \\u4E2A\\u9879\\u76EE",
+      scanCountAi: "AI \\u5DF2\\u6536\\u96C6 {{count}} \\u4E2A\\u9879\\u76EE",
+      aiRunning: "AI \\u626B\\u63CF\\u8FD0\\u884C\\u4E2D",
+      aiStopped: "AI \\u626B\\u63CF\\u5DF2\\u505C\\u6B62",
+      aiProcessing: "\\u4F9B\\u5E94\\u5546\\u6B63\\u5728\\u5904\\u7406\\u5F53\\u524D\\u6279\\u6B21\\u2026",
+      aiBudgetBlocked: "\\u5DF2\\u505C\\u6B62\\u53D1\\u9001\\uFF0C\\u8FBE\\u5230\\u9884\\u7B97\\u9650\\u5236",
+      aiRequestError: "\\u6700\\u8FD1\\u4E00\\u6B21\\u8BF7\\u6C42\\u5931\\u8D25",
+      aiReviewItems: "\\u5F85\\u590D\\u6838\\u5185\\u5BB9",
+      aiReviewRequired: "\\u9700\\u8981\\u4EBA\\u5DE5\\u590D\\u6838",
+      aiCounts: {
+        pending: "\\u5F85\\u5904\\u7406",
+        translated: "\\u5DF2\\u7FFB\\u8BD1",
+        keep: "\\u4FDD\\u7559",
+        removed: "\\u79FB\\u9664",
+        review: "\\u5F85\\u590D\\u6838",
+        failed: "\\u5931\\u8D25"
+      },
       totalCharacters: "\\u603B\\u5B57\\u7B26\\u6570",
       totalLines: "\\u603B\\u884C\\u6570",
       noSummary: "\\u65E0\\u53EF\\u7528\\u6458\\u8981",
@@ -2751,7 +3442,21 @@ ${result.join(",\n")}
       sessionScanPaused: "\\u52A8\\u6001\\u626B\\u63CF\\u5DF2\\u6682\\u505C\\u3002",
       sessionScanResumed: "\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u8BDD\\u5DF2\\u4ECE\\u4E0A\\u4E00\\u9875\\u6062\\u590D\\u3002",
       sessionScanContinued: "\\u52A8\\u6001\\u626B\\u63CF\\u5DF2\\u7EE7\\u7EED\\u3002",
-      cspWorkerWarning: "\\u56E0\\u7F51\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u6362\\u81F3\\u517C\\u5BB9\\u626B\\u63CF\\u6A21\\u5F0F\\u3002"
+      cspWorkerWarning: "\\u56E0\\u7F51\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u6362\\u81F3\\u517C\\u5BB9\\u626B\\u63CF\\u6A21\\u5F0F\\u3002",
+      scanModeConflict: "\\u8BF7\\u5148\\u505C\\u6B62\\u5F53\\u524D\\u626B\\u63CF\\u6A21\\u5F0F\\uFF0C\\u518D\\u542F\\u52A8\\u53E6\\u4E00\\u79CD\\u626B\\u63CF\\u3002",
+      aiScanStarted: "AI \\u52A8\\u6001\\u626B\\u63CF\\u5DF2\\u5F00\\u59CB\\u3002",
+      aiScanStopped: "AI \\u52A8\\u6001\\u626B\\u63CF\\u5DF2\\u505C\\u6B62\\u3002",
+      aiScanStartFailed: "AI \\u626B\\u63CF\\u542F\\u52A8\\u5931\\u8D25\\u3002",
+      aiDisabled: "AI \\u529F\\u80FD\\u5DF2\\u5173\\u95ED\\uFF0C\\u8BF7\\u5148\\u5728\\u8BBE\\u7F6E\\u4E2D\\u542F\\u7528\\u3002",
+      aiBatchCompleted: "AI \\u6279\\u6B21\\u5904\\u7406\\u5B8C\\u6210\\u3002",
+      aiNothingPending: "\\u5F53\\u524D\\u6CA1\\u6709\\u5F85\\u53D1\\u9001\\u5185\\u5BB9\\u3002",
+      aiRequestFailed: "AI \\u8BF7\\u6C42\\u5931\\u8D25\\uFF0C\\u6761\\u76EE\\u5DF2\\u8FDB\\u5165\\u5F85\\u590D\\u6838\\u3002",
+      aiBudgetBlocked: "\\u5DF2\\u8FBE\\u5230\\u6210\\u672C\\u9650\\u5236\\uFF1B\\u4ECD\\u4F1A\\u7EE7\\u7EED\\u5728\\u672C\\u5730\\u6536\\u96C6\\u3002",
+      aiProviderRequired: "\\u81F3\\u5C11\\u9700\\u8981\\u4FDD\\u7559\\u4E00\\u4E2A\\u4F9B\\u5E94\\u5546\\u3002",
+      aiProviderSaved: "\\u4F9B\\u5E94\\u5546\\u914D\\u7F6E\\u5DF2\\u4FDD\\u5B58\\u3002",
+      aiDailyUsageReset: "\\u4ECA\\u65E5\\u4F30\\u7B97\\u7528\\u91CF\\u5DF2\\u6E05\\u9664\\u3002",
+      aiStyleOriginRequired: "\\u7AD9\\u70B9 Origin \\u4E0D\\u80FD\\u4E3A\\u7A7A\\u3002",
+      aiStyleSaved: "\\u7AD9\\u70B9\\u7FFB\\u8BD1\\u504F\\u597D\\u5DF2\\u4FDD\\u5B58\\u3002"
     },
     placeholders: {
       click: "\\u70B9\\u51FB ",
@@ -2761,10 +3466,22 @@ ${result.join(",\n")}
       performOneTimeScan: " \\u6267\\u884C\\u4E00\\u6B21\\u6027\\u5FEB\\u901F\\u63D0\\u53D6"
     },
     confirmation: {
-      clear: "\\u60A8\\u786E\\u5B9A\\u8981\\u6E05\\u9664\\u5185\\u5BB9\\u5417\\uFF1F\\u6B64\\u64CD\\u4F5C\\u65E0\\u6CD5\\u64A4\\u9500\\u3002"
+      clear: "\\u60A8\\u786E\\u5B9A\\u8981\\u6E05\\u9664\\u5185\\u5BB9\\u5417\\uFF1F\\u6B64\\u64CD\\u4F5C\\u65E0\\u6CD5\\u64A4\\u9500\\u3002",
+      deleteProvider: "\\u786E\\u5B9A\\u5220\\u9664\\u5F53\\u524D\\u4F9B\\u5E94\\u5546\\u914D\\u7F6E\\u5417\\uFF1F",
+      deleteStyle: "\\u786E\\u5B9A\\u5220\\u9664\\u5F53\\u524D\\u7AD9\\u70B9\\u7FFB\\u8BD1\\u504F\\u597D\\u5417\\uFF1F",
+      clearStyles: "\\u786E\\u5B9A\\u6E05\\u7A7A\\u5168\\u90E8\\u7AD9\\u70B9\\u7FFB\\u8BD1\\u504F\\u597D\\u5417\\uFF1F"
+    },
+    ai: {
+      actions: {
+        submitPending: "\\u63D0\\u4EA4\\u5F85\\u5904\\u7406",
+        retryReview: "\\u91CD\\u65B0\\u5904\\u7406"
+      }
     },
     tooltip: {
       summary: "\\u67E5\\u770B\\u6458\\u8981",
+      ai_scan: "AI \\u52A8\\u6001\\u626B\\u63CF\\uFF08Beta\\uFF09",
+      ai_scan_stop: "\\u505C\\u6B62 AI \\u52A8\\u6001\\u626B\\u63CF",
+      ai_disabled: "AI \\u529F\\u80FD\\u5DF2\\u5173\\u95ED",
       dynamic_scan: "\\u52A8\\u6001\\u626B\\u63CF",
       static_scan: "\\u9759\\u6001\\u626B\\u63CF",
       element_scan: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF",
@@ -2781,7 +3498,8 @@ ${result.join(",\n")}
         }
       },
       disabled: {
-        scan_in_progress: "\\u53E6\\u4E00\\u9879\\u626B\\u63CF\\u6B63\\u5728\\u8FDB\\u884C\\u4E2D"
+        scan_in_progress: "\\u53E6\\u4E00\\u9879\\u626B\\u63CF\\u6B63\\u5728\\u8FDB\\u884C\\u4E2D",
+        ai_scan_active: "AI \\u626B\\u63CF\\u8FD0\\u884C\\u4E2D\\uFF0C\\u666E\\u901A\\u626B\\u63CF\\u5DF2\\u7981\\u7528"
       },
       filters: {
         title: "\\u5185\\u5BB9\\u8FC7\\u6EE4\\u5668\\u8BF4\\u660E",
@@ -3018,7 +3736,9 @@ ${result.join(",\n")}
       elementScanTitle: "\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u6559\\u7A0B",
       elementScan: '<p><strong>\\u529F\\u80FD\\u4ECB\\u7ECD:</strong></p><p>\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5141\\u8BB8\\u60A8\\u7CBE\\u786E\\u5730\\u9009\\u62E9\\u7F51\\u9875\\u4E0A\\u7684\\u4E00\\u4E2A\\u6216\\u591A\\u4E2A\\u533A\\u57DF\\uFF08\\u4F8B\\u5982\\u4E00\\u4E2A\\u6BB5\\u843D\\u3001\\u4E00\\u4E2A\\u5217\\u8868\\u3001\\u4E00\\u4E2A\\u4FA7\\u8FB9\\u680F\\uFF09\\uFF0C\\u5E76\\u4EC5\\u4ECE\\u8FD9\\u4E9B\\u533A\\u57DF\\u4E2D\\u63D0\\u53D6\\u6587\\u672C\\u3002</p><p><strong>\\u5982\\u4F55\\u4F7F\\u7528:</strong></p><ol><li><strong>\\u542F\\u52A8:</strong> \\u70B9\\u51FB\\u60AC\\u6D6E\\u6309\\u94AE\\u4E2D\\u7684\\u201C\\u9009\\u53D6\\u5143\\u7D20\\u201D\\u56FE\\u6807 <span class="help-icon-placeholder element-scan-icon"></span> \\u542F\\u52A8\\u626B\\u63CF\\u6A21\\u5F0F\\u3002</li><li><strong>\\u9009\\u62E9:</strong> \\u79FB\\u52A8\\u9F20\\u6807\\uFF0C\\u60A8\\u60F3\\u626B\\u63CF\\u7684\\u533A\\u57DF\\u4F1A\\u663E\\u793A\\u9AD8\\u4EAE\\u6846\\u3002\\u5355\\u51FB\\u4EE5\\u9009\\u5B9A\\u3002</li><li><strong>\\u8C03\\u6574:</strong> \\u9009\\u5B9A\\u540E\\u4F1A\\u51FA\\u73B0\\u5DE5\\u5177\\u680F\\u3002\\u60A8\\u53EF\\u4EE5\\u4F7F\\u7528<strong>\\u6ED1\\u5757</strong>\\u6765\\u6269\\u5927\\u6216\\u7F29\\u5C0F\\u9009\\u62E9\\u8303\\u56F4\\u3002</li><li><strong>\\u6682\\u5B58:</strong> \\u5982\\u679C\\u60A8\\u60F3\\u9009\\u62E9\\u591A\\u4E2A\\u4E0D\\u76F8\\u5173\\u7684\\u533A\\u57DF\\uFF0C\\u53EF\\u4EE5\\u70B9\\u51FB<span class="action-key">\\u6682\\u5B58</span>\\u6309\\u94AE\\u4FDD\\u5B58\\u5F53\\u524D\\u9009\\u62E9\\uFF0C\\u7136\\u540E\\u7EE7\\u7EED\\u9009\\u62E9\\u5176\\u4ED6\\u533A\\u57DF\\u3002</li><li><strong>\\u786E\\u8BA4:</strong> \\u5B8C\\u6210\\u6240\\u6709\\u9009\\u62E9\\u540E\\uFF0C\\u70B9\\u51FB<span class="action-key">\\u786E\\u8BA4</span>\\u6309\\u94AE\\uFF0C\\u7CFB\\u7EDF\\u5C06\\u5F00\\u59CB\\u4ECE\\u60A8\\u9009\\u62E9\\u7684\\u6240\\u6709\\u533A\\u57DF\\u4E2D\\u63D0\\u53D6\\u6587\\u672C\\u3002</li></ol><p><strong>\\u5982\\u4F55\\u9000\\u51FA:</strong></p><ul><li>\\u5728\\u9009\\u62E9\\u8FC7\\u7A0B\\u4E2D\\uFF08\\u51FA\\u73B0\\u9AD8\\u4EAE\\u6846\\u65F6\\uFF09\\uFF0C\\u5728\\u9875\\u9762\\u4EFB\\u610F\\u4F4D\\u7F6E<strong>\\u53F3\\u952E\\u5355\\u51FB</strong>\\u3002</li><li>\\u5728\\u4EFB\\u4F55\\u65F6\\u5019\\uFF0C\\u6309\\u4E0B<kbd>ESC</kbd>\\u952E\\u3002</li><li>\\u5728\\u4EFB\\u4F55\\u65F6\\u5019\\uFF0C\\u518D\\u6B21\\u70B9\\u51FB\\u201C\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u201D\\u56FE\\u6807\\u3002</li></ul>',
       sessionScanTitle: "\\u52A8\\u6001\\u626B\\u63CF\\u6559\\u7A0B",
-      sessionScan: '<p><strong>\\u529F\\u80FD\\u4ECB\\u7ECD:</strong></p><p>\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u6301\\u7EED\\u76D1\\u63A7\\u5E76\\u81EA\\u52A8\\u8BB0\\u5F55\\u7F51\\u9875\\u4E0A\\u6240\\u6709\\u52A8\\u6001\\u52A0\\u8F7D\\u6216\\u53D8\\u5316\\u7684\\u6587\\u672C\\uFF0C\\u7279\\u522B\\u9002\\u7528\\u4E8E\\u6293\\u53D6\\u5B9E\\u65F6\\u804A\\u5929\\u3001\\u6EDA\\u52A8\\u52A0\\u8F7D\\u5185\\u5BB9\\u6216\\u901A\\u77E5\\u7B49\\u3002</p><p><strong>\\u5982\\u4F55\\u4F7F\\u7528:</strong></p><ul><li><strong>\\u5F00\\u59CB\\u626B\\u63CF:</strong> \\u70B9\\u51FB\\u60AC\\u6D6E\\u6309\\u94AE\\u4E2D\\u7684\\u201C\\u52A8\\u6001\\u626B\\u63CF\\u201D\\u56FE\\u6807 <span class="help-icon-placeholder dynamic-scan-icon"></span>\\uFF0C\\u626B\\u63CF\\u7ACB\\u5373\\u5F00\\u59CB\\u3002</li><li><strong>\\u505C\\u6B62\\u626B\\u63CF:</strong> \\u518D\\u6B21\\u70B9\\u51FB\\u8BE5\\u56FE\\u6807 <span class="help-icon-placeholder stop-icon"></span>\\uFF0C\\u5373\\u53EF\\u505C\\u6B62\\u626B\\u63CF\\u3002</li><li><strong>\\u67E5\\u770B\\u7ED3\\u679C:</strong> \\u505C\\u6B62\\u540E\\uFF0C\\u70B9\\u51FB\\u4E3B\\u60AC\\u6D6E\\u6309\\u94AE <span class="help-icon-placeholder summary-icon"></span> \\u6253\\u5F00\\u7ED3\\u679C\\u7A97\\u53E3\\u3002</li></ul><p><strong>\\u5982\\u4F55\\u9000\\u51FA:</strong></p><ul><li>\\u5728\\u626B\\u63CF\\u8FC7\\u7A0B\\u4E2D\\uFF0C\\u518D\\u6B21\\u70B9\\u51FB\\u201C\\u52A8\\u6001\\u626B\\u63CF\\u201D\\u56FE\\u6807\\u3002</li><li>\\u5728\\u626B\\u63CF\\u8FC7\\u7A0B\\u4E2D\\uFF0C\\u968F\\u65F6\\u6309\\u4E0B<kbd>ESC</kbd>\\u952E\\u53EF\\u5FEB\\u901F\\u505C\\u6B62\\u3002</li></ul>'
+      sessionScan: '<p><strong>\\u529F\\u80FD\\u4ECB\\u7ECD:</strong></p><p>\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u6301\\u7EED\\u76D1\\u63A7\\u5E76\\u81EA\\u52A8\\u8BB0\\u5F55\\u7F51\\u9875\\u4E0A\\u6240\\u6709\\u52A8\\u6001\\u52A0\\u8F7D\\u6216\\u53D8\\u5316\\u7684\\u6587\\u672C\\uFF0C\\u7279\\u522B\\u9002\\u7528\\u4E8E\\u6293\\u53D6\\u5B9E\\u65F6\\u804A\\u5929\\u3001\\u6EDA\\u52A8\\u52A0\\u8F7D\\u5185\\u5BB9\\u6216\\u901A\\u77E5\\u7B49\\u3002</p><p><strong>\\u5982\\u4F55\\u4F7F\\u7528:</strong></p><ul><li><strong>\\u5F00\\u59CB\\u626B\\u63CF:</strong> \\u70B9\\u51FB\\u60AC\\u6D6E\\u6309\\u94AE\\u4E2D\\u7684\\u201C\\u52A8\\u6001\\u626B\\u63CF\\u201D\\u56FE\\u6807 <span class="help-icon-placeholder dynamic-scan-icon"></span>\\uFF0C\\u626B\\u63CF\\u7ACB\\u5373\\u5F00\\u59CB\\u3002</li><li><strong>\\u505C\\u6B62\\u626B\\u63CF:</strong> \\u518D\\u6B21\\u70B9\\u51FB\\u8BE5\\u56FE\\u6807 <span class="help-icon-placeholder stop-icon"></span>\\uFF0C\\u5373\\u53EF\\u505C\\u6B62\\u626B\\u63CF\\u3002</li><li><strong>\\u67E5\\u770B\\u7ED3\\u679C:</strong> \\u505C\\u6B62\\u540E\\uFF0C\\u70B9\\u51FB\\u4E3B\\u60AC\\u6D6E\\u6309\\u94AE <span class="help-icon-placeholder summary-icon"></span> \\u6253\\u5F00\\u7ED3\\u679C\\u7A97\\u53E3\\u3002</li></ul><p><strong>\\u5982\\u4F55\\u9000\\u51FA:</strong></p><ul><li>\\u5728\\u626B\\u63CF\\u8FC7\\u7A0B\\u4E2D\\uFF0C\\u518D\\u6B21\\u70B9\\u51FB\\u201C\\u52A8\\u6001\\u626B\\u63CF\\u201D\\u56FE\\u6807\\u3002</li><li>\\u5728\\u626B\\u63CF\\u8FC7\\u7A0B\\u4E2D\\uFF0C\\u968F\\u65F6\\u6309\\u4E0B<kbd>ESC</kbd>\\u952E\\u53EF\\u5FEB\\u901F\\u505C\\u6B62\\u3002</li></ul>',
+      aiScanTitle: "AI \\u52A8\\u6001\\u626B\\u63CF\\u8BF4\\u660E",
+      aiScan: "<p><strong>\\u529F\\u80FD\\u4ECB\\u7ECD:</strong></p><p>AI \\u626B\\u63CF\\u4F1A\\u6301\\u7EED\\u6536\\u96C6\\u7F51\\u9875\\u4E2D\\u7684\\u5019\\u9009\\u6587\\u672C\\uFF0C\\u5E76\\u6839\\u636E\\u8BBE\\u7F6E\\u81EA\\u52A8\\u5904\\u7406\\u6216\\u7B49\\u5F85\\u624B\\u52A8\\u63D0\\u4EA4\\u3002\\u9876\\u90E8\\u6570\\u5B57\\u8868\\u793A\\u672C\\u6B21\\u5DF2\\u6536\\u96C6\\u7684\\u5019\\u9009\\u9879\\u6570\\u91CF\\u3002</p><p><strong>\\u5982\\u4F55\\u4F7F\\u7528:</strong></p><ul><li>\\u518D\\u6B21\\u70B9\\u51FB AI \\u60AC\\u6D6E\\u6309\\u94AE\\u5373\\u53EF\\u505C\\u6B62\\u626B\\u63CF\\u3002</li><li>\\u70B9\\u51FB\\u201C\\u67E5\\u770B\\u6458\\u8981\\u201D\\u53EF\\u63D0\\u4EA4\\u5F85\\u5904\\u7406\\u5185\\u5BB9\\u3001\\u590D\\u6838\\u7ED3\\u679C\\u5E76\\u590D\\u5236\\u6216\\u5BFC\\u51FA\\u7FFB\\u8BD1\\u3002</li><li>\\u91CD\\u590D\\u51FA\\u73B0\\u6216\\u5DF2\\u7ECF\\u5904\\u7406\\u8FC7\\u7684\\u6587\\u672C\\u4E0D\\u4F1A\\u518D\\u6B21\\u63D0\\u4EA4\\u3002</li></ul>"
     }
   };
   var zh_TW_default = {
@@ -3036,6 +3756,8 @@ ${result.join(",\n")}
       clear: "\\u6E05\\u7A7A",
       copy: "\\u8907\\u88FD",
       save: "\\u5132\\u5B58",
+      reset: "\\u91CD\\u8A2D",
+      delete: "\\u522A\\u9664",
       discovered: "\\u5DF2\\u767C\\u73FE:",
       confirm: "\\u78BA\\u8A8D",
       cancel: "\\u53D6\\u6D88",
@@ -3127,6 +3849,68 @@ ${result.join(",\n")}
         dark: "\\u6DF1\\u8272",
         system: "\\u8DDF\\u96A8\\u7CFB\\u7D71"
       },
+      ai: {
+        title: "AI \\u6383\\u63CF",
+        enabled: "\\u555F\\u7528 AI \\u529F\\u80FD",
+        enabledDescription: "\\u95DC\\u9589\\u5F8C\\u6703\\u505C\\u6B62 AI \\u6383\\u63CF\\u4E26\\u96B1\\u85CF AI \\u61F8\\u6D6E\\u6309\\u9215\\uFF1B\\u4E00\\u822C\\u6383\\u63CF\\u529F\\u80FD\\u4E0D\\u53D7\\u5F71\\u97FF\\u3002",
+        betaBadge: "Beta",
+        betaNotice: "\\u76EE\\u524D\\u8A72\\u529F\\u80FD\\u4E0D\\u7A69\\u5B9A\\uFF0C\\u554F\\u984C\\u8F03\\u591A\\uFF0C\\u50C5\\u4F9B\\u6E2C\\u8A66\\u3002",
+        general: "\\u6383\\u63CF\\u8207\\u7FFB\\u8B6F",
+        processingMode: "\\u8655\\u7406\\u6A21\\u5F0F",
+        manual: "\\u624B\\u52D5\\u63D0\\u4EA4",
+        automatic: "\\u81EA\\u52D5\\u8655\\u7406",
+        targetLanguage: "\\u76EE\\u6A19\\u8A9E\\u8A00",
+        simplifiedChinese: "\\u4E2D\\u6587\\u7C21\\u9AD4",
+        traditionalChinese: "\\u4E2D\\u6587\\u7E41\\u9AD4",
+        confidenceThreshold: "\\u4FE1\\u5FC3\\u5EA6\\u95BE\\u503C",
+        provider: "\\u4F9B\\u61C9\\u5546\\u8A2D\\u5B9A",
+        currentProvider: "\\u76EE\\u524D\\u4F9B\\u61C9\\u5546",
+        providerName: "\\u4F9B\\u61C9\\u5546\\u540D\\u7A31",
+        apiUrl: "\\u5B8C\\u6574 API \\u4F4D\\u5740\\uFF08chat/completions\\uFF09",
+        model: "\\u6A21\\u578B",
+        responseMode: "\\u56DE\\u61C9\\u6A21\\u5F0F",
+        jsonMode: "JSON \\u6A21\\u5F0F",
+        promptJson: "Prompt JSON",
+        apiKey: "API Key\\uFF08\\u7368\\u7ACB\\u5132\\u5B58\\uFF09",
+        addProvider: "\\u65B0\\u589E\\u4F9B\\u61C9\\u5546",
+        newProvider: "\\u65B0\\u4F9B\\u61C9\\u5546",
+        saveProvider: "\\u5132\\u5B58\\u4F9B\\u61C9\\u5546\\u8A2D\\u5B9A",
+        testConnection: "\\u6E2C\\u8A66\\u8655\\u7406\\u8207\\u5EF6\\u9072",
+        testDescription: "\\u50B3\\u9001\\u4E00\\u689D\\u56FA\\u5B9A\\u7684\\u5408\\u6210\\u77ED\\u6587\\u672C\\uFF0C\\u9A57\\u8B49\\u4F9B\\u61C9\\u5546\\u80FD\\u56DE\\u50B3\\u53EF\\u89E3\\u6790\\u7684\\u5206\\u985E\\u8207\\u7FFB\\u8B6F JSON\\uFF1B\\u4E0D\\u6703\\u50B3\\u9001\\u7DB2\\u9801\\u5167\\u5BB9\\u3002\\u6E2C\\u8A66\\u53EF\\u80FD\\u7522\\u751F\\u6975\\u5C0F\\u8CBB\\u7528\\u3002",
+        testing: "\\u6B63\\u5728\\u6E2C\\u8A66\\u5206\\u985E\\u3001\\u7FFB\\u8B6F\\u548C JSON \\u7D50\\u679C\\uFF0C\\u53EF\\u80FD\\u7522\\u751F\\u6975\\u5C0F\\u8CBB\\u7528\\u2026",
+        processingOk: "\\u8655\\u7406\\u6B63\\u5E38",
+        connectionOk: "\\u8655\\u7406\\u6B63\\u5E38",
+        connectionFailed: "\\u8655\\u7406\\u6E2C\\u8A66\\u5931\\u6557",
+        costControl: "\\u6210\\u672C\\u63A7\\u5236",
+        maxBatchItems: "\\u55AE\\u6279\\u6700\\u591A\\u9805\\u76EE",
+        maxBatchCharacters: "\\u55AE\\u6279\\u6700\\u591A\\u5B57\\u5143",
+        maxRequests: "\\u55AE\\u9801\\u9762\\u6700\\u591A\\u8ACB\\u6C42",
+        maxPageCharacters: "\\u55AE\\u9801\\u9762\\u6700\\u591A\\u5B57\\u5143",
+        dailyTokens: "\\u6BCF\\u65E5\\u4F30\\u7B97 Token \\u4E0A\\u9650",
+        timeout: "\\u8ACB\\u6C42\\u903E\\u6642\\uFF08\\u79D2\\uFF09",
+        resetDailyUsage: "\\u6E05\\u9664\\u4ECA\\u65E5\\u7528\\u91CF",
+        siteStyles: "\\u7AD9\\u9EDE\\u7FFB\\u8B6F\\u504F\\u597D\\uFF08\\u53EF\\u9078\\uFF09",
+        siteStylesDescription: "\\u9019\\u662F\\u53EF\\u9078\\u9805\\u3002\\u76F4\\u63A5\\u5132\\u5B58\\u5373\\u53EF\\u70BA\\u76EE\\u524D\\u7DB2\\u7AD9\\u4F7F\\u7528\\u9810\\u8A2D\\u4E2D\\u6587\\u8868\\u9054\\uFF1B\\u53EA\\u6709\\u9700\\u8981\\u56FA\\u5B9A\\u8853\\u8A9E\\u6216\\u7279\\u6B8A\\u8868\\u9054\\u6642\\u624D\\u586B\\u5BEB\\u66F4\\u591A\\u5167\\u5BB9\\u3002",
+        styleLibrary: "\\u5DF2\\u5132\\u5B58\\u504F\\u597D",
+        styleEditor: "\\u76EE\\u524D\\u7DB2\\u7AD9\\u504F\\u597D",
+        searchStyles: "\\u641C\\u5C0B\\u7AD9\\u9EDE\\u504F\\u597D",
+        sortStyles: "\\u6392\\u5E8F",
+        sortRecent: "\\u6700\\u8FD1\\u66F4\\u65B0",
+        sortOrigin: "\\u6309\\u7AD9\\u9EDE",
+        styleOrigin: "\\u7AD9\\u9EDE Origin",
+        stylePath: "\\u53EF\\u9078\\u8DEF\\u5F91\\u524D\\u7DB4",
+        styleTone: "\\u8A9E\\u6C23",
+        styleGlossary: "\\u8853\\u8A9E\\u8868\\u8207\\u5C08\\u6709\\u540D\\u8A5E",
+        stylePunctuation: "\\u6A19\\u9EDE\\u7FD2\\u6163",
+        styleInstructions: "\\u81EA\\u8A02\\u7FFB\\u8B6F\\u8981\\u6C42",
+        advancedStyleSettings: "\\u9032\\u968E\\u5339\\u914D\\u8A2D\\u5B9A",
+        defaultStyleTone: "\\u81EA\\u7136\\u3001\\u6E05\\u6670\\uFF0C\\u7B26\\u5408\\u4E2D\\u6587\\u7DB2\\u9801\\u8868\\u9054",
+        defaultStylePunctuation: "\\u4F7F\\u7528\\u76EE\\u6A19\\u8A9E\\u8A00\\u7684\\u6A19\\u6E96\\u4E2D\\u6587\\u6A19\\u9EDE",
+        useCurrentSite: "\\u4F7F\\u7528\\u76EE\\u524D\\u7DB2\\u7AD9",
+        noStyles: "\\u6C92\\u6709\\u7B26\\u5408\\u7684\\u7AD9\\u9EDE\\u504F\\u597D",
+        saveStyle: "\\u5132\\u5B58\\u76EE\\u524D\\u7DB2\\u7AD9\\u504F\\u597D",
+        clearStyles: "\\u6E05\\u7A7A\\u5168\\u90E8\\u504F\\u597D"
+      },
       about: "\\u95DC\\u65BC",
       aboutPanel: {
         title: "\\u95DC\\u65BC",
@@ -3154,8 +3938,25 @@ ${result.join(",\n")}
     },
     results: {
       title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",
+      aiTitle: "AI \\u6383\\u63CF\\u7D50\\u679C",
       scanCountSession: "\\u5DF2\\u6383\\u63CF {{count}} \\u500B\\u9805\\u76EE",
       scanCountStatic: "\\u5171\\u6383\\u63CF {{count}} \\u500B\\u9805\\u76EE",
+      scanCountAi: "AI \\u5DF2\\u6536\\u96C6 {{count}} \\u500B\\u9805\\u76EE",
+      aiRunning: "AI \\u6383\\u63CF\\u57F7\\u884C\\u4E2D",
+      aiStopped: "AI \\u6383\\u63CF\\u5DF2\\u505C\\u6B62",
+      aiProcessing: "\\u4F9B\\u61C9\\u5546\\u6B63\\u5728\\u8655\\u7406\\u76EE\\u524D\\u6279\\u6B21\\u2026",
+      aiBudgetBlocked: "\\u5DF2\\u505C\\u6B62\\u50B3\\u9001\\uFF0C\\u9054\\u5230\\u9810\\u7B97\\u9650\\u5236",
+      aiRequestError: "\\u6700\\u8FD1\\u4E00\\u6B21\\u8ACB\\u6C42\\u5931\\u6557",
+      aiReviewItems: "\\u5F85\\u8907\\u6838\\u5167\\u5BB9",
+      aiReviewRequired: "\\u9700\\u8981\\u4EBA\\u5DE5\\u8907\\u6838",
+      aiCounts: {
+        pending: "\\u5F85\\u8655\\u7406",
+        translated: "\\u5DF2\\u7FFB\\u8B6F",
+        keep: "\\u4FDD\\u7559",
+        removed: "\\u79FB\\u9664",
+        review: "\\u5F85\\u8907\\u6838",
+        failed: "\\u5931\\u6557"
+      },
       totalCharacters: "\\u7E3D\\u5B57\\u5143\\u6578",
       totalLines: "\\u7E3D\\u884C\\u6578",
       noSummary: "\\u7121\\u53EF\\u7528\\u6458\\u8981",
@@ -3180,7 +3981,21 @@ ${result.join(",\n")}
       sessionScanPaused: "\\u52D5\\u614B\\u6383\\u63CF\\u5DF2\\u66AB\\u505C\\u3002",
       sessionScanResumed: "\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u8A71\\u5DF2\\u5F9E\\u4E0A\\u4E00\\u9801\\u6062\\u5FA9\\u3002",
       sessionScanContinued: "\\u52D5\\u614B\\u6383\\u63CF\\u5DF2\\u7E7C\\u7E8C\\u3002",
-      cspWorkerWarning: "\\u56E0\\u7DB2\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u63DB\\u81F3\\u76F8\\u5BB9\\u6383\\u63CF\\u6A21\\u5F0F\\u3002"
+      cspWorkerWarning: "\\u56E0\\u7DB2\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u63DB\\u81F3\\u76F8\\u5BB9\\u6383\\u63CF\\u6A21\\u5F0F\\u3002",
+      scanModeConflict: "\\u8ACB\\u5148\\u505C\\u6B62\\u76EE\\u524D\\u6383\\u63CF\\u6A21\\u5F0F\\uFF0C\\u518D\\u555F\\u52D5\\u53E6\\u4E00\\u7A2E\\u6383\\u63CF\\u3002",
+      aiScanStarted: "AI \\u52D5\\u614B\\u6383\\u63CF\\u5DF2\\u958B\\u59CB\\u3002",
+      aiScanStopped: "AI \\u52D5\\u614B\\u6383\\u63CF\\u5DF2\\u505C\\u6B62\\u3002",
+      aiScanStartFailed: "AI \\u6383\\u63CF\\u555F\\u52D5\\u5931\\u6557\\u3002",
+      aiDisabled: "AI \\u529F\\u80FD\\u5DF2\\u95DC\\u9589\\uFF0C\\u8ACB\\u5148\\u5728\\u8A2D\\u5B9A\\u4E2D\\u555F\\u7528\\u3002",
+      aiBatchCompleted: "AI \\u6279\\u6B21\\u8655\\u7406\\u5B8C\\u6210\\u3002",
+      aiNothingPending: "\\u76EE\\u524D\\u6C92\\u6709\\u5F85\\u50B3\\u9001\\u5167\\u5BB9\\u3002",
+      aiRequestFailed: "AI \\u8ACB\\u6C42\\u5931\\u6557\\uFF0C\\u9805\\u76EE\\u5DF2\\u9032\\u5165\\u5F85\\u8907\\u6838\\u3002",
+      aiBudgetBlocked: "\\u5DF2\\u9054\\u5230\\u6210\\u672C\\u9650\\u5236\\uFF1B\\u4ECD\\u6703\\u7E7C\\u7E8C\\u5728\\u672C\\u6A5F\\u6536\\u96C6\\u3002",
+      aiProviderRequired: "\\u81F3\\u5C11\\u9700\\u8981\\u4FDD\\u7559\\u4E00\\u500B\\u4F9B\\u61C9\\u5546\\u3002",
+      aiProviderSaved: "\\u4F9B\\u61C9\\u5546\\u8A2D\\u5B9A\\u5DF2\\u5132\\u5B58\\u3002",
+      aiDailyUsageReset: "\\u4ECA\\u65E5\\u4F30\\u7B97\\u7528\\u91CF\\u5DF2\\u6E05\\u9664\\u3002",
+      aiStyleOriginRequired: "\\u7AD9\\u9EDE Origin \\u4E0D\\u53EF\\u70BA\\u7A7A\\u3002",
+      aiStyleSaved: "\\u7AD9\\u9EDE\\u7FFB\\u8B6F\\u504F\\u597D\\u5DF2\\u5132\\u5B58\\u3002"
     },
     placeholders: {
       click: "\\u9EDE\\u64CA ",
@@ -3190,10 +4005,22 @@ ${result.join(",\n")}
       performOneTimeScan: " \\u57F7\\u884C\\u4E00\\u6B21\\u6027\\u5FEB\\u901F\\u63D0\\u53D6"
     },
     confirmation: {
-      clear: "\\u60A8\\u78BA\\u5B9A\\u8981\\u6E05\\u9664\\u5167\\u5BB9\\u55CE\\uFF1F\\u6B64\\u64CD\\u4F5C\\u7121\\u6CD5\\u64A4\\u92B7\\u3002"
+      clear: "\\u60A8\\u78BA\\u5B9A\\u8981\\u6E05\\u9664\\u5167\\u5BB9\\u55CE\\uFF1F\\u6B64\\u64CD\\u4F5C\\u7121\\u6CD5\\u64A4\\u92B7\\u3002",
+      deleteProvider: "\\u78BA\\u5B9A\\u522A\\u9664\\u76EE\\u524D\\u4F9B\\u61C9\\u5546\\u8A2D\\u5B9A\\u55CE\\uFF1F",
+      deleteStyle: "\\u78BA\\u5B9A\\u522A\\u9664\\u76EE\\u524D\\u7AD9\\u9EDE\\u7FFB\\u8B6F\\u504F\\u597D\\u55CE\\uFF1F",
+      clearStyles: "\\u78BA\\u5B9A\\u6E05\\u7A7A\\u5168\\u90E8\\u7AD9\\u9EDE\\u7FFB\\u8B6F\\u504F\\u597D\\u55CE\\uFF1F"
+    },
+    ai: {
+      actions: {
+        submitPending: "\\u63D0\\u4EA4\\u5F85\\u8655\\u7406",
+        retryReview: "\\u91CD\\u65B0\\u8655\\u7406"
+      }
     },
     tooltip: {
       summary: "\\u67E5\\u770B\\u6458\\u8981",
+      ai_scan: "AI \\u52D5\\u614B\\u6383\\u63CF\\uFF08Beta\\uFF09",
+      ai_scan_stop: "\\u505C\\u6B62 AI \\u52D5\\u614B\\u6383\\u63CF",
+      ai_disabled: "AI \\u529F\\u80FD\\u5DF2\\u95DC\\u9589",
       dynamic_scan: "\\u52D5\\u614B\\u6383\\u63CF",
       static_scan: "\\u975C\\u614B\\u6383\\u63CF",
       element_scan: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF",
@@ -3210,7 +4037,8 @@ ${result.join(",\n")}
         }
       },
       disabled: {
-        scan_in_progress: "\\u53E6\\u4E00\\u9805\\u6383\\u63CF\\u6B63\\u5728\\u9032\\u884C\\u4E2D"
+        scan_in_progress: "\\u53E6\\u4E00\\u9805\\u6383\\u63CF\\u6B63\\u5728\\u9032\\u884C\\u4E2D",
+        ai_scan_active: "AI \\u6383\\u63CF\\u57F7\\u884C\\u4E2D\\uFF0C\\u666E\\u901A\\u6383\\u63CF\\u5DF2\\u505C\\u7528"
       },
       filters: {
         title: "\\u5167\\u5BB9\\u904E\\u6FFE\\u5668\\u8AAA\\u660E",
@@ -3447,7 +4275,9 @@ ${result.join(",\n")}
       elementScanTitle: "\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u6559\\u7A0B",
       elementScan: '<p><strong>\\u529F\\u80FD\\u4ECB\\u7D39:</strong></p><p>\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5141\\u8A31\\u60A8\\u7CBE\\u78BA\\u5730\\u9078\\u64C7\\u7DB2\\u9801\\u4E0A\\u7684\\u4E00\\u500B\\u6216\\u591A\\u500B\\u5340\\u57DF\\uFF08\\u4F8B\\u5982\\u4E00\\u500B\\u6BB5\\u843D\\u3001\\u4E00\\u500B\\u5217\\u8868\\u3001\\u4E00\\u500B\\u5074\\u908A\\u6B04\\uFF09\\uFF0C\\u4E26\\u50C5\\u5F9E\\u9019\\u4E9B\\u5340\\u57DF\\u4E2D\\u63D0\\u53D6\\u6587\\u672C\\u3002</p><p><strong>\\u5982\\u4F55\\u4F7F\\u7528:</strong></p><ol><li><strong>\\u555F\\u52D5:</strong> \\u9EDE\\u64CA\\u61F8\\u6D6E\\u6309\\u9215\\u4E2D\\u7684\\u300C\\u9078\\u53D6\\u5143\\u7D20\\u300D\\u5716\\u6A19 <span class="help-icon-placeholder element-scan-icon"></span> \\u555F\\u52D5\\u6383\\u63CF\\u6A21\\u5F0F\\u3002</li><li><strong>\\u9078\\u64C7:</strong> \\u79FB\\u52D5\\u9F20\\u6A19\\uFF0C\\u60A8\\u60F3\\u6383\\u63CF\\u7684\\u5340\\u57DF\\u6703\\u986F\\u793A\\u9AD8\\u4EAE\\u6846\\u3002\\u55AE\\u64CA\\u4EE5\\u9078\\u5B9A\\u3002</li><li><strong>\\u8ABF\\u6574:</strong> \\u9078\\u5B9A\\u5F8C\\u6703\\u51FA\\u73FE\\u5DE5\\u5177\\u6B04\\u3002\\u60A8\\u53EF\\u4EE5\\u4F7F\\u7528<strong>\\u6ED1\\u584A</strong>\\u4F86\\u64F4\\u5927\\u6216\\u7E2E\\u5C0F\\u9078\\u64C7\\u7BC4\\u570D\\u3002</li><li><strong>\\u66AB\\u5B58:</strong> \\u5982\\u679C\\u60A8\\u60F3\\u9078\\u64C7\\u591A\\u500B\\u4E0D\\u76F8\\u95DC\\u7684\\u5340\\u57DF\\uFF0C\\u53EF\\u4EE5\\u9EDE\\u64CA<span class="action-key">\\u66AB\\u5B58</span>\\u6309\\u9215\\u4FDD\\u5B58\\u7576\\u524D\\u9078\\u64C7\\uFF0C\\u7136\\u5F8C\\u7E7C\\u7E8C\\u9078\\u64C7\\u5176\\u4ED6\\u5340\\u57DF\\u3002</li><li><strong>\\u78BA\\u8A8D:</strong> \\u5B8C\\u6210\\u6240\\u6709\\u9078\\u64C7\\u5F8C\\uFF0C\\u9EDE\\u64CA<span class="action-key">\\u78BA\\u8A8D</span>\\u6309\\u9215\\uFF0C\\u7CFB\\u7D71\\u5C07\\u958B\\u59CB\\u5F9E\\u60A8\\u9078\\u64C7\\u7684\\u6240\\u6709\\u5340\\u57DF\\u4E2D\\u63D0\\u53D6\\u6587\\u672C\\u3002</li></ol><p><strong>\\u5982\\u4F55\\u9000\\u51FA:</strong></p><ul><li>\\u5728\\u9078\\u64C7\\u904E\\u7A0B\\u4E2D\\uFF08\\u51FA\\u73FE\\u9AD8\\u4EAE\\u6846\\u6642\\uFF09\\uFF0C\\u5728\\u9801\\u9762\\u4EFB\\u610F\\u4F4D\\u7F6E<strong>\\u53F3\\u9375\\u55AE\\u64CA</strong>\\u3002</li><li>\\u5728\\u4EFB\\u4F55\\u6642\\u5019\\uFF0C\\u6309\\u4E0B <kbd>ESC</kbd> \\u9375\\u3002</li><li>\\u5728\\u4EFB\\u4F55\\u6642\\u5019\\uFF0C\\u518D\\u6B21\\u9EDE\\u64CA\\u300C\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u300D\\u5716\\u6A19\\u3002</li></ul>',
       sessionScanTitle: "\\u52D5\\u614B\\u6383\\u63CF\\u6559\\u7A0B",
-      sessionScan: '<p><strong>\\u529F\\u80FD\\u4ECB\\u7D39:</strong></p><p>\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u6301\\u7E8C\\u76E3\\u63A7\\u4E26\\u81EA\\u52D5\\u8A18\\u9304\\u7DB2\\u9801\\u4E0A\\u6240\\u6709\\u52D5\\u614B\\u52A0\\u8F09\\u6216\\u8B8A\\u5316\\u7684\\u6587\\u672C\\uFF0C\\u7279\\u5225\\u9069\\u7528\\u65BC\\u6293\\u53D6\\u5BE6\\u6642\\u804A\\u5929\\u3001\\u6EFE\\u52D5\\u52A0\\u8F09\\u5167\\u5BB9\\u6216\\u901A\\u77E5\\u7B49\\u3002</p><p><strong>\\u5982\\u4F55\\u4F7F\\u7528:</strong></p><ul><li><strong>\\u958B\\u59CB\\u6383\\u63CF:</strong> \\u9EDE\\u64CA\\u61F8\\u6D6E\\u6309\\u9215\\u4E2D\\u7684\\u300C\\u52D5\\u614B\\u6383\\u63CF\\u300D\\u5716\\u6A19 <span class="help-icon-placeholder dynamic-scan-icon"></span>\\uFF0C\\u6383\\u63CF\\u7ACB\\u5373\\u958B\\u59CB\\u3002</li><li><strong>\\u505C\\u6B62\\u6383\\u63CF:</strong> \\u518D\\u6B21\\u9EDE\\u64CA\\u8A72\\u5716\\u6A19 <span class="help-icon-placeholder stop-icon"></span>\\uFF0C\\u5373\\u53EF\\u505C\\u6B62\\u6383\\u63CF\\u3002</li><li><strong>\\u67E5\\u770B\\u7D50\\u679C:</strong> \\u505C\\u6B62\\u5F8C\\uFF0C\\u9EDE\\u64CA\\u4E3B\\u61F8\\u6D6E\\u6309\\u9215 <span class="help-icon-placeholder summary-icon"></span> \\u6253\\u958B\\u7D50\\u679C\\u7A97\\u53E3\\u3002</li></ul><p><strong>\\u5982\\u4F55\\u9000\\u51FA:</strong></p><ul><li>\\u5728\\u6383\\u63CF\\u904E\\u7A0B\\u4E2D\\uFF0C\\u518D\\u6B21\\u9EDE\\u64CA\\u300C\\u52D5\\u614B\\u6383\\u63CF\\u300D\\u5716\\u6A19\\u3002</li><li>\\u5728\\u6383\\u63CF\\u904E\\u7A0B\\u4E2D\\uFF0C\\u96A8\\u6642\\u6309\\u4E0B <kbd>ESC</kbd> \\u9375\\u53EF\\u5FEB\\u901F\\u505C\\u6B62\\u3002</li></ul>'
+      sessionScan: '<p><strong>\\u529F\\u80FD\\u4ECB\\u7D39:</strong></p><p>\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u6301\\u7E8C\\u76E3\\u63A7\\u4E26\\u81EA\\u52D5\\u8A18\\u9304\\u7DB2\\u9801\\u4E0A\\u6240\\u6709\\u52D5\\u614B\\u52A0\\u8F09\\u6216\\u8B8A\\u5316\\u7684\\u6587\\u672C\\uFF0C\\u7279\\u5225\\u9069\\u7528\\u65BC\\u6293\\u53D6\\u5BE6\\u6642\\u804A\\u5929\\u3001\\u6EFE\\u52D5\\u52A0\\u8F09\\u5167\\u5BB9\\u6216\\u901A\\u77E5\\u7B49\\u3002</p><p><strong>\\u5982\\u4F55\\u4F7F\\u7528:</strong></p><ul><li><strong>\\u958B\\u59CB\\u6383\\u63CF:</strong> \\u9EDE\\u64CA\\u61F8\\u6D6E\\u6309\\u9215\\u4E2D\\u7684\\u300C\\u52D5\\u614B\\u6383\\u63CF\\u300D\\u5716\\u6A19 <span class="help-icon-placeholder dynamic-scan-icon"></span>\\uFF0C\\u6383\\u63CF\\u7ACB\\u5373\\u958B\\u59CB\\u3002</li><li><strong>\\u505C\\u6B62\\u6383\\u63CF:</strong> \\u518D\\u6B21\\u9EDE\\u64CA\\u8A72\\u5716\\u6A19 <span class="help-icon-placeholder stop-icon"></span>\\uFF0C\\u5373\\u53EF\\u505C\\u6B62\\u6383\\u63CF\\u3002</li><li><strong>\\u67E5\\u770B\\u7D50\\u679C:</strong> \\u505C\\u6B62\\u5F8C\\uFF0C\\u9EDE\\u64CA\\u4E3B\\u61F8\\u6D6E\\u6309\\u9215 <span class="help-icon-placeholder summary-icon"></span> \\u6253\\u958B\\u7D50\\u679C\\u7A97\\u53E3\\u3002</li></ul><p><strong>\\u5982\\u4F55\\u9000\\u51FA:</strong></p><ul><li>\\u5728\\u6383\\u63CF\\u904E\\u7A0B\\u4E2D\\uFF0C\\u518D\\u6B21\\u9EDE\\u64CA\\u300C\\u52D5\\u614B\\u6383\\u63CF\\u300D\\u5716\\u6A19\\u3002</li><li>\\u5728\\u6383\\u63CF\\u904E\\u7A0B\\u4E2D\\uFF0C\\u96A8\\u6642\\u6309\\u4E0B <kbd>ESC</kbd> \\u9375\\u53EF\\u5FEB\\u901F\\u505C\\u6B62\\u3002</li></ul>',
+      aiScanTitle: "AI \\u52D5\\u614B\\u6383\\u63CF\\u8AAA\\u660E",
+      aiScan: "<p><strong>\\u529F\\u80FD\\u4ECB\\u7D39:</strong></p><p>AI \\u6383\\u63CF\\u6703\\u6301\\u7E8C\\u6536\\u96C6\\u7DB2\\u9801\\u4E2D\\u7684\\u5019\\u9078\\u6587\\u672C\\uFF0C\\u4E26\\u4F9D\\u8A2D\\u5B9A\\u81EA\\u52D5\\u8655\\u7406\\u6216\\u7B49\\u5F85\\u624B\\u52D5\\u63D0\\u4EA4\\u3002\\u9802\\u90E8\\u6578\\u5B57\\u8868\\u793A\\u672C\\u6B21\\u5DF2\\u6536\\u96C6\\u7684\\u5019\\u9078\\u9805\\u76EE\\u6578\\u91CF\\u3002</p><p><strong>\\u5982\\u4F55\\u4F7F\\u7528:</strong></p><ul><li>\\u518D\\u6B21\\u9EDE\\u64CA AI \\u61F8\\u6D6E\\u6309\\u9215\\u5373\\u53EF\\u505C\\u6B62\\u6383\\u63CF\\u3002</li><li>\\u9EDE\\u64CA\\u300C\\u67E5\\u770B\\u6458\\u8981\\u300D\\u53EF\\u63D0\\u4EA4\\u5F85\\u8655\\u7406\\u5167\\u5BB9\\u3001\\u8907\\u6838\\u7D50\\u679C\\u4E26\\u8907\\u88FD\\u6216\\u532F\\u51FA\\u7FFB\\u8B6F\\u3002</li><li>\\u91CD\\u8907\\u51FA\\u73FE\\u6216\\u5DF2\\u7D93\\u8655\\u7406\\u904E\\u7684\\u6587\\u672C\\u4E0D\\u6703\\u518D\\u6B21\\u63D0\\u4EA4\\u3002</li></ul>"
     }
   };
   var locales = {
@@ -3470,10 +4300,7 @@ ${result.join(",\n")}
     }
   ];
   var translationModules = locales;
-  var supportedLanguages = [
-    { code: "auto", name: "Auto" },
-    ...resourceLanguages
-  ];
+  var supportedLanguages = [{ code: "auto", name: "Auto" }, ...resourceLanguages];
   var translations = supportedLanguages.reduce((acc, lang) => {
     if (translationModules[lang.code]) {
       acc[lang.code] = translationModules[lang.code];
@@ -3497,12 +4324,6 @@ ${result.join(",\n")}
       });
     }
     return value;
-  }
-  function getAvailableLanguages() {
-    return supportedLanguages.map((lang) => ({
-      value: lang.code,
-      label: lang.name
-    }));
   }
   var IGNORED_TERMS_ARRAY = [
     "Github",
@@ -3579,137 +4400,129 @@ ${result.join(",\n")}
   ];
   var IGNORED_TERMS_SET = new Set(IGNORED_TERMS_ARRAY);
   var ignoredTerms_default = IGNORED_TERMS_SET;
-  var themeIcon = \`<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 32.5-156t88-127Q256-817 330-848.5T488-880q80 0 151 27.5t124.5 76q53.5 48.5 85 115T880-518q0 115-70 176.5T640-280h-74q-9 0-12.5 5t-3.5 11q0 12 15 34.5t15 51.5q0 50-27.5 74T480-80Zm0-400Zm-220 40q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120-160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm200 0q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120 160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17ZM480-160q9 0 14.5-5t5.5-13q0-14-15-33t-15-57q0-42 29-67t71-25h70q66 0 113-38.5T800-518q0-121-92.5-201.5T488-800q-136 0-232 93t-96 227q0 133 93.5 226.5T480-160Z"/></svg>\`;
-  var languageIcon_default = \`<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-155.5t86-127Q252-817 325-848.5T480-880q83 0 155.5 31.5t127 86q54.5 54.5 86 127T880-480q0 82-31.5 155t-86 127.5q-54.5 54.5-127 86T480-80Zm0-82q26-36 45-75t31-83H404q12 44 31 83t45 75Zm-104-16q-18-33-31.5-68.5T322-320H204q29 50 72.5 87t99.5 55Zm208 0q56-18 99.5-55t72.5-87H638q-9 38-22.5 73.5T584-178ZM170-400h136q-3-20-4.5-39.5T300-480q0-21 1.5-40.5T306-560H170q-5 20-7.5 39.5T160-480q0 21 2.5 40.5T170-400Zm216 0h188q3-20 4.5-39.5T580-480q0-21-1.5-40.5T574-560H386q-3 20-4.5 39.5T380-480q0 21 1.5 40.5T386-400Zm268 0h136q5-20 7.5-39.5T800-480q0-21-2.5-40.5T790-560H654q3 20 4.5 39.5T660-480q0 21-1.5 40.5T654-400Zm-16-240h118q-29-50-72.5-87T584-782q18 33 31.5 68.5T638-640Zm-234 0h152q-12-44-31-83t-45-75q-26 36-45 75t-31 83Zm-200 0h118q9-38 22.5-73.5T376-782q-56 18-99.5 55T204-640Z"/></svg>\`;
-  var infoIcon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>';
-  var lightThemeIcon = \`<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm0 80q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Zm326-268Z"/></svg>\`;
-  var darkThemeIcon = \`<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Zm0-80q88 0 158-48.5T740-375q-20 5-40 8t-40 3q-123 0-209.5-86.5T364-660q0-20 3-40t8-40q-78 32-126.5 102T200-480q0 116 82 198t198 82Zm-10-270Z"/></svg>\`;
-  var systemThemeIcon = \`<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M320-120v-80h80v-80H160q-33 0-56.5-23.5T80-360v-400q0-33 23.5-56.5T160-840h640q33 0 56.5 23.5T880-760v400q0 33-23.5 56.5T800-280H560v80h80v80H320ZM160-360h640v-400H160v400Zm0 0v-400 400Z"/></svg>\`;
-  var formatIcon = \`<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M600-160v-80h120v-480H600v-80h200v640H600Zm-440 0v-640h200v80H240v480h120v80H160Z"/></svg>\`;
-  var selectSettingsDefinitions = [
-    {
-      id: "theme-select",
-      key: "theme",
-      label: "settings.theme",
-      type: "image-card-select",
-      icon: themeIcon,
-      options: [
-        { value: "light", label: "settings.themes.light", icon: lightThemeIcon },
-        { value: "dark", label: "settings.themes.dark", icon: darkThemeIcon },
-        { value: "system", label: "settings.themes.system", icon: systemThemeIcon }
-      ]
-    },
-    {
-      id: "format-select",
-      key: "outputFormat",
-      label: "settings.format",
-      type: "image-card-select",
-      icon: formatIcon,
-      options: [
-        { value: "array", label: "settings.formats.array", previewType: "code-array" },
-        { value: "object", label: "settings.formats.object", previewType: "code-object" },
-        { value: "csv", label: "settings.formats.csv", previewType: "code-csv" }
-      ]
-    },
-    {
-      id: "language-select",
-      key: "language",
-      label: "settings.language",
-      icon: languageIcon_default,
-      options: getAvailableLanguages().map((lang) => ({
-        ...lang,
-        label: lang.value === "auto" ? "settings.languages.auto" : \`settings.languages.\${lang.value}\`
-      }))
-    }
-  ];
-  var filterDefinitions = [
-    { id: "filter-numbers", key: "numbers", label: "settings.filters.numbers", tooltip: { titleIcon: infoIcon, title: "settings.filters.numbers", text: "tooltip.filters.numbers" } },
-    { id: "filter-chinese", key: "chinese", label: "settings.filters.chinese", tooltip: { titleIcon: infoIcon, title: "settings.filters.chinese", text: "tooltip.filters.chinese" } },
-    { id: "filter-contains-chinese", key: "containsChinese", label: "settings.filters.contains_chinese", tooltip: { titleIcon: infoIcon, title: "settings.filters.contains_chinese", text: "tooltip.filters.contains_chinese" } },
-    { id: "filter-emoji-only", key: "emojiOnly", label: "settings.filters.emoji_only", tooltip: { titleIcon: infoIcon, title: "settings.filters.emoji_only", text: "tooltip.filters.emoji_only" } },
-    { id: "filter-symbols", key: "symbols", label: "settings.filters.symbols", tooltip: { titleIcon: infoIcon, title: "settings.filters.symbols", text: "tooltip.filters.symbols" } },
-    { id: "filter-term", key: "termFilter", label: "settings.filters.term", tooltip: { titleIcon: infoIcon, title: "settings.filters.term", text: "tooltip.filters.term" } },
-    { id: "filter-single-letter", key: "singleLetter", label: "settings.filters.single_letter", tooltip: { titleIcon: infoIcon, title: "settings.filters.single_letter", text: "tooltip.filters.single_letter" } },
-    {
-      id: "filter-repeating-chars",
-      key: "repeatingChars",
-      label: "settings.filters.repeating_chars",
-      tooltip: {
-        titleIcon: infoIcon,
-        title: "settings.filters.repeating_chars",
-        text: "tooltip.filters.repeating_chars"
-      }
-    },
-    { id: "filter-file-paths", key: "filePath", label: "settings.filters.file_paths", tooltip: { titleIcon: infoIcon, title: "settings.filters.file_paths", text: "tooltip.filters.file_paths" } },
-    { id: "filter-hex-colors", key: "hexColor", label: "settings.filters.hex_color_codes", tooltip: { titleIcon: infoIcon, title: "settings.filters.hex_color_codes", text: "tooltip.filters.hex_color_codes" } },
-    { id: "filter-emails", key: "email", label: "settings.filters.email_addresses", tooltip: { titleIcon: infoIcon, title: "settings.filters.email_addresses", text: "tooltip.filters.email_addresses" } },
-    { id: "filter-uuids", key: "uuid", label: "settings.filters.uuids", tooltip: { titleIcon: infoIcon, title: "settings.filters.uuids", text: "tooltip.filters.uuids" } },
-    { id: "filter-git-hashes", key: "gitCommitHash", label: "settings.filters.git_commit_hashes", tooltip: { titleIcon: infoIcon, title: "settings.filters.git_commit_hashes", text: "tooltip.filters.git_commit_hashes" } },
-    { id: "filter-website-urls", key: "websiteUrl", label: "settings.filters.website_urls", tooltip: { titleIcon: infoIcon, title: "settings.filters.website_urls_title", text: "tooltip.filters.website_urls" } },
-    { id: "filter-shorthand-numbers", key: "shorthandNumber", label: "settings.filters.shorthand_numbers", tooltip: { titleIcon: infoIcon, title: "settings.filters.shorthand_numbers_title", text: "tooltip.filters.shorthand_numbers" } }
-  ];
-  var filterConfigMap = new Map(filterDefinitions.map((def) => [def.key, def.label]));
+  var FILTER_LABEL_KEYS = Object.freeze({
+    numbers: "settings.filters.numbers",
+    chinese: "settings.filters.chinese",
+    containsChinese: "settings.filters.contains_chinese",
+    emojiOnly: "settings.filters.emoji_only",
+    symbols: "settings.filters.symbols",
+    termFilter: "settings.filters.term",
+    singleLetter: "settings.filters.single_letter",
+    repeatingChars: "settings.filters.repeating_chars",
+    filePath: "settings.filters.file_paths",
+    hexColor: "settings.filters.hex_color_codes",
+    email: "settings.filters.email_addresses",
+    uuid: "settings.filters.uuids",
+    gitCommitHash: "settings.filters.git_commit_hashes",
+    websiteUrl: "settings.filters.website_urls",
+    shorthandNumber: "settings.filters.shorthand_numbers"
+  });
   var ruleChecks =  new Map([
-    ["numbers", {
-      regex: /^[$\\\u20AC\\\xA3\\\xA5\\d,.\\s]+$/,
-      label: filterConfigMap.get("numbers")
-    }],
-    ["chinese", {
-      regex: /^[\\u4e00-\\u9fa5\\s]+$/u,
-      label: filterConfigMap.get("chinese")
-    }],
-    ["containsChinese", {
-      regex: /[\\u4e00-\\u9fa5]/u,
-      label: filterConfigMap.get("containsChinese")
-    }],
-    ["emojiOnly", {
-      regex: /^[\\p{Emoji}\\s]+$/u,
-      label: filterConfigMap.get("emojiOnly")
-    }],
-    ["symbols", {
-      test: (text) => !/[\\p{L}\\p{N}]/u.test(text),
-      label: filterConfigMap.get("symbols")
-    }],
-    ["termFilter", {
-      test: (text) => ignoredTerms_default.has(text),
-      label: filterConfigMap.get("termFilter")
-    }],
-    ["singleLetter", {
-      regex: /^[a-zA-Z]$/,
-      label: filterConfigMap.get("singleLetter")
-    }],
-    ["repeatingChars", {
-      regex: /^\\s*(.)\\1+\\s*$/,
-      label: filterConfigMap.get("repeatingChars")
-    }],
-    ["filePath", {
-      regex: /^(?:[a-zA-Z]:\\\\|\\\\\\\\|~|\\.\\.?\\/)[\\w\\-\\.\\/ \\\\]*[\\w\\-\\.]+\\.[\\w]{2,4}$/,
-      label: filterConfigMap.get("filePath")
-    }],
-    ["hexColor", {
-      regex: /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3,4}|[A-Fa-f0-9]{8})$/,
-      label: filterConfigMap.get("hexColor")
-    }],
-    ["email", {
-      regex: /^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$/,
-      label: filterConfigMap.get("email")
-    }],
-    ["uuid", {
-      regex: /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/,
-      label: filterConfigMap.get("uuid")
-    }],
-    ["gitCommitHash", {
-      regex: /^[0-9a-f]{7,40}$/i,
-      label: filterConfigMap.get("gitCommitHash")
-    }],
-    ["websiteUrl", {
-      regex: /^(?:(?:https?|ftp):\\/\\/)?(?:www\\.)?([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}(?:\\/.*)?$/,
-      label: filterConfigMap.get("websiteUrl")
-    }],
-    ["shorthandNumber", {
-      regex: /^\\d+(\\.\\d+)?\\s?[kmb]$/i,
-      label: filterConfigMap.get("shorthandNumber")
-    }]
+    [
+      "numbers",
+      {
+        regex: /^[$\\\u20AC\\\xA3\\\xA5\\d,.\\s]+$/,
+        label: FILTER_LABEL_KEYS.numbers
+      }
+    ],
+    [
+      "chinese",
+      {
+        regex: /^[\\u4e00-\\u9fa5\\s]+$/u,
+        label: FILTER_LABEL_KEYS.chinese
+      }
+    ],
+    [
+      "containsChinese",
+      {
+        regex: /[\\u4e00-\\u9fa5]/u,
+        label: FILTER_LABEL_KEYS.containsChinese
+      }
+    ],
+    [
+      "emojiOnly",
+      {
+        regex: /^[\\p{Emoji}\\s]+$/u,
+        label: FILTER_LABEL_KEYS.emojiOnly
+      }
+    ],
+    [
+      "symbols",
+      {
+        test: (text) => !/[\\p{L}\\p{N}]/u.test(text),
+        label: FILTER_LABEL_KEYS.symbols
+      }
+    ],
+    [
+      "termFilter",
+      {
+        test: (text) => ignoredTerms_default.has(text),
+        label: FILTER_LABEL_KEYS.termFilter
+      }
+    ],
+    [
+      "singleLetter",
+      {
+        regex: /^[a-zA-Z]$/,
+        label: FILTER_LABEL_KEYS.singleLetter
+      }
+    ],
+    [
+      "repeatingChars",
+      {
+        regex: /^\\s*(.)\\1+\\s*$/,
+        label: FILTER_LABEL_KEYS.repeatingChars
+      }
+    ],
+    [
+      "filePath",
+      {
+        regex: /^(?:[a-zA-Z]:\\\\|\\\\\\\\|~|\\.\\.?\\/)[\\w\\-\\.\\/ \\\\]*[\\w\\-\\.]+\\.[\\w]{2,4}$/,
+        label: FILTER_LABEL_KEYS.filePath
+      }
+    ],
+    [
+      "hexColor",
+      {
+        regex: /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3,4}|[A-Fa-f0-9]{8})$/,
+        label: FILTER_LABEL_KEYS.hexColor
+      }
+    ],
+    [
+      "email",
+      {
+        regex: /^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$/,
+        label: FILTER_LABEL_KEYS.email
+      }
+    ],
+    [
+      "uuid",
+      {
+        regex: /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/,
+        label: FILTER_LABEL_KEYS.uuid
+      }
+    ],
+    [
+      "gitCommitHash",
+      {
+        regex: /^[0-9a-f]{7,40}$/i,
+        label: FILTER_LABEL_KEYS.gitCommitHash
+      }
+    ],
+    [
+      "websiteUrl",
+      {
+        regex: /^(?:(?:https?|ftp):\\/\\/)?(?:www\\.)?([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}(?:\\/.*)?$/,
+        label: FILTER_LABEL_KEYS.websiteUrl
+      }
+    ],
+    [
+      "shorthandNumber",
+      {
+        regex: /^\\d+(\\.\\d+)?\\s?[kmb]$/i,
+        label: FILTER_LABEL_KEYS.shorthandNumber
+      }
+    ]
   ]);
   function shouldFilter(text, filterRules2) {
     for (const [key, rule] of ruleChecks.entries()) {
@@ -3724,42 +4537,49 @@ ${result.join(",\n")}
   }
   var formatTextsForTranslation = (texts, format = "array", options = {}) => {
     const { includeArrayBrackets: includeArrayBrackets2 = true } = options;
-    if (!texts || texts.length === 0) {
+    const pairs = Array.isArray(texts) ? texts.map((item) => {
+      if (typeof item === "string") {
+        return { sourceText: item, translation: "" };
+      }
+      if (Array.isArray(item)) {
+        return {
+          sourceText: String(item[0] || ""),
+          translation: String(item[1] || "")
+        };
+      }
+      return {
+        sourceText: String(item?.sourceText ?? item?.source ?? ""),
+        translation: String(item?.translation ?? "")
+      };
+    }).filter((pair) => pair.sourceText !== "") : [];
+    if (pairs.length === 0) {
       if (format === "object") return includeArrayBrackets2 ? "{}" : "";
       if (format === "csv") return "";
       return includeArrayBrackets2 ? "[]" : "";
     }
     if (format === "object") {
-      const indent = includeArrayBrackets2 ? "    " : "";
-      const result = texts.map(
-        (text) => \`\${indent}\${JSON.stringify(text)}: ""\`
+      const indent2 = includeArrayBrackets2 ? "    " : "";
+      const result2 = pairs.map(
+        (pair) => \`\${indent2}\${JSON.stringify(pair.sourceText)}: \${JSON.stringify(pair.translation)}\`
       );
-      if (includeArrayBrackets2) {
-        return \`{
-\${result.join(",\\n")}
-}\`;
-      } else {
-        return result.join(",\\n");
-      }
-    } else if (format === "csv") {
-      const result = texts.map((text) => {
-        const escaped = text.replace(/"/g, '""');
-        return \`"\${escaped}",""\`;
-      });
-      return result.join("\\n");
-    } else {
-      const indent = includeArrayBrackets2 ? "    " : "";
-      const result = texts.map(
-        (text) => \`\${indent}[\${JSON.stringify(text)}, ""]\`
-      );
-      if (includeArrayBrackets2) {
-        return \`[
-\${result.join(",\\n")}
-]\`;
-      } else {
-        return result.join(",\\n");
-      }
+      return includeArrayBrackets2 ? \`{
+\${result2.join(",\\n")}
+}\` : result2.join(",\\n");
     }
+    if (format === "csv") {
+      return pairs.map((pair) => {
+        const escapedSource = pair.sourceText.replace(/"/g, '""');
+        const escapedTranslation = pair.translation.replace(/"/g, '""');
+        return \`"\${escapedSource}","\${escapedTranslation}"\`;
+      }).join("\\n");
+    }
+    const indent = includeArrayBrackets2 ? "    " : "";
+    const result = pairs.map(
+      (pair) => \`\${indent}[\${JSON.stringify(pair.sourceText)}, \${JSON.stringify(pair.translation)}]\`
+    );
+    return includeArrayBrackets2 ? \`[
+\${result.join(",\\n")}
+]\` : result.join(",\\n");
   };
   var sessionTexts =  new Set();
   var filterRules = {};
@@ -3944,9 +4764,13 @@ ${result.join(",\n")}
       return;
     }
     notification.classList.add("tc-notification-fade-out");
-    notification.addEventListener("animationend", () => {
-      notification.remove();
-    }, { once: true });
+    notification.addEventListener(
+      "animationend",
+      () => {
+        notification.remove();
+      },
+      { once: true }
+    );
   }
   function createNotificationElement(message, type = "info") {
     const notification = document.createElement("div");
@@ -3992,13 +4816,11 @@ ${result.join(",\n")}
   // src/shared/ui/components/iconTitle.js
   function createIconTitle(iconSVG, text) {
     const container = document.createElement("div");
-    container.style.display = "flex";
-    container.style.alignItems = "center";
-    container.style.gap = "8px";
+    container.className = "tc-icon-title";
     if (iconSVG) {
       const iconWrapper = document.createElement("span");
-      iconWrapper.style.display = "flex";
-      iconWrapper.style.alignItems = "center";
+      iconWrapper.className = "tc-icon-title-icon";
+      iconWrapper.setAttribute("aria-hidden", "true");
       const svgElement = createSVGFromString(iconSVG);
       if (svgElement) {
         iconWrapper.appendChild(svgElement);
@@ -4025,11 +4847,19 @@ ${result.join(",\n")}
   var unsubscribeLanguageChanged;
   var unsubscribeSettingsSaved;
   var currentScanState = { count: 0, type: null };
+  var currentHeaderMode = "quick-scan";
+  function renderHeaderTitle() {
+    if (!titleContainer) return;
+    const isAiMode = currentHeaderMode === "ai-scan";
+    const title = createIconTitle(isAiMode ? aiIcon : summaryIcon, t(isAiMode ? "results.aiTitle" : "results.title"));
+    if (scanCountDisplay) title.appendChild(scanCountDisplay);
+    titleContainer.replaceChildren(title);
+  }
   function updateScanCountDisplay() {
     const { showScanCount } = loadSettings();
     if (!scanCountDisplay) return;
     if (showScanCount && currentScanState.count > 0 && currentScanState.type) {
-      const key = currentScanState.type === "session" ? "results.scanCountSession" : "results.scanCountStatic";
+      const key = currentScanState.type === "ai" ? "results.scanCountAi" : currentScanState.type === "session" ? "results.scanCountSession" : "results.scanCountStatic";
       const template = t(key);
       scanCountDisplay.textContent = simpleTemplate(template, { count: currentScanState.count });
       scanCountDisplay.classList.add("is-visible");
@@ -4043,24 +4873,17 @@ ${result.join(",\n")}
     }
   }
   function rerenderHeaderTexts() {
-    if (titleContainer) {
-      const titleElement = titleContainer.querySelector(".icon-title-text");
-      if (titleElement) {
-        titleElement.textContent = t("results.title");
-      }
-    }
+    renderHeaderTitle();
     updateScanCountDisplay();
   }
   function populateModalHeader(modalHeader, closeCallback) {
     titleContainer = document.createElement("div");
     titleContainer.id = "main-modal-title-container";
-    const newTitleElement = createIconTitle(summaryIcon, t("results.title"));
-    titleContainer.appendChild(newTitleElement);
     const rightControlsContainer = document.createElement("div");
     rightControlsContainer.className = "header-right-controls";
     scanCountDisplay = document.createElement("span");
     scanCountDisplay.id = "scan-count-display";
-    newTitleElement.appendChild(scanCountDisplay);
+    renderHeaderTitle();
     closeBtn = document.createElement("span");
     closeBtn.className = "tc-close-button text-extractor-modal-close";
     closeBtn.appendChild(createSVGFromString(closeIcon));
@@ -4074,6 +4897,10 @@ ${result.join(",\n")}
   function updateScanCount(count, type) {
     currentScanState = { count, type };
     updateScanCountDisplay();
+  }
+  function setModalHeaderMode(mode) {
+    currentHeaderMode = mode;
+    renderHeaderTitle();
   }
   // src/shared/utils/text/ignoredTerms.js
   var IGNORED_TERMS_ARRAY = [
@@ -4152,72 +4979,133 @@ ${result.join(",\n")}
   var IGNORED_TERMS_SET = new Set(IGNORED_TERMS_ARRAY);
   var ignoredTerms_default = IGNORED_TERMS_SET;
   // src/shared/utils/text/filterLogic.js
-  var filterConfigMap = new Map(filterDefinitions.map((def) => [def.key, def.label]));
+  var FILTER_LABEL_KEYS = Object.freeze({
+    numbers: "settings.filters.numbers",
+    chinese: "settings.filters.chinese",
+    containsChinese: "settings.filters.contains_chinese",
+    emojiOnly: "settings.filters.emoji_only",
+    symbols: "settings.filters.symbols",
+    termFilter: "settings.filters.term",
+    singleLetter: "settings.filters.single_letter",
+    repeatingChars: "settings.filters.repeating_chars",
+    filePath: "settings.filters.file_paths",
+    hexColor: "settings.filters.hex_color_codes",
+    email: "settings.filters.email_addresses",
+    uuid: "settings.filters.uuids",
+    gitCommitHash: "settings.filters.git_commit_hashes",
+    websiteUrl: "settings.filters.website_urls",
+    shorthandNumber: "settings.filters.shorthand_numbers"
+  });
   var ruleChecks = /* @__PURE__ */ new Map([
-    ["numbers", {
-      regex: /^[$\€\£\¥\d,.\s]+$/,
-      label: filterConfigMap.get("numbers")
-    }],
-    ["chinese", {
-      regex: /^[\u4e00-\u9fa5\s]+$/u,
-      label: filterConfigMap.get("chinese")
-    }],
-    ["containsChinese", {
-      regex: /[\u4e00-\u9fa5]/u,
-      label: filterConfigMap.get("containsChinese")
-    }],
-    ["emojiOnly", {
-      regex: /^[\p{Emoji}\s]+$/u,
-      label: filterConfigMap.get("emojiOnly")
-    }],
-    ["symbols", {
-      // 这个逻辑比较特殊，是“不包含字母或数字”，所以我们用一个函数来处理
-      test: (text) => !/[\p{L}\p{N}]/u.test(text),
-      label: filterConfigMap.get("symbols")
-    }],
-    ["termFilter", {
-      // 将 .includes() 修改为 .has()
-      test: (text) => ignoredTerms_default.has(text),
-      label: filterConfigMap.get("termFilter")
-    }],
-    ["singleLetter", {
-      regex: /^[a-zA-Z]$/,
-      label: filterConfigMap.get("singleLetter")
-    }],
-    ["repeatingChars", {
-      regex: /^\s*(.)\1+\s*$/,
-      label: filterConfigMap.get("repeatingChars")
-    }],
-    ["filePath", {
-      regex: /^(?:[a-zA-Z]:\\|\\\\|~|\.\.?\/)[\w\-\.\/ \\]*[\w\-\.]+\.[\w]{2,4}$/,
-      label: filterConfigMap.get("filePath")
-    }],
-    ["hexColor", {
-      regex: /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3,4}|[A-Fa-f0-9]{8})$/,
-      label: filterConfigMap.get("hexColor")
-    }],
-    ["email", {
-      regex: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/,
-      label: filterConfigMap.get("email")
-    }],
-    ["uuid", {
-      regex: /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/,
-      label: filterConfigMap.get("uuid")
-    }],
-    ["gitCommitHash", {
-      regex: /^[0-9a-f]{7,40}$/i,
-      label: filterConfigMap.get("gitCommitHash")
-    }],
-    ["websiteUrl", {
-      // 匹配常见的网址格式，包括协议、www前缀和裸域名，要求严格匹配整个字符串以避免误伤。
-      regex: /^(?:(?:https?|ftp):\/\/)?(?:www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(?:\/.*)?$/,
-      label: filterConfigMap.get("websiteUrl")
-    }],
-    ["shorthandNumber", {
-      // 匹配带k/m/b后缀的数字，支持整数、浮点数、大小写以及可选的空格。
-      regex: /^\d+(\.\d+)?\s?[kmb]$/i,
-      label: filterConfigMap.get("shorthandNumber")
-    }]
+    [
+      "numbers",
+      {
+        regex: /^[$\€\£\¥\d,.\s]+$/,
+        label: FILTER_LABEL_KEYS.numbers
+      }
+    ],
+    [
+      "chinese",
+      {
+        regex: /^[\u4e00-\u9fa5\s]+$/u,
+        label: FILTER_LABEL_KEYS.chinese
+      }
+    ],
+    [
+      "containsChinese",
+      {
+        regex: /[\u4e00-\u9fa5]/u,
+        label: FILTER_LABEL_KEYS.containsChinese
+      }
+    ],
+    [
+      "emojiOnly",
+      {
+        regex: /^[\p{Emoji}\s]+$/u,
+        label: FILTER_LABEL_KEYS.emojiOnly
+      }
+    ],
+    [
+      "symbols",
+      {
+        // 这个逻辑比较特殊，是“不包含字母或数字”，所以我们用一个函数来处理
+        test: (text) => !/[\p{L}\p{N}]/u.test(text),
+        label: FILTER_LABEL_KEYS.symbols
+      }
+    ],
+    [
+      "termFilter",
+      {
+        // 将 .includes() 修改为 .has()
+        test: (text) => ignoredTerms_default.has(text),
+        label: FILTER_LABEL_KEYS.termFilter
+      }
+    ],
+    [
+      "singleLetter",
+      {
+        regex: /^[a-zA-Z]$/,
+        label: FILTER_LABEL_KEYS.singleLetter
+      }
+    ],
+    [
+      "repeatingChars",
+      {
+        regex: /^\s*(.)\1+\s*$/,
+        label: FILTER_LABEL_KEYS.repeatingChars
+      }
+    ],
+    [
+      "filePath",
+      {
+        regex: /^(?:[a-zA-Z]:\\|\\\\|~|\.\.?\/)[\w\-\.\/ \\]*[\w\-\.]+\.[\w]{2,4}$/,
+        label: FILTER_LABEL_KEYS.filePath
+      }
+    ],
+    [
+      "hexColor",
+      {
+        regex: /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3,4}|[A-Fa-f0-9]{8})$/,
+        label: FILTER_LABEL_KEYS.hexColor
+      }
+    ],
+    [
+      "email",
+      {
+        regex: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/,
+        label: FILTER_LABEL_KEYS.email
+      }
+    ],
+    [
+      "uuid",
+      {
+        regex: /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/,
+        label: FILTER_LABEL_KEYS.uuid
+      }
+    ],
+    [
+      "gitCommitHash",
+      {
+        regex: /^[0-9a-f]{7,40}$/i,
+        label: FILTER_LABEL_KEYS.gitCommitHash
+      }
+    ],
+    [
+      "websiteUrl",
+      {
+        // 匹配常见的网址格式，包括协议、www前缀和裸域名，要求严格匹配整个字符串以避免误伤。
+        regex: /^(?:(?:https?|ftp):\/\/)?(?:www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(?:\/.*)?$/,
+        label: FILTER_LABEL_KEYS.websiteUrl
+      }
+    ],
+    [
+      "shorthandNumber",
+      {
+        // 匹配带k/m/b后缀的数字，支持整数、浮点数、大小写以及可选的空格。
+        regex: /^\d+(\.\d+)?\s?[kmb]$/i,
+        label: FILTER_LABEL_KEYS.shorthandNumber
+      }
+    ]
   ]);
   function shouldFilter(text, filterRules2) {
     for (const [key, rule] of ruleChecks.entries()) {
@@ -4233,7 +5121,41 @@ ${result.join(",\n")}
   // src/shared/utils/text/textProcessor.js
   var ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(", ");
   var ourUiSelector = "#text-extractor-container";
-  var blockElements = /* @__PURE__ */ new Set(["ADDRESS", "ARTICLE", "ASIDE", "BLOCKQUOTE", "DETAILS", "DIALOG", "DD", "DIV", "DL", "DT", "FIELDSET", "FIGCAPTION", "FIGURE", "FOOTER", "FORM", "H1", "H2", "H3", "H4", "H5", "H6", "HEADER", "HGROUP", "HR", "LI", "MAIN", "NAV", "OL", "P", "PRE", "SECTION", "TABLE", "UL"]);
+  var blockElements = /* @__PURE__ */ new Set([
+    "ADDRESS",
+    "ARTICLE",
+    "ASIDE",
+    "BLOCKQUOTE",
+    "DETAILS",
+    "DIALOG",
+    "DD",
+    "DIV",
+    "DL",
+    "DT",
+    "FIELDSET",
+    "FIGCAPTION",
+    "FIGURE",
+    "FOOTER",
+    "FORM",
+    "H1",
+    "H2",
+    "H3",
+    "H4",
+    "H5",
+    "H6",
+    "HEADER",
+    "HGROUP",
+    "HR",
+    "LI",
+    "MAIN",
+    "NAV",
+    "OL",
+    "P",
+    "PRE",
+    "SECTION",
+    "TABLE",
+    "UL"
+  ]);
   var traverseDOMAndExtract = (node, textCallback) => {
     if (!node) {
       return;
@@ -4345,10 +5267,7 @@ ${result.join(",\n")}
   var performQuickScan = () => {
     return new Promise(async (resolve, reject) => {
       const { filterRules: filterRules2, enableDebugLogging, outputFormat, includeArrayBrackets } = loadSettings();
-      const [texts, workerAllowed] = await Promise.all([
-        extractAndProcessText(),
-        isWorkerAllowed()
-      ]);
+      const [texts, workerAllowed] = await Promise.all([extractAndProcessText(), isWorkerAllowed()]);
       const runFallback = () => {
         log(t("log.quickScan.switchToFallback"));
         showNotification(t("notifications.cspWorkerWarning"), { type: "info", duration: 5e3 });
@@ -4356,12 +5275,7 @@ ${result.join(",\n")}
           const logFiltered = (text, reason) => {
             log(t("log.textProcessor.filtered", { text, reason }));
           };
-          const filteredTexts = filterAndNormalizeTexts(
-            texts,
-            filterRules2,
-            enableDebugLogging,
-            logFiltered
-          );
+          const filteredTexts = filterAndNormalizeTexts(texts, filterRules2, enableDebugLogging, logFiltered);
           const formattedText = formatTextsForTranslation(filteredTexts, outputFormat, { includeArrayBrackets });
           const result = {
             formattedText,
@@ -4426,6 +5340,7 @@ ${result.join(",\n")}
   var statsContainer = null;
   var placeholder = null;
   var loadingContainer = null;
+  var aiSummaryPanel = null;
   var canvasContext = null;
   var currentLineMap = [];
   var currentMode = "quick-scan";
@@ -4449,6 +5364,9 @@ ${result.join(",\n")}
   function setLoadingContainer(element) {
     loadingContainer = element;
   }
+  function setAiSummaryPanel(element) {
+    aiSummaryPanel = element;
+  }
   function setCanvasContext(context) {
     canvasContext = context;
   }
@@ -4461,8 +5379,1387 @@ ${result.join(",\n")}
   function getCurrentMode() {
     return currentMode;
   }
-  // src/features/session-scan/fallback.js
-  var sessionTexts = /* @__PURE__ */ new Set();
+  // src/shared/ui/mainModal/modalLayout.js
+  function createModalLayout() {
+    const modalOverlay2 = document.createElement("div");
+    modalOverlay2.className = "text-extractor-modal-overlay";
+    modalOverlay2.tabIndex = -1;
+    setModalOverlay(modalOverlay2);
+    const modal = document.createElement("div");
+    modal.className = "text-extractor-modal";
+    const modalHeader = document.createElement("div");
+    modalHeader.className = "text-extractor-modal-header";
+    const modalContent = document.createElement("div");
+    modalContent.className = "text-extractor-modal-content";
+    const modalFooter = document.createElement("div");
+    modalFooter.className = "text-extractor-modal-footer";
+    modal.appendChild(modalHeader);
+    modal.appendChild(modalContent);
+    modal.appendChild(modalFooter);
+    modalOverlay2.appendChild(modal);
+    uiContainer.appendChild(modalOverlay2);
+    return { modal, modalHeader, modalContent, modalFooter };
+  }
+  // src/assets/icons/loadingSpinner.js
+  var loadingSpinner = `
+  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25"/>
+    <path d="M12,4a8,8,0,0,1,7.89,6.7A1.53,1.53,0,0,0,21.38,12h0a1.5,1.5,0,0,0,1.48-1.75,11,11,0,0,0-21.72,0A1.5,1.5,0,0,0,2.62,12h0a1.53,1.53,0,0,0,1.49-1.3A8,8,0,0,1,12,4Z">
+      <animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="0.75s" repeatCount="indefinite"/>
+    </path>
+  </svg>
+`;
+  // src/shared/ui/mainModal/modalContent.js
+  var placeholder2;
+  var unsubscribeLanguageChanged2;
+  var currentMode2 = "quick-scan";
+  var lastAiSnapshot = null;
+  var lastAiReviewItems = [];
+  function renderAiSummaryPanel() {
+    const panel = aiSummaryPanel;
+    if (!panel) return;
+    panel.replaceChildren();
+    if (!lastAiSnapshot) return;
+    const status = document.createElement("div");
+    status.className = "ai-summary-status";
+    const statusDot = document.createElement("span");
+    statusDot.className = `ai-status-dot ${lastAiSnapshot.active ? "is-active" : ""}`;
+    status.append(
+      statusDot,
+      document.createTextNode(t(lastAiSnapshot.active ? "results.aiRunning" : "results.aiStopped"))
+    );
+    panel.appendChild(status);
+    const counts = document.createElement("div");
+    counts.className = "ai-summary-counts";
+    const countItems = [
+      ["pending", "results.aiCounts.pending"],
+      ["translated", "results.aiCounts.translated"],
+      ["keep", "results.aiCounts.keep"],
+      ["removed", "results.aiCounts.removed"],
+      ["review", "results.aiCounts.review"],
+      ["failed", "results.aiCounts.failed"]
+    ];
+    countItems.forEach(([key, labelKey]) => {
+      const badge = document.createElement("span");
+      badge.className = `ai-count-badge ai-count-${key}`;
+      badge.textContent = `${t(labelKey)} ${lastAiSnapshot.counts?.[key] || 0}`;
+      counts.appendChild(badge);
+    });
+    panel.appendChild(counts);
+    if (lastAiSnapshot.processing || lastAiSnapshot.budgetBlockedReason || lastAiSnapshot.lastErrorCode) {
+      const notice = document.createElement("div");
+      notice.className = "ai-summary-notice";
+      if (lastAiSnapshot.processing) {
+        notice.textContent = t("results.aiProcessing");
+      } else if (lastAiSnapshot.budgetBlockedReason) {
+        notice.textContent = `${t("results.aiBudgetBlocked")}: ${lastAiSnapshot.budgetBlockedReason}`;
+      } else {
+        notice.textContent = `${t("results.aiRequestError")}: ${lastAiSnapshot.lastErrorCode}`;
+      }
+      panel.appendChild(notice);
+    }
+    if (lastAiReviewItems.length > 0) {
+      const details = document.createElement("details");
+      details.className = "ai-review-list";
+      const summary = document.createElement("summary");
+      summary.textContent = `${t("results.aiReviewItems")} (${lastAiReviewItems.length})`;
+      details.appendChild(summary);
+      lastAiReviewItems.forEach((item) => {
+        const row = document.createElement("div");
+        row.className = "ai-review-item";
+        const source = document.createElement("div");
+        source.className = "ai-review-source";
+        source.textContent = item.sourceText;
+        const reason = document.createElement("div");
+        reason.className = "ai-review-reason";
+        reason.textContent = item.reason || item.category || t("results.aiReviewRequired");
+        row.append(source, reason);
+        details.appendChild(row);
+      });
+      panel.appendChild(details);
+    }
+  }
+  function rerenderPlaceholder() {
+    if (!placeholder2) return;
+    placeholder2.replaceChildren();
+    const placeholderIconDiv = document.createElement("div");
+    placeholderIconDiv.className = "placeholder-icon";
+    const infoIconSVG = createSVGFromString(infoIcon);
+    if (infoIconSVG) placeholderIconDiv.appendChild(infoIconSVG);
+    const p1 = document.createElement("p");
+    p1.textContent = t("results.noSummary");
+    const p2 = document.createElement("p");
+    p2.className = "placeholder-actions";
+    p2.append(t("placeholders.click"));
+    const span2 = document.createElement("span");
+    span2.className = "placeholder-action-icon";
+    const dynamicIconSVG = createSVGFromString(dynamicIcon);
+    if (dynamicIconSVG) span2.appendChild(dynamicIconSVG);
+    p2.appendChild(span2);
+    const strong2 = document.createElement("strong");
+    strong2.textContent = t("placeholders.dynamicScan");
+    p2.appendChild(strong2);
+    p2.append(t("placeholders.startNewScanSession"));
+    const p3 = document.createElement("p");
+    p3.className = "placeholder-actions";
+    p3.append(t("placeholders.click"));
+    const span3 = document.createElement("span");
+    span3.className = "placeholder-action-icon";
+    const translateIconSVG = createSVGFromString(translateIcon);
+    if (translateIconSVG) span3.appendChild(translateIconSVG);
+    p3.appendChild(span3);
+    const strong3 = document.createElement("strong");
+    strong3.textContent = t("placeholders.staticScan");
+    p3.appendChild(strong3);
+    p3.append(t("placeholders.performOneTimeScan"));
+    placeholder2.appendChild(placeholderIconDiv);
+    placeholder2.appendChild(p1);
+    placeholder2.appendChild(p2);
+    placeholder2.appendChild(p3);
+  }
+  function createLoadingSpinner() {
+    const loadingContainer2 = document.createElement("div");
+    loadingContainer2.className = "gm-loading-overlay";
+    const spinner = document.createElement("div");
+    spinner.className = "gm-loading-spinner";
+    const spinnerSVG = createSVGFromString(loadingSpinner);
+    if (spinnerSVG) spinner.appendChild(spinnerSVG);
+    loadingContainer2.appendChild(spinner);
+    return loadingContainer2;
+  }
+  function populateModalContent(modalContent) {
+    if (appConfig.ui.modalContentHeight) {
+      modalContent.style.height = appConfig.ui.modalContentHeight;
+    }
+    placeholder2 = document.createElement("div");
+    placeholder2.id = "modal-placeholder";
+    rerenderPlaceholder();
+    setPlaceholder(placeholder2);
+    const aiSummaryPanel2 = document.createElement("section");
+    aiSummaryPanel2.className = "ai-summary-panel";
+    aiSummaryPanel2.setAttribute("aria-live", "polite");
+    setAiSummaryPanel(aiSummaryPanel2);
+    const textareaContainer = document.createElement("div");
+    textareaContainer.className = "tc-textarea-container";
+    const lineNumbersDiv2 = document.createElement("div");
+    lineNumbersDiv2.className = "tc-line-numbers";
+    setLineNumbersDiv(lineNumbersDiv2);
+    const outputTextarea2 = document.createElement("textarea");
+    outputTextarea2.id = "text-extractor-output";
+    outputTextarea2.className = "tc-textarea";
+    setOutputTextarea(outputTextarea2);
+    textareaContainer.appendChild(lineNumbersDiv2);
+    textareaContainer.appendChild(outputTextarea2);
+    const loadingContainer2 = createLoadingSpinner();
+    setLoadingContainer(loadingContainer2);
+    modalContent.appendChild(placeholder2);
+    modalContent.appendChild(aiSummaryPanel2);
+    modalContent.appendChild(textareaContainer);
+    modalContent.appendChild(loadingContainer2);
+    unsubscribeLanguageChanged2 = on("languageChanged", () => {
+      rerenderPlaceholder();
+      renderAiSummaryPanel();
+    });
+  }
+  function showLoading() {
+    if (loadingContainer) loadingContainer.classList.add("is-visible");
+    if (outputTextarea) outputTextarea.disabled = true;
+  }
+  function hideLoading() {
+    if (loadingContainer) loadingContainer.classList.remove("is-visible");
+    if (outputTextarea) outputTextarea.disabled = false;
+  }
+  function setModalContentMode(mode) {
+    currentMode2 = mode;
+    if (aiSummaryPanel) {
+      aiSummaryPanel.classList.toggle("is-visible", currentMode2 === "ai-scan");
+    }
+  }
+  function updateAiSummaryPanel(snapshot, reviewItems = []) {
+    lastAiSnapshot = snapshot;
+    lastAiReviewItems = reviewItems;
+    renderAiSummaryPanel();
+  }
+  var copyIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M120-220v-80h80v80h-80Zm0-140v-80h80v80h-80Zm0-140v-80h80v80h-80ZM260-80v-80h80v80h-80Zm100-160q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480Zm40 240v-80h80v80h-80Zm-200 0q-33 0-56.5-23.5T120-160h80v80Zm340 0v-80h80q0 33-23.5 56.5T540-80ZM120-640q0-33 23.5-56.5T200-720v80h-80Zm420 80Z"/></svg>`;
+  var clearIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M120-40v-280q0-83 58.5-141.5T320-520h40v-320q0-33 23.5-56.5T440-920h80q33 0 56.5 23.5T600-840v320h40q83 0 141.5 58.5T840-320v280H120Zm80-80h80v-120q0-17 11.5-28.5T320-280q17 0 28.5 11.5T360-240v120h80v-120q0-17 11.5-28.5T480-280q17 0 28.5 11.5T520-240v120h80v-120q0-17 11.5-28.5T640-280q17 0 28.5 11.5T680-240v120h80v-200q0-50-35-85t-85-35H320q-50 0-85 35t-35 85v200Zm320-400v-320h-80v320h80Zm0 0h-80 80Z"/></svg>`;
+  function createButton({
+    id,
+    className,
+    textKey,
+    tooltipKey,
+    icon,
+    onClick,
+    disabled = false,
+    iconOnly = false
+  }) {
+    const button = document.createElement("button");
+    const controller2 = new AbortController();
+    const { signal } = controller2;
+    let iconAnimationTimer = null;
+    if (id) {
+      button.id = id;
+    }
+    if (iconOnly) {
+      button.className = "tc-icon-button";
+      if (className) {
+        button.classList.add(className);
+      }
+      button.innerHTML = createTrustedHTML(icon);
+      let currentTooltipKey = tooltipKey;
+      button.addEventListener("mouseover", () => showTooltip(button, t(currentTooltipKey)), { signal });
+      button.addEventListener("mouseout", hideTooltip, { signal });
+      button.updateText = (newTooltipKey) => {
+        currentTooltipKey = newTooltipKey;
+      };
+    } else {
+      button.className = "tc-button";
+      if (className) {
+        button.classList.add(className);
+      }
+      button.appendChild(createIconTitle(icon, t(textKey)));
+      button.updateText = (newTextKey) => {
+        const textElement = button.querySelector(".icon-title-text");
+        if (textElement) {
+          textElement.textContent = t(newTextKey);
+        }
+      };
+    }
+    button.disabled = disabled;
+    if (onClick && typeof onClick === "function") {
+      button.addEventListener("click", onClick, { signal });
+    }
+    button.updateIcon = (newIcon) => {
+      const newIconElement = createSVGFromString(newIcon);
+      if (!newIconElement) return;
+      const oldIconElements = Array.from(button.querySelectorAll("svg"));
+      let iconWrapper = button.querySelector(".tc-icon-title-icon");
+      if (!iconWrapper) {
+        iconWrapper = document.createElement("span");
+        iconWrapper.className = "tc-icon-title-icon";
+        iconWrapper.setAttribute("aria-hidden", "true");
+        const title = button.querySelector(".tc-icon-title");
+        if (title) title.prepend(iconWrapper);
+        else button.appendChild(iconWrapper);
+      }
+      if (iconAnimationTimer) clearTimeout(iconAnimationTimer);
+      iconWrapper.classList.add("is-changing");
+      newIconElement.classList.add("is-icon-entering");
+      newIconElement.style.opacity = "0";
+      iconWrapper.appendChild(newIconElement);
+      void newIconElement.offsetHeight;
+      requestAnimationFrame(() => {
+        oldIconElements.forEach((icon2) => {
+          icon2.classList.add("is-icon-leaving");
+          icon2.style.opacity = "0";
+        });
+        newIconElement.style.opacity = "1";
+      });
+      iconAnimationTimer = setTimeout(() => {
+        oldIconElements.forEach((icon2) => icon2.remove());
+        newIconElement.classList.remove("is-icon-entering");
+        newIconElement.style.removeProperty("opacity");
+        iconWrapper.classList.remove("is-changing");
+        iconAnimationTimer = null;
+      }, 200);
+    };
+    button.destroy = () => {
+      if (iconAnimationTimer) clearTimeout(iconAnimationTimer);
+      controller2.abort();
+    };
+    button.style.pointerEvents = "auto";
+    return button;
+  }
+  var confirmIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg>`;
+  var modalContainer = null;
+  var resolvePromise = null;
+  var confirmButton = null;
+  var cancelButton = null;
+  var controller = null;
+  function showConfirmationModal(text, iconSVG) {
+    return new Promise((resolve) => {
+      resolvePromise = resolve;
+      controller = new AbortController();
+      const { signal } = controller;
+      if (!modalContainer) {
+        modalContainer = document.createElement("div");
+        modalContainer.className = "confirmation-modal-overlay";
+        const modalContent = document.createElement("div");
+        modalContent.className = "confirmation-modal-content";
+        const iconContainer = document.createElement("div");
+        iconContainer.className = "confirmation-modal-icon";
+        const textContainer = document.createElement("p");
+        textContainer.className = "confirmation-modal-text";
+        const buttonContainer = document.createElement("div");
+        buttonContainer.className = "confirmation-modal-buttons";
+        confirmButton = createButton({
+          className: "confirm",
+          textKey: "common.confirm",
+          icon: confirmIcon,
+          onClick: () => handleConfirmation(true)
+        });
+        cancelButton = createButton({
+          className: "cancel",
+          textKey: "common.cancel",
+          icon: closeIcon,
+          onClick: () => handleConfirmation(false)
+        });
+        buttonContainer.append(cancelButton, confirmButton);
+        modalContent.append(iconContainer, textContainer, buttonContainer);
+        modalContainer.append(modalContent);
+        uiContainer.append(modalContainer);
+        modalContainer.addEventListener(
+          "click",
+          (e) => {
+            if (e.target === modalContainer) {
+              handleConfirmation(false);
+            }
+          },
+          { signal }
+        );
+      }
+      modalContainer.querySelector(".confirmation-modal-icon").replaceChildren(createSVGFromString(iconSVG));
+      modalContainer.querySelector(".confirmation-modal-text").textContent = text;
+      setTimeout(() => {
+        modalContainer.classList.add("is-visible");
+      }, 50);
+    });
+  }
+  function handleConfirmation(confirmed) {
+    if (modalContainer) {
+      modalContainer.classList.remove("is-visible");
+      setTimeout(() => {
+        if (confirmButton) {
+          confirmButton.destroy();
+          confirmButton = null;
+        }
+        if (cancelButton) {
+          cancelButton.destroy();
+          cancelButton = null;
+        }
+        if (controller) {
+          controller.abort();
+          controller = null;
+        }
+        modalContainer.remove();
+        modalContainer = null;
+        if (resolvePromise) {
+          resolvePromise(confirmed);
+          resolvePromise = null;
+        }
+      }, 300);
+    }
+  }
+  var warningIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m40-120 440-760 440 760H40Zm138-80h604L480-720 178-200Zm302-40q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Zm40-100Z"/></svg>`;
+  var exportIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80 280-280l56-56 104 103v-407h80v407l104-103 56 56L480-80ZM146-260q-32-49-49-105T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 59-17 115t-49 105l-58-58q22-37 33-78t11-84q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 43 11 84t33 78l-58 58Z"/></svg>`;
+  var exportBtn;
+  var unsubscribeLanguageChanged3;
+  function rerenderExportTexts() {
+    if (exportBtn) {
+      exportBtn.updateText("common.export");
+    }
+  }
+  function createExportButton() {
+    const container = document.createElement("div");
+    container.className = "tc-export-btn-container";
+    exportBtn = createButton({
+      className: "text-extractor-export-btn",
+      textKey: "common.export",
+      icon: exportIcon,
+      disabled: true,
+      onClick: () => {
+        log(t("log.exporter.buttonClicked", { format: "auto" }));
+        fire("exportToFile", {});
+      }
+    });
+    container.appendChild(exportBtn);
+    unsubscribeLanguageChanged3 = on("languageChanged", rerenderExportTexts);
+    container.destroy = () => {
+      if (exportBtn) {
+        exportBtn.destroy();
+        exportBtn = null;
+      }
+      if (unsubscribeLanguageChanged3) {
+        unsubscribeLanguageChanged3();
+        unsubscribeLanguageChanged3 = null;
+      }
+      log(t("log.exporter.uiCleanedUp"));
+    };
+    return container;
+  }
+  function updateExportButtonState(hasContent) {
+    if (exportBtn) {
+      exportBtn.disabled = !hasContent;
+    }
+  }
+  var clearBtn;
+  var copyBtn;
+  var exportBtnContainer;
+  var aiSubmitBtn;
+  var aiRetryBtn;
+  var unsubscribeLanguageChanged4;
+  var currentFooterMode = "quick-scan";
+  function rerenderFooterTexts() {
+    if (copyBtn) {
+      copyBtn.updateText("common.copy");
+    }
+    if (clearBtn) {
+      clearBtn.updateText("common.clear");
+    }
+    if (aiSubmitBtn) aiSubmitBtn.updateText("ai.actions.submitPending");
+    if (aiRetryBtn) aiRetryBtn.updateText("ai.actions.retryReview");
+    updateStatistics();
+  }
+  function populateModalFooter(modalFooter, updateContentCallback) {
+    const statsContainer2 = document.createElement("div");
+    statsContainer2.className = "tc-stats-container";
+    setStatsContainer(statsContainer2);
+    const footerButtonContainer = document.createElement("div");
+    footerButtonContainer.className = "tc-footer-buttons";
+    const handleCopyClick = () => {
+      const textToCopy = outputTextarea.value;
+      if (textToCopy && !copyBtn.disabled) {
+        log(t("log.ui.copyButton.copied", { count: textToCopy.length }));
+        setClipboard(textToCopy);
+        showNotification(t("notifications.copiedToClipboard"), { type: "success" });
+      } else {
+        log(t("log.ui.copyButton.nothingToCopy"));
+        showNotification(t("notifications.nothingToCopy"), { type: "info" });
+      }
+    };
+    const handleClearClick = async () => {
+      if (clearBtn.disabled) return;
+      log(t("log.ui.modal.clearContent"));
+      const confirmed = await showConfirmationModal(t("confirmation.clear"), warningIcon);
+      if (confirmed) {
+        const currentMode3 = currentMode;
+        log(t("log.ui.modal.clearingContent", { mode: currentMode3 }));
+        if (currentMode3 === "session-scan") {
+          fire("clearSessionScan");
+        } else if (currentMode3 === "element-scan") {
+          fire("clearElementScan");
+        } else if (currentMode3 === "ai-scan") {
+          fire("ai-clear");
+        }
+        updateScanCount(0, null);
+        updateContentCallback(SHOW_PLACEHOLDER, true, currentMode3);
+        showNotification(t("notifications.contentCleared"), { type: "success" });
+      } else {
+        log(t("log.ui.confirmationModal.cancelled"));
+      }
+    };
+    copyBtn = createButton({
+      className: "text-extractor-copy-btn",
+      textKey: "common.copy",
+      icon: copyIcon,
+      onClick: handleCopyClick,
+      disabled: true
+    });
+    clearBtn = createButton({
+      className: "text-extractor-clear-btn",
+      textKey: "common.clear",
+      icon: clearIcon,
+      onClick: handleClearClick,
+      disabled: true
+    });
+    exportBtnContainer = createExportButton();
+    aiSubmitBtn = createButton({
+      className: "ai-submit-btn",
+      textKey: "ai.actions.submitPending",
+      icon: aiIcon,
+      onClick: () => fire("ai-submit-pending"),
+      disabled: true
+    });
+    aiRetryBtn = createButton({
+      className: "ai-retry-btn",
+      textKey: "ai.actions.retryReview",
+      icon: aiIcon,
+      onClick: () => fire("ai-retry-review"),
+      disabled: true
+    });
+    footerButtonContainer.appendChild(exportBtnContainer);
+    footerButtonContainer.appendChild(aiRetryBtn);
+    footerButtonContainer.appendChild(aiSubmitBtn);
+    footerButtonContainer.appendChild(clearBtn);
+    footerButtonContainer.appendChild(copyBtn);
+    modalFooter.appendChild(statsContainer2);
+    modalFooter.appendChild(footerButtonContainer);
+    unsubscribeLanguageChanged4 = on("languageChanged", rerenderFooterTexts);
+  }
+  function setModalFooterMode(mode) {
+    currentFooterMode = mode;
+    aiSubmitBtn?.classList.toggle("is-visible", mode === "ai-scan");
+    aiRetryBtn?.classList.toggle("is-visible", mode === "ai-scan");
+  }
+  function updateAiFooterState(snapshot) {
+    if (!snapshot) return;
+    if (clearBtn && currentFooterMode === "ai-scan") {
+      clearBtn.disabled = (snapshot.counts?.total || 0) === 0;
+    }
+    if (aiSubmitBtn) {
+      aiSubmitBtn.disabled = !snapshot.active || snapshot.processing || (snapshot.counts?.pending || 0) === 0;
+    }
+    if (aiRetryBtn) {
+      const retryCount = (snapshot.counts?.review || 0) + (snapshot.counts?.failed || 0);
+      aiRetryBtn.disabled = !snapshot.active || snapshot.processing || retryCount === 0;
+    }
+    if (currentFooterMode !== "ai-scan") return;
+  }
+  function updateStatistics() {
+    if (!statsContainer || !outputTextarea) return;
+    requestAnimationFrame(() => {
+      const text = outputTextarea.value;
+      const lineCount = text.split("\n").length;
+      const charCount = text.length;
+      statsContainer.textContent = `${t("results.stats.lines")}: ${lineCount} | ${t("results.stats.chars")}: ${charCount}`;
+    });
+  }
+  var stringLinesCache =  new Map();
+  var lastCacheWidth = 0;
+  var lastTextValue = null;
+  var lastSplitLines = [];
+  function calcStringLines(sentence, width) {
+    if (!width || !canvasContext) return 1;
+    if (width !== lastCacheWidth) {
+      stringLinesCache.clear();
+      lastCacheWidth = width;
+    }
+    const cacheKey = sentence;
+    if (stringLinesCache.has(cacheKey)) {
+      return stringLinesCache.get(cacheKey);
+    }
+    let lineCount = 0;
+    let currentLine = "";
+    if (canvasContext.measureText(sentence).width <= width) {
+      lineCount = 1;
+      stringLinesCache.set(cacheKey, 1);
+      return 1;
+    }
+    for (let i = 0; i < sentence.length; i++) {
+      const char = sentence[i];
+      if (canvasContext.measureText(currentLine + char).width > width) {
+        lineCount++;
+        currentLine = char;
+      } else {
+        currentLine += char;
+      }
+    }
+    if (currentLine !== "" || sentence === "") {
+      lineCount++;
+    }
+    stringLinesCache.set(cacheKey, lineCount);
+    return lineCount;
+  }
+  function calcLines() {
+    const settings = loadSettings();
+    const currentValue = outputTextarea.value;
+    let lines;
+    if (currentValue === lastTextValue) {
+      lines = lastSplitLines;
+    } else {
+      lines = currentValue.split("\n");
+      lastTextValue = currentValue;
+      lastSplitLines = lines;
+    }
+    let lineNumbers = [];
+    let lineMap = [];
+    if (settings.enableWordWrap) {
+      const textareaStyles = window.getComputedStyle(outputTextarea);
+      const paddingLeft = parseFloat(textareaStyles.paddingLeft);
+      const paddingRight = parseFloat(textareaStyles.paddingRight);
+      const textareaContentWidth = outputTextarea.clientWidth - paddingLeft - paddingRight;
+      lines.forEach((lineString, realLineIndex) => {
+        const numLinesOfSentence = calcStringLines(lineString, textareaContentWidth);
+        lineNumbers.push(realLineIndex + 1);
+        lineMap.push(realLineIndex);
+        if (numLinesOfSentence > 1) {
+          for (let i = 0; i < numLinesOfSentence - 1; i++) {
+            lineNumbers.push("");
+            lineMap.push(realLineIndex);
+          }
+        }
+      });
+    } else {
+      const totalLines = lines.length;
+      for (let i = 0; i < totalLines; i++) {
+        lineNumbers.push(i + 1);
+        lineMap.push(i);
+      }
+    }
+    return { lineNumbers, lineMap };
+  }
+  function _performActiveLineUpdate() {
+    if (!lineNumbersDiv || !lineNumbersDiv.classList.contains("is-visible") || !outputTextarea)
+      return;
+    const settings = loadSettings();
+    const textarea = outputTextarea;
+    const text = textarea.value;
+    const selectionEnd = textarea.selectionEnd;
+    let cursorRealLineIndex = 0;
+    for (let i = 0; i < selectionEnd; i++) {
+      if (text[i] === "\n") {
+        cursorRealLineIndex++;
+      }
+    }
+    let finalVisualLineIndex = -1;
+    if (settings.enableWordWrap) {
+      let realLines;
+      if (text === lastTextValue) {
+        realLines = lastSplitLines;
+      } else {
+        realLines = text.split("\n");
+        lastTextValue = text;
+        lastSplitLines = realLines;
+      }
+      let positionInRealLine = selectionEnd;
+      for (let i = 0; i < cursorRealLineIndex; i++) {
+        positionInRealLine -= realLines[i].length + 1;
+      }
+      const textareaStyles = window.getComputedStyle(textarea);
+      const paddingLeft = parseFloat(textareaStyles.paddingLeft);
+      const paddingRight = parseFloat(textareaStyles.paddingRight);
+      const textareaContentWidth = textarea.clientWidth - paddingLeft - paddingRight;
+      const lineContent = realLines[cursorRealLineIndex];
+      let visualLineOffset = 0;
+      let currentLine = "";
+      for (let i = 0; i < lineContent.length; i++) {
+        const char = lineContent[i];
+        const nextLine = currentLine + char;
+        if (canvasContext.measureText(nextLine).width > textareaContentWidth) {
+          visualLineOffset++;
+          currentLine = char;
+        } else {
+          currentLine = nextLine;
+        }
+        if (i >= positionInRealLine - 1 && positionInRealLine > 0) {
+          break;
+        }
+      }
+      const firstVisualIndexOfRealLine = currentLineMap.indexOf(cursorRealLineIndex);
+      if (firstVisualIndexOfRealLine !== -1) {
+        finalVisualLineIndex = firstVisualIndexOfRealLine + visualLineOffset;
+      }
+    } else {
+      finalVisualLineIndex = cursorRealLineIndex;
+    }
+    const lineDivs = lineNumbersDiv.children;
+    for (let i = 0; i < lineDivs.length; i++) {
+      lineDivs[i].classList.remove("is-active");
+    }
+    if (finalVisualLineIndex !== -1 && lineDivs[finalVisualLineIndex]) {
+      lineDivs[finalVisualLineIndex].classList.add("is-active");
+    }
+  }
+  var isUpdateActiveLineScheduled = false;
+  function updateActiveLine() {
+    if (isUpdateActiveLineScheduled) return;
+    isUpdateActiveLineScheduled = true;
+    requestAnimationFrame(() => {
+      _performActiveLineUpdate();
+      isUpdateActiveLineScheduled = false;
+    });
+  }
+  var isThrottled = false;
+  function updateLineNumbers() {
+    if (!lineNumbersDiv || !outputTextarea || isThrottled) return;
+    isThrottled = true;
+    requestAnimationFrame(() => {
+      const { lineNumbers, lineMap } = calcLines();
+      setCurrentLineMap(lineMap);
+      const currentLineCount = lineNumbersDiv.children.length;
+      const newLineCount = lineNumbers.length;
+      for (let i = 0; i < newLineCount; i++) {
+        const lineText = lineNumbers[i] === "" ? "\xA0" : lineNumbers[i];
+        if (i < currentLineCount) {
+          if (lineNumbersDiv.children[i].textContent !== lineText) {
+            lineNumbersDiv.children[i].textContent = lineText;
+          }
+        } else {
+          const div = document.createElement("div");
+          div.textContent = lineText;
+          div.classList.add("line-number-enter-active");
+          lineNumbersDiv.appendChild(div);
+          div.addEventListener(
+            "animationend",
+            () => {
+              div.classList.remove("line-number-enter-active");
+            },
+            { once: true }
+          );
+        }
+      }
+      if (newLineCount < currentLineCount) {
+        for (let i = currentLineCount - 1; i >= newLineCount; i--) {
+          lineNumbersDiv.removeChild(lineNumbersDiv.children[i]);
+        }
+      }
+      if (newLineCount > 0) {
+        const maxLineNumber = lineNumbers[lineNumbers.length - 1];
+        let maxNumStr = String(maxLineNumber);
+        if (maxLineNumber === "") {
+          for (let k = lineNumbers.length - 1; k >= 0; k--) {
+            if (lineNumbers[k] !== "") {
+              maxNumStr = String(lineNumbers[k]);
+              break;
+            }
+          }
+        }
+        const textWidth = canvasContext.measureText(maxNumStr).width;
+        const newWidth = Math.max(40, Math.ceil(textWidth + 12));
+        lineNumbersDiv.style.setProperty("--line-number-width", `${newWidth}px`);
+      }
+      _performActiveLineUpdate();
+      isThrottled = false;
+    });
+  }
+  function initializeLineNumbers() {
+    const canvas = document.createElement("canvas");
+    const canvasContext2 = canvas.getContext("2d");
+    const textareaStyles = window.getComputedStyle(outputTextarea);
+    canvasContext2.font = `${textareaStyles.fontSize} ${textareaStyles.fontFamily}`;
+    setCanvasContext(canvasContext2);
+    const resizeObserver = new ResizeObserver(() => {
+      if (!lineNumbersDiv || !outputTextarea) return;
+      lineNumbersDiv.style.height = outputTextarea.clientHeight + "px";
+      updateLineNumbers();
+    });
+    resizeObserver.observe(outputTextarea);
+  }
+  var fullQuickScanContent = "";
+  var handleKeyDown = (event) => {
+    if (event.key === "Escape") {
+      event.stopPropagation();
+      closeModal();
+    }
+  };
+  function createMainModal() {
+    if (modalOverlay) return;
+    const { modalHeader, modalContent, modalFooter } = createModalLayout();
+    populateModalHeader(modalHeader, closeModal);
+    populateModalContent(modalContent);
+    populateModalFooter(modalFooter, updateModalContent);
+    initializeLineNumbers();
+    const handleTextareaUpdate2 = () => {
+      updateLineNumbers();
+      updateStatistics();
+    };
+    outputTextarea.addEventListener("input", handleTextareaUpdate2);
+    outputTextarea.addEventListener("click", updateActiveLine);
+    outputTextarea.addEventListener("keyup", updateActiveLine);
+    outputTextarea.addEventListener("scroll", () => {
+      lineNumbersDiv.scrollTop = outputTextarea.scrollTop;
+    });
+    updateModalAddonsVisibility();
+  }
+  async function openModal() {
+    if (!modalOverlay) {
+      console.error(t("notifications.modalInitError"));
+      return;
+    }
+    log(t("log.ui.modal.opening"));
+    updateModalContent(SHOW_LOADING, true, "quick-scan");
+    try {
+      const { formattedText, count } = await performQuickScan();
+      hideLoading();
+      fullQuickScanContent = formattedText;
+      updateModalContent(formattedText, false, "quick-scan");
+      const notificationText = simpleTemplate(t("scan.quickFinished"), { count });
+      showNotification(notificationText, { type: "success" });
+    } catch (error) {
+      hideLoading();
+      log(t("log.ui.modal.scanFailed", { error: error.message }));
+      showNotification(t("scan.quickFailed"), { type: "error" });
+      updateModalContent("[]", false, "quick-scan");
+    }
+  }
+  function closeModal() {
+    if (modalOverlay && modalOverlay.classList.contains("is-visible")) {
+      log(t("log.ui.modal.closing"));
+      modalOverlay.classList.remove("is-visible");
+      modalOverlay.removeEventListener("keydown", handleKeyDown);
+      fire("modalClosed");
+    }
+  }
+  function updateModalContent(content, shouldOpen = false, mode = "quick-scan") {
+    if (!modalOverlay) {
+      console.error("\u6A21\u6001\u6846\u5C1A\u672A\u521D\u59CB\u5316\u3002");
+      return;
+    }
+    setCurrentMode(mode);
+    setModalHeaderMode(mode);
+    setModalContentMode(mode);
+    setModalFooterMode(mode);
+    const copyBtn2 = modalOverlay.querySelector(".text-extractor-copy-btn");
+    const clearBtn2 = modalOverlay.querySelector(".text-extractor-clear-btn");
+    const textareaContainer = outputTextarea.parentElement;
+    const setButtonsDisabled = (disabled) => {
+      if (copyBtn2) copyBtn2.disabled = disabled;
+      if (clearBtn2) {
+        clearBtn2.disabled = disabled;
+      }
+      updateExportButtonState(!disabled);
+    };
+    if (content === SHOW_LOADING) {
+      placeholder.classList.remove("is-visible");
+      textareaContainer.classList.add("is-visible");
+      outputTextarea.value = "";
+      showLoading();
+      setButtonsDisabled(true);
+    } else if (content === SHOW_PLACEHOLDER) {
+      hideLoading();
+      const isAiMode = mode === "ai-scan";
+      textareaContainer.classList.toggle("is-visible", isAiMode);
+      placeholder.classList.toggle("is-visible", !isAiMode);
+      if (isAiMode) outputTextarea.value = "";
+      setButtonsDisabled(true);
+    } else {
+      hideLoading();
+      placeholder.classList.remove("is-visible");
+      textareaContainer.classList.add("is-visible");
+      const settings = loadSettings();
+      let displayText = content;
+      if (mode !== "ai-scan" && settings.enableTextTruncation && content.length > settings.textTruncationLength) {
+        displayText = content.substring(0, settings.textTruncationLength);
+        const warningMessage = t("scan.truncationWarning");
+        displayText += `
+--- ${warningMessage} ---`;
+      }
+      const isData = content && content.trim().length > 0;
+      if (!isData || content === t("results.noSummary")) {
+        updateScanCount(0, mode);
+      }
+      requestAnimationFrame(() => {
+        outputTextarea.value = displayText;
+        setButtonsDisabled(!isData);
+        outputTextarea.readOnly = !isData;
+        outputTextarea.dispatchEvent(new Event("input"));
+        updateActiveLine();
+      });
+    }
+    updateModalAddonsVisibility();
+    if (shouldOpen) {
+      modalOverlay.classList.add("is-visible");
+      modalOverlay.addEventListener("keydown", handleKeyDown);
+      modalOverlay.addEventListener(
+        "transitionend",
+        () => {
+          modalOverlay.focus();
+        },
+        { once: true }
+      );
+    }
+  }
+  function updateModalAddonsVisibility() {
+    if (!modalOverlay) return;
+    const settings = loadSettings();
+    if (lineNumbersDiv) {
+      lineNumbersDiv.classList.toggle("is-visible", settings.showLineNumbers);
+    }
+    if (statsContainer) {
+      const hasContent = outputTextarea && outputTextarea.parentElement.classList.contains("is-visible");
+      statsContainer.classList.toggle("is-visible", settings.showStatistics && hasContent);
+    }
+    if (outputTextarea) {
+      outputTextarea.classList.toggle("word-wrap-disabled", !settings.enableWordWrap);
+    }
+  }
+  var AI_ACTIONS = Object.freeze({
+    TRANSLATE: "translate",
+    KEEP: "keep",
+    REMOVE: "remove",
+    REVIEW: "review"
+  });
+  var AI_CANDIDATE_STATUS = Object.freeze({
+    PENDING: "pending",
+    IN_FLIGHT: "inflight",
+    TRANSLATED: "translated",
+    KEEP: "keep",
+    REMOVED: "removed",
+    REVIEW: "review",
+    FAILED: "failed"
+  });
+  var AI_PROCESSING_MODES = Object.freeze({
+    AUTO: "auto",
+    MANUAL: "manual"
+  });
+  var AI_TARGET_LANGUAGES = Object.freeze({
+    SIMPLIFIED_CHINESE: "zh-CN",
+    TRADITIONAL_CHINESE: "zh-TW"
+  });
+  var AI_RESPONSE_MODES = Object.freeze({
+    JSON: "json-mode",
+    PROMPT_JSON: "prompt-json"
+  });
+  var AI_SETTINGS_VERSION = 2;
+  var DEFAULT_DEEPSEEK_PROVIDER = Object.freeze({
+    id: "deepseek",
+    name: "DeepSeek",
+    apiUrl: "https://api.deepseek.com/chat/completions",
+    model: "deepseek-v4-flash",
+    protocol: "openai-chat-completions",
+    responseMode: AI_RESPONSE_MODES.JSON
+  });
+  var AI_DEFAULT_SETTINGS = Object.freeze({
+    version: AI_SETTINGS_VERSION,
+    enabled: true,
+    processingMode: AI_PROCESSING_MODES.MANUAL,
+    targetLanguage: AI_TARGET_LANGUAGES.SIMPLIFIED_CHINESE,
+    confidenceThreshold: 0.85,
+    activeProviderId: DEFAULT_DEEPSEEK_PROVIDER.id,
+    providers: [DEFAULT_DEEPSEEK_PROVIDER],
+    requestTimeoutMs: 45e3,
+    batch: {
+      maxItems: 100,
+      maxCharacters: 3e4,
+      debounceMs: 1200
+    },
+    budget: {
+      maxRequestsPerSession: 20,
+      maxCharactersPerSession: 5e4,
+      maxEstimatedTokensPerDay: 3e4
+    }
+  });
+  var ALLOWED_TARGETS = new Set(Object.values(AI_TARGET_LANGUAGES));
+  var ALLOWED_PROCESSING_MODES = new Set(Object.values(AI_PROCESSING_MODES));
+  var ALLOWED_RESPONSE_MODES = new Set(Object.values(AI_RESPONSE_MODES));
+  function clampNumber(value, fallback, min, max) {
+    const parsed = Number(value);
+    if (!Number.isFinite(parsed)) return fallback;
+    return Math.min(max, Math.max(min, parsed));
+  }
+  function normalizeProvider(provider, index = 0) {
+    const fallback = index === 0 ? DEFAULT_DEEPSEEK_PROVIDER : {
+      id: `custom-${index}`,
+      name: `Provider ${index + 1}`,
+      apiUrl: "",
+      model: "",
+      protocol: "openai-chat-completions",
+      responseMode: AI_RESPONSE_MODES.PROMPT_JSON
+    };
+    const id = String(provider?.id || fallback.id).replace(/[^a-zA-Z0-9_-]/g, "-");
+    return {
+      id: id || fallback.id,
+      name: String(provider?.name || fallback.name).trim().slice(0, 80),
+      apiUrl: String(provider?.apiUrl ?? fallback.apiUrl).trim().slice(0, 2048),
+      model: String(provider?.model ?? fallback.model).trim().slice(0, 120),
+      protocol: "openai-chat-completions",
+      responseMode: ALLOWED_RESPONSE_MODES.has(provider?.responseMode) ? provider.responseMode : fallback.responseMode
+    };
+  }
+  function mergeAiSettings(value = {}) {
+    const providers = Array.isArray(value.providers) && value.providers.length > 0 ? value.providers.map(normalizeProvider) : [normalizeProvider(DEFAULT_DEEPSEEK_PROVIDER)];
+    const providerIds = new Set(providers.map((provider) => provider.id));
+    const activeProviderId = providerIds.has(value.activeProviderId) ? value.activeProviderId : providers[0].id;
+    const shouldMigrateLegacyBatch = Number(value.version || 1) < AI_SETTINGS_VERSION && Number(value.batch?.maxItems) === 20 && Number(value.batch?.maxCharacters) === 6e3;
+    const batchValue = shouldMigrateLegacyBatch ? {
+      ...value.batch,
+      maxItems: AI_DEFAULT_SETTINGS.batch.maxItems,
+      maxCharacters: AI_DEFAULT_SETTINGS.batch.maxCharacters
+    } : value.batch;
+    return {
+      version: AI_SETTINGS_VERSION,
+      enabled: value.enabled !== false,
+      processingMode: ALLOWED_PROCESSING_MODES.has(value.processingMode) ? value.processingMode : AI_DEFAULT_SETTINGS.processingMode,
+      targetLanguage: ALLOWED_TARGETS.has(value.targetLanguage) ? value.targetLanguage : AI_DEFAULT_SETTINGS.targetLanguage,
+      confidenceThreshold: clampNumber(value.confidenceThreshold, AI_DEFAULT_SETTINGS.confidenceThreshold, 0.5, 1),
+      activeProviderId,
+      providers,
+      requestTimeoutMs: clampNumber(value.requestTimeoutMs, AI_DEFAULT_SETTINGS.requestTimeoutMs, 5e3, 12e4),
+      batch: {
+        maxItems: Math.round(clampNumber(batchValue?.maxItems, AI_DEFAULT_SETTINGS.batch.maxItems, 1, 200)),
+        maxCharacters: Math.round(
+          clampNumber(batchValue?.maxCharacters, AI_DEFAULT_SETTINGS.batch.maxCharacters, 500, 6e4)
+        ),
+        debounceMs: Math.round(
+          clampNumber(batchValue?.debounceMs, AI_DEFAULT_SETTINGS.batch.debounceMs, 200, 1e4)
+        )
+      },
+      budget: {
+        maxRequestsPerSession: Math.round(
+          clampNumber(
+            value.budget?.maxRequestsPerSession,
+            AI_DEFAULT_SETTINGS.budget.maxRequestsPerSession,
+            1,
+            500
+          )
+        ),
+        maxCharactersPerSession: Math.round(
+          clampNumber(
+            value.budget?.maxCharactersPerSession,
+            AI_DEFAULT_SETTINGS.budget.maxCharactersPerSession,
+            1e3,
+            1e6
+          )
+        ),
+        maxEstimatedTokensPerDay: Math.round(
+          clampNumber(
+            value.budget?.maxEstimatedTokensPerDay,
+            AI_DEFAULT_SETTINGS.budget.maxEstimatedTokensPerDay,
+            1e3,
+            1e7
+          )
+        )
+      }
+    };
+  }
+  function getActiveProvider(aiSettings) {
+    return aiSettings.providers.find((provider) => provider.id === aiSettings.activeProviderId) || aiSettings.providers[0] || null;
+  }
+  function hashText(value) {
+    let hash = 2166136261;
+    const input = String(value);
+    for (let index = 0; index < input.length; index += 1) {
+      hash ^= input.charCodeAt(index);
+      hash = Math.imul(hash, 16777619);
+    }
+    return (hash >>> 0).toString(36);
+  }
+  function createCandidateFingerprint(siteKey, targetLanguage, sourceText) {
+    const normalizedText = String(sourceText).normalize("NFC").replace(/\s+/g, " ").trim();
+    return hashText(`${siteKey}\0${targetLanguage}\0${normalizedText}`);
+  }
+  var defaultSettings = {
+    language: "auto",
+    outputFormat: "array",
+    includeArrayBrackets: true,
+    theme: "system",
+    showFab: true,
+    fabPosition: "bottom-right",
+    showScanCount: true,
+    showLineNumbers: true,
+    showStatistics: true,
+    enableWordWrap: false,
+    enableTextTruncation: true,
+    textTruncationLength: 5e4,
+    enableDebugLogging: false,
+    elementScan_persistData: true,
+    sessionScan_persistData: true,
+    ai: AI_DEFAULT_SETTINGS,
+    filterRules: {
+      numbers: true,
+      chinese: true,
+      containsChinese: false,
+      emojiOnly: true,
+      symbols: true,
+      termFilter: true,
+      singleLetter: false,
+      repeatingChars: true,
+      filePath: true,
+      hexColor: true,
+      email: true,
+      uuid: true,
+      gitCommitHash: true,
+      websiteUrl: true,
+      shorthandNumber: true
+    }
+  };
+  function applySettings(newSettings, oldSettings) {
+    updateLoggerState(newSettings.enableDebugLogging);
+    applyTheme(newSettings.theme);
+    const languageChanged = oldSettings.language !== newSettings.language;
+    if (languageChanged) {
+      switchLanguage(newSettings.language);
+    }
+    const fabContainer = uiContainer.querySelector(".text-extractor-fab-container");
+    if (fabContainer) {
+      fabContainer.classList.toggle("fab-container-visible", newSettings.showFab);
+    }
+    updateModalAddonsVisibility();
+    setTimeout(() => {
+      fire("settingsSaved");
+      showNotification(t("notifications.settingsSaved"), { type: "success" });
+    }, 50);
+  }
+  function loadSettings() {
+    const savedSettings = getValue("script_settings", null);
+    if (savedSettings) {
+      try {
+        const parsedSettings = JSON.parse(savedSettings);
+        const mergedSettings = {
+          ...defaultSettings,
+          ...parsedSettings,
+          filterRules: {
+            ...defaultSettings.filterRules,
+            ...parsedSettings.filterRules || {}
+          },
+          ai: mergeAiSettings(parsedSettings.ai)
+        };
+        return mergedSettings;
+      } catch (error) {
+        log(t("log.settings.parseError"), error);
+        return defaultSettings;
+      }
+    }
+    return defaultSettings;
+  }
+  function saveSettings(newSettings) {
+    if (typeof newSettings !== "object" || newSettings === null) {
+      log(t("log.settings.invalidObject"), newSettings);
+      return;
+    }
+    const oldSettings = loadSettings();
+    Object.keys(newSettings).forEach((key) => {
+      if (key !== "filterRules" && oldSettings[key] !== newSettings[key]) {
+        log(
+          t("log.settings.changed", {
+            key,
+            oldValue: oldSettings[key],
+            newValue: newSettings[key]
+          })
+        );
+      }
+    });
+    const oldRules = oldSettings.filterRules || {};
+    const newRules = newSettings.filterRules || {};
+    const allRuleKeys =  new Set([...Object.keys(oldRules), ...Object.keys(newRules)]);
+    allRuleKeys.forEach((key) => {
+      const oldValue = !!oldRules[key];
+      const newValue = !!newRules[key];
+      if (oldValue !== newValue) {
+        const statusKey = newValue ? "log.settings.filterRuleChanged.enabled" : "log.settings.filterRuleChanged.disabled";
+        log(t(statusKey, { key }));
+      }
+    });
+    const mergedSettings = {
+      ...oldSettings,
+      ...newSettings,
+      filterRules: {
+        ...oldSettings.filterRules,
+        ...newSettings.filterRules || {}
+      },
+      ai: mergeAiSettings(newSettings.ai || oldSettings.ai)
+    };
+    setValue("script_settings", JSON.stringify(mergedSettings));
+    return mergedSettings;
+  }
+  var SCAN_MODES = Object.freeze({
+    IDLE: "idle",
+    DYNAMIC: "normal-dynamic",
+    STATIC: "static",
+    ELEMENT: "element",
+    AI: "ai"
+  });
+  var activeMode = SCAN_MODES.IDLE;
+  var listeners =  new Set();
+  function notify(previousMode) {
+    listeners.forEach((listener) => {
+      listener({ activeMode, previousMode });
+    });
+  }
+  function canAcquireScanMode(mode) {
+    return activeMode === SCAN_MODES.IDLE || activeMode === mode;
+  }
+  function acquireScanMode(mode) {
+    if (!Object.values(SCAN_MODES).includes(mode) || mode === SCAN_MODES.IDLE) {
+      return false;
+    }
+    if (!canAcquireScanMode(mode)) {
+      return false;
+    }
+    if (activeMode === mode) {
+      return true;
+    }
+    const previousMode = activeMode;
+    activeMode = mode;
+    notify(previousMode);
+    return true;
+  }
+  function releaseScanMode(mode) {
+    if (activeMode !== mode) {
+      return false;
+    }
+    const previousMode = activeMode;
+    activeMode = SCAN_MODES.IDLE;
+    notify(previousMode);
+    return true;
+  }
+  function subscribeScanMode(listener) {
+    listeners.add(listener);
+    return () => listeners.delete(listener);
+  }
+  var snapshots =  new Map();
+  function applyAiExclusiveFabState(fabs, isAiActive, setDisabled, setTooltip) {
+    const ordinaryFabs = fabs.filter(Boolean);
+    if (isAiActive) {
+      ordinaryFabs.forEach((fab) => {
+        if (!snapshots.has(fab)) {
+          snapshots.set(fab, {
+            disabled: Boolean(fab.disabled),
+            hadDisabledClass: fab.classList.contains("fab-disabled"),
+            ariaDisabled: fab.getAttribute("aria-disabled"),
+            tabIndex: fab.tabIndex,
+            tooltipKey: fab.dataset.tooltipKey
+          });
+        }
+        setDisabled(fab, true, "tooltip.disabled.ai_scan_active");
+      });
+      return;
+    }
+    ordinaryFabs.forEach((fab) => {
+      const snapshot = snapshots.get(fab);
+      if (!snapshot) return;
+      fab.disabled = snapshot.disabled;
+      fab.classList.toggle("fab-disabled", snapshot.hadDisabledClass);
+      fab.setAttribute("aria-disabled", snapshot.ariaDisabled || String(snapshot.disabled));
+      fab.tabIndex = snapshot.tabIndex;
+      setTooltip(fab, snapshot.tooltipKey);
+      snapshots.delete(fab);
+    });
+  }
+  var summaryFab;
+  var aiFab;
+  var dynamicFab;
+  var staticFab;
+  var elementScanFab;
+  var unsubscribeScanMode = null;
+  function syncAiFabAvailability() {
+    if (!aiFab) return;
+    const enabled = loadSettings().ai?.enabled !== false;
+    aiFab.classList.toggle("fab-feature-hidden", !enabled);
+    aiFab.setAttribute("aria-hidden", String(!enabled));
+    const tooltipKey = !enabled ? "tooltip.ai_disabled" : aiFab.classList.contains("is-recording") ? "tooltip.ai_scan_stop" : "tooltip.ai_scan";
+    setFabDisabled(aiFab, !enabled, tooltipKey);
+  }
+  function createSingleFab(className, iconSVGString, titleKey, onClick) {
+    const fab = document.createElement("div");
+    fab.className = `text-extractor-fab ${className}`;
+    fab.setAttribute("role", "button");
+    fab.setAttribute("aria-disabled", "false");
+    fab.setAttribute("aria-label", t(titleKey));
+    fab.tabIndex = 0;
+    const svgIcon = createSVGFromString(iconSVGString);
+    if (svgIcon) {
+      fab.appendChild(svgIcon);
+    }
+    fab.dataset.tooltipKey = titleKey;
+    fab.addEventListener("click", (event) => {
+      if (fab.classList.contains("fab-disabled")) {
+        event.stopPropagation();
+        return;
+      }
+      onClick(event);
+    });
+    fab.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      fab.click();
+    });
+    fab.addEventListener("mouseenter", () => {
+      showTooltip(fab, t(fab.dataset.tooltipKey));
+    });
+    fab.addEventListener("mouseleave", () => {
+      hideTooltip();
+    });
+    fab.style.pointerEvents = "auto";
+    return fab;
+  }
+  function createFab({ callbacks, isVisible }) {
+    const { onStaticExtract, onDynamicExtract, onSummary, onElementScan, onAiScan } = callbacks;
+    const fabContainer = document.createElement("div");
+    fabContainer.className = "text-extractor-fab-container";
+    summaryFab = createSingleFab("fab-summary", summaryIcon, "tooltip.summary", onSummary);
+    aiFab = createSingleFab("fab-ai-scan", aiIcon, "tooltip.ai_scan", () => onAiScan(aiFab));
+    dynamicFab = createSingleFab(
+      "fab-dynamic",
+      dynamicIcon,
+      "tooltip.dynamic_scan",
+      () => onDynamicExtract(dynamicFab)
+    );
+    staticFab = createSingleFab("fab-static", translateIcon, "tooltip.static_scan", onStaticExtract);
+    elementScanFab = createSingleFab(
+      "fab-element-scan",
+      elementScanIcon,
+      "tooltip.element_scan",
+      () => onElementScan(elementScanFab)
+    );
+    fabContainer.appendChild(summaryFab);
+    fabContainer.appendChild(aiFab);
+    fabContainer.appendChild(dynamicFab);
+    fabContainer.appendChild(staticFab);
+    fabContainer.appendChild(elementScanFab);
+    uiContainer.appendChild(fabContainer);
+    syncAiFabAvailability();
+    if (isVisible) {
+      setTimeout(() => {
+        fabContainer.classList.add("fab-container-visible");
+      }, appConfig.ui.fabAnimationDelay);
+    }
+    updateFabPosition(fabContainer);
+    on("settingsSaved", () => {
+      updateFabPosition(fabContainer);
+      syncAiFabAvailability();
+    });
+    on("languageChanged", () => {
+      [summaryFab, aiFab, dynamicFab, staticFab, elementScanFab].forEach((fab) => {
+        if (fab?.dataset.tooltipKey) fab.setAttribute("aria-label", t(fab.dataset.tooltipKey));
+      });
+    });
+    if (unsubscribeScanMode) unsubscribeScanMode();
+    unsubscribeScanMode = subscribeScanMode(({ activeMode: activeMode2 }) => {
+      applyAiExclusiveFabState(
+        [dynamicFab, staticFab, elementScanFab],
+        activeMode2 === SCAN_MODES.AI,
+        setFabDisabled,
+        updateFabTooltip
+      );
+    });
+  }
+  function setFabDisabled(fabElement, disabled, tooltipKey = null) {
+    if (!fabElement) return;
+    fabElement.disabled = Boolean(disabled);
+    fabElement.classList.toggle("fab-disabled", Boolean(disabled));
+    fabElement.setAttribute("aria-disabled", String(Boolean(disabled)));
+    fabElement.tabIndex = disabled ? -1 : 0;
+    if (tooltipKey) updateFabTooltip(fabElement, tooltipKey);
+  }
+  function updateFabPosition(fabContainer) {
+    if (!fabContainer) return;
+    const settings = loadSettings();
+    const position = settings.fabPosition || "bottom-right";
+    fabContainer.classList.remove(
+      "fab-position-bottom-right",
+      "fab-position-top-right",
+      "fab-position-bottom-left",
+      "fab-position-top-left"
+    );
+    fabContainer.classList.add(`fab-position-${position}`);
+  }
+  function setFabIcon(fabElement, iconSVGString) {
+    while (fabElement.firstChild) {
+      fabElement.removeChild(fabElement.firstChild);
+    }
+    const newIcon = createSVGFromString(iconSVGString);
+    if (newIcon) {
+      fabElement.appendChild(newIcon);
+    }
+  }
+  function getDynamicFab() {
+    return dynamicFab;
+  }
+  function getAiFab() {
+    return aiFab;
+  }
+  function getElementScanFab() {
+    return elementScanFab;
+  }
+  function updateFabTooltip(fabElement, newTooltipKey) {
+    if (fabElement) {
+      fabElement.dataset.tooltipKey = newTooltipKey;
+      fabElement.setAttribute("aria-label", t(newTooltipKey));
+    }
+  }
+  async function handleQuickScanClick() {
+    if (!acquireScanMode(SCAN_MODES.STATIC)) {
+      showNotification(t("notifications.scanModeConflict"), { type: "info" });
+      return;
+    }
+    log(t("scan.quick"));
+    try {
+      await openModal();
+    } finally {
+      releaseScanMode(SCAN_MODES.STATIC);
+    }
+  }
+  var sessionTexts =  new Set();
   var filterRules = {};
   function initFallback(rules) {
     filterRules = rules || {};
@@ -4490,7 +6787,6 @@ ${result.join(",\n")}
     sessionTexts.clear();
     log(t("log.sessionScan.fallback.cleared"));
   }
-  // src/shared/services/sessionPersistence.js
   var SESSION_KEY = "qing_pagescanner_session";
   var RESUME_TIMEOUT_MS = 3e5;
   var isPersistenceEnabled = false;
@@ -4536,7 +6832,6 @@ ${result.join(",\n")}
       await clearActiveSession();
     }
   }
-  // src/shared/services/translationBridge.js
   var TRANSLATION_STATE_ATTRIBUTE = "data-qing-web-translate-state";
   var TRANSLATION_STATE_EVENT = "qing-web-translate:state";
   var TRANSLATION_IDLE_STATE = "idle";
@@ -4604,7 +6899,6 @@ ${result.join(",\n")}
       timeoutId = setTimeout(() => finish(true), timeoutMs);
     });
   }
-  // src/features/session-scan/logic.js
   var isRecording = false;
   var isPaused = false;
   var observer = null;
@@ -4613,10 +6907,10 @@ ${result.join(",\n")}
   var onSummaryCallback = null;
   var onUpdateCallback = null;
   var currentCount = 0;
-  var sessionTextsMirror = /* @__PURE__ */ new Set();
+  var sessionTextsMirror =  new Set();
   var autoSaveInterval = null;
   var AUTO_SAVE_INTERVAL_MS = 5e3;
-  var pendingDynamicRoots = /* @__PURE__ */ new Set();
+  var pendingDynamicRoots =  new Set();
   var pendingDynamicFlushTimeout = null;
   var pendingDynamicWaitStartedAt = null;
   function clearPendingDynamicRoots() {
@@ -4646,9 +6940,9 @@ ${result.join(",\n")}
   }
   function flushPendingDynamicRoots() {
     if (!isRecording || pendingDynamicRoots.size === 0) return;
-    const pendingRoots = Array.from(pendingDynamicRoots);
-    const pendingRootSet = new Set(pendingRoots);
-    const roots = pendingRoots.filter((root) => {
+    const pendingRoots2 = Array.from(pendingDynamicRoots);
+    const pendingRootSet = new Set(pendingRoots2);
+    const roots = pendingRoots2.filter((root) => {
       let parent = root.parentElement;
       while (parent) {
         if (pendingRootSet.has(parent)) return false;
@@ -4927,926 +7221,6 @@ ${result.join(",\n")}
       observer.observe(document.body, { childList: true, subtree: true });
     }
   };
-  // src/shared/ui/mainModal/modalLayout.js
-  function createModalLayout() {
-    const modalOverlay2 = document.createElement("div");
-    modalOverlay2.className = "text-extractor-modal-overlay";
-    modalOverlay2.tabIndex = -1;
-    setModalOverlay(modalOverlay2);
-    const modal = document.createElement("div");
-    modal.className = "text-extractor-modal";
-    const modalHeader = document.createElement("div");
-    modalHeader.className = "text-extractor-modal-header";
-    const modalContent = document.createElement("div");
-    modalContent.className = "text-extractor-modal-content";
-    const modalFooter = document.createElement("div");
-    modalFooter.className = "text-extractor-modal-footer";
-    modal.appendChild(modalHeader);
-    modal.appendChild(modalContent);
-    modal.appendChild(modalFooter);
-    modalOverlay2.appendChild(modal);
-    uiContainer.appendChild(modalOverlay2);
-    return { modal, modalHeader, modalContent, modalFooter };
-  }
-  // src/assets/icons/loadingSpinner.js
-  var loadingSpinner = `
-  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25"/>
-    <path d="M12,4a8,8,0,0,1,7.89,6.7A1.53,1.53,0,0,0,21.38,12h0a1.5,1.5,0,0,0,1.48-1.75,11,11,0,0,0-21.72,0A1.5,1.5,0,0,0,2.62,12h0a1.53,1.53,0,0,0,1.49-1.3A8,8,0,0,1,12,4Z">
-      <animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="0.75s" repeatCount="indefinite"/>
-    </path>
-  </svg>
-`;
-  // src/shared/ui/mainModal/modalContent.js
-  var placeholder2;
-  var unsubscribeLanguageChanged2;
-  function rerenderPlaceholder() {
-    if (!placeholder2) return;
-    placeholder2.replaceChildren();
-    const placeholderIconDiv = document.createElement("div");
-    placeholderIconDiv.className = "placeholder-icon";
-    const infoIconSVG = createSVGFromString(infoIcon);
-    if (infoIconSVG) placeholderIconDiv.appendChild(infoIconSVG);
-    const p1 = document.createElement("p");
-    p1.textContent = t("results.noSummary");
-    const p2 = document.createElement("p");
-    p2.className = "placeholder-actions";
-    p2.append(t("placeholders.click"));
-    const span2 = document.createElement("span");
-    span2.className = "placeholder-action-icon";
-    const dynamicIconSVG = createSVGFromString(dynamicIcon);
-    if (dynamicIconSVG) span2.appendChild(dynamicIconSVG);
-    p2.appendChild(span2);
-    const strong2 = document.createElement("strong");
-    strong2.textContent = t("placeholders.dynamicScan");
-    p2.appendChild(strong2);
-    p2.append(t("placeholders.startNewScanSession"));
-    const p3 = document.createElement("p");
-    p3.className = "placeholder-actions";
-    p3.append(t("placeholders.click"));
-    const span3 = document.createElement("span");
-    span3.className = "placeholder-action-icon";
-    const translateIconSVG = createSVGFromString(translateIcon);
-    if (translateIconSVG) span3.appendChild(translateIconSVG);
-    p3.appendChild(span3);
-    const strong3 = document.createElement("strong");
-    strong3.textContent = t("placeholders.staticScan");
-    p3.appendChild(strong3);
-    p3.append(t("placeholders.performOneTimeScan"));
-    placeholder2.appendChild(placeholderIconDiv);
-    placeholder2.appendChild(p1);
-    placeholder2.appendChild(p2);
-    placeholder2.appendChild(p3);
-  }
-  function createLoadingSpinner() {
-    const loadingContainer2 = document.createElement("div");
-    loadingContainer2.className = "gm-loading-overlay";
-    const spinner = document.createElement("div");
-    spinner.className = "gm-loading-spinner";
-    const spinnerSVG = createSVGFromString(loadingSpinner);
-    if (spinnerSVG) spinner.appendChild(spinnerSVG);
-    loadingContainer2.appendChild(spinner);
-    return loadingContainer2;
-  }
-  function populateModalContent(modalContent) {
-    if (appConfig.ui.modalContentHeight) {
-      modalContent.style.height = appConfig.ui.modalContentHeight;
-    }
-    placeholder2 = document.createElement("div");
-    placeholder2.id = "modal-placeholder";
-    rerenderPlaceholder();
-    setPlaceholder(placeholder2);
-    const textareaContainer = document.createElement("div");
-    textareaContainer.className = "tc-textarea-container";
-    const lineNumbersDiv2 = document.createElement("div");
-    lineNumbersDiv2.className = "tc-line-numbers";
-    setLineNumbersDiv(lineNumbersDiv2);
-    const outputTextarea2 = document.createElement("textarea");
-    outputTextarea2.id = "text-extractor-output";
-    outputTextarea2.className = "tc-textarea";
-    setOutputTextarea(outputTextarea2);
-    textareaContainer.appendChild(lineNumbersDiv2);
-    textareaContainer.appendChild(outputTextarea2);
-    const loadingContainer2 = createLoadingSpinner();
-    setLoadingContainer(loadingContainer2);
-    modalContent.appendChild(placeholder2);
-    modalContent.appendChild(textareaContainer);
-    modalContent.appendChild(loadingContainer2);
-    unsubscribeLanguageChanged2 = on("languageChanged", rerenderPlaceholder);
-  }
-  function showLoading() {
-    if (loadingContainer) loadingContainer.classList.add("is-visible");
-    if (outputTextarea) outputTextarea.disabled = true;
-  }
-  function hideLoading() {
-    if (loadingContainer) loadingContainer.classList.remove("is-visible");
-    if (outputTextarea) outputTextarea.disabled = false;
-  }
-  // src/assets/icons/copyIcon.js
-  var copyIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M120-220v-80h80v80h-80Zm0-140v-80h80v80h-80Zm0-140v-80h80v80h-80ZM260-80v-80h80v80h-80Zm100-160q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480Zm40 240v-80h80v80h-80Zm-200 0q-33 0-56.5-23.5T120-160h80v80Zm340 0v-80h80q0 33-23.5 56.5T540-80ZM120-640q0-33 23.5-56.5T200-720v80h-80Zm420 80Z"/></svg>`;
-  // src/assets/icons/clearIcon.js
-  var clearIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M120-40v-280q0-83 58.5-141.5T320-520h40v-320q0-33 23.5-56.5T440-920h80q33 0 56.5 23.5T600-840v320h40q83 0 141.5 58.5T840-320v280H120Zm80-80h80v-120q0-17 11.5-28.5T320-280q17 0 28.5 11.5T360-240v120h80v-120q0-17 11.5-28.5T480-280q17 0 28.5 11.5T520-240v120h80v-120q0-17 11.5-28.5T640-280q17 0 28.5 11.5T680-240v120h80v-200q0-50-35-85t-85-35H320q-50 0-85 35t-35 85v200Zm320-400v-320h-80v320h80Zm0 0h-80 80Z"/></svg>`;
-  // src/shared/ui/components/button.js
-  function createButton({ id, className, textKey, tooltipKey, icon, onClick, disabled = false, iconOnly = false }) {
-    const button = document.createElement("button");
-    const controller2 = new AbortController();
-    const { signal } = controller2;
-    if (id) {
-      button.id = id;
-    }
-    if (iconOnly) {
-      button.className = "tc-icon-button";
-      if (className) {
-        button.classList.add(className);
-      }
-      button.innerHTML = createTrustedHTML(icon);
-      let currentTooltipKey = tooltipKey;
-      button.addEventListener("mouseover", () => showTooltip(button, t(currentTooltipKey)), { signal });
-      button.addEventListener("mouseout", hideTooltip, { signal });
-      button.updateText = (newTooltipKey) => {
-        currentTooltipKey = newTooltipKey;
-      };
-    } else {
-      button.className = "tc-button";
-      if (className) {
-        button.classList.add(className);
-      }
-      button.appendChild(createIconTitle(icon, t(textKey)));
-      button.updateText = (newTextKey) => {
-        const textElement = button.querySelector(".icon-title-text");
-        if (textElement) {
-          textElement.textContent = t(newTextKey);
-        }
-      };
-    }
-    button.disabled = disabled;
-    if (onClick && typeof onClick === "function") {
-      button.addEventListener("click", onClick, { signal });
-    }
-    button.updateIcon = (newIcon) => {
-      const oldIconElements = button.querySelectorAll("svg");
-      const newIconElement = createSVGFromString(newIcon);
-      newIconElement.style.opacity = "0";
-      button.appendChild(newIconElement);
-      void newIconElement.offsetHeight;
-      requestAnimationFrame(() => {
-        oldIconElements.forEach((icon2) => {
-          icon2.style.opacity = "0";
-        });
-        newIconElement.style.opacity = "1";
-      });
-      setTimeout(() => {
-        oldIconElements.forEach((icon2) => icon2.remove());
-      }, 300);
-    };
-    button.destroy = () => controller2.abort();
-    button.style.pointerEvents = "auto";
-    return button;
-  }
-  // src/assets/icons/confirmIcon.js
-  var confirmIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg>`;
-  // src/shared/ui/components/confirmationModal.js
-  var modalContainer = null;
-  var resolvePromise = null;
-  var confirmButton = null;
-  var cancelButton = null;
-  var controller = null;
-  function showConfirmationModal(text, iconSVG) {
-    return new Promise((resolve) => {
-      resolvePromise = resolve;
-      controller = new AbortController();
-      const { signal } = controller;
-      if (!modalContainer) {
-        modalContainer = document.createElement("div");
-        modalContainer.className = "confirmation-modal-overlay";
-        const modalContent = document.createElement("div");
-        modalContent.className = "confirmation-modal-content";
-        const iconContainer = document.createElement("div");
-        iconContainer.className = "confirmation-modal-icon";
-        const textContainer = document.createElement("p");
-        textContainer.className = "confirmation-modal-text";
-        const buttonContainer = document.createElement("div");
-        buttonContainer.className = "confirmation-modal-buttons";
-        confirmButton = createButton({
-          className: "confirm",
-          textKey: "common.confirm",
-          icon: confirmIcon,
-          onClick: () => handleConfirmation(true)
-        });
-        cancelButton = createButton({
-          className: "cancel",
-          textKey: "common.cancel",
-          icon: closeIcon,
-          onClick: () => handleConfirmation(false)
-        });
-        buttonContainer.append(cancelButton, confirmButton);
-        modalContent.append(iconContainer, textContainer, buttonContainer);
-        modalContainer.append(modalContent);
-        uiContainer.append(modalContainer);
-        modalContainer.addEventListener("click", (e) => {
-          if (e.target === modalContainer) {
-            handleConfirmation(false);
-          }
-        }, { signal });
-      }
-      modalContainer.querySelector(".confirmation-modal-icon").replaceChildren(createSVGFromString(iconSVG));
-      modalContainer.querySelector(".confirmation-modal-text").textContent = text;
-      setTimeout(() => {
-        modalContainer.classList.add("is-visible");
-      }, 50);
-    });
-  }
-  function handleConfirmation(confirmed) {
-    if (modalContainer) {
-      modalContainer.classList.remove("is-visible");
-      setTimeout(() => {
-        if (confirmButton) {
-          confirmButton.destroy();
-          confirmButton = null;
-        }
-        if (cancelButton) {
-          cancelButton.destroy();
-          cancelButton = null;
-        }
-        if (controller) {
-          controller.abort();
-          controller = null;
-        }
-        modalContainer.remove();
-        modalContainer = null;
-        if (resolvePromise) {
-          resolvePromise(confirmed);
-          resolvePromise = null;
-        }
-      }, 300);
-    }
-  }
-  // src/assets/icons/warningIcon.js
-  var warningIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m40-120 440-760 440 760H40Zm138-80h604L480-720 178-200Zm302-40q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Zm40-100Z"/></svg>`;
-  // src/assets/icons/exportIcon.js
-  var exportIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80 280-280l56-56 104 103v-407h80v407l104-103 56 56L480-80ZM146-260q-32-49-49-105T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 59-17 115t-49 105l-58-58q22-37 33-78t11-84q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 43 11 84t33 78l-58 58Z"/></svg>`;
-  // src/features/export/ui.js
-  var exportBtn;
-  var unsubscribeLanguageChanged3;
-  function rerenderExportTexts() {
-    if (exportBtn) {
-      exportBtn.updateText("common.export");
-    }
-  }
-  function createExportButton() {
-    const container = document.createElement("div");
-    container.className = "tc-export-btn-container";
-    exportBtn = createButton({
-      className: "text-extractor-export-btn",
-      textKey: "common.export",
-      icon: exportIcon,
-      disabled: true,
-      onClick: () => {
-        log(t("log.exporter.buttonClicked", { format: "auto" }));
-        fire("exportToFile", {});
-      }
-    });
-    container.appendChild(exportBtn);
-    unsubscribeLanguageChanged3 = on("languageChanged", rerenderExportTexts);
-    container.destroy = () => {
-      if (exportBtn) {
-        exportBtn.destroy();
-        exportBtn = null;
-      }
-      if (unsubscribeLanguageChanged3) {
-        unsubscribeLanguageChanged3();
-        unsubscribeLanguageChanged3 = null;
-      }
-      log(t("log.exporter.uiCleanedUp"));
-    };
-    return container;
-  }
-  function updateExportButtonState(hasContent) {
-    if (exportBtn) {
-      exportBtn.disabled = !hasContent;
-    }
-  }
-  // src/shared/ui/mainModal/modalFooter.js
-  var clearBtn;
-  var copyBtn;
-  var exportBtnContainer;
-  var unsubscribeLanguageChanged4;
-  function rerenderFooterTexts() {
-    if (copyBtn) {
-      copyBtn.updateText("common.copy");
-    }
-    if (clearBtn) {
-      clearBtn.updateText("common.clear");
-    }
-    updateStatistics();
-  }
-  function populateModalFooter(modalFooter, updateContentCallback) {
-    const statsContainer2 = document.createElement("div");
-    statsContainer2.className = "tc-stats-container";
-    setStatsContainer(statsContainer2);
-    const footerButtonContainer = document.createElement("div");
-    footerButtonContainer.className = "tc-footer-buttons";
-    const handleCopyClick = () => {
-      const textToCopy = outputTextarea.value;
-      if (textToCopy && !copyBtn.disabled) {
-        log(t("log.ui.copyButton.copied", { count: textToCopy.length }));
-        setClipboard(textToCopy);
-        showNotification(t("notifications.copiedToClipboard"), { type: "success" });
-      } else {
-        log(t("log.ui.copyButton.nothingToCopy"));
-        showNotification(t("notifications.nothingToCopy"), { type: "info" });
-      }
-    };
-    const handleClearClick = async () => {
-      if (clearBtn.disabled) return;
-      log(t("log.ui.modal.clearContent"));
-      const confirmed = await showConfirmationModal(
-        t("confirmation.clear"),
-        warningIcon
-      );
-      if (confirmed) {
-        const currentMode2 = currentMode;
-        log(t("log.ui.modal.clearingContent", { mode: currentMode2 }));
-        if (currentMode2 === "session-scan") {
-          fire("clearSessionScan");
-        } else if (currentMode2 === "element-scan") {
-          fire("clearElementScan");
-        }
-        updateScanCount(0, null);
-        updateContentCallback(SHOW_PLACEHOLDER, true, currentMode2);
-        showNotification(t("notifications.contentCleared"), { type: "success" });
-      } else {
-        log(t("log.ui.confirmationModal.cancelled"));
-      }
-    };
-    copyBtn = createButton({
-      className: "text-extractor-copy-btn",
-      textKey: "common.copy",
-      icon: copyIcon,
-      onClick: handleCopyClick,
-      disabled: true
-    });
-    clearBtn = createButton({
-      className: "text-extractor-clear-btn",
-      textKey: "common.clear",
-      icon: clearIcon,
-      onClick: handleClearClick,
-      disabled: true
-    });
-    exportBtnContainer = createExportButton();
-    footerButtonContainer.appendChild(exportBtnContainer);
-    footerButtonContainer.appendChild(clearBtn);
-    footerButtonContainer.appendChild(copyBtn);
-    modalFooter.appendChild(statsContainer2);
-    modalFooter.appendChild(footerButtonContainer);
-    unsubscribeLanguageChanged4 = on("languageChanged", rerenderFooterTexts);
-  }
-  function updateStatistics() {
-    if (!statsContainer || !outputTextarea) return;
-    requestAnimationFrame(() => {
-      const text = outputTextarea.value;
-      const lineCount = text.split("\n").length;
-      const charCount = text.length;
-      statsContainer.textContent = `${t("results.stats.lines")}: ${lineCount} | ${t("results.stats.chars")}: ${charCount}`;
-    });
-  }
-  // src/shared/ui/mainModal/lineNumberLogic.js
-  var stringLinesCache = /* @__PURE__ */ new Map();
-  var lastCacheWidth = 0;
-  var lastTextValue = null;
-  var lastSplitLines = [];
-  function calcStringLines(sentence, width) {
-    if (!width || !canvasContext) return 1;
-    if (width !== lastCacheWidth) {
-      stringLinesCache.clear();
-      lastCacheWidth = width;
-    }
-    const cacheKey = sentence;
-    if (stringLinesCache.has(cacheKey)) {
-      return stringLinesCache.get(cacheKey);
-    }
-    let lineCount = 0;
-    let currentLine = "";
-    if (canvasContext.measureText(sentence).width <= width) {
-      lineCount = 1;
-      stringLinesCache.set(cacheKey, 1);
-      return 1;
-    }
-    for (let i = 0; i < sentence.length; i++) {
-      const char = sentence[i];
-      const wordWidth = canvasContext.measureText(char).width;
-      if (canvasContext.measureText(currentLine + char).width > width) {
-        lineCount++;
-        currentLine = char;
-      } else {
-        currentLine += char;
-      }
-    }
-    if (currentLine !== "" || sentence === "") {
-      lineCount++;
-    }
-    stringLinesCache.set(cacheKey, lineCount);
-    return lineCount;
-  }
-  function calcLines() {
-    const settings = loadSettings();
-    const currentValue = outputTextarea.value;
-    let lines;
-    if (currentValue === lastTextValue) {
-      lines = lastSplitLines;
-    } else {
-      lines = currentValue.split("\n");
-      lastTextValue = currentValue;
-      lastSplitLines = lines;
-    }
-    let lineNumbers = [];
-    let lineMap = [];
-    if (settings.enableWordWrap) {
-      const textareaStyles = window.getComputedStyle(outputTextarea);
-      const paddingLeft = parseFloat(textareaStyles.paddingLeft);
-      const paddingRight = parseFloat(textareaStyles.paddingRight);
-      const textareaContentWidth = outputTextarea.clientWidth - paddingLeft - paddingRight;
-      lines.forEach((lineString, realLineIndex) => {
-        const numLinesOfSentence = calcStringLines(lineString, textareaContentWidth);
-        lineNumbers.push(realLineIndex + 1);
-        lineMap.push(realLineIndex);
-        if (numLinesOfSentence > 1) {
-          for (let i = 0; i < numLinesOfSentence - 1; i++) {
-            lineNumbers.push("");
-            lineMap.push(realLineIndex);
-          }
-        }
-      });
-    } else {
-      const totalLines = lines.length;
-      for (let i = 0; i < totalLines; i++) {
-        lineNumbers.push(i + 1);
-        lineMap.push(i);
-      }
-    }
-    return { lineNumbers, lineMap };
-  }
-  function _performActiveLineUpdate() {
-    if (!lineNumbersDiv || !lineNumbersDiv.classList.contains("is-visible") || !outputTextarea) return;
-    const settings = loadSettings();
-    const textarea = outputTextarea;
-    const text = textarea.value;
-    const selectionEnd = textarea.selectionEnd;
-    let cursorRealLineIndex = 0;
-    for (let i = 0; i < selectionEnd; i++) {
-      if (text[i] === "\n") {
-        cursorRealLineIndex++;
-      }
-    }
-    let finalVisualLineIndex = -1;
-    if (settings.enableWordWrap) {
-      let realLines;
-      if (text === lastTextValue) {
-        realLines = lastSplitLines;
-      } else {
-        realLines = text.split("\n");
-        lastTextValue = text;
-        lastSplitLines = realLines;
-      }
-      let positionInRealLine = selectionEnd;
-      for (let i = 0; i < cursorRealLineIndex; i++) {
-        positionInRealLine -= realLines[i].length + 1;
-      }
-      const textareaStyles = window.getComputedStyle(textarea);
-      const paddingLeft = parseFloat(textareaStyles.paddingLeft);
-      const paddingRight = parseFloat(textareaStyles.paddingRight);
-      const textareaContentWidth = textarea.clientWidth - paddingLeft - paddingRight;
-      const lineContent = realLines[cursorRealLineIndex];
-      let visualLineOffset = 0;
-      let currentLine = "";
-      for (let i = 0; i < lineContent.length; i++) {
-        const char = lineContent[i];
-        const nextLine = currentLine + char;
-        if (canvasContext.measureText(nextLine).width > textareaContentWidth) {
-          visualLineOffset++;
-          currentLine = char;
-        } else {
-          currentLine = nextLine;
-        }
-        if (i >= positionInRealLine - 1 && positionInRealLine > 0) {
-          break;
-        }
-      }
-      const firstVisualIndexOfRealLine = currentLineMap.indexOf(cursorRealLineIndex);
-      if (firstVisualIndexOfRealLine !== -1) {
-        finalVisualLineIndex = firstVisualIndexOfRealLine + visualLineOffset;
-      }
-    } else {
-      finalVisualLineIndex = cursorRealLineIndex;
-    }
-    const lineDivs = lineNumbersDiv.children;
-    for (let i = 0; i < lineDivs.length; i++) {
-      lineDivs[i].classList.remove("is-active");
-    }
-    if (finalVisualLineIndex !== -1 && lineDivs[finalVisualLineIndex]) {
-      lineDivs[finalVisualLineIndex].classList.add("is-active");
-    }
-  }
-  var isUpdateActiveLineScheduled = false;
-  function updateActiveLine() {
-    if (isUpdateActiveLineScheduled) return;
-    isUpdateActiveLineScheduled = true;
-    requestAnimationFrame(() => {
-      _performActiveLineUpdate();
-      isUpdateActiveLineScheduled = false;
-    });
-  }
-  var isThrottled = false;
-  function updateLineNumbers() {
-    if (!lineNumbersDiv || !outputTextarea || isThrottled) return;
-    isThrottled = true;
-    requestAnimationFrame(() => {
-      const { lineNumbers, lineMap } = calcLines();
-      setCurrentLineMap(lineMap);
-      const currentLineCount = lineNumbersDiv.children.length;
-      const newLineCount = lineNumbers.length;
-      for (let i = 0; i < newLineCount; i++) {
-        const lineText = lineNumbers[i] === "" ? "\xA0" : lineNumbers[i];
-        if (i < currentLineCount) {
-          if (lineNumbersDiv.children[i].textContent !== lineText) {
-            lineNumbersDiv.children[i].textContent = lineText;
-          }
-        } else {
-          const div = document.createElement("div");
-          div.textContent = lineText;
-          div.classList.add("line-number-enter-active");
-          lineNumbersDiv.appendChild(div);
-          div.addEventListener("animationend", () => {
-            div.classList.remove("line-number-enter-active");
-          }, { once: true });
-        }
-      }
-      if (newLineCount < currentLineCount) {
-        for (let i = currentLineCount - 1; i >= newLineCount; i--) {
-          lineNumbersDiv.removeChild(lineNumbersDiv.children[i]);
-        }
-      }
-      if (newLineCount > 0) {
-        const maxLineNumber = lineNumbers[lineNumbers.length - 1];
-        let maxNumStr = String(maxLineNumber);
-        if (maxLineNumber === "") {
-          for (let k = lineNumbers.length - 1; k >= 0; k--) {
-            if (lineNumbers[k] !== "") {
-              maxNumStr = String(lineNumbers[k]);
-              break;
-            }
-          }
-        }
-        const textWidth = canvasContext.measureText(maxNumStr).width;
-        const newWidth = Math.max(40, Math.ceil(textWidth + 12));
-        lineNumbersDiv.style.setProperty("--line-number-width", `${newWidth}px`);
-      }
-      _performActiveLineUpdate();
-      isThrottled = false;
-    });
-  }
-  function initializeLineNumbers() {
-    const canvas = document.createElement("canvas");
-    const canvasContext2 = canvas.getContext("2d");
-    const textareaStyles = window.getComputedStyle(outputTextarea);
-    canvasContext2.font = `${textareaStyles.fontSize} ${textareaStyles.fontFamily}`;
-    setCanvasContext(canvasContext2);
-    const resizeObserver = new ResizeObserver(() => {
-      if (!lineNumbersDiv || !outputTextarea) return;
-      lineNumbersDiv.style.height = outputTextarea.clientHeight + "px";
-      updateLineNumbers();
-    });
-    resizeObserver.observe(outputTextarea);
-  }
-  var fullQuickScanContent = "";
-  var handleKeyDown = (event) => {
-    if (event.key === "Escape") {
-      event.stopPropagation();
-      closeModal();
-    }
-  };
-  function createMainModal() {
-    if (modalOverlay) return;
-    const { modalHeader, modalContent, modalFooter } = createModalLayout();
-    populateModalHeader(modalHeader, closeModal);
-    populateModalContent(modalContent);
-    populateModalFooter(modalFooter, updateModalContent);
-    initializeLineNumbers();
-    const handleTextareaUpdate2 = () => {
-      updateLineNumbers();
-      updateStatistics();
-    };
-    outputTextarea.addEventListener("input", handleTextareaUpdate2);
-    outputTextarea.addEventListener("click", updateActiveLine);
-    outputTextarea.addEventListener("keyup", updateActiveLine);
-    outputTextarea.addEventListener("scroll", () => {
-      lineNumbersDiv.scrollTop = outputTextarea.scrollTop;
-    });
-    updateModalAddonsVisibility();
-  }
-  async function openModal() {
-    if (!modalOverlay) {
-      console.error(t("notifications.modalInitError"));
-      return;
-    }
-    log(t("log.ui.modal.opening"));
-    updateModalContent(SHOW_LOADING, true, "quick-scan");
-    try {
-      const { formattedText, count } = await performQuickScan();
-      hideLoading();
-      fullQuickScanContent = formattedText;
-      updateModalContent(formattedText, false, "quick-scan");
-      const notificationText = simpleTemplate(t("scan.quickFinished"), { count });
-      showNotification(notificationText, { type: "success" });
-    } catch (error) {
-      hideLoading();
-      log(t("log.ui.modal.scanFailed", { error: error.message }));
-      showNotification(t("scan.quickFailed"), { type: "error" });
-      updateModalContent("[]", false, "quick-scan");
-    }
-  }
-  function closeModal() {
-    if (modalOverlay && modalOverlay.classList.contains("is-visible")) {
-      log(t("log.ui.modal.closing"));
-      modalOverlay.classList.remove("is-visible");
-      modalOverlay.removeEventListener("keydown", handleKeyDown);
-      fire("modalClosed");
-    }
-  }
-  function updateModalContent(content, shouldOpen = false, mode = "quick-scan") {
-    if (!modalOverlay) {
-      console.error("\u6A21\u6001\u6846\u5C1A\u672A\u521D\u59CB\u5316\u3002");
-      return;
-    }
-    setCurrentMode(mode);
-    const copyBtn2 = modalOverlay.querySelector(".text-extractor-copy-btn");
-    const clearBtn2 = modalOverlay.querySelector(".text-extractor-clear-btn");
-    const textareaContainer = outputTextarea.parentElement;
-    const setButtonsDisabled = (disabled) => {
-      if (copyBtn2) copyBtn2.disabled = disabled;
-      if (clearBtn2) {
-        clearBtn2.disabled = disabled;
-      }
-      updateExportButtonState(!disabled);
-    };
-    if (content === SHOW_LOADING) {
-      placeholder.classList.remove("is-visible");
-      textareaContainer.classList.add("is-visible");
-      outputTextarea.value = "";
-      showLoading();
-      setButtonsDisabled(true);
-    } else if (content === SHOW_PLACEHOLDER) {
-      hideLoading();
-      textareaContainer.classList.remove("is-visible");
-      placeholder.classList.add("is-visible");
-      setButtonsDisabled(true);
-    } else {
-      hideLoading();
-      placeholder.classList.remove("is-visible");
-      textareaContainer.classList.add("is-visible");
-      const settings = loadSettings();
-      let displayText = content;
-      if (settings.enableTextTruncation && content.length > settings.textTruncationLength) {
-        displayText = content.substring(0, settings.textTruncationLength);
-        const warningMessage = t("scan.truncationWarning");
-        displayText += `
---- ${warningMessage} ---`;
-      }
-      const isData = content && content.trim().length > 0;
-      if (!isData || content === t("results.noSummary")) {
-        updateScanCount(0, mode);
-      }
-      requestAnimationFrame(() => {
-        outputTextarea.value = displayText;
-        setButtonsDisabled(!isData);
-        outputTextarea.readOnly = !isData;
-        outputTextarea.dispatchEvent(new Event("input"));
-        updateActiveLine();
-      });
-    }
-    updateModalAddonsVisibility();
-    if (shouldOpen) {
-      modalOverlay.classList.add("is-visible");
-      modalOverlay.addEventListener("keydown", handleKeyDown);
-      modalOverlay.addEventListener("transitionend", () => {
-        modalOverlay.focus();
-      }, { once: true });
-    }
-  }
-  function updateModalAddonsVisibility() {
-    if (!modalOverlay) return;
-    const settings = loadSettings();
-    if (lineNumbersDiv) {
-      lineNumbersDiv.classList.toggle("is-visible", settings.showLineNumbers);
-    }
-    if (statsContainer) {
-      const hasContent = outputTextarea && outputTextarea.parentElement.classList.contains("is-visible");
-      statsContainer.classList.toggle("is-visible", settings.showStatistics && hasContent);
-    }
-    if (outputTextarea) {
-      outputTextarea.classList.toggle("word-wrap-disabled", !settings.enableWordWrap);
-    }
-  }
-  var defaultSettings = {
-    language: "auto",
-    outputFormat: "array",
-    includeArrayBrackets: true,
-    theme: "system",
-    showFab: true,
-    fabPosition: "bottom-right",
-    showScanCount: true,
-    showLineNumbers: true,
-    showStatistics: true,
-    enableWordWrap: false,
-    enableTextTruncation: true,
-    textTruncationLength: 5e4,
-    enableDebugLogging: false,
-    elementScan_persistData: true,
-    sessionScan_persistData: true,
-    filterRules: {
-      numbers: true,
-      chinese: true,
-      containsChinese: false,
-      emojiOnly: true,
-      symbols: true,
-      termFilter: true,
-      singleLetter: false,
-      repeatingChars: true,
-      filePath: true,
-      hexColor: true,
-      email: true,
-      uuid: true,
-      gitCommitHash: true,
-      websiteUrl: true,
-      shorthandNumber: true
-    }
-  };
-  function applySettings(newSettings, oldSettings) {
-    updateLoggerState(newSettings.enableDebugLogging);
-    applyTheme(newSettings.theme);
-    const languageChanged = oldSettings.language !== newSettings.language;
-    if (languageChanged) {
-      switchLanguage(newSettings.language);
-    }
-    const fabContainer = uiContainer.querySelector(".text-extractor-fab-container");
-    if (fabContainer) {
-      fabContainer.classList.toggle("fab-container-visible", newSettings.showFab);
-    }
-    updateModalAddonsVisibility();
-    setTimeout(() => {
-      fire("settingsSaved");
-      showNotification(t("notifications.settingsSaved"), { type: "success" });
-    }, 50);
-  }
-  function loadSettings() {
-    const savedSettings = getValue("script_settings", null);
-    if (savedSettings) {
-      try {
-        const parsedSettings = JSON.parse(savedSettings);
-        const mergedSettings = {
-          ...defaultSettings,
-          ...parsedSettings,
-          filterRules: {
-            ...defaultSettings.filterRules,
-            ...parsedSettings.filterRules || {}
-          }
-        };
-        return mergedSettings;
-      } catch (error) {
-        log(t("log.settings.parseError"), error);
-        return defaultSettings;
-      }
-    }
-    return defaultSettings;
-  }
-  function saveSettings(newSettings) {
-    if (typeof newSettings !== "object" || newSettings === null) {
-      log(t("log.settings.invalidObject"), newSettings);
-      return;
-    }
-    const oldSettings = loadSettings();
-    Object.keys(newSettings).forEach((key) => {
-      if (key !== "filterRules" && oldSettings[key] !== newSettings[key]) {
-        log(t("log.settings.changed", {
-          key,
-          oldValue: oldSettings[key],
-          newValue: newSettings[key]
-        }));
-      }
-    });
-    const oldRules = oldSettings.filterRules || {};
-    const newRules = newSettings.filterRules || {};
-    const allRuleKeys =  new Set([...Object.keys(oldRules), ...Object.keys(newRules)]);
-    allRuleKeys.forEach((key) => {
-      const oldValue = !!oldRules[key];
-      const newValue = !!newRules[key];
-      if (oldValue !== newValue) {
-        const statusKey = newValue ? "log.settings.filterRuleChanged.enabled" : "log.settings.filterRuleChanged.disabled";
-        log(t(statusKey, { key }));
-      }
-    });
-    setValue("script_settings", JSON.stringify(newSettings));
-  }
-  var summaryFab;
-  var dynamicFab;
-  var staticFab;
-  var elementScanFab;
-  function createSingleFab(className, iconSVGString, titleKey, onClick) {
-    const fab = document.createElement("div");
-    fab.className = `text-extractor-fab ${className}`;
-    const svgIcon = createSVGFromString(iconSVGString);
-    if (svgIcon) {
-      fab.appendChild(svgIcon);
-    }
-    fab.dataset.tooltipKey = titleKey;
-    fab.addEventListener("click", (event) => {
-      if (fab.classList.contains("fab-disabled")) {
-        event.stopPropagation();
-        return;
-      }
-      onClick(event);
-    });
-    fab.addEventListener("mouseenter", () => {
-      showTooltip(fab, t(fab.dataset.tooltipKey));
-    });
-    fab.addEventListener("mouseleave", () => {
-      hideTooltip();
-    });
-    fab.style.pointerEvents = "auto";
-    return fab;
-  }
-  function createFab({ callbacks, isVisible }) {
-    const { onStaticExtract, onDynamicExtract, onSummary, onElementScan } = callbacks;
-    const fabContainer = document.createElement("div");
-    fabContainer.className = "text-extractor-fab-container";
-    summaryFab = createSingleFab(
-      "fab-summary",
-      summaryIcon,
-      "tooltip.summary",
-      onSummary
-    );
-    dynamicFab = createSingleFab(
-      "fab-dynamic",
-      dynamicIcon,
-      "tooltip.dynamic_scan",
-      () => onDynamicExtract(dynamicFab)
-    );
-    staticFab = createSingleFab(
-      "fab-static",
-      translateIcon,
-      "tooltip.static_scan",
-      onStaticExtract
-    );
-    elementScanFab = createSingleFab(
-      "fab-element-scan",
-      elementScanIcon,
-      "tooltip.element_scan",
-      () => onElementScan(elementScanFab)
-    );
-    fabContainer.appendChild(summaryFab);
-    fabContainer.appendChild(dynamicFab);
-    fabContainer.appendChild(staticFab);
-    fabContainer.appendChild(elementScanFab);
-    uiContainer.appendChild(fabContainer);
-    if (isVisible) {
-      setTimeout(() => {
-        fabContainer.classList.add("fab-container-visible");
-      }, appConfig.ui.fabAnimationDelay);
-    }
-    updateFabPosition(fabContainer);
-    on("settingsSaved", () => updateFabPosition(fabContainer));
-  }
-  function updateFabPosition(fabContainer) {
-    if (!fabContainer) return;
-    const settings = loadSettings();
-    const position = settings.fabPosition || "bottom-right";
-    fabContainer.classList.remove("fab-position-bottom-right", "fab-position-top-right", "fab-position-bottom-left", "fab-position-top-left");
-    fabContainer.classList.add(`fab-position-${position}`);
-  }
-  function setFabIcon(fabElement, iconSVGString) {
-    while (fabElement.firstChild) {
-      fabElement.removeChild(fabElement.firstChild);
-    }
-    const newIcon = createSVGFromString(iconSVGString);
-    if (newIcon) {
-      fabElement.appendChild(newIcon);
-    }
-  }
-  function getDynamicFab() {
-    return dynamicFab;
-  }
-  function getElementScanFab() {
-    return elementScanFab;
-  }
-  function updateFabTooltip(fabElement, newTooltipKey) {
-    if (fabElement) {
-      fabElement.dataset.tooltipKey = newTooltipKey;
-    }
-  }
-  function handleQuickScanClick() {
-    log(t("scan.quick"));
-    openModal();
-  }
   var questionMarkIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M478-240q21 0 35.5-14.5T528-290q0-21-14.5-35.5T478-340q-21 0-35.5 14.5T428-290q0 21 14.5 35.5T478-240Zm-36-154h74q0-33 7.5-52t42.5-52q26-26 41-49.5t15-56.5q0-56-41-86t-97-30q-57 0-92.5 30T342-618l66 26q5-18 22.5-39t53.5-21q32 0 48 17.5t16 38.5q0 20-12 37.5T506-526q-44 39-54 59t-10 73Zm38 314q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>`;
   var Tooltip = class {
     constructor() {
@@ -6178,6 +7552,10 @@ ${result.join(",\n")}
       this.container.dataset.value = this.currentValue;
       this.trigger = document.createElement("div");
       this.trigger.className = "custom-select-trigger";
+      this.trigger.tabIndex = 0;
+      this.trigger.setAttribute("role", "combobox");
+      this.trigger.setAttribute("aria-haspopup", "listbox");
+      this.trigger.setAttribute("aria-expanded", "false");
       this.selectedContent = document.createElement("div");
       this.selectedContent.className = "selected-option-content";
       const arrowDiv = document.createElement("div");
@@ -6190,6 +7568,7 @@ ${result.join(",\n")}
       this.trigger.appendChild(arrowDiv);
       this.optionsContainer = document.createElement("div");
       this.optionsContainer.className = "custom-select-options";
+      this.optionsContainer.setAttribute("role", "listbox");
       this.container.appendChild(this.trigger);
       this.container.appendChild(this.optionsContainer);
       this.parentElement.appendChild(this.container);
@@ -6225,6 +7604,14 @@ ${result.join(",\n")}
     }
         bindEvents() {
       this.handleTriggerClick = this.toggle.bind(this);
+      this.handleTriggerKeyDown = (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          this.toggle();
+        } else if (event.key === "Escape") {
+          this.close();
+        }
+      };
       this.handleOptionClick = (e) => {
         const optionEl = e.target.closest(".custom-select-option");
         if (optionEl) {
@@ -6232,11 +7619,13 @@ ${result.join(",\n")}
         }
       };
       this.trigger.addEventListener("click", this.handleTriggerClick);
+      this.trigger.addEventListener("keydown", this.handleTriggerKeyDown);
       this.optionsContainer.addEventListener("click", this.handleOptionClick);
     }
             toggle() {
       this.isOpen = !this.isOpen;
       this.container.classList.toggle("open", this.isOpen);
+      this.trigger.setAttribute("aria-expanded", String(this.isOpen));
       if (this.isOpen) {
         this.abortController = new AbortController();
         listenClickOutside(this.container, () => this.close(), {
@@ -6250,33 +7639,53 @@ ${result.join(",\n")}
       if (this.isOpen) {
         this.isOpen = false;
         this.container.classList.remove("open");
+        this.trigger.setAttribute("aria-expanded", "false");
         if (this.abortController) {
           this.abortController.abort();
           this.abortController = null;
         }
       }
     }
-            select(value) {
+            select(value, { emit = true } = {}) {
       if (value === this.currentValue) {
         this.close();
         return;
       }
+      const selectedOption = this.options.find((opt) => opt.value === value);
+      if (!selectedOption) {
+        return;
+      }
       this.currentValue = value;
       this.container.dataset.value = value;
-      const selectedOption = this.options.find((opt) => opt.value === value);
       this.updateSelectedContent(selectedOption);
       this.optionsContainer.querySelector(".custom-select-option.selected")?.classList.remove("selected");
-      const newSelectedOptionEl = this.optionsContainer.querySelector(`[data-value="${value}"]`);
+      const newSelectedOptionEl = Array.from(this.optionsContainer.children).find(
+        (option) => option.dataset.value === value
+      );
       if (newSelectedOptionEl) {
         newSelectedOptionEl.classList.add("selected");
       }
       this.close();
+      if (emit) {
+        this.container.dispatchEvent(
+          new CustomEvent("custom-select-change", {
+            detail: { value }
+          })
+        );
+      }
+    }
+        setValue(value, options = { emit: false }) {
+      this.select(value, options);
     }
         getValue() {
       return this.currentValue;
     }
         updateOptions(newOptions) {
       this.options = newOptions;
+      if (!this.options.some((option) => option.value === this.currentValue)) {
+        this.currentValue = this.options[0]?.value || "";
+        this.container.dataset.value = this.currentValue;
+      }
       while (this.optionsContainer.firstChild) {
         this.optionsContainer.removeChild(this.optionsContainer.firstChild);
       }
@@ -6286,10 +7695,17 @@ ${result.join(",\n")}
         this.updateSelectedContent(currentSelectedOption);
       }
     }
-        destroy() {
+    /**
+     * @public
+     * @description 销毁组件，移除所有事件监听器。
+     */
+    destroy() {
       this.close();
       if (this.trigger && this.handleTriggerClick) {
         this.trigger.removeEventListener("click", this.handleTriggerClick);
+      }
+      if (this.trigger && this.handleTriggerKeyDown) {
+        this.trigger.removeEventListener("keydown", this.handleTriggerKeyDown);
       }
       if (this.optionsContainer && this.handleOptionClick) {
         this.optionsContainer.removeEventListener("click", this.handleOptionClick);
@@ -6479,7 +7895,7 @@ ${result.join(",\n")}
     return label;
   }
   function createNumericInput(id, labelText, value, options = {}) {
-    const { min, max, disabled = false } = options;
+    const { min, max, step, disabled = false } = options;
     const container = document.createElement("div");
     container.className = "numeric-input-group";
     const label = document.createElement("label");
@@ -6499,6 +7915,9 @@ ${result.join(",\n")}
     if (typeof max !== "undefined") {
       input.max = max;
     }
+    if (typeof step !== "undefined") {
+      input.step = step;
+    }
     if (disabled) {
       input.disabled = true;
     }
@@ -6515,6 +7934,7 @@ ${result.join(",\n")}
     { id: "tab-format", label: "settings.format", icon: formatIcon },
     { id: "tab-language", label: "settings.language", icon: languageIcon_default },
     { id: "tab-theme", label: "settings.theme", icon: themeIcon },
+    { id: "tab-ai", label: "settings.ai.title", icon: aiIcon },
     { id: "tab-about", label: "settings.about", icon: infoIcon }
   ];
   function buildPanelDOM(settings) {
@@ -6574,7 +7994,12 @@ ${result.join(",\n")}
     }
     filterTab.appendChild(filterNotice);
     filterDefinitions.forEach((filter) => {
-      const checkboxElement = createCheckbox(filter.id, t(filter.label), settings.filterRules[filter.key], filter.tooltip);
+      const checkboxElement = createCheckbox(
+        filter.id,
+        t(filter.label),
+        settings.filterRules[filter.key],
+        filter.tooltip
+      );
       checkboxElement.classList.add("setting-item");
       filterTab.appendChild(checkboxElement);
     });
@@ -6607,6 +8032,12 @@ ${result.join(",\n")}
       themeTab.appendChild(createSelectSettingDOM(themeDef));
     }
     contentArea.appendChild(themeTab);
+    const aiTab = createTabContent("tab-ai", false);
+    const aiSettingsMount = document.createElement("div");
+    aiSettingsMount.id = "ai-settings-mount";
+    aiSettingsMount.className = "ai-settings-mount";
+    aiTab.appendChild(aiSettingsMount);
+    contentArea.appendChild(aiTab);
     const aboutTab = createTabContent("tab-about", false);
     aboutTab.appendChild(createAboutTabContent());
     contentArea.appendChild(aboutTab);
@@ -6617,10 +8048,10 @@ ${result.join(",\n")}
     modal.appendChild(body);
     return modal;
   }
-  function createTabContent(id, isActive2) {
+  function createTabContent(id, isActive3) {
     const div = document.createElement("div");
     div.id = id;
-    div.className = `settings-tab-content ${isActive2 ? "active" : ""}`;
+    div.className = `settings-tab-content ${isActive3 ? "active" : ""}`;
     return div;
   }
   function createSelectSettingDOM(definition) {
@@ -6646,15 +8077,10 @@ ${result.join(",\n")}
       const numericConfig = setting.linkedNumeric;
       const numericValue = settings[numericConfig.key];
       const numericLabel = t("settings.display.character_limit");
-      const numericInputElement = createNumericInput(
-        numericConfig.id,
-        numericLabel,
-        numericValue,
-        {
-          min: 5,
-          disabled: !settings[setting.key]
-        }
-      );
+      const numericInputElement = createNumericInput(numericConfig.id, numericLabel, numericValue, {
+        min: 5,
+        disabled: !settings[setting.key]
+      });
       numericInputElement.classList.add("linked-numeric-input");
       compositeContainer.appendChild(numericInputElement);
       const checkbox = checkboxElement.querySelector('input[type="checkbox"]');
@@ -6671,7 +8097,11 @@ ${result.join(",\n")}
       selectTitle.textContent = t(setting.label);
       const selectWrapper = document.createElement("div");
       selectWrapper.id = setting.id;
-      new CustomSelect(selectWrapper, setting.options.map((opt) => ({ ...opt, label: t(opt.label) })), settings[setting.key]);
+      new CustomSelect(
+        selectWrapper,
+        setting.options.map((opt) => ({ ...opt, label: t(opt.label) })),
+        settings[setting.key]
+      );
       selectContainer.appendChild(selectTitle);
       selectContainer.appendChild(selectWrapper);
       item.appendChild(selectContainer);
@@ -6745,7 +8175,12 @@ ${result.join(",\n")}
       const item = document.createElement("div");
       item.className = "setting-item";
       if (setting.type === "checkbox") {
-        const checkboxElement = createCheckbox(setting.id, t(setting.label), settings[setting.key], setting.tooltip);
+        const checkboxElement = createCheckbox(
+          setting.id,
+          t(setting.label),
+          settings[setting.key],
+          setting.tooltip
+        );
         item.appendChild(checkboxElement);
       }
       content.appendChild(item);
@@ -6758,12 +8193,1300 @@ ${result.join(",\n")}
     return modal;
   }
   var saveIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z"/></svg>`;
+  var SESSION_KEY2 = "qing_pagescanner_ai_session_v1";
+  var CACHE_KEY = "qing_pagescanner_ai_cache_v1";
+  var DAILY_USAGE_KEY = "qing_pagescanner_ai_daily_usage_v1";
+  var API_KEY_PREFIX = "qing_pagescanner_ai_provider_key_v1_";
+  var CACHE_LIMIT = 5e3;
+  var CACHE_TTL_MS = 30 * 24 * 60 * 60 * 1e3;
+  function parseStoredJson(value, fallback) {
+    if (!value) return fallback;
+    if (typeof value === "object") return value;
+    try {
+      return JSON.parse(value);
+    } catch {
+      return fallback;
+    }
+  }
+  function safeProviderId(providerId) {
+    return String(providerId || "").replace(/[^a-zA-Z0-9_-]/g, "-");
+  }
+  async function loadProviderApiKey(providerId) {
+    return String(await getValue(`${API_KEY_PREFIX}${safeProviderId(providerId)}`, "") || "");
+  }
+  async function saveProviderApiKey(providerId, apiKey) {
+    const storageKey = `${API_KEY_PREFIX}${safeProviderId(providerId)}`;
+    if (!apiKey) {
+      await deleteValue(storageKey);
+      return;
+    }
+    await setValue(storageKey, String(apiKey));
+  }
+  async function deleteProviderApiKey(providerId) {
+    await deleteValue(`${API_KEY_PREFIX}${safeProviderId(providerId)}`);
+  }
+  async function loadAiSession() {
+    const stored = parseStoredJson(await getValue(SESSION_KEY2, null), null);
+    return stored?.version === 1 ? stored : null;
+  }
+  async function saveAiSession(session) {
+    await setValue(SESSION_KEY2, JSON.stringify({ ...session, version: 1, updatedAt: Date.now() }));
+  }
+  async function clearAiSession() {
+    await deleteValue(SESSION_KEY2);
+  }
+  async function loadAiCache() {
+    const stored = parseStoredJson(await getValue(CACHE_KEY, null), { version: 1, entries: [] });
+    const cutoff = Date.now() - CACHE_TTL_MS;
+    const entries = Array.isArray(stored.entries) ? stored.entries.filter((entry) => entry?.fingerprint && entry.updatedAt >= cutoff).slice(-CACHE_LIMIT) : [];
+    return new Map(entries.map((entry) => [entry.fingerprint, entry]));
+  }
+  async function saveAiCache(cacheMap) {
+    const entries = Array.from(cacheMap.values()).sort((left, right) => left.updatedAt - right.updatedAt).slice(-CACHE_LIMIT);
+    await setValue(CACHE_KEY, JSON.stringify({ version: 1, entries }));
+  }
+  async function clearAiCacheForSite(siteKey, targetLanguage) {
+    const cache2 = await loadAiCache();
+    for (const [fingerprint, entry] of cache2.entries()) {
+      if (entry.siteKey === siteKey && entry.targetLanguage === targetLanguage) {
+        cache2.delete(fingerprint);
+      }
+    }
+    await saveAiCache(cache2);
+  }
+  function currentDayKey(now = /* @__PURE__ */ new Date()) {
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+  }
+  async function loadDailyUsage() {
+    const stored = parseStoredJson(await getValue(DAILY_USAGE_KEY, null), null);
+    const day = currentDayKey();
+    if (!stored || stored.day !== day) return { day, tokens: 0 };
+    return { day, tokens: Math.max(0, Number(stored.tokens) || 0) };
+  }
+  async function addDailyUsage(tokens) {
+    const usage = await loadDailyUsage();
+    usage.tokens += Math.max(0, Math.round(Number(tokens) || 0));
+    await setValue(DAILY_USAGE_KEY, JSON.stringify(usage));
+    return usage;
+  }
+  async function resetDailyUsage() {
+    await deleteValue(DAILY_USAGE_KEY);
+  }
+  // src/shared/services/ai/candidateText.js
+  var INVISIBLE_TEXT_PATTERN = /[\u200B-\u200D\u2060\uFEFF]/g;
+  function normalizeAiSourceText(value) {
+    return String(value ?? "").normalize("NFC").replace(/\r\n|\r/g, "\n").replace(INVISIBLE_TEXT_PATTERN, "").replace(/[ \t]+/g, " ").trim();
+  }
+  function hasMeaningfulAiSourceText(value) {
+    return normalizeAiSourceText(value).length > 0;
+  }
+  function isSubmittableAiCandidate(candidate) {
+    return Boolean(candidate && hasMeaningfulAiSourceText(candidate.sourceText));
+  }
+  // src/shared/services/ai/budgetGuard.js
+  var AI_RESPONSE_TOKEN_LIMIT = 8192;
+  var AI_BATCH_RESPONSE_TOKEN_BUDGET = 7168;
+  function estimateTokens(value) {
+    return Math.max(1, Math.ceil(String(value || "").length / 3));
+  }
+  function estimateCandidateResponseTokens(candidate) {
+    return Math.max(48, String(candidate?.sourceText || "").length + 48);
+  }
+  function estimateBatchResponseTokens(candidates2) {
+    return candidates2.reduce((total, candidate) => total + estimateCandidateResponseTokens(candidate), 32);
+  }
+  function selectBatch(candidates2, limits) {
+    const selected = [];
+    const oversized = [];
+    const invalid = [];
+    let characters = 0;
+    let estimatedOutputTokens = 32;
+    const outputTokenBudget = Math.min(
+      AI_RESPONSE_TOKEN_LIMIT,
+      Math.max(256, Number(limits.maxEstimatedOutputTokens) || AI_BATCH_RESPONSE_TOKEN_BUDGET)
+    );
+    for (const candidate of candidates2) {
+      if (selected.length >= limits.maxItems) break;
+      if (!isSubmittableAiCandidate(candidate)) {
+        invalid.push(candidate);
+        continue;
+      }
+      const length = candidate.sourceText.length;
+      if (length > limits.maxCharacters) {
+        oversized.push(candidate);
+        continue;
+      }
+      if (selected.length > 0 && characters + length > limits.maxCharacters) break;
+      const candidateOutputTokens = estimateCandidateResponseTokens(candidate);
+      if (selected.length > 0 && estimatedOutputTokens + candidateOutputTokens > outputTokenBudget) break;
+      selected.push(candidate);
+      characters += length;
+      estimatedOutputTokens += candidateOutputTokens;
+    }
+    return { candidates: selected, oversized, invalid, characters, estimatedOutputTokens };
+  }
+  function checkBudget({ settings, sessionUsage: sessionUsage2, dailyUsage, requestPayload, nextCharacters = 0 }) {
+    const estimatedTokens = estimateTokens(JSON.stringify(requestPayload)) * 2;
+    if (sessionUsage2.requests >= settings.maxRequestsPerSession) {
+      return { allowed: false, reason: "session-requests", estimatedTokens };
+    }
+    if (sessionUsage2.characters + nextCharacters > settings.maxCharactersPerSession) {
+      return { allowed: false, reason: "session-characters", estimatedTokens };
+    }
+    if (dailyUsage.tokens + estimatedTokens > settings.maxEstimatedTokensPerDay) {
+      return { allowed: false, reason: "daily-tokens", estimatedTokens };
+    }
+    return { allowed: true, reason: null, estimatedTokens };
+  }
+  // src/shared/services/ai/promptBuilder.js
+  var TARGET_LABELS = {
+    "zh-CN": "Simplified Chinese",
+    "zh-TW": "Traditional Chinese"
+  };
+  function limitText(value, maxLength) {
+    return String(value || "").replace(/\s+/g, " ").trim().slice(0, maxLength);
+  }
+  function sanitizeContext(context = {}) {
+    return {
+      tagName: limitText(context.tagName, 24),
+      role: limitText(context.role, 40),
+      blockType: limitText(context.blockType, 40),
+      pageTitle: limitText(context.pageTitle, 200),
+      nearestHeading: limitText(context.nearestHeading, 240),
+      breadcrumb: limitText(context.breadcrumb, 240),
+      nearbyText: limitText(context.nearbyText, 360),
+      placeholders: Array.isArray(context.placeholders) ? context.placeholders.map((item) => limitText(item, 120)).slice(0, 20) : []
+    };
+  }
+  function buildTranslationRequest({ provider, candidates: candidates2, targetLanguage, styleProfile }) {
+    const validCandidates = candidates2.filter(isSubmittableAiCandidate);
+    if (validCandidates.length === 0 || validCandidates.length !== candidates2.length) {
+      throw new TypeError("empty-candidate-batch");
+    }
+    const targetLabel = TARGET_LABELS[targetLanguage] || TARGET_LABELS["zh-CN"];
+    const style = styleProfile ? {
+      tone: limitText(styleProfile.tone, 300),
+      glossary: limitText(styleProfile.glossary, 1200),
+      punctuation: limitText(styleProfile.punctuation, 300),
+      instructions: limitText(styleProfile.instructions, 1200)
+    } : null;
+    const systemContent = [
+      "You are a web UI text classifier and translator.",
+      `The source language may be any language. Translate only into ${targetLabel}.`,
+      "Classify every item as translate, keep, remove, or review.",
+      "translate: user-facing natural language that should enter a translation library.",
+      "keep: already suitable for the target language or intentionally language-neutral.",
+      "remove: code, URL, identifier, tracking value, decorative text, or content not useful to a translation library.",
+      "review: uncertain meaning or insufficient context.",
+      "Preserve every placeholder exactly. Do not add, remove, rename, or translate placeholders.",
+      "Return one result for every input id. Never return HTML or Markdown.",
+      'Return JSON with shape {"items":[{"id":"...","action":"translate|keep|remove|review","translation":"...","confidence":0.0,"category":"...","reason":"..."}]}.'
+    ].join("\n");
+    const userContent = JSON.stringify({
+      targetLanguage,
+      sourceLanguageHint: "auto",
+      style,
+      items: validCandidates.map((candidate) => ({
+        id: candidate.id,
+        sourceText: candidate.sourceText,
+        context: sanitizeContext(candidate.context)
+      }))
+    });
+    const maxOutputTokens = Math.min(
+      AI_RESPONSE_TOKEN_LIMIT,
+      Math.max(1024, estimateBatchResponseTokens(validCandidates) + 512)
+    );
+    const request = {
+      model: provider.model,
+      messages: [
+        { role: "system", content: systemContent },
+        { role: "user", content: userContent }
+      ],
+      temperature: 0.1,
+      max_tokens: maxOutputTokens,
+      stream: false
+    };
+    if (provider.responseMode === "json-mode") {
+      request.response_format = { type: "json_object" };
+    }
+    if (/^deepseek-/i.test(provider.model)) {
+      request.thinking = { type: "disabled" };
+    }
+    return request;
+  }
+  var PROVIDER_TEST_CANDIDATE = Object.freeze({
+    id: "provider-test",
+    sourceText: "Save settings",
+    context: Object.freeze({
+      tagName: "button",
+      role: "button",
+      blockType: "interactive",
+      pageTitle: "",
+      nearestHeading: "",
+      breadcrumb: "",
+      nearbyText: "",
+      placeholders: []
+    })
+  });
+  function buildProviderProcessingTestRequest(provider, targetLanguage = "zh-CN") {
+    const request = buildTranslationRequest({
+      provider,
+      candidates: [PROVIDER_TEST_CANDIDATE],
+      targetLanguage,
+      styleProfile: null
+    });
+    request.max_tokens = 1024;
+    return request;
+  }
+  // src/shared/services/ai/responseValidator.js
+  var ALLOWED_ACTIONS = new Set(Object.values(AI_ACTIONS));
+  var PLACEHOLDER_PATTERN = /\{\{[^{}]+\}\}|\$\{[^{}]+\}|\{(?:\d+|[a-zA-Z_][\w.-]*)\}|%(?:\d+\$)?[sdif]|%[a-zA-Z_][\w-]*%|:[a-zA-Z_][\w-]*|https?:\/\/[^\s)\]}>'"]+/gi;
+  function extractPlaceholders(text) {
+    return Array.from(new Set(String(text || "").match(PLACEHOLDER_PATTERN) || [])).sort();
+  }
+  function parseJsonContent(content) {
+    if (typeof content !== "string" || content.trim() === "") {
+      throw new Error("empty-response");
+    }
+    const trimmed = content.trim();
+    const withoutFence = trimmed.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
+    return JSON.parse(withoutFence);
+  }
+  function placeholdersMatch(sourceText, translation) {
+    return JSON.stringify(extractPlaceholders(sourceText)) === JSON.stringify(extractPlaceholders(translation));
+  }
+  function createReview(candidate, reason, item = {}) {
+    return {
+      id: candidate.id,
+      sourceText: candidate.sourceText,
+      action: AI_ACTIONS.REVIEW,
+      translation: typeof item.translation === "string" ? item.translation.trim() : "",
+      confidence: Number.isFinite(Number(item.confidence)) ? Number(item.confidence) : 0,
+      category: typeof item.category === "string" ? item.category.slice(0, 80) : "validation",
+      reason,
+      status: AI_CANDIDATE_STATUS.REVIEW
+    };
+  }
+  function validateTranslationResponse(payload, candidates2, confidenceThreshold) {
+    const candidateMap = new Map(candidates2.map((candidate) => [candidate.id, candidate]));
+    const rawItems = Array.isArray(payload?.items) ? payload.items : [];
+    const responseById = /* @__PURE__ */ new Map();
+    rawItems.forEach((item) => {
+      if (item && typeof item.id === "string" && candidateMap.has(item.id) && !responseById.has(item.id)) {
+        responseById.set(item.id, item);
+      }
+    });
+    return candidates2.map((candidate) => {
+      const item = responseById.get(candidate.id);
+      if (!item) return createReview(candidate, "missing-result");
+      if (!ALLOWED_ACTIONS.has(item.action)) return createReview(candidate, "invalid-action", item);
+      const confidence = Number(item.confidence);
+      if (!Number.isFinite(confidence) || confidence < 0 || confidence > 1) {
+        return createReview(candidate, "invalid-confidence", item);
+      }
+      if (item.action === AI_ACTIONS.REVIEW || confidence < confidenceThreshold) {
+        return createReview(candidate, item.reason || "low-confidence", item);
+      }
+      const translation = typeof item.translation === "string" ? item.translation.trim() : "";
+      if (item.action === AI_ACTIONS.TRANSLATE) {
+        if (!translation) return createReview(candidate, "empty-translation", item);
+        if (!placeholdersMatch(candidate.sourceText, translation)) {
+          return createReview(candidate, "placeholder-mismatch", item);
+        }
+      }
+      const statusMap = {
+        [AI_ACTIONS.TRANSLATE]: AI_CANDIDATE_STATUS.TRANSLATED,
+        [AI_ACTIONS.KEEP]: AI_CANDIDATE_STATUS.KEEP,
+        [AI_ACTIONS.REMOVE]: AI_CANDIDATE_STATUS.REMOVED
+      };
+      return {
+        id: candidate.id,
+        sourceText: candidate.sourceText,
+        action: item.action,
+        translation: item.action === AI_ACTIONS.TRANSLATE ? translation : "",
+        confidence,
+        category: typeof item.category === "string" ? item.category.slice(0, 80) : "",
+        reason: typeof item.reason === "string" ? item.reason.slice(0, 300) : "",
+        status: statusMap[item.action]
+      };
+    });
+  }
+  // src/shared/services/ai/providerClient.js
+  var AiProviderError = class extends Error {
+    constructor(code, message, status = 0) {
+      super(message);
+      this.name = "AiProviderError";
+      this.code = code;
+      this.status = status;
+    }
+  };
+  function validateProviderUrl(apiUrl) {
+    let parsed;
+    try {
+      parsed = new URL(apiUrl);
+    } catch {
+      throw new AiProviderError("invalid-url", "Invalid API URL");
+    }
+    const isLocalhost = ["localhost", "127.0.0.1", "[::1]"].includes(parsed.hostname);
+    if (parsed.protocol !== "https:" && !(parsed.protocol === "http:" && isLocalhost)) {
+      throw new AiProviderError("unsafe-url", "Only HTTPS or localhost HTTP endpoints are allowed");
+    }
+    if (parsed.username || parsed.password || parsed.search || parsed.hash) {
+      throw new AiProviderError(
+        "invalid-url",
+        "Credentials, query strings, and fragments are not allowed in the API URL"
+      );
+    }
+    if (!/\/chat\/completions\/?$/i.test(parsed.pathname)) {
+      throw new AiProviderError("invalid-endpoint", "The API URL must be a full chat/completions endpoint");
+    }
+    return parsed.toString();
+  }
+  function validateProviderConfiguration(provider, apiKey) {
+    if (!provider?.model) {
+      throw new AiProviderError("missing-model", "A model is required");
+    }
+    if (!apiKey || !String(apiKey).trim()) {
+      throw new AiProviderError("missing-api-key", "An API key is required");
+    }
+    if (String(apiKey).trim().length > 4096) {
+      throw new AiProviderError("invalid-api-key", "The API key is too long");
+    }
+    return validateProviderUrl(provider.apiUrl);
+  }
+  function parseResponseBody(responseText) {
+    try {
+      return JSON.parse(responseText);
+    } catch {
+      throw new AiProviderError("invalid-json", "The provider returned invalid JSON");
+    }
+  }
+  function createChatCompletionRequest({
+    provider,
+    apiKey,
+    payload,
+    timeoutMs = 45e3,
+    transport = xmlHttpRequest
+  }) {
+    const url = validateProviderConfiguration(provider, apiKey);
+    let requestHandle = null;
+    let settled = false;
+    const promise = new Promise((resolve, reject) => {
+      const finish = (callback) => (value) => {
+        if (settled) return;
+        settled = true;
+        callback(value);
+      };
+      const resolveOnce = finish(resolve);
+      const rejectOnce = finish(reject);
+      requestHandle = transport({
+        method: "POST",
+        url,
+        redirect: "error",
+        timeout: timeoutMs,
+        headers: {
+          Authorization: `Bearer ${String(apiKey).trim()}`,
+          "Content-Type": "application/json"
+        },
+        data: JSON.stringify(payload),
+        responseType: "text",
+        onload: (response) => {
+          if (response.status < 200 || response.status >= 300) {
+            const statusCode = Number(response.status) || 0;
+            const code = statusCode === 401 || statusCode === 403 ? "authentication" : statusCode === 429 ? "rate-limit" : statusCode >= 500 ? "provider-unavailable" : "http-error";
+            rejectOnce(
+              new AiProviderError(code, `Provider request failed with HTTP ${statusCode}`, statusCode)
+            );
+            return;
+          }
+          if (String(response.responseText || "").length > 2e6) {
+            rejectOnce(new AiProviderError("response-too-large", "The provider response is too large"));
+            return;
+          }
+          try {
+            const body = parseResponseBody(response.responseText);
+            if (body?.choices?.[0]?.finish_reason === "length") {
+              rejectOnce(new AiProviderError("truncated-response", "The provider response was truncated"));
+              return;
+            }
+            const content = body?.choices?.[0]?.message?.content;
+            if (typeof content !== "string") {
+              rejectOnce(
+                new AiProviderError(
+                  "invalid-response",
+                  "The provider response is missing choices[0].message.content"
+                )
+              );
+              return;
+            }
+            resolveOnce({ body, content, usage: body.usage || null });
+          } catch (error) {
+            rejectOnce(error);
+          }
+        },
+        ontimeout: () => rejectOnce(new AiProviderError("timeout", "The provider request timed out")),
+        onerror: () => rejectOnce(new AiProviderError("network", "The provider request failed")),
+        onabort: () => rejectOnce(new AiProviderError("aborted", "The provider request was aborted"))
+      });
+    });
+    return {
+      promise,
+      abort() {
+        if (!settled && requestHandle && typeof requestHandle.abort === "function") {
+          requestHandle.abort();
+        }
+      }
+    };
+  }
+  async function testProviderProcessing({
+    provider,
+    apiKey,
+    timeoutMs,
+    transport,
+    targetLanguage = "zh-CN",
+    confidenceThreshold = 0.85
+  }) {
+    const startedAt = typeof performance !== "undefined" ? performance.now() : Date.now();
+    const request = createChatCompletionRequest({
+      provider,
+      apiKey,
+      payload: buildProviderProcessingTestRequest(provider, targetLanguage),
+      timeoutMs,
+      transport
+    });
+    const response = await request.promise;
+    let decision;
+    try {
+      const payload = parseJsonContent(response.content);
+      [decision] = validateTranslationResponse(payload, [PROVIDER_TEST_CANDIDATE], confidenceThreshold);
+    } catch (error) {
+      throw new AiProviderError("processing-test-failed", error?.message || "The processing test failed");
+    }
+    if (decision?.action !== AI_ACTIONS.TRANSLATE || decision?.status !== AI_CANDIDATE_STATUS.TRANSLATED || !decision.translation) {
+      throw new AiProviderError(
+        "processing-test-failed",
+        `The provider did not return a valid translation (${decision?.reason || "invalid-result"})`
+      );
+    }
+    const finishedAt = typeof performance !== "undefined" ? performance.now() : Date.now();
+    return { latencyMs: Math.round(finishedAt - startedAt), translation: decision.translation };
+  }
+  // src/shared/services/ai/siteStyleStore.js
+  var STYLE_KEY = "qing_pagescanner_ai_site_styles_v1";
+  var MAX_PROFILES = 200;
+  function parseProfiles(value) {
+    if (!value) return [];
+    try {
+      const parsed = typeof value === "string" ? JSON.parse(value) : value;
+      return parsed?.version === 1 && Array.isArray(parsed.profiles) ? parsed.profiles : [];
+    } catch {
+      return [];
+    }
+  }
+  function normalizePathPrefix(value) {
+    const trimmed = String(value || "/").trim();
+    if (!trimmed || trimmed === "/") return "/";
+    return `/${trimmed.replace(/^\/+|\/+$/g, "")}/`;
+  }
+  function normalizeOrigin(value) {
+    try {
+      const parsed = new URL(String(value || "").trim());
+      return ["http:", "https:"].includes(parsed.protocol) ? parsed.origin : "";
+    } catch {
+      return "";
+    }
+  }
+  function normalizeStyleProfile(profile) {
+    const origin = normalizeOrigin(profile.origin);
+    const pathPrefix = normalizePathPrefix(profile.pathPrefix);
+    const targetLanguage = profile.targetLanguage === "zh-TW" ? "zh-TW" : "zh-CN";
+    return {
+      id: profile.id || `style-${hashText(`${origin}|${pathPrefix}|${targetLanguage}`)}`,
+      origin,
+      pathPrefix,
+      targetLanguage,
+      tone: String(profile.tone || "").trim().slice(0, 300),
+      glossary: String(profile.glossary || "").trim().slice(0, 1200),
+      punctuation: String(profile.punctuation || "").trim().slice(0, 300),
+      instructions: String(profile.instructions || "").trim().slice(0, 1200),
+      version: Math.max(1, Number(profile.version) || 1),
+      updatedAt: Number(profile.updatedAt) || Date.now(),
+      lastUsedAt: Number(profile.lastUsedAt) || Date.now()
+    };
+  }
+  async function loadStyleProfiles() {
+    const profiles = parseProfiles(await getValue(STYLE_KEY, null));
+    return profiles.map(normalizeStyleProfile).sort((left, right) => right.lastUsedAt - left.lastUsedAt);
+  }
+  async function saveStyleProfiles(profiles) {
+    const normalized = profiles.map(normalizeStyleProfile).slice(0, MAX_PROFILES);
+    await setValue(STYLE_KEY, JSON.stringify({ version: 1, profiles: normalized }));
+    return normalized;
+  }
+  async function upsertStyleProfile(profile) {
+    const profiles = await loadStyleProfiles();
+    const normalized = normalizeStyleProfile(profile);
+    if (!normalized.origin) throw new Error("invalid-style-origin");
+    const existingIndex = profiles.findIndex((item) => item.id === normalized.id);
+    if (existingIndex >= 0) {
+      normalized.version = profiles[existingIndex].version + 1;
+      profiles.splice(existingIndex, 1, normalized);
+    } else {
+      profiles.unshift(normalized);
+    }
+    await saveStyleProfiles(profiles);
+    return normalized;
+  }
+  async function deleteStyleProfile(profileId) {
+    const profiles = await loadStyleProfiles();
+    await saveStyleProfiles(profiles.filter((profile) => profile.id !== profileId));
+  }
+  async function clearStyleProfiles() {
+    await deleteValue(STYLE_KEY);
+  }
+  async function matchStyleProfile(locationLike, targetLanguage) {
+    const profiles = await loadStyleProfiles();
+    const origin = String(locationLike?.origin || "");
+    const pathname = normalizePathPrefix(locationLike?.pathname || "/");
+    const matched = profiles.filter(
+      (profile) => profile.origin === origin && profile.targetLanguage === targetLanguage && pathname.startsWith(profile.pathPrefix)
+    ).sort((left, right) => right.pathPrefix.length - left.pathPrefix.length)[0] || null;
+    if (matched) {
+      const now = Date.now();
+      if (now - matched.lastUsedAt > 6e4) {
+        matched.lastUsedAt = now;
+        await saveStyleProfiles(profiles.map((profile) => profile.id === matched.id ? matched : profile));
+      }
+    }
+    return matched;
+  }
+  // src/shared/ui/components/disclosure.js
+  function createDisclosure({ id, title, icon = "", expanded = false }) {
+    const controller2 = new AbortController();
+    const element = document.createElement("div");
+    element.className = "tc-disclosure";
+    const trigger = document.createElement("button");
+    trigger.type = "button";
+    trigger.className = "tc-disclosure-trigger";
+    trigger.setAttribute("aria-controls", `${id}-content`);
+    trigger.appendChild(createIconTitle(icon, title));
+    const arrow = document.createElement("span");
+    arrow.className = "tc-disclosure-arrow";
+    arrow.setAttribute("aria-hidden", "true");
+    const arrowSvg = createSVGFromString(arrowDownIcon);
+    if (arrowSvg) arrow.appendChild(arrowSvg);
+    trigger.appendChild(arrow);
+    const content = document.createElement("div");
+    content.id = `${id}-content`;
+    content.className = "tc-disclosure-content";
+    const setExpanded = (nextExpanded) => {
+      const isExpanded = Boolean(nextExpanded);
+      trigger.setAttribute("aria-expanded", String(isExpanded));
+      content.hidden = !isExpanded;
+    };
+    trigger.addEventListener("click", () => setExpanded(trigger.getAttribute("aria-expanded") !== "true"), {
+      signal: controller2.signal
+    });
+    element.append(trigger, content);
+    setExpanded(expanded);
+    return {
+      element,
+      content,
+      setExpanded,
+      destroy: () => controller2.abort()
+    };
+  }
+  function createFieldShell(id, labelText, control) {
+    const container = document.createElement("div");
+    container.className = "tc-field-group";
+    const label = document.createElement("label");
+    label.className = "tc-field-label";
+    label.htmlFor = id;
+    label.textContent = labelText;
+    container.append(label, control);
+    return container;
+  }
+  function createTextField(id, labelText, value = "", options = {}) {
+    const { type = "text", rows, autocomplete, spellcheck = false } = options;
+    const input = rows ? document.createElement("textarea") : document.createElement("input");
+    input.id = id;
+    input.className = "tc-text-input";
+    input.value = value ?? "";
+    input.spellcheck = spellcheck;
+    if (rows) {
+      input.rows = rows;
+      input.classList.add("tc-text-input-multiline");
+    } else {
+      input.type = type;
+    }
+    if (autocomplete) {
+      input.autocomplete = autocomplete;
+    }
+    return { element: createFieldShell(id, labelText, input), input };
+  }
+  function createCustomSelectField(id, labelText, options, value) {
+    const mount = document.createElement("div");
+    mount.className = "tc-custom-select-mount";
+    const select = new CustomSelect(mount, options, value);
+    select.trigger.id = id;
+    return { element: createFieldShell(id, labelText, mount), select };
+  }
+  function createToggleSwitch(id, title, description, checked = false) {
+    const input = document.createElement("input");
+    input.id = id;
+    input.className = "tc-toggle-input";
+    input.type = "checkbox";
+    input.setAttribute("role", "switch");
+    input.setAttribute("aria-describedby", `${id}-description`);
+    input.checked = Boolean(checked);
+    const titleElement = document.createElement("span");
+    titleElement.className = "tc-toggle-title";
+    titleElement.textContent = title;
+    const descriptionElement = document.createElement("span");
+    descriptionElement.id = `${id}-description`;
+    descriptionElement.className = "tc-toggle-description";
+    descriptionElement.textContent = description;
+    const copy = document.createElement("span");
+    copy.className = "tc-toggle-copy";
+    copy.append(titleElement, descriptionElement);
+    const control = document.createElement("span");
+    control.className = "tc-toggle-control";
+    control.setAttribute("aria-hidden", "true");
+    const element = document.createElement("label");
+    element.className = "tc-toggle-setting";
+    element.append(copy, input, control);
+    return { element, input };
+  }
+  var addIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>`;
+  var budgetIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M200-160q-33 0-56.5-23.5T120-240v-480q0-33 23.5-56.5T200-800h560q33 0 56.5 23.5T840-720v80H200v400h560v-80h80v80q0 33-23.5 56.5T760-160H200Zm360-160q-33 0-56.5-23.5T480-400v-160q0-33 23.5-56.5T560-640h280q33 0 56.5 23.5T920-560v160q0 33-23.5 56.5T840-320H560Zm280-80v-160H560v160h280Zm-640-80v240-480 240Z"/></svg>`;
+  var deleteIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>`;
+  var jsonIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M190-360h70q17 0 28.5-11.5T300-400v-200h-60v190h-40v-50h-50v60q0 17 11.5 28.5T190-360Zm177 0h60q17 0 28.5-11.5T467-400v-60q0-17-11.5-28.5T427-500h-50v-50h40v20h50v-30q0-17-11.5-28.5T427-600h-60q-17 0-28.5 11.5T327-560v60q0 17 11.5 28.5T367-460h50v50h-40v-20h-50v30q0 17 11.5 28.5T367-360Zm176-60v-120h40v120h-40Zm-10 60h60q17 0 28.5-11.5T633-400v-160q0-17-11.5-28.5T593-600h-60q-17 0-28.5 11.5T493-560v160q0 17 11.5 28.5T533-360Zm127 0h50v-105l40 105h50v-240h-50v105l-40-105h-50v240ZM120-160q-33 0-56.5-23.5T40-240v-480q0-33 23.5-56.5T120-800h720q33 0 56.5 23.5T920-720v480q0 33-23.5 56.5T840-160H120Zm0-80h720v-480H120v480Zm0 0v-480 480Z"/></svg>`;
+  var resetIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q88 0 169 41t135 111v-152h80v320H544v-80h196q-42-70-110-115t-150-45q-117 0-198.5 81.5T200-480q0 117 81.5 198.5T480-200q94 0 168.5-57.5T752-408h82q-31 125-129.5 206.5T480-120Z"/></svg>`;
+  var speedIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M418-340q24 24 62 23.5t56-27.5l224-336-336 224q-27 18-28 55.5t22 60.5Zm62-460q57 0 109 16.5t96 47.5l-70 47q-31-16-65.5-23.5T480-720q-133 0-226.5 93.5T160-400q0 42 11.5 81t32.5 74l-66 44q-28-46-43-96.5T80-400q0-83 31.5-155.5t85.5-126q54-53.5 127-85.5T480-800Zm278 124q42 53 62 120.5T840-420q0 57-14.5 109T784-211l-66-44q20-35 31-74t11-81q0-40-10-78t-30-72l38-116ZM480-120q-63 0-120.5-20.5T256-199l66-44q35 20 75 31.5t83 11.5q43 0 83-11.5t75-31.5l66 44q-46 38-103.5 58.5T480-120Z"/></svg>`;
+  function localizedOptions(options) {
+    return options.map(({ labelKey, ...option }) => ({ ...option, label: t(labelKey) }));
+  }
+  function createSelectField(id, labelKey, options, value) {
+    return createCustomSelectField(id, t(labelKey), localizedOptions(options), value);
+  }
+  function createNumberField(id, labelKey, value, options) {
+    const element = createNumericInput(id, t(labelKey), value, options);
+    element.classList.add("ai-number-field");
+    return { element, input: element.querySelector('input[type="number"]') };
+  }
+  function createSection(titleKey, icon) {
+    const section = document.createElement("section");
+    section.className = "ai-settings-section";
+    const header = document.createElement("header");
+    header.className = "ai-section-header setting-title-container";
+    header.appendChild(createIconTitle(icon, t(titleKey)));
+    const body = document.createElement("div");
+    body.className = "ai-section-body";
+    section.append(header, body);
+    return { section, body };
+  }
+  function numberValue(input, fallback) {
+    const value = Number(input.value);
+    return Number.isFinite(value) ? value : fallback;
+  }
+  function mountAiSettingsPanel(container, currentAiSettings) {
+    const settings = mergeAiSettings(currentAiSettings);
+    let providers = settings.providers.map((provider2) => ({ ...provider2 }));
+    let activeProviderId = settings.activeProviderId;
+    const providerKeys =  new Map();
+    const deletedProviderIds =  new Set();
+    const buttons = [];
+    const selects = [];
+    const lifecycle = new AbortController();
+    const { signal } = lifecycle;
+    let isDestroyed = false;
+    const registerSelect = (field) => {
+      selects.push(field.select);
+      return field;
+    };
+    const aiEnabled = createToggleSwitch(
+      "ai-feature-enabled",
+      t("settings.ai.enabled"),
+      t("settings.ai.enabledDescription"),
+      settings.enabled
+    );
+    const aiBetaBadge = document.createElement("span");
+    aiBetaBadge.className = "ai-beta-badge";
+    aiBetaBadge.textContent = t("settings.ai.betaBadge");
+    aiEnabled.element.querySelector(".tc-toggle-title")?.append(aiBetaBadge);
+    const aiBetaNotice = createIconTitle(warningIcon, t("settings.ai.betaNotice"));
+    aiBetaNotice.classList.add("settings-info-notice", "ai-beta-notice");
+    aiBetaNotice.setAttribute("role", "note");
+    aiBetaNotice.firstElementChild?.classList.add("settings-info-notice-icon");
+    const aiControls = document.createElement("div");
+    aiControls.className = "ai-settings-controls";
+    function syncAiControlsAvailability() {
+      const disabled = !aiEnabled.input.checked;
+      aiControls.classList.toggle("is-disabled", disabled);
+      aiControls.setAttribute("aria-disabled", String(disabled));
+      aiControls.inert = disabled;
+    }
+    aiEnabled.input.addEventListener("change", syncAiControlsAvailability, { signal });
+    const general = createSection("settings.ai.general", aiIcon);
+    const generalGrid = document.createElement("div");
+    generalGrid.className = "ai-form-grid ai-general-grid";
+    const mode = registerSelect(
+      createSelectField(
+        "ai-processing-mode",
+        "settings.ai.processingMode",
+        [
+          { value: AI_PROCESSING_MODES.MANUAL, labelKey: "settings.ai.manual", icon: pauseIcon },
+          { value: AI_PROCESSING_MODES.AUTO, labelKey: "settings.ai.automatic", icon: aiIcon }
+        ],
+        settings.processingMode
+      )
+    );
+    const target = registerSelect(
+      createSelectField(
+        "ai-target-language",
+        "settings.ai.targetLanguage",
+        [
+          {
+            value: AI_TARGET_LANGUAGES.SIMPLIFIED_CHINESE,
+            labelKey: "settings.ai.simplifiedChinese",
+            icon: languageIcon_default
+          },
+          {
+            value: AI_TARGET_LANGUAGES.TRADITIONAL_CHINESE,
+            labelKey: "settings.ai.traditionalChinese",
+            icon: languageIcon_default
+          }
+        ],
+        settings.targetLanguage
+      )
+    );
+    const confidence = createNumberField(
+      "ai-confidence-threshold",
+      "settings.ai.confidenceThreshold",
+      settings.confidenceThreshold,
+      { min: 0.5, max: 1, step: 0.01 }
+    );
+    generalGrid.append(mode.element, target.element, confidence.element);
+    general.body.appendChild(generalGrid);
+    const provider = createSection("settings.ai.provider", settingsIcon);
+    const providerToolbar = document.createElement("div");
+    providerToolbar.className = "ai-provider-toolbar";
+    const providerPicker = registerSelect(
+      createCustomSelectField(
+        "ai-active-provider",
+        t("settings.ai.currentProvider"),
+        providers.map((item) => ({ value: item.id, label: item.name, icon: settingsIcon })),
+        activeProviderId
+      )
+    );
+    providerPicker.element.classList.add("ai-provider-picker");
+    const providerToolbarActions = document.createElement("div");
+    providerToolbarActions.className = "ai-compact-actions";
+    providerToolbar.append(providerPicker.element, providerToolbarActions);
+    const providerName = createTextField("ai-provider-name", t("settings.ai.providerName"));
+    const providerUrl = createTextField("ai-provider-url", t("settings.ai.apiUrl"), "", { type: "url" });
+    const providerModel = createTextField("ai-provider-model", t("settings.ai.model"));
+    const responseMode = registerSelect(
+      createSelectField(
+        "ai-response-mode",
+        "settings.ai.responseMode",
+        [
+          { value: AI_RESPONSE_MODES.JSON, labelKey: "settings.ai.jsonMode", icon: jsonIcon },
+          { value: AI_RESPONSE_MODES.PROMPT_JSON, labelKey: "settings.ai.promptJson", icon: jsonIcon }
+        ],
+        AI_RESPONSE_MODES.JSON
+      )
+    );
+    const apiKey = createTextField("ai-provider-key", t("settings.ai.apiKey"), "", {
+      type: "password",
+      autocomplete: "off"
+    });
+    providerUrl.element.classList.add("ai-field-wide");
+    const providerForm = document.createElement("div");
+    providerForm.className = "ai-form-grid ai-provider-form";
+    providerForm.append(providerName.element, providerModel.element, providerUrl.element, responseMode.element);
+    const providerFooter = document.createElement("div");
+    providerFooter.className = "ai-action-footer ai-provider-footer";
+    providerFooter.hidden = true;
+    const providerStatus = document.createElement("div");
+    providerStatus.className = "ai-provider-status";
+    providerStatus.setAttribute("aria-live", "polite");
+    const providerTestDescription = createIconTitle(infoIcon, t("settings.ai.testDescription"));
+    providerTestDescription.classList.add("settings-info-notice", "ai-provider-test-description");
+    providerTestDescription.setAttribute("role", "note");
+    providerTestDescription.firstElementChild?.classList.add("settings-info-notice-icon");
+    function setProviderStatus(message = "", state = "") {
+      providerStatus.textContent = message;
+      providerStatus.dataset.state = state;
+      providerFooter.hidden = !message;
+    }
+    function activeProvider() {
+      return providers.find((item) => item.id === activeProviderId) || providers[0];
+    }
+    function syncProviderFromForm() {
+      const index = providers.findIndex((item) => item.id === activeProviderId);
+      if (index < 0) return;
+      providers[index] = normalizeProvider(
+        {
+          ...providers[index],
+          name: providerName.input.value,
+          apiUrl: providerUrl.input.value,
+          model: providerModel.input.value,
+          responseMode: responseMode.select.getValue()
+        },
+        index
+      );
+      providerKeys.set(activeProviderId, apiKey.input.value);
+    }
+    async function persistProviderKeys() {
+      await Promise.all(Array.from(providerKeys, ([id, key]) => saveProviderApiKey(id, key || "")));
+      await Promise.all(Array.from(deletedProviderIds, (id) => deleteProviderApiKey(id)));
+      deletedProviderIds.clear();
+    }
+    async function persistProviderConfiguration() {
+      syncProviderFromForm();
+      await persistProviderKeys();
+      const storedSettings = loadSettings();
+      saveSettings({
+        ai: mergeAiSettings({
+          ...storedSettings.ai,
+          activeProviderId,
+          providers
+        })
+      });
+      showNotification(t("notifications.aiProviderSaved"), { type: "success" });
+    }
+    async function renderProviderForm() {
+      const active = activeProvider();
+      if (!active) return;
+      activeProviderId = active.id;
+      providerPicker.select.updateOptions(
+        providers.map((item) => ({ value: item.id, label: item.name, icon: settingsIcon }))
+      );
+      providerPicker.select.setValue(activeProviderId);
+      providerName.input.value = active.name;
+      providerUrl.input.value = active.apiUrl;
+      providerModel.input.value = active.model;
+      responseMode.select.setValue(active.responseMode);
+      setProviderStatus();
+      deleteProviderBtn.disabled = providers.length <= 1;
+      const cachedKey = providerKeys.get(active.id);
+      apiKey.input.value = cachedKey || "";
+      if (!providerKeys.has(active.id)) {
+        const untouchedValue = apiKey.input.value;
+        const storedKey = await loadProviderApiKey(active.id);
+        if (isDestroyed) return;
+        providerKeys.set(active.id, storedKey);
+        if (activeProviderId === active.id && apiKey.input.value === untouchedValue) {
+          apiKey.input.value = storedKey || "";
+        }
+      }
+    }
+    providerPicker.select.container.addEventListener(
+      "custom-select-change",
+      (event) => {
+        syncProviderFromForm();
+        activeProviderId = event.detail.value;
+        void renderProviderForm();
+      },
+      { signal }
+    );
+    const addProviderBtn = createButton({
+      textKey: "settings.ai.addProvider",
+      icon: addIcon,
+      onClick: () => {
+        syncProviderFromForm();
+        const id = `custom-${Date.now()}-${providers.length}`;
+        providers.push(normalizeProvider({ id, name: t("settings.ai.newProvider") }, providers.length));
+        activeProviderId = id;
+        void renderProviderForm();
+      }
+    });
+    const deleteProviderBtn = createButton({
+      textKey: "common.delete",
+      icon: deleteIcon,
+      onClick: async () => {
+        if (providers.length <= 1) return;
+        const confirmed = await showConfirmationModal(t("confirmation.deleteProvider"), warningIcon);
+        if (!confirmed) return;
+        deletedProviderIds.add(activeProviderId);
+        providerKeys.delete(activeProviderId);
+        providers = providers.filter((item) => item.id !== activeProviderId);
+        activeProviderId = providers[0].id;
+        await renderProviderForm();
+      }
+    });
+    const testProviderBtn = createButton({
+      textKey: "settings.ai.testConnection",
+      icon: speedIcon,
+      onClick: async () => {
+        syncProviderFromForm();
+        setProviderStatus(t("settings.ai.testing"), "pending");
+        testProviderBtn.disabled = true;
+        try {
+          const result = await testProviderProcessing({
+            provider: activeProvider(),
+            apiKey: apiKey.input.value,
+            timeoutMs: numberValue(timeout.input, settings.requestTimeoutMs / 1e3) * 1e3,
+            targetLanguage: target.select.getValue(),
+            confidenceThreshold: numberValue(confidence.input, settings.confidenceThreshold)
+          });
+          setProviderStatus(
+            `${t("settings.ai.processingOk")}: ${result.translation} \xB7 ${result.latencyMs} ms`,
+            "success"
+          );
+        } catch (error) {
+          setProviderStatus(
+            `${t("settings.ai.connectionFailed")}: ${error?.code || error?.message || "unknown"}`,
+            "error"
+          );
+        } finally {
+          testProviderBtn.disabled = false;
+        }
+      }
+    });
+    const saveProviderBtn = createButton({
+      textKey: "settings.ai.saveProvider",
+      icon: saveIcon,
+      onClick: async () => {
+        saveProviderBtn.disabled = true;
+        try {
+          await persistProviderConfiguration();
+        } catch (error) {
+          setProviderStatus(
+            `${t("settings.ai.connectionFailed")}: ${error?.code || error?.message || "storage"}`,
+            "error"
+          );
+        } finally {
+          saveProviderBtn.disabled = false;
+        }
+      }
+    });
+    buttons.push(addProviderBtn, deleteProviderBtn, testProviderBtn, saveProviderBtn);
+    providerToolbarActions.append(addProviderBtn, deleteProviderBtn);
+    const providerKeyRow = document.createElement("div");
+    providerKeyRow.className = "ai-provider-key-row";
+    providerKeyRow.append(apiKey.element, testProviderBtn, saveProviderBtn);
+    providerFooter.append(providerStatus);
+    provider.body.append(providerToolbar, providerForm, providerKeyRow, providerTestDescription, providerFooter);
+    const budget = createSection("settings.ai.costControl", budgetIcon);
+    const budgetGrid = document.createElement("div");
+    budgetGrid.className = "ai-form-grid ai-budget-grid";
+    const maxBatchItems = createNumberField(
+      "ai-max-batch-items",
+      "settings.ai.maxBatchItems",
+      settings.batch.maxItems,
+      { min: 1, max: 200 }
+    );
+    const maxBatchCharacters = createNumberField(
+      "ai-max-batch-characters",
+      "settings.ai.maxBatchCharacters",
+      settings.batch.maxCharacters,
+      { min: 500, max: 6e4 }
+    );
+    const maxRequests = createNumberField(
+      "ai-max-page-requests",
+      "settings.ai.maxRequests",
+      settings.budget.maxRequestsPerSession,
+      { min: 1, max: 500 }
+    );
+    const maxCharacters = createNumberField(
+      "ai-max-page-characters",
+      "settings.ai.maxPageCharacters",
+      settings.budget.maxCharactersPerSession,
+      { min: 1e3, max: 1e6 }
+    );
+    const dailyTokens = createNumberField(
+      "ai-daily-token-limit",
+      "settings.ai.dailyTokens",
+      settings.budget.maxEstimatedTokensPerDay,
+      { min: 1e3, max: 1e7 }
+    );
+    const timeout = createNumberField("ai-request-timeout", "settings.ai.timeout", settings.requestTimeoutMs / 1e3, {
+      min: 5,
+      max: 120
+    });
+    budgetGrid.append(
+      maxBatchItems.element,
+      maxBatchCharacters.element,
+      maxRequests.element,
+      maxCharacters.element,
+      dailyTokens.element,
+      timeout.element
+    );
+    const resetUsageBtn = createButton({
+      textKey: "settings.ai.resetDailyUsage",
+      icon: resetIcon,
+      onClick: async () => {
+        await resetDailyUsage();
+        showNotification(t("notifications.aiDailyUsageReset"), { type: "success" });
+      }
+    });
+    buttons.push(resetUsageBtn);
+    const budgetFooter = document.createElement("div");
+    budgetFooter.className = "ai-action-footer ai-action-footer-end";
+    budgetFooter.appendChild(resetUsageBtn);
+    budget.body.append(budgetGrid, budgetFooter);
+    const styles = createSection("settings.ai.siteStyles", themeIcon);
+    const stylesDescription = createIconTitle(infoIcon, t("settings.ai.siteStylesDescription"));
+    stylesDescription.classList.add("settings-info-notice", "ai-style-description");
+    stylesDescription.setAttribute("role", "note");
+    stylesDescription.firstElementChild?.classList.add("settings-info-notice-icon");
+    const styleToolbar = document.createElement("div");
+    styleToolbar.className = "ai-style-toolbar";
+    const styleSearch = createTextField("ai-style-search", t("settings.ai.searchStyles"), "", { type: "search" });
+    const styleSort = registerSelect(
+      createSelectField(
+        "ai-style-sort",
+        "settings.ai.sortStyles",
+        [
+          { value: "recent", labelKey: "settings.ai.sortRecent" },
+          { value: "origin", labelKey: "settings.ai.sortOrigin" }
+        ],
+        "recent"
+      )
+    );
+    styleToolbar.append(styleSearch.element, styleSort.element);
+    const styleWorkspace = document.createElement("div");
+    styleWorkspace.className = "ai-style-workspace";
+    const styleLibrary = document.createElement("div");
+    styleLibrary.className = "ai-style-library";
+    const styleLibraryTitle = document.createElement("div");
+    styleLibraryTitle.className = "ai-subsection-title";
+    styleLibraryTitle.appendChild(createIconTitle(themeIcon, t("settings.ai.styleLibrary")));
+    const styleList = document.createElement("div");
+    styleList.className = "ai-style-list";
+    const styleEditor = document.createElement("div");
+    styleEditor.className = "ai-style-editor";
+    const styleEditorTitle = document.createElement("div");
+    styleEditorTitle.className = "ai-subsection-title";
+    styleEditorTitle.appendChild(createIconTitle(settingsIcon, t("settings.ai.styleEditor")));
+    const origin = createTextField("ai-style-origin", t("settings.ai.styleOrigin"), window.location.origin);
+    const pathPrefix = createTextField("ai-style-path", t("settings.ai.stylePath"), "/");
+    const styleTarget = registerSelect(
+      createSelectField(
+        "ai-style-target",
+        "settings.ai.targetLanguage",
+        [
+          { value: "zh-CN", labelKey: "settings.ai.simplifiedChinese", icon: languageIcon_default },
+          { value: "zh-TW", labelKey: "settings.ai.traditionalChinese", icon: languageIcon_default }
+        ],
+        settings.targetLanguage
+      )
+    );
+    const tone = createTextField("ai-style-tone", t("settings.ai.styleTone"), t("settings.ai.defaultStyleTone"));
+    const glossary = createTextField("ai-style-glossary", t("settings.ai.styleGlossary"), "", { rows: 4 });
+    const punctuation = createTextField(
+      "ai-style-punctuation",
+      t("settings.ai.stylePunctuation"),
+      t("settings.ai.defaultStylePunctuation")
+    );
+    const instructions = createTextField("ai-style-instructions", t("settings.ai.styleInstructions"), "", {
+      rows: 4
+    });
+    tone.element.classList.add("ai-field-wide");
+    glossary.element.classList.add("ai-field-wide");
+    instructions.element.classList.add("ai-field-wide");
+    const styleForm = document.createElement("div");
+    styleForm.className = "ai-form-grid ai-style-form";
+    styleForm.append(tone.element, glossary.element, instructions.element);
+    const advancedStyleSettings = createDisclosure({
+      id: "ai-style-advanced",
+      title: t("settings.ai.advancedStyleSettings"),
+      icon: settingsIcon
+    });
+    advancedStyleSettings.element.classList.add("ai-style-advanced");
+    const advancedStyleForm = document.createElement("div");
+    advancedStyleForm.className = "ai-form-grid ai-style-advanced-form";
+    advancedStyleForm.append(origin.element, pathPrefix.element, styleTarget.element, punctuation.element);
+    advancedStyleSettings.content.appendChild(advancedStyleForm);
+    let styleProfiles = [];
+    let editingStyleId = null;
+    function updateStyleActionState() {
+      deleteStyleBtn.disabled = !editingStyleId;
+      clearStylesBtn.disabled = styleProfiles.length === 0;
+    }
+    function resetStyleForm() {
+      editingStyleId = null;
+      origin.input.value = window.location.origin;
+      pathPrefix.input.value = "/";
+      styleTarget.select.setValue(target.select.getValue());
+      tone.input.value = t("settings.ai.defaultStyleTone");
+      glossary.input.value = "";
+      punctuation.input.value = t("settings.ai.defaultStylePunctuation");
+      instructions.input.value = "";
+      advancedStyleSettings.setExpanded(false);
+      updateStyleActionState();
+      renderStyles();
+    }
+    function editStyle(profile) {
+      editingStyleId = profile.id;
+      origin.input.value = profile.origin;
+      pathPrefix.input.value = profile.pathPrefix;
+      styleTarget.select.setValue(profile.targetLanguage);
+      tone.input.value = profile.tone;
+      glossary.input.value = profile.glossary;
+      punctuation.input.value = profile.punctuation;
+      instructions.input.value = profile.instructions;
+      advancedStyleSettings.setExpanded(
+        profile.origin !== window.location.origin || profile.pathPrefix !== "/" || profile.targetLanguage !== target.select.getValue() || profile.punctuation !== t("settings.ai.defaultStylePunctuation")
+      );
+      updateStyleActionState();
+      renderStyles();
+    }
+    function renderStyles() {
+      const query = styleSearch.input.value.trim().toLocaleLowerCase();
+      const visible = styleProfiles.filter(
+        (profile) => !query || [profile.origin, profile.pathPrefix, profile.tone, profile.glossary].some(
+          (value) => String(value).toLocaleLowerCase().includes(query)
+        )
+      );
+      visible.sort(
+        styleSort.select.getValue() === "origin" ? (left, right) => left.origin.localeCompare(right.origin) : (left, right) => right.updatedAt - left.updatedAt
+      );
+      styleList.replaceChildren();
+      visible.forEach((profile) => {
+        const row = document.createElement("button");
+        row.type = "button";
+        row.className = "ai-style-row";
+        row.classList.toggle("is-active", profile.id === editingStyleId);
+        row.setAttribute("aria-pressed", String(profile.id === editingStyleId));
+        row.appendChild(createIconTitle(themeIcon, `${profile.origin}${profile.pathPrefix}`));
+        const language = document.createElement("span");
+        language.className = "ai-style-row-meta";
+        language.textContent = profile.targetLanguage;
+        row.appendChild(language);
+        row.addEventListener("click", () => editStyle(profile));
+        styleList.appendChild(row);
+      });
+      if (visible.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "ai-style-empty";
+        empty.textContent = t("settings.ai.noStyles");
+        styleList.appendChild(empty);
+      }
+      updateStyleActionState();
+    }
+    styleSearch.input.addEventListener("input", renderStyles, { signal });
+    styleSort.select.container.addEventListener("custom-select-change", renderStyles, { signal });
+    const saveStyleBtn = createButton({
+      textKey: "settings.ai.saveStyle",
+      icon: saveIcon,
+      onClick: async () => {
+        if (!origin.input.value.trim()) {
+          showNotification(t("notifications.aiStyleOriginRequired"), { type: "error" });
+          return;
+        }
+        try {
+          await upsertStyleProfile({
+            id: editingStyleId,
+            origin: origin.input.value,
+            pathPrefix: pathPrefix.input.value,
+            targetLanguage: styleTarget.select.getValue(),
+            tone: tone.input.value,
+            glossary: glossary.input.value,
+            punctuation: punctuation.input.value,
+            instructions: instructions.input.value
+          });
+        } catch {
+          showNotification(t("notifications.aiStyleOriginRequired"), { type: "error" });
+          return;
+        }
+        styleProfiles = await loadStyleProfiles();
+        resetStyleForm();
+        showNotification(t("notifications.aiStyleSaved"), { type: "success" });
+      }
+    });
+    const resetStyleBtn = createButton({
+      textKey: "settings.ai.useCurrentSite",
+      icon: resetIcon,
+      onClick: resetStyleForm
+    });
+    const deleteStyleBtn = createButton({
+      textKey: "common.delete",
+      icon: deleteIcon,
+      disabled: true,
+      onClick: async () => {
+        if (!editingStyleId) return;
+        const confirmed = await showConfirmationModal(t("confirmation.deleteStyle"), warningIcon);
+        if (!confirmed) return;
+        await deleteStyleProfile(editingStyleId);
+        styleProfiles = await loadStyleProfiles();
+        resetStyleForm();
+      }
+    });
+    const clearStylesBtn = createButton({
+      textKey: "settings.ai.clearStyles",
+      icon: clearIcon,
+      disabled: true,
+      onClick: async () => {
+        const confirmed = await showConfirmationModal(t("confirmation.clearStyles"), warningIcon);
+        if (!confirmed) return;
+        await clearStyleProfiles();
+        styleProfiles = [];
+        resetStyleForm();
+      }
+    });
+    buttons.push(saveStyleBtn, resetStyleBtn, deleteStyleBtn, clearStylesBtn);
+    const styleLibraryFooter = document.createElement("div");
+    styleLibraryFooter.className = "ai-style-library-footer";
+    styleLibraryFooter.appendChild(clearStylesBtn);
+    styleLibrary.append(styleLibraryTitle, styleList, styleLibraryFooter);
+    const styleActions = document.createElement("div");
+    styleActions.className = "ai-action-footer ai-style-actions";
+    styleActions.append(resetStyleBtn, deleteStyleBtn, saveStyleBtn);
+    styleEditor.append(styleEditorTitle, styleForm, advancedStyleSettings.element, styleActions);
+    styleWorkspace.append(styleLibrary, styleEditor);
+    styles.body.append(stylesDescription, styleToolbar, styleWorkspace);
+    aiControls.append(general.section, provider.section, budget.section, styles.section);
+    container.append(aiEnabled.element, aiBetaNotice, aiControls);
+    syncAiControlsAvailability();
+    void renderProviderForm();
+    void loadStyleProfiles().then((profiles) => {
+      if (isDestroyed) return;
+      styleProfiles = profiles;
+      renderStyles();
+    });
+    return {
+      async getSettings() {
+        syncProviderFromForm();
+        await persistProviderKeys();
+        return mergeAiSettings({
+          enabled: aiEnabled.input.checked,
+          processingMode: mode.select.getValue(),
+          targetLanguage: target.select.getValue(),
+          confidenceThreshold: numberValue(confidence.input, settings.confidenceThreshold),
+          activeProviderId,
+          providers,
+          requestTimeoutMs: numberValue(timeout.input, settings.requestTimeoutMs / 1e3) * 1e3,
+          batch: {
+            maxItems: numberValue(maxBatchItems.input, settings.batch.maxItems),
+            maxCharacters: numberValue(maxBatchCharacters.input, settings.batch.maxCharacters),
+            debounceMs: settings.batch.debounceMs
+          },
+          budget: {
+            maxRequestsPerSession: numberValue(maxRequests.input, settings.budget.maxRequestsPerSession),
+            maxCharactersPerSession: numberValue(maxCharacters.input, settings.budget.maxCharactersPerSession),
+            maxEstimatedTokensPerDay: numberValue(dailyTokens.input, settings.budget.maxEstimatedTokensPerDay)
+          }
+        });
+      },
+      destroy() {
+        isDestroyed = true;
+        lifecycle.abort();
+        selects.forEach((select) => select.destroy());
+        buttons.forEach((button) => button.destroy?.());
+        advancedStyleSettings.destroy();
+      }
+    };
+  }
   var settingsPanel = null;
   var selectComponents = {};
   var isTooltipVisible = false;
   var saveBtn = null;
   var unsubscribeTooltipShow = null;
   var unsubscribeTooltipHide = null;
+  var aiPanelController = null;
   var handleKeyDown2 = (event) => {
     if (isTooltipVisible) return;
     if (event.key === "Escape") {
@@ -6799,9 +9522,18 @@ ${result.join(",\n")}
         }));
         if (definition.type === "image-card-select") {
           const includeBrackets = definition.key === "outputFormat" ? currentSettings.includeArrayBrackets : true;
-          selectComponents[definition.key] = new ImageCardSelect(selectWrapper, options, currentSettings[definition.key], includeBrackets);
+          selectComponents[definition.key] = new ImageCardSelect(
+            selectWrapper,
+            options,
+            currentSettings[definition.key],
+            includeBrackets
+          );
         } else {
-          selectComponents[definition.key] = new CustomSelect(selectWrapper, options, currentSettings[definition.key]);
+          selectComponents[definition.key] = new CustomSelect(
+            selectWrapper,
+            options,
+            currentSettings[definition.key]
+          );
         }
       }
     });
@@ -6818,6 +9550,10 @@ ${result.join(",\n")}
     const filterTitleContainer = settingsPanel.querySelector("#filter-setting-title-container");
     if (filterTitleContainer) {
       filterTitleContainer.appendChild(createIconTitle(filterIcon, t("settings.filterRules")));
+    }
+    const aiMount = settingsPanel.querySelector("#ai-settings-mount");
+    if (aiMount) {
+      aiPanelController = mountAiSettingsPanel(aiMount, currentSettings.ai);
     }
     const footer = settingsPanel.querySelector(".settings-panel-footer");
     saveBtn = createButton({
@@ -6863,9 +9599,13 @@ ${result.join(",\n")}
     unsubscribeTooltipHide = on("infoTooltipDidHide", () => {
       isTooltipVisible = false;
     });
-    settingsPanel.addEventListener("transitionend", () => {
-      settingsPanel.focus();
-    }, { once: true });
+    settingsPanel.addEventListener(
+      "transitionend",
+      () => {
+        settingsPanel.focus();
+      },
+      { once: true }
+    );
     setTimeout(() => {
       if (settingsPanel) settingsPanel.classList.add("is-visible");
     }, 10);
@@ -6889,6 +9629,10 @@ ${result.join(",\n")}
         }
       }
       selectComponents = {};
+      if (aiPanelController) {
+        aiPanelController.destroy();
+        aiPanelController = null;
+      }
       setTimeout(() => {
         if (settingsPanel) {
           settingsPanel.remove();
@@ -6897,7 +9641,7 @@ ${result.join(",\n")}
       }, 300);
     }
   }
-  function handleSave(onSave) {
+  async function handleSave(onSave) {
     log(t("log.settings.panel.saving"));
     const newSettings = {};
     for (const key in selectComponents) {
@@ -6938,6 +9682,9 @@ ${result.join(",\n")}
         newSettings[setting.key] = checkbox.checked;
       }
     });
+    if (aiPanelController) {
+      newSettings.ai = await aiPanelController.getSettings();
+    }
     if (onSave) {
       onSave(newSettings);
     }
@@ -7110,7 +9857,12 @@ ${result.join(",\n")}
         }
       }
       document.removeEventListener("keydown", handleEscForSessionScan, true);
+      releaseScanMode(SCAN_MODES.DYNAMIC);
     } else {
+      if (!acquireScanMode(SCAN_MODES.DYNAMIC)) {
+        showNotification(t("notifications.scanModeConflict"), { type: "info" });
+        return;
+      }
       log(t("scan.startSession"));
       setFabIcon(dynamicFab2, stopIcon);
       dynamicFab2.classList.add("is-recording");
@@ -7122,12 +9874,25 @@ ${result.join(",\n")}
       }
       showNotification(t("scan.sessionStarted"), { type: "info" });
       showTopCenterUI();
-      setTimeout(() => {
-        start((count) => {
-          updateCounterValue(count);
-          currentSessionCount = count;
-        });
-      }, 50);
+      void start((count) => {
+        updateCounterValue(count);
+        currentSessionCount = count;
+      }).catch((error) => {
+        log(t("log.sessionScan.worker.initSyncError", { error: error.message }), "error");
+        setFabIcon(dynamicFab2, dynamicIcon);
+        dynamicFab2.classList.remove("is-recording");
+        updateFabTooltip(dynamicFab2, "tooltip.dynamic_scan");
+        hideTopCenterUI();
+        document.removeEventListener("keydown", handleEscForSessionScan, true);
+        if (elementScanFab2) {
+          elementScanFab2.classList.remove("fab-disabled");
+          if (elementScanFab2.dataset.originalTooltipKey) {
+            updateFabTooltip(elementScanFab2, elementScanFab2.dataset.originalTooltipKey);
+          }
+        }
+        releaseScanMode(SCAN_MODES.DYNAMIC);
+        showNotification(t("notifications.scanFailed"), { type: "error" });
+      });
       document.addEventListener("keydown", handleEscForSessionScan, true);
     }
   }
@@ -7137,11 +9902,29 @@ ${result.join(",\n")}
       const dynamicFab2 = getDynamicFab();
       const settings = await loadSettings();
       if (dynamicFab2 && !isSessionRecording()) {
+        if (!acquireScanMode(SCAN_MODES.DYNAMIC)) {
+          showNotification(t("notifications.scanModeConflict"), { type: "info" });
+          return;
+        }
         const resumedData = settings.sessionScan_persistData && state.data ? state.data : null;
-        start((count) => {
+        void start((count) => {
           updateCounterValue(count);
           currentSessionCount = count;
-        }, resumedData);
+        }, resumedData).catch((error) => {
+          releaseScanMode(SCAN_MODES.DYNAMIC);
+          setFabIcon(dynamicFab2, dynamicIcon);
+          dynamicFab2.classList.remove("is-recording");
+          updateFabTooltip(dynamicFab2, "tooltip.dynamic_scan");
+          hideTopCenterUI();
+          const elementScanFab3 = getElementScanFab();
+          if (elementScanFab3) {
+            elementScanFab3.classList.remove("fab-disabled");
+            if (elementScanFab3.dataset.originalTooltipKey) {
+              updateFabTooltip(elementScanFab3, elementScanFab3.dataset.originalTooltipKey);
+            }
+          }
+          log(t("log.main.resumeFailed"), error);
+        });
         setFabIcon(dynamicFab2, stopIcon);
         dynamicFab2.classList.add("is-recording");
         updateFabTooltip(dynamicFab2, "scan.stopSession");
@@ -7178,17 +9961,20 @@ ${result.join(",\n")}
       this.initOnVisible();
     }
     initOnVisible() {
-      this.observer = new IntersectionObserver((entries, observer2) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            if (!this.isInitialized) {
-              this.performInitialMeasurement();
-              this.isInitialized = true;
+      this.observer = new IntersectionObserver(
+        (entries, observer3) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              if (!this.isInitialized) {
+                this.performInitialMeasurement();
+                this.isInitialized = true;
+              }
+              observer3.unobserve(this.element);
             }
-            observer2.unobserve(this.element);
-          }
-        });
-      }, { threshold: 0.1 });
+          });
+        },
+        { threshold: 0.1 }
+      );
       this.observer.observe(this.element);
     }
     performInitialMeasurement() {
@@ -7384,8 +10170,6 @@ ${result.join(",\n")}
       scanContainer.classList.remove("is-error");
     }
     const rect = targetElement.getBoundingClientRect();
-    const scrollX = window.scrollX;
-    const scrollY = window.scrollY;
     const padding = 6;
     const elementSelector = getElementSelector(targetElement);
     const coordinates = {
@@ -7720,7 +10504,8 @@ ${result.join(",\n")}
         } else {
           log(t("log.elementScan.startingNewSession"));
         }
-        startElementScan(elementScanFab2, { silent: true });
+        const started = startElementScan(elementScanFab2, { silent: true });
+        if (!started) return;
         updateStagedCount();
         saveSessionState();
         if (settings.elementScan_persistData) {
@@ -7788,6 +10573,12 @@ ${result.join(",\n")}
     }
   }
   function startElementScan(fabElement, options = {}) {
+    if (!acquireScanMode(SCAN_MODES.ELEMENT)) {
+      if (!options.silent) {
+        showNotification(t("notifications.scanModeConflict"), { type: "info" });
+      }
+      return false;
+    }
     log(t("log.elementScan.starting"));
     uiLifecycle.acquire();
     enablePersistence();
@@ -7819,6 +10610,7 @@ ${result.join(",\n")}
       }
     }, AUTO_SAVE_INTERVAL_MS2);
     log(t("log.elementScan.listenersAdded"));
+    return true;
   }
   function addListenersToDocument(doc) {
     try {
@@ -7862,11 +10654,15 @@ ${result.join(",\n")}
       if (iframe.contentWindow && iframe.contentWindow.document && iframe.contentWindow.document.readyState === "complete") {
         attach(iframe.contentWindow);
       } else {
-        iframe.addEventListener("load", () => {
-          if (iframe.contentWindow) {
-            attach(iframe.contentWindow);
-          }
-        }, { once: true });
+        iframe.addEventListener(
+          "load",
+          () => {
+            if (iframe.contentWindow) {
+              attach(iframe.contentWindow);
+            }
+          },
+          { once: true }
+        );
       }
     } catch (e) {
     }
@@ -7916,7 +10712,10 @@ ${result.join(",\n")}
     }
   }
   function stopElementScan(fabElement) {
-    if (!isActive) return;
+    if (!isActive) {
+      releaseScanMode(SCAN_MODES.ELEMENT);
+      return;
+    }
     log(t("log.elementScan.stopping"));
     isActive = false;
     isAdjusting = false;
@@ -7959,6 +10758,7 @@ ${result.join(",\n")}
     updateStagedCount();
     log(t("log.elementScan.stateReset"));
     uiLifecycle.release();
+    releaseScanMode(SCAN_MODES.ELEMENT);
   }
   function terminateWorker() {
     if (workerInstance) {
@@ -8026,7 +10826,7 @@ ${result.join(",\n")}
         if (!workerInstance) {
           log(t("log.elementScan.worker.initializing"), "info");
           workerInstance = new Worker(trustedWorkerUrl);
-          workerInstance.onerror = (error) => {
+          workerInstance.onerror = () => {
             log(t("log.elementScan.worker.error"), "error");
           };
         }
@@ -8036,7 +10836,7 @@ ${result.join(",\n")}
             resolve(payload.texts);
           }
         };
-        workerInstance.onerror = (error) => {
+        workerInstance.onerror = () => {
           log(t("log.elementScan.worker.runtimeError"), "warn");
           workerInstance.terminate();
           workerInstance = null;
@@ -8263,31 +11063,816 @@ ${result.join(",\n")}
       }
     });
   }
+  var CONTEXT_BLOCK_SELECTOR = "article, main, nav, header, footer, aside, form, dialog, section";
+  var BREADCRUMB_SELECTOR = '[aria-label*="breadcrumb" i], nav.breadcrumb, .breadcrumb';
+  var MAX_LOCAL_TEXT_LENGTH = 1e5;
+  function normalizeText(value) {
+    return normalizeAiSourceText(value);
+  }
+  function limitText2(value, maxLength) {
+    return normalizeText(value).replace(/\s+/g, " ").slice(0, maxLength);
+  }
+  function isIgnoredElement(element, ignoredSelector) {
+    if (!element || typeof element.closest !== "function") return true;
+    if (element.closest(ignoredSelector)) return true;
+    if (element.closest('[hidden], [inert], [aria-hidden="true"]')) return true;
+    const inlineStyle = element.getAttribute("style") || "";
+    return /display\s*:\s*none|visibility\s*:\s*hidden/i.test(inlineStyle);
+  }
+  function findNearestHeading(element) {
+    const block = element.closest(CONTEXT_BLOCK_SELECTOR) || element.parentElement;
+    const heading = block?.querySelector("h1, h2, h3, h4, h5, h6");
+    return limitText2(heading?.textContent, 240);
+  }
+  function buildContext(element, sourceText) {
+    const block = element.closest(CONTEXT_BLOCK_SELECTOR);
+    const breadcrumb = document.querySelector(BREADCRUMB_SELECTOR);
+    return {
+      tagName: element.tagName?.toLowerCase() || "",
+      role: element.getAttribute?.("role") || "",
+      blockType: block?.tagName?.toLowerCase() || "",
+      pageTitle: limitText2(document.title, 200),
+      nearestHeading: findNearestHeading(element),
+      breadcrumb: limitText2(breadcrumb?.textContent, 240),
+      nearbyText: limitText2(element.parentElement?.textContent, 360),
+      placeholders: extractPlaceholders(sourceText)
+    };
+  }
+  function createCandidate(element, sourceText, targetLanguage, siteKey) {
+    const fingerprint = createCandidateFingerprint(siteKey, targetLanguage, sourceText);
+    return {
+      id: `ai-${fingerprint}-${sourceText.length}`,
+      sourceText,
+      siteKey,
+      targetLanguage,
+      fingerprint,
+      context: buildContext(element, sourceText),
+      status: "pending"
+    };
+  }
+  function extractAiCandidates(root, { filterRules: filterRules2, targetLanguage, scannerConfig, siteKey = window.location.origin }) {
+    const candidates2 =  new Map();
+    const isDocumentRoot = root?.nodeType === Node.DOCUMENT_NODE;
+    const attributesToExtract = Array.isArray(scannerConfig?.attributesToExtract) ? scannerConfig.attributesToExtract : [];
+    const ignoredSelectors = Array.isArray(scannerConfig?.ignoredSelectors) ? scannerConfig.ignoredSelectors : [];
+    const ignoredSelector = [...ignoredSelectors, "#text-extractor-container"].join(", ");
+    const addCandidate = (element, rawText) => {
+      const sourceText = normalizeText(rawText).slice(0, MAX_LOCAL_TEXT_LENGTH);
+      if (!sourceText || shouldFilter(sourceText, filterRules2)) return;
+      const candidate = createCandidate(element, sourceText, targetLanguage, siteKey);
+      if (!candidates2.has(candidate.fingerprint)) {
+        candidates2.set(candidate.fingerprint, candidate);
+      }
+    };
+    const processElementAttributes = (element) => {
+      attributesToExtract.forEach((attribute) => {
+        const value = element.getAttribute?.(attribute);
+        if (value) addCandidate(element, value);
+      });
+    };
+    const rootNode = isDocumentRoot ? root.body : root;
+    if (!rootNode) return [];
+    if (isDocumentRoot && document.title) {
+      addCandidate(document.documentElement, document.title);
+    }
+    if (rootNode.nodeType === Node.TEXT_NODE) {
+      const parent = rootNode.parentElement;
+      if (parent && !isIgnoredElement(parent, ignoredSelector)) addCandidate(parent, rootNode.nodeValue);
+      return Array.from(candidates2.values());
+    }
+    if (rootNode.nodeType !== Node.ELEMENT_NODE || isIgnoredElement(rootNode, ignoredSelector)) {
+      return [];
+    }
+    processElementAttributes(rootNode);
+    rootNode.querySelectorAll?.("*").forEach((element) => {
+      if (!isIgnoredElement(element, ignoredSelector)) processElementAttributes(element);
+    });
+    const walker = document.createTreeWalker(rootNode, NodeFilter.SHOW_TEXT, {
+      acceptNode(node) {
+        return node.parentElement && !isIgnoredElement(node.parentElement, ignoredSelector) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+      }
+    });
+    while (walker.nextNode()) {
+      addCandidate(walker.currentNode.parentElement, walker.currentNode.nodeValue);
+    }
+    return Array.from(candidates2.values());
+  }
+  var HIDDEN_OUTPUT_STATUSES =  new Set([AI_CANDIDATE_STATUS.KEEP, AI_CANDIDATE_STATUS.REMOVED]);
+  function buildAiDisplayPairs(candidateItems, decisionItems) {
+    const decisionById = new Map(decisionItems.map((decision) => [decision.id, decision]));
+    return candidateItems.filter(
+      (candidate) => hasMeaningfulAiSourceText(candidate.sourceText) && !HIDDEN_OUTPUT_STATUSES.has(candidate.status)
+    ).map((candidate) => {
+      const decision = decisionById.get(candidate.id);
+      const hasValidatedTranslation = candidate.status === AI_CANDIDATE_STATUS.TRANSLATED && decision?.action === AI_ACTIONS.TRANSLATE && typeof decision.translation === "string";
+      return {
+        sourceText: candidate.sourceText,
+        translation: hasValidatedTranslation ? decision.translation : ""
+      };
+    });
+  }
+  // src/features/ai-scan/logic.js
+  var isActive2 = false;
+  var observer2 = null;
+  var rootFlushTimer = null;
+  var autoSubmitTimer = null;
+  var pendingRoots = /* @__PURE__ */ new Set();
+  var candidates = /* @__PURE__ */ new Map();
+  var candidateFingerprints = /* @__PURE__ */ new Set();
+  var decisions = /* @__PURE__ */ new Map();
+  var cache = /* @__PURE__ */ new Map();
+  var currentRequest = null;
+  var inFlightCandidateIds = [];
+  var generation = 0;
+  var currentSiteKey = "";
+  var currentTargetLanguage = "zh-CN";
+  var sessionUsage = { requests: 0, characters: 0 };
+  var lastError = null;
+  var budgetBlockedReason = null;
+  var persistenceChain = Promise.resolve();
+  var isClearing = false;
+  var submissionInProgress = false;
+  var MAX_PERSISTED_SESSION_ITEMS = 5e3;
+  function getCounts() {
+    const counts = {
+      total: candidates.size,
+      pending: 0,
+      inflight: 0,
+      translated: 0,
+      keep: 0,
+      removed: 0,
+      review: 0,
+      failed: 0
+    };
+    candidates.forEach((candidate) => {
+      if (Object.prototype.hasOwnProperty.call(counts, candidate.status)) {
+        counts[candidate.status] += 1;
+      }
+    });
+    return counts;
+  }
+  function emitState() {
+    fire("aiStateChanged", getAiStateSnapshot());
+  }
+  function markInFlightAsPending() {
+    inFlightCandidateIds.forEach((id) => {
+      const candidate = candidates.get(id);
+      if (candidate && candidate.status === AI_CANDIDATE_STATUS.IN_FLIGHT) {
+        candidate.status = AI_CANDIDATE_STATUS.PENDING;
+      }
+    });
+    inFlightCandidateIds = [];
+  }
+  function serializeSession() {
+    const persistedCandidates = Array.from(candidates.values()).slice(-MAX_PERSISTED_SESSION_ITEMS);
+    const persistedIds = new Set(persistedCandidates.map((candidate) => candidate.id));
+    return {
+      siteKey: currentSiteKey,
+      targetLanguage: currentTargetLanguage,
+      candidates: persistedCandidates,
+      decisions: Array.from(decisions.values()).filter((decision) => persistedIds.has(decision.id)),
+      sessionUsage
+    };
+  }
+  async function persistState() {
+    const snapshot = serializeSession();
+    persistenceChain = persistenceChain.catch(() => void 0).then(() => saveAiSession(snapshot));
+    await persistenceChain;
+  }
+  function hydrateCachedDecision(candidate, cacheEntry) {
+    const cachedDecision = cacheEntry?.decision;
+    if (!cachedDecision) return false;
+    const decision = {
+      ...cachedDecision,
+      id: candidate.id,
+      sourceText: candidate.sourceText
+    };
+    decisions.set(candidate.id, decision);
+    candidate.status = decision.status;
+    return true;
+  }
+  function addCandidateBatch(newCandidates) {
+    let added = 0;
+    newCandidates.forEach((candidate) => {
+      if (!isSubmittableAiCandidate(candidate) || candidateFingerprints.has(candidate.fingerprint)) {
+        return;
+      }
+      const cacheEntry = cache.get(candidate.fingerprint);
+      hydrateCachedDecision(candidate, cacheEntry);
+      candidates.set(candidate.id, candidate);
+      candidateFingerprints.add(candidate.fingerprint);
+      added += 1;
+    });
+    if (added > 0) {
+      void persistState().catch(() => {
+        lastError = { code: "storage" };
+        emitState();
+      });
+      emitState();
+      const aiSettings = mergeAiSettings(loadSettings().ai);
+      if (isActive2 && aiSettings.processingMode === AI_PROCESSING_MODES.AUTO && !budgetBlockedReason) {
+        scheduleAutoSubmit(aiSettings.batch.debounceMs);
+      }
+    }
+    return added;
+  }
+  function collectFromRoot(root) {
+    const settings = loadSettings();
+    const extracted = extractAiCandidates(root, {
+      filterRules: settings.filterRules,
+      targetLanguage: currentTargetLanguage,
+      siteKey: currentSiteKey,
+      scannerConfig: appConfig.scanner
+    });
+    return addCandidateBatch(extracted);
+  }
+  async function flushPendingRoots(runGeneration = generation) {
+    if (!isActive2 || runGeneration !== generation || pendingRoots.size === 0) return;
+    if (isTranslationBridgeActive() && !isTranslationBridgeIdle()) {
+      await waitForTranslationBridgeIdle();
+    }
+    if (!isActive2 || runGeneration !== generation) return;
+    const roots = Array.from(pendingRoots);
+    pendingRoots =  new Set();
+    const rootSet = new Set(roots.filter((root) => root?.nodeType === Node.ELEMENT_NODE));
+    const topLevelRoots = roots.filter((root) => {
+      if (root?.nodeType !== Node.ELEMENT_NODE) return true;
+      let parent = root.parentElement;
+      while (parent) {
+        if (rootSet.has(parent)) return false;
+        parent = parent.parentElement;
+      }
+      return true;
+    });
+    topLevelRoots.forEach(collectFromRoot);
+  }
+  function scheduleRootFlush() {
+    if (rootFlushTimer !== null) clearTimeout(rootFlushTimer);
+    const delay = mergeAiSettings(loadSettings().ai).batch.debounceMs;
+    const runGeneration = generation;
+    rootFlushTimer = setTimeout(() => {
+      rootFlushTimer = null;
+      void flushPendingRoots(runGeneration);
+    }, delay);
+  }
+  function handleMutations2(mutations) {
+    if (!isActive2) return;
+    mutations.forEach((mutation) => {
+      if (mutation.type === "characterData") {
+        pendingRoots.add(mutation.target);
+        return;
+      }
+      if (mutation.type === "attributes") {
+        pendingRoots.add(mutation.target);
+        return;
+      }
+      mutation.addedNodes.forEach((node) => pendingRoots.add(node));
+    });
+    if (pendingRoots.size > 0) scheduleRootFlush();
+  }
+  function scheduleAutoSubmit(delayMs) {
+    if (!isActive2 || currentRequest) return;
+    if (autoSubmitTimer !== null) clearTimeout(autoSubmitTimer);
+    const runGeneration = generation;
+    autoSubmitTimer = setTimeout(() => {
+      autoSubmitTimer = null;
+      if (isActive2 && runGeneration === generation) {
+        void submitPending();
+      }
+    }, delayMs);
+  }
+  async function restoreSession() {
+    const saved = await loadAiSession();
+    if (!saved || saved.siteKey !== currentSiteKey || saved.targetLanguage !== currentTargetLanguage) {
+      candidates =  new Map();
+      candidateFingerprints =  new Set();
+      decisions =  new Map();
+      sessionUsage = { requests: 0, characters: 0 };
+      return;
+    }
+    const restoredCandidates = Array.isArray(saved.candidates) ? saved.candidates.filter(isSubmittableAiCandidate) : [];
+    restoredCandidates.forEach((candidate) => {
+      if (candidate.status === AI_CANDIDATE_STATUS.IN_FLIGHT) {
+        candidate.status = AI_CANDIDATE_STATUS.PENDING;
+      }
+    });
+    candidates = new Map(restoredCandidates.map((candidate) => [candidate.id, candidate]));
+    candidateFingerprints = new Set(restoredCandidates.map((candidate) => candidate.fingerprint).filter(Boolean));
+    const restoredDecisions = Array.isArray(saved.decisions) ? saved.decisions : [];
+    decisions = new Map(
+      restoredDecisions.filter((decision) => candidates.has(decision.id)).map((decision) => [decision.id, decision])
+    );
+    sessionUsage = {
+      requests: Math.max(0, Number(saved.sessionUsage?.requests) || 0),
+      characters: Math.max(0, Number(saved.sessionUsage?.characters) || 0)
+    };
+  }
+  async function startAiScan() {
+    if (isActive2) return { started: true };
+    const aiSettings = mergeAiSettings(loadSettings().ai);
+    if (!aiSettings.enabled) {
+      return { started: false, reason: "disabled" };
+    }
+    if (!acquireScanMode(SCAN_MODES.AI)) {
+      return { started: false, reason: "mode-conflict" };
+    }
+    isActive2 = true;
+    generation += 1;
+    lastError = null;
+    budgetBlockedReason = null;
+    currentSiteKey = window.location.origin;
+    currentTargetLanguage = aiSettings.targetLanguage;
+    try {
+      registerTranslationBridgeClient();
+      cache = await loadAiCache();
+      await restoreSession();
+      await waitForTranslationBridgeIdle();
+      if (!isActive2) return { started: false, reason: "stopped" };
+      collectFromRoot(document);
+      observer2 = new MutationObserver(handleMutations2);
+      observer2.observe(document.body, {
+        childList: true,
+        subtree: true,
+        characterData: true,
+        attributes: true,
+        attributeFilter: ["placeholder", "alt", "title", "aria-label"]
+      });
+      emitState();
+      return { started: true };
+    } catch (error) {
+      isActive2 = false;
+      unregisterTranslationBridgeClient();
+      releaseScanMode(SCAN_MODES.AI);
+      lastError = error;
+      emitState();
+      throw error;
+    }
+  }
+  async function stopAiScan() {
+    if (!isActive2) {
+      releaseScanMode(SCAN_MODES.AI);
+      return;
+    }
+    isActive2 = false;
+    generation += 1;
+    if (observer2) {
+      observer2.disconnect();
+      observer2 = null;
+    }
+    if (rootFlushTimer !== null) {
+      clearTimeout(rootFlushTimer);
+      rootFlushTimer = null;
+    }
+    if (autoSubmitTimer !== null) {
+      clearTimeout(autoSubmitTimer);
+      autoSubmitTimer = null;
+    }
+    pendingRoots.clear();
+    if (currentRequest) {
+      currentRequest.abort();
+      currentRequest = null;
+    }
+    markInFlightAsPending();
+    unregisterTranslationBridgeClient();
+    releaseScanMode(SCAN_MODES.AI);
+    await persistState();
+    emitState();
+  }
+  async function performSubmitPending() {
+    if (!isActive2 || currentRequest || isClearing) return { submitted: false, reason: "inactive-or-busy" };
+    const submissionGeneration = generation;
+    const settings = loadSettings();
+    const aiSettings = mergeAiSettings(settings.ai);
+    const provider = getActiveProvider(aiSettings);
+    if (!provider) return { submitted: false, reason: "missing-provider" };
+    const pending = Array.from(candidates.values()).filter(
+      (candidate) => candidate.status === AI_CANDIDATE_STATUS.PENDING
+    );
+    const batch = selectBatch(pending, aiSettings.batch);
+    batch.invalid.forEach((candidate) => {
+      candidates.delete(candidate.id);
+      decisions.delete(candidate.id);
+      if (candidate.fingerprint) candidateFingerprints.delete(candidate.fingerprint);
+    });
+    batch.oversized.forEach((candidate) => {
+      candidate.status = AI_CANDIDATE_STATUS.REVIEW;
+      decisions.set(candidate.id, {
+        id: candidate.id,
+        sourceText: candidate.sourceText,
+        action: AI_ACTIONS.REVIEW,
+        translation: "",
+        confidence: 0,
+        category: "local-validation",
+        reason: "source-too-long",
+        status: AI_CANDIDATE_STATUS.REVIEW
+      });
+    });
+    if (batch.invalid.length > 0 || batch.oversized.length > 0) {
+      await persistState();
+      emitState();
+    }
+    if (!isActive2 || generation !== submissionGeneration || isClearing) {
+      return { submitted: false, reason: "stale" };
+    }
+    if (batch.candidates.length === 0) return { submitted: false, reason: "empty" };
+    const [apiKey, styleProfile, dailyUsage] = await Promise.all([
+      loadProviderApiKey(provider.id),
+      matchStyleProfile(window.location, currentTargetLanguage),
+      loadDailyUsage()
+    ]);
+    if (!isActive2 || generation !== submissionGeneration || isClearing) {
+      return { submitted: false, reason: "stale" };
+    }
+    const payload = buildTranslationRequest({
+      provider,
+      candidates: batch.candidates,
+      targetLanguage: currentTargetLanguage,
+      styleProfile
+    });
+    try {
+      validateProviderConfiguration(provider, apiKey);
+    } catch (error) {
+      lastError = error;
+      emitState();
+      fire("aiRequestFailed", { code: error?.code || "invalid-provider" });
+      return { submitted: false, reason: error?.code || "invalid-provider" };
+    }
+    const budget = checkBudget({
+      settings: aiSettings.budget,
+      sessionUsage,
+      dailyUsage,
+      requestPayload: payload,
+      nextCharacters: batch.characters
+    });
+    if (!budget.allowed) {
+      budgetBlockedReason = budget.reason;
+      emitState();
+      fire("aiBudgetBlocked", budget.reason);
+      return { submitted: false, reason: budget.reason };
+    }
+    budgetBlockedReason = null;
+    try {
+      await addDailyUsage(budget.estimatedTokens);
+    } catch {
+      lastError = { code: "storage" };
+      emitState();
+      return { submitted: false, reason: "storage" };
+    }
+    if (!isActive2 || generation !== submissionGeneration || isClearing) {
+      return { submitted: false, reason: "stale" };
+    }
+    batch.candidates.forEach((candidate) => {
+      candidate.status = AI_CANDIDATE_STATUS.IN_FLIGHT;
+    });
+    const requestCandidateIds = batch.candidates.map((candidate) => candidate.id);
+    inFlightCandidateIds = requestCandidateIds;
+    sessionUsage.requests += 1;
+    sessionUsage.characters += batch.characters;
+    lastError = null;
+    emitState();
+    const requestGeneration = submissionGeneration;
+    let requestHandle = null;
+    try {
+      requestHandle = createChatCompletionRequest({
+        provider,
+        apiKey,
+        payload,
+        timeoutMs: aiSettings.requestTimeoutMs
+      });
+      currentRequest = requestHandle;
+      const response = await requestHandle.promise;
+      if (!isActive2 || requestGeneration !== generation) {
+        return { submitted: false, reason: "stale" };
+      }
+      const parsed = parseJsonContent(response.content);
+      const validated = validateTranslationResponse(parsed, batch.candidates, aiSettings.confidenceThreshold);
+      validated.forEach((decision) => {
+        const candidate = candidates.get(decision.id);
+        if (!candidate) return;
+        candidate.status = decision.status;
+        decisions.set(decision.id, decision);
+        if ([AI_ACTIONS.TRANSLATE, AI_ACTIONS.KEEP, AI_ACTIONS.REMOVE].includes(decision.action)) {
+          cache.set(candidate.fingerprint, {
+            fingerprint: candidate.fingerprint,
+            siteKey: candidate.siteKey,
+            targetLanguage: candidate.targetLanguage,
+            sourceText: candidate.sourceText,
+            providerId: provider.id,
+            model: provider.model,
+            styleVersion: styleProfile?.version || 0,
+            decision,
+            updatedAt: Date.now()
+          });
+        }
+      });
+      await Promise.all([saveAiCache(cache), persistState()]);
+      return { submitted: true, count: validated.length };
+    } catch (error) {
+      if (requestGeneration !== generation) {
+        return { submitted: false, reason: "stale" };
+      }
+      if (error?.code !== "aborted") {
+        lastError = error;
+        const validationFailure = error instanceof SyntaxError || error?.message === "empty-response" || ["truncated-response", "invalid-response"].includes(error?.code);
+        requestCandidateIds.forEach((id) => {
+          const candidate = candidates.get(id);
+          if (!candidate) return;
+          candidate.status = validationFailure ? AI_CANDIDATE_STATUS.REVIEW : AI_CANDIDATE_STATUS.FAILED;
+          decisions.set(id, {
+            id,
+            sourceText: candidate.sourceText,
+            action: AI_ACTIONS.REVIEW,
+            translation: "",
+            confidence: 0,
+            category: validationFailure ? "validation" : "request-error",
+            reason: validationFailure ? error?.code || error?.message || "invalid-response" : error?.code || "request-error",
+            status: candidate.status
+          });
+        });
+        await persistState();
+        fire("aiRequestFailed", { code: error?.code || "unknown" });
+      } else {
+        requestCandidateIds.forEach((id) => {
+          const candidate = candidates.get(id);
+          if (candidate?.status === AI_CANDIDATE_STATUS.IN_FLIGHT) {
+            candidate.status = AI_CANDIDATE_STATUS.PENDING;
+          }
+        });
+      }
+      return { submitted: false, reason: error?.code || "unknown" };
+    } finally {
+      if (currentRequest === requestHandle) {
+        currentRequest = null;
+        inFlightCandidateIds = [];
+      }
+      emitState();
+    }
+  }
+  async function submitPending() {
+    if (!isActive2 || currentRequest || isClearing || submissionInProgress) {
+      return { submitted: false, reason: "inactive-or-busy" };
+    }
+    const pending = Array.from(candidates.values()).filter(
+      (candidate) => candidate.status === AI_CANDIDATE_STATUS.PENDING
+    );
+    const invalid = pending.filter((candidate) => !isSubmittableAiCandidate(candidate));
+    invalid.forEach((candidate) => {
+      candidates.delete(candidate.id);
+      decisions.delete(candidate.id);
+      if (candidate.fingerprint) candidateFingerprints.delete(candidate.fingerprint);
+    });
+    if (invalid.length > 0) {
+      await persistState();
+      emitState();
+    }
+    if (!pending.some(isSubmittableAiCandidate)) {
+      return { submitted: false, reason: "empty" };
+    }
+    submissionInProgress = true;
+    emitState();
+    let result;
+    try {
+      result = await performSubmitPending();
+      return result;
+    } finally {
+      submissionInProgress = false;
+      emitState();
+      const latestSettings = mergeAiSettings(loadSettings().ai);
+      if (result?.submitted && isActive2 && !isClearing && latestSettings.processingMode === AI_PROCESSING_MODES.AUTO && Array.from(candidates.values()).some((candidate) => candidate.status === AI_CANDIDATE_STATUS.PENDING) && !budgetBlockedReason) {
+        queueMicrotask(() => void submitPending());
+      }
+    }
+  }
+  async function retryReviewItems() {
+    decisions.forEach((decision, id) => {
+      if (decision.status === AI_CANDIDATE_STATUS.REVIEW || decision.status === AI_CANDIDATE_STATUS.FAILED) {
+        const candidate = candidates.get(id);
+        if (candidate) candidate.status = AI_CANDIDATE_STATUS.PENDING;
+        decisions.delete(id);
+      }
+    });
+    budgetBlockedReason = null;
+    await persistState();
+    emitState();
+    return submitPending();
+  }
+  async function clearAiData() {
+    if (isClearing) return;
+    isClearing = true;
+    generation += 1;
+    try {
+      const requestToCancel = currentRequest;
+      if (requestToCancel) {
+        requestToCancel.abort();
+        await requestToCancel.promise.catch(() => void 0);
+      }
+      currentRequest = null;
+      inFlightCandidateIds = [];
+      candidates.clear();
+      candidateFingerprints.clear();
+      decisions.clear();
+      sessionUsage = { requests: 0, characters: 0 };
+      lastError = null;
+      budgetBlockedReason = null;
+      await persistenceChain.catch(() => void 0);
+      await Promise.all([
+        clearAiSession(),
+        clearAiCacheForSite(currentSiteKey || window.location.origin, currentTargetLanguage)
+      ]);
+      emitState();
+    } finally {
+      isClearing = false;
+    }
+  }
+  function getAiDisplayPairs() {
+    return buildAiDisplayPairs(Array.from(candidates.values()), Array.from(decisions.values()));
+  }
+  function getReviewItems() {
+    return Array.from(decisions.values()).filter(
+      (decision) => decision.status === AI_CANDIDATE_STATUS.REVIEW || decision.status === AI_CANDIDATE_STATUS.FAILED
+    );
+  }
+  function getAiStateSnapshot() {
+    return {
+      active: isActive2,
+      processing: Boolean(currentRequest) || submissionInProgress,
+      counts: getCounts(),
+      sessionUsage: { ...sessionUsage },
+      lastErrorCode: lastError?.code || null,
+      budgetBlockedReason
+    };
+  }
+  function isAiScanActive() {
+    return isActive2;
+  }
+  function hasAiData() {
+    return candidates.size > 0 || decisions.size > 0;
+  }
+  var initialized = false;
+  var aiCounterVisible = false;
+  function resetAiFab() {
+    const aiFab2 = getAiFab();
+    if (!aiFab2) return;
+    setFabIcon(aiFab2, aiIcon);
+    aiFab2.classList.remove("is-recording");
+    updateFabTooltip(aiFab2, "tooltip.ai_scan");
+  }
+  function showAiCounter(snapshot = getAiStateSnapshot()) {
+    if (!aiCounterVisible) {
+      createCounterWithHelp({
+        counterKey: "common.discovered",
+        helpKey: "tutorial.aiScan"
+      });
+      showCounterWithHelp();
+      aiCounterVisible = true;
+    }
+    updateCounterValue(snapshot.counts.total);
+  }
+  function hideAiCounter() {
+    if (!aiCounterVisible) return;
+    hideCounterWithHelp();
+    aiCounterVisible = false;
+  }
+  function formatAiResults(pairs = getAiDisplayPairs()) {
+    const settings = loadSettings();
+    return formatTextsForTranslation(pairs, settings.outputFormat, {
+      includeArrayBrackets: settings.includeArrayBrackets
+    });
+  }
+  function syncAiSummary(open = false) {
+    const snapshot = getAiStateSnapshot();
+    const pairs = getAiDisplayPairs();
+    updateAiSummaryPanel(snapshot, getReviewItems());
+    updateAiFooterState(snapshot);
+    updateScanCount(snapshot.counts.total, "ai");
+    if (!open) {
+      const visibleAiModal = currentMode === "ai-scan" && modalOverlay?.classList.contains("is-visible");
+      if (!visibleAiModal) return;
+    }
+    updateModalContent(pairs.length > 0 ? formatAiResults(pairs) : SHOW_PLACEHOLDER, open, "ai-scan");
+    updateAiSummaryPanel(snapshot, getReviewItems());
+    updateAiFooterState(snapshot);
+  }
+  async function handleSubmit() {
+    try {
+      const result = await submitPending();
+      if (result.submitted) {
+        showNotification(t("notifications.aiBatchCompleted"), { type: "success" });
+      } else if (result.reason === "empty") {
+        showNotification(t("notifications.aiNothingPending"), { type: "info" });
+      } else if (["missing-provider", "storage"].includes(result.reason)) {
+        showNotification(t("notifications.aiRequestFailed"), { type: "error" });
+      }
+    } catch {
+      showNotification(t("notifications.aiRequestFailed"), { type: "error" });
+    } finally {
+      syncAiSummary(false);
+    }
+  }
+  async function handleAiScanClick(aiFab2) {
+    if (isAiScanActive()) {
+      await stopAiScan();
+      resetAiFab();
+      hideAiCounter();
+      showNotification(t("notifications.aiScanStopped"), { type: "success" });
+      syncAiSummary(false);
+      return;
+    }
+    try {
+      const result = await startAiScan();
+      if (!result.started) {
+        const messageKey = result.reason === "disabled" ? "notifications.aiDisabled" : "notifications.scanModeConflict";
+        showNotification(t(messageKey), { type: "info" });
+        return;
+      }
+      setFabIcon(aiFab2, stopIcon);
+      aiFab2.classList.add("is-recording");
+      updateFabTooltip(aiFab2, "tooltip.ai_scan_stop");
+      showAiCounter();
+      showNotification(t("notifications.aiScanStarted"), { type: "info" });
+      syncAiSummary(false);
+    } catch {
+      resetAiFab();
+      hideAiCounter();
+      showNotification(t("notifications.aiScanStartFailed"), { type: "error" });
+    }
+  }
+  function showAiSummary() {
+    syncAiSummary(true);
+  }
+  function initializeAiScanUI() {
+    if (initialized) return;
+    initialized = true;
+    on("aiStateChanged", (snapshot) => {
+      if (snapshot.active) showAiCounter(snapshot);
+      else hideAiCounter();
+      syncAiSummary(false);
+    });
+    on("ai-submit-pending", () => void handleSubmit());
+    on("ai-retry-review", async () => {
+      await retryReviewItems();
+      syncAiSummary(false);
+    });
+    on("ai-clear", async () => {
+      await clearAiData();
+      syncAiSummary(false);
+    });
+    on("settingsSaved", () => {
+      const aiSettings = mergeAiSettings(loadSettings().ai);
+      if (!aiSettings.enabled && isAiScanActive()) {
+        void stopAiScan().then(() => {
+          resetAiFab();
+          hideAiCounter();
+        });
+      }
+      if (hasAiData()) syncAiSummary(false);
+    });
+    on("languageChanged", () => {
+      if (hasAiData()) syncAiSummary(false);
+    });
+    on("aiBudgetBlocked", () => {
+      showNotification(t("notifications.aiBudgetBlocked"), { type: "warning" });
+    });
+    on("aiRequestFailed", () => {
+      showNotification(t("notifications.aiRequestFailed"), { type: "error" });
+    });
+  }
+  var preferAiSummary = false;
+  subscribeScanMode(({ activeMode: activeMode2 }) => {
+    if (activeMode2 === SCAN_MODES.AI) preferAiSummary = true;
+    if (activeMode2 === SCAN_MODES.DYNAMIC || activeMode2 === SCAN_MODES.ELEMENT) preferAiSummary = false;
+  });
   function handleSummaryClick() {
     log(t("tooltip.summary"));
     if (isElementScanActive()) {
       const stagedTexts2 = getStagedTexts();
       const { outputFormat, includeArrayBrackets } = loadSettings();
-      const formattedText = formatTextsForTranslation(Array.from(stagedTexts2), outputFormat, { includeArrayBrackets });
+      const formattedText = formatTextsForTranslation(Array.from(stagedTexts2), outputFormat, {
+        includeArrayBrackets
+      });
       updateScanCount(stagedTexts2.size, "element-scan");
       if (stagedTexts2.size === 0) {
         updateModalContent(SHOW_PLACEHOLDER, true, "element-scan");
       } else {
         updateModalContent(formattedText, true, "element-scan");
       }
+    } else if (isAiScanActive() || preferAiSummary && hasAiData()) {
+      showAiSummary();
     } else {
       showSessionSummary();
     }
   }
   function initUI() {
     const settings = loadSettings();
+    initializeAiScanUI();
     createMainModal();
     createFab({
       callbacks: {
         onStaticExtract: handleQuickScanClick,
         onDynamicExtract: handleDynamicExtractClick,
         onSummary: handleSummaryClick,
-        onElementScan: handleElementScanClick
+        onElementScan: handleElementScanClick,
+        onAiScan: handleAiScanClick
       },
       isVisible: settings.showFab
     });
@@ -8296,8 +11881,8 @@ ${result.join(",\n")}
     const currentSettings = loadSettings();
     openSettingsPanel(currentSettings, (newSettings) => {
       const oldSettings = loadSettings();
-      saveSettings(newSettings);
-      applySettings(newSettings, oldSettings);
+      const savedSettings = saveSettings(newSettings);
+      applySettings(savedSettings, oldSettings);
     });
   }
   function initialize() {
@@ -8326,7 +11911,7 @@ ${result.join(",\n")}
     log(t("log.exporter.fileExported", { filename }));
   }
   function exportToFile() {
-    const currentMode2 = getCurrentMode();
+    const currentMode3 = getCurrentMode();
     const settings = loadSettings();
     const outputFormat = settings.outputFormat || "array";
     const processAndDownload = (text) => {
@@ -8368,7 +11953,7 @@ ${result.join(",\n")}
       processAndDownload(contentToExport);
     } else {
       log(t("log.exporter.exportingRawData"));
-      if (currentMode2 === "session-scan") {
+      if (currentMode3 === "session-scan") {
         log(t("log.main.requestingSessionScanData"));
         requestSummary(processAndDownload);
       } else {
@@ -8391,7 +11976,7 @@ ${result.join(",\n")}
     log(t("log.main.initializing"));
     log(t("log.main.initialSettingsLoaded"), settings);
     const styleElement = document.createElement("style");
-    styleElement.textContent = `:host{box-sizing:border-box;font-family:Menlo,Monaco,Cascadia Code,PingFang SC,monospace,sans-serif;font-size:16px;line-height:1.5;text-align:left;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;--color-bg:#fff;--color-text:#333;--color-text-secondary:#666;--color-border:#e0e0e0;--color-overlay-bg:rgba(0,0,0,.5);--color-shadow:rgba(0,0,0,.2);--color-primary:#1a73e8;--color-primary-hover:#185abc;--color-primary-text:#fff;--color-toast-bg:#333;--color-toast-text:#fff;--color-textarea-bg:#fff;--color-textarea-border:#ccc;--color-tooltip-bg:#333;--color-tooltip-text:#fff;--color-line-number-text:#888;--color-line-number-active-text:#000;--dark-color-bg:#2d2d2d;--dark-color-text:#f0f0f0;--dark-color-text-secondary:#aaa;--dark-color-border:#555;--dark-color-overlay-bg:rgba(0,0,0,.7);--dark-color-shadow:rgba(0,0,0,.4);--dark-color-primary:#1e90ff;--dark-color-primary-hover:#1c86ee;--dark-color-primary-text:#fff;--dark-color-toast-bg:#eee;--dark-color-toast-text:#111;--dark-color-textarea-bg:#3a3a3a;--dark-color-textarea-border:#666;--dark-color-tooltip-bg:#e0e0e0;--dark-color-tooltip-text:#111;--dark-color-line-number-text:#777;--dark-color-line-number-active-text:#fff;--color-scrollbar-thumb:#c1c1c1;--color-scrollbar-thumb-hover:#a8a8a8;--color-scrollbar-border:#fff;--dark-color-scrollbar-thumb:#555;--dark-color-scrollbar-thumb-hover:#777;--dark-color-scrollbar-border:#2d2d2d}*,:after,:before{box-sizing:inherit}button,input,optgroup,select,textarea{color:inherit;font-family:inherit;font-size:100%;line-height:1.15;margin:0}:host([data-theme=light]){--main-bg:var(--color-bg);--main-text:var(--color-text);--main-text-secondary:var(--color-text-secondary);--tc-secondary-text-color:var(--color-text-secondary);--main-border:var(--color-border);--main-overlay-bg:var(--color-overlay-bg);--main-shadow:var(--color-shadow);--main-primary:var(--color-primary);--main-primary-hover:var(--color-primary-hover);--main-primary-text:var(--color-primary-text);--main-toast-bg:var(--color-toast-bg);--main-toast-text:var(--color-toast-text);--main-textarea-bg:var(--color-textarea-bg);--main-textarea-border:var(--color-textarea-border);--main-tooltip-bg:var(--color-tooltip-bg);--main-tooltip-text:var(--color-tooltip-text);--main-disabled:#ccc;--main-disabled-text:#666;--main-line-number-text:var(--color-line-number-text);--main-line-number-active-text:var(--color-line-number-active-text);--tc-scrollbar-thumb-color:var(--color-scrollbar-thumb);--tc-scrollbar-thumb-hover-color:var(--color-scrollbar-thumb-hover);--tc-scrollbar-border-color:var(--color-scrollbar-border);--main-bg-a:hsla(0,0%,100%,.6)}:host([data-theme=dark]){--main-bg:var(--dark-color-bg);--main-text:var(--dark-color-text);--main-text-secondary:var(--dark-color-text-secondary);--tc-secondary-text-color:var(--dark-color-text-secondary);--main-border:var(--dark-color-border);--main-overlay-bg:var(--dark-color-overlay-bg);--main-shadow:var(--dark-color-shadow);--main-primary:var(--dark-color-primary);--main-primary-hover:var(--dark-color-primary-hover);--main-primary-text:var(--dark-color-primary-text);--main-toast-bg:var(--dark-color-toast-bg);--main-toast-text:var(--dark-color-toast-text);--main-textarea-bg:var(--dark-color-textarea-bg);--main-textarea-border:var(--dark-color-textarea-border);--main-tooltip-bg:var(--dark-color-tooltip-bg);--main-tooltip-text:var(--dark-color-tooltip-text);--main-disabled:#444;--main-disabled-text:#888;--main-line-number-text:var(--dark-color-line-number-text);--main-line-number-active-text:var(--dark-color-line-number-active-text);--tc-scrollbar-thumb-color:var(--dark-color-scrollbar-thumb);--tc-scrollbar-thumb-hover-color:var(--dark-color-scrollbar-thumb-hover);--tc-scrollbar-border-color:var(--dark-color-scrollbar-border);--main-bg-a:rgba(45,45,45,.6)}.confirmation-modal-overlay{align-items:center;background-color:var(--main-overlay-bg);display:flex;height:100%;justify-content:center;left:0;opacity:0;pointer-events:none;position:fixed;top:0;transition:opacity .3s ease,visibility .3s ease;visibility:hidden;width:100%;z-index:2147483647}.confirmation-modal-overlay.is-visible{opacity:1;pointer-events:auto;visibility:visible}.confirmation-modal-content{background-color:var(--main-bg);border-radius:16px;box-shadow:0 10px 30px var(--main-shadow);color:var(--main-text);font-family:Menlo,Monaco,Cascadia Code,PingFang SC;padding:30px;text-align:center;transform:scale(.95);transition:transform .3s ease;width:400px}.confirmation-modal-overlay.is-visible .confirmation-modal-content{transform:scale(1)}.confirmation-modal-icon{margin-bottom:20px}.confirmation-modal-icon svg{fill:var(--main-text);height:56px;width:56px}.confirmation-modal-text{font-size:16px;line-height:1.6;margin:0 0 25px}.confirmation-modal-buttons{display:flex;gap:15px;justify-content:center}.confirmation-modal-button{border:none;border-radius:9999px;cursor:pointer;font-size:14px;font-weight:700;padding:12px 24px;transition:background-color .2s ease,transform .2s ease}.confirmation-modal-button.confirm{background-color:var(--main-primary);color:var(--main-primary-text)}.confirmation-modal-button.confirm:hover{background-color:var(--main-primary-hover)}.confirmation-modal-button.cancel{background-color:transparent;border:1px solid var(--main-border);color:var(--main-text)}.confirmation-modal-button.cancel:hover{background-color:var(--main-shadow)}.counter-with-help-container{align-items:center;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);background-color:var(--main-bg-a);border:1px solid var(--main-border);border-radius:24px;box-shadow:var(--main-shadow);box-sizing:border-box;display:flex;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;gap:12px;height:42px;left:50%;opacity:0;padding:8px 12px;pointer-events:all;position:fixed;top:20px;transform:translate(-50%,-150%);transition:transform .4s var(--easing-standard,cubic-bezier(.4,0,.2,1)),opacity .4s var(--easing-standard,cubic-bezier(.4,0,.2,1));z-index:2147483645}.counter-with-help-container.is-visible{opacity:1;transform:translate(-50%)}.counter-with-help-separator{background-color:var(--main-border);height:16px;width:1px}.counter-with-help-container .tc-icon-button,.counter-with-help-container .tc-top-center-counter{backdrop-filter:none;-webkit-backdrop-filter:none;background-color:transparent;border:none;box-shadow:none;margin:0;opacity:1;padding:0;position:static;transform:none;transition:none}.counter-with-help-container .tc-icon-button{align-items:center;border-radius:50%;color:var(--main-text-secondary);display:flex;height:32px;justify-content:center;position:relative;transition:color .2s,background-color .2s;width:32px}.counter-with-help-container .tc-icon-button:hover{background-color:var(--main-border);color:var(--main-text)}.counter-with-help-container .tc-icon-button svg{fill:currentColor;height:20px;left:50%;position:absolute;top:50%;transform:translate(-50%,-50%);transition:opacity .3s ease-in-out;width:20px}.counter-actions-container{align-items:center;display:flex;gap:4px}.counter-with-help-container .tc-top-center-counter{font-size:14px;font-weight:500;margin-left:9px}.counter-with-help-container .tc-top-center-counter span{color:var(--main-primary);font-size:16px;font-weight:700;margin-left:6px;margin-right:2px}.custom-select-container{position:relative;user-select:none;width:100%}.custom-select-trigger{align-items:center;background-color:var(--main-textarea-bg);border:1px solid var(--main-textarea-border);border-radius:12px;color:var(--main-text);cursor:pointer;display:flex;font-size:15px;font-weight:500;justify-content:space-between;padding:4px 10px;transition:border-color .2s,box-shadow .2s}.custom-select-trigger:hover{border-color:var(--main-primary);box-shadow:0 0 0 2px rgba(30,144,255,.1)}.custom-select-container.open .custom-select-trigger{border-color:var(--main-primary);box-shadow:0 0 0 2px rgba(30,144,255,.2)}.custom-select-arrow{align-items:center;display:flex;justify-content:center;transform-origin:center;transition:transform .3s ease}.custom-select-container.open .custom-select-arrow{transform:rotate(180deg)}.custom-select-options{background-color:var(--main-bg);border:1px solid var(--main-border);border-radius:12px;box-shadow:0 4px 12px var(--main-shadow);left:0;max-height:0;opacity:0;overflow:hidden;position:absolute;right:0;top:calc(100% + 4px);transition:max-height .2s ease-out,opacity .2s ease-out,visibility 0s .2s;visibility:hidden;z-index:2147483647}.custom-select-container.open .custom-select-options{max-height:200px;opacity:1;transition:max-height .2s ease-out,opacity .2s ease-out;visibility:visible}.custom-select-option{align-items:center;cursor:pointer;display:flex;gap:8px;padding:8px 12px;transition:background-color .2s}.custom-select-option:hover{background-color:var(--main-border)}.custom-select-option.selected{color:var(--main-primary);font-weight:600}.custom-select-option .option-icon,.custom-slider-container{align-items:center;display:flex}.custom-slider-container{flex-direction:column;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;width:100%}.custom-slider-info-text{color:var(--main-text-secondary);font-size:15px;font-weight:500;margin:12px 0 0}.custom-slider-wrapper{align-items:center;display:flex;gap:8px;height:20px;margin:5px 0;width:100%}.custom-slider-label{color:var(--main-text-secondary);font-size:12px;user-select:none;white-space:nowrap}.custom-slider-track{background-color:var(--main-textarea-bg);border:1px solid var(--main-textarea-border);border-radius:4px;cursor:pointer;flex-grow:1;height:8px;position:relative}.custom-slider-ticks{align-items:center;box-sizing:border-box;display:flex;height:100%;justify-content:space-between;left:0;padding:0 4px;pointer-events:none;position:absolute;right:0}.custom-slider-tick{background-color:var(--main-border);border-radius:50%;height:4px;width:4px}.custom-slider-thumb{background-color:var(--main-primary);border:2px solid var(--main-bg);border-radius:50%;box-shadow:0 2px 4px var(--main-shadow);cursor:grab;height:18px;position:absolute;top:50%;transform:translateY(-50%);transition:transform .1s ease-out,left .1s ease-out;width:18px;will-change:transform,left}.custom-slider-thumb:hover{transform:translateY(-50%) scale(1.1)}.custom-slider-thumb.is-dragging{cursor:grabbing;transform:translateY(-50%) scale(1.2)}.tc-dropdown-menu{animation:slide-up-fade-in .3s ease forwards;background-color:var(--color-bg);border:1px solid var(--color-border);border-radius:16px;bottom:calc(100% + 8px);box-shadow:0 5px 15px var(--main-shadow);display:none;min-width:100%;overflow:hidden;position:absolute;right:51%;width:max-content;z-index:2147483647}.tc-dropdown-menu.visible{display:block}.tc-dropdown-menu button{align-items:center;background-color:transparent;border:none;color:var(--main-text);cursor:pointer;display:flex;font-size:14px;gap:12px;padding:10px 16px;text-align:left;transition:background-color .2s ease;width:100%}.tc-dropdown-menu button:hover{background-color:#f0f0f0}:host([data-theme=dark]) .tc-dropdown-menu{background-color:var(--dark-color-bg);border-color:var(--dark-color-border)}:host([data-theme=dark]) .tc-dropdown-menu button:hover{background-color:hsla(0,0%,100%,.1)}.tc-export-btn-container{position:relative}@keyframes slide-up-fade-in{0%{opacity:0;transform:translateY(10px) translateX(50%)}to{opacity:1;transform:translateY(0) translateX(50%)}}@keyframes slide-down-fade-out{0%{opacity:1;transform:translateY(0) translateX(50%)}to{opacity:0;transform:translateY(10px) translateX(50%)}}.tc-dropdown-menu.is-hiding{animation:slide-down-fade-out .3s ease forwards}#element-scan-container{opacity:0;pointer-events:none;position:absolute;transition:all .2s cubic-bezier(.19,1,.22,1),opacity .2s ease-in-out,visibility 0s linear .2s;visibility:hidden;z-index:2147483644}#element-scan-highlight-border{background-color:rgba(52,152,219,.2);border:4px solid #3498db;border-radius:6px 6px 6px 0;box-sizing:border-box;height:100%;width:100%}#element-scan-tag-name{background-color:#3498db;border-radius:0 0 6px 6px;color:#fff;font-size:12px;left:0;padding:4px 8px;position:absolute;top:100%;transition:background-color .1s ease-out,opacity .2s ease-out;white-space:nowrap;z-index:1}#element-scan-tag-name,#element-scan-toolbar{font-family:Menlo,Monaco,Cascadia Code,PingFang SC;pointer-events:auto}#element-scan-toolbar{background-color:var(--main-bg);border:1px solid var(--main-border);border-radius:20px;box-shadow:0 4px 12px rgba(0,0,0,.15);cursor:move;display:flex;flex-direction:column;opacity:0;padding:16px;position:fixed;transform:scale(.95);transition:opacity .2s cubic-bezier(.19,1,.22,1),transform .2s cubic-bezier(.19,1,.22,1),visibility 0s linear .2s;visibility:hidden;width:fit-content;z-index:2147483645}#element-scan-container.is-visible,#element-scan-toolbar.is-visible{opacity:1;transform:scale(1);transition-delay:0s;visibility:visible}#element-scan-toolbar-tag,#element-scan-toolbar-title,.custom-slider-info-text{user-select:none}#element-scan-toolbar-title{font-size:20px;margin-bottom:16px}#element-scan-toolbar-tag,#element-scan-toolbar-title{color:var(--main-text);font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-weight:700;text-align:center}#element-scan-toolbar-tag{border-radius:4px;font-size:14px;padding:0 8px;transition:opacity .1s ease-in-out}#element-scan-slider-container{min-width:380px}#element-scan-level-slider{width:100%}#element-scan-toolbar-actions{display:flex;gap:6px;justify-content:space-between;white-space:nowrap}#element-scan-toolbar-actions button{align-items:center;border:none;border-radius:20px;color:var(--main-primary-text);cursor:pointer;display:flex;flex-grow:1;font-size:15px;gap:6px;justify-content:center;margin:6px 0 0;padding:10px 16px;transition:background-color .1s ease-in-out,transform .1s ease-in-out}#element-scan-toolbar-actions button:active{transform:scale(.95)}#element-scan-toolbar-confirm:hover{background-color:#27ae60}#element-scan-toolbar-confirm{background-color:#2ecc71}#element-scan-toolbar-cancel:hover{background-color:#c0392b}#element-scan-toolbar-cancel{background-color:#e74c3c}#element-scan-toolbar-reselect{background-color:var(--main-primary)}#element-scan-toolbar-reselect:hover{background-color:var(--main-primary-hover)}#element-scan-toolbar-stage:hover{background-color:#7f8c8d}#element-scan-toolbar-stage{background-color:#95a5a6}.text-extractor-fab.is-recording{animation:tc-breathing 2s ease-in-out infinite;background-color:#f39c12}.text-extractor-fab.is-recording:hover{background-color:#e67e22}@keyframes scan-pulse{0%{box-shadow:0 0 0 0 rgba(243,156,18,.7)}50%{box-shadow:0 0 0 4px rgba(243,156,18,.5)}to{box-shadow:0 0 0 10px rgba(243,156,18,0)}}@keyframes scan-confirm-flash{0%{box-shadow:0 0 0 0 rgba(46,204,113,.7)}50%{box-shadow:0 0 0 4px rgba(46,204,113,.5)}to{box-shadow:0 0 0 10px rgba(46,204,113,0)}}#element-scan-container.is-locked #element-scan-highlight-border{animation:scan-pulse .5s cubic-bezier(.25,.8,.25,1);background-color:rgba(243,156,18,.1);border-color:#f39c12}#element-scan-container.is-confirmed #element-scan-highlight-border{animation:scan-confirm-flash .5s cubic-bezier(.25,.8,.25,1) forwards;background-color:rgba(46,204,113,.1);border-color:#2ecc71}#element-scan-container.is-confirmed #element-scan-tag-name{opacity:0;transition:opacity .2s ease-out}#element-scan-container.is-error #element-scan-highlight-border{animation:scan-error-pulse .5s cubic-bezier(.25,.8,.25,1)}@keyframes scan-error-pulse{0%{box-shadow:0 0 0 0 rgba(231,76,60,.7);transform:scale(1)}50%{box-shadow:0 0 0 4px rgba(231,76,60,.5);transform:scale(1.03)}to{box-shadow:0 0 0 10px rgba(231,76,60,0);transform:scale(1)}}#element-scan-container.is-error #element-scan-highlight-border{animation:scan-error-pulse .6s cubic-bezier(.25,.8,.25,1);background-color:rgba(231,76,60,.1);border-color:#e74c3c}#element-scan-container.is-locked #element-scan-tag-name{background-color:#f39c12}#element-scan-container.is-error #element-scan-tag-name{background-color:#e74c3c}#element-scan-container.is-confirmed #element-scan-tag-name{background-color:#2ecc71}.fab-position-top-right{transform:translate(-30px,30px)}.fab-position-bottom-right{transform:translate(-30px,calc(100vh - 290px))}.fab-position-top-left{transform:translate(calc(-100vw + 86px + var(--scrollbar-width)),30px)}.fab-position-bottom-left{transform:translate(calc(-100vw + 86px + var(--scrollbar-width)),calc(100vh - 290px))}.code-preview{align-items:center;display:flex;height:100%;justify-content:center;padding:10px;width:100%}.code-preview .wrapper-bracket,.code-preview .wrapper-indent{display:inline;opacity:1;transition:opacity .2s ease-in-out}.code-preview.hide-brackets .wrapper-bracket,.code-preview.hide-brackets .wrapper-indent{opacity:0}.code-text-preview{color:var(--main-text-secondary);font-family:Menlo,Monaco,Consolas,Courier New,monospace;font-size:14px;line-height:1.4;overflow:hidden;text-align:left;white-space:nowrap}.image-card-option.selected .code-text-preview{color:var(--main-text)}.code-text-preview .punct{color:var(--main-text-secondary);font-weight:700}.code-text-preview .str{color:var(--main-primary)}.image-card-option.selected .code-text-preview .punct{color:var(--main-text)}.tc-button{background-color:var(--main-primary);border:none;border-radius:999px;color:var(--main-primary-text);cursor:pointer;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:16px;font-weight:500;padding:10px 20px;transition:background-color .2s,transform .15s,box-shadow .2s}.tc-button:hover{background-color:var(--main-primary-hover);box-shadow:0 2px 8px rgba(0,0,0,.15)}.tc-button:active{transform:scale(.97)}.tc-button:disabled{background-color:var(--main-disabled);box-shadow:none;color:var(--main-disabled-text);cursor:not-allowed}.tc-textarea{background-color:var(--main-textarea-bg);border:1px solid var(--main-textarea-border);border-radius:8px;box-sizing:border-box;color:var(--main-text);font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:14px;height:100%;line-height:1.5;padding:12px 18px 12px 12px;resize:none;width:100%}.tc-textarea:focus{outline:none}.tc-textarea::-webkit-scrollbar-thumb{background-color:var(--main-border)}.tc-textarea::-webkit-scrollbar-thumb:hover{background-color:var(--main-primary)}.tc-textarea::-webkit-scrollbar-button{display:none}.tc-select{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:var(--main-textarea-bg);background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='currentColor' viewBox='0 0 16 16'%3E%3Cpath d='M8 11 2 5h12z'/%3E%3C/svg%3E");background-position:right 12px center;background-repeat:no-repeat;background-size:12px;border:1px solid var(--main-textarea-border);border-radius:8px;color:var(--main-text);cursor:pointer;display:block;font-size:14px;padding:10px 36px 10px 12px;transition:border-color .2s,box-shadow .2s;width:100%}.tc-select:hover{border-color:var(--main-primary);box-shadow:0 0 0 2px var(--main-primary-hover-bg,rgba(30,144,255,.1))}.info-tooltip-overlay{align-items:center;background-color:var(--main-overlay-bg);display:flex;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;height:100%;justify-content:center;left:0;opacity:0;pointer-events:none;position:fixed;top:0;transition:opacity .3s ease,visibility .3s;visibility:hidden;width:100%;z-index:2147483647}.info-tooltip-overlay.is-visible{opacity:1;pointer-events:auto;visibility:visible}.info-tooltip-modal{background-color:var(--main-bg);border:1px solid var(--main-border);border-radius:16px;box-shadow:0 5px 15px var(--main-shadow);color:var(--main-text);display:flex;flex-direction:column;max-height:80vh;max-width:80vw;overflow:hidden;padding:0;position:relative;transform:scale(.95);transition:transform .3s ease;width:480px}.info-tooltip-overlay.is-visible .info-tooltip-modal{transform:scale(1)}.info-tooltip-header{align-items:center;border-bottom:1px solid var(--main-border);display:flex;justify-content:space-between;padding:20px}.info-tooltip-title-container{align-items:center;display:flex;gap:10px}.info-tooltip-title-icon{color:var(--secondary-text);height:20px;width:20px}.info-tooltip-title{font-size:18px;font-weight:700;margin:0}.info-tooltip-close{align-items:center;background-color:transparent;border-radius:50%;color:var(--main-text);cursor:pointer;display:flex;height:32px;justify-content:center;transition:background-color .2s,transform .15s;width:32px}.info-tooltip-close:hover{background-color:var(--main-border)}.info-tooltip-close:active{transform:scale(.9)}.info-tooltip-close svg{height:18px;width:18px}.info-tooltip-content{overflow-y:auto;padding:24px}.info-tooltip-content p{font-size:16px;line-height:1.7;margin:0 0 15px}.info-tooltip-content p:last-child{margin-bottom:0}.info-tooltip-content strong{color:var(--primary-accent);font-weight:600}.info-tooltip-image{animation:fadeIn .3s forwards;border-radius:8px;display:block;height:auto;margin-left:auto;margin-right:auto;margin-top:10px;max-width:100%;opacity:0}.info-icon{align-items:center;border-radius:50%;color:var(--secondary-text);cursor:pointer;display:inline-flex;height:20px;justify-content:center;margin-left:8px;transition:background-color .2s,color .2s;vertical-align:text-bottom;width:20px}.info-icon:hover{background-color:var(--main-border);color:var(--primary-accent)}.info-icon svg{height:16px;width:16px}kbd{background-color:var(--main-bg);border:solid var(--main-border);border-radius:4px;border-width:1px 1px 3px;box-shadow:0 1px 1px var(--main-shadow);color:var(--main-text);display:inline-block;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:.85em;font-weight:700;line-height:1;margin:0 5px;padding:3px 6px;position:relative;top:-3px;vertical-align:baseline;white-space:nowrap}.gm-loading-overlay{align-items:center;background-color:hsla(0,0%,50%,.2);display:flex;height:100%;justify-content:center;left:0;opacity:0;position:absolute;top:0;transition:opacity .2s,visibility .2s;visibility:hidden;width:100%;z-index:10}.gm-loading-overlay.is-visible{opacity:1;visibility:visible}.gm-loading-spinner svg{color:var(--color-icon);height:48px;width:48px}.text-extractor-fab-container{align-items:center;display:flex;flex-direction:column;gap:12px;opacity:0;pointer-events:none;position:fixed;right:0;top:0;transform-origin:top right;transition:opacity .3s ease,visibility .3s,transform .3s ease-in-out;visibility:hidden;z-index:2147483645}.text-extractor-fab-container.fab-container-visible{opacity:1;visibility:visible}.text-extractor-fab{background-color:var(--main-primary);border:1px solid var(--main-border);border-radius:50%;box-shadow:0 4px 8px var(--main-shadow);color:var(--main-primary-text);cursor:pointer;height:56px;pointer-events:auto;position:relative;transition:background-color .3s,transform .2s,box-shadow .3s,color .3s;width:56px}.text-extractor-fab:hover{background-color:var(--main-primary-hover);box-shadow:0 6px 12px var(--main-shadow);transform:scale(1.05)}.text-extractor-fab:active{transform:scale(.95);transition-duration:.1s}.text-extractor-fab svg{fill:currentColor;height:26px;left:50%;position:absolute;top:50%;transform:translate(-50%,-50%);width:26px}.text-extractor-modal-overlay{align-items:center;background-color:var(--main-overlay-bg);display:flex;height:100%;justify-content:center;left:0;opacity:0;pointer-events:none;position:fixed;top:0;transition:opacity .3s ease,visibility .3s;visibility:hidden;width:100%;z-index:2147483646}.text-extractor-modal-overlay.is-visible{opacity:1;pointer-events:auto;visibility:visible}.text-extractor-modal{background-color:var(--main-bg);border-radius:16px;box-shadow:0 5px 15px var(--main-shadow);color:var(--main-text);display:flex;flex-direction:column;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;height:600px;max-height:85vh;max-width:800px;transform:scale(.95);transition:transform .3s ease;width:90%}.text-extractor-modal-overlay.is-visible .text-extractor-modal{transform:scale(1)}.text-extractor-modal-header{border-bottom:1px solid var(--main-border);font-size:18px;font-weight:700;justify-content:space-between;padding:18px}.tc-close-button,.text-extractor-modal-header{align-items:center;color:var(--main-text);display:flex}.tc-close-button{background-color:transparent;border-radius:50%;cursor:pointer;height:32px;justify-content:center;transition:background-color .2s,transform .15s;width:32px}.tc-close-button:active,.tc-close-button:hover{background-color:var(--main-border)}.tc-close-button:active{transform:scale(.9)}.text-extractor-modal-content{display:flex;flex-grow:1;overflow-y:auto;padding:18px;position:relative}.tc-textarea-container{box-sizing:border-box;height:100%;opacity:0;transition:opacity .2s ease-in-out,visibility .2s ease-in-out;visibility:hidden;width:100%}.tc-textarea-container.is-visible{opacity:1;visibility:visible}.text-extractor-modal-footer{align-items:center;border-top:1px solid var(--main-border);display:flex;justify-content:space-between;padding:18px}.tc-footer-buttons{align-items:center;display:flex;gap:10px}@keyframes tc-breathing{0%{box-shadow:0 4px 8px var(--main-shadow),0 0 0 0 rgba(243,156,18,.4)}70%{box-shadow:0 4px 12px var(--main-shadow),0 0 0 10px rgba(243,156,18,0)}to{box-shadow:0 4px 8px var(--main-shadow),0 0 0 0 rgba(243,156,18,0)}}#scan-count-display{color:var(--tc-secondary-text-color);font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:14px;margin-left:6px;opacity:0;transition:opacity .3s ease-in-out}#scan-count-display,.header-right-controls{align-items:center;display:flex}#scan-count-display.is-visible{opacity:1}.text-extractor-fab-container.fab-container-visible .text-extractor-fab.fab-disabled{background-color:var(--main-disabled);box-shadow:none;color:var(--main-disabled-text);cursor:not-allowed;transform:none}.tc-help-icon-button{align-items:center;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);background-color:var(--main-bg-a);border:1px solid var(--main-border);border-radius:50%;box-shadow:var(--main-shadow);color:var(--main-text-secondary);cursor:pointer;display:flex;justify-content:center;padding:0;transition:color .2s,transform .2s,background-color .2s}.tc-help-icon-button:hover{background-color:var(--main-border);color:var(--main-text)}.tc-help-icon-button svg{height:20px;width:20px}.action-key{background-color:var(--main-bg);border:solid var(--main-border);border-radius:4px;border-width:1px 1px 3px;box-shadow:0 1px 1px var(--main-shadow);color:var(--main-text);display:inline-block;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:.85em;font-weight:700;line-height:1;margin:0 5px;padding:3px 6px;position:relative;top:-3px;vertical-align:baseline;white-space:nowrap}.tc-textarea-container{border:1px solid var(--main-textarea-border);border-radius:8px;display:flex;flex-grow:1;overflow:hidden;position:relative}.tc-line-numbers{background-color:var(--tc-secondary-bg-color);border-right:1px solid var(--tc-border-color);box-sizing:border-box;color:var(--main-line-number-text);font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:14px;line-height:1.5;margin-right:0;max-width:0;opacity:0;overflow:hidden;padding:10px 0 8px;text-align:right;transition:max-width .3s ease,opacity .3s ease,padding .3s ease,margin-right .3s ease;user-select:none;width:var(--line-number-width,40px)}.tc-line-numbers>div{box-sizing:border-box;padding:0 4px;transition:color .2s ease-in-out;white-space:nowrap}.tc-line-numbers>div.is-active{color:var(--main-line-number-active-text);font-weight:700}.tc-textarea-container .tc-textarea{border:none;border-radius:0;box-sizing:border-box;flex-grow:1;font-size:14px;line-height:1.5;padding:10px 10px 8px;resize:none;scrollbar-gutter:stable}.tc-textarea-container .tc-textarea:focus{box-shadow:none;outline:none}.tc-textarea.word-wrap-disabled{overflow-x:auto;white-space:pre}.tc-line-numbers.is-visible{margin-right:4px;max-width:var(--line-number-width,40px);opacity:1;padding:10px 4px}.tc-stats-container{align-items:center;color:var(--tc-secondary-text-color);display:flex;flex-grow:1;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:14px;opacity:0;transition:opacity .3s ease,visibility .3s ease;visibility:hidden}.tc-stats-container.is-visible{opacity:1;visibility:visible}.tc-textarea::-webkit-scrollbar{height:6px;width:6px}.tc-textarea::-webkit-scrollbar-track{background:transparent}.tc-textarea::-webkit-scrollbar-thumb{background:var(--tc-scrollbar-thumb-color);border:1px solid var(--tc-scrollbar-border-color);border-radius:3px}.tc-textarea::-webkit-scrollbar-thumb:hover{background:var(--tc-scrollbar-thumb-hover-color)}@keyframes line-number-enter{0%{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}.line-number-enter-active{animation:line-number-enter .2s ease-out}.tc-notification-container{display:flex;flex-direction:column;gap:10px;pointer-events:none;position:fixed;right:20px;top:20px;z-index:2147483647}.tc-notification{align-items:center;animation:tc-notification-fade-in .5s forwards;background-color:var(--main-bg,#fff);border:1px solid var(--main-border,#eee);border-radius:16px;box-shadow:0 4px 12px var(--main-shadow,rgba(0,0,0,.15));color:var(--main-text,#333);display:flex;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;opacity:0;padding:12px 16px;pointer-events:auto;transform:translateX(100%);transition:box-shadow .3s;width:320px}.tc-notification:hover{box-shadow:0 6px 16px var(--main-shadow,rgba(0,0,0,.2))}.tc-notification-icon{align-items:center;display:flex;margin-right:12px}.tc-notification-icon svg{height:20px;width:20px}.tc-notification-info .tc-notification-icon{color:#3498db}.tc-notification-success .tc-notification-icon{color:#2ecc71}.tc-notification-content{flex-grow:1;font-size:14px;line-height:1.4}.tc-notification-close{cursor:pointer;opacity:.6;padding:4px;transition:opacity .3s}.tc-notification-close:hover{opacity:1}.tc-notification-close svg{height:16px;stroke:var(--main-text,#333);width:16px}@keyframes tc-notification-fade-in{to{opacity:1;transform:translateX(0)}}.tc-notification-fade-out{animation:tc-notification-fade-out .5s forwards}@keyframes tc-notification-fade-out{0%{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(100%)}}#modal-placeholder{align-items:center;box-sizing:border-box;color:var(--text-color-secondary);display:flex;flex-direction:column;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;height:100%;justify-content:center;left:0;opacity:0;padding:20px;position:absolute;text-align:center;top:0;transition:opacity .2s ease-in-out,visibility .2s ease-in-out;visibility:hidden;width:100%}#modal-placeholder.is-visible{opacity:1;visibility:visible}.placeholder-icon{color:var(--text-color-secondary)}.placeholder-icon svg{height:48px;width:48px}#modal-placeholder p{font-size:14px;margin:4px 0}.placeholder-actions{align-items:center;color:var(--text-color-primary);display:flex;gap:6px}.placeholder-action-icon svg{fill:currentColor;height:18px;vertical-align:middle;width:18px}#modal-placeholder strong{font-weight:600}.settings-panel-overlay{align-items:center;background-color:var(--main-overlay-bg);display:flex;height:100%;justify-content:center;left:0;opacity:0;pointer-events:none;position:fixed;top:0;transition:opacity .3s ease,visibility .3s;visibility:hidden;width:100%;z-index:2147483648}.settings-panel-overlay.is-visible{opacity:1;pointer-events:auto;visibility:visible}.settings-panel-modal{background-color:var(--main-bg);border:1px solid var(--main-border);border-radius:16px;box-shadow:0 5px 15px var(--main-shadow);color:var(--main-text);display:flex;flex-direction:column;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;height:600px;max-height:85vh;max-width:800px;overflow:hidden;transform:scale(.95);transition:transform .3s ease;width:90%}.settings-panel-content{flex-grow:1;overflow-y:auto;padding:20px}.settings-panel-overlay.is-visible .settings-panel-modal{transform:scale(1)}.settings-panel-header{align-items:center;border-bottom:1px solid var(--main-border);display:flex;flex-shrink:0;font-size:18px;font-weight:700;justify-content:space-between;padding:16px 20px}.settings-panel-body{display:flex;flex:1;overflow:hidden}.settings-sidebar{background-color:color-mix(in srgb,var(--main-bg) 97%,var(--main-text));border-right:1px solid var(--main-border);box-sizing:border-box;display:flex;flex-direction:column;flex-shrink:0;position:relative;width:200px}.sidebar-highlight{background-color:color-mix(in srgb,var(--main-primary) 10%,transparent);border-left:3px solid var(--main-primary);box-sizing:border-box;left:0;pointer-events:none;position:absolute;top:0;transition:transform .2s cubic-bezier(.4,0,.2,1),height .2s ease;width:100%;z-index:0}.settings-sidebar-item{align-items:center;background:transparent;border-left:3px solid transparent;box-sizing:border-box;color:var(--main-text);cursor:pointer;display:flex;font-size:15px;font-weight:500;gap:10px;padding:12px 20px;position:relative;transition:color .2s,background-color .2s;z-index:1}.settings-sidebar-item:hover{background-color:color-mix(in srgb,var(--main-textarea-bg) 50%,transparent)}.settings-sidebar-item.active{border-left-color:transparent;color:var(--main-primary)}.settings-sidebar-item svg{fill:currentColor;height:22px;width:22px}.settings-content-area{background-color:var(--main-bg);display:flex;flex:1;flex-direction:column;overflow:hidden;position:relative}.settings-tab-content{display:none;flex:1;overflow-y:auto;padding:20px}.settings-tab-content.active{animation:fadeIn .2s ease;display:block}@keyframes fadeIn{0%{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}.setting-item{margin-bottom:12px}.setting-item>label{display:block;font-weight:500;margin-bottom:8px}.setting-title-container{align-items:center;display:flex;font-size:16px;font-weight:700;gap:8px;margin-bottom:12px}.settings-info-notice{align-items:center;background-color:color-mix(in srgb,var(--main-primary) 8%,var(--main-bg));border:1px solid color-mix(in srgb,var(--main-primary) 28%,var(--main-border));border-radius:10px;color:var(--main-text-secondary);display:flex;font-size:13px;gap:10px;line-height:1.5;margin:0 0 16px;padding:10px 12px}.settings-info-notice-icon{align-items:center;color:var(--main-primary);display:flex;flex:0 0 auto;justify-content:center}.settings-info-notice-icon svg{display:block;height:20px;width:20px}.settings-info-notice .icon-title-text{margin:0;min-width:0}.settings-tab-content::-webkit-scrollbar{width:6px}.settings-tab-content::-webkit-scrollbar-track{background:transparent}.settings-tab-content::-webkit-scrollbar-thumb{background-color:var(--main-border);border-radius:3px}.settings-tab-content::-webkit-scrollbar-thumb:hover{background-color:var(--main-primary)}.settings-tab-content::-webkit-scrollbar-button{display:none}.settings-panel-footer{background-color:var(--main-bg);border-top:1px solid var(--main-border);flex-shrink:0;padding:16px 20px;text-align:right}.checkbox-group{color:var(--main-text);cursor:pointer;display:block;height:20px;line-height:20px;margin-left:2px;margin-top:12px;padding-left:30px;position:relative;user-select:none}.checkbox-group input{cursor:pointer;height:0;opacity:0;position:absolute;width:0}.checkmark{background-color:var(--main-textarea-bg);border:1px solid var(--main-textarea-border);border-radius:3px;height:18px;left:0;position:absolute;top:0;transition:all .2s;width:18px}.checkbox-group:hover input~.checkmark{border-color:var(--main-primary)}.checkbox-group input:checked~.checkmark{background-color:var(--main-primary);border-color:var(--main-primary)}.checkmark:after{content:"";display:none;position:absolute}.checkbox-group input:checked~.checkmark:after{display:block}.checkbox-group .checkmark:after{border:solid var(--main-bg);border-width:0 2px 2px 0;height:10px;left:6px;top:2px;transform:rotate(45deg);width:5px}.composite-setting-container{font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-weight:500;margin-left:0;margin-top:14px}.composite-setting-container .checkbox-group{margin-top:0}.linked-numeric-input{margin-left:32px;margin-top:8px}.numeric-input-group{align-items:center;display:flex;gap:8px}.numeric-input{background-color:var(--main-textarea-bg);border:1px solid var(--main-textarea-border);border-radius:8px;color:var(--main-text);font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:14px;padding:6px 8px;transition:border-color .2s,box-shadow .2s,background-color .2s,color .2s;width:100px}.numeric-input:focus{border-color:var(--main-primary);box-shadow:0 0 0 2px color-mix(in srgb,var(--main-primary) 20%,transparent);outline:none}.numeric-input:disabled{background-color:var(--main-disabled);border-color:var(--main-border);color:var(--main-disabled-text);cursor:not-allowed}.setting-item-select{align-items:center;display:flex;font-weight:500;justify-content:space-between;margin-left:32px}.image-card-select-container{display:flex;gap:16px;justify-content:space-between;width:100%}.image-card-option{background-color:var(--main-bg);border:1px solid var(--main-border);border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.05);cursor:pointer;display:flex;flex:1;flex-direction:column;overflow:hidden;padding:0;position:relative;transition:border-color .2s,box-shadow .2s}.image-card-option:hover{border-color:var(--main-primary);box-shadow:0 2px 8px rgba(0,0,0,.08);transform:none}.image-card-option.selected{background-color:color-mix(in srgb,var(--main-primary) 5%,var(--main-bg));border-color:var(--main-primary);box-shadow:0 0 0 2px color-mix(in srgb,var(--main-primary) 20%,transparent)}.image-card-preview{background-color:var(--main-textarea-bg);border-bottom:1px solid var(--main-border);height:110px;padding:16px;transition:background-color .2s,border-bottom-color .2s}.image-card-preview,.schematic-container{align-items:center;display:flex;justify-content:center}.schematic-container{height:100%;width:100%}.schematic-card{align-items:center;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,.1);display:flex;gap:8px;height:60px;padding:8px;transition:background-color .2s;width:100px}.schematic-icon-box{border-radius:6px;flex-shrink:0;height:24px;width:24px}.schematic-lines{display:flex;flex:1;flex-direction:column;gap:6px}.schematic-line{border-radius:3px;height:6px;width:100%}.schematic-line.secondary{width:60%}.image-card-option[data-value=light] .image-card-preview{background-color:#f1f5f9}.image-card-option[data-value=light] .schematic-card{background-color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.05)}.image-card-option[data-value=light] .schematic-icon-box{background-color:#e2e8f0}.image-card-option[data-value=light] .schematic-line{background-color:#cbd5e1}.image-card-option[data-value=dark] .image-card-preview{background-color:#0f172a}.image-card-option[data-value=dark] .schematic-card{background-color:#1e293b;box-shadow:0 2px 8px rgba(0,0,0,.2)}.image-card-option[data-value=dark] .schematic-icon-box{background-color:#334155}.image-card-option[data-value=dark] .schematic-line{background-color:#475569}.image-card-option[data-value=system] .image-card-preview{background-color:#1e293b}.image-card-option[data-value=system] .schematic-card{background-color:#334155;border:1px solid #475569}.image-card-option[data-value=system] .schematic-icon-box{background-color:#475569}.image-card-option[data-value=system] .schematic-line{background-color:#64748b}.image-card-label{align-items:center;display:flex;font-size:14px;font-weight:500;justify-content:flex-start;padding:12px}.image-card-radio{align-items:center;background-color:transparent;border:1px solid var(--main-border);border-radius:50%;display:flex;flex-shrink:0;height:16px;justify-content:center;margin-right:8px;transition:all .2s;width:16px}.radio-dot{background-color:var(--main-primary);border-radius:50%;height:8px;opacity:0;transform:scale(0);transition:all .2s cubic-bezier(.4,0,.2,1);width:8px}.image-card-option.selected .image-card-radio{border-color:var(--main-primary)}.image-card-option.selected .radio-dot{opacity:1;transform:scale(1)}.image-card-label-icon{align-items:center;color:var(--main-text-secondary);display:flex;margin-left:4px}.image-card-option.selected .image-card-label-icon{color:var(--main-primary)}.image-card-label-icon svg{fill:currentColor;height:18px;width:18px}@media (prefers-color-scheme:light){.image-card-option[data-value=system] .image-card-preview{background-color:#f1f5f9}.image-card-option[data-value=system] .schematic-card{background-color:#fff;border:none;box-shadow:0 2px 8px rgba(0,0,0,.05)}.image-card-option[data-value=system] .schematic-icon-box{background-color:#e2e8f0}.image-card-option[data-value=system] .schematic-line{background-color:#cbd5e1}}@media (prefers-color-scheme:dark){.image-card-option[data-value=system] .image-card-preview{background-color:#0f172a}.image-card-option[data-value=system] .schematic-card{background-color:#1e293b;border:none;box-shadow:0 2px 8px rgba(0,0,0,.2)}.image-card-option[data-value=system] .schematic-icon-box{background-color:#334155}.image-card-option[data-value=system] .schematic-line{background-color:#475569}}.about-tab-container{align-items:center;display:flex;flex-direction:column;height:100%;justify-content:center;padding-bottom:40px;text-align:center}.about-logo{color:var(--main-primary);height:100px;margin-bottom:18px;width:100px}.about-logo svg{fill:currentColor;height:100%;width:100%}.about-title{color:var(--main-text);font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:24px;font-weight:700;margin:0 0 6px}.about-description{color:var(--main-text-secondary);font-size:14px;line-height:1.5;margin:0 0 24px;max-width:400px}.about-version{color:var(--main-text-secondary);font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:16px;margin:0 0 16px}.about-actions{display:flex;gap:16px}#about-github-btn svg{height:20px;width:20px}.text-extractor-tooltip{background-color:var(--main-tooltip-bg);border:1px solid var(--main-border);border-radius:16px;box-shadow:0 2px 5px var(--main-shadow);color:var(--main-tooltip-text);font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:14px;font-weight:700;opacity:0;padding:8px 12px;pointer-events:none;position:fixed;transition:opacity .2s ease,visibility .2s;visibility:hidden;white-space:nowrap;z-index:2147483647}.text-extractor-tooltip.is-visible{opacity:1;visibility:visible}`;
+    styleElement.textContent = `:host{box-sizing:border-box;font-family:Menlo,Monaco,Cascadia Code,PingFang SC,monospace,sans-serif;font-size:16px;line-height:1.5;text-align:left;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;--color-bg:#fff;--color-text:#333;--color-text-secondary:#666;--color-border:#e0e0e0;--color-overlay-bg:rgba(0,0,0,.5);--color-shadow:rgba(0,0,0,.2);--color-primary:#1a73e8;--color-primary-hover:#185abc;--color-primary-text:#fff;--color-toast-bg:#333;--color-toast-text:#fff;--color-textarea-bg:#fff;--color-textarea-border:#ccc;--color-tooltip-bg:#333;--color-tooltip-text:#fff;--color-line-number-text:#888;--color-line-number-active-text:#000;--dark-color-bg:#2d2d2d;--dark-color-text:#f0f0f0;--dark-color-text-secondary:#aaa;--dark-color-border:#555;--dark-color-overlay-bg:rgba(0,0,0,.7);--dark-color-shadow:rgba(0,0,0,.4);--dark-color-primary:#1e90ff;--dark-color-primary-hover:#1c86ee;--dark-color-primary-text:#fff;--dark-color-toast-bg:#eee;--dark-color-toast-text:#111;--dark-color-textarea-bg:#3a3a3a;--dark-color-textarea-border:#666;--dark-color-tooltip-bg:#e0e0e0;--dark-color-tooltip-text:#111;--dark-color-line-number-text:#777;--dark-color-line-number-active-text:#fff;--color-scrollbar-thumb:#c1c1c1;--color-scrollbar-thumb-hover:#a8a8a8;--color-scrollbar-border:#fff;--dark-color-scrollbar-thumb:#555;--dark-color-scrollbar-thumb-hover:#777;--dark-color-scrollbar-border:#2d2d2d}*,:after,:before{box-sizing:inherit}button,input,optgroup,select,textarea{color:inherit;font-family:inherit;font-size:100%;line-height:1.15;margin:0}:host([data-theme=light]){--main-bg:var(--color-bg);--main-text:var(--color-text);--main-text-secondary:var(--color-text-secondary);--tc-secondary-text-color:var(--color-text-secondary);--main-border:var(--color-border);--main-overlay-bg:var(--color-overlay-bg);--main-shadow:var(--color-shadow);--main-primary:var(--color-primary);--main-primary-hover:var(--color-primary-hover);--main-primary-text:var(--color-primary-text);--main-toast-bg:var(--color-toast-bg);--main-toast-text:var(--color-toast-text);--main-textarea-bg:var(--color-textarea-bg);--main-textarea-border:var(--color-textarea-border);--main-tooltip-bg:var(--color-tooltip-bg);--main-tooltip-text:var(--color-tooltip-text);--main-disabled:#ccc;--main-disabled-text:#666;--main-line-number-text:var(--color-line-number-text);--main-line-number-active-text:var(--color-line-number-active-text);--tc-scrollbar-thumb-color:var(--color-scrollbar-thumb);--tc-scrollbar-thumb-hover-color:var(--color-scrollbar-thumb-hover);--tc-scrollbar-border-color:var(--color-scrollbar-border);--main-bg-a:hsla(0,0%,100%,.6)}:host([data-theme=dark]){--main-bg:var(--dark-color-bg);--main-text:var(--dark-color-text);--main-text-secondary:var(--dark-color-text-secondary);--tc-secondary-text-color:var(--dark-color-text-secondary);--main-border:var(--dark-color-border);--main-overlay-bg:var(--dark-color-overlay-bg);--main-shadow:var(--dark-color-shadow);--main-primary:var(--dark-color-primary);--main-primary-hover:var(--dark-color-primary-hover);--main-primary-text:var(--dark-color-primary-text);--main-toast-bg:var(--dark-color-toast-bg);--main-toast-text:var(--dark-color-toast-text);--main-textarea-bg:var(--dark-color-textarea-bg);--main-textarea-border:var(--dark-color-textarea-border);--main-tooltip-bg:var(--dark-color-tooltip-bg);--main-tooltip-text:var(--dark-color-tooltip-text);--main-disabled:#444;--main-disabled-text:#888;--main-line-number-text:var(--dark-color-line-number-text);--main-line-number-active-text:var(--dark-color-line-number-active-text);--tc-scrollbar-thumb-color:var(--dark-color-scrollbar-thumb);--tc-scrollbar-thumb-hover-color:var(--dark-color-scrollbar-thumb-hover);--tc-scrollbar-border-color:var(--dark-color-scrollbar-border);--main-bg-a:rgba(45,45,45,.6)}.ai-summary-panel{background:color-mix(in srgb,var(--main-primary) 5%,var(--main-bg));border:1px solid var(--main-border);border-radius:12px;display:none;flex:0 0 auto;margin-bottom:12px;padding:12px}.ai-summary-panel.is-visible{display:block}.ai-summary-status{align-items:center;display:flex;font-weight:600;gap:8px;margin-bottom:10px}.ai-status-dot{background:var(--main-disabled-text);border-radius:50%;height:9px;width:9px}.ai-status-dot.is-active{background:#22a559;box-shadow:0 0 0 4px color-mix(in srgb,#22a559 18%,transparent)}.ai-summary-counts{display:flex;flex-wrap:wrap;gap:7px}.ai-count-badge{background:var(--main-bg);border:1px solid var(--main-border);border-radius:999px;color:var(--main-text-secondary);font-size:12px;padding:4px 8px}.ai-summary-notice{color:var(--main-text-secondary);font-size:13px;margin-top:10px}.ai-review-list{border-top:1px solid var(--main-border);margin-top:10px;padding-top:8px}.ai-review-list summary{cursor:pointer;font-weight:600}.ai-review-item{border-bottom:1px solid var(--main-border);display:grid;font-size:12px;gap:12px;grid-template-columns:minmax(0,2fr) minmax(120px,1fr);padding:8px 0}.ai-review-source{overflow-wrap:anywhere}.ai-review-reason{color:var(--main-text-secondary)}.ai-retry-btn,.ai-submit-btn{display:none}.ai-retry-btn.is-visible,.ai-submit-btn.is-visible{display:inline-flex}.ai-settings-mount{--ai-content-gap:20px}.ai-settings-controls,.ai-settings-mount{display:flex;flex-direction:column;gap:28px}.ai-settings-controls{filter:grayscale(0);opacity:1;transition:opacity .2s ease,filter .2s ease}.ai-settings-controls.is-disabled{cursor:not-allowed;filter:grayscale(.45);opacity:.42;pointer-events:none;user-select:none}.ai-settings-controls.is-disabled *{cursor:not-allowed}.ai-beta-badge{align-items:center;background:color-mix(in srgb,var(--main-warning,#d97706) 16%,transparent);border-radius:999px;color:var(--main-warning,#d97706);display:inline-flex;font-size:11px;font-weight:700;line-height:18px;margin-left:8px;padding:1px 8px;vertical-align:middle}.ai-settings-mount .ai-beta-notice{margin:0}.ai-settings-section{border-bottom:1px solid var(--main-border);padding:0 0 28px}.ai-settings-section:last-child{border-bottom:0;padding-bottom:4px}.ai-section-header{color:var(--main-text);font-size:17px;margin:0 0 18px}.ai-section-header svg{fill:currentColor;height:22px;width:22px}.ai-section-header .tc-icon-title-icon{flex-basis:22px;height:22px;width:22px}.ai-section-header .icon-title-text{line-height:22px}.ai-section-body{display:flex;flex-direction:column;gap:var(--ai-content-gap)}.ai-form-grid{display:grid;gap:18px 20px;grid-template-columns:repeat(2,minmax(0,1fr))}.ai-budget-grid,.ai-general-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.ai-field-wide{grid-column:1/-1}.ai-settings-mount .ai-number-field{align-items:stretch;display:flex;flex-direction:column;gap:8px}.ai-number-field .numeric-input{font-variant-numeric:tabular-nums;min-height:42px;padding:9px 12px;width:100%}.ai-provider-toolbar{align-items:end;display:flex;gap:16px}.ai-provider-picker{flex:1 1 340px}.ai-compact-actions{display:flex;flex:0 0 auto;gap:10px}.ai-provider-key-row{align-items:end;display:grid;gap:12px;grid-template-columns:minmax(0,1fr) auto auto}.ai-provider-test-description,.ai-style-description{margin:0}.ai-action-footer{align-items:center;border-top:1px solid color-mix(in srgb,var(--main-border) 72%,transparent);display:flex;gap:16px;justify-content:space-between;min-height:42px;padding-top:16px}.ai-action-footer-end{justify-content:flex-end}.ai-provider-status{color:var(--main-text-secondary);font-size:13px;line-height:1.5;min-width:0}.ai-provider-status[data-state=success]{color:#36a269}.ai-provider-status[data-state=error]{color:#d95757}.ai-provider-footer[hidden]{display:none}.ai-style-advanced-form{grid-template-columns:repeat(2,minmax(0,1fr))}.tc-disclosure.ai-style-advanced{background-color:color-mix(in srgb,var(--main-textarea-bg) 64%,var(--main-bg));border-color:var(--main-border);border-radius:12px}.ai-style-advanced .tc-disclosure-trigger{font-size:14px;min-height:48px;padding:12px 14px}.ai-style-advanced .tc-disclosure-trigger>.tc-icon-title{min-height:20px}.ai-style-advanced .tc-disclosure-content{background-color:color-mix(in srgb,var(--main-bg) 76%,transparent);padding:18px}.ai-style-toolbar{display:grid;gap:20px;grid-template-columns:minmax(0,2fr) minmax(180px,1fr)}.ai-style-workspace{align-items:start;display:grid;gap:20px;grid-template-columns:minmax(240px,.78fr) minmax(0,2fr)}.ai-style-editor,.ai-style-library{background-color:color-mix(in srgb,var(--main-textarea-bg) 64%,var(--main-bg));border:1px solid var(--main-border);border-radius:12px;min-width:0;padding:18px}.ai-subsection-title{color:var(--main-text);font-size:14px;font-weight:700;margin-bottom:14px}.ai-subsection-title svg{fill:currentColor;height:19px;width:19px}.ai-style-list{background-color:var(--main-bg);border:1px solid var(--main-border);border-radius:10px;max-height:340px;min-height:180px;overflow-y:auto}.ai-style-row{align-items:center;background:transparent;border:0;border-bottom:1px solid var(--main-border);color:var(--main-text);cursor:pointer;display:flex;gap:10px;justify-content:space-between;min-height:48px;padding:10px 12px;text-align:left;transition:background-color .2s,color .2s,transform .15s;width:100%}.ai-style-row:hover{background:color-mix(in srgb,var(--main-primary) 8%,transparent)}.ai-style-row:active{transform:scale(.98)}.ai-style-row:focus-visible{outline:2px solid color-mix(in srgb,var(--main-primary) 72%,transparent);outline-offset:-2px;position:relative;z-index:1}.ai-style-row.is-active{background-color:color-mix(in srgb,var(--main-primary) 12%,var(--main-bg));color:var(--main-primary)}.ai-style-row>div{min-width:0}.ai-style-row .icon-title-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ai-style-row svg{fill:currentColor;flex:0 0 auto;height:18px;width:18px}.ai-style-row-meta{color:var(--main-text-secondary);flex:0 0 auto;font-size:11px}.ai-style-empty{color:var(--main-text-secondary);display:grid;font-size:13px;min-height:180px;padding:20px;place-items:center;text-align:center}.ai-style-library-footer{display:flex;justify-content:flex-end;margin-top:14px}.ai-style-actions{flex-wrap:wrap;justify-content:flex-end}@media (max-width:1100px){.ai-budget-grid,.ai-general-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.ai-style-workspace{grid-template-columns:1fr}.ai-style-list{max-height:220px}}@media (max-width:700px){.ai-settings-mount{gap:24px}.ai-budget-grid,.ai-form-grid,.ai-general-grid,.ai-review-item,.ai-style-advanced-form,.ai-style-toolbar{grid-template-columns:1fr}.ai-provider-toolbar{align-items:stretch;flex-direction:column}.ai-provider-key-row{grid-template-columns:1fr}.ai-provider-picker{flex-basis:auto}.ai-action-footer{align-items:stretch;flex-direction:column}.ai-compact-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.ai-action-footer-end,.ai-style-actions{align-items:flex-end}.ai-style-editor,.ai-style-library{padding:16px}.text-extractor-modal-footer{align-items:flex-start;flex-direction:column;gap:10px}}@media (max-width:450px){.ai-compact-actions{grid-template-columns:1fr}}@media (prefers-reduced-motion:reduce){.ai-style-row{transition:none}}.confirmation-modal-overlay{align-items:center;background-color:var(--main-overlay-bg);display:flex;height:100%;justify-content:center;left:0;opacity:0;pointer-events:none;position:fixed;top:0;transition:opacity .3s ease,visibility .3s ease;visibility:hidden;width:100%;z-index:2147483647}.confirmation-modal-overlay.is-visible{opacity:1;pointer-events:auto;visibility:visible}.confirmation-modal-content{background-color:var(--main-bg);border-radius:16px;box-shadow:0 10px 30px var(--main-shadow);color:var(--main-text);font-family:Menlo,Monaco,Cascadia Code,PingFang SC;padding:30px;text-align:center;transform:scale(.95);transition:transform .3s ease;width:400px}.confirmation-modal-overlay.is-visible .confirmation-modal-content{transform:scale(1)}.confirmation-modal-icon{margin-bottom:20px}.confirmation-modal-icon svg{fill:var(--main-text);height:56px;width:56px}.confirmation-modal-text{font-size:16px;line-height:1.6;margin:0 0 25px}.confirmation-modal-buttons{display:flex;gap:15px;justify-content:center}.confirmation-modal-button{border:none;border-radius:9999px;cursor:pointer;font-size:14px;font-weight:700;padding:12px 24px;transition:background-color .2s ease,transform .2s ease}.confirmation-modal-button.confirm{background-color:var(--main-primary);color:var(--main-primary-text)}.confirmation-modal-button.confirm:hover{background-color:var(--main-primary-hover)}.confirmation-modal-button.cancel{background-color:transparent;border:1px solid var(--main-border);color:var(--main-text)}.confirmation-modal-button.cancel:hover{background-color:var(--main-shadow)}.counter-with-help-container{align-items:center;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);background-color:var(--main-bg-a);border:1px solid var(--main-border);border-radius:24px;box-shadow:var(--main-shadow);box-sizing:border-box;display:flex;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;gap:12px;height:42px;left:50%;opacity:0;padding:8px 12px;pointer-events:all;position:fixed;top:20px;transform:translate(-50%,-150%);transition:transform .4s var(--easing-standard,cubic-bezier(.4,0,.2,1)),opacity .4s var(--easing-standard,cubic-bezier(.4,0,.2,1));z-index:2147483645}.counter-with-help-container.is-visible{opacity:1;transform:translate(-50%)}.counter-with-help-separator{background-color:var(--main-border);height:16px;width:1px}.counter-with-help-container .tc-icon-button,.counter-with-help-container .tc-top-center-counter{backdrop-filter:none;-webkit-backdrop-filter:none;background-color:transparent;border:none;box-shadow:none;margin:0;opacity:1;padding:0;position:static;transform:none;transition:none}.counter-with-help-container .tc-icon-button{align-items:center;border-radius:50%;color:var(--main-text-secondary);display:flex;height:32px;justify-content:center;position:relative;transition:color .2s,background-color .2s;width:32px}.counter-with-help-container .tc-icon-button:hover{background-color:var(--main-border);color:var(--main-text)}.counter-with-help-container .tc-icon-button svg{fill:currentColor;height:20px;left:50%;position:absolute;top:50%;transform:translate(-50%,-50%);transition:opacity .3s ease-in-out;width:20px}.counter-actions-container{align-items:center;display:flex;gap:4px}.counter-with-help-container .tc-top-center-counter{font-size:14px;font-weight:500;margin-left:9px}.counter-with-help-container .tc-top-center-counter span{color:var(--main-primary);font-size:16px;font-weight:700;margin-left:6px;margin-right:2px}.custom-select-container{position:relative;user-select:none;width:100%}.custom-select-trigger{align-items:center;background-color:var(--main-textarea-bg);border:1px solid var(--main-textarea-border);border-radius:12px;box-sizing:border-box;color:var(--main-text);cursor:pointer;display:flex;font-size:15px;font-weight:500;gap:12px;justify-content:space-between;min-height:42px;padding:7px 10px;transition:border-color .2s,box-shadow .2s}.selected-option-content{align-items:center;display:flex;flex:1 1 auto;min-width:0}.custom-select-option>.tc-icon-title,.selected-option-content>.tc-icon-title{align-items:center;line-height:20px;min-height:20px}.selected-option-content>.tc-icon-title{width:100%}.custom-select-option .icon-title-text,.custom-select-trigger .icon-title-text{line-height:20px}.custom-select-trigger:focus-visible{outline:2px solid color-mix(in srgb,var(--main-primary) 72%,transparent);outline-offset:2px}.custom-select-trigger:hover{border-color:var(--main-primary);box-shadow:0 0 0 2px rgba(30,144,255,.1)}.custom-select-container.open .custom-select-trigger{border-color:var(--main-primary);box-shadow:0 0 0 2px rgba(30,144,255,.2)}.custom-select-arrow{align-items:center;display:flex;flex:0 0 20px;height:20px;justify-content:center;transform-origin:center;transition:transform .3s ease;width:20px}.custom-select-container.open .custom-select-arrow{transform:rotate(180deg)}.custom-select-options{background-color:var(--main-bg);border:1px solid var(--main-border);border-radius:12px;box-shadow:0 4px 12px var(--main-shadow);left:0;max-height:0;opacity:0;overflow:hidden;position:absolute;right:0;top:calc(100% + 4px);transition:max-height .2s ease-out,opacity .2s ease-out,visibility 0s .2s;visibility:hidden;z-index:2147483647}.custom-select-container.open .custom-select-options{max-height:200px;opacity:1;transition:max-height .2s ease-out,opacity .2s ease-out;visibility:visible}.custom-select-option{align-items:center;cursor:pointer;display:flex;gap:8px;min-height:40px;padding:8px 12px;transition:background-color .2s}.custom-select-option svg,.custom-select-trigger svg{display:block;fill:currentColor;height:20px;width:20px}.custom-select-arrow svg{height:18px;width:18px}.custom-select-option:hover{background-color:var(--main-border)}.custom-select-option.selected{color:var(--main-primary);font-weight:600}.custom-select-option .option-icon,.custom-slider-container{align-items:center;display:flex}.custom-slider-container{flex-direction:column;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;width:100%}.custom-slider-info-text{color:var(--main-text-secondary);font-size:15px;font-weight:500;margin:12px 0 0}.custom-slider-wrapper{align-items:center;display:flex;gap:8px;height:20px;margin:5px 0;width:100%}.custom-slider-label{color:var(--main-text-secondary);font-size:12px;user-select:none;white-space:nowrap}.custom-slider-track{background-color:var(--main-textarea-bg);border:1px solid var(--main-textarea-border);border-radius:4px;cursor:pointer;flex-grow:1;height:8px;position:relative}.custom-slider-ticks{align-items:center;box-sizing:border-box;display:flex;height:100%;justify-content:space-between;left:0;padding:0 4px;pointer-events:none;position:absolute;right:0}.custom-slider-tick{background-color:var(--main-border);border-radius:50%;height:4px;width:4px}.custom-slider-thumb{background-color:var(--main-primary);border:2px solid var(--main-bg);border-radius:50%;box-shadow:0 2px 4px var(--main-shadow);cursor:grab;height:18px;position:absolute;top:50%;transform:translateY(-50%);transition:transform .1s ease-out,left .1s ease-out;width:18px;will-change:transform,left}.custom-slider-thumb:hover{transform:translateY(-50%) scale(1.1)}.custom-slider-thumb.is-dragging{cursor:grabbing;transform:translateY(-50%) scale(1.2)}.tc-dropdown-menu{animation:slide-up-fade-in .3s ease forwards;background-color:var(--color-bg);border:1px solid var(--color-border);border-radius:16px;bottom:calc(100% + 8px);box-shadow:0 5px 15px var(--main-shadow);display:none;min-width:100%;overflow:hidden;position:absolute;right:51%;width:max-content;z-index:2147483647}.tc-dropdown-menu.visible{display:block}.tc-dropdown-menu button{align-items:center;background-color:transparent;border:none;color:var(--main-text);cursor:pointer;display:flex;font-size:14px;gap:12px;padding:10px 16px;text-align:left;transition:background-color .2s ease;width:100%}.tc-dropdown-menu button:hover{background-color:#f0f0f0}:host([data-theme=dark]) .tc-dropdown-menu{background-color:var(--dark-color-bg);border-color:var(--dark-color-border)}:host([data-theme=dark]) .tc-dropdown-menu button:hover{background-color:hsla(0,0%,100%,.1)}.tc-export-btn-container{position:relative}@keyframes slide-up-fade-in{0%{opacity:0;transform:translateY(10px) translateX(50%)}to{opacity:1;transform:translateY(0) translateX(50%)}}@keyframes slide-down-fade-out{0%{opacity:1;transform:translateY(0) translateX(50%)}to{opacity:0;transform:translateY(10px) translateX(50%)}}.tc-dropdown-menu.is-hiding{animation:slide-down-fade-out .3s ease forwards}#element-scan-container{opacity:0;pointer-events:none;position:absolute;transition:all .2s cubic-bezier(.19,1,.22,1),opacity .2s ease-in-out,visibility 0s linear .2s;visibility:hidden;z-index:2147483644}#element-scan-highlight-border{background-color:rgba(52,152,219,.2);border:4px solid #3498db;border-radius:6px 6px 6px 0;box-sizing:border-box;height:100%;width:100%}#element-scan-tag-name{background-color:#3498db;border-radius:0 0 6px 6px;color:#fff;font-size:12px;left:0;padding:4px 8px;position:absolute;top:100%;transition:background-color .1s ease-out,opacity .2s ease-out;white-space:nowrap;z-index:1}#element-scan-tag-name,#element-scan-toolbar{font-family:Menlo,Monaco,Cascadia Code,PingFang SC;pointer-events:auto}#element-scan-toolbar{background-color:var(--main-bg);border:1px solid var(--main-border);border-radius:20px;box-shadow:0 4px 12px rgba(0,0,0,.15);cursor:move;display:flex;flex-direction:column;opacity:0;padding:16px;position:fixed;transform:scale(.95);transition:opacity .2s cubic-bezier(.19,1,.22,1),transform .2s cubic-bezier(.19,1,.22,1),visibility 0s linear .2s;visibility:hidden;width:fit-content;z-index:2147483645}#element-scan-container.is-visible,#element-scan-toolbar.is-visible{opacity:1;transform:scale(1);transition-delay:0s;visibility:visible}#element-scan-toolbar-tag,#element-scan-toolbar-title,.custom-slider-info-text{user-select:none}#element-scan-toolbar-title{font-size:20px;margin-bottom:16px}#element-scan-toolbar-tag,#element-scan-toolbar-title{color:var(--main-text);font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-weight:700;text-align:center}#element-scan-toolbar-tag{border-radius:4px;font-size:14px;padding:0 8px;transition:opacity .1s ease-in-out}#element-scan-slider-container{min-width:380px}#element-scan-level-slider{width:100%}#element-scan-toolbar-actions{display:flex;gap:6px;justify-content:space-between;white-space:nowrap}#element-scan-toolbar-actions button{align-items:center;border:none;border-radius:20px;color:var(--main-primary-text);cursor:pointer;display:flex;flex-grow:1;font-size:15px;gap:6px;justify-content:center;margin:6px 0 0;padding:10px 16px;transition:background-color .1s ease-in-out,transform .1s ease-in-out}#element-scan-toolbar-actions button:active{transform:scale(.95)}#element-scan-toolbar-confirm:hover{background-color:#27ae60}#element-scan-toolbar-confirm{background-color:#2ecc71}#element-scan-toolbar-cancel:hover{background-color:#c0392b}#element-scan-toolbar-cancel{background-color:#e74c3c}#element-scan-toolbar-reselect{background-color:var(--main-primary)}#element-scan-toolbar-reselect:hover{background-color:var(--main-primary-hover)}#element-scan-toolbar-stage:hover{background-color:#7f8c8d}#element-scan-toolbar-stage{background-color:#95a5a6}.text-extractor-fab.is-recording{animation:tc-breathing 2s ease-in-out infinite;background-color:#f39c12}.text-extractor-fab.is-recording:hover{background-color:#e67e22}@keyframes scan-pulse{0%{box-shadow:0 0 0 0 rgba(243,156,18,.7)}50%{box-shadow:0 0 0 4px rgba(243,156,18,.5)}to{box-shadow:0 0 0 10px rgba(243,156,18,0)}}@keyframes scan-confirm-flash{0%{box-shadow:0 0 0 0 rgba(46,204,113,.7)}50%{box-shadow:0 0 0 4px rgba(46,204,113,.5)}to{box-shadow:0 0 0 10px rgba(46,204,113,0)}}#element-scan-container.is-locked #element-scan-highlight-border{animation:scan-pulse .5s cubic-bezier(.25,.8,.25,1);background-color:rgba(243,156,18,.1);border-color:#f39c12}#element-scan-container.is-confirmed #element-scan-highlight-border{animation:scan-confirm-flash .5s cubic-bezier(.25,.8,.25,1) forwards;background-color:rgba(46,204,113,.1);border-color:#2ecc71}#element-scan-container.is-confirmed #element-scan-tag-name{opacity:0;transition:opacity .2s ease-out}#element-scan-container.is-error #element-scan-highlight-border{animation:scan-error-pulse .5s cubic-bezier(.25,.8,.25,1)}@keyframes scan-error-pulse{0%{box-shadow:0 0 0 0 rgba(231,76,60,.7);transform:scale(1)}50%{box-shadow:0 0 0 4px rgba(231,76,60,.5);transform:scale(1.03)}to{box-shadow:0 0 0 10px rgba(231,76,60,0);transform:scale(1)}}#element-scan-container.is-error #element-scan-highlight-border{animation:scan-error-pulse .6s cubic-bezier(.25,.8,.25,1);background-color:rgba(231,76,60,.1);border-color:#e74c3c}#element-scan-container.is-locked #element-scan-tag-name{background-color:#f39c12}#element-scan-container.is-error #element-scan-tag-name{background-color:#e74c3c}#element-scan-container.is-confirmed #element-scan-tag-name{background-color:#2ecc71}.fab-position-top-right{transform:translate(-30px,30px)}.fab-position-bottom-right{transform:translate(-30px,calc(100vh - 100% - 30px))}.fab-position-top-left{transform:translate(calc(-100vw + 100% + 30px + var(--scrollbar-width)),30px)}.fab-position-bottom-left{transform:translate(calc(-100vw + 100% + 30px + var(--scrollbar-width)),calc(100vh - 100% - 30px))}.code-preview{align-items:center;display:flex;height:100%;justify-content:center;padding:10px;width:100%}.code-preview .wrapper-bracket,.code-preview .wrapper-indent{display:inline;opacity:1;transition:opacity .2s ease-in-out}.code-preview.hide-brackets .wrapper-bracket,.code-preview.hide-brackets .wrapper-indent{opacity:0}.code-text-preview{color:var(--main-text-secondary);font-family:Menlo,Monaco,Consolas,Courier New,monospace;font-size:14px;line-height:1.4;overflow:hidden;text-align:left;white-space:nowrap}.image-card-option.selected .code-text-preview{color:var(--main-text)}.code-text-preview .punct{color:var(--main-text-secondary);font-weight:700}.code-text-preview .str{color:var(--main-primary)}.image-card-option.selected .code-text-preview .punct{color:var(--main-text)}.tc-button{background-color:var(--main-primary);border:none;border-radius:999px;color:var(--main-primary-text);cursor:pointer;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:16px;font-weight:500;justify-content:center;line-height:1;min-height:42px;padding:10px 20px;touch-action:manipulation;transition:background-color .2s,transform .15s,box-shadow .2s}.tc-button,.tc-icon-title{align-items:center;display:inline-flex}.tc-icon-title{gap:8px;line-height:20px;min-width:0}.tc-icon-title-icon{align-items:center;display:inline-flex;flex:0 0 20px;height:20px;justify-content:center;width:20px}.tc-icon-title-icon svg{display:block;fill:currentColor;height:100%;width:100%}.icon-title-text{display:block;line-height:20px;min-width:0}.tc-button>.tc-icon-title{line-height:20px;min-height:20px;white-space:nowrap}.tc-button svg{display:block;fill:currentColor;flex:0 0 auto;height:20px;width:20px}.tc-icon-title-icon svg.is-icon-entering,.tc-icon-title-icon svg.is-icon-leaving{inset:0;position:absolute;transition:opacity .2s ease}.tc-icon-title-icon.is-changing{position:relative}.tc-button:focus-visible{outline:2px solid color-mix(in srgb,var(--main-primary) 72%,transparent);outline-offset:2px}.tc-button:hover{background-color:var(--main-primary-hover);box-shadow:0 2px 8px rgba(0,0,0,.15)}.tc-button:active{transform:scale(.97)}.tc-button:disabled{background-color:var(--main-disabled);box-shadow:none;color:var(--main-disabled-text);cursor:not-allowed}.tc-toggle-setting{align-items:center;background:var(--main-bg);border:1px solid var(--main-border);border-radius:12px;color:var(--main-text);cursor:pointer;display:grid;gap:20px;grid-template-columns:minmax(0,1fr) auto;min-height:72px;padding:14px 16px}.tc-toggle-copy{display:flex;flex-direction:column;gap:5px;min-width:0}.tc-toggle-title{font-size:15px;font-weight:700}.tc-toggle-description{color:var(--main-text-secondary);font-size:13px;line-height:1.5}.tc-toggle-input{height:1px;opacity:0;pointer-events:none;position:absolute;width:1px}.tc-toggle-control{background:var(--main-disabled);border-radius:999px;height:26px;position:relative;transition:background-color .2s,box-shadow .2s;width:48px}.tc-toggle-control:after{background:var(--main-primary-text);border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,.28);content:"";height:20px;left:3px;position:absolute;top:3px;transition:transform .2s;width:20px}.tc-toggle-input:checked+.tc-toggle-control{background:var(--main-primary)}.tc-toggle-input:checked+.tc-toggle-control:after{transform:translateX(22px)}.tc-toggle-input:focus-visible+.tc-toggle-control{box-shadow:0 0 0 3px color-mix(in srgb,var(--main-primary) 25%,transparent)}.tc-disclosure{background:var(--main-bg);border:1px solid var(--main-border);border-radius:10px;overflow:hidden}.tc-disclosure-trigger{align-items:center;background:transparent;border:0;color:var(--main-text);cursor:pointer;display:flex;font-size:14px;font-weight:700;gap:16px;justify-content:space-between;min-height:44px;padding:10px 14px;text-align:left;width:100%}.tc-disclosure-trigger:hover{background:color-mix(in srgb,var(--main-primary) 7%,transparent)}.tc-disclosure-trigger:focus-visible{outline:2px solid color-mix(in srgb,var(--main-primary) 72%,transparent);outline-offset:-2px}.tc-disclosure-arrow{display:grid;flex:0 0 20px;height:20px;place-items:center;transition:transform .2s ease;width:20px}.tc-disclosure-arrow svg{display:block;fill:currentColor;height:20px;width:20px}.tc-disclosure-trigger[aria-expanded=true] .tc-disclosure-arrow{transform:rotate(180deg)}.tc-disclosure-content{border-top:1px solid var(--main-border);padding:16px}.tc-disclosure-content[hidden]{display:none}.tc-field-group{display:flex;flex-direction:column;gap:8px;min-width:0}.numeric-input-label,.tc-field-label{color:var(--main-text);font-size:14px;font-weight:600;line-height:1.4}.tc-text-input{background-color:var(--main-textarea-bg);border:1px solid var(--main-textarea-border);border-radius:10px;color:var(--main-text);font-family:inherit;font-size:14px;line-height:1.45;min-height:42px;padding:9px 12px;transition:border-color .2s,box-shadow .2s;width:100%}.tc-text-input:hover{border-color:color-mix(in srgb,var(--main-primary) 60%,var(--main-textarea-border))}.tc-text-input:focus{border-color:var(--main-primary);box-shadow:0 0 0 2px color-mix(in srgb,var(--main-primary) 18%,transparent);outline:none}.tc-text-input-multiline{min-height:104px;resize:vertical}.tc-textarea{background-color:var(--main-textarea-bg);border:1px solid var(--main-textarea-border);border-radius:8px;box-sizing:border-box;color:var(--main-text);font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:14px;height:100%;line-height:1.5;padding:12px 18px 12px 12px;resize:none;width:100%}.tc-textarea:focus{outline:none}.tc-textarea::-webkit-scrollbar-thumb{background-color:var(--main-border)}.tc-textarea::-webkit-scrollbar-thumb:hover{background-color:var(--main-primary)}.tc-textarea::-webkit-scrollbar-button{display:none}.tc-select{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:var(--main-textarea-bg);background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='currentColor' viewBox='0 0 16 16'%3E%3Cpath d='M8 11 2 5h12z'/%3E%3C/svg%3E");background-position:right 12px center;background-repeat:no-repeat;background-size:12px;border:1px solid var(--main-textarea-border);border-radius:8px;color:var(--main-text);cursor:pointer;display:block;font-size:14px;padding:10px 36px 10px 12px;transition:border-color .2s,box-shadow .2s;width:100%}.tc-select:hover{border-color:var(--main-primary);box-shadow:0 0 0 2px var(--main-primary-hover-bg,rgba(30,144,255,.1))}.info-tooltip-overlay{align-items:center;background-color:var(--main-overlay-bg);display:flex;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;height:100%;justify-content:center;left:0;opacity:0;pointer-events:none;position:fixed;top:0;transition:opacity .3s ease,visibility .3s;visibility:hidden;width:100%;z-index:2147483647}.info-tooltip-overlay.is-visible{opacity:1;pointer-events:auto;visibility:visible}.info-tooltip-modal{background-color:var(--main-bg);border:1px solid var(--main-border);border-radius:16px;box-shadow:0 5px 15px var(--main-shadow);color:var(--main-text);display:flex;flex-direction:column;max-height:80vh;max-width:80vw;overflow:hidden;padding:0;position:relative;transform:scale(.95);transition:transform .3s ease;width:480px}.info-tooltip-overlay.is-visible .info-tooltip-modal{transform:scale(1)}.info-tooltip-header{align-items:center;border-bottom:1px solid var(--main-border);display:flex;justify-content:space-between;padding:20px}.info-tooltip-title-container{align-items:center;display:flex;gap:10px}.info-tooltip-title-icon{color:var(--secondary-text);height:20px;width:20px}.info-tooltip-title{font-size:18px;font-weight:700;margin:0}.info-tooltip-close{align-items:center;background-color:transparent;border-radius:50%;color:var(--main-text);cursor:pointer;display:flex;height:32px;justify-content:center;transition:background-color .2s,transform .15s;width:32px}.info-tooltip-close:hover{background-color:var(--main-border)}.info-tooltip-close:active{transform:scale(.9)}.info-tooltip-close svg{height:18px;width:18px}.info-tooltip-content{overflow-y:auto;padding:24px}.info-tooltip-content p{font-size:16px;line-height:1.7;margin:0 0 15px}.info-tooltip-content p:last-child{margin-bottom:0}.info-tooltip-content strong{color:var(--primary-accent);font-weight:600}.info-tooltip-image{animation:fadeIn .3s forwards;border-radius:8px;display:block;height:auto;margin-left:auto;margin-right:auto;margin-top:10px;max-width:100%;opacity:0}.info-icon{align-items:center;border-radius:50%;color:var(--secondary-text);cursor:pointer;display:inline-flex;height:20px;justify-content:center;margin-left:8px;transition:background-color .2s,color .2s;vertical-align:text-bottom;width:20px}.info-icon:hover{background-color:var(--main-border);color:var(--primary-accent)}.info-icon svg{height:16px;width:16px}kbd{background-color:var(--main-bg);border:solid var(--main-border);border-radius:4px;border-width:1px 1px 3px;box-shadow:0 1px 1px var(--main-shadow);color:var(--main-text);display:inline-block;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:.85em;font-weight:700;line-height:1;margin:0 5px;padding:3px 6px;position:relative;top:-3px;vertical-align:baseline;white-space:nowrap}.gm-loading-overlay{align-items:center;background-color:hsla(0,0%,50%,.2);display:flex;height:100%;justify-content:center;left:0;opacity:0;position:absolute;top:0;transition:opacity .2s,visibility .2s;visibility:hidden;width:100%;z-index:10}.gm-loading-overlay.is-visible{opacity:1;visibility:visible}.gm-loading-spinner svg{color:var(--color-icon);height:48px;width:48px}.text-extractor-fab-container{align-items:center;display:flex;flex-direction:column;gap:0;opacity:0;pointer-events:none;position:fixed;right:0;top:0;transform-origin:top right;transition:opacity .3s ease,visibility .3s,transform .3s ease-in-out;visibility:hidden;z-index:2147483645}.text-extractor-fab-container.fab-container-visible{opacity:1;visibility:visible}.text-extractor-fab{background-color:var(--main-primary);border:1px solid var(--main-border);border-radius:50%;box-shadow:0 4px 8px var(--main-shadow);box-sizing:border-box;color:var(--main-primary-text);cursor:pointer;flex:0 0 auto;height:56px;margin-top:12px;max-height:56px;overflow:hidden;pointer-events:auto;position:relative;transition:background-color .3s,height .3s var(--easing-standard,cubic-bezier(.4,0,.2,1)),max-height .3s var(--easing-standard,cubic-bezier(.4,0,.2,1)),margin-top .3s var(--easing-standard,cubic-bezier(.4,0,.2,1)),opacity .2s ease,transform .2s,box-shadow .3s,color .3s,visibility 0s;width:56px}.text-extractor-fab:first-child{margin-top:0}.text-extractor-fab:hover{background-color:var(--main-primary-hover);box-shadow:0 6px 12px var(--main-shadow);transform:scale(1.05)}.text-extractor-fab.fab-feature-hidden{border-width:0;height:0;margin-top:0;max-height:0;opacity:0;pointer-events:none;transform:scale(.72);transition:height .3s var(--easing-standard,cubic-bezier(.4,0,.2,1)),max-height .3s var(--easing-standard,cubic-bezier(.4,0,.2,1)),margin-top .3s var(--easing-standard,cubic-bezier(.4,0,.2,1)),opacity .18s ease,transform .2s ease,visibility 0s .3s;visibility:hidden}.text-extractor-fab:active{transform:scale(.95);transition-duration:.1s}.text-extractor-fab svg{fill:currentColor;height:26px;left:50%;position:absolute;top:50%;transform:translate(-50%,-50%);width:26px}.text-extractor-modal-overlay{align-items:center;background-color:var(--main-overlay-bg);display:flex;height:100%;justify-content:center;left:0;opacity:0;pointer-events:none;position:fixed;top:0;transition:opacity .3s ease,visibility .3s;visibility:hidden;width:100%;z-index:2147483646}.text-extractor-modal-overlay.is-visible{opacity:1;pointer-events:auto;visibility:visible}.text-extractor-modal{background-color:var(--main-bg);border-radius:16px;box-shadow:0 5px 15px var(--main-shadow);color:var(--main-text);display:flex;flex-direction:column;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;height:72vh;max-height:84vh;max-width:960px;transform:scale(.95);transition:transform .3s ease;width:min(960px,calc(100vw - 40px))}.text-extractor-modal-overlay.is-visible .text-extractor-modal{transform:scale(1)}.text-extractor-modal-header{align-items:center;border-bottom:1px solid var(--main-border);color:var(--main-text);display:flex;font-size:18px;font-weight:700;justify-content:space-between;padding:18px}#main-modal-title-container{align-items:center;display:flex;min-height:32px;min-width:0}#main-modal-title-container>.tc-icon-title{gap:10px;min-height:32px}#main-modal-title-container .tc-icon-title-icon{flex-basis:24px;height:24px;width:24px}#main-modal-title-container>.tc-icon-title>.icon-title-text{line-height:24px}.tc-close-button{align-items:center;background-color:transparent;border:0;border-radius:50%;color:var(--main-text);cursor:pointer;display:flex;flex:0 0 32px;height:32px;justify-content:center;line-height:0;padding:0;transition:background-color .2s,transform .15s;width:32px}.tc-close-button svg{display:block;fill:currentColor;height:24px;width:24px}.tc-close-button:active,.tc-close-button:hover{background-color:var(--main-border)}.tc-close-button:active{transform:scale(.9)}.text-extractor-modal-content{display:flex;flex-direction:column;flex-grow:1;overflow-y:auto;padding:18px;position:relative}.tc-textarea-container{box-sizing:border-box;flex:1;height:100%;min-height:0;opacity:0;transition:opacity .2s ease-in-out,visibility .2s ease-in-out;visibility:hidden;width:100%}.tc-textarea-container.is-visible{opacity:1;visibility:visible}.text-extractor-modal-footer{align-items:center;border-top:1px solid var(--main-border);display:flex;justify-content:space-between;padding:18px}.tc-footer-buttons{align-items:center;display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end}@keyframes tc-breathing{0%{box-shadow:0 4px 8px var(--main-shadow),0 0 0 0 rgba(243,156,18,.4)}70%{box-shadow:0 4px 12px var(--main-shadow),0 0 0 10px rgba(243,156,18,0)}to{box-shadow:0 4px 8px var(--main-shadow),0 0 0 0 rgba(243,156,18,0)}}#scan-count-display{align-items:center;color:var(--tc-secondary-text-color);display:flex;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:14px;line-height:20px;margin-left:2px;min-height:20px;opacity:0;transition:opacity .3s ease-in-out}.header-right-controls{align-items:center;display:flex;min-height:32px}@media (prefers-reduced-motion:reduce){.text-extractor-fab,.text-extractor-fab-container,.text-extractor-fab.fab-feature-hidden{transition-duration:.01ms}}#scan-count-display.is-visible{opacity:1}.text-extractor-fab-container.fab-container-visible .text-extractor-fab.fab-disabled{background-color:var(--main-disabled);box-shadow:none;color:var(--main-disabled-text);cursor:not-allowed;transform:none}.tc-help-icon-button{align-items:center;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);background-color:var(--main-bg-a);border:1px solid var(--main-border);border-radius:50%;box-shadow:var(--main-shadow);color:var(--main-text-secondary);cursor:pointer;display:flex;justify-content:center;padding:0;transition:color .2s,transform .2s,background-color .2s}.tc-help-icon-button:hover{background-color:var(--main-border);color:var(--main-text)}.tc-help-icon-button svg{height:20px;width:20px}.action-key{background-color:var(--main-bg);border:solid var(--main-border);border-radius:4px;border-width:1px 1px 3px;box-shadow:0 1px 1px var(--main-shadow);color:var(--main-text);display:inline-block;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:.85em;font-weight:700;line-height:1;margin:0 5px;padding:3px 6px;position:relative;top:-3px;vertical-align:baseline;white-space:nowrap}.tc-textarea-container{border:1px solid var(--main-textarea-border);border-radius:8px;display:flex;flex-grow:1;overflow:hidden;position:relative}.tc-line-numbers{background-color:var(--tc-secondary-bg-color);border-right:1px solid var(--tc-border-color);box-sizing:border-box;color:var(--main-line-number-text);font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:14px;line-height:1.5;margin-right:0;max-width:0;opacity:0;overflow:hidden;padding:10px 0 8px;text-align:right;transition:max-width .3s ease,opacity .3s ease,padding .3s ease,margin-right .3s ease;user-select:none;width:var(--line-number-width,40px)}.tc-line-numbers>div{box-sizing:border-box;padding:0 4px;transition:color .2s ease-in-out;white-space:nowrap}.tc-line-numbers>div.is-active{color:var(--main-line-number-active-text);font-weight:700}.tc-textarea-container .tc-textarea{border:none;border-radius:0;box-sizing:border-box;flex-grow:1;font-size:14px;line-height:1.5;padding:10px 10px 8px;resize:none;scrollbar-gutter:stable}.tc-textarea-container .tc-textarea:focus{box-shadow:none;outline:none}.tc-textarea.word-wrap-disabled{overflow-x:auto;white-space:pre}.tc-line-numbers.is-visible{margin-right:4px;max-width:var(--line-number-width,40px);opacity:1;padding:10px 4px}.tc-stats-container{align-items:center;color:var(--tc-secondary-text-color);display:flex;flex-grow:1;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:14px;opacity:0;transition:opacity .3s ease,visibility .3s ease;visibility:hidden}.tc-stats-container.is-visible{opacity:1;visibility:visible}.tc-textarea::-webkit-scrollbar{height:6px;width:6px}.tc-textarea::-webkit-scrollbar-track{background:transparent}.tc-textarea::-webkit-scrollbar-thumb{background:var(--tc-scrollbar-thumb-color);border:1px solid var(--tc-scrollbar-border-color);border-radius:3px}.tc-textarea::-webkit-scrollbar-thumb:hover{background:var(--tc-scrollbar-thumb-hover-color)}@keyframes line-number-enter{0%{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}.line-number-enter-active{animation:line-number-enter .2s ease-out}.tc-notification-container{display:flex;flex-direction:column;gap:10px;pointer-events:none;position:fixed;right:20px;top:20px;z-index:2147483647}.tc-notification{align-items:center;animation:tc-notification-fade-in .5s forwards;background-color:var(--main-bg,#fff);border:1px solid var(--main-border,#eee);border-radius:16px;box-shadow:0 4px 12px var(--main-shadow,rgba(0,0,0,.15));color:var(--main-text,#333);display:flex;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;opacity:0;padding:12px 16px;pointer-events:auto;transform:translateX(100%);transition:box-shadow .3s;width:320px}.tc-notification:hover{box-shadow:0 6px 16px var(--main-shadow,rgba(0,0,0,.2))}.tc-notification-icon{align-items:center;display:flex;margin-right:12px}.tc-notification-icon svg{height:20px;width:20px}.tc-notification-info .tc-notification-icon{color:#3498db}.tc-notification-success .tc-notification-icon{color:#2ecc71}.tc-notification-content{flex-grow:1;font-size:14px;line-height:1.4}.tc-notification-close{cursor:pointer;opacity:.6;padding:4px;transition:opacity .3s}.tc-notification-close:hover{opacity:1}.tc-notification-close svg{height:16px;stroke:var(--main-text,#333);width:16px}@keyframes tc-notification-fade-in{to{opacity:1;transform:translateX(0)}}.tc-notification-fade-out{animation:tc-notification-fade-out .5s forwards}@keyframes tc-notification-fade-out{0%{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(100%)}}#modal-placeholder{align-items:center;box-sizing:border-box;color:var(--text-color-secondary);display:flex;flex-direction:column;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;height:100%;justify-content:center;left:0;opacity:0;padding:20px;position:absolute;text-align:center;top:0;transition:opacity .2s ease-in-out,visibility .2s ease-in-out;visibility:hidden;width:100%}#modal-placeholder.is-visible{opacity:1;visibility:visible}.placeholder-icon{color:var(--text-color-secondary)}.placeholder-icon svg{height:48px;width:48px}#modal-placeholder p{font-size:14px;margin:4px 0}.placeholder-actions{align-items:center;color:var(--text-color-primary);display:flex;gap:6px}.placeholder-action-icon svg{fill:currentColor;height:18px;vertical-align:middle;width:18px}#modal-placeholder strong{font-weight:600}.settings-panel-overlay{align-items:center;background-color:var(--main-overlay-bg);display:flex;height:100%;justify-content:center;left:0;opacity:0;pointer-events:none;position:fixed;top:0;transition:opacity .3s ease,visibility .3s;visibility:hidden;width:100%;z-index:2147483648}.settings-panel-overlay.is-visible{opacity:1;pointer-events:auto;visibility:visible}.settings-panel-modal{background-color:var(--main-bg);border:1px solid var(--main-border);border-radius:16px;box-shadow:0 5px 15px var(--main-shadow);color:var(--main-text);display:flex;flex-direction:column;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;height:min(760px,calc(100vh - 56px));max-height:90vh;max-width:1040px;overflow:hidden;overscroll-behavior:contain;transform:scale(.95);transition:transform .3s ease;width:min(1040px,calc(100vw - 48px))}.settings-panel-content{flex-grow:1;overflow-y:auto;padding:20px}.settings-panel-overlay.is-visible .settings-panel-modal{transform:scale(1)}.settings-panel-header{align-items:center;border-bottom:1px solid var(--main-border);display:flex;flex-shrink:0;font-size:18px;font-weight:700;justify-content:space-between;padding:16px 20px}#contextual-settings-title-container,#settings-panel-title-container{align-items:center;display:flex;min-height:32px;min-width:0}#contextual-settings-title-container>.tc-icon-title,#settings-panel-title-container>.tc-icon-title{gap:10px;min-height:32px}#contextual-settings-title-container .tc-icon-title-icon,#settings-panel-title-container .tc-icon-title-icon{flex-basis:24px;height:24px;width:24px}#contextual-settings-title-container .icon-title-text,#settings-panel-title-container .icon-title-text{line-height:24px}.settings-panel-body{display:flex;flex:1;overflow:hidden}.settings-sidebar{background-color:color-mix(in srgb,var(--main-bg) 97%,var(--main-text));border-right:1px solid var(--main-border);box-sizing:border-box;display:flex;flex-direction:column;flex-shrink:0;position:relative;width:220px}.sidebar-highlight{background-color:color-mix(in srgb,var(--main-primary) 10%,transparent);border-left:3px solid var(--main-primary);box-sizing:border-box;left:0;pointer-events:none;position:absolute;top:0;transition:transform .2s cubic-bezier(.4,0,.2,1),height .2s ease;width:100%;z-index:0}.settings-sidebar-item{align-items:center;background:transparent;border-left:3px solid transparent;box-sizing:border-box;color:var(--main-text);cursor:pointer;display:flex;font-size:15px;font-weight:500;gap:10px;padding:12px 20px;position:relative;transition:color .2s,background-color .2s;z-index:1}.settings-sidebar-item:hover{background-color:color-mix(in srgb,var(--main-textarea-bg) 50%,transparent)}.settings-sidebar-item.active{border-left-color:transparent;color:var(--main-primary)}.settings-sidebar-item svg{display:block;fill:currentColor;flex:0 0 22px;height:22px;width:22px}.settings-sidebar-item>span{display:block;line-height:22px}.settings-content-area{background-color:var(--main-bg);display:flex;flex:1;flex-direction:column;overflow:hidden;position:relative}.settings-tab-content{display:none;flex:1;overflow-y:auto;padding:20px}.settings-tab-content.active{animation:fadeIn .2s ease;display:block}#tab-ai.settings-tab-content{padding:28px 32px}@keyframes fadeIn{0%{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}.setting-item{margin-bottom:12px}.setting-item>label{display:block;font-weight:500;margin-bottom:8px}.setting-title-container{align-items:center;display:flex;font-size:16px;font-weight:700;gap:8px;margin-bottom:12px}.settings-info-notice{align-items:center;background-color:color-mix(in srgb,var(--main-primary) 8%,var(--main-bg));border:1px solid color-mix(in srgb,var(--main-primary) 28%,var(--main-border));border-radius:10px;color:var(--main-text-secondary);display:flex;font-size:13px;gap:10px;line-height:1.5;margin:0 0 16px;padding:10px 12px}.settings-info-notice-icon{align-items:center;color:var(--main-primary);display:flex;flex:0 0 auto;justify-content:center}.settings-info-notice-icon svg{display:block;height:20px;width:20px}.settings-info-notice .icon-title-text{margin:0;min-width:0}.settings-tab-content::-webkit-scrollbar{width:6px}.settings-tab-content::-webkit-scrollbar-track{background:transparent}.settings-tab-content::-webkit-scrollbar-thumb{background-color:var(--main-border);border-radius:3px}.settings-tab-content::-webkit-scrollbar-thumb:hover{background-color:var(--main-primary)}.settings-tab-content::-webkit-scrollbar-button{display:none}.settings-panel-footer{background-color:var(--main-bg);border-top:1px solid var(--main-border);flex-shrink:0;padding:16px 20px;text-align:right}.checkbox-group{color:var(--main-text);cursor:pointer;display:block;height:20px;line-height:20px;margin-left:2px;margin-top:12px;padding-left:30px;position:relative;user-select:none}.checkbox-group input{cursor:pointer;height:0;opacity:0;position:absolute;width:0}.checkmark{background-color:var(--main-textarea-bg);border:1px solid var(--main-textarea-border);border-radius:3px;height:18px;left:0;position:absolute;top:0;transition:all .2s;width:18px}.checkbox-group:hover input~.checkmark{border-color:var(--main-primary)}.checkbox-group input:checked~.checkmark{background-color:var(--main-primary);border-color:var(--main-primary)}.checkmark:after{content:"";display:none;position:absolute}.checkbox-group input:checked~.checkmark:after{display:block}.checkbox-group .checkmark:after{border:solid var(--main-bg);border-width:0 2px 2px 0;height:10px;left:6px;top:2px;transform:rotate(45deg);width:5px}.composite-setting-container{font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-weight:500;margin-left:0;margin-top:14px}.composite-setting-container .checkbox-group{margin-top:0}.linked-numeric-input{margin-left:32px;margin-top:8px}.numeric-input-group{align-items:center;display:flex;gap:8px}.numeric-input{background-color:var(--main-textarea-bg);border:1px solid var(--main-textarea-border);border-radius:8px;color:var(--main-text);font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:14px;padding:6px 8px;transition:border-color .2s,box-shadow .2s,background-color .2s,color .2s;width:100px}.numeric-input:focus{border-color:var(--main-primary);box-shadow:0 0 0 2px color-mix(in srgb,var(--main-primary) 20%,transparent);outline:none}.numeric-input:disabled{background-color:var(--main-disabled);border-color:var(--main-border);color:var(--main-disabled-text);cursor:not-allowed}.setting-item-select{align-items:center;display:flex;font-weight:500;justify-content:space-between;margin-left:32px}.image-card-select-container{display:flex;gap:16px;justify-content:space-between;width:100%}.image-card-option{background-color:var(--main-bg);border:1px solid var(--main-border);border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.05);cursor:pointer;display:flex;flex:1;flex-direction:column;overflow:hidden;padding:0;position:relative;transition:border-color .2s,box-shadow .2s}.image-card-option:hover{border-color:var(--main-primary);box-shadow:0 2px 8px rgba(0,0,0,.08);transform:none}.image-card-option.selected{background-color:color-mix(in srgb,var(--main-primary) 5%,var(--main-bg));border-color:var(--main-primary);box-shadow:0 0 0 2px color-mix(in srgb,var(--main-primary) 20%,transparent)}.image-card-preview{background-color:var(--main-textarea-bg);border-bottom:1px solid var(--main-border);height:110px;padding:16px;transition:background-color .2s,border-bottom-color .2s}.image-card-preview,.schematic-container{align-items:center;display:flex;justify-content:center}.schematic-container{height:100%;width:100%}.schematic-card{align-items:center;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,.1);display:flex;gap:8px;height:60px;padding:8px;transition:background-color .2s;width:100px}.schematic-icon-box{border-radius:6px;flex-shrink:0;height:24px;width:24px}.schematic-lines{display:flex;flex:1;flex-direction:column;gap:6px}.schematic-line{border-radius:3px;height:6px;width:100%}.schematic-line.secondary{width:60%}.image-card-option[data-value=light] .image-card-preview{background-color:#f1f5f9}.image-card-option[data-value=light] .schematic-card{background-color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.05)}.image-card-option[data-value=light] .schematic-icon-box{background-color:#e2e8f0}.image-card-option[data-value=light] .schematic-line{background-color:#cbd5e1}.image-card-option[data-value=dark] .image-card-preview{background-color:#0f172a}.image-card-option[data-value=dark] .schematic-card{background-color:#1e293b;box-shadow:0 2px 8px rgba(0,0,0,.2)}.image-card-option[data-value=dark] .schematic-icon-box{background-color:#334155}.image-card-option[data-value=dark] .schematic-line{background-color:#475569}.image-card-option[data-value=system] .image-card-preview{background-color:#1e293b}.image-card-option[data-value=system] .schematic-card{background-color:#334155;border:1px solid #475569}.image-card-option[data-value=system] .schematic-icon-box{background-color:#475569}.image-card-option[data-value=system] .schematic-line{background-color:#64748b}.image-card-label{align-items:center;display:flex;font-size:14px;font-weight:500;justify-content:flex-start;padding:12px}.image-card-radio{align-items:center;background-color:transparent;border:1px solid var(--main-border);border-radius:50%;display:flex;flex-shrink:0;height:16px;justify-content:center;margin-right:8px;transition:all .2s;width:16px}.radio-dot{background-color:var(--main-primary);border-radius:50%;height:8px;opacity:0;transform:scale(0);transition:all .2s cubic-bezier(.4,0,.2,1);width:8px}.image-card-option.selected .image-card-radio{border-color:var(--main-primary)}.image-card-option.selected .radio-dot{opacity:1;transform:scale(1)}.image-card-label-icon{align-items:center;color:var(--main-text-secondary);display:flex;margin-left:4px}.image-card-option.selected .image-card-label-icon{color:var(--main-primary)}.image-card-label-icon svg{fill:currentColor;height:18px;width:18px}@media (prefers-color-scheme:light){.image-card-option[data-value=system] .image-card-preview{background-color:#f1f5f9}.image-card-option[data-value=system] .schematic-card{background-color:#fff;border:none;box-shadow:0 2px 8px rgba(0,0,0,.05)}.image-card-option[data-value=system] .schematic-icon-box{background-color:#e2e8f0}.image-card-option[data-value=system] .schematic-line{background-color:#cbd5e1}}@media (prefers-color-scheme:dark){.image-card-option[data-value=system] .image-card-preview{background-color:#0f172a}.image-card-option[data-value=system] .schematic-card{background-color:#1e293b;border:none;box-shadow:0 2px 8px rgba(0,0,0,.2)}.image-card-option[data-value=system] .schematic-icon-box{background-color:#334155}.image-card-option[data-value=system] .schematic-line{background-color:#475569}}.about-tab-container{align-items:center;display:flex;flex-direction:column;height:100%;justify-content:center;padding-bottom:40px;text-align:center}.about-logo{color:var(--main-primary);height:100px;margin-bottom:18px;width:100px}.about-logo svg{fill:currentColor;height:100%;width:100%}.about-title{color:var(--main-text);font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:24px;font-weight:700;margin:0 0 6px}.about-description{color:var(--main-text-secondary);font-size:14px;line-height:1.5;margin:0 0 24px;max-width:400px}.about-version{color:var(--main-text-secondary);font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:16px;margin:0 0 16px}.about-actions{display:flex;gap:16px}#about-github-btn svg{height:20px;width:20px}@media (max-width:900px){.settings-panel-modal{height:calc(100vh - 28px);max-height:none;width:calc(100vw - 28px)}.settings-sidebar{width:180px}.settings-sidebar-item{padding-inline:14px}#tab-ai.settings-tab-content{padding:24px}}@media (max-width:700px){.settings-panel-modal{border-radius:12px;height:calc(100vh - 16px);width:calc(100vw - 16px)}.settings-panel-header{padding:14px 16px}.settings-panel-body{flex-direction:column}.settings-sidebar{border-bottom:1px solid var(--main-border);border-right:0;flex-direction:row;overflow-x:auto;width:100%}.sidebar-highlight{display:none}.settings-sidebar-item{border-left:0;flex:0 0 auto;min-height:44px;padding:10px 12px}.settings-sidebar-item.active{background-color:color-mix(in srgb,var(--main-primary) 10%,transparent)}.settings-sidebar-item svg{height:20px;width:20px}#tab-ai.settings-tab-content,.settings-tab-content{padding:18px}.settings-panel-footer{padding:12px 16px}}.text-extractor-tooltip{background-color:var(--main-tooltip-bg);border:1px solid var(--main-border);border-radius:16px;box-shadow:0 2px 5px var(--main-shadow);color:var(--main-tooltip-text);font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:14px;font-weight:700;opacity:0;padding:8px 12px;pointer-events:none;position:fixed;transition:opacity .2s ease,visibility .2s;visibility:hidden;white-space:nowrap;z-index:2147483647}.text-extractor-tooltip.is-visible{opacity:1;visibility:visible}`;
     uiContainer.appendChild(styleElement);
     initTheme();
     initialize();

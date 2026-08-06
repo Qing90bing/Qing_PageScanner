@@ -15,8 +15,79 @@ import { translateIcon } from '../../../assets/icons/icon.js';
 import { loadingSpinner } from '../../../assets/icons/loadingSpinner.js';
 import { appConfig } from '../../../features/settings/config.js';
 
-
 let placeholder, unsubscribeLanguageChanged;
+let currentMode = 'quick-scan';
+let lastAiSnapshot = null;
+let lastAiReviewItems = [];
+
+function renderAiSummaryPanel() {
+    const panel = state.aiSummaryPanel;
+    if (!panel) return;
+    panel.replaceChildren();
+    if (!lastAiSnapshot) return;
+
+    const status = document.createElement('div');
+    status.className = 'ai-summary-status';
+    const statusDot = document.createElement('span');
+    statusDot.className = `ai-status-dot ${lastAiSnapshot.active ? 'is-active' : ''}`;
+    status.append(
+        statusDot,
+        document.createTextNode(t(lastAiSnapshot.active ? 'results.aiRunning' : 'results.aiStopped'))
+    );
+    panel.appendChild(status);
+
+    const counts = document.createElement('div');
+    counts.className = 'ai-summary-counts';
+    const countItems = [
+        ['pending', 'results.aiCounts.pending'],
+        ['translated', 'results.aiCounts.translated'],
+        ['keep', 'results.aiCounts.keep'],
+        ['removed', 'results.aiCounts.removed'],
+        ['review', 'results.aiCounts.review'],
+        ['failed', 'results.aiCounts.failed'],
+    ];
+    countItems.forEach(([key, labelKey]) => {
+        const badge = document.createElement('span');
+        badge.className = `ai-count-badge ai-count-${key}`;
+        badge.textContent = `${t(labelKey)} ${lastAiSnapshot.counts?.[key] || 0}`;
+        counts.appendChild(badge);
+    });
+    panel.appendChild(counts);
+
+    if (lastAiSnapshot.processing || lastAiSnapshot.budgetBlockedReason || lastAiSnapshot.lastErrorCode) {
+        const notice = document.createElement('div');
+        notice.className = 'ai-summary-notice';
+        if (lastAiSnapshot.processing) {
+            notice.textContent = t('results.aiProcessing');
+        } else if (lastAiSnapshot.budgetBlockedReason) {
+            notice.textContent = `${t('results.aiBudgetBlocked')}: ${lastAiSnapshot.budgetBlockedReason}`;
+        } else {
+            notice.textContent = `${t('results.aiRequestError')}: ${lastAiSnapshot.lastErrorCode}`;
+        }
+        panel.appendChild(notice);
+    }
+
+    if (lastAiReviewItems.length > 0) {
+        const details = document.createElement('details');
+        details.className = 'ai-review-list';
+        const summary = document.createElement('summary');
+        summary.textContent = `${t('results.aiReviewItems')} (${lastAiReviewItems.length})`;
+        details.appendChild(summary);
+        lastAiReviewItems.forEach((item) => {
+            const row = document.createElement('div');
+            row.className = 'ai-review-item';
+            const source = document.createElement('div');
+            source.className = 'ai-review-source';
+            source.textContent = item.sourceText;
+            const reason = document.createElement('div');
+            reason.className = 'ai-review-reason';
+            reason.textContent = item.reason || item.category || t('results.aiReviewRequired');
+            row.append(source, reason);
+            details.appendChild(row);
+        });
+        panel.appendChild(details);
+    }
+}
 
 /**
  * @private
@@ -97,6 +168,10 @@ export function populateModalContent(modalContent) {
     rerenderPlaceholder();
     state.setPlaceholder(placeholder);
 
+    const aiSummaryPanel = document.createElement('section');
+    aiSummaryPanel.className = 'ai-summary-panel';
+    aiSummaryPanel.setAttribute('aria-live', 'polite');
+    state.setAiSummaryPanel(aiSummaryPanel);
 
     const textareaContainer = document.createElement('div');
     textareaContainer.className = 'tc-textarea-container';
@@ -117,10 +192,14 @@ export function populateModalContent(modalContent) {
     state.setLoadingContainer(loadingContainer);
 
     modalContent.appendChild(placeholder);
+    modalContent.appendChild(aiSummaryPanel);
     modalContent.appendChild(textareaContainer);
     modalContent.appendChild(loadingContainer);
 
-    unsubscribeLanguageChanged = on('languageChanged', rerenderPlaceholder);
+    unsubscribeLanguageChanged = on('languageChanged', () => {
+        rerenderPlaceholder();
+        renderAiSummaryPanel();
+    });
 }
 
 /**
@@ -148,4 +227,22 @@ export function showLoading() {
 export function hideLoading() {
     if (state.loadingContainer) state.loadingContainer.classList.remove('is-visible');
     if (state.outputTextarea) state.outputTextarea.disabled = false;
+}
+
+/** @param {'quick-scan'|'session-scan'|'element-scan'|'ai-scan'} mode */
+export function setModalContentMode(mode) {
+    currentMode = mode;
+    if (state.aiSummaryPanel) {
+        state.aiSummaryPanel.classList.toggle('is-visible', currentMode === 'ai-scan');
+    }
+}
+
+/**
+ * @param {object} snapshot
+ * @param {Array<object>} reviewItems
+ */
+export function updateAiSummaryPanel(snapshot, reviewItems = []) {
+    lastAiSnapshot = snapshot;
+    lastAiReviewItems = reviewItems;
+    renderAiSummaryPanel();
 }

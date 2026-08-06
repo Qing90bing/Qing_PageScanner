@@ -34,7 +34,11 @@ export class EventIsolator {
         }
 
         // 情况 B: 事件关联目标是脚本 UI (e.relatedTarget)
-        if (e.relatedTarget && (e.relatedTarget === this.container || (e.relatedTarget instanceof Node && this.container.contains(e.relatedTarget)))) {
+        if (
+            e.relatedTarget &&
+            (e.relatedTarget === this.container ||
+                (e.relatedTarget instanceof Node && this.container.contains(e.relatedTarget)))
+        ) {
             shouldBlock = true;
         }
 
@@ -50,9 +54,14 @@ export class EventIsolator {
     restoreFocus(originalElement) {
         setTimeout(() => {
             const current = document.activeElement;
-            if ((current === document.body || current === this.container) &&
-                originalElement && originalElement.isConnected) {
-                try { originalElement.focus(); } catch (err) { }
+            if (
+                (current === document.body || current === this.container) &&
+                originalElement &&
+                originalElement.isConnected
+            ) {
+                try {
+                    originalElement.focus();
+                } catch (err) {}
             }
         }, 0);
     }
@@ -70,7 +79,8 @@ export class EventIsolator {
             if (e.type === 'mousedown') {
                 const target = e.target;
                 const tagName = target.tagName;
-                const isInput = tagName === 'INPUT' || tagName === 'TEXTAREA' || tagName === 'SELECT' || target.isContentEditable;
+                const isInput =
+                    tagName === 'INPUT' || tagName === 'TEXTAREA' || tagName === 'SELECT' || target.isContentEditable;
                 const isLabel = tagName === 'LABEL';
 
                 if (!isInput && !isLabel) {
@@ -82,12 +92,23 @@ export class EventIsolator {
         };
 
         const bubbleEvents = [
-            'click', 'dblclick', 'contextmenu', 'mouseup', 'mousedown',
-            'keydown', 'keyup', 'keypress',
-            'pointerdown', 'pointerup', 'touchstart', 'touchend', 'focusin', 'focusout'
+            'click',
+            'dblclick',
+            'contextmenu',
+            'mouseup',
+            'mousedown',
+            'keydown',
+            'keyup',
+            'keypress',
+            'pointerdown',
+            'pointerup',
+            'touchstart',
+            'touchend',
+            'focusin',
+            'focusout',
         ];
 
-        bubbleEvents.forEach(evt => {
+        bubbleEvents.forEach((evt) => {
             this.shadowRoot.addEventListener(evt, handleInternalBubble, { capture: false });
         });
     }
@@ -97,11 +118,19 @@ export class EventIsolator {
      */
     attachGlobalListeners() {
         const captureEvents = [
-            'pointerdown', 'pointerup', 'touchstart', 'touchend',
-            'focusin', 'focusout',
-            'mouseout', 'mouseleave', 'pointerout', 'pointerleave', 'blur'
+            'pointerdown',
+            'pointerup',
+            'touchstart',
+            'touchend',
+            'focusin',
+            'focusout',
+            'mouseout',
+            'mouseleave',
+            'pointerout',
+            'pointerleave',
+            'blur',
         ];
-        captureEvents.forEach(evt => window.addEventListener(evt, this.handleGlobalCapture, { capture: true }));
+        captureEvents.forEach((evt) => window.addEventListener(evt, this.handleGlobalCapture, { capture: true }));
     }
 
     /**
@@ -109,10 +138,18 @@ export class EventIsolator {
      */
     detachGlobalListeners() {
         const captureEvents = [
-            'pointerdown', 'pointerup', 'touchstart', 'touchend',
-            'focusin', 'focusout',
-            'mouseout', 'mouseleave', 'pointerout', 'pointerleave', 'blur'
+            'pointerdown',
+            'pointerup',
+            'touchstart',
+            'touchend',
+            'focusin',
+            'focusout',
+            'mouseout',
+            'mouseleave',
+            'pointerout',
+            'pointerleave',
+            'blur',
         ];
-        captureEvents.forEach(evt => window.removeEventListener(evt, this.handleGlobalCapture, { capture: true }));
+        captureEvents.forEach((evt) => window.removeEventListener(evt, this.handleGlobalCapture, { capture: true }));
     }
 }

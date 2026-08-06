@@ -10,10 +10,7 @@ const translationModules = locales;
 // 定义支持的语言列表
 // 'Auto' 总是作为第一个选项
 // 其他语言从构建脚本生成的 resourceLanguages 中获取
-export const supportedLanguages = [
-    { code: 'auto', name: 'Auto' },
-    ...resourceLanguages
-];
+export const supportedLanguages = [{ code: 'auto', name: 'Auto' }, ...resourceLanguages];
 
 // 从 supportedLanguages 动态构建 translations 对象
 const translations = supportedLanguages.reduce((acc, lang) => {
@@ -22,7 +19,6 @@ const translations = supportedLanguages.reduce((acc, lang) => {
     }
     return acc;
 }, {});
-
 
 let currentLanguage = 'en';
 let currentTranslations = translations.en;
@@ -78,9 +74,7 @@ export function t(key, replacements) {
     if (replacements) {
         return value.replace(/{{\s*(\w+)\s*}}/g, (match, key) => {
             // 如果 replacements 中有这个 key，就替换，否则保留原样
-            return Object.prototype.hasOwnProperty.call(replacements, key)
-                ? replacements[key]
-                : match;
+            return Object.prototype.hasOwnProperty.call(replacements, key) ? replacements[key] : match;
         });
     }
 
@@ -108,7 +102,7 @@ export function getTranslationObject(key) {
 export function getAvailableLanguages() {
     // 从集中化的语言配置中动态生成列表
     // 直接使用原生名称作为标签，这是语言选择器的最佳实践
-    return supportedLanguages.map(lang => ({
+    return supportedLanguages.map((lang) => ({
         value: lang.code,
         label: lang.name,
     }));

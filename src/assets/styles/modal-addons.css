@@ -19,7 +19,11 @@
     max-width: 0;
     opacity: 0;
     margin-right: 0;
-    transition: max-width 0.3s ease, opacity 0.3s ease, padding 0.3s ease, margin-right 0.3s ease;
+    transition:
+        max-width 0.3s ease,
+        opacity 0.3s ease,
+        padding 0.3s ease,
+        margin-right 0.3s ease;
     color: var(--main-line-number-text);
     background-color: var(--tc-secondary-bg-color);
     overflow: hidden;
@@ -37,7 +41,7 @@
     /* 为水平滚动条预留空间 */
 }
 
-.tc-line-numbers>div {
+.tc-line-numbers > div {
     white-space: nowrap;
     padding: 0 4px;
     box-sizing: border-box;
@@ -45,7 +49,7 @@
     /* 为 active 状态的颜色变化添加过渡 */
 }
 
-.tc-line-numbers>div.is-active {
+.tc-line-numbers > div.is-active {
     font-weight: bold;
     color: var(--main-line-number-active-text);
 }
@@ -95,7 +99,9 @@
     flex-grow: 1;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    transition:
+        opacity 0.3s ease,
+        visibility 0.3s ease;
 }
 
 .tc-stats-container.is-visible {

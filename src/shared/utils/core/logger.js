@@ -16,7 +16,7 @@ let isDebugEnabled = false;
  * @param {boolean} isEnabled - 是否应启用日志记录。
  */
 export function updateLoggerState(isEnabled) {
-  isDebugEnabled = isEnabled;
+    isDebugEnabled = isEnabled;
 }
 
 /**
@@ -25,7 +25,7 @@ export function updateLoggerState(isEnabled) {
  * @param {...*} args - 要传递给 console.log 的参数。
  */
 export function log(...args) {
-  if (isDebugEnabled) {
-    console.log(t('log.prefix'), ...args);
-  }
+    if (isDebugEnabled) {
+        console.log(t('log.prefix'), ...args);
+    }
 }

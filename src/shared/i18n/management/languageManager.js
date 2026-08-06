@@ -1,13 +1,8 @@
 // src/shared/i18n/management/languageManager.js
 
 import { setLanguage as setI18nLanguage, t, supportedLanguages } from '../index.js';
-import {
-    registerMenuCommand,
-    unregisterMenuCommand,
-    getValue,
-    setValue,
-} from '../../services/tampermonkey.js';
-import { loadSettings, saveSettings } from '../../../features/settings/logic.js';
+import { registerMenuCommand, unregisterMenuCommand, getValue, setValue } from '../../services/tampermonkey.js';
+import { loadSettings } from '../../../features/settings/logic.js';
 
 /**
  * @description
@@ -47,7 +42,7 @@ export async function updateSettingsMenu(onClick) {
  */
 function isLanguageSupported(langCode) {
     // 'auto' is now in supportedLanguages
-    return supportedLanguages.some(lang => lang.code === langCode);
+    return supportedLanguages.some((lang) => lang.code === langCode);
 }
 
 /**
@@ -79,7 +74,11 @@ export function initializeLanguage(settings) {
 
             if (browserLang.startsWith('zh')) {
                 // 偏好简体中文，除非明确是繁体
-                if (browserLang.toLowerCase().includes('tw') || browserLang.toLowerCase().includes('hk') || browserLang.toLowerCase().includes('hant')) {
+                if (
+                    browserLang.toLowerCase().includes('tw') ||
+                    browserLang.toLowerCase().includes('hk') ||
+                    browserLang.toLowerCase().includes('hant')
+                ) {
                     langToSet = 'zh-TW';
                 } else {
                     langToSet = 'zh-CN';
@@ -97,7 +96,6 @@ export function initializeLanguage(settings) {
 
     setI18nLanguage(langToSet);
 }
-
 
 /**
  * 切换并保存当前语言。

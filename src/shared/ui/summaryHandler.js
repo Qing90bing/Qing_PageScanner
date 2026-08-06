@@ -8,6 +8,14 @@ import { isElementScanActive, getStagedTexts } from '../../features/element-scan
 import { showSessionSummary } from '../../features/session-scan/ui.js';
 import { formatTextsForTranslation } from '../utils/text/formatting.js';
 import { loadSettings } from '../../features/settings/logic.js';
+import { hasAiData, isAiScanActive, showAiSummary } from '../../features/ai-scan/ui.js';
+import { SCAN_MODES, subscribeScanMode } from '../services/scanModeCoordinator.js';
+
+let preferAiSummary = false;
+subscribeScanMode(({ activeMode }) => {
+    if (activeMode === SCAN_MODES.AI) preferAiSummary = true;
+    if (activeMode === SCAN_MODES.DYNAMIC || activeMode === SCAN_MODES.ELEMENT) preferAiSummary = false;
+});
 
 /**
  * @public
@@ -23,7 +31,9 @@ export function handleSummaryClick() {
         // 如果是，则显示暂存的文本
         const stagedTexts = getStagedTexts();
         const { outputFormat, includeArrayBrackets } = loadSettings();
-        const formattedText = formatTextsForTranslation(Array.from(stagedTexts), outputFormat, { includeArrayBrackets });
+        const formattedText = formatTextsForTranslation(Array.from(stagedTexts), outputFormat, {
+            includeArrayBrackets,
+        });
 
         updateScanCount(stagedTexts.size, 'element-scan');
 
@@ -32,6 +42,8 @@ export function handleSummaryClick() {
         } else {
             updateModalContent(formattedText, true, 'element-scan');
         }
+    } else if (isAiScanActive() || (preferAiSummary && hasAiData())) {
+        showAiSummary();
     } else {
         // 否则，调用专门的会话扫描摘要函数
         showSessionSummary();

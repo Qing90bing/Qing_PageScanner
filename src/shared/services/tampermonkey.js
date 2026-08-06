@@ -12,7 +12,7 @@
  * @returns {number} 返回已注册命令的ID，可用于注销。
  */
 export const registerMenuCommand = (caption, commandFunc) => {
-  return GM_registerMenuCommand(caption, commandFunc);
+    return GM_registerMenuCommand(caption, commandFunc);
 };
 
 /**
@@ -28,7 +28,7 @@ export const unregisterMenuCommand = (commandId) => {
  * @param {string} text - 要复制的文本。
  */
 export const setClipboard = (text) => {
-  GM_setClipboard(text, 'text');
+    GM_setClipboard(text, 'text');
 };
 
 /**
@@ -38,7 +38,7 @@ export const setClipboard = (text) => {
  * @returns {Promise<any>} 返回一个Promise，解析为存储的值。
  */
 export const getValue = (key, defaultValue) => {
-  return GM_getValue(key, defaultValue);
+    return GM_getValue(key, defaultValue);
 };
 
 /**
@@ -48,7 +48,7 @@ export const getValue = (key, defaultValue) => {
  * @returns {Promise<void>} 返回一个Promise，在值保存后解析。
  */
 export const setValue = (key, value) => {
-  return GM_setValue(key, value);
+    return GM_setValue(key, value);
 };
 
 /**
@@ -57,5 +57,14 @@ export const setValue = (key, value) => {
  * @returns {Promise<void>} 返回一个Promise，在值删除后解析。
  */
 export const deleteValue = (key) => {
-  return GM_deleteValue(key);
+    return GM_deleteValue(key);
+};
+
+/**
+ * 发起可跨域的油猴网络请求。调用方负责校验目标地址和响应内容。
+ * @param {object} details - GM_xmlhttpRequest 参数。
+ * @returns {object} 可取消的请求句柄。
+ */
+export const xmlHttpRequest = (details) => {
+    return GM_xmlhttpRequest(details);
 };

@@ -13,29 +13,29 @@ import * as state from './modalState.js';
  * @returns {{modal, modalHeader, modalContent, modalFooter}} 包含主要布局元素的DOM引用。
  */
 export function createModalLayout() {
-  const modalOverlay = document.createElement('div');
-  modalOverlay.className = 'text-extractor-modal-overlay';
-  modalOverlay.tabIndex = -1;
-  state.setModalOverlay(modalOverlay);
+    const modalOverlay = document.createElement('div');
+    modalOverlay.className = 'text-extractor-modal-overlay';
+    modalOverlay.tabIndex = -1;
+    state.setModalOverlay(modalOverlay);
 
-  const modal = document.createElement('div');
-  modal.className = 'text-extractor-modal';
+    const modal = document.createElement('div');
+    modal.className = 'text-extractor-modal';
 
-  const modalHeader = document.createElement('div');
-  modalHeader.className = 'text-extractor-modal-header';
+    const modalHeader = document.createElement('div');
+    modalHeader.className = 'text-extractor-modal-header';
 
-  const modalContent = document.createElement('div');
-  modalContent.className = 'text-extractor-modal-content';
+    const modalContent = document.createElement('div');
+    modalContent.className = 'text-extractor-modal-content';
 
-  const modalFooter = document.createElement('div');
-  modalFooter.className = 'text-extractor-modal-footer';
+    const modalFooter = document.createElement('div');
+    modalFooter.className = 'text-extractor-modal-footer';
 
-  modal.appendChild(modalHeader);
-  modal.appendChild(modalContent);
-  modal.appendChild(modalFooter);
-  modalOverlay.appendChild(modal);
+    modal.appendChild(modalHeader);
+    modal.appendChild(modalContent);
+    modal.appendChild(modalFooter);
+    modalOverlay.appendChild(modal);
 
-  uiContainer.appendChild(modalOverlay);
+    uiContainer.appendChild(modalOverlay);
 
-  return { modal, modalHeader, modalContent, modalFooter };
+    return { modal, modalHeader, modalContent, modalFooter };
 }

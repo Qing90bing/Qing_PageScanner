@@ -14,7 +14,9 @@
     pointer-events: none; /* 确保提示本身不会干扰鼠标事件 */
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.2s ease, visibility 0.2s;
+    transition:
+        opacity 0.2s ease,
+        visibility 0.2s;
     box-shadow: 0 2px 5px var(--main-shadow);
     white-space: nowrap; /* 防止文本换行 */
 }

@@ -39,7 +39,7 @@ export function createExportButton() {
         onClick: () => {
             log(t('log.exporter.buttonClicked', { format: 'auto' }));
             fire('exportToFile', {}); // 由逻辑模块根据设置决定格式
-        }
+        },
     });
 
     container.appendChild(exportBtn);

@@ -9,16 +9,13 @@
 }
 
 .fab-position-bottom-right {
-    transform: translate(-30px, calc(100vh - 260px - 30px));
+    transform: translate(-30px, calc(100vh - 100% - 30px));
 }
 
 .fab-position-top-left {
-    transform: translate(calc(-100vw + 56px + 30px + var(--scrollbar-width)), 30px);
+    transform: translate(calc(-100vw + 100% + 30px + var(--scrollbar-width)), 30px);
 }
 
 .fab-position-bottom-left {
-    transform: translate(
-        calc(-100vw + 56px + 30px + var(--scrollbar-width)),
-        calc(100vh - 260px - 30px)
-    );
+    transform: translate(calc(-100vw + 100% + 30px + var(--scrollbar-width)), calc(100vh - 100% - 30px));
 }

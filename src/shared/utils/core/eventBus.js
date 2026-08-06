@@ -23,7 +23,7 @@ export function on(eventName, callback) {
 
     // 返回一个取消订阅的函数
     return () => {
-        events[eventName] = events[eventName].filter(cb => cb !== callback);
+        events[eventName] = events[eventName].filter((cb) => cb !== callback);
     };
 }
 
@@ -34,7 +34,7 @@ export function on(eventName, callback) {
  */
 export function fire(eventName, data) {
     if (events[eventName]) {
-        events[eventName].forEach(callback => {
+        events[eventName].forEach((callback) => {
             try {
                 callback(data);
             } catch (error) {

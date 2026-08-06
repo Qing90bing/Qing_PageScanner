@@ -63,14 +63,12 @@ export function onTranslationBridgeStateChange(callback) {
  * safety valve for a failed or outdated translation script; normal dynamic
  * synchronization is event-driven.
  */
-export function waitForTranslationBridgeIdle(
-    timeoutMs = TRANSLATION_BRIDGE_WAIT_TIMEOUT_MS
-) {
+export function waitForTranslationBridgeIdle(timeoutMs = TRANSLATION_BRIDGE_WAIT_TIMEOUT_MS) {
     if (isTranslationBridgeIdle()) {
         return Promise.resolve({ timedOut: false });
     }
 
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
         let timeoutId = null;
 
         const cleanup = () => {

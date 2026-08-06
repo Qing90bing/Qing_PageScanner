@@ -15,7 +15,6 @@ class Tooltip {
         this.handleEscKey = this.handleEscKey.bind(this);
     }
 
-
     /**
      * @private
      * @description 根据配置创建提示窗口的 DOM 结构。

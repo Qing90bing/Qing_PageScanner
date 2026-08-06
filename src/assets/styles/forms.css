@@ -2,96 +2,354 @@
 
 /* --- 可复用的按钮样式 --- */
 .tc-button {
-  font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
-  padding: 10px 20px;
-  background-color: var(--main-primary);
-  color: var(--main-primary-text);
-  border: none;
-  border-radius: 999px; /* 完全圆角，胶囊形状 */
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 500;
-  transition: background-color 0.2s, transform 0.15s, box-shadow 0.2s;
+    font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 10px 20px;
+    background-color: var(--main-primary);
+    color: var(--main-primary-text);
+    border: none;
+    border-radius: 999px; /* 完全圆角，胶囊形状 */
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1;
+    touch-action: manipulation;
+    transition:
+        background-color 0.2s,
+        transform 0.15s,
+        box-shadow 0.2s;
+}
+
+.tc-icon-title {
+    display: inline-flex;
+    min-width: 0;
+    align-items: center;
+    gap: 8px;
+    line-height: 20px;
+}
+
+.tc-icon-title-icon {
+    display: inline-flex;
+    width: 20px;
+    height: 20px;
+    flex: 0 0 20px;
+    align-items: center;
+    justify-content: center;
+}
+
+.tc-icon-title-icon svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    fill: currentColor;
+}
+
+.icon-title-text {
+    display: block;
+    min-width: 0;
+    line-height: 20px;
+}
+
+.tc-button > .tc-icon-title {
+    min-height: 20px;
+    line-height: 20px;
+    white-space: nowrap;
+}
+
+.tc-button svg {
+    display: block;
+    width: 20px;
+    height: 20px;
+    flex: 0 0 auto;
+    fill: currentColor;
+}
+
+.tc-icon-title-icon svg.is-icon-entering,
+.tc-icon-title-icon svg.is-icon-leaving {
+    position: absolute;
+    inset: 0;
+    transition: opacity 0.2s ease;
+}
+
+.tc-icon-title-icon.is-changing {
+    position: relative;
+}
+
+.tc-button:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--main-primary) 72%, transparent);
+    outline-offset: 2px;
 }
 .tc-button:hover {
-  background-color: var(--main-primary-hover);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    background-color: var(--main-primary-hover);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 .tc-button:active {
-  transform: scale(0.97);
+    transform: scale(0.97);
 }
 .tc-button:disabled {
-  background-color: var(--main-disabled);
-  color: var(--main-disabled-text);
-  cursor: not-allowed;
-  box-shadow: none;
+    background-color: var(--main-disabled);
+    color: var(--main-disabled-text);
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* --- Reusable settings switch --- */
+.tc-toggle-setting {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 20px;
+    min-height: 72px;
+    padding: 14px 16px;
+    border: 1px solid var(--main-border);
+    border-radius: 12px;
+    background: var(--main-bg);
+    color: var(--main-text);
+    cursor: pointer;
+}
+
+.tc-toggle-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+}
+
+.tc-toggle-title {
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.tc-toggle-description {
+    color: var(--main-text-secondary);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.tc-toggle-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.tc-toggle-control {
+    position: relative;
+    width: 48px;
+    height: 26px;
+    border-radius: 999px;
+    background: var(--main-disabled);
+    transition:
+        background-color 0.2s,
+        box-shadow 0.2s;
+}
+
+.tc-toggle-control::after {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--main-primary-text);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.28);
+    content: '';
+    transition: transform 0.2s;
+}
+
+.tc-toggle-input:checked + .tc-toggle-control {
+    background: var(--main-primary);
+}
+
+.tc-toggle-input:checked + .tc-toggle-control::after {
+    transform: translateX(22px);
+}
+
+.tc-toggle-input:focus-visible + .tc-toggle-control {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--main-primary) 25%, transparent);
+}
+
+/* --- Reusable disclosure section --- */
+.tc-disclosure {
+    overflow: hidden;
+    border: 1px solid var(--main-border);
+    border-radius: 10px;
+    background: var(--main-bg);
+}
+
+.tc-disclosure-trigger {
+    display: flex;
+    width: 100%;
+    min-height: 44px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 10px 14px;
+    border: 0;
+    background: transparent;
+    color: var(--main-text);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: left;
+}
+
+.tc-disclosure-trigger:hover {
+    background: color-mix(in srgb, var(--main-primary) 7%, transparent);
+}
+
+.tc-disclosure-trigger:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--main-primary) 72%, transparent);
+    outline-offset: -2px;
+}
+
+.tc-disclosure-arrow {
+    display: grid;
+    width: 20px;
+    height: 20px;
+    flex: 0 0 20px;
+    place-items: center;
+    transition: transform 0.2s ease;
+}
+
+.tc-disclosure-arrow svg {
+    display: block;
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+}
+
+.tc-disclosure-trigger[aria-expanded='true'] .tc-disclosure-arrow {
+    transform: rotate(180deg);
+}
+
+.tc-disclosure-content {
+    padding: 16px;
+    border-top: 1px solid var(--main-border);
+}
+
+.tc-disclosure-content[hidden] {
+    display: none;
+}
+
+/* --- Reusable labelled text and select fields --- */
+.tc-field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.tc-field-label,
+.numeric-input-label {
+    color: var(--main-text);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.tc-text-input {
+    width: 100%;
+    min-height: 42px;
+    padding: 9px 12px;
+    border: 1px solid var(--main-textarea-border);
+    border-radius: 10px;
+    background-color: var(--main-textarea-bg);
+    color: var(--main-text);
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.45;
+    transition:
+        border-color 0.2s,
+        box-shadow 0.2s;
+}
+
+.tc-text-input:hover {
+    border-color: color-mix(in srgb, var(--main-primary) 60%, var(--main-textarea-border));
+}
+
+.tc-text-input:focus {
+    outline: none;
+    border-color: var(--main-primary);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--main-primary) 18%, transparent);
+}
+
+.tc-text-input-multiline {
+    min-height: 104px;
+    resize: vertical;
 }
 
 /* --- 可复用的文本框样式 --- */
 .tc-textarea {
-  width: 100%;
-  height: 100%;
-  border: 1px solid var(--main-textarea-border);
-  background-color: var(--main-textarea-bg);
-  color: var(--main-text);
-  border-radius: 8px;
-  padding: 12px;
-  padding-right: 18px; /* 为滚动条轨道留出空间 */
-  font-family: Menlo, Monaco,'Cascadia Code','PingFang SC';
-  font-size: 14px;
-  resize: none; /* 禁用拖拽调整大小 */
-  box-sizing: border-box;
-  line-height: 1.5;
+    width: 100%;
+    height: 100%;
+    border: 1px solid var(--main-textarea-border);
+    background-color: var(--main-textarea-bg);
+    color: var(--main-text);
+    border-radius: 8px;
+    padding: 12px;
+    padding-right: 18px; /* 为滚动条轨道留出空间 */
+    font-family: Menlo, Monaco, 'Cascadia Code', 'PingFang SC';
+    font-size: 14px;
+    resize: none; /* 禁用拖拽调整大小 */
+    box-sizing: border-box;
+    line-height: 1.5;
 }
 
 .tc-textarea:focus {
-  outline: none;
+    outline: none;
 }
 
 /* 自定义滚动条样式 */
 .tc-textarea::-webkit-scrollbar {
-  width: 6px; /* 更细的滚动条 */
+    width: 6px; /* 更细的滚动条 */
 }
 .tc-textarea::-webkit-scrollbar-track {
-  background: transparent; /* 轨道透明 */
+    background: transparent; /* 轨道透明 */
 }
 .tc-textarea::-webkit-scrollbar-thumb {
-  background-color: var(--main-border);
-  border-radius: 3px;
+    background-color: var(--main-border);
+    border-radius: 3px;
 }
 .tc-textarea::-webkit-scrollbar-thumb:hover {
-  background-color: var(--main-primary);
+    background-color: var(--main-primary);
 }
 .tc-textarea::-webkit-scrollbar-button {
-  display: none; /* 隐藏上下两端的箭头按钮 */
+    display: none; /* 隐藏上下两端的箭头按钮 */
 }
 
 /* --- 可复用的下拉菜单样式 --- */
 .tc-select {
-  /* Box model and appearance */
-  display: block;
-  width: 100%;
-  padding: 10px 36px 10px 12px; /* 右侧留出更多空间给箭头 */
-  border: 1px solid var(--main-textarea-border);
-  border-radius: 8px;
-  background-color: var(--main-textarea-bg);
-  color: var(--main-text);
-  font-size: 14px;
-  cursor: pointer;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
+    /* Box model and appearance */
+    display: block;
+    width: 100%;
+    padding: 10px 36px 10px 12px; /* 右侧留出更多空间给箭头 */
+    border: 1px solid var(--main-textarea-border);
+    border-radius: 8px;
+    background-color: var(--main-textarea-bg);
+    color: var(--main-text);
+    font-size: 14px;
+    cursor: pointer;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
 
-  /* Custom arrow icon */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='currentColor'%3E%3Cpath d='M8 11L2 5h12z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  background-size: 12px; /* 稍微增大箭头尺寸 */
+    /* Custom arrow icon */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='currentColor'%3E%3Cpath d='M8 11L2 5h12z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 12px; /* 稍微增大箭头尺寸 */
 
-  /* Transitions */
-  transition: border-color 0.2s, box-shadow 0.2s;
+    /* Transitions */
+    transition:
+        border-color 0.2s,
+        box-shadow 0.2s;
 }
 .tc-select:hover {
-  border-color: var(--main-primary);
-  box-shadow: 0 0 0 2px var(--main-primary-hover-bg, rgba(30, 144, 255, 0.1));
+    border-color: var(--main-primary);
+    box-shadow: 0 0 0 2px var(--main-primary-hover-bg, rgba(30, 144, 255, 0.1));
 }

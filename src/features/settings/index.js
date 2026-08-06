@@ -11,8 +11,8 @@ function handleOpenSettings() {
     const currentSettings = loadSettings();
     openSettingsPanel(currentSettings, (newSettings) => {
         const oldSettings = loadSettings();
-        saveSettings(newSettings);
-        applySettings(newSettings, oldSettings);
+        const savedSettings = saveSettings(newSettings);
+        applySettings(savedSettings, oldSettings);
     });
 }
 

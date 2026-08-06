@@ -20,10 +20,20 @@ import { createTrustedHTML } from '../../utils/dom/trustedTypes.js';
  * @param {boolean} [options.iconOnly=false] - 是否为纯图标按钮。
  * @returns {HTMLButtonElement} - 创建好的按钮元素。
  */
-export function createButton({ id, className, textKey, tooltipKey, icon, onClick, disabled = false, iconOnly = false }) {
+export function createButton({
+    id,
+    className,
+    textKey,
+    tooltipKey,
+    icon,
+    onClick,
+    disabled = false,
+    iconOnly = false,
+}) {
     const button = document.createElement('button');
     const controller = new AbortController();
     const { signal } = controller;
+    let iconAnimationTimer = null;
 
     if (id) {
         button.id = id;
@@ -66,32 +76,48 @@ export function createButton({ id, className, textKey, tooltipKey, icon, onClick
     }
 
     button.updateIcon = (newIcon) => {
-        const oldIconElements = button.querySelectorAll('svg');
-
-        // 1. 创建新图标并添加到按钮中，初始状态为透明
         const newIconElement = createSVGFromString(newIcon);
+        if (!newIconElement) return;
+        const oldIconElements = Array.from(button.querySelectorAll('svg'));
+        let iconWrapper = button.querySelector('.tc-icon-title-icon');
+        if (!iconWrapper) {
+            iconWrapper = document.createElement('span');
+            iconWrapper.className = 'tc-icon-title-icon';
+            iconWrapper.setAttribute('aria-hidden', 'true');
+            const title = button.querySelector('.tc-icon-title');
+            if (title) title.prepend(iconWrapper);
+            else button.appendChild(iconWrapper);
+        }
+        if (iconAnimationTimer) clearTimeout(iconAnimationTimer);
+        iconWrapper.classList.add('is-changing');
+        newIconElement.classList.add('is-icon-entering');
         newIconElement.style.opacity = '0';
-        button.appendChild(newIconElement);
+        iconWrapper.appendChild(newIconElement);
 
-        // 2. 强制浏览器重绘
         void newIconElement.offsetHeight;
 
-        // 3. 在下一帧让所有旧图标淡出，新图标淡入
         requestAnimationFrame(() => {
-            oldIconElements.forEach(icon => {
+            oldIconElements.forEach((icon) => {
+                icon.classList.add('is-icon-leaving');
                 icon.style.opacity = '0';
             });
             newIconElement.style.opacity = '1';
         });
 
-        // 4. 在动画结束后移除所有旧图标
-        setTimeout(() => {
-            oldIconElements.forEach(icon => icon.remove());
-        }, 300); // 必须匹配 CSS transition 的持续时间
+        iconAnimationTimer = setTimeout(() => {
+            oldIconElements.forEach((icon) => icon.remove());
+            newIconElement.classList.remove('is-icon-entering');
+            newIconElement.style.removeProperty('opacity');
+            iconWrapper.classList.remove('is-changing');
+            iconAnimationTimer = null;
+        }, 200);
     };
 
     // 添加 destroy 方法来移除所有事件监听器
-    button.destroy = () => controller.abort();
+    button.destroy = () => {
+        if (iconAnimationTimer) clearTimeout(iconAnimationTimer);
+        controller.abort();
+    };
 
     // 确保按钮可交互，覆盖 uiContainer 的 pointer-events: none
     button.style.pointerEvents = 'auto';

@@ -44,25 +44,25 @@ function calculateOptimalPosition(targetRect, tooltipRect, obstacles) {
         {
             name: 'bottom',
             top: targetRect.bottom + MARGIN,
-            left: targetRect.left + (targetRect.width / 2) - (ttWidth / 2),
+            left: targetRect.left + targetRect.width / 2 - ttWidth / 2,
         },
         // 2. 右侧 (Right)
         {
             name: 'right',
-            top: targetRect.top + (targetRect.height / 2) - (ttHeight / 2),
+            top: targetRect.top + targetRect.height / 2 - ttHeight / 2,
             left: targetRect.right + MARGIN,
         },
         // 3. 左侧 (Left)
         {
             name: 'left',
-            top: targetRect.top + (targetRect.height / 2) - (ttHeight / 2),
+            top: targetRect.top + targetRect.height / 2 - ttHeight / 2,
             left: targetRect.left - ttWidth - MARGIN,
         },
         // 4. 上方 (Top)
         {
             name: 'top',
             top: targetRect.top - ttHeight - MARGIN,
-            left: targetRect.left + (targetRect.width / 2) - (ttWidth / 2),
+            left: targetRect.left + targetRect.width / 2 - ttWidth / 2,
         },
     ];
 
@@ -113,8 +113,8 @@ export function showTooltip(targetElement, text) {
 
     // 获取所有其他的 FAB 按钮作为障碍物
     const obstacles = Array.from(uiContainer.querySelectorAll('.text-extractor-fab'))
-        .filter(el => el !== targetElement) // 排除触发提示框的按钮本身
-        .map(el => el.getBoundingClientRect());
+        .filter((el) => el !== targetElement) // 排除触发提示框的按钮本身
+        .map((el) => el.getBoundingClientRect());
 
     const { top, left } = calculateOptimalPosition(targetRect, tooltipRect, obstacles);
 

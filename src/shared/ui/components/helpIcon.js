@@ -40,7 +40,7 @@ export function createHelpIcon(contentKey) {
         infoTooltip.show({
             title: helpTitle,
             text: helpContent,
-            titleIcon: questionMarkIcon
+            titleIcon: questionMarkIcon,
         });
     };
 

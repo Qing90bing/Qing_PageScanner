@@ -17,7 +17,41 @@ const ourUiSelector = '#text-extractor-container';
 
 // 定义一个包含所有块级元素的 Set，用于高效查找。
 // 列表参考了 MDN 的块级元素列表。
-const blockElements = new Set(['ADDRESS', 'ARTICLE', 'ASIDE', 'BLOCKQUOTE', 'DETAILS', 'DIALOG', 'DD', 'DIV', 'DL', 'DT', 'FIELDSET', 'FIGCAPTION', 'FIGURE', 'FOOTER', 'FORM', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'HEADER', 'HGROUP', 'HR', 'LI', 'MAIN', 'NAV', 'OL', 'P', 'PRE', 'SECTION', 'TABLE', 'UL']);
+const blockElements = new Set([
+    'ADDRESS',
+    'ARTICLE',
+    'ASIDE',
+    'BLOCKQUOTE',
+    'DETAILS',
+    'DIALOG',
+    'DD',
+    'DIV',
+    'DL',
+    'DT',
+    'FIELDSET',
+    'FIGCAPTION',
+    'FIGURE',
+    'FOOTER',
+    'FORM',
+    'H1',
+    'H2',
+    'H3',
+    'H4',
+    'H5',
+    'H6',
+    'HEADER',
+    'HGROUP',
+    'HR',
+    'LI',
+    'MAIN',
+    'NAV',
+    'OL',
+    'P',
+    'PRE',
+    'SECTION',
+    'TABLE',
+    'UL',
+]);
 
 // --- 私有函数 ---
 
@@ -50,7 +84,7 @@ const traverseDOMAndExtract = (node, textCallback) => {
 
             // 1. 首先提取当前元素自身的属性文本
             const attributesToExtract = appConfig.scanner.attributesToExtract;
-            attributesToExtract.forEach(attr => {
+            attributesToExtract.forEach((attr) => {
                 const attrValue = node.getAttribute(attr);
                 if (attrValue) {
                     textCallback(attrValue);
@@ -116,7 +150,6 @@ const traverseDOMAndExtract = (node, textCallback) => {
     }
 };
 
-
 // --- 公开函数 ---
 
 /**
@@ -156,7 +189,6 @@ export const extractAndProcessText = () => {
     return Array.from(uniqueTexts);
 };
 
-
 /**
  * @public
  * @description 接收一个原始文本数组，并对其进行规范化、过滤和去重。
@@ -177,7 +209,7 @@ export const filterAndNormalizeTexts = (texts, filterRules, enableDebugLogging, 
     const uniqueTexts = new Set();
 
     if (Array.isArray(texts)) {
-        texts.forEach(rawText => {
+        texts.forEach((rawText) => {
             if (!rawText || typeof rawText !== 'string') return;
 
             // 规范化文本（仅统一换行符类型，不合并），并移除首尾的空白字符（非换行符）。

@@ -59,13 +59,12 @@ function calcStringLines(sentence, width) {
 
     for (let i = 0; i < sentence.length; i++) {
         const char = sentence[i];
-        const wordWidth = state.canvasContext.measureText(char).width;
 
         // 优化：避免每次都重新测量整个 currentLine 的宽度
         // 实际上 measureText 开销较大。累加字符宽度虽然不精确（因为字距调整），
         // 但在等宽字体或简单场景下可以作为估算。
         // 不过为了准确性，还是使用累加后的字符串测量。
-        // 进一步优化：currentLine 是在不断增长的，measureText(currentLine + char) 
+        // 进一步优化：currentLine 是在不断增长的，measureText(currentLine + char)
         // 比 measureText(currentLine) + measureText(char) 准确。
 
         // 这里保持原有逻辑准确性，重点在于 Memoization 已经能解决 99% 的重绘问题
@@ -155,7 +154,8 @@ function calcLines() {
  * @description 立即执行活动行高亮的更新逻辑。
  */
 function _performActiveLineUpdate() {
-    if (!state.lineNumbersDiv || !state.lineNumbersDiv.classList.contains('is-visible') || !state.outputTextarea) return;
+    if (!state.lineNumbersDiv || !state.lineNumbersDiv.classList.contains('is-visible') || !state.outputTextarea)
+        return;
 
     const settings = loadSettings();
     const textarea = state.outputTextarea;
@@ -190,7 +190,7 @@ function _performActiveLineUpdate() {
         let positionInRealLine = selectionEnd;
         for (let i = 0; i < cursorRealLineIndex; i++) {
             // 减去之前的行长度 + 换行符
-            positionInRealLine -= (realLines[i].length + 1);
+            positionInRealLine -= realLines[i].length + 1;
         }
 
         const textareaStyles = window.getComputedStyle(textarea);
@@ -282,9 +282,13 @@ export function updateLineNumbers() {
                 div.classList.add('line-number-enter-active');
                 state.lineNumbersDiv.appendChild(div);
                 // 动画结束后移除类，以便下次复用
-                div.addEventListener('animationend', () => {
-                    div.classList.remove('line-number-enter-active');
-                }, { once: true });
+                div.addEventListener(
+                    'animationend',
+                    () => {
+                        div.classList.remove('line-number-enter-active');
+                    },
+                    { once: true }
+                );
             }
         }
 

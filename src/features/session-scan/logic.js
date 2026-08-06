@@ -68,7 +68,7 @@ function processDynamicTexts(textsBatch) {
     } else if (worker) {
         worker.postMessage({
             type: 'session-add-texts',
-            payload: { texts: textsBatch }
+            payload: { texts: textsBatch },
         });
     }
 }
@@ -78,7 +78,7 @@ function flushPendingDynamicRoots() {
 
     const pendingRoots = Array.from(pendingDynamicRoots);
     const pendingRootSet = new Set(pendingRoots);
-    const roots = pendingRoots.filter(root => {
+    const roots = pendingRoots.filter((root) => {
         let parent = root.parentElement;
         while (parent) {
             if (pendingRootSet.has(parent)) return false;
@@ -90,7 +90,7 @@ function flushPendingDynamicRoots() {
     const textsBatch = [];
     const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(', ');
 
-    roots.forEach(root => {
+    roots.forEach((root) => {
         if (!root.isConnected || root.closest(ignoredSelectorString)) return;
 
         const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
@@ -116,8 +116,9 @@ function scheduleDynamicFlushFallback() {
         // A normal translation batch ends with an idle event. Do not read a
         // partially translated DOM merely because the watchdog interval ran.
         const bridgeStillBusy = isTranslationBridgeActive() && !isTranslationBridgeIdle();
-        const waitedTooLong = pendingDynamicWaitStartedAt !== null
-            && performance.now() - pendingDynamicWaitStartedAt >= TRANSLATION_BRIDGE_MAX_WAIT_MS;
+        const waitedTooLong =
+            pendingDynamicWaitStartedAt !== null &&
+            performance.now() - pendingDynamicWaitStartedAt >= TRANSLATION_BRIDGE_MAX_WAIT_MS;
 
         if (!bridgeStillBusy || waitedTooLong) {
             flushPendingDynamicRoots();
@@ -152,7 +153,7 @@ on('settingsSaved', () => {
             payload: {
                 outputFormat: settings.outputFormat,
                 includeArrayBrackets: settings.includeArrayBrackets,
-            }
+            },
         });
         log(t('log.settings.changed', { key: 'outputFormat', oldValue: '', newValue: settings.outputFormat }));
     }
@@ -164,8 +165,8 @@ const handleMutations = (mutations) => {
     if (!isRecording) return; // 防止停止后处理残留的 mutation
     const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(', ');
 
-    mutations.forEach(mutation => {
-        mutation.addedNodes.forEach(node => {
+    mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
             if (node.nodeType !== Node.ELEMENT_NODE || node.closest(ignoredSelectorString)) return;
 
             pendingDynamicRoots.add(node);
@@ -235,14 +236,14 @@ export const start = async (onUpdate, resumedData = null) => {
     const [initialTexts, settings, workerAllowed] = await Promise.all([
         waitForTranslationBridgeIdle().then(() => extractAndProcessText()),
         loadSettings(),
-        isWorkerAllowed()
+        isWorkerAllowed(),
     ]);
 
     // 在数据加载和初始保存之前，明确启用持久化
     enablePersistence();
 
     if (resumedData && Array.isArray(resumedData)) {
-        resumedData.forEach(text => {
+        resumedData.forEach((text) => {
             initialTexts.push(text);
             sessionTextsMirror.add(text);
         });
@@ -282,7 +283,7 @@ export const start = async (onUpdate, resumedData = null) => {
                     updateScanCount(payload.count, 'session');
 
                     if (payload.newTexts && Array.isArray(payload.newTexts)) {
-                        payload.newTexts.forEach(text => sessionTextsMirror.add(text));
+                        payload.newTexts.forEach((text) => sessionTextsMirror.add(text));
                     }
                 } else if (type === 'summaryReady' && onSummaryCallback) {
                     onSummaryCallback(payload, currentCount);
@@ -309,11 +310,10 @@ export const start = async (onUpdate, resumedData = null) => {
                         textFiltered: t('log.textProcessor.filtered'),
                         filterReasons: getTranslationObject('filterReasons'),
                     },
-                    initialData: initialTexts
+                    initialData: initialTexts,
                 },
             });
             log(t('log.sessionScan.worker.initialized', { count: initialTexts.length }));
-
         } catch (e) {
             log(t('log.sessionScan.worker.initSyncError', { error: e.message }), 'error');
             showNotification(t('notifications.cspWorkerWarning'), { type: 'info', duration: 5000 });
@@ -411,7 +411,7 @@ export const requestSummary = (onReady) => {
         onSummaryCallback = onReady;
         worker.postMessage({ type: 'session-get-summary' });
     } else {
-        onReady("[]", 0); // Or "{}" depending on default but this is empty anyway
+        onReady('[]', 0); // Or "{}" depending on default but this is empty anyway
     }
 };
 

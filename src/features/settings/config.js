@@ -38,9 +38,9 @@ export const selectSettingsDefinitions = [
         key: 'language',
         label: 'settings.language',
         icon: languageIcon,
-        options: getAvailableLanguages().map(lang => ({
+        options: getAvailableLanguages().map((lang) => ({
             ...lang,
-            label: lang.value === 'auto' ? 'settings.languages.auto' : `settings.languages.${lang.value}`
+            label: lang.value === 'auto' ? 'settings.languages.auto' : `settings.languages.${lang.value}`,
         })),
     },
 ];
@@ -53,38 +53,143 @@ export const outputSettingsDefinitions = [
         tooltip: {
             titleIcon: infoIcon,
             title: 'settings.output.include_brackets',
-            text: 'tooltip.output.include_brackets'
-        }
+            text: 'tooltip.output.include_brackets',
+        },
     },
 ];
 
 export const filterDefinitions = [
-    { id: 'filter-numbers', key: 'numbers', label: 'settings.filters.numbers', tooltip: { titleIcon: infoIcon, title: 'settings.filters.numbers', text: 'tooltip.filters.numbers' } },
-    { id: 'filter-chinese', key: 'chinese', label: 'settings.filters.chinese', tooltip: { titleIcon: infoIcon, title: 'settings.filters.chinese', text: 'tooltip.filters.chinese' } },
-    { id: 'filter-contains-chinese', key: 'containsChinese', label: 'settings.filters.contains_chinese', tooltip: { titleIcon: infoIcon, title: 'settings.filters.contains_chinese', text: 'tooltip.filters.contains_chinese' } },
-    { id: 'filter-emoji-only', key: 'emojiOnly', label: 'settings.filters.emoji_only', tooltip: { titleIcon: infoIcon, title: 'settings.filters.emoji_only', text: 'tooltip.filters.emoji_only' } },
-    { id: 'filter-symbols', key: 'symbols', label: 'settings.filters.symbols', tooltip: { titleIcon: infoIcon, title: 'settings.filters.symbols', text: 'tooltip.filters.symbols' } },
-    { id: 'filter-term', key: 'termFilter', label: 'settings.filters.term', tooltip: { titleIcon: infoIcon, title: 'settings.filters.term', text: 'tooltip.filters.term' } },
-    { id: 'filter-single-letter', key: 'singleLetter', label: 'settings.filters.single_letter', tooltip: { titleIcon: infoIcon, title: 'settings.filters.single_letter', text: 'tooltip.filters.single_letter' } },
     {
-        id: 'filter-repeating-chars', key: 'repeatingChars', label: 'settings.filters.repeating_chars',
+        id: 'filter-numbers',
+        key: 'numbers',
+        label: 'settings.filters.numbers',
+        tooltip: { titleIcon: infoIcon, title: 'settings.filters.numbers', text: 'tooltip.filters.numbers' },
+    },
+    {
+        id: 'filter-chinese',
+        key: 'chinese',
+        label: 'settings.filters.chinese',
+        tooltip: { titleIcon: infoIcon, title: 'settings.filters.chinese', text: 'tooltip.filters.chinese' },
+    },
+    {
+        id: 'filter-contains-chinese',
+        key: 'containsChinese',
+        label: 'settings.filters.contains_chinese',
+        tooltip: {
+            titleIcon: infoIcon,
+            title: 'settings.filters.contains_chinese',
+            text: 'tooltip.filters.contains_chinese',
+        },
+    },
+    {
+        id: 'filter-emoji-only',
+        key: 'emojiOnly',
+        label: 'settings.filters.emoji_only',
+        tooltip: { titleIcon: infoIcon, title: 'settings.filters.emoji_only', text: 'tooltip.filters.emoji_only' },
+    },
+    {
+        id: 'filter-symbols',
+        key: 'symbols',
+        label: 'settings.filters.symbols',
+        tooltip: { titleIcon: infoIcon, title: 'settings.filters.symbols', text: 'tooltip.filters.symbols' },
+    },
+    {
+        id: 'filter-term',
+        key: 'termFilter',
+        label: 'settings.filters.term',
+        tooltip: { titleIcon: infoIcon, title: 'settings.filters.term', text: 'tooltip.filters.term' },
+    },
+    {
+        id: 'filter-single-letter',
+        key: 'singleLetter',
+        label: 'settings.filters.single_letter',
+        tooltip: {
+            titleIcon: infoIcon,
+            title: 'settings.filters.single_letter',
+            text: 'tooltip.filters.single_letter',
+        },
+    },
+    {
+        id: 'filter-repeating-chars',
+        key: 'repeatingChars',
+        label: 'settings.filters.repeating_chars',
         tooltip: {
             titleIcon: infoIcon,
             title: 'settings.filters.repeating_chars',
-            text: 'tooltip.filters.repeating_chars'
-        }
+            text: 'tooltip.filters.repeating_chars',
+        },
     },
-    { id: 'filter-file-paths', key: 'filePath', label: 'settings.filters.file_paths', tooltip: { titleIcon: infoIcon, title: 'settings.filters.file_paths', text: 'tooltip.filters.file_paths' } },
-    { id: 'filter-hex-colors', key: 'hexColor', label: 'settings.filters.hex_color_codes', tooltip: { titleIcon: infoIcon, title: 'settings.filters.hex_color_codes', text: 'tooltip.filters.hex_color_codes' } },
-    { id: 'filter-emails', key: 'email', label: 'settings.filters.email_addresses', tooltip: { titleIcon: infoIcon, title: 'settings.filters.email_addresses', text: 'tooltip.filters.email_addresses' } },
-    { id: 'filter-uuids', key: 'uuid', label: 'settings.filters.uuids', tooltip: { titleIcon: infoIcon, title: 'settings.filters.uuids', text: 'tooltip.filters.uuids' } },
-    { id: 'filter-git-hashes', key: 'gitCommitHash', label: 'settings.filters.git_commit_hashes', tooltip: { titleIcon: infoIcon, title: 'settings.filters.git_commit_hashes', text: 'tooltip.filters.git_commit_hashes' } },
-    { id: 'filter-website-urls', key: 'websiteUrl', label: 'settings.filters.website_urls', tooltip: { titleIcon: infoIcon, title: 'settings.filters.website_urls_title', text: 'tooltip.filters.website_urls' } },
-    { id: 'filter-shorthand-numbers', key: 'shorthandNumber', label: 'settings.filters.shorthand_numbers', tooltip: { titleIcon: infoIcon, title: 'settings.filters.shorthand_numbers_title', text: 'tooltip.filters.shorthand_numbers' } },
+    {
+        id: 'filter-file-paths',
+        key: 'filePath',
+        label: 'settings.filters.file_paths',
+        tooltip: { titleIcon: infoIcon, title: 'settings.filters.file_paths', text: 'tooltip.filters.file_paths' },
+    },
+    {
+        id: 'filter-hex-colors',
+        key: 'hexColor',
+        label: 'settings.filters.hex_color_codes',
+        tooltip: {
+            titleIcon: infoIcon,
+            title: 'settings.filters.hex_color_codes',
+            text: 'tooltip.filters.hex_color_codes',
+        },
+    },
+    {
+        id: 'filter-emails',
+        key: 'email',
+        label: 'settings.filters.email_addresses',
+        tooltip: {
+            titleIcon: infoIcon,
+            title: 'settings.filters.email_addresses',
+            text: 'tooltip.filters.email_addresses',
+        },
+    },
+    {
+        id: 'filter-uuids',
+        key: 'uuid',
+        label: 'settings.filters.uuids',
+        tooltip: { titleIcon: infoIcon, title: 'settings.filters.uuids', text: 'tooltip.filters.uuids' },
+    },
+    {
+        id: 'filter-git-hashes',
+        key: 'gitCommitHash',
+        label: 'settings.filters.git_commit_hashes',
+        tooltip: {
+            titleIcon: infoIcon,
+            title: 'settings.filters.git_commit_hashes',
+            text: 'tooltip.filters.git_commit_hashes',
+        },
+    },
+    {
+        id: 'filter-website-urls',
+        key: 'websiteUrl',
+        label: 'settings.filters.website_urls',
+        tooltip: {
+            titleIcon: infoIcon,
+            title: 'settings.filters.website_urls_title',
+            text: 'tooltip.filters.website_urls',
+        },
+    },
+    {
+        id: 'filter-shorthand-numbers',
+        key: 'shorthandNumber',
+        label: 'settings.filters.shorthand_numbers',
+        tooltip: {
+            titleIcon: infoIcon,
+            title: 'settings.filters.shorthand_numbers_title',
+            text: 'tooltip.filters.shorthand_numbers',
+        },
+    },
 ];
 
 export const relatedSettingsDefinitions = [
-    { id: 'show-fab', key: 'showFab', label: 'settings.display.show_fab', tooltip: { titleIcon: infoIcon, title: 'settings.display.show_fab', text: 'tooltip.display.show_fab' } },
+    {
+        id: 'show-fab',
+        key: 'showFab',
+        label: 'settings.display.show_fab',
+        tooltip: { titleIcon: infoIcon, title: 'settings.display.show_fab', text: 'tooltip.display.show_fab' },
+    },
     {
         id: 'fab-position',
         key: 'fabPosition',
@@ -97,12 +202,50 @@ export const relatedSettingsDefinitions = [
             { value: 'top-left', label: 'settings.display.fab_positions.top_left' },
         ],
     },
-    { id: 'show-scan-count', key: 'showScanCount', label: 'settings.display.show_scan_count', tooltip: { titleIcon: infoIcon, title: 'settings.display.show_scan_count', text: 'tooltip.display.show_scan_count' } },
-    { id: 'show-line-numbers', key: 'showLineNumbers', label: 'settings.display.show_line_numbers', tooltip: { titleIcon: infoIcon, title: 'settings.display.show_line_numbers', text: 'tooltip.display.show_line_numbers' } },
-    { id: 'show-statistics', key: 'showStatistics', label: 'settings.display.show_statistics', tooltip: { titleIcon: infoIcon, title: 'settings.display.show_statistics', text: 'tooltip.display.show_statistics' } },
-    { id: 'enable-word-wrap', key: 'enableWordWrap', label: 'settings.display.enable_word_wrap', tooltip: { titleIcon: infoIcon, title: 'settings.display.enable_word_wrap', text: 'tooltip.display.enable_word_wrap' } },
     {
-        id: 'enable-text-truncation', key: 'enableTextTruncation', label: 'settings.display.text_truncation_limit',
+        id: 'show-scan-count',
+        key: 'showScanCount',
+        label: 'settings.display.show_scan_count',
+        tooltip: {
+            titleIcon: infoIcon,
+            title: 'settings.display.show_scan_count',
+            text: 'tooltip.display.show_scan_count',
+        },
+    },
+    {
+        id: 'show-line-numbers',
+        key: 'showLineNumbers',
+        label: 'settings.display.show_line_numbers',
+        tooltip: {
+            titleIcon: infoIcon,
+            title: 'settings.display.show_line_numbers',
+            text: 'tooltip.display.show_line_numbers',
+        },
+    },
+    {
+        id: 'show-statistics',
+        key: 'showStatistics',
+        label: 'settings.display.show_statistics',
+        tooltip: {
+            titleIcon: infoIcon,
+            title: 'settings.display.show_statistics',
+            text: 'tooltip.display.show_statistics',
+        },
+    },
+    {
+        id: 'enable-word-wrap',
+        key: 'enableWordWrap',
+        label: 'settings.display.enable_word_wrap',
+        tooltip: {
+            titleIcon: infoIcon,
+            title: 'settings.display.enable_word_wrap',
+            text: 'tooltip.display.enable_word_wrap',
+        },
+    },
+    {
+        id: 'enable-text-truncation',
+        key: 'enableTextTruncation',
+        label: 'settings.display.text_truncation_limit',
         linkedNumeric: {
             id: 'text-truncation-length',
             key: 'textTruncationLength',
@@ -110,10 +253,19 @@ export const relatedSettingsDefinitions = [
         tooltip: {
             titleIcon: infoIcon,
             title: 'settings.display.text_truncation_limit',
-            text: 'tooltip.display.text_truncation_limit'
-        }
+            text: 'tooltip.display.text_truncation_limit',
+        },
     },
-    { id: 'enable-debug-logging', key: 'enableDebugLogging', label: 'settings.advanced.enable_debug_logging', tooltip: { titleIcon: infoIcon, title: 'settings.advanced.enable_debug_logging', text: 'tooltip.advanced.enable_debug_logging' } },
+    {
+        id: 'enable-debug-logging',
+        key: 'enableDebugLogging',
+        label: 'settings.advanced.enable_debug_logging',
+        tooltip: {
+            titleIcon: infoIcon,
+            title: 'settings.advanced.enable_debug_logging',
+            text: 'tooltip.advanced.enable_debug_logging',
+        },
+    },
 ];
 
 /**
@@ -141,18 +293,39 @@ export const appConfig = {
     scanner: {
         // 定义了文本提取的目标CSS选择器
         targetSelectors: [
-            'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-            'li', 'td', 'th', 'pre', 'span', 'a', 'button',
-            'article', 'main', 'div', 'body *',
+            'p',
+            'h1',
+            'h2',
+            'h3',
+            'h4',
+            'h5',
+            'h6',
+            'li',
+            'td',
+            'th',
+            'pre',
+            'span',
+            'a',
+            'button',
+            'article',
+            'main',
+            'div',
+            'body *',
         ],
         // 定义了在扫描DOM元素时，需要提取其文本内容的属性列表
         attributesToExtract: ['placeholder', 'alt', 'title', 'aria-label'],
         // 定义一个CSS选择器数组，任何匹配这些选择器的元素及其所有后代都将被文本提取过程完全忽略。
         ignoredSelectors: [
             // --- 语义化标签 ---
-            'script', 'style', 'noscript', 'code', 'pre', 'kbd',
+            'script',
+            'style',
+            'noscript',
+            'code',
+            'pre',
+            'kbd',
             // --- 常见的非内容区域 ---
-            '.no-translate', '.view-line',
+            '.no-translate',
+            '.view-line',
         ],
     },
 };

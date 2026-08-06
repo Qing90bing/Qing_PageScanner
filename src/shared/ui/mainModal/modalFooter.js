@@ -14,8 +14,10 @@ import * as state from './modalState.js';
 import { SHOW_PLACEHOLDER } from './modalState.js';
 import { updateScanCount } from './modalHeader.js';
 import { createButton } from '../components/button.js';
+import { aiIcon } from '../../../assets/icons/aiIcon.js';
 
-let clearBtn, copyBtn, exportBtnContainer, unsubscribeLanguageChanged;
+let clearBtn, copyBtn, exportBtnContainer, aiSubmitBtn, aiRetryBtn, unsubscribeLanguageChanged;
+let currentFooterMode = 'quick-scan';
 
 function rerenderFooterTexts() {
     if (copyBtn) {
@@ -24,6 +26,8 @@ function rerenderFooterTexts() {
     if (clearBtn) {
         clearBtn.updateText('common.clear');
     }
+    if (aiSubmitBtn) aiSubmitBtn.updateText('ai.actions.submitPending');
+    if (aiRetryBtn) aiRetryBtn.updateText('ai.actions.retryReview');
     updateStatistics();
 }
 
@@ -51,10 +55,7 @@ export function populateModalFooter(modalFooter, updateContentCallback) {
         if (clearBtn.disabled) return;
         log(t('log.ui.modal.clearContent'));
 
-        const confirmed = await showConfirmationModal(
-            t('confirmation.clear'),
-            warningIcon
-        );
+        const confirmed = await showConfirmationModal(t('confirmation.clear'), warningIcon);
 
         if (confirmed) {
             const currentMode = state.currentMode;
@@ -64,6 +65,8 @@ export function populateModalFooter(modalFooter, updateContentCallback) {
                 fire('clearSessionScan');
             } else if (currentMode === 'element-scan') {
                 fire('clearElementScan');
+            } else if (currentMode === 'ai-scan') {
+                fire('ai-clear');
             }
             // 重置扫描计数显示
             updateScanCount(0, null);
@@ -91,7 +94,23 @@ export function populateModalFooter(modalFooter, updateContentCallback) {
     });
 
     exportBtnContainer = createExportButton();
+    aiSubmitBtn = createButton({
+        className: 'ai-submit-btn',
+        textKey: 'ai.actions.submitPending',
+        icon: aiIcon,
+        onClick: () => fire('ai-submit-pending'),
+        disabled: true,
+    });
+    aiRetryBtn = createButton({
+        className: 'ai-retry-btn',
+        textKey: 'ai.actions.retryReview',
+        icon: aiIcon,
+        onClick: () => fire('ai-retry-review'),
+        disabled: true,
+    });
     footerButtonContainer.appendChild(exportBtnContainer);
+    footerButtonContainer.appendChild(aiRetryBtn);
+    footerButtonContainer.appendChild(aiSubmitBtn);
     footerButtonContainer.appendChild(clearBtn);
     footerButtonContainer.appendChild(copyBtn);
 
@@ -114,6 +133,14 @@ export function destroyModalFooter() {
         exportBtnContainer.destroy();
         exportBtnContainer = null;
     }
+    if (aiSubmitBtn) {
+        aiSubmitBtn.destroy();
+        aiSubmitBtn = null;
+    }
+    if (aiRetryBtn) {
+        aiRetryBtn.destroy();
+        aiRetryBtn = null;
+    }
     if (unsubscribeLanguageChanged) {
         unsubscribeLanguageChanged();
         unsubscribeLanguageChanged = null; // 移除引用
@@ -121,6 +148,29 @@ export function destroyModalFooter() {
     copyBtn = null;
     clearBtn = null;
     log(t('log.ui.modal.footerCleanedUp'));
+}
+
+/** @param {'quick-scan'|'session-scan'|'element-scan'|'ai-scan'} mode */
+export function setModalFooterMode(mode) {
+    currentFooterMode = mode;
+    aiSubmitBtn?.classList.toggle('is-visible', mode === 'ai-scan');
+    aiRetryBtn?.classList.toggle('is-visible', mode === 'ai-scan');
+}
+
+/** @param {object} snapshot */
+export function updateAiFooterState(snapshot) {
+    if (!snapshot) return;
+    if (clearBtn && currentFooterMode === 'ai-scan') {
+        clearBtn.disabled = (snapshot.counts?.total || 0) === 0;
+    }
+    if (aiSubmitBtn) {
+        aiSubmitBtn.disabled = !snapshot.active || snapshot.processing || (snapshot.counts?.pending || 0) === 0;
+    }
+    if (aiRetryBtn) {
+        const retryCount = (snapshot.counts?.review || 0) + (snapshot.counts?.failed || 0);
+        aiRetryBtn.disabled = !snapshot.active || snapshot.processing || retryCount === 0;
+    }
+    if (currentFooterMode !== 'ai-scan') return;
 }
 
 export function updateStatistics() {

@@ -44,7 +44,7 @@ export function processTextsInFallback(texts, logPrefix = '') {
     const processedTexts = filterAndNormalizeTexts(texts, filterRules, true, logFiltered);
 
     // 将处理后的文本添加到会话 Set 中
-    processedTexts.forEach(text => sessionTexts.add(text));
+    processedTexts.forEach((text) => sessionTexts.add(text));
 
     // 如果 Set 的大小发生变化，则返回 true
     return sessionTexts.size > originalSize;

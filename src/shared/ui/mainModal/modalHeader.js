@@ -10,12 +10,23 @@ import { createSVGFromString } from '../../utils/dom/dom.js';
 import { t } from '../../i18n/index.js';
 import { on } from '../../utils/core/eventBus.js';
 import { summaryIcon } from '../../../assets/icons/summaryIcon.js';
+import { aiIcon } from '../../../assets/icons/aiIcon.js';
 import { closeIcon } from '../../../assets/icons/closeIcon.js';
 import { loadSettings } from '../../../features/settings/logic.js';
 import { simpleTemplate } from '../../utils/dom/templating.js';
 
 let titleContainer, scanCountDisplay, closeBtn, unsubscribeLanguageChanged, unsubscribeSettingsSaved;
 let currentScanState = { count: 0, type: null };
+let currentHeaderMode = 'quick-scan';
+
+function renderHeaderTitle() {
+    if (!titleContainer) return;
+
+    const isAiMode = currentHeaderMode === 'ai-scan';
+    const title = createIconTitle(isAiMode ? aiIcon : summaryIcon, t(isAiMode ? 'results.aiTitle' : 'results.title'));
+    if (scanCountDisplay) title.appendChild(scanCountDisplay);
+    titleContainer.replaceChildren(title);
+}
 
 /**
  * @private
@@ -26,7 +37,12 @@ function updateScanCountDisplay() {
     if (!scanCountDisplay) return;
 
     if (showScanCount && currentScanState.count > 0 && currentScanState.type) {
-        const key = currentScanState.type === 'session' ? 'results.scanCountSession' : 'results.scanCountStatic';
+        const key =
+            currentScanState.type === 'ai'
+                ? 'results.scanCountAi'
+                : currentScanState.type === 'session'
+                  ? 'results.scanCountSession'
+                  : 'results.scanCountStatic';
         const template = t(key);
         scanCountDisplay.textContent = simpleTemplate(template, { count: currentScanState.count });
         scanCountDisplay.classList.add('is-visible');
@@ -46,13 +62,7 @@ function updateScanCountDisplay() {
  * @description 更新模态框头部的所有文本内容，包括标题和扫描计数。
  */
 function rerenderHeaderTexts() {
-    if (titleContainer) {
-        // 仅更新标题文本，不重新创建整个元素
-        const titleElement = titleContainer.querySelector('.icon-title-text');
-        if (titleElement) {
-            titleElement.textContent = t('results.title');
-        }
-    }
+    renderHeaderTitle();
     // 重新渲染扫描计数以应用新的语言
     updateScanCountDisplay();
 }
@@ -66,8 +76,6 @@ export function populateModalHeader(modalHeader, closeCallback) {
     // 左侧标题容器
     titleContainer = document.createElement('div');
     titleContainer.id = 'main-modal-title-container';
-    const newTitleElement = createIconTitle(summaryIcon, t('results.title'));
-    titleContainer.appendChild(newTitleElement);
 
     // 右侧控件容器
     const rightControlsContainer = document.createElement('div');
@@ -76,8 +84,7 @@ export function populateModalHeader(modalHeader, closeCallback) {
     // 扫描计数器
     scanCountDisplay = document.createElement('span');
     scanCountDisplay.id = 'scan-count-display';
-    // 将计数器直接附加到标题元素后面
-    newTitleElement.appendChild(scanCountDisplay);
+    renderHeaderTitle();
 
     // 关闭按钮
     closeBtn = document.createElement('span');
@@ -123,9 +130,17 @@ export function destroyModalHeader(closeCallback) {
 /**
  * @description 更新扫描计数的外部接口。
  * @param {number} count - 新的扫描计数。
- * @param {('session'|'static'|null)} type - 扫描类型。
+ * @param {('session'|'static'|'ai'|null)} type - 扫描类型。
  */
 export function updateScanCount(count, type) {
     currentScanState = { count, type };
     updateScanCountDisplay();
+}
+
+/**
+ * @param {'quick-scan'|'session-scan'|'element-scan'|'ai-scan'} mode
+ */
+export function setModalHeaderMode(mode) {
+    currentHeaderMode = mode;
+    renderHeaderTitle();
 }

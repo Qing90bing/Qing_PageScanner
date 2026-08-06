@@ -1,11 +1,16 @@
 // src/features/session-scan/ui.js
 
-import { updateModalContent, SHOW_PLACEHOLDER, SHOW_LOADING, closeModal } from '../../shared/ui/mainModal/index.js';
+import { updateModalContent, SHOW_PLACEHOLDER, SHOW_LOADING } from '../../shared/ui/mainModal/index.js';
 import { modalOverlay } from '../../shared/ui/mainModal/modalState.js';
 import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
 import * as sessionExtractor from './logic.js';
 import { showNotification } from '../../shared/ui/components/notification.js';
-import { createCounterWithHelp, showCounterWithHelp, hideCounterWithHelp, updateCounterValue } from '../../shared/ui/components/counterWithHelp.js';
+import {
+    createCounterWithHelp,
+    showCounterWithHelp,
+    hideCounterWithHelp,
+    updateCounterValue,
+} from '../../shared/ui/components/counterWithHelp.js';
 import { t } from '../../shared/i18n/index.js';
 import { setFabIcon, getElementScanFab, updateFabTooltip, getDynamicFab } from '../../shared/ui/components/fab.js';
 import { dynamicIcon } from '../../assets/icons/dynamicIcon.js';
@@ -18,6 +23,7 @@ import { loadSettings, saveSettings, applySettings } from '../settings/logic.js'
 import { settingsIcon } from '../../assets/icons/settingsIcon.js';
 import { infoIcon } from '../../assets/icons/infoIcon.js';
 import { uiContainer } from '../../shared/ui/uiContainer.js';
+import { acquireScanMode, releaseScanMode, SCAN_MODES } from '../../shared/services/scanModeCoordinator.js';
 
 let currentSessionCount = 0;
 
@@ -49,9 +55,9 @@ function showTopCenterUI() {
                     tooltip: {
                         titleIcon: infoIcon,
                         title: 'tooltip.persistData.title',
-                        text: 'tooltip.persistData.text.sessionScan'
-                    }
-                }
+                        text: 'tooltip.persistData.text.sessionScan',
+                    },
+                },
             ];
             openContextualSettingsPanel({
                 titleKey: 'settings.contextual.sessionScanTitle',
@@ -62,9 +68,9 @@ function showTopCenterUI() {
                     const updatedSettings = { ...currentSettings, ...newSettings };
                     saveSettings(updatedSettings);
                     applySettings(updatedSettings, currentSettings);
-                }
+                },
             });
-        }
+        },
     });
     showCounterWithHelp();
 }
@@ -172,8 +178,13 @@ export function handleDynamicExtractClick(dynamicFab) {
         }
         // 在停止时移除键盘事件监听器
         document.removeEventListener('keydown', handleEscForSessionScan, true);
+        releaseScanMode(SCAN_MODES.DYNAMIC);
     } else {
         // --- 启动会话扫描 ---
+        if (!acquireScanMode(SCAN_MODES.DYNAMIC)) {
+            showNotification(t('notifications.scanModeConflict'), { type: 'info' });
+            return;
+        }
         log(t('scan.startSession'));
 
         setFabIcon(dynamicFab, stopIcon);
@@ -189,12 +200,27 @@ export function handleDynamicExtractClick(dynamicFab) {
         showNotification(t('scan.sessionStarted'), { type: 'info' });
         showTopCenterUI();
 
-        setTimeout(() => {
-            sessionExtractor.start((count) => {
+        void sessionExtractor
+            .start((count) => {
                 updateCounterValue(count);
                 currentSessionCount = count;
+            })
+            .catch((error) => {
+                log(t('log.sessionScan.worker.initSyncError', { error: error.message }), 'error');
+                setFabIcon(dynamicFab, dynamicIcon);
+                dynamicFab.classList.remove('is-recording');
+                updateFabTooltip(dynamicFab, 'tooltip.dynamic_scan');
+                hideTopCenterUI();
+                document.removeEventListener('keydown', handleEscForSessionScan, true);
+                if (elementScanFab) {
+                    elementScanFab.classList.remove('fab-disabled');
+                    if (elementScanFab.dataset.originalTooltipKey) {
+                        updateFabTooltip(elementScanFab, elementScanFab.dataset.originalTooltipKey);
+                    }
+                }
+                releaseScanMode(SCAN_MODES.DYNAMIC);
+                showNotification(t('notifications.scanFailed'), { type: 'error' });
             });
-        }, 50);
 
         // 在启动时添加键盘事件监听器，使用捕获阶段以确保优先执行
         document.addEventListener('keydown', handleEscForSessionScan, true);
@@ -210,13 +236,33 @@ on('resumeScanSession', async (state) => {
 
         // 确保按钮存在且当前未在扫描
         if (dynamicFab && !sessionExtractor.isSessionRecording()) {
-            const resumedData = (settings.sessionScan_persistData && state.data) ? state.data : null;
+            if (!acquireScanMode(SCAN_MODES.DYNAMIC)) {
+                showNotification(t('notifications.scanModeConflict'), { type: 'info' });
+                return;
+            }
+            const resumedData = settings.sessionScan_persistData && state.data ? state.data : null;
 
             // 直接调用 start 函数，并传入恢复的数据
-            sessionExtractor.start((count) => {
-                updateCounterValue(count);
-                currentSessionCount = count;
-            }, resumedData);
+            void sessionExtractor
+                .start((count) => {
+                    updateCounterValue(count);
+                    currentSessionCount = count;
+                }, resumedData)
+                .catch((error) => {
+                    releaseScanMode(SCAN_MODES.DYNAMIC);
+                    setFabIcon(dynamicFab, dynamicIcon);
+                    dynamicFab.classList.remove('is-recording');
+                    updateFabTooltip(dynamicFab, 'tooltip.dynamic_scan');
+                    hideTopCenterUI();
+                    const elementScanFab = getElementScanFab();
+                    if (elementScanFab) {
+                        elementScanFab.classList.remove('fab-disabled');
+                        if (elementScanFab.dataset.originalTooltipKey) {
+                            updateFabTooltip(elementScanFab, elementScanFab.dataset.originalTooltipKey);
+                        }
+                    }
+                    log(t('log.main.resumeFailed'), error);
+                });
 
             // 手动更新UI状态以匹配“正在录制”
             setFabIcon(dynamicFab, stopIcon);

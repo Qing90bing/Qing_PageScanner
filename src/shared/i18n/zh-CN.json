@@ -1,431 +1,541 @@
 {
-  "_meta": {
-    "name": "简体中文"
-  },
-  "script": {
-    "name": "网页文本提取工具"
-  },
-  "common": {
-    "scan": "扫描",
-    "stop": "停止",
-    "pause": "暂停",
-    "resume": "恢复",
-    "clear": "清空",
-    "copy": "复制",
-    "save": "保存",
-    "discovered": "已发现:",
-    "confirm": "确认",
-    "cancel": "取消",
-    "export": "导出",
-    "reselect": "重新选择",
-    "stage": "暂存",
-    "processingElement": "处理元素"
-  },
-  "export": {
-    "exportAsTxt": "导出为 TXT",
-    "exportAsJson": "导出为 JSON",
-    "exportAsCsv": "导出为 CSV",
-    "csv": {
-      "id": "ID",
-      "original": "原文",
-      "translation": "译文"
-    }
-  },
-  "settings": {
-    "title": "设置",
-    "theme": "主题",
-    "language": "语言",
-    "format": "输出格式",
-    "formats": {
-      "array": "嵌套数组",
-      "object": "键值对对象",
-      "csv": "CSV 字符串"
+    "_meta": {
+        "name": "简体中文"
     },
-    "output": {
-      "include_brackets": "包含首尾符号"
+    "script": {
+        "name": "网页文本提取工具"
     },
-    "relatedSettings": "相关设置",
-    "filterRules": "内容过滤规则",
-    "dynamicScanRefreshNotice": "使用动态扫描模式时，保存过滤规则后需要刷新网页才能生效。",
-    "filters": {
-      "numbers": "过滤数字/货币",
-      "chinese": "过滤纯中文文本",
-      "contains_chinese": "过滤含中文的文本",
-      "emoji_only": "过滤纯表情符号文本",
-      "symbols": "过滤纯符号文本",
-      "term": "过滤特定术语",
-      "single_letter": "过滤单个英文字母",
-      "repeating_chars": "过滤重复字符",
-      "file_paths": "过滤文件路径",
-      "hex_color_codes": "过滤十六进制颜色代码",
-      "email_addresses": "过滤电子邮件地址",
-      "uuids": "过滤 UUID",
-      "git_commit_hashes": "过滤 Git 提交哈希值",
-      "website_urls": "过滤网站链接",
-      "website_urls_title": "过滤网站链接",
-      "shorthand_numbers": "过滤速记数字",
-      "shorthand_numbers_title": "过滤速记数字"
+    "common": {
+        "scan": "扫描",
+        "stop": "停止",
+        "pause": "暂停",
+        "resume": "恢复",
+        "clear": "清空",
+        "copy": "复制",
+        "save": "保存",
+        "reset": "重置",
+        "delete": "删除",
+        "discovered": "已发现:",
+        "confirm": "确认",
+        "cancel": "取消",
+        "export": "导出",
+        "reselect": "重新选择",
+        "stage": "暂存",
+        "processingElement": "处理元素"
     },
-    "display": {
-      "show_fab": "显示悬浮按钮",
-      "fab_position": "悬浮按钮位置",
-      "fab_positions": {
-        "bottom_right": "↘ 右下角",
-        "top_right": "↗ 右上角",
-        "bottom_left": "↙ 左下角",
-        "top_left": "↖ 左上角"
-      },
-      "show_line_numbers": "显示行号",
-      "show_statistics": "显示统计信息",
-      "enable_word_wrap": "启用自动换行",
-      "text_truncation_limit": "启用文本截断限制",
-      "character_limit": "字符限制",
-      "show_scan_count": "在标题中启用扫描计数"
-    },
-    "advanced": {
-      "enable_debug_logging": "启用调试日志记录",
-      "init_i18n": "初始化国际化（i18n）",
-      "init_logger": "根据设置初始化日志记录器"
-    },
-    "panel": {
-      "title": "设置面板"
-    },
-    "contextual": {
-      "elementScanTitle": "选取元素扫描设置",
-      "sessionScanTitle": "动态扫描设置",
-      "persistData": "跨页面时保留扫描数据"
-    },
-    "languages": {
-      "auto": "自动检测",
-      "en": "英文 (美国)",
-      "zh-CN": "简体中文",
-      "zh-TW": "繁体中文"
-    },
-    "themes": {
-      "light": "浅色",
-      "dark": "深色",
-      "system": "跟随系统"
-    },
-    "about": "关于",
-    "aboutPanel": {
-      "title": "关于",
-      "version": "版本",
-      "projectUrl": "GitHub"
-    }
-  },
-  "scan": {
-    "quick": "快速扫描",
-    "session": "动态扫描",
-    "stagedCount": "已暂存:",
-    "elementFinished": "选取元素扫描完成，发现 {{count}} 条文本。",
-    "startSession": "开始动态扫描会话",
-    "stopSession": "停止动态扫描会话",
-    "finished": "扫描完成，发现 {{count}} 条文本。",
-    "quickFinished": "快速扫描完成，发现 {{count}} 条文本。",
-    "sessionStarted": "动态扫描已开始。",
-    "sessionInProgress": "扫描进行中...",
-    "truncationWarning": "为保持界面流畅，此处仅显示部分文本。导出后将包含完整内容。"
-  },
-  "slider": {
-    "adjustFrameSize": "移动滑块以调整框架大小",
-    "minLabel": "最小",
-    "maxLabel": "最大"
-  },
-  "results": {
-    "title": "提取的文本",
-    "scanCountSession": "已扫描 {{count}} 个项目",
-    "scanCountStatic": "共扫描 {{count}} 个项目",
-    "totalCharacters": "总字符数",
-    "totalLines": "总行数",
-    "noSummary": "无可用摘要",
-    "stats": {
-      "lines": "行",
-      "chars": "字符"
-    }
-  },
-  "notifications": {
-    "copiedToClipboard": "已复制到剪贴板！",
-    "settingsSaved": "设置已保存！",
-    "modalInitError": "模态框未初始化。",
-    "nothingToCopy": "没有可复制的内容。",
-    "contentCleared": "内容已清除。",
-    "noTextSelected": "未选择任何文本。",
-    "scanFailed": "扫描失败。",
-    "elementScanStarted": "选取元素扫描已开始。",
-    "elementScanPaused": "元素扫描已暂停。",
-    "elementScanResumed": "选取元素扫描会话已从上一页恢复。",
-    "elementScanContinued": "选取元素扫描已继续。",
-    "sessionScanStarted": "动态扫描已开始。",
-    "sessionScanPaused": "动态扫描已暂停。",
-    "sessionScanResumed": "动态扫描会话已从上一页恢复。",
-    "sessionScanContinued": "动态扫描已继续。",
-    "cspWorkerWarning": "因网站安全限制，已切换至兼容扫描模式。"
-  },
-  "placeholders": {
-    "click": "点击 ",
-    "dynamicScan": "[动态扫描]",
-    "startNewScanSession": " 开始新的扫描会话",
-    "staticScan": "[静态扫描]",
-    "performOneTimeScan": " 执行一次性快速提取"
-  },
-  "confirmation": {
-    "clear": "您确定要清除内容吗？此操作无法撤销。"
-  },
-  "tooltip": {
-    "summary": "查看摘要",
-    "dynamic_scan": "动态扫描",
-    "static_scan": "静态扫描",
-    "element_scan": "选取元素扫描",
-    "pauseElementScan": "暂停元素扫描",
-    "resumeElementScan": "恢复元素扫描",
-    "pauseSessionScan": "暂停动态扫描",
-    "resumeSessionScan": "恢复动态扫描",
-    "tooltipHelp": "帮助",
-    "persistData": {
-      "title": "数据持久化说明",
-      "text": {
-        "sessionScan": "开启后，当点击链接跳转到新页面时，会自动恢复并继续累加上一页的扫描结果。关闭此选项，则只恢复扫描模式，但会开始一次全新的扫描。",
-        "elementScan": "开启后，当点击链接跳转到新页面时，会自动恢复当前已暂存的所有文本。关闭此选项，则只恢复扫描模式，但暂存区会是空的。"
-      }
-    },
-    "disabled": {
-      "scan_in_progress": "另一项扫描正在进行中"
-    },
-    "filters": {
-      "title": "内容过滤器说明",
-      "numbers": "此规则过滤掉<strong>完全</strong>由数字、空格、千位分隔符(,)、小数点(.)以及部分货币符号($, €, £, ¥)组成的文本。<br><br><strong>更多示例:</strong><br>• \"1,234.56\"<br>• \"¥999\"<br>• \"€200\"<br>• \"$ 100\"",
-      "chinese": "此规则过滤掉<strong>完全</strong>由汉字和空格组成，且不含任何标点的文本。<br><br><strong>示例:</strong><br>• \"你好 世界\" (将被过滤)<br>• \"你好，世界\" (不会被过滤)",
-      "contains_chinese": "此规则过滤掉任何含有至少一个汉字的文本，无论其他字符是什么。<br><br><strong>示例:</strong><br>• \"你好 World\" (将被过滤)<br>• \"第一章\" (将被过滤)",
-      "emoji_only": "此规则过滤掉<strong>完全</strong>由一个或多个表情符号及空格组成的文本。<br><br><strong>示例:</strong><br>• \"👍\"<br>• \"😊 🎉 🚀\"",
-      "symbols": "此规则过滤掉<strong>完全</strong>由各种标点和符号组成的文本。<br><br><strong>更多示例:</strong><br>• \"@#*&^%\"<br>• \"()[]{}\"<br>• \"---...---\"",
-      "term": "此规则过滤掉通常不需要翻译的常见UI术语。<br><br><strong>更多示例:</strong><br>• \"OK\", \"Cancel\", \"Submit\"<br>• \"Login\", \"Settings\", \"Help\"",
-      "single_letter": "此规则过滤掉由<strong>单个</strong>英文字母组成的文本（不区分大小写）。<br><br><strong>示例:</strong><br>• \"A\" (将被过滤)<br>• \"b\" (将被过滤)<br>• \"AB\" (不会被过滤)",
-      "repeating_chars": "此规则过滤掉由<strong>同一个字符</strong>连续重复2次或以上的文本。<br><br><strong>示例:</strong><br>• \"aa\"<br>• \"======\"<br>• \"bbbbb\"",
-      "file_paths": "此规则尝试识别并过滤掉类似操作系统文件路径且<strong>包含文件扩展名</strong>的文本。它不匹配网址。<br><br><strong>更多示例:</strong><br>• \"/path/to/file.js\"<br>• \"C:\\Users\\Test\\document.docx\"<br>• \"./config.json\"",
-      "hex_color_codes": "此规则过滤掉标准的CSS十六进制颜色代码（3、4、6或8位，后者包含透明度通道）。<br><br><strong>示例:</strong><br>• \"#FFFFFF\"<br>• \"#ff0000\"<br>• \"#f0c\"<br>• \"#f0c8\" (4位)<br>• \"#ff000080\" (8位)",
-      "email_addresses": "此规则过滤掉符合标准电子邮件地址格式的文本。<br><br><strong>示例:</strong><br>• \"example@domain.com\"<br>• \"user.name@sub.domain.org\"",
-      "uuids": "此规则过滤掉通用唯一标识符 (UUID)。<br><br><strong>示例:</strong><br>• \"123e4567-e89b-12d3-a456-426614174000\"",
-      "git_commit_hashes": "此规则过滤掉标准的Git提交哈希值（长或短）。<br><br><strong>示例:</strong><br>• \"a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2\"<br>• \"a1b2c3d\"",
-      "website_urls": "此规则过滤掉<strong>独立的网址</strong>。它设计得比较严格，以避免意外移除不是链接的文本。<br><br><strong>更多示例:</strong><br>• \"https://www.example.com\"<br>• \"http://test.co.uk\"<br>• \"www.google.com\"<br>• \"example.org\"",
-      "shorthand_numbers": "此规则过滤掉使用<strong>常见速记后缀</strong>表示千(k)、百万(m)或十亿(b)的数字（不区分大小写）。<br><br><strong>更多示例:</strong><br>• \"1.2k\"<br>• \"15M\"<br>• \"2.5b\"<br>• \"100K\""
-    },
-    "display": {
-      "title": "显示设置说明",
-      "show_fab": "控制是否在网页右下角显示<strong>悬浮操作按钮(FAB)</strong>。这是进行静态和动态文本提取的主要入口。<br><br>如果您禁用了此按钮，可以通过油猴扩展菜单中的设置面板重新启用它。",
-      "show_scan_count": "启用后，结果窗口的标题栏将<strong>实时显示</strong>当前扫描中找到的总文本项目数。这对于监控长时间运行的<strong>动态扫描</strong>的进度特别有用。",
-      "show_line_numbers": "在结果窗口的文本区域左侧显示行号。当您需要讨论或记录特定文本行时，这提供了一个<strong>精确的参考点</strong>。",
-      "show_statistics": "在结果窗口底部的状态栏中显示有关提取内容的<strong>实时统计数据</strong>，包括<strong>总行数</strong>和<strong>总字符数</strong>。这有助于您快速评估内容的体量。",
-      "enable_word_wrap": "控制结果窗口中长文本行的显示方式。<br><br>• <strong>启用:</strong> 长行将自动换行以适应窗口宽度。<br>• <strong>禁用:</strong> 长行将保持在单行，并出现水平滚动条。",
-      "text_truncation_limit": "这是一个<strong>性能优化</strong>功能。如果脚本提取到<strong>极长的单行文本</strong>（例如，base64编码的图片），可能会导致浏览器<strong>卡顿或无响应</strong>。<br><br>此设置会截断任何超过指定长度的单行文本，以确保UI保持流畅。<strong>注意：这仅影响显示；导出的文件仍将包含完整的、未截断的内容。</strong>"
-    },
-    "advanced": {
-      "title": "高级设置说明",
-      "enable_debug_logging": "启用后，脚本会将详细的内部状态、执行步骤和错误信息输出到浏览器的<strong>开发者工具控制台</strong>（通常用F12打开）。这主要供开发者或需要提交详细错误报告的用户使用。"
-    },
-    "output": {
-      "include_brackets": "控制输出文本是否包含格式的首尾符号（如数组格式的 <code>[</code> 和 <code>]</code>，或对象格式的 <code>{</code> 和 <code>}</code>）。<br><br><strong>开启时:</strong> 包含完整的格式结构。<br><strong>关闭时:</strong> 仅输出内容行，不含首尾符号。"
-    }
-  },
-  "log": {
-    "prefix": "[文本提取脚本-调试]",
-    "language": {
-      "switched": "语言已切换至：{{lang}}",
-      "notFound": "未找到语言 '{{lang}}'，已回退至 'en'。"
+    "export": {
+        "exportAsTxt": "导出为 TXT",
+        "exportAsJson": "导出为 JSON",
+        "exportAsCsv": "导出为 CSV",
+        "csv": {
+            "id": "ID",
+            "original": "原文",
+            "translation": "译文"
+        }
     },
     "settings": {
-      "changed": "设置 '{{key}}' 已从 '{{oldValue}}' 更改为 '{{newValue}}'",
-      "filterRuleChanged": {
-        "enabled": "过滤规则 '{{key}}' 已启用",
-        "disabled": "过滤规则 '{{key}}' 已禁用"
-      },
-      "panel": {
-        "opening": "正在打开设置面板...",
-        "closing": "正在关闭设置面板...",
-        "saving": "正在保存设置..."
-      },
-      "parseError": "解析已保存的设置时出错：",
-      "invalidObject": "试图为设置保存一个无效对象："
+        "title": "设置",
+        "theme": "主题",
+        "language": "语言",
+        "format": "输出格式",
+        "formats": {
+            "array": "嵌套数组",
+            "object": "键值对对象",
+            "csv": "CSV 字符串"
+        },
+        "output": {
+            "include_brackets": "包含首尾符号"
+        },
+        "relatedSettings": "相关设置",
+        "filterRules": "内容过滤规则",
+        "dynamicScanRefreshNotice": "使用动态扫描模式时，保存过滤规则后需要刷新网页才能生效。",
+        "filters": {
+            "numbers": "过滤数字/货币",
+            "chinese": "过滤纯中文文本",
+            "contains_chinese": "过滤含中文的文本",
+            "emoji_only": "过滤纯表情符号文本",
+            "symbols": "过滤纯符号文本",
+            "term": "过滤特定术语",
+            "single_letter": "过滤单个英文字母",
+            "repeating_chars": "过滤重复字符",
+            "file_paths": "过滤文件路径",
+            "hex_color_codes": "过滤十六进制颜色代码",
+            "email_addresses": "过滤电子邮件地址",
+            "uuids": "过滤 UUID",
+            "git_commit_hashes": "过滤 Git 提交哈希值",
+            "website_urls": "过滤网站链接",
+            "website_urls_title": "过滤网站链接",
+            "shorthand_numbers": "过滤速记数字",
+            "shorthand_numbers_title": "过滤速记数字"
+        },
+        "display": {
+            "show_fab": "显示悬浮按钮",
+            "fab_position": "悬浮按钮位置",
+            "fab_positions": {
+                "bottom_right": "↘ 右下角",
+                "top_right": "↗ 右上角",
+                "bottom_left": "↙ 左下角",
+                "top_left": "↖ 左上角"
+            },
+            "show_line_numbers": "显示行号",
+            "show_statistics": "显示统计信息",
+            "enable_word_wrap": "启用自动换行",
+            "text_truncation_limit": "启用文本截断限制",
+            "character_limit": "字符限制",
+            "show_scan_count": "在标题中启用扫描计数"
+        },
+        "advanced": {
+            "enable_debug_logging": "启用调试日志记录",
+            "init_i18n": "初始化国际化（i18n）",
+            "init_logger": "根据设置初始化日志记录器"
+        },
+        "panel": {
+            "title": "设置面板"
+        },
+        "contextual": {
+            "elementScanTitle": "选取元素扫描设置",
+            "sessionScanTitle": "动态扫描设置",
+            "persistData": "跨页面时保留扫描数据"
+        },
+        "languages": {
+            "auto": "自动检测",
+            "en": "英文 (美国)",
+            "zh-CN": "简体中文",
+            "zh-TW": "繁体中文"
+        },
+        "themes": {
+            "light": "浅色",
+            "dark": "深色",
+            "system": "跟随系统"
+        },
+        "ai": {
+            "title": "AI 扫描",
+            "enabled": "启用 AI 功能",
+            "enabledDescription": "关闭后会停止 AI 扫描并隐藏 AI 悬浮按钮；普通扫描功能不受影响。",
+            "betaBadge": "Beta",
+            "betaNotice": "目前该功能不稳定，问题较多，仅做测试。",
+            "general": "扫描与翻译",
+            "processingMode": "处理模式",
+            "manual": "手动提交",
+            "automatic": "自动处理",
+            "targetLanguage": "目标语言",
+            "simplifiedChinese": "中文简体",
+            "traditionalChinese": "中文繁体",
+            "confidenceThreshold": "置信度阈值",
+            "provider": "供应商配置",
+            "currentProvider": "当前供应商",
+            "providerName": "供应商名称",
+            "apiUrl": "完整 API 地址（chat/completions）",
+            "model": "模型",
+            "responseMode": "响应模式",
+            "jsonMode": "JSON 模式",
+            "promptJson": "Prompt JSON",
+            "apiKey": "API Key（独立保存）",
+            "addProvider": "新增供应商",
+            "newProvider": "新供应商",
+            "saveProvider": "保存供应商配置",
+            "testConnection": "测试处理与延迟",
+            "testDescription": "发送一条固定的合成短文本，验证供应商能返回可解析的分类与翻译 JSON；不会发送网页内容。测试可能产生极小费用。",
+            "testing": "正在测试分类、翻译和 JSON 结果，可能产生极小费用…",
+            "processingOk": "处理正常",
+            "connectionOk": "处理正常",
+            "connectionFailed": "处理测试失败",
+            "costControl": "成本控制",
+            "maxBatchItems": "单批最多条目",
+            "maxBatchCharacters": "单批最多字符",
+            "maxRequests": "单页面最多请求",
+            "maxPageCharacters": "单页面最多字符",
+            "dailyTokens": "每日估算 Token 上限",
+            "timeout": "请求超时（秒）",
+            "resetDailyUsage": "清除今日用量",
+            "siteStyles": "站点翻译偏好（可选）",
+            "siteStylesDescription": "这是可选项。直接保存即可为当前网站使用默认中文表达；只有需要固定术语或特殊表达时才填写更多内容。",
+            "styleLibrary": "已保存偏好",
+            "styleEditor": "当前网站偏好",
+            "searchStyles": "搜索站点偏好",
+            "sortStyles": "排序",
+            "sortRecent": "最近更新",
+            "sortOrigin": "按站点",
+            "styleOrigin": "站点 Origin",
+            "stylePath": "可选路径前缀",
+            "styleTone": "语气",
+            "styleGlossary": "术语表与专有名词",
+            "stylePunctuation": "标点习惯",
+            "styleInstructions": "自定义翻译要求",
+            "advancedStyleSettings": "高级匹配设置",
+            "defaultStyleTone": "自然、清晰，符合中文网页表达",
+            "defaultStylePunctuation": "使用目标语言的标准中文标点",
+            "useCurrentSite": "使用当前网站",
+            "noStyles": "没有匹配的站点偏好",
+            "saveStyle": "保存当前网站偏好",
+            "clearStyles": "清空全部偏好"
+        },
+        "about": "关于",
+        "aboutPanel": {
+            "title": "关于",
+            "version": "版本",
+            "projectUrl": "GitHub"
+        }
     },
-    "textProcessor": {
-      "filtered": "文本已过滤: \"{{text}}\" (原因: {{reason}})"
+    "scan": {
+        "quick": "快速扫描",
+        "session": "动态扫描",
+        "stagedCount": "已暂存:",
+        "elementFinished": "选取元素扫描完成，发现 {{count}} 条文本。",
+        "startSession": "开始动态扫描会话",
+        "stopSession": "停止动态扫描会话",
+        "finished": "扫描完成，发现 {{count}} 条文本。",
+        "quickFinished": "快速扫描完成，发现 {{count}} 条文本。",
+        "sessionStarted": "动态扫描已开始。",
+        "sessionInProgress": "扫描进行中...",
+        "truncationWarning": "为保持界面流畅，此处仅显示部分文本。导出后将包含完整内容。"
     },
-    "quickScan": {
-      "switchToFallback": "[快速扫描] 正在切换到主线程备选方案。",
-      "fallbackFailed": "[快速扫描] 主线程备选方案执行失败: {{error}}",
-      "fallback": {
-        "starting": "[快速扫描 - 备选] 正在主线程中开始处理...",
-        "completed": "[快速扫描 - 备选] 处理完成，找到 {{count}} 条不重复文本。"
-      },
-      "worker": {
-        "logPrefix": "[快速扫描 Worker]",
-        "starting": "[快速扫描] 开始执行，尝试使用 Web Worker...",
-        "completed": "[快速扫描] Worker 处理成功，收到 {{count}} 条文本。",
-        "scanComplete": "[快速扫描 Worker] 处理完成，找到 {{count}} 条不重复文本。正在发回主线程...",
-        "initFailed": "[快速扫描] Worker 初始化失败。这很可能是由于网站的内容安全策略 (CSP) 导致的。",
-        "originalError": "[快速扫描] 原始错误: {{error}}",
-        "sendingData": "[快速扫描] Web Worker 已创建，正在发送 {{count}} 条文本进行处理...",
-        "initSyncError": "[快速扫描] Worker 初始化期间发生同步错误: {{error}}",
-        "cspBlocked": "[快速扫描] CSP检查失败，不允许创建Worker。"
-      }
+    "slider": {
+        "adjustFrameSize": "移动滑块以调整框架大小",
+        "minLabel": "最小",
+        "maxLabel": "最大"
     },
-    "sessionScan": {
-      "switchToFallback": "[动态扫描] 正在切换到主线程备选方案。",
-      "resuming": "正在从上一页恢复动态扫描...",
-      "domObserver": {
-        "stopped": "[动态扫描] 已停止监听 DOM 变化。"
-      },
-      "fallback": {
-        "initialized": "[动态扫描 - 备选] 已初始化。",
-        "cleared": "[动态扫描 - 备选] 数据已清除。"
-      },
-      "worker": {
-        "logPrefix": "[动态扫描 Worker]",
-        "starting": "动态扫描：正在尝试启动 Web Worker...",
-        "initFailed": "[动态扫描] Worker 初始化失败。这很可能是由于网站的内容安全策略 (CSP) 导致的。",
-        "originalError": "[动态扫描] 原始错误: {{error}}",
-        "initialized": "[动态扫描] Worker 初始化成功，已发送 {{count}} 条初始文本以开始会话。",
-        "initSyncError": "[动态扫描] Worker 初始化期间发生同步错误: {{error}}",
-        "clearCommandSent": "[动态扫描] 清除命令已发送至 worker。",
-        "cspBlocked": "[动态扫描] CSP检查失败，不允许创建Worker。"
-      }
+    "results": {
+        "title": "提取的文本",
+        "aiTitle": "AI 扫描结果",
+        "scanCountSession": "已扫描 {{count}} 个项目",
+        "scanCountStatic": "共扫描 {{count}} 个项目",
+        "scanCountAi": "AI 已收集 {{count}} 个项目",
+        "aiRunning": "AI 扫描运行中",
+        "aiStopped": "AI 扫描已停止",
+        "aiProcessing": "供应商正在处理当前批次…",
+        "aiBudgetBlocked": "已停止发送，达到预算限制",
+        "aiRequestError": "最近一次请求失败",
+        "aiReviewItems": "待复核内容",
+        "aiReviewRequired": "需要人工复核",
+        "aiCounts": {
+            "pending": "待处理",
+            "translated": "已翻译",
+            "keep": "保留",
+            "removed": "移除",
+            "review": "待复核",
+            "failed": "失败"
+        },
+        "totalCharacters": "总字符数",
+        "totalLines": "总行数",
+        "noSummary": "无可用摘要",
+        "stats": {
+            "lines": "行",
+            "chars": "字符"
+        }
     },
-    "ui": {
-      "copyButton": {
-        "copied": "复制按钮已点击，复制了 {{count}} 个字符。",
-        "nothingToCopy": "复制按钮已点击，但没有内容可复制或按钮被禁用。"
-      },
-      "confirmationModal": {
-        "sessionScan": {
-          "confirmed": "用户已确认清除动态扫描文本，正在调用回调..."
+    "notifications": {
+        "copiedToClipboard": "已复制到剪贴板！",
+        "settingsSaved": "设置已保存！",
+        "modalInitError": "模态框未初始化。",
+        "nothingToCopy": "没有可复制的内容。",
+        "contentCleared": "内容已清除。",
+        "noTextSelected": "未选择任何文本。",
+        "scanFailed": "扫描失败。",
+        "elementScanStarted": "选取元素扫描已开始。",
+        "elementScanPaused": "元素扫描已暂停。",
+        "elementScanResumed": "选取元素扫描会话已从上一页恢复。",
+        "elementScanContinued": "选取元素扫描已继续。",
+        "sessionScanStarted": "动态扫描已开始。",
+        "sessionScanPaused": "动态扫描已暂停。",
+        "sessionScanResumed": "动态扫描会话已从上一页恢复。",
+        "sessionScanContinued": "动态扫描已继续。",
+        "cspWorkerWarning": "因网站安全限制，已切换至兼容扫描模式。",
+        "scanModeConflict": "请先停止当前扫描模式，再启动另一种扫描。",
+        "aiScanStarted": "AI 动态扫描已开始。",
+        "aiScanStopped": "AI 动态扫描已停止。",
+        "aiScanStartFailed": "AI 扫描启动失败。",
+        "aiDisabled": "AI 功能已关闭，请先在设置中启用。",
+        "aiBatchCompleted": "AI 批次处理完成。",
+        "aiNothingPending": "当前没有待发送内容。",
+        "aiRequestFailed": "AI 请求失败，条目已进入待复核。",
+        "aiBudgetBlocked": "已达到成本限制；仍会继续在本地收集。",
+        "aiProviderRequired": "至少需要保留一个供应商。",
+        "aiProviderSaved": "供应商配置已保存。",
+        "aiDailyUsageReset": "今日估算用量已清除。",
+        "aiStyleOriginRequired": "站点 Origin 不能为空。",
+        "aiStyleSaved": "站点翻译偏好已保存。"
+    },
+    "placeholders": {
+        "click": "点击 ",
+        "dynamicScan": "[动态扫描]",
+        "startNewScanSession": " 开始新的扫描会话",
+        "staticScan": "[静态扫描]",
+        "performOneTimeScan": " 执行一次性快速提取"
+    },
+    "confirmation": {
+        "clear": "您确定要清除内容吗？此操作无法撤销。",
+        "deleteProvider": "确定删除当前供应商配置吗？",
+        "deleteStyle": "确定删除当前站点翻译偏好吗？",
+        "clearStyles": "确定清空全部站点翻译偏好吗？"
+    },
+    "ai": {
+        "actions": {
+            "submitPending": "提交待处理",
+            "retryReview": "重新处理"
+        }
+    },
+    "tooltip": {
+        "summary": "查看摘要",
+        "ai_scan": "AI 动态扫描（Beta）",
+        "ai_scan_stop": "停止 AI 动态扫描",
+        "ai_disabled": "AI 功能已关闭",
+        "dynamic_scan": "动态扫描",
+        "static_scan": "静态扫描",
+        "element_scan": "选取元素扫描",
+        "pauseElementScan": "暂停元素扫描",
+        "resumeElementScan": "恢复元素扫描",
+        "pauseSessionScan": "暂停动态扫描",
+        "resumeSessionScan": "恢复动态扫描",
+        "tooltipHelp": "帮助",
+        "persistData": {
+            "title": "数据持久化说明",
+            "text": {
+                "sessionScan": "开启后，当点击链接跳转到新页面时，会自动恢复并继续累加上一页的扫描结果。关闭此选项，则只恢复扫描模式，但会开始一次全新的扫描。",
+                "elementScan": "开启后，当点击链接跳转到新页面时，会自动恢复当前已暂存的所有文本。关闭此选项，则只恢复扫描模式，但暂存区会是空的。"
+            }
+        },
+        "disabled": {
+            "scan_in_progress": "另一项扫描正在进行中",
+            "ai_scan_active": "AI 扫描运行中，普通扫描已禁用"
+        },
+        "filters": {
+            "title": "内容过滤器说明",
+            "numbers": "此规则过滤掉<strong>完全</strong>由数字、空格、千位分隔符(,)、小数点(.)以及部分货币符号($, €, £, ¥)组成的文本。<br><br><strong>更多示例:</strong><br>• \"1,234.56\"<br>• \"¥999\"<br>• \"€200\"<br>• \"$ 100\"",
+            "chinese": "此规则过滤掉<strong>完全</strong>由汉字和空格组成，且不含任何标点的文本。<br><br><strong>示例:</strong><br>• \"你好 世界\" (将被过滤)<br>• \"你好，世界\" (不会被过滤)",
+            "contains_chinese": "此规则过滤掉任何含有至少一个汉字的文本，无论其他字符是什么。<br><br><strong>示例:</strong><br>• \"你好 World\" (将被过滤)<br>• \"第一章\" (将被过滤)",
+            "emoji_only": "此规则过滤掉<strong>完全</strong>由一个或多个表情符号及空格组成的文本。<br><br><strong>示例:</strong><br>• \"👍\"<br>• \"😊 🎉 🚀\"",
+            "symbols": "此规则过滤掉<strong>完全</strong>由各种标点和符号组成的文本。<br><br><strong>更多示例:</strong><br>• \"@#*&^%\"<br>• \"()[]{}\"<br>• \"---...---\"",
+            "term": "此规则过滤掉通常不需要翻译的常见UI术语。<br><br><strong>更多示例:</strong><br>• \"OK\", \"Cancel\", \"Submit\"<br>• \"Login\", \"Settings\", \"Help\"",
+            "single_letter": "此规则过滤掉由<strong>单个</strong>英文字母组成的文本（不区分大小写）。<br><br><strong>示例:</strong><br>• \"A\" (将被过滤)<br>• \"b\" (将被过滤)<br>• \"AB\" (不会被过滤)",
+            "repeating_chars": "此规则过滤掉由<strong>同一个字符</strong>连续重复2次或以上的文本。<br><br><strong>示例:</strong><br>• \"aa\"<br>• \"======\"<br>• \"bbbbb\"",
+            "file_paths": "此规则尝试识别并过滤掉类似操作系统文件路径且<strong>包含文件扩展名</strong>的文本。它不匹配网址。<br><br><strong>更多示例:</strong><br>• \"/path/to/file.js\"<br>• \"C:\\Users\\Test\\document.docx\"<br>• \"./config.json\"",
+            "hex_color_codes": "此规则过滤掉标准的CSS十六进制颜色代码（3、4、6或8位，后者包含透明度通道）。<br><br><strong>示例:</strong><br>• \"#FFFFFF\"<br>• \"#ff0000\"<br>• \"#f0c\"<br>• \"#f0c8\" (4位)<br>• \"#ff000080\" (8位)",
+            "email_addresses": "此规则过滤掉符合标准电子邮件地址格式的文本。<br><br><strong>示例:</strong><br>• \"example@domain.com\"<br>• \"user.name@sub.domain.org\"",
+            "uuids": "此规则过滤掉通用唯一标识符 (UUID)。<br><br><strong>示例:</strong><br>• \"123e4567-e89b-12d3-a456-426614174000\"",
+            "git_commit_hashes": "此规则过滤掉标准的Git提交哈希值（长或短）。<br><br><strong>示例:</strong><br>• \"a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2\"<br>• \"a1b2c3d\"",
+            "website_urls": "此规则过滤掉<strong>独立的网址</strong>。它设计得比较严格，以避免意外移除不是链接的文本。<br><br><strong>更多示例:</strong><br>• \"https://www.example.com\"<br>• \"http://test.co.uk\"<br>• \"www.google.com\"<br>• \"example.org\"",
+            "shorthand_numbers": "此规则过滤掉使用<strong>常见速记后缀</strong>表示千(k)、百万(m)或十亿(b)的数字（不区分大小写）。<br><br><strong>更多示例:</strong><br>• \"1.2k\"<br>• \"15M\"<br>• \"2.5b\"<br>• \"100K\""
+        },
+        "display": {
+            "title": "显示设置说明",
+            "show_fab": "控制是否在网页右下角显示<strong>悬浮操作按钮(FAB)</strong>。这是进行静态和动态文本提取的主要入口。<br><br>如果您禁用了此按钮，可以通过油猴扩展菜单中的设置面板重新启用它。",
+            "show_scan_count": "启用后，结果窗口的标题栏将<strong>实时显示</strong>当前扫描中找到的总文本项目数。这对于监控长时间运行的<strong>动态扫描</strong>的进度特别有用。",
+            "show_line_numbers": "在结果窗口的文本区域左侧显示行号。当您需要讨论或记录特定文本行时，这提供了一个<strong>精确的参考点</strong>。",
+            "show_statistics": "在结果窗口底部的状态栏中显示有关提取内容的<strong>实时统计数据</strong>，包括<strong>总行数</strong>和<strong>总字符数</strong>。这有助于您快速评估内容的体量。",
+            "enable_word_wrap": "控制结果窗口中长文本行的显示方式。<br><br>• <strong>启用:</strong> 长行将自动换行以适应窗口宽度。<br>• <strong>禁用:</strong> 长行将保持在单行，并出现水平滚动条。",
+            "text_truncation_limit": "这是一个<strong>性能优化</strong>功能。如果脚本提取到<strong>极长的单行文本</strong>（例如，base64编码的图片），可能会导致浏览器<strong>卡顿或无响应</strong>。<br><br>此设置会截断任何超过指定长度的单行文本，以确保UI保持流畅。<strong>注意：这仅影响显示；导出的文件仍将包含完整的、未截断的内容。</strong>"
+        },
+        "advanced": {
+            "title": "高级设置说明",
+            "enable_debug_logging": "启用后，脚本会将详细的内部状态、执行步骤和错误信息输出到浏览器的<strong>开发者工具控制台</strong>（通常用F12打开）。这主要供开发者或需要提交详细错误报告的用户使用。"
+        },
+        "output": {
+            "include_brackets": "控制输出文本是否包含格式的首尾符号（如数组格式的 <code>[</code> 和 <code>]</code>，或对象格式的 <code>{</code> 和 <code>}</code>）。<br><br><strong>开启时:</strong> 包含完整的格式结构。<br><strong>关闭时:</strong> 仅输出内容行，不含首尾符号。"
+        }
+    },
+    "log": {
+        "prefix": "[文本提取脚本-调试]",
+        "language": {
+            "switched": "语言已切换至：{{lang}}",
+            "notFound": "未找到语言 '{{lang}}'，已回退至 'en'。"
+        },
+        "settings": {
+            "changed": "设置 '{{key}}' 已从 '{{oldValue}}' 更改为 '{{newValue}}'",
+            "filterRuleChanged": {
+                "enabled": "过滤规则 '{{key}}' 已启用",
+                "disabled": "过滤规则 '{{key}}' 已禁用"
+            },
+            "panel": {
+                "opening": "正在打开设置面板...",
+                "closing": "正在关闭设置面板...",
+                "saving": "正在保存设置..."
+            },
+            "parseError": "解析已保存的设置时出错：",
+            "invalidObject": "试图为设置保存一个无效对象："
+        },
+        "textProcessor": {
+            "filtered": "文本已过滤: \"{{text}}\" (原因: {{reason}})"
         },
         "quickScan": {
-          "confirmed": "用户已确认清除快速扫描文本。"
+            "switchToFallback": "[快速扫描] 正在切换到主线程备选方案。",
+            "fallbackFailed": "[快速扫描] 主线程备选方案执行失败: {{error}}",
+            "fallback": {
+                "starting": "[快速扫描 - 备选] 正在主线程中开始处理...",
+                "completed": "[快速扫描 - 备选] 处理完成，找到 {{count}} 条不重复文本。"
+            },
+            "worker": {
+                "logPrefix": "[快速扫描 Worker]",
+                "starting": "[快速扫描] 开始执行，尝试使用 Web Worker...",
+                "completed": "[快速扫描] Worker 处理成功，收到 {{count}} 条文本。",
+                "scanComplete": "[快速扫描 Worker] 处理完成，找到 {{count}} 条不重复文本。正在发回主线程...",
+                "initFailed": "[快速扫描] Worker 初始化失败。这很可能是由于网站的内容安全策略 (CSP) 导致的。",
+                "originalError": "[快速扫描] 原始错误: {{error}}",
+                "sendingData": "[快速扫描] Web Worker 已创建，正在发送 {{count}} 条文本进行处理...",
+                "initSyncError": "[快速扫描] Worker 初始化期间发生同步错误: {{error}}",
+                "cspBlocked": "[快速扫描] CSP检查失败，不允许创建Worker。"
+            }
         },
-        "cancelled": "用户已取消清除操作。"
-      },
-      "modal": {
-        "opening": "正在打开主模态框...",
-        "closing": "正在关闭主模态框...",
-        "scanFailed": "静态扫描失败: {{error}}",
-        "clearContent": "清空内容按钮已点击。",
-        "clearingContent": "正在清除模式的内容: {{mode}}",
-        "footerCleanedUp": "模态框页脚已清理。",
-        "destroyed": "主模态框已销毁。"
-      },
-      "helpIcon": {
-        "clicked": "点击了帮助图标，显示内容键：{{contentKey}}"
-      }
+        "sessionScan": {
+            "switchToFallback": "[动态扫描] 正在切换到主线程备选方案。",
+            "resuming": "正在从上一页恢复动态扫描...",
+            "domObserver": {
+                "stopped": "[动态扫描] 已停止监听 DOM 变化。"
+            },
+            "fallback": {
+                "initialized": "[动态扫描 - 备选] 已初始化。",
+                "cleared": "[动态扫描 - 备选] 数据已清除。"
+            },
+            "worker": {
+                "logPrefix": "[动态扫描 Worker]",
+                "starting": "动态扫描：正在尝试启动 Web Worker...",
+                "initFailed": "[动态扫描] Worker 初始化失败。这很可能是由于网站的内容安全策略 (CSP) 导致的。",
+                "originalError": "[动态扫描] 原始错误: {{error}}",
+                "initialized": "[动态扫描] Worker 初始化成功，已发送 {{count}} 条初始文本以开始会话。",
+                "initSyncError": "[动态扫描] Worker 初始化期间发生同步错误: {{error}}",
+                "clearCommandSent": "[动态扫描] 清除命令已发送至 worker。",
+                "cspBlocked": "[动态扫描] CSP检查失败，不允许创建Worker。"
+            }
+        },
+        "ui": {
+            "copyButton": {
+                "copied": "复制按钮已点击，复制了 {{count}} 个字符。",
+                "nothingToCopy": "复制按钮已点击，但没有内容可复制或按钮被禁用。"
+            },
+            "confirmationModal": {
+                "sessionScan": {
+                    "confirmed": "用户已确认清除动态扫描文本，正在调用回调..."
+                },
+                "quickScan": {
+                    "confirmed": "用户已确认清除快速扫描文本。"
+                },
+                "cancelled": "用户已取消清除操作。"
+            },
+            "modal": {
+                "opening": "正在打开主模态框...",
+                "closing": "正在关闭主模态框...",
+                "scanFailed": "静态扫描失败: {{error}}",
+                "clearContent": "清空内容按钮已点击。",
+                "clearingContent": "正在清除模式的内容: {{mode}}",
+                "footerCleanedUp": "模态框页脚已清理。",
+                "destroyed": "主模态框已销毁。"
+            },
+            "helpIcon": {
+                "clicked": "点击了帮助图标，显示内容键：{{contentKey}}"
+            }
+        },
+        "exporter": {
+            "buttonClicked": "导出按钮已点击，格式: {{format}}。",
+            "csvError": "解析文本并生成CSV时出错: {{error}}",
+            "fileExported": "文件已导出: {{filename}}",
+            "noContent": "无内容可导出。",
+            "unknownFormat": "未知的导出格式: {{format}}",
+            "uiCleanedUp": "导出UI已清理。",
+            "exportingUserContent": "正在导出UI中用户编辑的内容。",
+            "exportingRawData": "正在导出原始数据（UI内容无效或被截断）。"
+        },
+        "main": {
+            "requestingSessionScanData": "正在请求动态扫描模式的完整数据...",
+            "exportingQuickScanData": "正在导出快速扫描模式内存中的完整数据...",
+            "inIframe": "脚本在 iframe 中，已跳过初始化。",
+            "initializing": "脚本初始化开始...",
+            "initialSettingsLoaded": "初始设置已加载:",
+            "resumeFailed": "恢复会话失败"
+        },
+        "dom": {
+            "ttpCreationError": "创建 Trusted Type 策略失败:",
+            "svgParseError": "SVG 字符串无效或解析失败:"
+        },
+        "persistence": {
+            "saveBlocked": "保存被阻止，因为持有化已被禁用。",
+            "staleSession": "发现过期的会话，已忽略。",
+            "parseError": "解析已保存的会话失败，正在清除。"
+        },
+        "worker": {
+            "sessionStarted": "会话已开始，初始包含 {{count}} 个项目。",
+            "sessionCleared": "会话已清除。"
+        },
+        "elementScan": {
+            "starting": "选取元素扫描已开始。",
+            "stopping": "选取元素扫描已停止。",
+            "listenersAdded": "已为选取元素扫描添加全局事件监听器。",
+            "listenersRemoved": "已为选取元素扫描移除全局事件监听器。",
+            "stateReset": "选取元素扫描状态已重置。",
+            "resuming": "正在从上一页恢复元素扫描...",
+            "restored": "已恢复 {{count}} 个暂存项目。",
+            "skipRestore": "根据设置跳过数据恢复。",
+            "startingNewSession": "开始新的元素扫描会话。",
+            "reselecting": "正在返回元素重新选择模式。",
+            "hovering": "正在悬停于 <{{tagName}}>。",
+            "escapePressed": "按下 Escape 键，正在停止选取元素扫描。",
+            "escapeIgnoredForSettings": "按下了Escape键，但因设置面板打开而被忽略。",
+            "escapeIgnoredForModal": "按下了Escape键，但因模态框或提示窗口打开而被忽略。",
+            "escapePressedInAdjust": "在调整模式下按下了Escape键，返回重新选择模式。",
+            "clickedEnteringAdjust": "元素 <{{tagName}}> 已被点击，正在进入调整模式。",
+            "pathBuilt": "元素层级路径已构建，深度为：{{depth}}。",
+            "adjustingLevel": "正在调整选择层级至 {{level}} ({{tagName}})。",
+            "confirmExtracting": "选择已确认，正在从 <{{tagName}}> 提取文本。",
+            "staged": "元素已暂存。总数：{{count}}。",
+            "confirmingStaged": "确认选择。正在处理 {{count}} 个已暂存的元素。",
+            "extractedCount": "已从元素中提取 {{count}} 条原始文本。",
+            "confirmFailedNoTarget": "确认失败：未选择任何目标元素。",
+            "rightClickExit": "检测到右键点击，正在停止选取元素扫描。",
+            "processingError": "文本处理过程中发生错误: {{error}}",
+            "scrollListenersAdded": "已为 {{count}} 个父元素添加滚动监听器。",
+            "scrollListenersRemoved": "已移除所有滚动监听器。",
+            "worker": {
+                "logPrefix": "[ES Worker]",
+                "starting": "选取元素扫描 Worker 正在启动...",
+                "sendingData": "正在向选取元素扫描 Worker 发送 {{count}} 条文本片段。",
+                "completed": "选取元素扫描 Worker 已完成，找到 {{count}} 条不重复文本。",
+                "initFailed": "选取元素扫描 Worker 初始化失败。浏览器的CSP可能阻止了 data: URL。",
+                "initSyncError": "选取元素扫描 Worker 初始化期间发生同步错误: {{error}}",
+                "originalError": "原始 Worker 错误: {{error}}",
+                "cspBlocked": "选取元素扫描的CSP检查失败，不允许创建Worker。",
+                "attemping": "正在尝试使用 Web Worker 进行过滤...",
+                "fallback": "已切换到主线程进行过滤。",
+                "cspHint": "这可能是由于网站的内容安全策略（CSP）导致的。"
+            },
+            "switchToFallback": "正在为选取元素扫描切换到主线程备选方案。",
+            "fallbackFailed": "“选取元素扫描”后备模式失败：{{error}}",
+            "stagingStarted": "开始暂存元素：<{{tagName}}>",
+            "stagedNothingNew": "未能从此元素中暂存任何新的唯一文本。",
+            "stagingFinished": "暂存操作已完成。",
+            "confirmStarted": "确认流程已开始...",
+            "confirmFinished": "确认流程已成功完成。",
+            "confirmFailed": "确认流程失败。错误：{{error}}"
+        },
+        "elementScanUI": {
+            "creatingHighlights": "元素扫描UI：首次创建高亮元素。",
+            "updatingHighlight": "元素扫描UI：正在为 <{{tagName}}> 更新高亮。",
+            "creatingToolbar": "元素扫描UI：正在创建调整工具栏。",
+            "toolbarPositioned": "元素扫描UI：工具栏已定位。",
+            "sliderChanged": "元素扫描UI：滑块层级变为 {{level}}",
+            "reselectClicked": "元素扫描UI：“重新选择”按钮被点击。",
+            "stageClicked": "元素扫描UI：“暂存”按钮被点击。",
+            "cancelClicked": "元素扫描UI：“取消”按钮被点击。",
+            "confirmClicked": "元素扫描UI：“确认”按钮被点击。",
+            "dragStarted": "元素扫描UI：拖动开始。",
+            "dragEnded": "元素扫描UI：拖动结束。",
+            "cleaningHighlights": "元素扫描UI：正在清理高亮元素。",
+            "cleaningToolbar": "元素扫描UI：正在清理工具栏。"
+        },
+        "eventBus": {
+            "callbackError": "事件 '{{eventName}}' 的回调函数出错:"
+        },
+        "trustedTypes": {
+            "workerPolicyError": "创建 Trusted Types worker 策略失败:",
+            "htmlPolicyError": "创建 Trusted Types HTML 策略失败:",
+            "defaultWorkerPolicyWarning": "用于 worker URL 的 Trusted Types 默认策略失败，回退到原始 URL。",
+            "defaultHtmlPolicyWarning": "用于 HTML 的 Trusted Types 默认策略失败，回退到原始字符串。"
+        }
     },
-    "exporter": {
-      "buttonClicked": "导出按钮已点击，格式: {{format}}。",
-      "csvError": "解析文本并生成CSV时出错: {{error}}",
-      "fileExported": "文件已导出: {{filename}}",
-      "noContent": "无内容可导出。",
-      "unknownFormat": "未知的导出格式: {{format}}",
-      "uiCleanedUp": "导出UI已清理。",
-      "exportingUserContent": "正在导出UI中用户编辑的内容。",
-      "exportingRawData": "正在导出原始数据（UI内容无效或被截断）。"
-    },
-    "main": {
-      "requestingSessionScanData": "正在请求动态扫描模式的完整数据...",
-      "exportingQuickScanData": "正在导出快速扫描模式内存中的完整数据...",
-      "inIframe": "脚本在 iframe 中，已跳过初始化。",
-      "initializing": "脚本初始化开始...",
-      "initialSettingsLoaded": "初始设置已加载:",
-      "resumeFailed": "恢复会话失败"
-    },
-    "dom": {
-      "ttpCreationError": "创建 Trusted Type 策略失败:",
-      "svgParseError": "SVG 字符串无效或解析失败:"
-    },
-    "persistence": {
-      "saveBlocked": "保存被阻止，因为持有化已被禁用。",
-      "staleSession": "发现过期的会话，已忽略。",
-      "parseError": "解析已保存的会话失败，正在清除。"
-    },
-    "worker": {
-      "sessionStarted": "会话已开始，初始包含 {{count}} 个项目。",
-      "sessionCleared": "会话已清除。"
-    },
-    "elementScan": {
-      "starting": "选取元素扫描已开始。",
-      "stopping": "选取元素扫描已停止。",
-      "listenersAdded": "已为选取元素扫描添加全局事件监听器。",
-      "listenersRemoved": "已为选取元素扫描移除全局事件监听器。",
-      "stateReset": "选取元素扫描状态已重置。",
-      "resuming": "正在从上一页恢复元素扫描...",
-      "restored": "已恢复 {{count}} 个暂存项目。",
-      "skipRestore": "根据设置跳过数据恢复。",
-      "startingNewSession": "开始新的元素扫描会话。",
-      "reselecting": "正在返回元素重新选择模式。",
-      "hovering": "正在悬停于 <{{tagName}}>。",
-      "escapePressed": "按下 Escape 键，正在停止选取元素扫描。",
-      "escapeIgnoredForSettings": "按下了Escape键，但因设置面板打开而被忽略。",
-      "escapeIgnoredForModal": "按下了Escape键，但因模态框或提示窗口打开而被忽略。",
-      "escapePressedInAdjust": "在调整模式下按下了Escape键，返回重新选择模式。",
-      "clickedEnteringAdjust": "元素 <{{tagName}}> 已被点击，正在进入调整模式。",
-      "pathBuilt": "元素层级路径已构建，深度为：{{depth}}。",
-      "adjustingLevel": "正在调整选择层级至 {{level}} ({{tagName}})。",
-      "confirmExtracting": "选择已确认，正在从 <{{tagName}}> 提取文本。",
-      "staged": "元素已暂存。总数：{{count}}。",
-      "confirmingStaged": "确认选择。正在处理 {{count}} 个已暂存的元素。",
-      "extractedCount": "已从元素中提取 {{count}} 条原始文本。",
-      "confirmFailedNoTarget": "确认失败：未选择任何目标元素。",
-      "rightClickExit": "检测到右键点击，正在停止选取元素扫描。",
-      "processingError": "文本处理过程中发生错误: {{error}}",
-      "scrollListenersAdded": "已为 {{count}} 个父元素添加滚动监听器。",
-      "scrollListenersRemoved": "已移除所有滚动监听器。",
-      "worker": {
-        "logPrefix": "[ES Worker]",
-        "starting": "选取元素扫描 Worker 正在启动...",
-        "sendingData": "正在向选取元素扫描 Worker 发送 {{count}} 条文本片段。",
-        "completed": "选取元素扫描 Worker 已完成，找到 {{count}} 条不重复文本。",
-        "initFailed": "选取元素扫描 Worker 初始化失败。浏览器的CSP可能阻止了 data: URL。",
-        "initSyncError": "选取元素扫描 Worker 初始化期间发生同步错误: {{error}}",
-        "originalError": "原始 Worker 错误: {{error}}",
-        "cspBlocked": "选取元素扫描的CSP检查失败，不允许创建Worker。",
-        "attemping": "正在尝试使用 Web Worker 进行过滤...",
-        "fallback": "已切换到主线程进行过滤。",
-        "cspHint": "这可能是由于网站的内容安全策略（CSP）导致的。"
-      },
-      "switchToFallback": "正在为选取元素扫描切换到主线程备选方案。",
-      "fallbackFailed": "“选取元素扫描”后备模式失败：{{error}}",
-      "stagingStarted": "开始暂存元素：<{{tagName}}>",
-      "stagedNothingNew": "未能从此元素中暂存任何新的唯一文本。",
-      "stagingFinished": "暂存操作已完成。",
-      "confirmStarted": "确认流程已开始...",
-      "confirmFinished": "确认流程已成功完成。",
-      "confirmFailed": "确认流程失败。错误：{{error}}"
-    },
-    "elementScanUI": {
-      "creatingHighlights": "元素扫描UI：首次创建高亮元素。",
-      "updatingHighlight": "元素扫描UI：正在为 <{{tagName}}> 更新高亮。",
-      "creatingToolbar": "元素扫描UI：正在创建调整工具栏。",
-      "toolbarPositioned": "元素扫描UI：工具栏已定位。",
-      "sliderChanged": "元素扫描UI：滑块层级变为 {{level}}",
-      "reselectClicked": "元素扫描UI：“重新选择”按钮被点击。",
-      "stageClicked": "元素扫描UI：“暂存”按钮被点击。",
-      "cancelClicked": "元素扫描UI：“取消”按钮被点击。",
-      "confirmClicked": "元素扫描UI：“确认”按钮被点击。",
-      "dragStarted": "元素扫描UI：拖动开始。",
-      "dragEnded": "元素扫描UI：拖动结束。",
-      "cleaningHighlights": "元素扫描UI：正在清理高亮元素。",
-      "cleaningToolbar": "元素扫描UI：正在清理工具栏。"
-    },
-    "eventBus": {
-      "callbackError": "事件 '{{eventName}}' 的回调函数出错:"
-    },
-    "trustedTypes": {
-      "workerPolicyError": "创建 Trusted Types worker 策略失败:",
-      "htmlPolicyError": "创建 Trusted Types HTML 策略失败:",
-      "defaultWorkerPolicyWarning": "用于 worker URL 的 Trusted Types 默认策略失败，回退到原始 URL。",
-      "defaultHtmlPolicyWarning": "用于 HTML 的 Trusted Types 默认策略失败，回退到原始字符串。"
+    "tutorial": {
+        "elementScanTitle": "选取元素扫描教程",
+        "elementScan": "<p><strong>功能介绍:</strong></p><p>选取元素扫描允许您精确地选择网页上的一个或多个区域（例如一个段落、一个列表、一个侧边栏），并仅从这些区域中提取文本。</p><p><strong>如何使用:</strong></p><ol><li><strong>启动:</strong> 点击悬浮按钮中的“选取元素”图标 <span class=\"help-icon-placeholder element-scan-icon\"></span> 启动扫描模式。</li><li><strong>选择:</strong> 移动鼠标，您想扫描的区域会显示高亮框。单击以选定。</li><li><strong>调整:</strong> 选定后会出现工具栏。您可以使用<strong>滑块</strong>来扩大或缩小选择范围。</li><li><strong>暂存:</strong> 如果您想选择多个不相关的区域，可以点击<span class=\"action-key\">暂存</span>按钮保存当前选择，然后继续选择其他区域。</li><li><strong>确认:</strong> 完成所有选择后，点击<span class=\"action-key\">确认</span>按钮，系统将开始从您选择的所有区域中提取文本。</li></ol><p><strong>如何退出:</strong></p><ul><li>在选择过程中（出现高亮框时），在页面任意位置<strong>右键单击</strong>。</li><li>在任何时候，按下<kbd>ESC</kbd>键。</li><li>在任何时候，再次点击“选取元素扫描”图标。</li></ul>",
+        "sessionScanTitle": "动态扫描教程",
+        "sessionScan": "<p><strong>功能介绍:</strong></p><p>动态扫描会持续监控并自动记录网页上所有动态加载或变化的文本，特别适用于抓取实时聊天、滚动加载内容或通知等。</p><p><strong>如何使用:</strong></p><ul><li><strong>开始扫描:</strong> 点击悬浮按钮中的“动态扫描”图标 <span class=\"help-icon-placeholder dynamic-scan-icon\"></span>，扫描立即开始。</li><li><strong>停止扫描:</strong> 再次点击该图标 <span class=\"help-icon-placeholder stop-icon\"></span>，即可停止扫描。</li><li><strong>查看结果:</strong> 停止后，点击主悬浮按钮 <span class=\"help-icon-placeholder summary-icon\"></span> 打开结果窗口。</li></ul><p><strong>如何退出:</strong></p><ul><li>在扫描过程中，再次点击“动态扫描”图标。</li><li>在扫描过程中，随时按下<kbd>ESC</kbd>键可快速停止。</li></ul>",
+        "aiScanTitle": "AI 动态扫描说明",
+        "aiScan": "<p><strong>功能介绍:</strong></p><p>AI 扫描会持续收集网页中的候选文本，并根据设置自动处理或等待手动提交。顶部数字表示本次已收集的候选项数量。</p><p><strong>如何使用:</strong></p><ul><li>再次点击 AI 悬浮按钮即可停止扫描。</li><li>点击“查看摘要”可提交待处理内容、复核结果并复制或导出翻译。</li><li>重复出现或已经处理过的文本不会再次提交。</li></ul>"
     }
-  },
-  "tutorial": {
-    "elementScanTitle": "选取元素扫描教程",
-    "elementScan": "<p><strong>功能介绍:</strong></p><p>选取元素扫描允许您精确地选择网页上的一个或多个区域（例如一个段落、一个列表、一个侧边栏），并仅从这些区域中提取文本。</p><p><strong>如何使用:</strong></p><ol><li><strong>启动:</strong> 点击悬浮按钮中的“选取元素”图标 <span class=\"help-icon-placeholder element-scan-icon\"></span> 启动扫描模式。</li><li><strong>选择:</strong> 移动鼠标，您想扫描的区域会显示高亮框。单击以选定。</li><li><strong>调整:</strong> 选定后会出现工具栏。您可以使用<strong>滑块</strong>来扩大或缩小选择范围。</li><li><strong>暂存:</strong> 如果您想选择多个不相关的区域，可以点击<span class=\"action-key\">暂存</span>按钮保存当前选择，然后继续选择其他区域。</li><li><strong>确认:</strong> 完成所有选择后，点击<span class=\"action-key\">确认</span>按钮，系统将开始从您选择的所有区域中提取文本。</li></ol><p><strong>如何退出:</strong></p><ul><li>在选择过程中（出现高亮框时），在页面任意位置<strong>右键单击</strong>。</li><li>在任何时候，按下<kbd>ESC</kbd>键。</li><li>在任何时候，再次点击“选取元素扫描”图标。</li></ul>",
-    "sessionScanTitle": "动态扫描教程",
-    "sessionScan": "<p><strong>功能介绍:</strong></p><p>动态扫描会持续监控并自动记录网页上所有动态加载或变化的文本，特别适用于抓取实时聊天、滚动加载内容或通知等。</p><p><strong>如何使用:</strong></p><ul><li><strong>开始扫描:</strong> 点击悬浮按钮中的“动态扫描”图标 <span class=\"help-icon-placeholder dynamic-scan-icon\"></span>，扫描立即开始。</li><li><strong>停止扫描:</strong> 再次点击该图标 <span class=\"help-icon-placeholder stop-icon\"></span>，即可停止扫描。</li><li><strong>查看结果:</strong> 停止后，点击主悬浮按钮 <span class=\"help-icon-placeholder summary-icon\"></span> 打开结果窗口。</li></ul><p><strong>如何退出:</strong></p><ul><li>在扫描过程中，再次点击“动态扫描”图标。</li><li>在扫描过程中，随时按下<kbd>ESC</kbd>键可快速停止。</li></ul>"
-  }
 }

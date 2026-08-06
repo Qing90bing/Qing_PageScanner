@@ -6,7 +6,12 @@ import { CustomSelect } from '../../shared/ui/components/customSelect.js';
 import { ImageCardSelect } from '../../shared/ui/components/imageCardSelect.js'; // Import new component
 import { uiContainer } from '../../shared/ui/uiContainer.js';
 import { buildPanelDOM, buildContextualPanelDOM } from './panelBuilder.js';
-import { filterDefinitions, relatedSettingsDefinitions, selectSettingsDefinitions, outputSettingsDefinitions } from './config.js';
+import {
+    filterDefinitions,
+    relatedSettingsDefinitions,
+    selectSettingsDefinitions,
+    outputSettingsDefinitions,
+} from './config.js';
 import { t } from '../../shared/i18n/index.js';
 import { on } from '../../shared/utils/core/eventBus.js';
 import { settingsIcon } from '../../assets/icons/settingsIcon.js';
@@ -15,6 +20,7 @@ import { saveIcon } from '../../assets/icons/saveIcon.js';
 import { relatedSettingsIcon } from '../../assets/icons/relatedSettingsIcon.js';
 import { updateSettingsMenu } from '../../shared/i18n/management/languageManager.js';
 import { createButton } from '../../shared/ui/components/button.js';
+import { mountAiSettingsPanel } from './aiPanel.js';
 
 // --- 模块级变量 ---
 
@@ -24,6 +30,7 @@ let isTooltipVisible = false;
 let saveBtn = null;
 let unsubscribeTooltipShow = null;
 let unsubscribeTooltipHide = null;
+let aiPanelController = null;
 
 // --- 私有函数 ---
 
@@ -69,7 +76,7 @@ function showSettingsPanel(currentSettings, onSave) {
 
     // 动态创建选择组件（CustomSelect 或 ImageCardSelect）
     selectComponents = {};
-    selectSettingsDefinitions.forEach(definition => {
+    selectSettingsDefinitions.forEach((definition) => {
         const titleContainer = settingsPanel.querySelector(`#${definition.id}-title-container`);
         if (titleContainer) {
             titleContainer.appendChild(createIconTitle(definition.icon, t(definition.label)));
@@ -77,7 +84,7 @@ function showSettingsPanel(currentSettings, onSave) {
 
         const selectWrapper = settingsPanel.querySelector(`#${definition.id}-wrapper`);
         if (selectWrapper) {
-            const options = definition.options.map(opt => ({
+            const options = definition.options.map((opt) => ({
                 ...opt,
                 label: t(opt.label),
                 // 如果 config.js 中已经定义了 icon，这里会直接透传
@@ -86,9 +93,18 @@ function showSettingsPanel(currentSettings, onSave) {
             if (definition.type === 'image-card-select') {
                 // 对于输出格式，传入 includeArrayBrackets 设置
                 const includeBrackets = definition.key === 'outputFormat' ? currentSettings.includeArrayBrackets : true;
-                selectComponents[definition.key] = new ImageCardSelect(selectWrapper, options, currentSettings[definition.key], includeBrackets);
+                selectComponents[definition.key] = new ImageCardSelect(
+                    selectWrapper,
+                    options,
+                    currentSettings[definition.key],
+                    includeBrackets
+                );
             } else {
-                selectComponents[definition.key] = new CustomSelect(selectWrapper, options, currentSettings[definition.key]);
+                selectComponents[definition.key] = new CustomSelect(
+                    selectWrapper,
+                    options,
+                    currentSettings[definition.key]
+                );
             }
         }
     });
@@ -109,6 +125,11 @@ function showSettingsPanel(currentSettings, onSave) {
     const filterTitleContainer = settingsPanel.querySelector('#filter-setting-title-container');
     if (filterTitleContainer) {
         filterTitleContainer.appendChild(createIconTitle(filterIcon, t('settings.filterRules')));
+    }
+
+    const aiMount = settingsPanel.querySelector('#ai-settings-mount');
+    if (aiMount) {
+        aiPanelController = mountAiSettingsPanel(aiMount, currentSettings.ai);
     }
 
     const footer = settingsPanel.querySelector('.settings-panel-footer');
@@ -153,12 +174,12 @@ function showSettingsPanel(currentSettings, onSave) {
     }
 
     // 绑定侧边栏切换事件
-    sidebarItems.forEach(item => {
+    sidebarItems.forEach((item) => {
         item.addEventListener('click', () => {
             const targetId = item.dataset.target;
 
             // 更新侧边栏激活状态
-            sidebarItems.forEach(i => i.classList.remove('active'));
+            sidebarItems.forEach((i) => i.classList.remove('active'));
             item.classList.add('active');
 
             // 移动高亮块
@@ -166,7 +187,7 @@ function showSettingsPanel(currentSettings, onSave) {
 
             // 切换内容区域显示
             const contents = settingsPanel.querySelectorAll('.settings-tab-content');
-            contents.forEach(content => {
+            contents.forEach((content) => {
                 content.classList.remove('active');
                 if (content.id === targetId) {
                     content.classList.add('active');
@@ -176,13 +197,21 @@ function showSettingsPanel(currentSettings, onSave) {
     });
 
     // 监听 tooltip 事件以暂停/恢复 ESC 键的处理
-    unsubscribeTooltipShow = on('infoTooltipWillShow', () => { isTooltipVisible = true; });
-    unsubscribeTooltipHide = on('infoTooltipDidHide', () => { isTooltipVisible = false; });
+    unsubscribeTooltipShow = on('infoTooltipWillShow', () => {
+        isTooltipVisible = true;
+    });
+    unsubscribeTooltipHide = on('infoTooltipDidHide', () => {
+        isTooltipVisible = false;
+    });
 
     // 修复：确保在CSS过渡动画完成后再设置焦点。
-    settingsPanel.addEventListener('transitionend', () => {
-        settingsPanel.focus();
-    }, { once: true });
+    settingsPanel.addEventListener(
+        'transitionend',
+        () => {
+            settingsPanel.focus();
+        },
+        { once: true }
+    );
 
     // 触发显示
     setTimeout(() => {
@@ -217,6 +246,10 @@ function hideSettingsPanel() {
             }
         }
         selectComponents = {};
+        if (aiPanelController) {
+            aiPanelController.destroy();
+            aiPanelController = null;
+        }
 
         setTimeout(() => {
             if (settingsPanel) {
@@ -232,7 +265,7 @@ function hideSettingsPanel() {
  * @description 处理“保存”按钮的点击事件。
  * @param {function} onSave - 用于处理保存逻辑的回调函数。
  */
-function handleSave(onSave) {
+async function handleSave(onSave) {
     log(t('log.settings.panel.saving'));
     const newSettings = {};
 
@@ -243,14 +276,14 @@ function handleSave(onSave) {
 
     // 2. 收集过滤规则
     const newFilterRules = {};
-    filterDefinitions.forEach(filter => {
+    filterDefinitions.forEach((filter) => {
         const checkbox = settingsPanel.querySelector(`#${filter.id}`);
         if (checkbox) newFilterRules[filter.key] = checkbox.checked;
     });
     newSettings.filterRules = newFilterRules;
 
     // 3. 收集相关设置（包括新的复合设置项）
-    relatedSettingsDefinitions.forEach(setting => {
+    relatedSettingsDefinitions.forEach((setting) => {
         if (setting.type === 'select') {
             const selectContainer = settingsPanel.querySelector(`#${setting.id} .custom-select-container`);
             if (selectContainer) {
@@ -281,12 +314,16 @@ function handleSave(onSave) {
     });
 
     // 4. 收集输出设置（首尾符号开关）
-    outputSettingsDefinitions.forEach(setting => {
+    outputSettingsDefinitions.forEach((setting) => {
         const checkbox = settingsPanel.querySelector(`#${setting.id}`);
         if (checkbox) {
             newSettings[setting.key] = checkbox.checked;
         }
     });
+
+    if (aiPanelController) {
+        newSettings.ai = await aiPanelController.getSettings();
+    }
 
     if (onSave) {
         onSave(newSettings);
@@ -360,7 +397,7 @@ export function openContextualSettingsPanel({ titleKey, icon, definitions, setti
 
     const handleSave = () => {
         const newSettings = {};
-        definitions.forEach(def => {
+        definitions.forEach((def) => {
             if (def.type === 'checkbox') {
                 const checkbox = contextualPanel.querySelector(`#${def.id}`);
                 if (checkbox) newSettings[def.key] = checkbox.checked;

@@ -50,13 +50,15 @@ export function createHostElement() {
 /**
  * @function attachToBody
  * @description 将容器挂载到 document.body。
- * @param {HTMLElement} container 
+ * @param {HTMLElement} container
  */
 export function attachToBody(container) {
     if (document.body && !container.isConnected) {
         document.body.appendChild(container);
         if (container.popover === 'manual') {
-            try { container.showPopover(); } catch (e) { }
+            try {
+                container.showPopover();
+            } catch (e) {}
         }
     }
 }
@@ -85,7 +87,7 @@ export class TopLayerManager {
             // 1. 尝试隐藏 Popover (清理 Top Layer 状态)
             try {
                 this.container.hidePopover();
-            } catch (e) { }
+            } catch (e) {}
 
             // 2. 强制浏览器回流 (Reflow)
             void this.container.offsetHeight;
@@ -103,7 +105,7 @@ export class TopLayerManager {
 
                     // 再次显示 (推入 Top Layer 栈顶)
                     this.container.showPopover();
-                } catch (e) { }
+                } catch (e) {}
             });
         }, 100);
     }

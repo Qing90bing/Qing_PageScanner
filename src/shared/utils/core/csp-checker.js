@@ -53,14 +53,12 @@ export async function isWorkerAllowed() {
 
         // 清理测试Worker
         worker.terminate();
-
     } catch (e) {
         // 捕获到错误（通常是SecurityError），意味着CSP阻止了Worker的创建
         isAllowed = false;
 
         // 记录错误以用于调试
         console.error('[CSP Checker] Worker creation failed:', e);
-
     } finally {
         // 无论成功与否，只要objectURL被创建，就必须释放它
         if (objectURL) {

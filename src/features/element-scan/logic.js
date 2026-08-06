@@ -1,6 +1,16 @@
 // src/features/element-scan/logic.js
 
-import { updateHighlight, cleanupUI, createAdjustmentToolbar, cleanupToolbar, showTopCenterUI, hideTopCenterUI, playScanConfirmationAnimation, playScanPulseAnimation, playScanErrorAnimation } from './ui.js';
+import {
+    updateHighlight,
+    cleanupUI,
+    createAdjustmentToolbar,
+    cleanupToolbar,
+    showTopCenterUI,
+    hideTopCenterUI,
+    playScanConfirmationAnimation,
+    playScanPulseAnimation,
+    playScanErrorAnimation,
+} from './ui.js';
 import { extractRawTextFromElement } from '../../shared/utils/text/textProcessor.js';
 import { formatTextsForTranslation } from '../../shared/utils/text/formatting.js';
 import { updateModalContent } from '../../shared/ui/mainModal/index.js';
@@ -17,6 +27,7 @@ import { trustedWorkerUrl } from '../../shared/workers/worker-url.js';
 import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
 import { on, fire } from '../../shared/utils/core/eventBus.js';
 import { saveActiveSession, clearActiveSession, enablePersistence } from '../../shared/services/sessionPersistence.js';
+import { acquireScanMode, releaseScanMode, SCAN_MODES } from '../../shared/services/scanModeCoordinator.js';
 
 // --- 模块级状态变量 ---
 
@@ -44,7 +55,6 @@ let iframeObserver = null;
 // 修复：防止暂存动画定时器与手动操作冲突
 let reselectTimer = null;
 
-
 // --- 事件监听 ---
 on('clearElementScan', () => {
     stagedTexts.clear();
@@ -64,8 +74,9 @@ on('resumeScanSession', async (state) => {
                 log(t('log.elementScan.resuming'));
 
                 // 只有当设置为 true 时才恢复数据
-                if (settings.elementScan_persistData) { // Assuming settings.elementScan_persistData is the equivalent of shouldPersistElementScanData()
-                    state.data.forEach(item => stagedTexts.add(item));
+                if (settings.elementScan_persistData) {
+                    // Assuming settings.elementScan_persistData is the equivalent of shouldPersistElementScanData()
+                    state.data.forEach((item) => stagedTexts.add(item));
                     log(t('log.elementScan.restored', { count: stagedTexts.size }));
                     // 恢复 UI 状态 (如果需要)
                     // ...
@@ -78,7 +89,8 @@ on('resumeScanSession', async (state) => {
             }
 
             // 自动启动扫描
-            startElementScan(elementScanFab, { silent: true });
+            const started = startElementScan(elementScanFab, { silent: true });
+            if (!started) return;
 
             // 手动更新计数器UI
             updateStagedCount();
@@ -140,14 +152,13 @@ function addScrollListeners() {
  * 移除所有添加的滚动监听器。
  */
 function removeScrollListeners() {
-    scrollableParents.forEach(parent => {
+    scrollableParents.forEach((parent) => {
         parent.removeEventListener('scroll', handleScroll);
     });
     window.removeEventListener('scroll', handleScroll);
     scrollableParents = []; // 清空数组
     log(t('log.elementScan.scrollListenersRemoved'));
 }
-
 
 export function isElementScanActive() {
     return isActive;
@@ -174,6 +185,12 @@ export function handleElementScanClick(fabElement) {
 }
 
 function startElementScan(fabElement, options = {}) {
+    if (!acquireScanMode(SCAN_MODES.ELEMENT)) {
+        if (!options.silent) {
+            showNotification(t('notifications.scanModeConflict'), { type: 'info' });
+        }
+        return false;
+    }
     log(t('log.elementScan.starting'));
 
     // 1. 激活 UI 容器的全局监听器
@@ -222,8 +239,8 @@ function startElementScan(fabElement, options = {}) {
     }, AUTO_SAVE_INTERVAL_MS);
 
     log(t('log.elementScan.listenersAdded'));
+    return true;
 }
-
 
 /**
  * 为指定文档对象添加必要的事件监听器。
@@ -262,7 +279,7 @@ function removeListenersFromDocument(doc) {
  */
 function addListenersToIframes() {
     const iframes = document.querySelectorAll('iframe');
-    iframes.forEach(iframe => {
+    iframes.forEach((iframe) => {
         attachIframeListeners(iframe);
     });
 }
@@ -286,15 +303,23 @@ function attachIframeListeners(iframe) {
             }
         };
 
-        if (iframe.contentWindow && iframe.contentWindow.document && iframe.contentWindow.document.readyState === 'complete') {
+        if (
+            iframe.contentWindow &&
+            iframe.contentWindow.document &&
+            iframe.contentWindow.document.readyState === 'complete'
+        ) {
             attach(iframe.contentWindow);
         } else {
             // 如果 iframe 还没加载完，监听 load 事件
-            iframe.addEventListener('load', () => {
-                if (iframe.contentWindow) {
-                    attach(iframe.contentWindow);
-                }
-            }, { once: true });
+            iframe.addEventListener(
+                'load',
+                () => {
+                    if (iframe.contentWindow) {
+                        attach(iframe.contentWindow);
+                    }
+                },
+                { once: true }
+            );
         }
     } catch (e) {
         // 忽略跨域 iframe
@@ -340,7 +365,7 @@ function removeListenersFromIframes() {
     }
 
     const iframes = document.querySelectorAll('iframe');
-    iframes.forEach(iframe => {
+    iframes.forEach((iframe) => {
         try {
             const iframeDoc = iframe.contentDocument || (iframe.contentWindow && iframe.contentWindow.document);
             if (iframeDoc) {
@@ -368,7 +393,10 @@ function handleElementScanUnload() {
 }
 
 export function stopElementScan(fabElement) {
-    if (!isActive) return;
+    if (!isActive) {
+        releaseScanMode(SCAN_MODES.ELEMENT);
+        return;
+    }
     log(t('log.elementScan.stopping'));
     isActive = false;
     isAdjusting = false;
@@ -425,6 +453,7 @@ export function stopElementScan(fabElement) {
 
     // 释放 UI 容器的全局监听器
     uiLifecycle.release();
+    releaseScanMode(SCAN_MODES.ELEMENT);
 }
 
 function terminateWorker() {
@@ -515,7 +544,7 @@ function filterTextsWithWorker(texts, settings) {
                 workerInstance = new Worker(trustedWorkerUrl);
 
                 // 设置通用的错误处理，防止未捕获的异常
-                workerInstance.onerror = (error) => {
+                workerInstance.onerror = () => {
                     log(t('log.elementScan.worker.error'), 'error');
                     // 注意：这里不 terminate，除非是严重错误。让单次请求的 handler 去处理回调逻辑。
                     // 但为了稳健，如果 Worker 挂了，我们可能需要重置 workerInstance
@@ -534,7 +563,7 @@ function filterTextsWithWorker(texts, settings) {
             };
 
             // 覆盖 onerror 以便捕获本次特定的错误并 fallback
-            workerInstance.onerror = (error) => {
+            workerInstance.onerror = () => {
                 log(t('log.elementScan.worker.runtimeError'), 'warn');
                 workerInstance.terminate();
                 workerInstance = null; // 销毁并重置，下次会重建
@@ -551,17 +580,15 @@ function filterTextsWithWorker(texts, settings) {
                         workerLogPrefix: t('log.elementScan.worker.logPrefix'),
                         textFiltered: t('log.textProcessor.filtered'),
                         filterReasons: getTranslationObject('filterReasons'),
-                    }
-                }
+                    },
+                },
             });
-
         } catch (initError) {
             log(t('log.elementScan.worker.initSyncError', { error: initError.message }), 'error');
             handleFallback();
         }
     });
 }
-
 
 export async function stageCurrentElement() {
     if (!currentTarget) return;
@@ -576,7 +603,7 @@ export async function stageCurrentElement() {
         const newlyStagedCount = filteredTexts.length;
 
         if (newlyStagedCount > 0) {
-            filteredTexts.forEach(text => stagedTexts.add(text));
+            filteredTexts.forEach((text) => stagedTexts.add(text));
             log(t('log.elementScan.staged', { count: newlyStagedCount, total: stagedTexts.size }));
             updateStagedCount();
 
@@ -610,7 +637,6 @@ export async function stageCurrentElement() {
     log(t('log.elementScan.stagingFinished'));
     reselectElement();
 }
-
 
 /**
  * @private
@@ -648,7 +674,6 @@ function scheduledHighlightUpdate() {
     }
     isHighlightUpdateQueued = false;
 }
-
 
 function handleMouseOver(event) {
     if (!isActive || isAdjusting || isPaused) return;
@@ -809,7 +834,7 @@ export async function confirmSelectionAndExtract() {
 
     try {
         const filteredTexts = await filterTextsWithWorker(rawTexts, settings);
-        filteredTexts.forEach(text => stagedTexts.add(text));
+        filteredTexts.forEach((text) => stagedTexts.add(text));
         updateStagedCount(); // 更新最终计数值
     } catch (error) {
         log(t('log.elementScan.processingError', { error: error.message }), 'error');
@@ -851,7 +876,6 @@ export async function confirmSelectionAndExtract() {
             const notificationText = simpleTemplate(t('scan.elementFinished'), { count });
             showNotification(notificationText, { type: 'success' });
             log(t('log.elementScan.confirmFinished'));
-
         } catch (error) {
             log(t('log.elementScan.confirmFailed', { error: error.message }), 'error');
             showNotification(t('notifications.scanFailed'), { type: 'error' });

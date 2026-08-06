@@ -9,6 +9,7 @@ import { translateIcon } from '../../../assets/icons/icon.js';
 import { dynamicIcon } from '../../../assets/icons/dynamicIcon.js';
 import { summaryIcon } from '../../../assets/icons/summaryIcon.js';
 import { elementScanIcon } from '../../../assets/icons/elementScanIcon.js';
+import { aiIcon } from '../../../assets/icons/aiIcon.js';
 import { showTooltip, hideTooltip } from './tooltip.js';
 import { appConfig } from '../../../features/settings/config.js';
 import { on } from '../../utils/core/eventBus.js';
@@ -16,9 +17,24 @@ import { loadSettings } from '../../../features/settings/logic.js';
 import { t } from '../../i18n/index.js';
 import { createSVGFromString } from '../../utils/dom/dom.js';
 import { uiContainer } from '../uiContainer.js';
+import { SCAN_MODES, subscribeScanMode } from '../../services/scanModeCoordinator.js';
+import { applyAiExclusiveFabState } from './fabExclusiveState.js';
 
+let summaryFab, aiFab, dynamicFab, staticFab, elementScanFab;
+let unsubscribeScanMode = null;
 
-let summaryFab, dynamicFab, staticFab, elementScanFab;
+function syncAiFabAvailability() {
+    if (!aiFab) return;
+    const enabled = loadSettings().ai?.enabled !== false;
+    aiFab.classList.toggle('fab-feature-hidden', !enabled);
+    aiFab.setAttribute('aria-hidden', String(!enabled));
+    const tooltipKey = !enabled
+        ? 'tooltip.ai_disabled'
+        : aiFab.classList.contains('is-recording')
+          ? 'tooltip.ai_scan_stop'
+          : 'tooltip.ai_scan';
+    setFabDisabled(aiFab, !enabled, tooltipKey);
+}
 
 /**
  * @private
@@ -32,6 +48,10 @@ let summaryFab, dynamicFab, staticFab, elementScanFab;
 function createSingleFab(className, iconSVGString, titleKey, onClick) {
     const fab = document.createElement('div');
     fab.className = `text-extractor-fab ${className}`;
+    fab.setAttribute('role', 'button');
+    fab.setAttribute('aria-disabled', 'false');
+    fab.setAttribute('aria-label', t(titleKey));
+    fab.tabIndex = 0;
 
     const svgIcon = createSVGFromString(iconSVGString);
     if (svgIcon) {
@@ -47,6 +67,12 @@ function createSingleFab(className, iconSVGString, titleKey, onClick) {
             return;
         }
         onClick(event);
+    });
+
+    fab.addEventListener('keydown', (event) => {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        event.preventDefault();
+        fab.click();
     });
 
     // 使用自定义的 Tooltip
@@ -75,7 +101,7 @@ function createSingleFab(className, iconSVGString, titleKey, onClick) {
  * @param {boolean} options.isVisible - 按钮创建后是否立即可见。
  */
 export function createFab({ callbacks, isVisible }) {
-    const { onStaticExtract, onDynamicExtract, onSummary, onElementScan } = callbacks;
+    const { onStaticExtract, onDynamicExtract, onSummary, onElementScan, onAiScan } = callbacks;
     // 创建一个容器来包裹所有的 FAB
     const fabContainer = document.createElement('div');
     fabContainer.className = 'text-extractor-fab-container';
@@ -83,12 +109,9 @@ export function createFab({ callbacks, isVisible }) {
     // --- 创建四个按钮 ---
 
     // 1. 总结按钮 (最上方)
-    summaryFab = createSingleFab(
-        'fab-summary',
-        summaryIcon,
-        'tooltip.summary',
-        onSummary
-    );
+    summaryFab = createSingleFab('fab-summary', summaryIcon, 'tooltip.summary', onSummary);
+
+    aiFab = createSingleFab('fab-ai-scan', aiIcon, 'tooltip.ai_scan', () => onAiScan(aiFab));
 
     // 2. 动态扫描按钮 (中间)
     dynamicFab = createSingleFab(
@@ -99,27 +122,21 @@ export function createFab({ callbacks, isVisible }) {
     );
 
     // 3. 静态扫描按钮 (中间)
-    staticFab = createSingleFab(
-        'fab-static',
-        translateIcon,
-        'tooltip.static_scan',
-        onStaticExtract
-    );
+    staticFab = createSingleFab('fab-static', translateIcon, 'tooltip.static_scan', onStaticExtract);
 
     // 4. 选取元素扫描按钮 (最下方)
-    elementScanFab = createSingleFab(
-        'fab-element-scan',
-        elementScanIcon,
-        'tooltip.element_scan',
-        () => onElementScan(elementScanFab)
+    elementScanFab = createSingleFab('fab-element-scan', elementScanIcon, 'tooltip.element_scan', () =>
+        onElementScan(elementScanFab)
     );
 
     // --- 添加到页面 ---
     fabContainer.appendChild(summaryFab);
+    fabContainer.appendChild(aiFab);
     fabContainer.appendChild(dynamicFab);
     fabContainer.appendChild(staticFab);
     fabContainer.appendChild(elementScanFab);
     uiContainer.appendChild(fabContainer);
+    syncAiFabAvailability();
 
     // 根据初始设置决定是否显示
     if (isVisible) {
@@ -132,7 +149,34 @@ export function createFab({ callbacks, isVisible }) {
     // 更新位置
     updateFabPosition(fabContainer);
 
-    on('settingsSaved', () => updateFabPosition(fabContainer));
+    on('settingsSaved', () => {
+        updateFabPosition(fabContainer);
+        syncAiFabAvailability();
+    });
+    on('languageChanged', () => {
+        [summaryFab, aiFab, dynamicFab, staticFab, elementScanFab].forEach((fab) => {
+            if (fab?.dataset.tooltipKey) fab.setAttribute('aria-label', t(fab.dataset.tooltipKey));
+        });
+    });
+
+    if (unsubscribeScanMode) unsubscribeScanMode();
+    unsubscribeScanMode = subscribeScanMode(({ activeMode }) => {
+        applyAiExclusiveFabState(
+            [dynamicFab, staticFab, elementScanFab],
+            activeMode === SCAN_MODES.AI,
+            setFabDisabled,
+            updateFabTooltip
+        );
+    });
+}
+
+export function setFabDisabled(fabElement, disabled, tooltipKey = null) {
+    if (!fabElement) return;
+    fabElement.disabled = Boolean(disabled);
+    fabElement.classList.toggle('fab-disabled', Boolean(disabled));
+    fabElement.setAttribute('aria-disabled', String(Boolean(disabled)));
+    fabElement.tabIndex = disabled ? -1 : 0;
+    if (tooltipKey) updateFabTooltip(fabElement, tooltipKey);
 }
 
 function updateFabPosition(fabContainer) {
@@ -141,7 +185,12 @@ function updateFabPosition(fabContainer) {
     const position = settings.fabPosition || 'bottom-right';
 
     // 移除旧的位置类
-    fabContainer.classList.remove('fab-position-bottom-right', 'fab-position-top-right', 'fab-position-bottom-left', 'fab-position-top-left');
+    fabContainer.classList.remove(
+        'fab-position-bottom-right',
+        'fab-position-top-right',
+        'fab-position-bottom-left',
+        'fab-position-top-left'
+    );
 
     // 添加新的位置类
     fabContainer.classList.add(`fab-position-${position}`);
@@ -172,6 +221,14 @@ export function getDynamicFab() {
     return dynamicFab;
 }
 
+export function getStaticFab() {
+    return staticFab;
+}
+
+export function getAiFab() {
+    return aiFab;
+}
+
 /**
  * @public
  * @description 获取对“选取元素扫描”按钮的引用。
@@ -190,5 +247,6 @@ export function getElementScanFab() {
 export function updateFabTooltip(fabElement, newTooltipKey) {
     if (fabElement) {
         fabElement.dataset.tooltipKey = newTooltipKey;
+        fabElement.setAttribute('aria-label', t(newTooltipKey));
     }
 }

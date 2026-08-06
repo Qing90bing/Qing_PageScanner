@@ -14,14 +14,19 @@ import { t } from '../../i18n/index.js';
 import { simpleTemplate } from '../../utils/dom/templating.js';
 import * as state from './modalState.js';
 import { fire } from '../../utils/core/eventBus.js';
-import { isSessionRecording } from '../../../features/session-scan/logic.js';
 
 // 重新导出常量以保持API兼容性
 export { SHOW_PLACEHOLDER, SHOW_LOADING } from './modalState.js';
 import { createModalLayout } from './modalLayout.js';
-import { populateModalHeader, destroyModalHeader, updateScanCount } from './modalHeader.js';
-import { populateModalContent, destroyModalContent, showLoading, hideLoading } from './modalContent.js';
-import { populateModalFooter, destroyModalFooter, updateStatistics } from './modalFooter.js';
+import { populateModalHeader, destroyModalHeader, updateScanCount, setModalHeaderMode } from './modalHeader.js';
+import {
+    populateModalContent,
+    destroyModalContent,
+    showLoading,
+    hideLoading,
+    setModalContentMode,
+} from './modalContent.js';
+import { populateModalFooter, destroyModalFooter, updateStatistics, setModalFooterMode } from './modalFooter.js';
 import { initializeLineNumbers, updateLineNumbers, updateActiveLine } from './lineNumberLogic.js';
 import { updateExportButtonState } from '../../../features/export/ui.js';
 
@@ -135,7 +140,6 @@ export async function openModal() {
         // 5. 显示成功通知
         const notificationText = simpleTemplate(t('scan.quickFinished'), { count });
         showNotification(notificationText, { type: 'success' });
-
     } catch (error) {
         hideLoading(); // 确保在出错时也隐藏加载动画
         // 错误处理
@@ -171,11 +175,14 @@ export function closeModal() {
  */
 export function updateModalContent(content, shouldOpen = false, mode = 'quick-scan') {
     if (!state.modalOverlay) {
-        console.error("模态框尚未初始化。");
+        console.error('模态框尚未初始化。');
         return;
     }
 
     state.setCurrentMode(mode);
+    setModalHeaderMode(mode);
+    setModalContentMode(mode);
+    setModalFooterMode(mode);
 
     const copyBtn = state.modalOverlay.querySelector('.text-extractor-copy-btn');
     const clearBtn = state.modalOverlay.querySelector('.text-extractor-clear-btn');
@@ -197,8 +204,10 @@ export function updateModalContent(content, shouldOpen = false, mode = 'quick-sc
         setButtonsDisabled(true);
     } else if (content === state.SHOW_PLACEHOLDER) {
         hideLoading();
-        textareaContainer.classList.remove('is-visible');
-        state.placeholder.classList.add('is-visible');
+        const isAiMode = mode === 'ai-scan';
+        textareaContainer.classList.toggle('is-visible', isAiMode);
+        state.placeholder.classList.toggle('is-visible', !isAiMode);
+        if (isAiMode) state.outputTextarea.value = '';
         setButtonsDisabled(true);
     } else {
         hideLoading();
@@ -209,7 +218,7 @@ export function updateModalContent(content, shouldOpen = false, mode = 'quick-sc
         let displayText = content;
 
         // 根据用户设置决定是否截断文本
-        if (settings.enableTextTruncation && content.length > settings.textTruncationLength) {
+        if (mode !== 'ai-scan' && settings.enableTextTruncation && content.length > settings.textTruncationLength) {
             displayText = content.substring(0, settings.textTruncationLength);
             const warningMessage = t('scan.truncationWarning');
             displayText += `\n\n--- ${warningMessage} ---`;
@@ -246,9 +255,13 @@ export function updateModalContent(content, shouldOpen = false, mode = 'quick-sc
         // 修复：确保在CSS过渡动画完成后再设置焦点。
         // 这可以防止因元素在调用focus()时还不可见而导致的焦点设置失败。
         // 使用 { once: true } 确保监听器在触发一次后自动移除。
-        state.modalOverlay.addEventListener('transitionend', () => {
-            state.modalOverlay.focus();
-        }, { once: true });
+        state.modalOverlay.addEventListener(
+            'transitionend',
+            () => {
+                state.modalOverlay.focus();
+            },
+            { once: true }
+        );
     }
 }
 

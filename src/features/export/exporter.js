@@ -115,7 +115,8 @@ function exportToFile() {
     } else {
         log(t('log.exporter.exportingRawData'));
         // 回退到原始数据
-        if (currentMode === 'session-scan') { // Changed 'state.mode' to 'currentMode' to match existing variable
+        if (currentMode === 'session-scan') {
+            // Changed 'state.mode' to 'currentMode' to match existing variable
             log(t('log.main.requestingSessionScanData'));
             requestSummary(processAndDownload);
         } else {

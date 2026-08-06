@@ -1,7 +1,14 @@
 // src/features/element-scan/ui.js
 
 import { uiContainer } from '../../shared/ui/uiContainer.js';
-import { updateSelectionLevel, reselectElement, confirmSelectionAndExtract, stageCurrentElement, pauseElementScan, resumeElementScan } from './logic.js';
+import {
+    updateSelectionLevel,
+    reselectElement,
+    confirmSelectionAndExtract,
+    stageCurrentElement,
+    pauseElementScan,
+    resumeElementScan,
+} from './logic.js';
 import { t } from '../../shared/i18n/index.js';
 import { createTrustedHTML } from '../../shared/utils/dom/trustedTypes.js';
 import { log } from '../../shared/utils/core/logger.js';
@@ -11,7 +18,12 @@ import { stashIcon } from '../../assets/icons/stashIcon.js';
 import { confirmIcon } from '../../assets/icons/confirmIcon.js';
 import { simpleTemplate } from '../../shared/utils/dom/templating.js';
 import { on } from '../../shared/utils/core/eventBus.js';
-import { createCounterWithHelp, showCounterWithHelp, hideCounterWithHelp, updateCounterValue } from '../../shared/ui/components/counterWithHelp.js';
+import {
+    createCounterWithHelp,
+    showCounterWithHelp,
+    hideCounterWithHelp,
+    updateCounterValue,
+} from '../../shared/ui/components/counterWithHelp.js';
 import { CustomSlider } from '../../shared/ui/components/customSlider.js';
 import { openContextualSettingsPanel } from '../settings/ui.js';
 import { loadSettings, saveSettings, applySettings } from '../settings/logic.js';
@@ -129,8 +141,6 @@ export function updateHighlight(targetElement, offset = { x: 0, y: 0 }) {
     }
 
     const rect = targetElement.getBoundingClientRect();
-    const scrollX = window.scrollX;
-    const scrollY = window.scrollY;
     const padding = 6; // 为内容添加内边距，使边框看起来更舒适
     const elementSelector = getElementSelector(targetElement);
 
@@ -138,7 +148,7 @@ export function updateHighlight(targetElement, offset = { x: 0, y: 0 }) {
         top: rect.top.toFixed(2),
         left: rect.left.toFixed(2),
         width: rect.width.toFixed(2),
-        height: rect.height.toFixed(2)
+        height: rect.height.toFixed(2),
     };
     log(simpleTemplate(t('log.elementScanUI.updatingHighlight'), { tagName: elementSelector }), coordinates);
 
@@ -223,7 +233,7 @@ export function createAdjustmentToolbar(elementPath, offset = { x: 0, y: 0 }) {
         onChange: (newValue) => {
             log(simpleTemplate(t('log.elementScanUI.sliderChanged'), { level: newValue }));
             updateSelectionLevel(newValue);
-        }
+        },
     });
     sliderContainer.appendChild(sliderInstance.getElement());
 
@@ -239,7 +249,7 @@ export function createAdjustmentToolbar(elementPath, offset = { x: 0, y: 0 }) {
         onClick: () => {
             log(t('log.elementScanUI.reselectClicked'));
             reselectElement();
-        }
+        },
     });
 
     stageBtn = createButton({
@@ -249,7 +259,7 @@ export function createAdjustmentToolbar(elementPath, offset = { x: 0, y: 0 }) {
         onClick: () => {
             log(t('log.elementScanUI.stageClicked'));
             stageCurrentElement();
-        }
+        },
     });
 
     confirmBtn = createButton({
@@ -259,7 +269,7 @@ export function createAdjustmentToolbar(elementPath, offset = { x: 0, y: 0 }) {
         onClick: () => {
             log(t('log.elementScanUI.confirmClicked'));
             confirmSelectionAndExtract();
-        }
+        },
     });
 
     actionsContainer.appendChild(reselectBtn);
@@ -285,7 +295,7 @@ export function createAdjustmentToolbar(elementPath, offset = { x: 0, y: 0 }) {
         top: initialRect.top + offset.y,
         bottom: initialRect.bottom + offset.y,
         left: initialRect.left + offset.x,
-        right: initialRect.right + offset.x
+        right: initialRect.right + offset.x,
     };
 
     // 水平方向的默认对齐方式：与目标元素右对齐，并确保不超出视口边界
@@ -464,7 +474,6 @@ export function cleanupToolbar() {
     }
 }
 
-
 /**
  * @public
  * @function showTopCenterUI
@@ -488,9 +497,9 @@ export function showTopCenterUI() {
                     tooltip: {
                         titleIcon: infoIcon,
                         title: 'tooltip.persistData.title',
-                        text: 'tooltip.persistData.text.elementScan'
-                    }
-                }
+                        text: 'tooltip.persistData.text.elementScan',
+                    },
+                },
             ];
             openContextualSettingsPanel({
                 titleKey: 'settings.contextual.elementScanTitle',
@@ -501,9 +510,9 @@ export function showTopCenterUI() {
                     const updatedSettings = { ...currentSettings, ...newSettings };
                     saveSettings(updatedSettings);
                     applySettings(updatedSettings, currentSettings);
-                }
+                },
             });
-        }
+        },
     });
     showCounterWithHelp();
 

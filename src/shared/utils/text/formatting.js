@@ -1,52 +1,61 @@
 /**
- * @public
- * @param {string[]} texts - 需要被格式化的文本字符串数组。
- * @param {string} format - 输出格式 ('array', 'object', 'csv')。默认为 'array'。
- * @param {object} options - 可选的配置选项。
- * @param {boolean} [options.includeArrayBrackets=true] - 是否包含首尾符号（如 [] 或 {}）。
- * @returns {string} 一个格式化后的字符串，可以直接复制用于翻译工作流。
- * @description 将一个字符串数组转换成特定的格式字符串。
+ * 将原文或原文/译文对格式化为项目支持的三种输出格式。
+ * 传入字符串时保持旧行为，译文默认为空字符串。
+ *
+ * @param {Array<string|{sourceText?: string, source?: string, translation?: string}|[string, string]>} texts
+ * @param {'array'|'object'|'csv'} [format='array']
+ * @param {{includeArrayBrackets?: boolean}} [options]
+ * @returns {string}
  */
 export const formatTextsForTranslation = (texts, format = 'array', options = {}) => {
     const { includeArrayBrackets = true } = options;
+    const pairs = Array.isArray(texts)
+        ? texts
+              .map((item) => {
+                  if (typeof item === 'string') {
+                      return { sourceText: item, translation: '' };
+                  }
+                  if (Array.isArray(item)) {
+                      return {
+                          sourceText: String(item[0] || ''),
+                          translation: String(item[1] || ''),
+                      };
+                  }
+                  return {
+                      sourceText: String(item?.sourceText ?? item?.source ?? ''),
+                      translation: String(item?.translation ?? ''),
+                  };
+              })
+              .filter((pair) => pair.sourceText !== '')
+        : [];
 
-    if (!texts || texts.length === 0) {
+    if (pairs.length === 0) {
         if (format === 'object') return includeArrayBrackets ? '{}' : '';
         if (format === 'csv') return '';
         return includeArrayBrackets ? '[]' : '';
     }
 
-    // 优化：使用 JSON.stringify 来自动处理所有转义字符（包括 " \ \n \t 等）。
-
     if (format === 'object') {
         const indent = includeArrayBrackets ? '    ' : '';
-        const result = texts.map(text =>
-            `${indent}${JSON.stringify(text)}: ""`
+        const result = pairs.map(
+            (pair) => `${indent}${JSON.stringify(pair.sourceText)}: ${JSON.stringify(pair.translation)}`
         );
-        if (includeArrayBrackets) {
-            return `{\n${result.join(',\n')}\n}`;
-        } else {
-            return result.join(',\n');
-        }
-    } else if (format === 'csv') {
-        // CSV Format: "Source",""
-        // Need to escape double quotes by doubling them
-        // CSV 格式不受 includeArrayBrackets 设置影响
-        const result = texts.map(text => {
-            const escaped = text.replace(/"/g, '""');
-            return `"${escaped}",""`;
-        });
-        return result.join('\n');
-    } else {
-        // Default 'array' format
-        const indent = includeArrayBrackets ? '    ' : '';
-        const result = texts.map(text =>
-            `${indent}[${JSON.stringify(text)}, ""]`
-        );
-        if (includeArrayBrackets) {
-            return `[\n${result.join(',\n')}\n]`;
-        } else {
-            return result.join(',\n');
-        }
+        return includeArrayBrackets ? `{\n${result.join(',\n')}\n}` : result.join(',\n');
     }
+
+    if (format === 'csv') {
+        return pairs
+            .map((pair) => {
+                const escapedSource = pair.sourceText.replace(/"/g, '""');
+                const escapedTranslation = pair.translation.replace(/"/g, '""');
+                return `"${escapedSource}","${escapedTranslation}"`;
+            })
+            .join('\n');
+    }
+
+    const indent = includeArrayBrackets ? '    ' : '';
+    const result = pairs.map(
+        (pair) => `${indent}[${JSON.stringify(pair.sourceText)}, ${JSON.stringify(pair.translation)}]`
+    );
+    return includeArrayBrackets ? `[\n${result.join(',\n')}\n]` : result.join(',\n');
 };

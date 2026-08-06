@@ -13,7 +13,7 @@ const localesPlugin = {
     name: 'locales-plugin',
     setup(build) {
         // 拦截 'virtual:locales' 导入
-        build.onResolve({ filter: /^virtual:locales$/ }, args => ({
+        build.onResolve({ filter: /^virtual:locales$/ }, (args) => ({
             path: args.path,
             namespace: 'locales-ns',
         }));
@@ -25,7 +25,7 @@ const localesPlugin = {
             const absI18nDir = path.resolve(i18nDir);
 
             const files = await fs.readdir(i18nDir);
-            const jsonFiles = files.filter(file => path.extname(file) === '.json');
+            const jsonFiles = files.filter((file) => path.extname(file) === '.json');
 
             const imports = [];
             const exports = [];
@@ -43,7 +43,7 @@ const localesPlugin = {
                     if (json._meta && json._meta.name) {
                         name = json._meta.name;
                     }
-                } catch (e) {
+                } catch {
                     console.warn(`Warning: Failed to parse ${file}`);
                 }
 
@@ -90,7 +90,7 @@ async function build() {
 
         // 筛选并排序 CSS 文件，确保 themes.css 在最前面
         const sortedCssFiles = cssFiles
-            .filter(file => path.extname(file) === '.css')
+            .filter((file) => path.extname(file) === '.css')
             .sort((a, b) => {
                 if (a === themeFile) return -1;
                 if (b === themeFile) return 1;
@@ -105,10 +105,9 @@ async function build() {
 
         // 使用 PostCSS 清理和压缩 CSS
         console.log('正在清理和压缩 CSS...');
-        const postcssResult = await postcss([
-            discardComments({ removeAll: true }),
-            cssnano()
-        ]).process(allCssContent, { from: undefined });
+        const postcssResult = await postcss([discardComments({ removeAll: true }), cssnano()]).process(allCssContent, {
+            from: undefined,
+        });
         const cleanedCss = postcssResult.css;
         console.log('CSS 清理和压缩完成。');
 
@@ -136,9 +135,9 @@ async function build() {
             plugins: [localesPlugin], // 添加虚拟模块插件
             globalName: 'TextExtractor',
             define: {
-                '__INJECTED_CSS__': JSON.stringify(cleanedCss),
-                '__PROCESSING_WORKER_STRING__': JSON.stringify(processingWorkerCode),
-            }
+                __INJECTED_CSS__: JSON.stringify(cleanedCss),
+                __PROCESSING_WORKER_STRING__: JSON.stringify(processingWorkerCode),
+            },
         });
         console.log('主应用程序打包完成。');
 
@@ -146,7 +145,10 @@ async function build() {
 
         console.log('开始清理代码...');
         let codeWithoutComments = strip(bundledCode);
-        let cleanedCode = codeWithoutComments.split('\n').filter(line => line.trim() !== '').join('\n');
+        let cleanedCode = codeWithoutComments
+            .split('\n')
+            .filter((line) => line.trim() !== '')
+            .join('\n');
         console.log('代码清理完成。');
 
         const finalScript = `${header}\n\n${cleanedCode}`;
@@ -156,7 +158,6 @@ async function build() {
         await fs.writeFile(outputPath, finalScript);
 
         console.log(`✅ 构建成功！脚本已保存至 ${outputPath}`);
-
     } catch (error) {
         console.error('🔥 构建失败:', error);
         process.exit(1);

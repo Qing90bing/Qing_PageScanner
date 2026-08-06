@@ -53,7 +53,11 @@ function createUIContainer() {
             }
             // C. 检查现有元素的属性变化 (如 dialog.open)
             if (mutation.type === 'attributes' && mutation.target !== container) {
-                if (mutation.target.tagName === 'DIALOG' && mutation.attributeName === 'open' && mutation.target.hasAttribute('open')) {
+                if (
+                    mutation.target.tagName === 'DIALOG' &&
+                    mutation.attributeName === 'open' &&
+                    mutation.target.hasAttribute('open')
+                ) {
                     potentialOcclusion = true;
                 }
             }
@@ -80,7 +84,7 @@ function createUIContainer() {
                     childList: true,
                     subtree: true,
                     attributes: true,
-                    attributeFilter: ['open', 'popover']
+                    attributeFilter: ['open', 'popover'],
                 });
             }
         };

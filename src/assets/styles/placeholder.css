@@ -5,7 +5,9 @@
     display: flex; /* 改为flex以便应用flex属性 */
     opacity: 0; /* 初始透明 */
     visibility: hidden; /* 初始隐藏 */
-    transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out; /* 过渡效果 */
+    transition:
+        opacity 0.2s ease-in-out,
+        visibility 0.2s ease-in-out; /* 过渡效果 */
     flex-direction: column;
     justify-content: center;
     align-items: center;

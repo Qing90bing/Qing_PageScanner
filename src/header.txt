@@ -3,7 +3,7 @@
 // @name:en-US   Web Text Extraction Tool
 // @namespace    https://github.com/Qing90bing/Qing_PageScanner
 // @namespace    http://tampermonkey.net/
-// @version      1.0.1
+// @version      1.0.2
 // @description  像扫描仪一样快速“扫描”整个网页，智能识别并捕获所有需要翻译的文本片段，提高你的翻译效率。
 // @description:en-US  Scan the entire web page like a scanner, intelligently identify and capture all text fragments that need translation.
 // @license      MIT
@@ -19,5 +19,7 @@
 // @grant        GM_deleteValue
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
+// @grant        GM_xmlhttpRequest
+// @connect      *
 // @run-at       document-start
 // ==/UserScript==

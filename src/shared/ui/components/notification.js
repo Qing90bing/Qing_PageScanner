@@ -34,9 +34,13 @@ function closeNotification(notification) {
     }
 
     notification.classList.add('tc-notification-fade-out');
-    notification.addEventListener('animationend', () => {
-        notification.remove();
-    }, { once: true }); // 使用 once 确保事件监听器在执行后自动移除
+    notification.addEventListener(
+        'animationend',
+        () => {
+            notification.remove();
+        },
+        { once: true }
+    ); // 使用 once 确保事件监听器在执行后自动移除
 }
 
 /**

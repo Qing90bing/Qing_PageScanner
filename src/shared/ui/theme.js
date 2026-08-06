@@ -6,8 +6,8 @@ import { uiContainer } from './uiContainer.js';
  * 初始化并应用主题
  */
 export function initTheme() {
-  const { theme } = loadSettings();
-  applyTheme(theme);
+    const { theme } = loadSettings();
+    applyTheme(theme);
 }
 
 /**
@@ -15,20 +15,20 @@ export function initTheme() {
  * @param {string} theme - 'light', 'dark', 或 'system'
  */
 export function applyTheme(theme) {
-  let finalTheme = theme;
-  if (theme === 'system') {
-    // 检测系统设置
-    finalTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  }
+    let finalTheme = theme;
+    if (theme === 'system') {
+        // 检测系统设置
+        finalTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
 
-  // 在 Shadow DOM 宿主元素上设置 data-theme 属性
-  uiContainer.host.setAttribute('data-theme', finalTheme);
+    // 在 Shadow DOM 宿主元素上设置 data-theme 属性
+    uiContainer.host.setAttribute('data-theme', finalTheme);
 }
 
 // 监听系统颜色方案变化
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-  const { theme } = loadSettings();
-  if (theme === 'system') {
-    applyTheme('system');
-  }
+    const { theme } = loadSettings();
+    if (theme === 'system') {
+        applyTheme('system');
+    }
 });

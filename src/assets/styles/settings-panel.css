@@ -15,7 +15,9 @@
     /* --- 新增：动画相关属性 --- */
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s;
+    transition:
+        opacity 0.3s ease,
+        visibility 0.3s;
     pointer-events: none;
     /* 默认不拦截，避免不可见时阻挡 */
 }
@@ -35,18 +37,18 @@
     border: 1px solid var(--main-border);
     border-radius: 16px;
     box-shadow: 0 5px 15px var(--main-shadow);
-    width: 90%;
-    max-width: 800px;
-    /* 增加宽度以适应侧边栏布局 */
-    height: 600px;
+    width: min(1040px, calc(100vw - 48px));
+    max-width: 1040px;
+    height: min(760px, calc(100vh - 56px));
     /* 设置固定高度或最大高度 */
-    max-height: 85vh;
+    max-height: 90vh;
     display: flex;
     flex-direction: column;
     /* --- 新增：动画相关属性 --- */
     transform: scale(0.95);
     transition: transform 0.3s ease;
     overflow: hidden;
+    overscroll-behavior: contain;
     /* 防止圆角被子元素遮挡 */
 }
 
@@ -80,6 +82,32 @@
     /* 防止头部被压缩 */
 }
 
+#settings-panel-title-container,
+#contextual-settings-title-container {
+    display: flex;
+    min-width: 0;
+    min-height: 32px;
+    align-items: center;
+}
+
+#settings-panel-title-container > .tc-icon-title,
+#contextual-settings-title-container > .tc-icon-title {
+    min-height: 32px;
+    gap: 10px;
+}
+
+#settings-panel-title-container .tc-icon-title-icon,
+#contextual-settings-title-container .tc-icon-title-icon {
+    width: 24px;
+    height: 24px;
+    flex-basis: 24px;
+}
+
+#settings-panel-title-container .icon-title-text,
+#contextual-settings-title-container .icon-title-text {
+    line-height: 24px;
+}
+
 /* --- 新增：主体布局（侧边栏 + 内容区） --- */
 .settings-panel-body {
     display: flex;
@@ -90,7 +118,7 @@
 
 /* --- 新增：侧边栏样式 --- */
 .settings-sidebar {
-    width: 200px;
+    width: 220px;
     border-right: 1px solid var(--main-border);
     background-color: color-mix(in srgb, var(--main-bg) 97%, var(--main-text));
     /* 轻微调整背景色 */
@@ -113,7 +141,9 @@
     /* 初始高度和位置将在 JS 中动态设置 */
     background-color: color-mix(in srgb, var(--main-primary) 10%, transparent);
     border-left: 3px solid var(--main-primary);
-    transition: transform 0.2s cubic-bezier(0.4, 0.0, 0.2, 1), height 0.2s ease;
+    transition:
+        transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+        height 0.2s ease;
     /* 加快一点速度 */
     pointer-events: none;
     /* 确保不阻挡点击事件 */
@@ -130,7 +160,9 @@
     font-weight: 500;
     color: var(--main-text);
     /* 关键修复：添加 background-color 到 transition 列表中 */
-    transition: color 0.2s, background-color 0.2s;
+    transition:
+        color 0.2s,
+        background-color 0.2s;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -157,9 +189,16 @@
 }
 
 .settings-sidebar-item svg {
+    display: block;
     width: 22px;
     height: 22px;
+    flex: 0 0 22px;
     fill: currentColor;
+}
+
+.settings-sidebar-item > span {
+    display: block;
+    line-height: 22px;
 }
 
 /* --- 新增：内容区域样式 --- */
@@ -184,6 +223,10 @@
     animation: fadeIn 0.2s ease;
 }
 
+#tab-ai.settings-tab-content {
+    padding: 28px 32px;
+}
+
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -202,7 +245,7 @@
     margin-bottom: 12px;
 }
 
-.setting-item>label {
+.setting-item > label {
     display: block;
     margin-bottom: 8px;
     font-weight: 500;
@@ -315,22 +358,22 @@
     transition: all 0.2s;
 }
 
-.checkbox-group:hover input~.checkmark {
+.checkbox-group:hover input ~ .checkmark {
     border-color: var(--main-primary);
 }
 
-.checkbox-group input:checked~.checkmark {
+.checkbox-group input:checked ~ .checkmark {
     background-color: var(--main-primary);
     border-color: var(--main-primary);
 }
 
 .checkmark:after {
-    content: "";
+    content: '';
     position: absolute;
     display: none;
 }
 
-.checkbox-group input:checked~.checkmark:after {
+.checkbox-group input:checked ~ .checkmark:after {
     display: block;
 }
 
@@ -375,7 +418,11 @@
     background-color: var(--main-textarea-bg);
     color: var(--main-text);
     font-size: 14px;
-    transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s, color 0.2s;
+    transition:
+        border-color 0.2s,
+        box-shadow 0.2s,
+        background-color 0.2s,
+        color 0.2s;
 }
 
 .numeric-input:focus {
@@ -418,7 +465,9 @@
     background-color: var(--main-bg);
     cursor: pointer;
     overflow: hidden;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    transition:
+        border-color 0.2s,
+        box-shadow 0.2s;
     /* No transform */
     padding: 0;
     position: relative;
@@ -447,7 +496,9 @@
     border-bottom: 1px solid var(--main-border);
     padding: 16px;
     background-color: var(--main-textarea-bg);
-    transition: background-color 0.2s, border-bottom-color 0.2s;
+    transition:
+        background-color 0.2s,
+        border-bottom-color 0.2s;
 }
 
 /* Schematic Drawing Logic */
@@ -499,66 +550,65 @@
 /* --- Theme Specific Colors for Schematic --- */
 
 /* Light Option */
-.image-card-option[data-value="light"] .image-card-preview {
+.image-card-option[data-value='light'] .image-card-preview {
     background-color: #f1f5f9;
     /* Slate 100 */
 }
 
-.image-card-option[data-value="light"] .schematic-card {
+.image-card-option[data-value='light'] .schematic-card {
     background-color: #ffffff;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-.image-card-option[data-value="light"] .schematic-icon-box {
+.image-card-option[data-value='light'] .schematic-icon-box {
     background-color: #e2e8f0;
     /* Slate 200 */
 }
 
-.image-card-option[data-value="light"] .schematic-line {
+.image-card-option[data-value='light'] .schematic-line {
     background-color: #cbd5e1;
     /* Slate 300 */
 }
 
 /* Dark Option */
-.image-card-option[data-value="dark"] .image-card-preview {
+.image-card-option[data-value='dark'] .image-card-preview {
     background-color: #0f172a;
     /* Slate 900 */
 }
 
-.image-card-option[data-value="dark"] .schematic-card {
+.image-card-option[data-value='dark'] .schematic-card {
     background-color: #1e293b;
     /* Slate 800 */
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-.image-card-option[data-value="dark"] .schematic-icon-box {
+.image-card-option[data-value='dark'] .schematic-icon-box {
     background-color: #334155;
     /* Slate 700 */
 }
 
-.image-card-option[data-value="dark"] .schematic-line {
+.image-card-option[data-value='dark'] .schematic-line {
     background-color: #475569;
     /* Slate 600 */
 }
 
 /* System Option */
-.image-card-option[data-value="system"] .image-card-preview {
+.image-card-option[data-value='system'] .image-card-preview {
     background-color: #1e293b;
 }
 
-.image-card-option[data-value="system"] .schematic-card {
+.image-card-option[data-value='system'] .schematic-card {
     background-color: #334155;
     border: 1px solid #475569;
 }
 
-.image-card-option[data-value="system"] .schematic-icon-box {
+.image-card-option[data-value='system'] .schematic-icon-box {
     background-color: #475569;
 }
 
-.image-card-option[data-value="system"] .schematic-line {
+.image-card-option[data-value='system'] .schematic-line {
     background-color: #64748b;
 }
-
 
 /* 2. Label Area (Radio + Text + Icon) */
 .image-card-label {
@@ -591,7 +641,7 @@
     background-color: var(--main-primary);
     opacity: 0;
     transform: scale(0);
-    transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .image-card-option.selected .image-card-radio {
@@ -623,44 +673,44 @@
 /* --- Dynamic System Theme Behavior --- */
 
 @media (prefers-color-scheme: light) {
-    .image-card-option[data-value="system"] .image-card-preview {
+    .image-card-option[data-value='system'] .image-card-preview {
         background-color: #f1f5f9;
         /* Match Light */
     }
 
-    .image-card-option[data-value="system"] .schematic-card {
+    .image-card-option[data-value='system'] .schematic-card {
         background-color: #ffffff;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         border: none;
         /* Reset system border override */
     }
 
-    .image-card-option[data-value="system"] .schematic-icon-box {
+    .image-card-option[data-value='system'] .schematic-icon-box {
         background-color: #e2e8f0;
     }
 
-    .image-card-option[data-value="system"] .schematic-line {
+    .image-card-option[data-value='system'] .schematic-line {
         background-color: #cbd5e1;
     }
 }
 
 @media (prefers-color-scheme: dark) {
-    .image-card-option[data-value="system"] .image-card-preview {
+    .image-card-option[data-value='system'] .image-card-preview {
         background-color: #0f172a;
         /* Match Dark */
     }
 
-    .image-card-option[data-value="system"] .schematic-card {
+    .image-card-option[data-value='system'] .schematic-card {
         background-color: #1e293b;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         border: none;
     }
 
-    .image-card-option[data-value="system"] .schematic-icon-box {
+    .image-card-option[data-value='system'] .schematic-icon-box {
         background-color: #334155;
     }
 
-    .image-card-option[data-value="system"] .schematic-line {
+    .image-card-option[data-value='system'] .schematic-line {
         background-color: #475569;
     }
 }
@@ -722,4 +772,77 @@
 #about-github-btn svg {
     width: 20px;
     height: 20px;
+}
+
+@media (max-width: 900px) {
+    .settings-panel-modal {
+        width: calc(100vw - 28px);
+        height: calc(100vh - 28px);
+        max-height: none;
+    }
+
+    .settings-sidebar {
+        width: 180px;
+    }
+
+    .settings-sidebar-item {
+        padding-inline: 14px;
+    }
+
+    #tab-ai.settings-tab-content {
+        padding: 24px;
+    }
+}
+
+@media (max-width: 700px) {
+    .settings-panel-modal {
+        width: calc(100vw - 16px);
+        height: calc(100vh - 16px);
+        border-radius: 12px;
+    }
+
+    .settings-panel-header {
+        padding: 14px 16px;
+    }
+
+    .settings-panel-body {
+        flex-direction: column;
+    }
+
+    .settings-sidebar {
+        width: 100%;
+        flex-direction: row;
+        overflow-x: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--main-border);
+    }
+
+    .sidebar-highlight {
+        display: none;
+    }
+
+    .settings-sidebar-item {
+        flex: 0 0 auto;
+        min-height: 44px;
+        padding: 10px 12px;
+        border-left: 0;
+    }
+
+    .settings-sidebar-item.active {
+        background-color: color-mix(in srgb, var(--main-primary) 10%, transparent);
+    }
+
+    .settings-sidebar-item svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .settings-tab-content,
+    #tab-ai.settings-tab-content {
+        padding: 18px;
+    }
+
+    .settings-panel-footer {
+        padding: 12px 16px;
+    }
 }

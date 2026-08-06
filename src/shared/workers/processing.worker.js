@@ -37,7 +37,7 @@ const t = (key, replacements) => {
             const reasonKey = replacements.reason;
             finalReplacements.reason = translations.filterReasons[reasonKey] || reasonKey;
         }
-        Object.keys(finalReplacements).forEach(placeholder => {
+        Object.keys(finalReplacements).forEach((placeholder) => {
             const regex = new RegExp(`{{${placeholder}}}`, 'g');
             value = value.replace(regex, finalReplacements[placeholder]);
         });
@@ -110,7 +110,7 @@ self.onmessage = (event) => {
             const uniqueTexts = new Set();
 
             if (Array.isArray(texts)) {
-                texts.forEach(text => processText(text, uniqueTexts));
+                texts.forEach((text) => processText(text, uniqueTexts));
             }
 
             const textsArray = Array.from(uniqueTexts);
@@ -121,8 +121,8 @@ self.onmessage = (event) => {
                 type: 'scanCompleted',
                 payload: {
                     formattedText,
-                    count: textsArray.length
-                }
+                    count: textsArray.length,
+                },
             });
             break;
         }
@@ -135,14 +135,14 @@ self.onmessage = (event) => {
             const filteredTexts = new Set();
 
             if (Array.isArray(texts)) {
-                texts.forEach(text => processText(text, filteredTexts));
+                texts.forEach((text) => processText(text, filteredTexts));
             }
 
             self.postMessage({
                 type: 'textsFiltered',
                 payload: {
-                    texts: Array.from(filteredTexts)
-                }
+                    texts: Array.from(filteredTexts),
+                },
             });
             break;
         }
@@ -155,7 +155,7 @@ self.onmessage = (event) => {
             sessionTexts.clear();
             const newTexts = [];
             if (Array.isArray(initialData)) {
-                initialData.forEach(text => {
+                initialData.forEach((text) => {
                     if (processText(text, sessionTexts)) {
                         newTexts.push(text);
                     }
@@ -179,7 +179,7 @@ self.onmessage = (event) => {
             const { texts } = payload;
             const newTexts = [];
             if (Array.isArray(texts)) {
-                texts.forEach(text => {
+                texts.forEach((text) => {
                     // processText 的副作用是将文本添加到 sessionTexts
                     if (processText(text, sessionTexts)) {
                         // 如果文本被成功添加（是新的），则也将其添加到 newTexts
@@ -192,8 +192,8 @@ self.onmessage = (event) => {
                     type: 'countUpdated',
                     payload: {
                         count: sessionTexts.size,
-                        newTexts: newTexts
-                    }
+                        newTexts: newTexts,
+                    },
                 });
             }
             break;

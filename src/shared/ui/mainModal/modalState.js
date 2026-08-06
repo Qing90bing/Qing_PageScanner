@@ -12,6 +12,7 @@ export let lineNumbersDiv = null;
 export let statsContainer = null;
 export let placeholder = null;
 export let loadingContainer = null;
+export let aiSummaryPanel = null;
 
 // --- 状态与上下文 ---
 export let canvasContext = null; // 用于文本宽度计算的Canvas上下文
@@ -24,16 +25,39 @@ export const SHOW_LOADING = '::show_loading::'; // 加载状态标识符
 
 // --- 更新函数 ---
 // 为了避免循环依赖，我们提供setter函数来修改状态
-export function setModalOverlay(element) { modalOverlay = element; }
-export function setOutputTextarea(element) { outputTextarea = element; }
-export function setLineNumbersDiv(element) { lineNumbersDiv = element; }
-export function setStatsContainer(element) { statsContainer = element; }
-export function setPlaceholder(element) { placeholder = element; }
-export function setLoadingContainer(element) { loadingContainer = element; }
-export function setCanvasContext(context) { canvasContext = context; }
-export function setCurrentLineMap(map) { currentLineMap = map; }
-export function setCurrentMode(mode) { currentMode = mode; }
-export function getCurrentMode() { return currentMode; }
+export function setModalOverlay(element) {
+    modalOverlay = element;
+}
+export function setOutputTextarea(element) {
+    outputTextarea = element;
+}
+export function setLineNumbersDiv(element) {
+    lineNumbersDiv = element;
+}
+export function setStatsContainer(element) {
+    statsContainer = element;
+}
+export function setPlaceholder(element) {
+    placeholder = element;
+}
+export function setLoadingContainer(element) {
+    loadingContainer = element;
+}
+export function setAiSummaryPanel(element) {
+    aiSummaryPanel = element;
+}
+export function setCanvasContext(context) {
+    canvasContext = context;
+}
+export function setCurrentLineMap(map) {
+    currentLineMap = map;
+}
+export function setCurrentMode(mode) {
+    currentMode = mode;
+}
+export function getCurrentMode() {
+    return currentMode;
+}
 
 export function resetState() {
     modalOverlay = null;
@@ -42,6 +66,7 @@ export function resetState() {
     statsContainer = null;
     placeholder = null;
     loadingContainer = null;
+    aiSummaryPanel = null;
     canvasContext = null;
     currentLineMap = [];
     currentMode = 'quick-scan';

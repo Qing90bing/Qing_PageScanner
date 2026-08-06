@@ -1,32 +1,39 @@
 {
-  "name": "app",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "node build.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Qing90bing/Qing_PageScanner.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "module",
-  "bugs": {
-    "url": "https://github.com/Qing90bing/Qing_PageScanner/issues"
-  },
-  "homepage": "https://github.com/Qing90bing/Qing_PageScanner#readme",
-  "devDependencies": {
-    "@playwright/test": "^1.57.0",
-    "cssnano": "^7.1.2",
-    "esbuild": "^0.25.10",
-    "postcss": "^8.5.6",
-    "postcss-discard-comments": "^7.0.4"
-  },
-  "dependencies": {
-    "strip-comments": "^2.0.1"
-  }
+    "name": "app",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "lint": "eslint src build.js --max-warnings 0",
+        "format:check": "prettier --check .",
+        "test": "node --test tests/*.test.js",
+        "build": "node build.js",
+        "check": "npm run lint && npm run format:check && npm test && npm run build"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Qing90bing/Qing_PageScanner.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "type": "module",
+    "bugs": {
+        "url": "https://github.com/Qing90bing/Qing_PageScanner/issues"
+    },
+    "homepage": "https://github.com/Qing90bing/Qing_PageScanner#readme",
+    "devDependencies": {
+        "@eslint/js": "^10.0.1",
+        "@playwright/test": "^1.57.0",
+        "cssnano": "^7.1.2",
+        "esbuild": "^0.25.10",
+        "eslint": "^10.8.0",
+        "globals": "^17.9.0",
+        "postcss": "^8.5.6",
+        "postcss-discard-comments": "^7.0.4",
+        "prettier": "^3.9.6"
+    },
+    "dependencies": {
+        "strip-comments": "^2.0.1"
+    }
 }

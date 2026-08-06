@@ -24,9 +24,13 @@ export function createDropdown(triggerElement, menuContent) {
 
         if (isVisible) {
             menuContent.classList.add('is-hiding');
-            menuContent.addEventListener('animationend', () => {
-                menuContent.classList.remove('visible', 'is-hiding');
-            }, { once: true });
+            menuContent.addEventListener(
+                'animationend',
+                () => {
+                    menuContent.classList.remove('visible', 'is-hiding');
+                },
+                { once: true }
+            );
 
             if (docClickListenerController) {
                 docClickListenerController.abort();
@@ -58,7 +62,7 @@ export function createDropdown(triggerElement, menuContent) {
                     }
 
                     return false;
-                }
+                },
             });
         }
     };
@@ -79,6 +83,6 @@ export function createDropdown(triggerElement, menuContent) {
     return {
         menuElement: menuContent,
         toggle: toggle,
-        destroy: destroy
+        destroy: destroy,
     };
 }

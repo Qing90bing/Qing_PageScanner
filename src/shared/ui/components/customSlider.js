@@ -21,18 +21,21 @@ export class CustomSlider {
     }
 
     initOnVisible() {
-        this.observer = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    if (!this.isInitialized) {
-                        this.performInitialMeasurement();
-                        this.isInitialized = true;
+        this.observer = new IntersectionObserver(
+            (entries, observer) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        if (!this.isInitialized) {
+                            this.performInitialMeasurement();
+                            this.isInitialized = true;
+                        }
+                        // Stop observing once it's visible and initialized.
+                        observer.unobserve(this.element);
                     }
-                    // Stop observing once it's visible and initialized.
-                    observer.unobserve(this.element);
-                }
-            });
-        }, { threshold: 0.1 }); // Trigger when at least 10% is visible
+                });
+            },
+            { threshold: 0.1 }
+        ); // Trigger when at least 10% is visible
 
         this.observer.observe(this.element);
     }
@@ -49,7 +52,7 @@ export class CustomSlider {
         const firstTick = this.ticksContainer.querySelector('.custom-slider-tick');
 
         this.padding = parseFloat(ticksStyle.paddingLeft) || 0;
-        this.tickWidth = firstTick ? (parseFloat(window.getComputedStyle(firstTick).width) || 0) : 0;
+        this.tickWidth = firstTick ? parseFloat(window.getComputedStyle(firstTick).width) || 0 : 0;
     }
 
     createSliderElement() {

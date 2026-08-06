@@ -13,25 +13,28 @@ import { handleDynamicExtractClick } from '../../features/session-scan/ui.js';
 import { handleElementScanClick } from '../../features/element-scan/logic.js';
 import { loadSettings } from '../../features/settings/logic.js';
 import { handleSummaryClick } from './summaryHandler.js'; // New import
+import { handleAiScanClick, initializeAiScanUI } from '../../features/ai-scan/ui.js';
 
 /**
  * @description 初始化脚本的整个用户界面。
  * 此函数会创建所有必要的 UI 元素并将它们的功能连接起来。
  */
 export function initUI() {
-  const settings = loadSettings();
+    const settings = loadSettings();
+    initializeAiScanUI();
 
-  // 1. 创建主模态框（此时还不可见）
-  createMainModal();
+    // 1. 创建主模态框（此时还不可见）
+    createMainModal();
 
-  // 2. 根据设置创建悬浮操作按钮 (FAB)
-  createFab({
-    callbacks: {
-      onStaticExtract: handleQuickScanClick,
-      onDynamicExtract: handleDynamicExtractClick,
-      onSummary: handleSummaryClick, // Updated callback
-      onElementScan: handleElementScanClick,
-    },
-    isVisible: settings.showFab,
-  });
+    // 2. 根据设置创建悬浮操作按钮 (FAB)
+    createFab({
+        callbacks: {
+            onStaticExtract: handleQuickScanClick,
+            onDynamicExtract: handleDynamicExtractClick,
+            onSummary: handleSummaryClick, // Updated callback
+            onElementScan: handleElementScanClick,
+            onAiScan: handleAiScanClick,
+        },
+        isVisible: settings.showFab,
+    });
 }

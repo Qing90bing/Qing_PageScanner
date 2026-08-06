@@ -30,7 +30,7 @@ export class ImageCardSelect {
         this.container = document.createElement('div');
         this.container.className = 'image-card-select-container';
 
-        this.options.forEach(option => {
+        this.options.forEach((option) => {
             const card = document.createElement('div');
             card.className = 'image-card-option';
             card.dataset.value = option.value;
@@ -184,7 +184,7 @@ export class ImageCardSelect {
 
         // 更新 UI
         const cards = this.container.querySelectorAll('.image-card-option');
-        cards.forEach(card => {
+        cards.forEach((card) => {
             if (card.dataset.value === value) {
                 card.classList.add('selected');
             } else {

@@ -12,7 +12,6 @@ import { on } from '../../utils/core/eventBus.js';
  * 从而实现了高度的可复用性和灵活性。
  */
 
-
 /**
  * @public
  * @function createTopCenterCounter
