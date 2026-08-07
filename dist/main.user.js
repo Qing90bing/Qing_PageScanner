@@ -665,7 +665,6 @@ var TextExtractor = (() => {
       aiCounts: {
         pending: "Pending",
         translated: "Translated",
-        keep: "Kept",
         removed: "Removed",
         review: "Review",
         failed: "Failed"
@@ -1210,7 +1209,6 @@ var TextExtractor = (() => {
       aiCounts: {
         pending: "\u5F85\u5904\u7406",
         translated: "\u5DF2\u7FFB\u8BD1",
-        keep: "\u4FDD\u7559",
         removed: "\u79FB\u9664",
         review: "\u5F85\u590D\u6838",
         failed: "\u5931\u8D25"
@@ -1753,7 +1751,6 @@ var TextExtractor = (() => {
       aiCounts: {
         pending: "\u5F85\u8655\u7406",
         translated: "\u5DF2\u7FFB\u8B6F",
-        keep: "\u4FDD\u7559",
         removed: "\u79FB\u9664",
         review: "\u5F85\u8907\u6838",
         failed: "\u5931\u6557"
@@ -2967,7 +2964,6 @@ ${result.join(",\n")}
       aiCounts: {
         pending: "Pending",
         translated: "Translated",
-        keep: "Kept",
         removed: "Removed",
         review: "Review",
         failed: "Failed"
@@ -3512,7 +3508,6 @@ ${result.join(",\n")}
       aiCounts: {
         pending: "\\u5F85\\u5904\\u7406",
         translated: "\\u5DF2\\u7FFB\\u8BD1",
-        keep: "\\u4FDD\\u7559",
         removed: "\\u79FB\\u9664",
         review: "\\u5F85\\u590D\\u6838",
         failed: "\\u5931\\u8D25"
@@ -4055,7 +4050,6 @@ ${result.join(",\n")}
       aiCounts: {
         pending: "\\u5F85\\u8655\\u7406",
         translated: "\\u5DF2\\u7FFB\\u8B6F",
-        keep: "\\u4FDD\\u7559",
         removed: "\\u79FB\\u9664",
         review: "\\u5F85\\u8907\\u6838",
         failed: "\\u5931\\u6557"
@@ -5569,7 +5563,6 @@ ${result.join(",\n")}
     const countItems = [
       ["pending", "results.aiCounts.pending"],
       ["translated", "results.aiCounts.translated"],
-      ["keep", "results.aiCounts.keep"],
       ["removed", "results.aiCounts.removed"],
       ["review", "results.aiCounts.review"],
       ["failed", "results.aiCounts.failed"]
@@ -8729,14 +8722,14 @@ ${result.join(",\n")}
       `The source language may be any language. Translate only into ${targetLabel}.`,
       "A page profile may be included with the site name, URL, title, language hint, and navigation terms. Use it to understand the site domain and vocabulary.",
       "Treat the page language hint as a weak signal: if the source text language differs from the hint, follow the actual text.",
-      "Classify every item as translate, keep, remove, or review.",
-      "translate: user-facing natural language that should enter a translation library.",
-      "keep: already suitable for the target language or intentionally language-neutral.",
-      "remove: code, URL, identifier, tracking value, decorative text, or content not useful to a translation library.",
+      "Classify every item as translate, remove, or review.",
+      "translate: user-facing UI copy that should be translated into the target language and enter the translation library.",
+      "remove: anything that should not enter the translation library, including copy already in the target language, proper nouns or brands that stay untranslated, and dynamic or user-specific data such as project, plan, or product names.",
       "review: uncertain meaning or insufficient context.",
+      "URLs, codes, identifiers, numbers, emails, and similar noise are usually already removed by local filters before submission.",
       "Preserve every placeholder exactly. Do not add, remove, rename, or translate placeholders.",
       "Return one result for every input id. Never return HTML or Markdown.",
-      'Return JSON with shape {"items":[{"id":"...","action":"translate|keep|remove|review","translation":"...","confidence":0.0,"category":"...","reason":"..."}]}.'
+      'Return JSON with shape {"items":[{"id":"...","action":"translate|remove|review","translation":"...","confidence":0.0,"category":"...","reason":"..."}]}.'
     ].join("\n");
     const userContent = JSON.stringify({
       targetLanguage,
@@ -8836,16 +8829,17 @@ ${result.join(",\n")}
     return candidates2.map((candidate) => {
       const item = responseById.get(candidate.id);
       if (!item) return createReview(candidate, "missing-result");
-      if (!ALLOWED_ACTIONS.has(item.action)) return createReview(candidate, "invalid-action", item);
+      const action = item.action === AI_ACTIONS.KEEP ? AI_ACTIONS.REMOVE : item.action;
+      if (!ALLOWED_ACTIONS.has(action)) return createReview(candidate, "invalid-action", item);
       const confidence = Number(item.confidence);
       if (!Number.isFinite(confidence) || confidence < 0 || confidence > 1) {
         return createReview(candidate, "invalid-confidence", item);
       }
-      if (item.action === AI_ACTIONS.REVIEW || confidence < confidenceThreshold) {
+      if (action === AI_ACTIONS.REVIEW || confidence < confidenceThreshold) {
         return createReview(candidate, item.reason || "low-confidence", item);
       }
       const translation = typeof item.translation === "string" ? item.translation.trim() : "";
-      if (item.action === AI_ACTIONS.TRANSLATE) {
+      if (action === AI_ACTIONS.TRANSLATE) {
         if (!translation) return createReview(candidate, "empty-translation", item);
         if (!placeholdersMatch(candidate.sourceText, translation)) {
           return createReview(candidate, "placeholder-mismatch", item);
@@ -8853,18 +8847,17 @@ ${result.join(",\n")}
       }
       const statusMap = {
         [AI_ACTIONS.TRANSLATE]: AI_CANDIDATE_STATUS.TRANSLATED,
-        [AI_ACTIONS.KEEP]: AI_CANDIDATE_STATUS.KEEP,
         [AI_ACTIONS.REMOVE]: AI_CANDIDATE_STATUS.REMOVED
       };
       return {
         id: candidate.id,
         sourceText: candidate.sourceText,
-        action: item.action,
-        translation: item.action === AI_ACTIONS.TRANSLATE ? translation : "",
+        action,
+        translation: action === AI_ACTIONS.TRANSLATE ? translation : "",
         confidence,
         category: typeof item.category === "string" ? item.category.slice(0, 80) : "",
         reason: typeof item.reason === "string" ? item.reason.slice(0, 300) : "",
-        status: statusMap[item.action]
+        status: statusMap[action]
       };
     });
   }
@@ -11788,6 +11781,10 @@ ${result.join(",\n")}
       id: candidate.id,
       sourceText: candidate.sourceText
     };
+    if (decision.action === AI_ACTIONS.KEEP) {
+      decision.action = AI_ACTIONS.REMOVE;
+      decision.status = AI_CANDIDATE_STATUS.REMOVED;
+    }
     decisions.set(candidate.id, decision);
     candidate.status = decision.status;
     return true;
@@ -11893,6 +11890,9 @@ ${result.join(",\n")}
     }
     const restoredCandidates = Array.isArray(saved.candidates) ? saved.candidates.filter(isSubmittableAiCandidate) : [];
     restoredCandidates.forEach((candidate) => {
+      if (candidate.status === AI_CANDIDATE_STATUS.KEEP) {
+        candidate.status = AI_CANDIDATE_STATUS.REMOVED;
+      }
       if (candidate.status === AI_CANDIDATE_STATUS.IN_FLIGHT) {
         candidate.status = AI_CANDIDATE_STATUS.PENDING;
       }
@@ -11901,7 +11901,15 @@ ${result.join(",\n")}
     candidateFingerprints = new Set(restoredCandidates.map((candidate) => candidate.fingerprint).filter(Boolean));
     const restoredDecisions = Array.isArray(saved.decisions) ? saved.decisions : [];
     decisions = new Map(
-      restoredDecisions.filter((decision) => candidates.has(decision.id)).map((decision) => [decision.id, decision])
+      restoredDecisions.filter((decision) => candidates.has(decision.id)).map((decision) => {
+        if (decision.action === AI_ACTIONS.KEEP) {
+          return [
+            decision.id,
+            { ...decision, action: AI_ACTIONS.REMOVE, status: AI_CANDIDATE_STATUS.REMOVED }
+          ];
+        }
+        return [decision.id, decision];
+      })
     );
     sessionUsage = {
       requests: Math.max(0, Number(saved.sessionUsage?.requests) || 0),
