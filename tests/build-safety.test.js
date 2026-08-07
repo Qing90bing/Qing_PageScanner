@@ -11,3 +11,11 @@ test('userscript metadata grants cross-origin requests and build output contains
     assert.match(header, /@connect\s+\*/);
     assert.doesNotMatch(bundle, /sk-test-secret|Bearer test-key|test-api-key/i);
 });
+
+test('built userscript bundle is syntactically valid JavaScript', async () => {
+    const bundle = await readFile(new URL('../dist/main.user.js', import.meta.url), 'utf8');
+
+    assert.doesNotThrow(() => {
+        new Function(bundle);
+    });
+});

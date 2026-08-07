@@ -3,7 +3,6 @@
 import esbuild from 'esbuild';
 import fs from 'fs/promises';
 import path from 'path';
-import strip from 'strip-comments';
 import postcss from 'postcss';
 import discardComments from 'postcss-discard-comments';
 import cssnano from 'cssnano';
@@ -143,13 +142,12 @@ async function build() {
 
         const bundledCode = result.outputFiles[0].text;
 
-        console.log('开始清理代码...');
-        let codeWithoutComments = strip(bundledCode);
-        let cleanedCode = codeWithoutComments
+        console.log('开始清理空行...');
+        const cleanedCode = bundledCode
             .split('\n')
             .filter((line) => line.trim() !== '')
             .join('\n');
-        console.log('代码清理完成。');
+        console.log('空行清理完成。');
 
         const finalScript = `${header}\n\n${cleanedCode}`;
 
