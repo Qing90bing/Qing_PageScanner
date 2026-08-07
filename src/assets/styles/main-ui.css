@@ -29,6 +29,10 @@
 /* --- 单个悬浮操作按钮 (FAB) --- */
 .text-extractor-fab {
     position: relative; /* 为SVG定位提供基准 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform-origin: center;
     width: 56px;
     height: 56px;
     max-height: 56px;
@@ -89,10 +93,6 @@
 }
 
 .text-extractor-fab svg {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     width: 26px;
     height: 26px;
     fill: currentColor; /* 关键：让 SVG 的 fill 颜色继承自父元素的 color 属性 */
@@ -132,8 +132,8 @@
     color: var(--main-text);
     width: min(960px, calc(100vw - 40px));
     max-width: 960px;
-    height: 72vh;
-    max-height: 84vh;
+    height: min(760px, calc(100vh - 56px));
+    max-height: 90vh;
     border-radius: 16px; /* 增大了圆角 */
     box-shadow: 0 5px 15px var(--main-shadow);
     display: flex;

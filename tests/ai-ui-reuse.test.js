@@ -38,6 +38,27 @@ test('AI settings actions use distinct semantic icons', async () => {
     assert.doesNotMatch(source, /ai-button-(?:secondary|danger)/);
 });
 
+test('AI cost controls expose a restore-defaults action wired to shared defaults', async () => {
+    const source = await readFile(AI_PANEL_PATH, 'utf8');
+
+    assert.match(source, /textKey: 'settings\.ai\.restoreDefaults'/);
+    assert.match(source, /AI_DEFAULT_SETTINGS\.batch\.maxItems/);
+    assert.match(source, /AI_DEFAULT_SETTINGS\.budget\.maxEstimatedTokensPerDay/);
+    assert.match(source, /AI_DEFAULT_SETTINGS\.requestTimeoutMs \/ 1000/);
+});
+
+test('summary modal height matches the settings panel height', async () => {
+    const [mainStyles, settingsStyles] = await Promise.all([
+        readFile(MAIN_STYLES_PATH, 'utf8'),
+        readFile(SETTINGS_STYLES_PATH, 'utf8'),
+    ]);
+
+    assert.match(mainStyles, /\.text-extractor-modal\s*\{[\s\S]*height: min\(760px, calc\(100vh - 56px\)\)/);
+    assert.match(mainStyles, /\.text-extractor-modal\s*\{[\s\S]*max-height: 90vh/);
+    assert.match(settingsStyles, /\.settings-panel-modal\s*\{[\s\S]*height: min\(760px, calc\(100vh - 56px\)\)/);
+    assert.match(settingsStyles, /\.settings-panel-modal\s*\{[\s\S]*max-height: 90vh/);
+});
+
 test('the shared settings modal uses the compact workspace size', async () => {
     const styles = await readFile(SETTINGS_STYLES_PATH, 'utf8');
 
@@ -81,6 +102,17 @@ test('FAB bottom positioning follows the visible stack height', async () => {
     assert.match(mainStyles, /\.text-extractor-fab\.fab-feature-hidden[\s\S]*height: 0/);
     assert.match(mainStyles, /margin-top 0\.3s/);
     assert.doesNotMatch(mainStyles, /\.fab-feature-hidden\s*\{\s*display: none/);
+});
+
+test('FAB icon centering uses flexbox without nested transforms', async () => {
+    const styles = await readFile(MAIN_STYLES_PATH, 'utf8');
+
+    const fabBlock = styles.match(/\.text-extractor-fab\s*\{([^}]*)\}/)?.[1] || '';
+    const iconBlock = styles.match(/\.text-extractor-fab svg\s*\{([^}]*)\}/)?.[1] || '';
+    assert.match(fabBlock, /display:\s*flex/);
+    assert.match(fabBlock, /align-items:\s*center/);
+    assert.match(fabBlock, /justify-content:\s*center/);
+    assert.doesNotMatch(iconBlock, /position|top:|left:|transform/);
 });
 
 test('AI disabled state keeps its switch active and dims the remaining settings group', async () => {
