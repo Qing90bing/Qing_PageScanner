@@ -47,18 +47,20 @@ export function validateTranslationResponse(payload, candidates, confidenceThres
     return candidates.map((candidate) => {
         const item = responseById.get(candidate.id);
         if (!item) return createReview(candidate, 'missing-result');
-        if (!ALLOWED_ACTIONS.has(item.action)) return createReview(candidate, 'invalid-action', item);
+        // Legacy keep responses are treated as remove so they never enter the library.
+        const action = item.action === AI_ACTIONS.KEEP ? AI_ACTIONS.REMOVE : item.action;
+        if (!ALLOWED_ACTIONS.has(action)) return createReview(candidate, 'invalid-action', item);
 
         const confidence = Number(item.confidence);
         if (!Number.isFinite(confidence) || confidence < 0 || confidence > 1) {
             return createReview(candidate, 'invalid-confidence', item);
         }
-        if (item.action === AI_ACTIONS.REVIEW || confidence < confidenceThreshold) {
+        if (action === AI_ACTIONS.REVIEW || confidence < confidenceThreshold) {
             return createReview(candidate, item.reason || 'low-confidence', item);
         }
 
         const translation = typeof item.translation === 'string' ? item.translation.trim() : '';
-        if (item.action === AI_ACTIONS.TRANSLATE) {
+        if (action === AI_ACTIONS.TRANSLATE) {
             if (!translation) return createReview(candidate, 'empty-translation', item);
             if (!placeholdersMatch(candidate.sourceText, translation)) {
                 return createReview(candidate, 'placeholder-mismatch', item);
@@ -67,19 +69,18 @@ export function validateTranslationResponse(payload, candidates, confidenceThres
 
         const statusMap = {
             [AI_ACTIONS.TRANSLATE]: AI_CANDIDATE_STATUS.TRANSLATED,
-            [AI_ACTIONS.KEEP]: AI_CANDIDATE_STATUS.KEEP,
             [AI_ACTIONS.REMOVE]: AI_CANDIDATE_STATUS.REMOVED,
         };
 
         return {
             id: candidate.id,
             sourceText: candidate.sourceText,
-            action: item.action,
-            translation: item.action === AI_ACTIONS.TRANSLATE ? translation : '',
+            action,
+            translation: action === AI_ACTIONS.TRANSLATE ? translation : '',
             confidence,
             category: typeof item.category === 'string' ? item.category.slice(0, 80) : '',
             reason: typeof item.reason === 'string' ? item.reason.slice(0, 300) : '',
-            status: statusMap[item.action],
+            status: statusMap[action],
         };
     });
 }

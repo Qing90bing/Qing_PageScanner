@@ -211,7 +211,6 @@
         "aiCounts": {
             "pending": "Pending",
             "translated": "Translated",
-            "keep": "Kept",
             "removed": "Removed",
             "review": "Review",
             "failed": "Failed"

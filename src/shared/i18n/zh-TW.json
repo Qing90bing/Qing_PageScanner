@@ -211,7 +211,6 @@
         "aiCounts": {
             "pending": "待處理",
             "translated": "已翻譯",
-            "keep": "保留",
             "removed": "移除",
             "review": "待複核",
             "failed": "失敗"

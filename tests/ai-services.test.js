@@ -139,6 +139,40 @@ test('prompt includes a compact page profile and structured item context when pr
     assert.ok(!('secretField' in user.items[0].context));
 });
 
+test('prompt instructs only translate, remove, and review categories', () => {
+    const request = buildTranslationRequest({
+        provider,
+        targetLanguage: 'zh-CN',
+        styleProfile: null,
+        candidates: [candidate('en', 'Hello')],
+    });
+    const system = request.messages[0].content;
+    assert.match(system, /Classify every item as translate, remove, or review/);
+    assert.doesNotMatch(system, /translate, keep, remove/);
+    assert.doesNotMatch(JSON.stringify(request), /translate\|keep\|remove\|review/);
+});
+
+test('legacy keep responses are normalized to remove and never enter the library', () => {
+    const result = validateTranslationResponse(
+        {
+            items: [
+                {
+                    id: 'brand',
+                    action: 'keep',
+                    translation: '',
+                    confidence: 0.99,
+                    category: 'proper-noun',
+                    reason: '',
+                },
+            ],
+        },
+        [candidate('brand', 'GitHub')],
+        0.85
+    );
+    assert.equal(result[0].action, 'remove');
+    assert.equal(result[0].status, 'removed');
+});
+
 test('large translation batches reserve more response tokens without exceeding the configured cap', () => {
     const request = buildTranslationRequest({
         provider,

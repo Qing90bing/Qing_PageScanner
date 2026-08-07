@@ -2,16 +2,18 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { buildAiDisplayPairs } from '../src/features/ai-scan/resultView.js';
 
-test('pending AI candidates are visible before submission and translated values appear in place', () => {
+test('pending and review candidates stay visible while removed and legacy keep items are excluded', () => {
     const candidates = [
         { id: 'pending', sourceText: 'Open settings', status: 'pending' },
         { id: 'done', sourceText: 'Save', status: 'translated' },
-        { id: 'keep', sourceText: '中文', status: 'keep' },
+        { id: 'legacyKeep', sourceText: '中文', status: 'keep' },
+        { id: 'removed', sourceText: 'GitHub', status: 'removed' },
         { id: 'review', sourceText: 'Grounding', status: 'review' },
     ];
     const decisions = [
         { id: 'done', action: 'translate', translation: '保存' },
-        { id: 'keep', action: 'keep', translation: '' },
+        { id: 'legacyKeep', action: 'keep', translation: '' },
+        { id: 'removed', action: 'remove', translation: '' },
         { id: 'review', action: 'review', translation: '接地' },
     ];
 

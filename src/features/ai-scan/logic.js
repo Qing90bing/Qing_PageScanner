@@ -119,6 +119,10 @@ function hydrateCachedDecision(candidate, cacheEntry) {
         id: candidate.id,
         sourceText: candidate.sourceText,
     };
+    if (decision.action === AI_ACTIONS.KEEP) {
+        decision.action = AI_ACTIONS.REMOVE;
+        decision.status = AI_CANDIDATE_STATUS.REMOVED;
+    }
     decisions.set(candidate.id, decision);
     candidate.status = decision.status;
     return true;
@@ -234,6 +238,9 @@ async function restoreSession() {
 
     const restoredCandidates = Array.isArray(saved.candidates) ? saved.candidates.filter(isSubmittableAiCandidate) : [];
     restoredCandidates.forEach((candidate) => {
+        if (candidate.status === AI_CANDIDATE_STATUS.KEEP) {
+            candidate.status = AI_CANDIDATE_STATUS.REMOVED;
+        }
         if (candidate.status === AI_CANDIDATE_STATUS.IN_FLIGHT) {
             candidate.status = AI_CANDIDATE_STATUS.PENDING;
         }
@@ -242,7 +249,17 @@ async function restoreSession() {
     candidateFingerprints = new Set(restoredCandidates.map((candidate) => candidate.fingerprint).filter(Boolean));
     const restoredDecisions = Array.isArray(saved.decisions) ? saved.decisions : [];
     decisions = new Map(
-        restoredDecisions.filter((decision) => candidates.has(decision.id)).map((decision) => [decision.id, decision])
+        restoredDecisions
+            .filter((decision) => candidates.has(decision.id))
+            .map((decision) => {
+                if (decision.action === AI_ACTIONS.KEEP) {
+                    return [
+                        decision.id,
+                        { ...decision, action: AI_ACTIONS.REMOVE, status: AI_CANDIDATE_STATUS.REMOVED },
+                    ];
+                }
+                return [decision.id, decision];
+            })
     );
     sessionUsage = {
         requests: Math.max(0, Number(saved.sessionUsage?.requests) || 0),

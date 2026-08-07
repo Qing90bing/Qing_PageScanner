@@ -41,7 +41,6 @@ function renderAiSummaryPanel() {
     const countItems = [
         ['pending', 'results.aiCounts.pending'],
         ['translated', 'results.aiCounts.translated'],
-        ['keep', 'results.aiCounts.keep'],
         ['removed', 'results.aiCounts.removed'],
         ['review', 'results.aiCounts.review'],
         ['failed', 'results.aiCounts.failed'],

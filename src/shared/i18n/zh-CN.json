@@ -213,7 +213,6 @@
         "aiCounts": {
             "pending": "待处理",
             "translated": "已翻译",
-            "keep": "保留",
             "removed": "移除",
             "review": "待复核",
             "failed": "失败"

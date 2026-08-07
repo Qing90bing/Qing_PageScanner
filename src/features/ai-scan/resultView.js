@@ -6,7 +6,8 @@ const HIDDEN_OUTPUT_STATUSES = new Set([AI_CANDIDATE_STATUS.KEEP, AI_CANDIDATE_S
 /**
  * Build the editable summary view from the complete local candidate state.
  * Pending, in-flight, review, and failed items remain visible with an empty
- * translation. Only validated translated decisions populate the second value.
+ * translation. Removed items are excluded, and legacy kept items are treated
+ * as removed. Only validated translated decisions populate the second value.
  * @param {Array<object>} candidateItems
  * @param {Array<object>} decisionItems
  * @returns {Array<{sourceText: string, translation: string}>}
