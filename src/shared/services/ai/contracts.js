@@ -30,7 +30,7 @@ export const AI_RESPONSE_MODES = Object.freeze({
     PROMPT_JSON: 'prompt-json',
 });
 
-export const AI_SETTINGS_VERSION = 2;
+export const AI_SETTINGS_VERSION = 4;
 
 export const DEFAULT_DEEPSEEK_PROVIDER = Object.freeze({
     id: 'deepseek',
@@ -51,14 +51,15 @@ export const AI_DEFAULT_SETTINGS = Object.freeze({
     providers: [DEFAULT_DEEPSEEK_PROVIDER],
     requestTimeoutMs: 45000,
     batch: {
-        maxItems: 100,
-        maxCharacters: 30000,
+        maxItems: 200,
+        maxCharacters: 60000,
+        maxEstimatedOutputTokens: 32768,
         debounceMs: 1200,
     },
     budget: {
-        maxRequestsPerSession: 20,
-        maxCharactersPerSession: 50000,
-        maxEstimatedTokensPerDay: 30000,
+        maxRequestsPerSession: 100,
+        maxCharactersPerSession: 200000,
+        maxEstimatedTokensPerDay: 100000,
     },
 });
 
@@ -111,15 +112,19 @@ export function mergeAiSettings(value = {}) {
             : [normalizeProvider(DEFAULT_DEEPSEEK_PROVIDER)];
     const providerIds = new Set(providers.map((provider) => provider.id));
     const activeProviderId = providerIds.has(value.activeProviderId) ? value.activeProviderId : providers[0].id;
-    const shouldMigrateLegacyBatch =
+    const shouldMigrateBatchDefaults =
         Number(value.version || 1) < AI_SETTINGS_VERSION &&
-        Number(value.batch?.maxItems) === 20 &&
-        Number(value.batch?.maxCharacters) === 6000;
-    const batchValue = shouldMigrateLegacyBatch
+        ((Number(value.batch?.maxItems) === 20 && Number(value.batch?.maxCharacters) === 6000) ||
+            (Number(value.batch?.maxItems) === 100 && Number(value.batch?.maxCharacters) === 30000) ||
+            (Number(value.batch?.maxItems) === 200 &&
+                Number(value.batch?.maxCharacters) === 60000 &&
+                Number(value.batch?.maxEstimatedOutputTokens) === 15360));
+    const batchValue = shouldMigrateBatchDefaults
         ? {
               ...value.batch,
               maxItems: AI_DEFAULT_SETTINGS.batch.maxItems,
               maxCharacters: AI_DEFAULT_SETTINGS.batch.maxCharacters,
+              maxEstimatedOutputTokens: AI_DEFAULT_SETTINGS.batch.maxEstimatedOutputTokens,
           }
         : value.batch;
 
@@ -137,9 +142,17 @@ export function mergeAiSettings(value = {}) {
         providers,
         requestTimeoutMs: clampNumber(value.requestTimeoutMs, AI_DEFAULT_SETTINGS.requestTimeoutMs, 5000, 120000),
         batch: {
-            maxItems: Math.round(clampNumber(batchValue?.maxItems, AI_DEFAULT_SETTINGS.batch.maxItems, 1, 200)),
+            maxItems: Math.round(clampNumber(batchValue?.maxItems, AI_DEFAULT_SETTINGS.batch.maxItems, 1, 500)),
             maxCharacters: Math.round(
-                clampNumber(batchValue?.maxCharacters, AI_DEFAULT_SETTINGS.batch.maxCharacters, 500, 60000)
+                clampNumber(batchValue?.maxCharacters, AI_DEFAULT_SETTINGS.batch.maxCharacters, 1000, 200000)
+            ),
+            maxEstimatedOutputTokens: Math.round(
+                clampNumber(
+                    batchValue?.maxEstimatedOutputTokens,
+                    AI_DEFAULT_SETTINGS.batch.maxEstimatedOutputTokens,
+                    4096,
+                    131072
+                )
             ),
             debounceMs: Math.round(
                 clampNumber(batchValue?.debounceMs, AI_DEFAULT_SETTINGS.batch.debounceMs, 200, 10000)

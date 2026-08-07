@@ -9,6 +9,7 @@ import {
     mergeAiSettings,
 } from '../../shared/services/ai/contracts.js';
 import { extractAiCandidates } from '../../shared/services/ai/candidateExtractor.js';
+import { buildPageContext } from '../../shared/services/ai/pageContextBuilder.js';
 import { buildTranslationRequest } from '../../shared/services/ai/promptBuilder.js';
 import { createChatCompletionRequest, validateProviderConfiguration } from '../../shared/services/ai/providerClient.js';
 import { parseJsonContent, validateTranslationResponse } from '../../shared/services/ai/responseValidator.js';
@@ -374,11 +375,13 @@ async function performSubmitPending() {
     if (!isActive || generation !== submissionGeneration || isClearing) {
         return { submitted: false, reason: 'stale' };
     }
+    const pageContext = buildPageContext({ targetLanguage: currentTargetLanguage });
     const payload = buildTranslationRequest({
         provider,
         candidates: batch.candidates,
         targetLanguage: currentTargetLanguage,
         styleProfile,
+        pageContext,
     });
     try {
         validateProviderConfiguration(provider, apiKey);

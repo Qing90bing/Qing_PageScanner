@@ -1,4 +1,5 @@
 import {
+    AI_DEFAULT_SETTINGS,
     AI_PROCESSING_MODES,
     AI_RESPONSE_MODES,
     AI_TARGET_LANGUAGES,
@@ -389,13 +390,19 @@ export function mountAiSettingsPanel(container, currentAiSettings) {
         'ai-max-batch-items',
         'settings.ai.maxBatchItems',
         settings.batch.maxItems,
-        { min: 1, max: 200 }
+        { min: 1, max: 500 }
     );
     const maxBatchCharacters = createNumberField(
         'ai-max-batch-characters',
         'settings.ai.maxBatchCharacters',
         settings.batch.maxCharacters,
-        { min: 500, max: 60000 }
+        { min: 500, max: 200000 }
+    );
+    const maxOutputTokens = createNumberField(
+        'ai-max-output-tokens',
+        'settings.ai.maxOutputTokens',
+        settings.batch.maxEstimatedOutputTokens,
+        { min: 4096, max: 131072 }
     );
     const maxRequests = createNumberField(
         'ai-max-page-requests',
@@ -422,6 +429,7 @@ export function mountAiSettingsPanel(container, currentAiSettings) {
     budgetGrid.append(
         maxBatchItems.element,
         maxBatchCharacters.element,
+        maxOutputTokens.element,
         maxRequests.element,
         maxCharacters.element,
         dailyTokens.element,
@@ -435,10 +443,25 @@ export function mountAiSettingsPanel(container, currentAiSettings) {
             showNotification(t('notifications.aiDailyUsageReset'), { type: 'success' });
         },
     });
-    buttons.push(resetUsageBtn);
+    const restoreDefaultsBtn = createButton({
+        textKey: 'settings.ai.restoreDefaults',
+        icon: resetIcon,
+        onClick: () => {
+            maxBatchItems.input.value = AI_DEFAULT_SETTINGS.batch.maxItems;
+            maxBatchCharacters.input.value = AI_DEFAULT_SETTINGS.batch.maxCharacters;
+            maxOutputTokens.input.value = AI_DEFAULT_SETTINGS.batch.maxEstimatedOutputTokens;
+            maxRequests.input.value = AI_DEFAULT_SETTINGS.budget.maxRequestsPerSession;
+            maxCharacters.input.value = AI_DEFAULT_SETTINGS.budget.maxCharactersPerSession;
+            dailyTokens.input.value = AI_DEFAULT_SETTINGS.budget.maxEstimatedTokensPerDay;
+            timeout.input.value = AI_DEFAULT_SETTINGS.requestTimeoutMs / 1000;
+            showNotification(t('notifications.aiDefaultsRestored'), { type: 'success' });
+        },
+    });
+    buttons.push(resetUsageBtn, restoreDefaultsBtn);
     const budgetFooter = document.createElement('div');
     budgetFooter.className = 'ai-action-footer ai-action-footer-end';
     budgetFooter.appendChild(resetUsageBtn);
+    budgetFooter.appendChild(restoreDefaultsBtn);
     budget.body.append(budgetGrid, budgetFooter);
 
     const styles = createSection('settings.ai.siteStyles', themeIcon);
@@ -698,6 +721,10 @@ export function mountAiSettingsPanel(container, currentAiSettings) {
                 batch: {
                     maxItems: numberValue(maxBatchItems.input, settings.batch.maxItems),
                     maxCharacters: numberValue(maxBatchCharacters.input, settings.batch.maxCharacters),
+                    maxEstimatedOutputTokens: numberValue(
+                        maxOutputTokens.input,
+                        settings.batch.maxEstimatedOutputTokens
+                    ),
                     debounceMs: settings.batch.debounceMs,
                 },
                 budget: {

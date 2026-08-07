@@ -47,12 +47,22 @@ test('settings allow only Simplified or Traditional Chinese targets and preserve
     assert.equal(mergeAiSettings({ processingMode: AI_PROCESSING_MODES.AUTO }).processingMode, 'auto');
     assert.equal(mergeAiSettings({ processingMode: 'invalid' }).processingMode, 'manual');
     assert.deepEqual(mergeAiSettings({}).batch, AI_DEFAULT_SETTINGS.batch);
-    assert.equal(AI_DEFAULT_SETTINGS.batch.maxItems, 100);
-    assert.equal(AI_DEFAULT_SETTINGS.batch.maxCharacters, 30000);
+    assert.equal(AI_DEFAULT_SETTINGS.batch.maxItems, 200);
+    assert.equal(AI_DEFAULT_SETTINGS.batch.maxCharacters, 60000);
+    assert.equal(AI_DEFAULT_SETTINGS.batch.maxEstimatedOutputTokens, 32768);
     const migrated = mergeAiSettings({ version: 1, batch: { maxItems: 20, maxCharacters: 6000 } });
     assert.equal(migrated.version, AI_SETTINGS_VERSION);
-    assert.equal(migrated.batch.maxItems, 100);
-    assert.equal(migrated.batch.maxCharacters, 30000);
+    assert.equal(migrated.batch.maxItems, 200);
+    assert.equal(migrated.batch.maxCharacters, 60000);
+    assert.equal(migrated.batch.maxEstimatedOutputTokens, 32768);
+    const migratedDefaults = mergeAiSettings({ version: 2, batch: { maxItems: 100, maxCharacters: 30000 } });
+    assert.equal(migratedDefaults.batch.maxItems, 200);
+    assert.equal(migratedDefaults.batch.maxCharacters, 60000);
+    const migratedOutputBudget = mergeAiSettings({
+        version: 3,
+        batch: { maxItems: 200, maxCharacters: 60000, maxEstimatedOutputTokens: 15360 },
+    });
+    assert.equal(migratedOutputBudget.batch.maxEstimatedOutputTokens, 32768);
     const retained = mergeAiSettings({
         version: AI_SETTINGS_VERSION,
         batch: { maxItems: 20, maxCharacters: 6000 },
@@ -84,7 +94,52 @@ test('prompt accepts multiple source languages, sends limited semantics, and omi
     assert.deepEqual(request.response_format, { type: 'json_object' });
 });
 
-test('large translation batches reserve more response tokens without exceeding the compatibility cap', () => {
+test('prompt includes a compact page profile and structured item context when provided', () => {
+    const request = buildTranslationRequest({
+        provider,
+        targetLanguage: 'zh-CN',
+        styleProfile: null,
+        pageContext: {
+            url: 'https://example.com/settings/profile',
+            siteName: 'Example',
+            title: 'Profile settings',
+            langHint: 'de',
+            description: 'Manage your account',
+            type: 'settings',
+            navigation: ['Home', 'Account'],
+            targetLanguage: 'zh-CN',
+        },
+        candidates: [
+            {
+                ...candidate('save', 'Save changes'),
+                context: {
+                    tagName: 'button',
+                    role: 'button',
+                    domPath: 'main > form > footer > button.btn-primary',
+                    label: 'Profile actions',
+                    precedingText: 'Account name',
+                    followingText: 'Cancel',
+                    headingChain: 'Settings / Profile',
+                    listIndex: 2,
+                    placeholders: [],
+                    secretField: 'should-not-leak',
+                },
+            },
+        ],
+    });
+    const serialized = JSON.stringify(request);
+    const user = JSON.parse(request.messages[1].content);
+    assert.equal(user.sourceLanguageHint, 'auto');
+    assert.equal(user.page.langHint, 'de');
+    assert.match(serialized, /https:\/\/example\.com\/settings\/profile/);
+    assert.match(serialized, /main > form > footer > button\.btn-primary/);
+    assert.match(serialized, /precedingText/);
+    assert.match(serialized, /headingChain/);
+    assert.equal(user.items[0].context.listIndex, 2);
+    assert.ok(!('secretField' in user.items[0].context));
+});
+
+test('large translation batches reserve more response tokens without exceeding the configured cap', () => {
     const request = buildTranslationRequest({
         provider,
         targetLanguage: 'zh-CN',
@@ -92,7 +147,7 @@ test('large translation batches reserve more response tokens without exceeding t
         candidates: Array.from({ length: 100 }, (_, index) => candidate(`item-${index}`, 'x'.repeat(300))),
     });
 
-    assert.equal(request.max_tokens, 8192);
+    assert.equal(request.max_tokens, 35344);
 });
 
 test('DeepSeek translation requests disable thinking so JSON output keeps the response budget', () => {
@@ -159,7 +214,6 @@ test('response validation supports multilingual sources and routes low confidenc
     assert.equal(result[2].reason, 'low-confidence');
 });
 
-
 test('placeholder protection covers named, positional, percent, route, and URL tokens', () => {
     assert.deepEqual(
         extractPlaceholders('Open {name} with %1$s, %user%, :route and https://example.com/docs?q=1'),
@@ -192,19 +246,20 @@ test('batch and budget guards enforce item, character, request, and daily token 
     const guarded = selectBatch(
         [
             candidate('blank', ' \u200B '),
-            ...Array.from({ length: 100 }, (_, index) => candidate(`item-${index}`, 'x'.repeat(100))),
+            ...Array.from({ length: 300 }, (_, index) => candidate(`item-${index}`, 'x'.repeat(100))),
         ],
         {
-            maxItems: 100,
-            maxCharacters: 30000,
+            maxItems: 300,
+            maxCharacters: 60000,
+            maxEstimatedOutputTokens: 32768,
         }
     );
     assert.deepEqual(
         guarded.invalid.map((item) => item.id),
         ['blank']
     );
-    assert.ok(guarded.candidates.length < 100);
-    assert.ok(guarded.estimatedOutputTokens <= 7168);
+    assert.ok(guarded.candidates.length < 300);
+    assert.ok(guarded.estimatedOutputTokens <= 32768);
 
     const settings = { maxRequestsPerSession: 1, maxCharactersPerSession: 50, maxEstimatedTokensPerDay: 1000 };
     assert.equal(

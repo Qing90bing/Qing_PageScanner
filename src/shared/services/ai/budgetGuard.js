@@ -1,7 +1,7 @@
 import { isSubmittableAiCandidate } from './candidateText.js';
 
-export const AI_RESPONSE_TOKEN_LIMIT = 8192;
-export const AI_BATCH_RESPONSE_TOKEN_BUDGET = 7168;
+export const AI_RESPONSE_TOKEN_LIMIT = 65536;
+export const AI_BATCH_RESPONSE_TOKEN_BUDGET = 32768;
 
 export function estimateTokens(value) {
     return Math.max(1, Math.ceil(String(value || '').length / 3));
