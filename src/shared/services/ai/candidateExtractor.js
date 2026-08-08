@@ -56,9 +56,14 @@ function findLabelText(element) {
     }
     const labelledBy = element.getAttribute?.('aria-labelledby');
     if (labelledBy) {
+        const root = element.getRootNode?.() || element.ownerDocument;
         const label = labelledBy
             .split(/\s+/)
-            .map((id) => document.getElementById(id))
+            .map((id) => {
+                if (typeof root.getElementById === 'function') return root.getElementById(id);
+                const safeId = String(id).replace(/["\\]/g, '\\$&');
+                return root.querySelector?.(`[id="${safeId}"]`);
+            })
             .find(Boolean);
         if (label) return limitText(label.textContent, 120);
     }
@@ -137,6 +142,75 @@ function createCandidate(element, sourceText, targetLanguage, siteKey) {
     };
 }
 
+function processElementAttributes(element, attributesToExtract, addCandidate) {
+    attributesToExtract.forEach((attribute) => {
+        const value = element.getAttribute?.(attribute);
+        if (value) addCandidate(element, value);
+    });
+}
+
+function extractSubtree(rootNode, { attributesToExtract, ignoredSelector, addCandidate }) {
+    if (rootNode.nodeType === Node.TEXT_NODE) {
+        const parent = rootNode.parentElement;
+        if (parent && !isIgnoredElement(parent, ignoredSelector)) addCandidate(parent, rootNode.nodeValue);
+        return;
+    }
+
+    const isDocument = rootNode.nodeType === Node.DOCUMENT_NODE;
+    const elementRoot = isDocument ? rootNode.body : rootNode;
+    if (!elementRoot || elementRoot.nodeType === Node.TEXT_NODE) return;
+    const isElementRoot = elementRoot.nodeType === Node.ELEMENT_NODE;
+    const isFragmentRoot = elementRoot.nodeType === Node.DOCUMENT_FRAGMENT_NODE;
+    if (!isElementRoot && !isFragmentRoot) return;
+    if (isElementRoot && isIgnoredElement(elementRoot, ignoredSelector)) {
+        return;
+    }
+
+    processElementAttributes(elementRoot, attributesToExtract, addCandidate);
+
+    elementRoot.querySelectorAll?.('*').forEach((element) => {
+        if (isIgnoredElement(element, ignoredSelector)) return;
+
+        processElementAttributes(element, attributesToExtract, addCandidate);
+
+        if (element.tagName === 'IFRAME') {
+            try {
+                const iframeDoc = element.contentDocument || (element.contentWindow && element.contentWindow.document);
+                if (iframeDoc) extractSubtree(iframeDoc, { attributesToExtract, ignoredSelector, addCandidate });
+            } catch {
+                // Cross-origin iframes are inaccessible; skip silently.
+            }
+        }
+
+        const shadowRoot = element.shadowRoot || element._shadowRoot;
+        if (shadowRoot) extractSubtree(shadowRoot, { attributesToExtract, ignoredSelector, addCandidate });
+    });
+
+    if (elementRoot.tagName === 'IFRAME') {
+        try {
+            const iframeDoc =
+                elementRoot.contentDocument || (elementRoot.contentWindow && elementRoot.contentWindow.document);
+            if (iframeDoc) extractSubtree(iframeDoc, { attributesToExtract, ignoredSelector, addCandidate });
+        } catch {
+            // Cross-origin iframes are inaccessible; skip silently.
+        }
+    }
+
+    const rootShadow = elementRoot.shadowRoot || elementRoot._shadowRoot;
+    if (rootShadow) extractSubtree(rootShadow, { attributesToExtract, ignoredSelector, addCandidate });
+
+    const walker = (elementRoot.ownerDocument || document).createTreeWalker(elementRoot, NodeFilter.SHOW_TEXT, {
+        acceptNode(node) {
+            return node.parentElement && !isIgnoredElement(node.parentElement, ignoredSelector)
+                ? NodeFilter.FILTER_ACCEPT
+                : NodeFilter.FILTER_REJECT;
+        },
+    });
+    while (walker.nextNode()) {
+        addCandidate(walker.currentNode.parentElement, walker.currentNode.nodeValue);
+    }
+}
+
 export function extractAiCandidates(
     root,
     { filterRules, targetLanguage, scannerConfig, siteKey = window.location.origin }
@@ -158,13 +232,6 @@ export function extractAiCandidates(
         }
     };
 
-    const processElementAttributes = (element) => {
-        attributesToExtract.forEach((attribute) => {
-            const value = element.getAttribute?.(attribute);
-            if (value) addCandidate(element, value);
-        });
-    };
-
     const rootNode = isDocumentRoot ? root.body : root;
     if (!rootNode) return [];
 
@@ -178,25 +245,7 @@ export function extractAiCandidates(
         return Array.from(candidates.values());
     }
 
-    if (rootNode.nodeType !== Node.ELEMENT_NODE || isIgnoredElement(rootNode, ignoredSelector)) {
-        return [];
-    }
-
-    processElementAttributes(rootNode);
-    rootNode.querySelectorAll?.('*').forEach((element) => {
-        if (!isIgnoredElement(element, ignoredSelector)) processElementAttributes(element);
-    });
-
-    const walker = document.createTreeWalker(rootNode, NodeFilter.SHOW_TEXT, {
-        acceptNode(node) {
-            return node.parentElement && !isIgnoredElement(node.parentElement, ignoredSelector)
-                ? NodeFilter.FILTER_ACCEPT
-                : NodeFilter.FILTER_REJECT;
-        },
-    });
-    while (walker.nextNode()) {
-        addCandidate(walker.currentNode.parentElement, walker.currentNode.nodeValue);
-    }
+    extractSubtree(rootNode, { attributesToExtract, ignoredSelector, addCandidate });
 
     return Array.from(candidates.values());
 }
