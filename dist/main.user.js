@@ -561,9 +561,9 @@ var TextExtractor = (() => {
         system: "System"
       },
       ai: {
-        title: "AI Scan",
+        title: "AI Translate",
         enabled: "Enable AI Features",
-        enabledDescription: "Turning this off stops AI scanning and hides the AI floating button. Normal scans are unaffected.",
+        enabledDescription: "Turning this off stops AI translation and hides the AI floating button. Normal scans are unaffected.",
         betaBadge: "Beta",
         betaNotice: "This feature is currently unstable and has known issues. It is for testing only.",
         general: "Scan and Translation",
@@ -651,12 +651,12 @@ var TextExtractor = (() => {
     },
     results: {
       title: "Extracted Text",
-      aiTitle: "AI Scan Results",
+      aiTitle: "AI Translation Results",
       scanCountSession: "Scanned {{count}} items",
       scanCountStatic: "Total {{count}} items scanned",
       scanCountAi: "AI collected {{count}} items",
-      aiRunning: "AI scan is running",
-      aiStopped: "AI scan stopped",
+      aiRunning: "AI translation is in progress",
+      aiStopped: "AI translation stopped",
       aiProcessing: "The provider is processing the current batch\u2026",
       aiBudgetBlocked: "Sending stopped because a budget limit was reached",
       aiRequestError: "Most recent request failed",
@@ -695,9 +695,9 @@ var TextExtractor = (() => {
       sessionScanContinued: "Dynamic scan continued.",
       cspWorkerWarning: "Switched to compatibility scan mode due to website security restrictions.",
       scanModeConflict: "Stop the active scan mode before starting another one.",
-      aiScanStarted: "AI dynamic scan started.",
-      aiScanStopped: "AI dynamic scan stopped.",
-      aiScanStartFailed: "AI scan failed to start.",
+      aiScanStarted: "AI translation started.",
+      aiScanStopped: "AI translation stopped.",
+      aiScanStartFailed: "AI translation failed to start.",
       aiDisabled: "AI features are disabled. Enable them in Settings first.",
       aiBatchCompleted: "AI batch completed.",
       aiNothingPending: "There are no pending items to send.",
@@ -731,8 +731,8 @@ var TextExtractor = (() => {
     },
     tooltip: {
       summary: "View Summary",
-      ai_scan: "AI Dynamic Scan (Beta)",
-      ai_scan_stop: "Stop AI Dynamic Scan",
+      ai_scan: "AI Translate (Beta)",
+      ai_scan_stop: "Stop AI Translate",
       ai_disabled: "AI features are disabled",
       dynamic_scan: "Dynamic Scan",
       static_scan: "Static Scan",
@@ -751,7 +751,7 @@ var TextExtractor = (() => {
       },
       disabled: {
         scan_in_progress: "Another scan is in progress",
-        ai_scan_active: "Regular scans are disabled while AI scan is running"
+        ai_scan_active: "Regular scans are disabled while AI translation is running"
       },
       filters: {
         title: "Content Filter Explanation",
@@ -989,8 +989,8 @@ var TextExtractor = (() => {
       elementScan: '<p><strong>What it does:</strong></p><p>Element Scan allows you to precisely select one or more areas on a webpage (e.g., a paragraph, a list, a sidebar) and extract text only from those areas.</p><p><strong>How to use:</strong></p><ol><li><strong>Start:</strong> Click the "Element Scan" icon <span class="help-icon-placeholder element-scan-icon"></span> in the floating button to enter scan mode.</li><li><strong>Select:</strong> Move your mouse over the page. The area you want to scan will be highlighted. Click to select it.</li><li><strong>Adjust:</strong> A toolbar will appear after selection. You can use the <strong>slider</strong> to expand or shrink the selection area.</li><li><strong>Stage:</strong> If you want to select multiple unrelated areas, click the <span class="action-key">Stage</span> button to save the current selection and continue selecting other areas.</li><li><strong>Confirm:</strong> Once you have finished all selections, click the <span class="action-key">Confirm</span> button to start extracting text from all your chosen areas.</li></ol><p><strong>How to exit:</strong></p><ul><li>While the highlight box is visible, <strong>right-click</strong> anywhere on the page.</li><li>Press the <kbd>ESC</kbd> key at any time.</li><li>Click the "Element Scan" icon again at any time.</li></ul>',
       sessionScanTitle: "Dynamic Scan Tutorial",
       sessionScan: '<p><strong>What it does:</strong></p><p>Dynamic Scan continuously monitors and automatically records all text that dynamically loads or changes on a webpage. It is especially useful for capturing live chats, infinite scrolling content, or notifications.</p><p><strong>How to use:</strong></p><ul><li><strong>Start Scan:</strong> Click the "Dynamic Scan" icon <span class="help-icon-placeholder dynamic-scan-icon"></span> in the floating button to start scanning immediately.</li><li><strong>Stop Scan:</strong> Click the icon again <span class="help-icon-placeholder stop-icon"></span> to stop.</li><li><strong>View Results:</strong> After stopping, click the main floating button <span class="help-icon-placeholder summary-icon"></span> to open the results window.</li></ul><p><strong>How to exit:</strong></p><ul><li>Click the "Dynamic Scan" icon again during the scan.</li><li>Press the <kbd>ESC</kbd> key at any time to quickly stop the scan.</li></ul>',
-      aiScanTitle: "AI Dynamic Scan Guide",
-      aiScan: "<p><strong>What it does:</strong></p><p>AI Scan continuously collects candidate webpage text and either processes it automatically or waits for manual submission. The top counter shows how many candidates have been collected.</p><p><strong>How to use:</strong></p><ul><li>Click the AI floating button again to stop scanning.</li><li>Open View Summary to submit pending items, review results, and copy or export translations.</li><li>Repeated or previously processed text is not submitted again.</li></ul>"
+      aiScanTitle: "AI Translation Guide",
+      aiScan: "<p><strong>What it does:</strong></p><p>AI translation continuously collects candidate webpage text and either processes it automatically or waits for manual submission. The top counter shows how many candidates have been collected.</p><p><strong>How to use:</strong></p><ul><li>Click the AI floating button again to stop translation.</li><li>Open View Summary to submit pending items, review results, and copy or export translations.</li><li>Repeated or previously processed text is not submitted again.</li></ul>"
     }
   };
   // src/shared/i18n/zh-CN.json
@@ -1105,9 +1105,9 @@ var TextExtractor = (() => {
         system: "\u8DDF\u968F\u7CFB\u7EDF"
       },
       ai: {
-        title: "AI \u626B\u63CF",
+        title: "AI \u7FFB\u8BD1",
         enabled: "\u542F\u7528 AI \u529F\u80FD",
-        enabledDescription: "\u5173\u95ED\u540E\u4F1A\u505C\u6B62 AI \u626B\u63CF\u5E76\u9690\u85CF AI \u60AC\u6D6E\u6309\u94AE\uFF1B\u666E\u901A\u626B\u63CF\u529F\u80FD\u4E0D\u53D7\u5F71\u54CD\u3002",
+        enabledDescription: "\u5173\u95ED\u540E\u4F1A\u505C\u6B62 AI \u7FFB\u8BD1\u5E76\u9690\u85CF AI \u60AC\u6D6E\u6309\u94AE\uFF1B\u666E\u901A\u626B\u63CF\u529F\u80FD\u4E0D\u53D7\u5F71\u54CD\u3002",
         betaBadge: "Beta",
         betaNotice: "\u76EE\u524D\u8BE5\u529F\u80FD\u4E0D\u7A33\u5B9A\uFF0C\u95EE\u9898\u8F83\u591A\uFF0C\u4EC5\u505A\u6D4B\u8BD5\u3002",
         general: "\u626B\u63CF\u4E0E\u7FFB\u8BD1",
@@ -1195,12 +1195,12 @@ var TextExtractor = (() => {
     },
     results: {
       title: "\u63D0\u53D6\u7684\u6587\u672C",
-      aiTitle: "AI \u626B\u63CF\u7ED3\u679C",
+      aiTitle: "AI \u7FFB\u8BD1\u7ED3\u679C",
       scanCountSession: "\u5DF2\u626B\u63CF {{count}} \u4E2A\u9879\u76EE",
       scanCountStatic: "\u5171\u626B\u63CF {{count}} \u4E2A\u9879\u76EE",
       scanCountAi: "AI \u5DF2\u6536\u96C6 {{count}} \u4E2A\u9879\u76EE",
-      aiRunning: "AI \u626B\u63CF\u8FD0\u884C\u4E2D",
-      aiStopped: "AI \u626B\u63CF\u5DF2\u505C\u6B62",
+      aiRunning: "AI \u7FFB\u8BD1\u8FDB\u884C\u4E2D",
+      aiStopped: "AI \u7FFB\u8BD1\u5DF2\u505C\u6B62",
       aiProcessing: "\u4F9B\u5E94\u5546\u6B63\u5728\u5904\u7406\u5F53\u524D\u6279\u6B21\u2026",
       aiBudgetBlocked: "\u5DF2\u505C\u6B62\u53D1\u9001\uFF0C\u8FBE\u5230\u9884\u7B97\u9650\u5236",
       aiRequestError: "\u6700\u8FD1\u4E00\u6B21\u8BF7\u6C42\u5931\u8D25",
@@ -1239,9 +1239,9 @@ var TextExtractor = (() => {
       sessionScanContinued: "\u52A8\u6001\u626B\u63CF\u5DF2\u7EE7\u7EED\u3002",
       cspWorkerWarning: "\u56E0\u7F51\u7AD9\u5B89\u5168\u9650\u5236\uFF0C\u5DF2\u5207\u6362\u81F3\u517C\u5BB9\u626B\u63CF\u6A21\u5F0F\u3002",
       scanModeConflict: "\u8BF7\u5148\u505C\u6B62\u5F53\u524D\u626B\u63CF\u6A21\u5F0F\uFF0C\u518D\u542F\u52A8\u53E6\u4E00\u79CD\u626B\u63CF\u3002",
-      aiScanStarted: "AI \u52A8\u6001\u626B\u63CF\u5DF2\u5F00\u59CB\u3002",
-      aiScanStopped: "AI \u52A8\u6001\u626B\u63CF\u5DF2\u505C\u6B62\u3002",
-      aiScanStartFailed: "AI \u626B\u63CF\u542F\u52A8\u5931\u8D25\u3002",
+      aiScanStarted: "AI \u7FFB\u8BD1\u5DF2\u5F00\u59CB\u3002",
+      aiScanStopped: "AI \u7FFB\u8BD1\u5DF2\u505C\u6B62\u3002",
+      aiScanStartFailed: "AI \u7FFB\u8BD1\u542F\u52A8\u5931\u8D25\u3002",
       aiDisabled: "AI \u529F\u80FD\u5DF2\u5173\u95ED\uFF0C\u8BF7\u5148\u5728\u8BBE\u7F6E\u4E2D\u542F\u7528\u3002",
       aiBatchCompleted: "AI \u6279\u6B21\u5904\u7406\u5B8C\u6210\u3002",
       aiNothingPending: "\u5F53\u524D\u6CA1\u6709\u5F85\u53D1\u9001\u5185\u5BB9\u3002",
@@ -1275,8 +1275,8 @@ var TextExtractor = (() => {
     },
     tooltip: {
       summary: "\u67E5\u770B\u6458\u8981",
-      ai_scan: "AI \u52A8\u6001\u626B\u63CF\uFF08Beta\uFF09",
-      ai_scan_stop: "\u505C\u6B62 AI \u52A8\u6001\u626B\u63CF",
+      ai_scan: "AI \u7FFB\u8BD1\uFF08Beta\uFF09",
+      ai_scan_stop: "\u505C\u6B62 AI \u7FFB\u8BD1",
       ai_disabled: "AI \u529F\u80FD\u5DF2\u5173\u95ED",
       dynamic_scan: "\u52A8\u6001\u626B\u63CF",
       static_scan: "\u9759\u6001\u626B\u63CF",
@@ -1295,7 +1295,7 @@ var TextExtractor = (() => {
       },
       disabled: {
         scan_in_progress: "\u53E6\u4E00\u9879\u626B\u63CF\u6B63\u5728\u8FDB\u884C\u4E2D",
-        ai_scan_active: "AI \u626B\u63CF\u8FD0\u884C\u4E2D\uFF0C\u666E\u901A\u626B\u63CF\u5DF2\u7981\u7528"
+        ai_scan_active: "AI \u7FFB\u8BD1\u8FDB\u884C\u4E2D\uFF0C\u666E\u901A\u626B\u63CF\u5DF2\u7981\u7528"
       },
       filters: {
         title: "\u5185\u5BB9\u8FC7\u6EE4\u5668\u8BF4\u660E",
@@ -1533,8 +1533,8 @@ var TextExtractor = (() => {
       elementScan: '<p><strong>\u529F\u80FD\u4ECB\u7ECD:</strong></p><p>\u9009\u53D6\u5143\u7D20\u626B\u63CF\u5141\u8BB8\u60A8\u7CBE\u786E\u5730\u9009\u62E9\u7F51\u9875\u4E0A\u7684\u4E00\u4E2A\u6216\u591A\u4E2A\u533A\u57DF\uFF08\u4F8B\u5982\u4E00\u4E2A\u6BB5\u843D\u3001\u4E00\u4E2A\u5217\u8868\u3001\u4E00\u4E2A\u4FA7\u8FB9\u680F\uFF09\uFF0C\u5E76\u4EC5\u4ECE\u8FD9\u4E9B\u533A\u57DF\u4E2D\u63D0\u53D6\u6587\u672C\u3002</p><p><strong>\u5982\u4F55\u4F7F\u7528:</strong></p><ol><li><strong>\u542F\u52A8:</strong> \u70B9\u51FB\u60AC\u6D6E\u6309\u94AE\u4E2D\u7684\u201C\u9009\u53D6\u5143\u7D20\u201D\u56FE\u6807 <span class="help-icon-placeholder element-scan-icon"></span> \u542F\u52A8\u626B\u63CF\u6A21\u5F0F\u3002</li><li><strong>\u9009\u62E9:</strong> \u79FB\u52A8\u9F20\u6807\uFF0C\u60A8\u60F3\u626B\u63CF\u7684\u533A\u57DF\u4F1A\u663E\u793A\u9AD8\u4EAE\u6846\u3002\u5355\u51FB\u4EE5\u9009\u5B9A\u3002</li><li><strong>\u8C03\u6574:</strong> \u9009\u5B9A\u540E\u4F1A\u51FA\u73B0\u5DE5\u5177\u680F\u3002\u60A8\u53EF\u4EE5\u4F7F\u7528<strong>\u6ED1\u5757</strong>\u6765\u6269\u5927\u6216\u7F29\u5C0F\u9009\u62E9\u8303\u56F4\u3002</li><li><strong>\u6682\u5B58:</strong> \u5982\u679C\u60A8\u60F3\u9009\u62E9\u591A\u4E2A\u4E0D\u76F8\u5173\u7684\u533A\u57DF\uFF0C\u53EF\u4EE5\u70B9\u51FB<span class="action-key">\u6682\u5B58</span>\u6309\u94AE\u4FDD\u5B58\u5F53\u524D\u9009\u62E9\uFF0C\u7136\u540E\u7EE7\u7EED\u9009\u62E9\u5176\u4ED6\u533A\u57DF\u3002</li><li><strong>\u786E\u8BA4:</strong> \u5B8C\u6210\u6240\u6709\u9009\u62E9\u540E\uFF0C\u70B9\u51FB<span class="action-key">\u786E\u8BA4</span>\u6309\u94AE\uFF0C\u7CFB\u7EDF\u5C06\u5F00\u59CB\u4ECE\u60A8\u9009\u62E9\u7684\u6240\u6709\u533A\u57DF\u4E2D\u63D0\u53D6\u6587\u672C\u3002</li></ol><p><strong>\u5982\u4F55\u9000\u51FA:</strong></p><ul><li>\u5728\u9009\u62E9\u8FC7\u7A0B\u4E2D\uFF08\u51FA\u73B0\u9AD8\u4EAE\u6846\u65F6\uFF09\uFF0C\u5728\u9875\u9762\u4EFB\u610F\u4F4D\u7F6E<strong>\u53F3\u952E\u5355\u51FB</strong>\u3002</li><li>\u5728\u4EFB\u4F55\u65F6\u5019\uFF0C\u6309\u4E0B<kbd>ESC</kbd>\u952E\u3002</li><li>\u5728\u4EFB\u4F55\u65F6\u5019\uFF0C\u518D\u6B21\u70B9\u51FB\u201C\u9009\u53D6\u5143\u7D20\u626B\u63CF\u201D\u56FE\u6807\u3002</li></ul>',
       sessionScanTitle: "\u52A8\u6001\u626B\u63CF\u6559\u7A0B",
       sessionScan: '<p><strong>\u529F\u80FD\u4ECB\u7ECD:</strong></p><p>\u52A8\u6001\u626B\u63CF\u4F1A\u6301\u7EED\u76D1\u63A7\u5E76\u81EA\u52A8\u8BB0\u5F55\u7F51\u9875\u4E0A\u6240\u6709\u52A8\u6001\u52A0\u8F7D\u6216\u53D8\u5316\u7684\u6587\u672C\uFF0C\u7279\u522B\u9002\u7528\u4E8E\u6293\u53D6\u5B9E\u65F6\u804A\u5929\u3001\u6EDA\u52A8\u52A0\u8F7D\u5185\u5BB9\u6216\u901A\u77E5\u7B49\u3002</p><p><strong>\u5982\u4F55\u4F7F\u7528:</strong></p><ul><li><strong>\u5F00\u59CB\u626B\u63CF:</strong> \u70B9\u51FB\u60AC\u6D6E\u6309\u94AE\u4E2D\u7684\u201C\u52A8\u6001\u626B\u63CF\u201D\u56FE\u6807 <span class="help-icon-placeholder dynamic-scan-icon"></span>\uFF0C\u626B\u63CF\u7ACB\u5373\u5F00\u59CB\u3002</li><li><strong>\u505C\u6B62\u626B\u63CF:</strong> \u518D\u6B21\u70B9\u51FB\u8BE5\u56FE\u6807 <span class="help-icon-placeholder stop-icon"></span>\uFF0C\u5373\u53EF\u505C\u6B62\u626B\u63CF\u3002</li><li><strong>\u67E5\u770B\u7ED3\u679C:</strong> \u505C\u6B62\u540E\uFF0C\u70B9\u51FB\u4E3B\u60AC\u6D6E\u6309\u94AE <span class="help-icon-placeholder summary-icon"></span> \u6253\u5F00\u7ED3\u679C\u7A97\u53E3\u3002</li></ul><p><strong>\u5982\u4F55\u9000\u51FA:</strong></p><ul><li>\u5728\u626B\u63CF\u8FC7\u7A0B\u4E2D\uFF0C\u518D\u6B21\u70B9\u51FB\u201C\u52A8\u6001\u626B\u63CF\u201D\u56FE\u6807\u3002</li><li>\u5728\u626B\u63CF\u8FC7\u7A0B\u4E2D\uFF0C\u968F\u65F6\u6309\u4E0B<kbd>ESC</kbd>\u952E\u53EF\u5FEB\u901F\u505C\u6B62\u3002</li></ul>',
-      aiScanTitle: "AI \u52A8\u6001\u626B\u63CF\u8BF4\u660E",
-      aiScan: "<p><strong>\u529F\u80FD\u4ECB\u7ECD:</strong></p><p>AI \u626B\u63CF\u4F1A\u6301\u7EED\u6536\u96C6\u7F51\u9875\u4E2D\u7684\u5019\u9009\u6587\u672C\uFF0C\u5E76\u6839\u636E\u8BBE\u7F6E\u81EA\u52A8\u5904\u7406\u6216\u7B49\u5F85\u624B\u52A8\u63D0\u4EA4\u3002\u9876\u90E8\u6570\u5B57\u8868\u793A\u672C\u6B21\u5DF2\u6536\u96C6\u7684\u5019\u9009\u9879\u6570\u91CF\u3002</p><p><strong>\u5982\u4F55\u4F7F\u7528:</strong></p><ul><li>\u518D\u6B21\u70B9\u51FB AI \u60AC\u6D6E\u6309\u94AE\u5373\u53EF\u505C\u6B62\u626B\u63CF\u3002</li><li>\u70B9\u51FB\u201C\u67E5\u770B\u6458\u8981\u201D\u53EF\u63D0\u4EA4\u5F85\u5904\u7406\u5185\u5BB9\u3001\u590D\u6838\u7ED3\u679C\u5E76\u590D\u5236\u6216\u5BFC\u51FA\u7FFB\u8BD1\u3002</li><li>\u91CD\u590D\u51FA\u73B0\u6216\u5DF2\u7ECF\u5904\u7406\u8FC7\u7684\u6587\u672C\u4E0D\u4F1A\u518D\u6B21\u63D0\u4EA4\u3002</li></ul>"
+      aiScanTitle: "AI \u7FFB\u8BD1\u8BF4\u660E",
+      aiScan: "<p><strong>\u529F\u80FD\u4ECB\u7ECD:</strong></p><p>AI \u7FFB\u8BD1\u4F1A\u6301\u7EED\u6536\u96C6\u7F51\u9875\u4E2D\u7684\u5019\u9009\u6587\u672C\uFF0C\u5E76\u6839\u636E\u8BBE\u7F6E\u81EA\u52A8\u5904\u7406\u6216\u7B49\u5F85\u624B\u52A8\u63D0\u4EA4\u3002\u9876\u90E8\u6570\u5B57\u8868\u793A\u672C\u6B21\u5DF2\u6536\u96C6\u7684\u5019\u9009\u9879\u6570\u91CF\u3002</p><p><strong>\u5982\u4F55\u4F7F\u7528:</strong></p><ul><li>\u518D\u6B21\u70B9\u51FB AI \u60AC\u6D6E\u6309\u94AE\u5373\u53EF\u505C\u6B62\u7FFB\u8BD1\u3002</li><li>\u70B9\u51FB\u201C\u67E5\u770B\u6458\u8981\u201D\u53EF\u63D0\u4EA4\u5F85\u5904\u7406\u5185\u5BB9\u3001\u590D\u6838\u7ED3\u679C\u5E76\u590D\u5236\u6216\u5BFC\u51FA\u7FFB\u8BD1\u3002</li><li>\u91CD\u590D\u51FA\u73B0\u6216\u5DF2\u7ECF\u5904\u7406\u8FC7\u7684\u6587\u672C\u4E0D\u4F1A\u518D\u6B21\u63D0\u4EA4\u3002</li></ul>"
     }
   };
   // src/shared/i18n/zh-TW.json
@@ -1647,9 +1647,9 @@ var TextExtractor = (() => {
         system: "\u8DDF\u96A8\u7CFB\u7D71"
       },
       ai: {
-        title: "AI \u6383\u63CF",
+        title: "AI \u7FFB\u8B6F",
         enabled: "\u555F\u7528 AI \u529F\u80FD",
-        enabledDescription: "\u95DC\u9589\u5F8C\u6703\u505C\u6B62 AI \u6383\u63CF\u4E26\u96B1\u85CF AI \u61F8\u6D6E\u6309\u9215\uFF1B\u4E00\u822C\u6383\u63CF\u529F\u80FD\u4E0D\u53D7\u5F71\u97FF\u3002",
+        enabledDescription: "\u95DC\u9589\u5F8C\u6703\u505C\u6B62 AI \u7FFB\u8B6F\u4E26\u96B1\u85CF AI \u61F8\u6D6E\u6309\u9215\uFF1B\u4E00\u822C\u6383\u63CF\u529F\u80FD\u4E0D\u53D7\u5F71\u97FF\u3002",
         betaBadge: "Beta",
         betaNotice: "\u76EE\u524D\u8A72\u529F\u80FD\u4E0D\u7A69\u5B9A\uFF0C\u554F\u984C\u8F03\u591A\uFF0C\u50C5\u4F9B\u6E2C\u8A66\u3002",
         general: "\u6383\u63CF\u8207\u7FFB\u8B6F",
@@ -1737,12 +1737,12 @@ var TextExtractor = (() => {
     },
     results: {
       title: "\u63D0\u53D6\u7684\u6587\u672C",
-      aiTitle: "AI \u6383\u63CF\u7D50\u679C",
+      aiTitle: "AI \u7FFB\u8B6F\u7D50\u679C",
       scanCountSession: "\u5DF2\u6383\u63CF {{count}} \u500B\u9805\u76EE",
       scanCountStatic: "\u5171\u6383\u63CF {{count}} \u500B\u9805\u76EE",
       scanCountAi: "AI \u5DF2\u6536\u96C6 {{count}} \u500B\u9805\u76EE",
-      aiRunning: "AI \u6383\u63CF\u57F7\u884C\u4E2D",
-      aiStopped: "AI \u6383\u63CF\u5DF2\u505C\u6B62",
+      aiRunning: "AI \u7FFB\u8B6F\u9032\u884C\u4E2D",
+      aiStopped: "AI \u7FFB\u8B6F\u5DF2\u505C\u6B62",
       aiProcessing: "\u4F9B\u61C9\u5546\u6B63\u5728\u8655\u7406\u76EE\u524D\u6279\u6B21\u2026",
       aiBudgetBlocked: "\u5DF2\u505C\u6B62\u50B3\u9001\uFF0C\u9054\u5230\u9810\u7B97\u9650\u5236",
       aiRequestError: "\u6700\u8FD1\u4E00\u6B21\u8ACB\u6C42\u5931\u6557",
@@ -1781,9 +1781,9 @@ var TextExtractor = (() => {
       sessionScanContinued: "\u52D5\u614B\u6383\u63CF\u5DF2\u7E7C\u7E8C\u3002",
       cspWorkerWarning: "\u56E0\u7DB2\u7AD9\u5B89\u5168\u9650\u5236\uFF0C\u5DF2\u5207\u63DB\u81F3\u76F8\u5BB9\u6383\u63CF\u6A21\u5F0F\u3002",
       scanModeConflict: "\u8ACB\u5148\u505C\u6B62\u76EE\u524D\u6383\u63CF\u6A21\u5F0F\uFF0C\u518D\u555F\u52D5\u53E6\u4E00\u7A2E\u6383\u63CF\u3002",
-      aiScanStarted: "AI \u52D5\u614B\u6383\u63CF\u5DF2\u958B\u59CB\u3002",
-      aiScanStopped: "AI \u52D5\u614B\u6383\u63CF\u5DF2\u505C\u6B62\u3002",
-      aiScanStartFailed: "AI \u6383\u63CF\u555F\u52D5\u5931\u6557\u3002",
+      aiScanStarted: "AI \u7FFB\u8B6F\u5DF2\u958B\u59CB\u3002",
+      aiScanStopped: "AI \u7FFB\u8B6F\u5DF2\u505C\u6B62\u3002",
+      aiScanStartFailed: "AI \u7FFB\u8B6F\u555F\u52D5\u5931\u6557\u3002",
       aiDisabled: "AI \u529F\u80FD\u5DF2\u95DC\u9589\uFF0C\u8ACB\u5148\u5728\u8A2D\u5B9A\u4E2D\u555F\u7528\u3002",
       aiBatchCompleted: "AI \u6279\u6B21\u8655\u7406\u5B8C\u6210\u3002",
       aiNothingPending: "\u76EE\u524D\u6C92\u6709\u5F85\u50B3\u9001\u5167\u5BB9\u3002",
@@ -1817,8 +1817,8 @@ var TextExtractor = (() => {
     },
     tooltip: {
       summary: "\u67E5\u770B\u6458\u8981",
-      ai_scan: "AI \u52D5\u614B\u6383\u63CF\uFF08Beta\uFF09",
-      ai_scan_stop: "\u505C\u6B62 AI \u52D5\u614B\u6383\u63CF",
+      ai_scan: "AI \u7FFB\u8B6F\uFF08Beta\uFF09",
+      ai_scan_stop: "\u505C\u6B62 AI \u7FFB\u8B6F",
       ai_disabled: "AI \u529F\u80FD\u5DF2\u95DC\u9589",
       dynamic_scan: "\u52D5\u614B\u6383\u63CF",
       static_scan: "\u975C\u614B\u6383\u63CF",
@@ -1837,7 +1837,7 @@ var TextExtractor = (() => {
       },
       disabled: {
         scan_in_progress: "\u53E6\u4E00\u9805\u6383\u63CF\u6B63\u5728\u9032\u884C\u4E2D",
-        ai_scan_active: "AI \u6383\u63CF\u57F7\u884C\u4E2D\uFF0C\u666E\u901A\u6383\u63CF\u5DF2\u505C\u7528"
+        ai_scan_active: "AI \u7FFB\u8B6F\u9032\u884C\u4E2D\uFF0C\u666E\u901A\u6383\u63CF\u5DF2\u505C\u7528"
       },
       filters: {
         title: "\u5167\u5BB9\u904E\u6FFE\u5668\u8AAA\u660E",
@@ -2075,8 +2075,8 @@ var TextExtractor = (() => {
       elementScan: '<p><strong>\u529F\u80FD\u4ECB\u7D39:</strong></p><p>\u9078\u53D6\u5143\u7D20\u6383\u63CF\u5141\u8A31\u60A8\u7CBE\u78BA\u5730\u9078\u64C7\u7DB2\u9801\u4E0A\u7684\u4E00\u500B\u6216\u591A\u500B\u5340\u57DF\uFF08\u4F8B\u5982\u4E00\u500B\u6BB5\u843D\u3001\u4E00\u500B\u5217\u8868\u3001\u4E00\u500B\u5074\u908A\u6B04\uFF09\uFF0C\u4E26\u50C5\u5F9E\u9019\u4E9B\u5340\u57DF\u4E2D\u63D0\u53D6\u6587\u672C\u3002</p><p><strong>\u5982\u4F55\u4F7F\u7528:</strong></p><ol><li><strong>\u555F\u52D5:</strong> \u9EDE\u64CA\u61F8\u6D6E\u6309\u9215\u4E2D\u7684\u300C\u9078\u53D6\u5143\u7D20\u300D\u5716\u6A19 <span class="help-icon-placeholder element-scan-icon"></span> \u555F\u52D5\u6383\u63CF\u6A21\u5F0F\u3002</li><li><strong>\u9078\u64C7:</strong> \u79FB\u52D5\u9F20\u6A19\uFF0C\u60A8\u60F3\u6383\u63CF\u7684\u5340\u57DF\u6703\u986F\u793A\u9AD8\u4EAE\u6846\u3002\u55AE\u64CA\u4EE5\u9078\u5B9A\u3002</li><li><strong>\u8ABF\u6574:</strong> \u9078\u5B9A\u5F8C\u6703\u51FA\u73FE\u5DE5\u5177\u6B04\u3002\u60A8\u53EF\u4EE5\u4F7F\u7528<strong>\u6ED1\u584A</strong>\u4F86\u64F4\u5927\u6216\u7E2E\u5C0F\u9078\u64C7\u7BC4\u570D\u3002</li><li><strong>\u66AB\u5B58:</strong> \u5982\u679C\u60A8\u60F3\u9078\u64C7\u591A\u500B\u4E0D\u76F8\u95DC\u7684\u5340\u57DF\uFF0C\u53EF\u4EE5\u9EDE\u64CA<span class="action-key">\u66AB\u5B58</span>\u6309\u9215\u4FDD\u5B58\u7576\u524D\u9078\u64C7\uFF0C\u7136\u5F8C\u7E7C\u7E8C\u9078\u64C7\u5176\u4ED6\u5340\u57DF\u3002</li><li><strong>\u78BA\u8A8D:</strong> \u5B8C\u6210\u6240\u6709\u9078\u64C7\u5F8C\uFF0C\u9EDE\u64CA<span class="action-key">\u78BA\u8A8D</span>\u6309\u9215\uFF0C\u7CFB\u7D71\u5C07\u958B\u59CB\u5F9E\u60A8\u9078\u64C7\u7684\u6240\u6709\u5340\u57DF\u4E2D\u63D0\u53D6\u6587\u672C\u3002</li></ol><p><strong>\u5982\u4F55\u9000\u51FA:</strong></p><ul><li>\u5728\u9078\u64C7\u904E\u7A0B\u4E2D\uFF08\u51FA\u73FE\u9AD8\u4EAE\u6846\u6642\uFF09\uFF0C\u5728\u9801\u9762\u4EFB\u610F\u4F4D\u7F6E<strong>\u53F3\u9375\u55AE\u64CA</strong>\u3002</li><li>\u5728\u4EFB\u4F55\u6642\u5019\uFF0C\u6309\u4E0B <kbd>ESC</kbd> \u9375\u3002</li><li>\u5728\u4EFB\u4F55\u6642\u5019\uFF0C\u518D\u6B21\u9EDE\u64CA\u300C\u9078\u53D6\u5143\u7D20\u6383\u63CF\u300D\u5716\u6A19\u3002</li></ul>',
       sessionScanTitle: "\u52D5\u614B\u6383\u63CF\u6559\u7A0B",
       sessionScan: '<p><strong>\u529F\u80FD\u4ECB\u7D39:</strong></p><p>\u52D5\u614B\u6383\u63CF\u6703\u6301\u7E8C\u76E3\u63A7\u4E26\u81EA\u52D5\u8A18\u9304\u7DB2\u9801\u4E0A\u6240\u6709\u52D5\u614B\u52A0\u8F09\u6216\u8B8A\u5316\u7684\u6587\u672C\uFF0C\u7279\u5225\u9069\u7528\u65BC\u6293\u53D6\u5BE6\u6642\u804A\u5929\u3001\u6EFE\u52D5\u52A0\u8F09\u5167\u5BB9\u6216\u901A\u77E5\u7B49\u3002</p><p><strong>\u5982\u4F55\u4F7F\u7528:</strong></p><ul><li><strong>\u958B\u59CB\u6383\u63CF:</strong> \u9EDE\u64CA\u61F8\u6D6E\u6309\u9215\u4E2D\u7684\u300C\u52D5\u614B\u6383\u63CF\u300D\u5716\u6A19 <span class="help-icon-placeholder dynamic-scan-icon"></span>\uFF0C\u6383\u63CF\u7ACB\u5373\u958B\u59CB\u3002</li><li><strong>\u505C\u6B62\u6383\u63CF:</strong> \u518D\u6B21\u9EDE\u64CA\u8A72\u5716\u6A19 <span class="help-icon-placeholder stop-icon"></span>\uFF0C\u5373\u53EF\u505C\u6B62\u6383\u63CF\u3002</li><li><strong>\u67E5\u770B\u7D50\u679C:</strong> \u505C\u6B62\u5F8C\uFF0C\u9EDE\u64CA\u4E3B\u61F8\u6D6E\u6309\u9215 <span class="help-icon-placeholder summary-icon"></span> \u6253\u958B\u7D50\u679C\u7A97\u53E3\u3002</li></ul><p><strong>\u5982\u4F55\u9000\u51FA:</strong></p><ul><li>\u5728\u6383\u63CF\u904E\u7A0B\u4E2D\uFF0C\u518D\u6B21\u9EDE\u64CA\u300C\u52D5\u614B\u6383\u63CF\u300D\u5716\u6A19\u3002</li><li>\u5728\u6383\u63CF\u904E\u7A0B\u4E2D\uFF0C\u96A8\u6642\u6309\u4E0B <kbd>ESC</kbd> \u9375\u53EF\u5FEB\u901F\u505C\u6B62\u3002</li></ul>',
-      aiScanTitle: "AI \u52D5\u614B\u6383\u63CF\u8AAA\u660E",
-      aiScan: "<p><strong>\u529F\u80FD\u4ECB\u7D39:</strong></p><p>AI \u6383\u63CF\u6703\u6301\u7E8C\u6536\u96C6\u7DB2\u9801\u4E2D\u7684\u5019\u9078\u6587\u672C\uFF0C\u4E26\u4F9D\u8A2D\u5B9A\u81EA\u52D5\u8655\u7406\u6216\u7B49\u5F85\u624B\u52D5\u63D0\u4EA4\u3002\u9802\u90E8\u6578\u5B57\u8868\u793A\u672C\u6B21\u5DF2\u6536\u96C6\u7684\u5019\u9078\u9805\u76EE\u6578\u91CF\u3002</p><p><strong>\u5982\u4F55\u4F7F\u7528:</strong></p><ul><li>\u518D\u6B21\u9EDE\u64CA AI \u61F8\u6D6E\u6309\u9215\u5373\u53EF\u505C\u6B62\u6383\u63CF\u3002</li><li>\u9EDE\u64CA\u300C\u67E5\u770B\u6458\u8981\u300D\u53EF\u63D0\u4EA4\u5F85\u8655\u7406\u5167\u5BB9\u3001\u8907\u6838\u7D50\u679C\u4E26\u8907\u88FD\u6216\u532F\u51FA\u7FFB\u8B6F\u3002</li><li>\u91CD\u8907\u51FA\u73FE\u6216\u5DF2\u7D93\u8655\u7406\u904E\u7684\u6587\u672C\u4E0D\u6703\u518D\u6B21\u63D0\u4EA4\u3002</li></ul>"
+      aiScanTitle: "AI \u7FFB\u8B6F\u8AAA\u660E",
+      aiScan: "<p><strong>\u529F\u80FD\u4ECB\u7D39:</strong></p><p>AI \u7FFB\u8B6F\u6703\u6301\u7E8C\u6536\u96C6\u7DB2\u9801\u4E2D\u7684\u5019\u9078\u6587\u672C\uFF0C\u4E26\u4F9D\u8A2D\u5B9A\u81EA\u52D5\u8655\u7406\u6216\u7B49\u5F85\u624B\u52D5\u63D0\u4EA4\u3002\u9802\u90E8\u6578\u5B57\u8868\u793A\u672C\u6B21\u5DF2\u6536\u96C6\u7684\u5019\u9078\u9805\u76EE\u6578\u91CF\u3002</p><p><strong>\u5982\u4F55\u4F7F\u7528:</strong></p><ul><li>\u518D\u6B21\u9EDE\u64CA AI \u61F8\u6D6E\u6309\u9215\u5373\u53EF\u505C\u6B62\u7FFB\u8B6F\u3002</li><li>\u9EDE\u64CA\u300C\u67E5\u770B\u6458\u8981\u300D\u53EF\u63D0\u4EA4\u5F85\u8655\u7406\u5167\u5BB9\u3001\u8907\u6838\u7D50\u679C\u4E26\u8907\u88FD\u6216\u532F\u51FA\u7FFB\u8B6F\u3002</li><li>\u91CD\u8907\u51FA\u73FE\u6216\u5DF2\u7D93\u8655\u7406\u904E\u7684\u6587\u672C\u4E0D\u6703\u518D\u6B21\u63D0\u4EA4\u3002</li></ul>"
     }
   };
   // locales-ns:virtual:locales
@@ -2860,9 +2860,9 @@ ${result.join(",\n")}
         system: "System"
       },
       ai: {
-        title: "AI Scan",
+        title: "AI Translate",
         enabled: "Enable AI Features",
-        enabledDescription: "Turning this off stops AI scanning and hides the AI floating button. Normal scans are unaffected.",
+        enabledDescription: "Turning this off stops AI translation and hides the AI floating button. Normal scans are unaffected.",
         betaBadge: "Beta",
         betaNotice: "This feature is currently unstable and has known issues. It is for testing only.",
         general: "Scan and Translation",
@@ -2950,12 +2950,12 @@ ${result.join(",\n")}
     },
     results: {
       title: "Extracted Text",
-      aiTitle: "AI Scan Results",
+      aiTitle: "AI Translation Results",
       scanCountSession: "Scanned {{count}} items",
       scanCountStatic: "Total {{count}} items scanned",
       scanCountAi: "AI collected {{count}} items",
-      aiRunning: "AI scan is running",
-      aiStopped: "AI scan stopped",
+      aiRunning: "AI translation is in progress",
+      aiStopped: "AI translation stopped",
       aiProcessing: "The provider is processing the current batch\\u2026",
       aiBudgetBlocked: "Sending stopped because a budget limit was reached",
       aiRequestError: "Most recent request failed",
@@ -2994,9 +2994,9 @@ ${result.join(",\n")}
       sessionScanContinued: "Dynamic scan continued.",
       cspWorkerWarning: "Switched to compatibility scan mode due to website security restrictions.",
       scanModeConflict: "Stop the active scan mode before starting another one.",
-      aiScanStarted: "AI dynamic scan started.",
-      aiScanStopped: "AI dynamic scan stopped.",
-      aiScanStartFailed: "AI scan failed to start.",
+      aiScanStarted: "AI translation started.",
+      aiScanStopped: "AI translation stopped.",
+      aiScanStartFailed: "AI translation failed to start.",
       aiDisabled: "AI features are disabled. Enable them in Settings first.",
       aiBatchCompleted: "AI batch completed.",
       aiNothingPending: "There are no pending items to send.",
@@ -3030,8 +3030,8 @@ ${result.join(",\n")}
     },
     tooltip: {
       summary: "View Summary",
-      ai_scan: "AI Dynamic Scan (Beta)",
-      ai_scan_stop: "Stop AI Dynamic Scan",
+      ai_scan: "AI Translate (Beta)",
+      ai_scan_stop: "Stop AI Translate",
       ai_disabled: "AI features are disabled",
       dynamic_scan: "Dynamic Scan",
       static_scan: "Static Scan",
@@ -3050,7 +3050,7 @@ ${result.join(",\n")}
       },
       disabled: {
         scan_in_progress: "Another scan is in progress",
-        ai_scan_active: "Regular scans are disabled while AI scan is running"
+        ai_scan_active: "Regular scans are disabled while AI translation is running"
       },
       filters: {
         title: "Content Filter Explanation",
@@ -3288,8 +3288,8 @@ ${result.join(",\n")}
       elementScan: '<p><strong>What it does:</strong></p><p>Element Scan allows you to precisely select one or more areas on a webpage (e.g., a paragraph, a list, a sidebar) and extract text only from those areas.</p><p><strong>How to use:</strong></p><ol><li><strong>Start:</strong> Click the "Element Scan" icon <span class="help-icon-placeholder element-scan-icon"></span> in the floating button to enter scan mode.</li><li><strong>Select:</strong> Move your mouse over the page. The area you want to scan will be highlighted. Click to select it.</li><li><strong>Adjust:</strong> A toolbar will appear after selection. You can use the <strong>slider</strong> to expand or shrink the selection area.</li><li><strong>Stage:</strong> If you want to select multiple unrelated areas, click the <span class="action-key">Stage</span> button to save the current selection and continue selecting other areas.</li><li><strong>Confirm:</strong> Once you have finished all selections, click the <span class="action-key">Confirm</span> button to start extracting text from all your chosen areas.</li></ol><p><strong>How to exit:</strong></p><ul><li>While the highlight box is visible, <strong>right-click</strong> anywhere on the page.</li><li>Press the <kbd>ESC</kbd> key at any time.</li><li>Click the "Element Scan" icon again at any time.</li></ul>',
       sessionScanTitle: "Dynamic Scan Tutorial",
       sessionScan: '<p><strong>What it does:</strong></p><p>Dynamic Scan continuously monitors and automatically records all text that dynamically loads or changes on a webpage. It is especially useful for capturing live chats, infinite scrolling content, or notifications.</p><p><strong>How to use:</strong></p><ul><li><strong>Start Scan:</strong> Click the "Dynamic Scan" icon <span class="help-icon-placeholder dynamic-scan-icon"></span> in the floating button to start scanning immediately.</li><li><strong>Stop Scan:</strong> Click the icon again <span class="help-icon-placeholder stop-icon"></span> to stop.</li><li><strong>View Results:</strong> After stopping, click the main floating button <span class="help-icon-placeholder summary-icon"></span> to open the results window.</li></ul><p><strong>How to exit:</strong></p><ul><li>Click the "Dynamic Scan" icon again during the scan.</li><li>Press the <kbd>ESC</kbd> key at any time to quickly stop the scan.</li></ul>',
-      aiScanTitle: "AI Dynamic Scan Guide",
-      aiScan: "<p><strong>What it does:</strong></p><p>AI Scan continuously collects candidate webpage text and either processes it automatically or waits for manual submission. The top counter shows how many candidates have been collected.</p><p><strong>How to use:</strong></p><ul><li>Click the AI floating button again to stop scanning.</li><li>Open View Summary to submit pending items, review results, and copy or export translations.</li><li>Repeated or previously processed text is not submitted again.</li></ul>"
+      aiScanTitle: "AI Translation Guide",
+      aiScan: "<p><strong>What it does:</strong></p><p>AI translation continuously collects candidate webpage text and either processes it automatically or waits for manual submission. The top counter shows how many candidates have been collected.</p><p><strong>How to use:</strong></p><ul><li>Click the AI floating button again to stop translation.</li><li>Open View Summary to submit pending items, review results, and copy or export translations.</li><li>Repeated or previously processed text is not submitted again.</li></ul>"
     }
   };
   // src/shared/i18n/zh-CN.json
@@ -3404,9 +3404,9 @@ ${result.join(",\n")}
         system: "\\u8DDF\\u968F\\u7CFB\\u7EDF"
       },
       ai: {
-        title: "AI \\u626B\\u63CF",
+        title: "AI \\u7FFB\\u8BD1",
         enabled: "\\u542F\\u7528 AI \\u529F\\u80FD",
-        enabledDescription: "\\u5173\\u95ED\\u540E\\u4F1A\\u505C\\u6B62 AI \\u626B\\u63CF\\u5E76\\u9690\\u85CF AI \\u60AC\\u6D6E\\u6309\\u94AE\\uFF1B\\u666E\\u901A\\u626B\\u63CF\\u529F\\u80FD\\u4E0D\\u53D7\\u5F71\\u54CD\\u3002",
+        enabledDescription: "\\u5173\\u95ED\\u540E\\u4F1A\\u505C\\u6B62 AI \\u7FFB\\u8BD1\\u5E76\\u9690\\u85CF AI \\u60AC\\u6D6E\\u6309\\u94AE\\uFF1B\\u666E\\u901A\\u626B\\u63CF\\u529F\\u80FD\\u4E0D\\u53D7\\u5F71\\u54CD\\u3002",
         betaBadge: "Beta",
         betaNotice: "\\u76EE\\u524D\\u8BE5\\u529F\\u80FD\\u4E0D\\u7A33\\u5B9A\\uFF0C\\u95EE\\u9898\\u8F83\\u591A\\uFF0C\\u4EC5\\u505A\\u6D4B\\u8BD5\\u3002",
         general: "\\u626B\\u63CF\\u4E0E\\u7FFB\\u8BD1",
@@ -3494,12 +3494,12 @@ ${result.join(",\n")}
     },
     results: {
       title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",
-      aiTitle: "AI \\u626B\\u63CF\\u7ED3\\u679C",
+      aiTitle: "AI \\u7FFB\\u8BD1\\u7ED3\\u679C",
       scanCountSession: "\\u5DF2\\u626B\\u63CF {{count}} \\u4E2A\\u9879\\u76EE",
       scanCountStatic: "\\u5171\\u626B\\u63CF {{count}} \\u4E2A\\u9879\\u76EE",
       scanCountAi: "AI \\u5DF2\\u6536\\u96C6 {{count}} \\u4E2A\\u9879\\u76EE",
-      aiRunning: "AI \\u626B\\u63CF\\u8FD0\\u884C\\u4E2D",
-      aiStopped: "AI \\u626B\\u63CF\\u5DF2\\u505C\\u6B62",
+      aiRunning: "AI \\u7FFB\\u8BD1\\u8FDB\\u884C\\u4E2D",
+      aiStopped: "AI \\u7FFB\\u8BD1\\u5DF2\\u505C\\u6B62",
       aiProcessing: "\\u4F9B\\u5E94\\u5546\\u6B63\\u5728\\u5904\\u7406\\u5F53\\u524D\\u6279\\u6B21\\u2026",
       aiBudgetBlocked: "\\u5DF2\\u505C\\u6B62\\u53D1\\u9001\\uFF0C\\u8FBE\\u5230\\u9884\\u7B97\\u9650\\u5236",
       aiRequestError: "\\u6700\\u8FD1\\u4E00\\u6B21\\u8BF7\\u6C42\\u5931\\u8D25",
@@ -3538,9 +3538,9 @@ ${result.join(",\n")}
       sessionScanContinued: "\\u52A8\\u6001\\u626B\\u63CF\\u5DF2\\u7EE7\\u7EED\\u3002",
       cspWorkerWarning: "\\u56E0\\u7F51\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u6362\\u81F3\\u517C\\u5BB9\\u626B\\u63CF\\u6A21\\u5F0F\\u3002",
       scanModeConflict: "\\u8BF7\\u5148\\u505C\\u6B62\\u5F53\\u524D\\u626B\\u63CF\\u6A21\\u5F0F\\uFF0C\\u518D\\u542F\\u52A8\\u53E6\\u4E00\\u79CD\\u626B\\u63CF\\u3002",
-      aiScanStarted: "AI \\u52A8\\u6001\\u626B\\u63CF\\u5DF2\\u5F00\\u59CB\\u3002",
-      aiScanStopped: "AI \\u52A8\\u6001\\u626B\\u63CF\\u5DF2\\u505C\\u6B62\\u3002",
-      aiScanStartFailed: "AI \\u626B\\u63CF\\u542F\\u52A8\\u5931\\u8D25\\u3002",
+      aiScanStarted: "AI \\u7FFB\\u8BD1\\u5DF2\\u5F00\\u59CB\\u3002",
+      aiScanStopped: "AI \\u7FFB\\u8BD1\\u5DF2\\u505C\\u6B62\\u3002",
+      aiScanStartFailed: "AI \\u7FFB\\u8BD1\\u542F\\u52A8\\u5931\\u8D25\\u3002",
       aiDisabled: "AI \\u529F\\u80FD\\u5DF2\\u5173\\u95ED\\uFF0C\\u8BF7\\u5148\\u5728\\u8BBE\\u7F6E\\u4E2D\\u542F\\u7528\\u3002",
       aiBatchCompleted: "AI \\u6279\\u6B21\\u5904\\u7406\\u5B8C\\u6210\\u3002",
       aiNothingPending: "\\u5F53\\u524D\\u6CA1\\u6709\\u5F85\\u53D1\\u9001\\u5185\\u5BB9\\u3002",
@@ -3574,8 +3574,8 @@ ${result.join(",\n")}
     },
     tooltip: {
       summary: "\\u67E5\\u770B\\u6458\\u8981",
-      ai_scan: "AI \\u52A8\\u6001\\u626B\\u63CF\\uFF08Beta\\uFF09",
-      ai_scan_stop: "\\u505C\\u6B62 AI \\u52A8\\u6001\\u626B\\u63CF",
+      ai_scan: "AI \\u7FFB\\u8BD1\\uFF08Beta\\uFF09",
+      ai_scan_stop: "\\u505C\\u6B62 AI \\u7FFB\\u8BD1",
       ai_disabled: "AI \\u529F\\u80FD\\u5DF2\\u5173\\u95ED",
       dynamic_scan: "\\u52A8\\u6001\\u626B\\u63CF",
       static_scan: "\\u9759\\u6001\\u626B\\u63CF",
@@ -3594,7 +3594,7 @@ ${result.join(",\n")}
       },
       disabled: {
         scan_in_progress: "\\u53E6\\u4E00\\u9879\\u626B\\u63CF\\u6B63\\u5728\\u8FDB\\u884C\\u4E2D",
-        ai_scan_active: "AI \\u626B\\u63CF\\u8FD0\\u884C\\u4E2D\\uFF0C\\u666E\\u901A\\u626B\\u63CF\\u5DF2\\u7981\\u7528"
+        ai_scan_active: "AI \\u7FFB\\u8BD1\\u8FDB\\u884C\\u4E2D\\uFF0C\\u666E\\u901A\\u626B\\u63CF\\u5DF2\\u7981\\u7528"
       },
       filters: {
         title: "\\u5185\\u5BB9\\u8FC7\\u6EE4\\u5668\\u8BF4\\u660E",
@@ -3832,8 +3832,8 @@ ${result.join(",\n")}
       elementScan: '<p><strong>\\u529F\\u80FD\\u4ECB\\u7ECD:</strong></p><p>\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u5141\\u8BB8\\u60A8\\u7CBE\\u786E\\u5730\\u9009\\u62E9\\u7F51\\u9875\\u4E0A\\u7684\\u4E00\\u4E2A\\u6216\\u591A\\u4E2A\\u533A\\u57DF\\uFF08\\u4F8B\\u5982\\u4E00\\u4E2A\\u6BB5\\u843D\\u3001\\u4E00\\u4E2A\\u5217\\u8868\\u3001\\u4E00\\u4E2A\\u4FA7\\u8FB9\\u680F\\uFF09\\uFF0C\\u5E76\\u4EC5\\u4ECE\\u8FD9\\u4E9B\\u533A\\u57DF\\u4E2D\\u63D0\\u53D6\\u6587\\u672C\\u3002</p><p><strong>\\u5982\\u4F55\\u4F7F\\u7528:</strong></p><ol><li><strong>\\u542F\\u52A8:</strong> \\u70B9\\u51FB\\u60AC\\u6D6E\\u6309\\u94AE\\u4E2D\\u7684\\u201C\\u9009\\u53D6\\u5143\\u7D20\\u201D\\u56FE\\u6807 <span class="help-icon-placeholder element-scan-icon"></span> \\u542F\\u52A8\\u626B\\u63CF\\u6A21\\u5F0F\\u3002</li><li><strong>\\u9009\\u62E9:</strong> \\u79FB\\u52A8\\u9F20\\u6807\\uFF0C\\u60A8\\u60F3\\u626B\\u63CF\\u7684\\u533A\\u57DF\\u4F1A\\u663E\\u793A\\u9AD8\\u4EAE\\u6846\\u3002\\u5355\\u51FB\\u4EE5\\u9009\\u5B9A\\u3002</li><li><strong>\\u8C03\\u6574:</strong> \\u9009\\u5B9A\\u540E\\u4F1A\\u51FA\\u73B0\\u5DE5\\u5177\\u680F\\u3002\\u60A8\\u53EF\\u4EE5\\u4F7F\\u7528<strong>\\u6ED1\\u5757</strong>\\u6765\\u6269\\u5927\\u6216\\u7F29\\u5C0F\\u9009\\u62E9\\u8303\\u56F4\\u3002</li><li><strong>\\u6682\\u5B58:</strong> \\u5982\\u679C\\u60A8\\u60F3\\u9009\\u62E9\\u591A\\u4E2A\\u4E0D\\u76F8\\u5173\\u7684\\u533A\\u57DF\\uFF0C\\u53EF\\u4EE5\\u70B9\\u51FB<span class="action-key">\\u6682\\u5B58</span>\\u6309\\u94AE\\u4FDD\\u5B58\\u5F53\\u524D\\u9009\\u62E9\\uFF0C\\u7136\\u540E\\u7EE7\\u7EED\\u9009\\u62E9\\u5176\\u4ED6\\u533A\\u57DF\\u3002</li><li><strong>\\u786E\\u8BA4:</strong> \\u5B8C\\u6210\\u6240\\u6709\\u9009\\u62E9\\u540E\\uFF0C\\u70B9\\u51FB<span class="action-key">\\u786E\\u8BA4</span>\\u6309\\u94AE\\uFF0C\\u7CFB\\u7EDF\\u5C06\\u5F00\\u59CB\\u4ECE\\u60A8\\u9009\\u62E9\\u7684\\u6240\\u6709\\u533A\\u57DF\\u4E2D\\u63D0\\u53D6\\u6587\\u672C\\u3002</li></ol><p><strong>\\u5982\\u4F55\\u9000\\u51FA:</strong></p><ul><li>\\u5728\\u9009\\u62E9\\u8FC7\\u7A0B\\u4E2D\\uFF08\\u51FA\\u73B0\\u9AD8\\u4EAE\\u6846\\u65F6\\uFF09\\uFF0C\\u5728\\u9875\\u9762\\u4EFB\\u610F\\u4F4D\\u7F6E<strong>\\u53F3\\u952E\\u5355\\u51FB</strong>\\u3002</li><li>\\u5728\\u4EFB\\u4F55\\u65F6\\u5019\\uFF0C\\u6309\\u4E0B<kbd>ESC</kbd>\\u952E\\u3002</li><li>\\u5728\\u4EFB\\u4F55\\u65F6\\u5019\\uFF0C\\u518D\\u6B21\\u70B9\\u51FB\\u201C\\u9009\\u53D6\\u5143\\u7D20\\u626B\\u63CF\\u201D\\u56FE\\u6807\\u3002</li></ul>',
       sessionScanTitle: "\\u52A8\\u6001\\u626B\\u63CF\\u6559\\u7A0B",
       sessionScan: '<p><strong>\\u529F\\u80FD\\u4ECB\\u7ECD:</strong></p><p>\\u52A8\\u6001\\u626B\\u63CF\\u4F1A\\u6301\\u7EED\\u76D1\\u63A7\\u5E76\\u81EA\\u52A8\\u8BB0\\u5F55\\u7F51\\u9875\\u4E0A\\u6240\\u6709\\u52A8\\u6001\\u52A0\\u8F7D\\u6216\\u53D8\\u5316\\u7684\\u6587\\u672C\\uFF0C\\u7279\\u522B\\u9002\\u7528\\u4E8E\\u6293\\u53D6\\u5B9E\\u65F6\\u804A\\u5929\\u3001\\u6EDA\\u52A8\\u52A0\\u8F7D\\u5185\\u5BB9\\u6216\\u901A\\u77E5\\u7B49\\u3002</p><p><strong>\\u5982\\u4F55\\u4F7F\\u7528:</strong></p><ul><li><strong>\\u5F00\\u59CB\\u626B\\u63CF:</strong> \\u70B9\\u51FB\\u60AC\\u6D6E\\u6309\\u94AE\\u4E2D\\u7684\\u201C\\u52A8\\u6001\\u626B\\u63CF\\u201D\\u56FE\\u6807 <span class="help-icon-placeholder dynamic-scan-icon"></span>\\uFF0C\\u626B\\u63CF\\u7ACB\\u5373\\u5F00\\u59CB\\u3002</li><li><strong>\\u505C\\u6B62\\u626B\\u63CF:</strong> \\u518D\\u6B21\\u70B9\\u51FB\\u8BE5\\u56FE\\u6807 <span class="help-icon-placeholder stop-icon"></span>\\uFF0C\\u5373\\u53EF\\u505C\\u6B62\\u626B\\u63CF\\u3002</li><li><strong>\\u67E5\\u770B\\u7ED3\\u679C:</strong> \\u505C\\u6B62\\u540E\\uFF0C\\u70B9\\u51FB\\u4E3B\\u60AC\\u6D6E\\u6309\\u94AE <span class="help-icon-placeholder summary-icon"></span> \\u6253\\u5F00\\u7ED3\\u679C\\u7A97\\u53E3\\u3002</li></ul><p><strong>\\u5982\\u4F55\\u9000\\u51FA:</strong></p><ul><li>\\u5728\\u626B\\u63CF\\u8FC7\\u7A0B\\u4E2D\\uFF0C\\u518D\\u6B21\\u70B9\\u51FB\\u201C\\u52A8\\u6001\\u626B\\u63CF\\u201D\\u56FE\\u6807\\u3002</li><li>\\u5728\\u626B\\u63CF\\u8FC7\\u7A0B\\u4E2D\\uFF0C\\u968F\\u65F6\\u6309\\u4E0B<kbd>ESC</kbd>\\u952E\\u53EF\\u5FEB\\u901F\\u505C\\u6B62\\u3002</li></ul>',
-      aiScanTitle: "AI \\u52A8\\u6001\\u626B\\u63CF\\u8BF4\\u660E",
-      aiScan: "<p><strong>\\u529F\\u80FD\\u4ECB\\u7ECD:</strong></p><p>AI \\u626B\\u63CF\\u4F1A\\u6301\\u7EED\\u6536\\u96C6\\u7F51\\u9875\\u4E2D\\u7684\\u5019\\u9009\\u6587\\u672C\\uFF0C\\u5E76\\u6839\\u636E\\u8BBE\\u7F6E\\u81EA\\u52A8\\u5904\\u7406\\u6216\\u7B49\\u5F85\\u624B\\u52A8\\u63D0\\u4EA4\\u3002\\u9876\\u90E8\\u6570\\u5B57\\u8868\\u793A\\u672C\\u6B21\\u5DF2\\u6536\\u96C6\\u7684\\u5019\\u9009\\u9879\\u6570\\u91CF\\u3002</p><p><strong>\\u5982\\u4F55\\u4F7F\\u7528:</strong></p><ul><li>\\u518D\\u6B21\\u70B9\\u51FB AI \\u60AC\\u6D6E\\u6309\\u94AE\\u5373\\u53EF\\u505C\\u6B62\\u626B\\u63CF\\u3002</li><li>\\u70B9\\u51FB\\u201C\\u67E5\\u770B\\u6458\\u8981\\u201D\\u53EF\\u63D0\\u4EA4\\u5F85\\u5904\\u7406\\u5185\\u5BB9\\u3001\\u590D\\u6838\\u7ED3\\u679C\\u5E76\\u590D\\u5236\\u6216\\u5BFC\\u51FA\\u7FFB\\u8BD1\\u3002</li><li>\\u91CD\\u590D\\u51FA\\u73B0\\u6216\\u5DF2\\u7ECF\\u5904\\u7406\\u8FC7\\u7684\\u6587\\u672C\\u4E0D\\u4F1A\\u518D\\u6B21\\u63D0\\u4EA4\\u3002</li></ul>"
+      aiScanTitle: "AI \\u7FFB\\u8BD1\\u8BF4\\u660E",
+      aiScan: "<p><strong>\\u529F\\u80FD\\u4ECB\\u7ECD:</strong></p><p>AI \\u7FFB\\u8BD1\\u4F1A\\u6301\\u7EED\\u6536\\u96C6\\u7F51\\u9875\\u4E2D\\u7684\\u5019\\u9009\\u6587\\u672C\\uFF0C\\u5E76\\u6839\\u636E\\u8BBE\\u7F6E\\u81EA\\u52A8\\u5904\\u7406\\u6216\\u7B49\\u5F85\\u624B\\u52A8\\u63D0\\u4EA4\\u3002\\u9876\\u90E8\\u6570\\u5B57\\u8868\\u793A\\u672C\\u6B21\\u5DF2\\u6536\\u96C6\\u7684\\u5019\\u9009\\u9879\\u6570\\u91CF\\u3002</p><p><strong>\\u5982\\u4F55\\u4F7F\\u7528:</strong></p><ul><li>\\u518D\\u6B21\\u70B9\\u51FB AI \\u60AC\\u6D6E\\u6309\\u94AE\\u5373\\u53EF\\u505C\\u6B62\\u7FFB\\u8BD1\\u3002</li><li>\\u70B9\\u51FB\\u201C\\u67E5\\u770B\\u6458\\u8981\\u201D\\u53EF\\u63D0\\u4EA4\\u5F85\\u5904\\u7406\\u5185\\u5BB9\\u3001\\u590D\\u6838\\u7ED3\\u679C\\u5E76\\u590D\\u5236\\u6216\\u5BFC\\u51FA\\u7FFB\\u8BD1\\u3002</li><li>\\u91CD\\u590D\\u51FA\\u73B0\\u6216\\u5DF2\\u7ECF\\u5904\\u7406\\u8FC7\\u7684\\u6587\\u672C\\u4E0D\\u4F1A\\u518D\\u6B21\\u63D0\\u4EA4\\u3002</li></ul>"
     }
   };
   // src/shared/i18n/zh-TW.json
@@ -3946,9 +3946,9 @@ ${result.join(",\n")}
         system: "\\u8DDF\\u96A8\\u7CFB\\u7D71"
       },
       ai: {
-        title: "AI \\u6383\\u63CF",
+        title: "AI \\u7FFB\\u8B6F",
         enabled: "\\u555F\\u7528 AI \\u529F\\u80FD",
-        enabledDescription: "\\u95DC\\u9589\\u5F8C\\u6703\\u505C\\u6B62 AI \\u6383\\u63CF\\u4E26\\u96B1\\u85CF AI \\u61F8\\u6D6E\\u6309\\u9215\\uFF1B\\u4E00\\u822C\\u6383\\u63CF\\u529F\\u80FD\\u4E0D\\u53D7\\u5F71\\u97FF\\u3002",
+        enabledDescription: "\\u95DC\\u9589\\u5F8C\\u6703\\u505C\\u6B62 AI \\u7FFB\\u8B6F\\u4E26\\u96B1\\u85CF AI \\u61F8\\u6D6E\\u6309\\u9215\\uFF1B\\u4E00\\u822C\\u6383\\u63CF\\u529F\\u80FD\\u4E0D\\u53D7\\u5F71\\u97FF\\u3002",
         betaBadge: "Beta",
         betaNotice: "\\u76EE\\u524D\\u8A72\\u529F\\u80FD\\u4E0D\\u7A69\\u5B9A\\uFF0C\\u554F\\u984C\\u8F03\\u591A\\uFF0C\\u50C5\\u4F9B\\u6E2C\\u8A66\\u3002",
         general: "\\u6383\\u63CF\\u8207\\u7FFB\\u8B6F",
@@ -4036,12 +4036,12 @@ ${result.join(",\n")}
     },
     results: {
       title: "\\u63D0\\u53D6\\u7684\\u6587\\u672C",
-      aiTitle: "AI \\u6383\\u63CF\\u7D50\\u679C",
+      aiTitle: "AI \\u7FFB\\u8B6F\\u7D50\\u679C",
       scanCountSession: "\\u5DF2\\u6383\\u63CF {{count}} \\u500B\\u9805\\u76EE",
       scanCountStatic: "\\u5171\\u6383\\u63CF {{count}} \\u500B\\u9805\\u76EE",
       scanCountAi: "AI \\u5DF2\\u6536\\u96C6 {{count}} \\u500B\\u9805\\u76EE",
-      aiRunning: "AI \\u6383\\u63CF\\u57F7\\u884C\\u4E2D",
-      aiStopped: "AI \\u6383\\u63CF\\u5DF2\\u505C\\u6B62",
+      aiRunning: "AI \\u7FFB\\u8B6F\\u9032\\u884C\\u4E2D",
+      aiStopped: "AI \\u7FFB\\u8B6F\\u5DF2\\u505C\\u6B62",
       aiProcessing: "\\u4F9B\\u61C9\\u5546\\u6B63\\u5728\\u8655\\u7406\\u76EE\\u524D\\u6279\\u6B21\\u2026",
       aiBudgetBlocked: "\\u5DF2\\u505C\\u6B62\\u50B3\\u9001\\uFF0C\\u9054\\u5230\\u9810\\u7B97\\u9650\\u5236",
       aiRequestError: "\\u6700\\u8FD1\\u4E00\\u6B21\\u8ACB\\u6C42\\u5931\\u6557",
@@ -4080,9 +4080,9 @@ ${result.join(",\n")}
       sessionScanContinued: "\\u52D5\\u614B\\u6383\\u63CF\\u5DF2\\u7E7C\\u7E8C\\u3002",
       cspWorkerWarning: "\\u56E0\\u7DB2\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u63DB\\u81F3\\u76F8\\u5BB9\\u6383\\u63CF\\u6A21\\u5F0F\\u3002",
       scanModeConflict: "\\u8ACB\\u5148\\u505C\\u6B62\\u76EE\\u524D\\u6383\\u63CF\\u6A21\\u5F0F\\uFF0C\\u518D\\u555F\\u52D5\\u53E6\\u4E00\\u7A2E\\u6383\\u63CF\\u3002",
-      aiScanStarted: "AI \\u52D5\\u614B\\u6383\\u63CF\\u5DF2\\u958B\\u59CB\\u3002",
-      aiScanStopped: "AI \\u52D5\\u614B\\u6383\\u63CF\\u5DF2\\u505C\\u6B62\\u3002",
-      aiScanStartFailed: "AI \\u6383\\u63CF\\u555F\\u52D5\\u5931\\u6557\\u3002",
+      aiScanStarted: "AI \\u7FFB\\u8B6F\\u5DF2\\u958B\\u59CB\\u3002",
+      aiScanStopped: "AI \\u7FFB\\u8B6F\\u5DF2\\u505C\\u6B62\\u3002",
+      aiScanStartFailed: "AI \\u7FFB\\u8B6F\\u555F\\u52D5\\u5931\\u6557\\u3002",
       aiDisabled: "AI \\u529F\\u80FD\\u5DF2\\u95DC\\u9589\\uFF0C\\u8ACB\\u5148\\u5728\\u8A2D\\u5B9A\\u4E2D\\u555F\\u7528\\u3002",
       aiBatchCompleted: "AI \\u6279\\u6B21\\u8655\\u7406\\u5B8C\\u6210\\u3002",
       aiNothingPending: "\\u76EE\\u524D\\u6C92\\u6709\\u5F85\\u50B3\\u9001\\u5167\\u5BB9\\u3002",
@@ -4116,8 +4116,8 @@ ${result.join(",\n")}
     },
     tooltip: {
       summary: "\\u67E5\\u770B\\u6458\\u8981",
-      ai_scan: "AI \\u52D5\\u614B\\u6383\\u63CF\\uFF08Beta\\uFF09",
-      ai_scan_stop: "\\u505C\\u6B62 AI \\u52D5\\u614B\\u6383\\u63CF",
+      ai_scan: "AI \\u7FFB\\u8B6F\\uFF08Beta\\uFF09",
+      ai_scan_stop: "\\u505C\\u6B62 AI \\u7FFB\\u8B6F",
       ai_disabled: "AI \\u529F\\u80FD\\u5DF2\\u95DC\\u9589",
       dynamic_scan: "\\u52D5\\u614B\\u6383\\u63CF",
       static_scan: "\\u975C\\u614B\\u6383\\u63CF",
@@ -4136,7 +4136,7 @@ ${result.join(",\n")}
       },
       disabled: {
         scan_in_progress: "\\u53E6\\u4E00\\u9805\\u6383\\u63CF\\u6B63\\u5728\\u9032\\u884C\\u4E2D",
-        ai_scan_active: "AI \\u6383\\u63CF\\u57F7\\u884C\\u4E2D\\uFF0C\\u666E\\u901A\\u6383\\u63CF\\u5DF2\\u505C\\u7528"
+        ai_scan_active: "AI \\u7FFB\\u8B6F\\u9032\\u884C\\u4E2D\\uFF0C\\u666E\\u901A\\u6383\\u63CF\\u5DF2\\u505C\\u7528"
       },
       filters: {
         title: "\\u5167\\u5BB9\\u904E\\u6FFE\\u5668\\u8AAA\\u660E",
@@ -4374,8 +4374,8 @@ ${result.join(",\n")}
       elementScan: '<p><strong>\\u529F\\u80FD\\u4ECB\\u7D39:</strong></p><p>\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u5141\\u8A31\\u60A8\\u7CBE\\u78BA\\u5730\\u9078\\u64C7\\u7DB2\\u9801\\u4E0A\\u7684\\u4E00\\u500B\\u6216\\u591A\\u500B\\u5340\\u57DF\\uFF08\\u4F8B\\u5982\\u4E00\\u500B\\u6BB5\\u843D\\u3001\\u4E00\\u500B\\u5217\\u8868\\u3001\\u4E00\\u500B\\u5074\\u908A\\u6B04\\uFF09\\uFF0C\\u4E26\\u50C5\\u5F9E\\u9019\\u4E9B\\u5340\\u57DF\\u4E2D\\u63D0\\u53D6\\u6587\\u672C\\u3002</p><p><strong>\\u5982\\u4F55\\u4F7F\\u7528:</strong></p><ol><li><strong>\\u555F\\u52D5:</strong> \\u9EDE\\u64CA\\u61F8\\u6D6E\\u6309\\u9215\\u4E2D\\u7684\\u300C\\u9078\\u53D6\\u5143\\u7D20\\u300D\\u5716\\u6A19 <span class="help-icon-placeholder element-scan-icon"></span> \\u555F\\u52D5\\u6383\\u63CF\\u6A21\\u5F0F\\u3002</li><li><strong>\\u9078\\u64C7:</strong> \\u79FB\\u52D5\\u9F20\\u6A19\\uFF0C\\u60A8\\u60F3\\u6383\\u63CF\\u7684\\u5340\\u57DF\\u6703\\u986F\\u793A\\u9AD8\\u4EAE\\u6846\\u3002\\u55AE\\u64CA\\u4EE5\\u9078\\u5B9A\\u3002</li><li><strong>\\u8ABF\\u6574:</strong> \\u9078\\u5B9A\\u5F8C\\u6703\\u51FA\\u73FE\\u5DE5\\u5177\\u6B04\\u3002\\u60A8\\u53EF\\u4EE5\\u4F7F\\u7528<strong>\\u6ED1\\u584A</strong>\\u4F86\\u64F4\\u5927\\u6216\\u7E2E\\u5C0F\\u9078\\u64C7\\u7BC4\\u570D\\u3002</li><li><strong>\\u66AB\\u5B58:</strong> \\u5982\\u679C\\u60A8\\u60F3\\u9078\\u64C7\\u591A\\u500B\\u4E0D\\u76F8\\u95DC\\u7684\\u5340\\u57DF\\uFF0C\\u53EF\\u4EE5\\u9EDE\\u64CA<span class="action-key">\\u66AB\\u5B58</span>\\u6309\\u9215\\u4FDD\\u5B58\\u7576\\u524D\\u9078\\u64C7\\uFF0C\\u7136\\u5F8C\\u7E7C\\u7E8C\\u9078\\u64C7\\u5176\\u4ED6\\u5340\\u57DF\\u3002</li><li><strong>\\u78BA\\u8A8D:</strong> \\u5B8C\\u6210\\u6240\\u6709\\u9078\\u64C7\\u5F8C\\uFF0C\\u9EDE\\u64CA<span class="action-key">\\u78BA\\u8A8D</span>\\u6309\\u9215\\uFF0C\\u7CFB\\u7D71\\u5C07\\u958B\\u59CB\\u5F9E\\u60A8\\u9078\\u64C7\\u7684\\u6240\\u6709\\u5340\\u57DF\\u4E2D\\u63D0\\u53D6\\u6587\\u672C\\u3002</li></ol><p><strong>\\u5982\\u4F55\\u9000\\u51FA:</strong></p><ul><li>\\u5728\\u9078\\u64C7\\u904E\\u7A0B\\u4E2D\\uFF08\\u51FA\\u73FE\\u9AD8\\u4EAE\\u6846\\u6642\\uFF09\\uFF0C\\u5728\\u9801\\u9762\\u4EFB\\u610F\\u4F4D\\u7F6E<strong>\\u53F3\\u9375\\u55AE\\u64CA</strong>\\u3002</li><li>\\u5728\\u4EFB\\u4F55\\u6642\\u5019\\uFF0C\\u6309\\u4E0B <kbd>ESC</kbd> \\u9375\\u3002</li><li>\\u5728\\u4EFB\\u4F55\\u6642\\u5019\\uFF0C\\u518D\\u6B21\\u9EDE\\u64CA\\u300C\\u9078\\u53D6\\u5143\\u7D20\\u6383\\u63CF\\u300D\\u5716\\u6A19\\u3002</li></ul>',
       sessionScanTitle: "\\u52D5\\u614B\\u6383\\u63CF\\u6559\\u7A0B",
       sessionScan: '<p><strong>\\u529F\\u80FD\\u4ECB\\u7D39:</strong></p><p>\\u52D5\\u614B\\u6383\\u63CF\\u6703\\u6301\\u7E8C\\u76E3\\u63A7\\u4E26\\u81EA\\u52D5\\u8A18\\u9304\\u7DB2\\u9801\\u4E0A\\u6240\\u6709\\u52D5\\u614B\\u52A0\\u8F09\\u6216\\u8B8A\\u5316\\u7684\\u6587\\u672C\\uFF0C\\u7279\\u5225\\u9069\\u7528\\u65BC\\u6293\\u53D6\\u5BE6\\u6642\\u804A\\u5929\\u3001\\u6EFE\\u52D5\\u52A0\\u8F09\\u5167\\u5BB9\\u6216\\u901A\\u77E5\\u7B49\\u3002</p><p><strong>\\u5982\\u4F55\\u4F7F\\u7528:</strong></p><ul><li><strong>\\u958B\\u59CB\\u6383\\u63CF:</strong> \\u9EDE\\u64CA\\u61F8\\u6D6E\\u6309\\u9215\\u4E2D\\u7684\\u300C\\u52D5\\u614B\\u6383\\u63CF\\u300D\\u5716\\u6A19 <span class="help-icon-placeholder dynamic-scan-icon"></span>\\uFF0C\\u6383\\u63CF\\u7ACB\\u5373\\u958B\\u59CB\\u3002</li><li><strong>\\u505C\\u6B62\\u6383\\u63CF:</strong> \\u518D\\u6B21\\u9EDE\\u64CA\\u8A72\\u5716\\u6A19 <span class="help-icon-placeholder stop-icon"></span>\\uFF0C\\u5373\\u53EF\\u505C\\u6B62\\u6383\\u63CF\\u3002</li><li><strong>\\u67E5\\u770B\\u7D50\\u679C:</strong> \\u505C\\u6B62\\u5F8C\\uFF0C\\u9EDE\\u64CA\\u4E3B\\u61F8\\u6D6E\\u6309\\u9215 <span class="help-icon-placeholder summary-icon"></span> \\u6253\\u958B\\u7D50\\u679C\\u7A97\\u53E3\\u3002</li></ul><p><strong>\\u5982\\u4F55\\u9000\\u51FA:</strong></p><ul><li>\\u5728\\u6383\\u63CF\\u904E\\u7A0B\\u4E2D\\uFF0C\\u518D\\u6B21\\u9EDE\\u64CA\\u300C\\u52D5\\u614B\\u6383\\u63CF\\u300D\\u5716\\u6A19\\u3002</li><li>\\u5728\\u6383\\u63CF\\u904E\\u7A0B\\u4E2D\\uFF0C\\u96A8\\u6642\\u6309\\u4E0B <kbd>ESC</kbd> \\u9375\\u53EF\\u5FEB\\u901F\\u505C\\u6B62\\u3002</li></ul>',
-      aiScanTitle: "AI \\u52D5\\u614B\\u6383\\u63CF\\u8AAA\\u660E",
-      aiScan: "<p><strong>\\u529F\\u80FD\\u4ECB\\u7D39:</strong></p><p>AI \\u6383\\u63CF\\u6703\\u6301\\u7E8C\\u6536\\u96C6\\u7DB2\\u9801\\u4E2D\\u7684\\u5019\\u9078\\u6587\\u672C\\uFF0C\\u4E26\\u4F9D\\u8A2D\\u5B9A\\u81EA\\u52D5\\u8655\\u7406\\u6216\\u7B49\\u5F85\\u624B\\u52D5\\u63D0\\u4EA4\\u3002\\u9802\\u90E8\\u6578\\u5B57\\u8868\\u793A\\u672C\\u6B21\\u5DF2\\u6536\\u96C6\\u7684\\u5019\\u9078\\u9805\\u76EE\\u6578\\u91CF\\u3002</p><p><strong>\\u5982\\u4F55\\u4F7F\\u7528:</strong></p><ul><li>\\u518D\\u6B21\\u9EDE\\u64CA AI \\u61F8\\u6D6E\\u6309\\u9215\\u5373\\u53EF\\u505C\\u6B62\\u6383\\u63CF\\u3002</li><li>\\u9EDE\\u64CA\\u300C\\u67E5\\u770B\\u6458\\u8981\\u300D\\u53EF\\u63D0\\u4EA4\\u5F85\\u8655\\u7406\\u5167\\u5BB9\\u3001\\u8907\\u6838\\u7D50\\u679C\\u4E26\\u8907\\u88FD\\u6216\\u532F\\u51FA\\u7FFB\\u8B6F\\u3002</li><li>\\u91CD\\u8907\\u51FA\\u73FE\\u6216\\u5DF2\\u7D93\\u8655\\u7406\\u904E\\u7684\\u6587\\u672C\\u4E0D\\u6703\\u518D\\u6B21\\u63D0\\u4EA4\\u3002</li></ul>"
+      aiScanTitle: "AI \\u7FFB\\u8B6F\\u8AAA\\u660E",
+      aiScan: "<p><strong>\\u529F\\u80FD\\u4ECB\\u7D39:</strong></p><p>AI \\u7FFB\\u8B6F\\u6703\\u6301\\u7E8C\\u6536\\u96C6\\u7DB2\\u9801\\u4E2D\\u7684\\u5019\\u9078\\u6587\\u672C\\uFF0C\\u4E26\\u4F9D\\u8A2D\\u5B9A\\u81EA\\u52D5\\u8655\\u7406\\u6216\\u7B49\\u5F85\\u624B\\u52D5\\u63D0\\u4EA4\\u3002\\u9802\\u90E8\\u6578\\u5B57\\u8868\\u793A\\u672C\\u6B21\\u5DF2\\u6536\\u96C6\\u7684\\u5019\\u9078\\u9805\\u76EE\\u6578\\u91CF\\u3002</p><p><strong>\\u5982\\u4F55\\u4F7F\\u7528:</strong></p><ul><li>\\u518D\\u6B21\\u9EDE\\u64CA AI \\u61F8\\u6D6E\\u6309\\u9215\\u5373\\u53EF\\u505C\\u6B62\\u7FFB\\u8B6F\\u3002</li><li>\\u9EDE\\u64CA\\u300C\\u67E5\\u770B\\u6458\\u8981\\u300D\\u53EF\\u63D0\\u4EA4\\u5F85\\u8655\\u7406\\u5167\\u5BB9\\u3001\\u8907\\u6838\\u7D50\\u679C\\u4E26\\u8907\\u88FD\\u6216\\u532F\\u51FA\\u7FFB\\u8B6F\\u3002</li><li>\\u91CD\\u8907\\u51FA\\u73FE\\u6216\\u5DF2\\u7D93\\u8655\\u7406\\u904E\\u7684\\u6587\\u672C\\u4E0D\\u6703\\u518D\\u6B21\\u63D0\\u4EA4\\u3002</li></ul>"
     }
   };
   // locales-ns:virtual:locales
@@ -11501,7 +11501,12 @@ ${result.join(",\n")}
     }
     const labelledBy = element.getAttribute?.("aria-labelledby");
     if (labelledBy) {
-      const label = labelledBy.split(/\s+/).map((id) => document.getElementById(id)).find(Boolean);
+      const root = element.getRootNode?.() || element.ownerDocument;
+      const label = labelledBy.split(/\s+/).map((id) => {
+        if (typeof root.getElementById === "function") return root.getElementById(id);
+        const safeId = String(id).replace(/["\\]/g, "\\$&");
+        return root.querySelector?.(`[id="${safeId}"]`);
+      }).find(Boolean);
       if (label) return limitText2(label.textContent, 120);
     }
     return "";
@@ -11573,6 +11578,59 @@ ${result.join(",\n")}
       status: "pending"
     };
   }
+  function processElementAttributes(element, attributesToExtract, addCandidate) {
+    attributesToExtract.forEach((attribute) => {
+      const value = element.getAttribute?.(attribute);
+      if (value) addCandidate(element, value);
+    });
+  }
+  function extractSubtree(rootNode, { attributesToExtract, ignoredSelector, addCandidate }) {
+    if (rootNode.nodeType === Node.TEXT_NODE) {
+      const parent = rootNode.parentElement;
+      if (parent && !isIgnoredElement(parent, ignoredSelector)) addCandidate(parent, rootNode.nodeValue);
+      return;
+    }
+    const isDocument = rootNode.nodeType === Node.DOCUMENT_NODE;
+    const elementRoot = isDocument ? rootNode.body : rootNode;
+    if (!elementRoot || elementRoot.nodeType === Node.TEXT_NODE) return;
+    const isElementRoot = elementRoot.nodeType === Node.ELEMENT_NODE;
+    const isFragmentRoot = elementRoot.nodeType === Node.DOCUMENT_FRAGMENT_NODE;
+    if (!isElementRoot && !isFragmentRoot) return;
+    if (isElementRoot && isIgnoredElement(elementRoot, ignoredSelector)) {
+      return;
+    }
+    processElementAttributes(elementRoot, attributesToExtract, addCandidate);
+    elementRoot.querySelectorAll?.("*").forEach((element) => {
+      if (isIgnoredElement(element, ignoredSelector)) return;
+      processElementAttributes(element, attributesToExtract, addCandidate);
+      if (element.tagName === "IFRAME") {
+        try {
+          const iframeDoc = element.contentDocument || element.contentWindow && element.contentWindow.document;
+          if (iframeDoc) extractSubtree(iframeDoc, { attributesToExtract, ignoredSelector, addCandidate });
+        } catch {
+        }
+      }
+      const shadowRoot = element.shadowRoot || element._shadowRoot;
+      if (shadowRoot) extractSubtree(shadowRoot, { attributesToExtract, ignoredSelector, addCandidate });
+    });
+    if (elementRoot.tagName === "IFRAME") {
+      try {
+        const iframeDoc = elementRoot.contentDocument || elementRoot.contentWindow && elementRoot.contentWindow.document;
+        if (iframeDoc) extractSubtree(iframeDoc, { attributesToExtract, ignoredSelector, addCandidate });
+      } catch {
+      }
+    }
+    const rootShadow = elementRoot.shadowRoot || elementRoot._shadowRoot;
+    if (rootShadow) extractSubtree(rootShadow, { attributesToExtract, ignoredSelector, addCandidate });
+    const walker = (elementRoot.ownerDocument || document).createTreeWalker(elementRoot, NodeFilter.SHOW_TEXT, {
+      acceptNode(node) {
+        return node.parentElement && !isIgnoredElement(node.parentElement, ignoredSelector) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+      }
+    });
+    while (walker.nextNode()) {
+      addCandidate(walker.currentNode.parentElement, walker.currentNode.nodeValue);
+    }
+  }
   function extractAiCandidates(root, { filterRules: filterRules2, targetLanguage, scannerConfig, siteKey = window.location.origin }) {
     const candidates2 = /* @__PURE__ */ new Map();
     const isDocumentRoot = root?.nodeType === Node.DOCUMENT_NODE;
@@ -11587,12 +11645,6 @@ ${result.join(",\n")}
         candidates2.set(candidate.fingerprint, candidate);
       }
     };
-    const processElementAttributes = (element) => {
-      attributesToExtract.forEach((attribute) => {
-        const value = element.getAttribute?.(attribute);
-        if (value) addCandidate(element, value);
-      });
-    };
     const rootNode = isDocumentRoot ? root.body : root;
     if (!rootNode) return [];
     if (isDocumentRoot && document.title) {
@@ -11603,21 +11655,7 @@ ${result.join(",\n")}
       if (parent && !isIgnoredElement(parent, ignoredSelector)) addCandidate(parent, rootNode.nodeValue);
       return Array.from(candidates2.values());
     }
-    if (rootNode.nodeType !== Node.ELEMENT_NODE || isIgnoredElement(rootNode, ignoredSelector)) {
-      return [];
-    }
-    processElementAttributes(rootNode);
-    rootNode.querySelectorAll?.("*").forEach((element) => {
-      if (!isIgnoredElement(element, ignoredSelector)) processElementAttributes(element);
-    });
-    const walker = document.createTreeWalker(rootNode, NodeFilter.SHOW_TEXT, {
-      acceptNode(node) {
-        return node.parentElement && !isIgnoredElement(node.parentElement, ignoredSelector) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
-      }
-    });
-    while (walker.nextNode()) {
-      addCandidate(walker.currentNode.parentElement, walker.currentNode.nodeValue);
-    }
+    extractSubtree(rootNode, { attributesToExtract, ignoredSelector, addCandidate });
     return Array.from(candidates2.values());
   }
   // src/shared/services/ai/pageContextBuilder.js
