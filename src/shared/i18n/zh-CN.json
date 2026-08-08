@@ -109,9 +109,9 @@
             "system": "跟随系统"
         },
         "ai": {
-            "title": "AI 扫描",
+            "title": "AI 翻译",
             "enabled": "启用 AI 功能",
-            "enabledDescription": "关闭后会停止 AI 扫描并隐藏 AI 悬浮按钮；普通扫描功能不受影响。",
+            "enabledDescription": "关闭后会停止 AI 翻译并隐藏 AI 悬浮按钮；普通扫描功能不受影响。",
             "betaBadge": "Beta",
             "betaNotice": "目前该功能不稳定，问题较多，仅做测试。",
             "general": "扫描与翻译",
@@ -199,12 +199,12 @@
     },
     "results": {
         "title": "提取的文本",
-        "aiTitle": "AI 扫描结果",
+        "aiTitle": "AI 翻译结果",
         "scanCountSession": "已扫描 {{count}} 个项目",
         "scanCountStatic": "共扫描 {{count}} 个项目",
         "scanCountAi": "AI 已收集 {{count}} 个项目",
-        "aiRunning": "AI 扫描运行中",
-        "aiStopped": "AI 扫描已停止",
+        "aiRunning": "AI 翻译进行中",
+        "aiStopped": "AI 翻译已停止",
         "aiProcessing": "供应商正在处理当前批次…",
         "aiBudgetBlocked": "已停止发送，达到预算限制",
         "aiRequestError": "最近一次请求失败",
@@ -243,9 +243,9 @@
         "sessionScanContinued": "动态扫描已继续。",
         "cspWorkerWarning": "因网站安全限制，已切换至兼容扫描模式。",
         "scanModeConflict": "请先停止当前扫描模式，再启动另一种扫描。",
-        "aiScanStarted": "AI 动态扫描已开始。",
-        "aiScanStopped": "AI 动态扫描已停止。",
-        "aiScanStartFailed": "AI 扫描启动失败。",
+        "aiScanStarted": "AI 翻译已开始。",
+        "aiScanStopped": "AI 翻译已停止。",
+        "aiScanStartFailed": "AI 翻译启动失败。",
         "aiDisabled": "AI 功能已关闭，请先在设置中启用。",
         "aiBatchCompleted": "AI 批次处理完成。",
         "aiNothingPending": "当前没有待发送内容。",
@@ -279,8 +279,8 @@
     },
     "tooltip": {
         "summary": "查看摘要",
-        "ai_scan": "AI 动态扫描（Beta）",
-        "ai_scan_stop": "停止 AI 动态扫描",
+        "ai_scan": "AI 翻译（Beta）",
+        "ai_scan_stop": "停止 AI 翻译",
         "ai_disabled": "AI 功能已关闭",
         "dynamic_scan": "动态扫描",
         "static_scan": "静态扫描",
@@ -299,7 +299,7 @@
         },
         "disabled": {
             "scan_in_progress": "另一项扫描正在进行中",
-            "ai_scan_active": "AI 扫描运行中，普通扫描已禁用"
+            "ai_scan_active": "AI 翻译进行中，普通扫描已禁用"
         },
         "filters": {
             "title": "内容过滤器说明",
@@ -537,7 +537,7 @@
         "elementScan": "<p><strong>功能介绍:</strong></p><p>选取元素扫描允许您精确地选择网页上的一个或多个区域（例如一个段落、一个列表、一个侧边栏），并仅从这些区域中提取文本。</p><p><strong>如何使用:</strong></p><ol><li><strong>启动:</strong> 点击悬浮按钮中的“选取元素”图标 <span class=\"help-icon-placeholder element-scan-icon\"></span> 启动扫描模式。</li><li><strong>选择:</strong> 移动鼠标，您想扫描的区域会显示高亮框。单击以选定。</li><li><strong>调整:</strong> 选定后会出现工具栏。您可以使用<strong>滑块</strong>来扩大或缩小选择范围。</li><li><strong>暂存:</strong> 如果您想选择多个不相关的区域，可以点击<span class=\"action-key\">暂存</span>按钮保存当前选择，然后继续选择其他区域。</li><li><strong>确认:</strong> 完成所有选择后，点击<span class=\"action-key\">确认</span>按钮，系统将开始从您选择的所有区域中提取文本。</li></ol><p><strong>如何退出:</strong></p><ul><li>在选择过程中（出现高亮框时），在页面任意位置<strong>右键单击</strong>。</li><li>在任何时候，按下<kbd>ESC</kbd>键。</li><li>在任何时候，再次点击“选取元素扫描”图标。</li></ul>",
         "sessionScanTitle": "动态扫描教程",
         "sessionScan": "<p><strong>功能介绍:</strong></p><p>动态扫描会持续监控并自动记录网页上所有动态加载或变化的文本，特别适用于抓取实时聊天、滚动加载内容或通知等。</p><p><strong>如何使用:</strong></p><ul><li><strong>开始扫描:</strong> 点击悬浮按钮中的“动态扫描”图标 <span class=\"help-icon-placeholder dynamic-scan-icon\"></span>，扫描立即开始。</li><li><strong>停止扫描:</strong> 再次点击该图标 <span class=\"help-icon-placeholder stop-icon\"></span>，即可停止扫描。</li><li><strong>查看结果:</strong> 停止后，点击主悬浮按钮 <span class=\"help-icon-placeholder summary-icon\"></span> 打开结果窗口。</li></ul><p><strong>如何退出:</strong></p><ul><li>在扫描过程中，再次点击“动态扫描”图标。</li><li>在扫描过程中，随时按下<kbd>ESC</kbd>键可快速停止。</li></ul>",
-        "aiScanTitle": "AI 动态扫描说明",
-        "aiScan": "<p><strong>功能介绍:</strong></p><p>AI 扫描会持续收集网页中的候选文本，并根据设置自动处理或等待手动提交。顶部数字表示本次已收集的候选项数量。</p><p><strong>如何使用:</strong></p><ul><li>再次点击 AI 悬浮按钮即可停止扫描。</li><li>点击“查看摘要”可提交待处理内容、复核结果并复制或导出翻译。</li><li>重复出现或已经处理过的文本不会再次提交。</li></ul>"
+        "aiScanTitle": "AI 翻译说明",
+        "aiScan": "<p><strong>功能介绍:</strong></p><p>AI 翻译会持续收集网页中的候选文本，并根据设置自动处理或等待手动提交。顶部数字表示本次已收集的候选项数量。</p><p><strong>如何使用:</strong></p><ul><li>再次点击 AI 悬浮按钮即可停止翻译。</li><li>点击“查看摘要”可提交待处理内容、复核结果并复制或导出翻译。</li><li>重复出现或已经处理过的文本不会再次提交。</li></ul>"
     }
 }

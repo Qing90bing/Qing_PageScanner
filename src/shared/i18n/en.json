@@ -107,9 +107,9 @@
             "system": "System"
         },
         "ai": {
-            "title": "AI Scan",
+            "title": "AI Translate",
             "enabled": "Enable AI Features",
-            "enabledDescription": "Turning this off stops AI scanning and hides the AI floating button. Normal scans are unaffected.",
+            "enabledDescription": "Turning this off stops AI translation and hides the AI floating button. Normal scans are unaffected.",
             "betaBadge": "Beta",
             "betaNotice": "This feature is currently unstable and has known issues. It is for testing only.",
             "general": "Scan and Translation",
@@ -197,12 +197,12 @@
     },
     "results": {
         "title": "Extracted Text",
-        "aiTitle": "AI Scan Results",
+        "aiTitle": "AI Translation Results",
         "scanCountSession": "Scanned {{count}} items",
         "scanCountStatic": "Total {{count}} items scanned",
         "scanCountAi": "AI collected {{count}} items",
-        "aiRunning": "AI scan is running",
-        "aiStopped": "AI scan stopped",
+        "aiRunning": "AI translation is in progress",
+        "aiStopped": "AI translation stopped",
         "aiProcessing": "The provider is processing the current batch…",
         "aiBudgetBlocked": "Sending stopped because a budget limit was reached",
         "aiRequestError": "Most recent request failed",
@@ -241,9 +241,9 @@
         "sessionScanContinued": "Dynamic scan continued.",
         "cspWorkerWarning": "Switched to compatibility scan mode due to website security restrictions.",
         "scanModeConflict": "Stop the active scan mode before starting another one.",
-        "aiScanStarted": "AI dynamic scan started.",
-        "aiScanStopped": "AI dynamic scan stopped.",
-        "aiScanStartFailed": "AI scan failed to start.",
+        "aiScanStarted": "AI translation started.",
+        "aiScanStopped": "AI translation stopped.",
+        "aiScanStartFailed": "AI translation failed to start.",
         "aiDisabled": "AI features are disabled. Enable them in Settings first.",
         "aiBatchCompleted": "AI batch completed.",
         "aiNothingPending": "There are no pending items to send.",
@@ -277,8 +277,8 @@
     },
     "tooltip": {
         "summary": "View Summary",
-        "ai_scan": "AI Dynamic Scan (Beta)",
-        "ai_scan_stop": "Stop AI Dynamic Scan",
+        "ai_scan": "AI Translate (Beta)",
+        "ai_scan_stop": "Stop AI Translate",
         "ai_disabled": "AI features are disabled",
         "dynamic_scan": "Dynamic Scan",
         "static_scan": "Static Scan",
@@ -297,7 +297,7 @@
         },
         "disabled": {
             "scan_in_progress": "Another scan is in progress",
-            "ai_scan_active": "Regular scans are disabled while AI scan is running"
+            "ai_scan_active": "Regular scans are disabled while AI translation is running"
         },
         "filters": {
             "title": "Content Filter Explanation",
@@ -535,7 +535,7 @@
         "elementScan": "<p><strong>What it does:</strong></p><p>Element Scan allows you to precisely select one or more areas on a webpage (e.g., a paragraph, a list, a sidebar) and extract text only from those areas.</p><p><strong>How to use:</strong></p><ol><li><strong>Start:</strong> Click the \"Element Scan\" icon <span class=\"help-icon-placeholder element-scan-icon\"></span> in the floating button to enter scan mode.</li><li><strong>Select:</strong> Move your mouse over the page. The area you want to scan will be highlighted. Click to select it.</li><li><strong>Adjust:</strong> A toolbar will appear after selection. You can use the <strong>slider</strong> to expand or shrink the selection area.</li><li><strong>Stage:</strong> If you want to select multiple unrelated areas, click the <span class=\"action-key\">Stage</span> button to save the current selection and continue selecting other areas.</li><li><strong>Confirm:</strong> Once you have finished all selections, click the <span class=\"action-key\">Confirm</span> button to start extracting text from all your chosen areas.</li></ol><p><strong>How to exit:</strong></p><ul><li>While the highlight box is visible, <strong>right-click</strong> anywhere on the page.</li><li>Press the <kbd>ESC</kbd> key at any time.</li><li>Click the \"Element Scan\" icon again at any time.</li></ul>",
         "sessionScanTitle": "Dynamic Scan Tutorial",
         "sessionScan": "<p><strong>What it does:</strong></p><p>Dynamic Scan continuously monitors and automatically records all text that dynamically loads or changes on a webpage. It is especially useful for capturing live chats, infinite scrolling content, or notifications.</p><p><strong>How to use:</strong></p><ul><li><strong>Start Scan:</strong> Click the \"Dynamic Scan\" icon <span class=\"help-icon-placeholder dynamic-scan-icon\"></span> in the floating button to start scanning immediately.</li><li><strong>Stop Scan:</strong> Click the icon again <span class=\"help-icon-placeholder stop-icon\"></span> to stop.</li><li><strong>View Results:</strong> After stopping, click the main floating button <span class=\"help-icon-placeholder summary-icon\"></span> to open the results window.</li></ul><p><strong>How to exit:</strong></p><ul><li>Click the \"Dynamic Scan\" icon again during the scan.</li><li>Press the <kbd>ESC</kbd> key at any time to quickly stop the scan.</li></ul>",
-        "aiScanTitle": "AI Dynamic Scan Guide",
-        "aiScan": "<p><strong>What it does:</strong></p><p>AI Scan continuously collects candidate webpage text and either processes it automatically or waits for manual submission. The top counter shows how many candidates have been collected.</p><p><strong>How to use:</strong></p><ul><li>Click the AI floating button again to stop scanning.</li><li>Open View Summary to submit pending items, review results, and copy or export translations.</li><li>Repeated or previously processed text is not submitted again.</li></ul>"
+        "aiScanTitle": "AI Translation Guide",
+        "aiScan": "<p><strong>What it does:</strong></p><p>AI translation continuously collects candidate webpage text and either processes it automatically or waits for manual submission. The top counter shows how many candidates have been collected.</p><p><strong>How to use:</strong></p><ul><li>Click the AI floating button again to stop translation.</li><li>Open View Summary to submit pending items, review results, and copy or export translations.</li><li>Repeated or previously processed text is not submitted again.</li></ul>"
     }
 }
