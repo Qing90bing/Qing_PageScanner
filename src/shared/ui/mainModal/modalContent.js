@@ -28,12 +28,14 @@ function renderAiSummaryPanel() {
 
     const status = document.createElement('div');
     status.className = 'ai-summary-status';
+    status.setAttribute('role', 'status');
     const statusDot = document.createElement('span');
     statusDot.className = `ai-status-dot ${lastAiSnapshot.active ? 'is-active' : ''}`;
-    status.append(
-        statusDot,
-        document.createTextNode(t(lastAiSnapshot.active ? 'results.aiRunning' : 'results.aiStopped'))
-    );
+    statusDot.setAttribute('aria-hidden', 'true');
+    const statusText = document.createElement('span');
+    statusText.className = 'ai-summary-status-text';
+    statusText.textContent = t(lastAiSnapshot.active ? 'results.aiRunning' : 'results.aiStopped');
+    status.append(statusDot, statusText);
     panel.appendChild(status);
 
     const counts = document.createElement('div');
@@ -48,16 +50,30 @@ function renderAiSummaryPanel() {
     countItems.forEach(([key, labelKey]) => {
         const badge = document.createElement('span');
         badge.className = `ai-count-badge ai-count-${key}`;
-        badge.textContent = `${t(labelKey)} ${lastAiSnapshot.counts?.[key] || 0}`;
+        const count = lastAiSnapshot.counts?.[key] || 0;
+        badge.classList.toggle('is-nonzero', count > 0);
+        const label = t(labelKey);
+        badge.setAttribute('aria-label', `${label}: ${count}`);
+
+        const labelElement = document.createElement('span');
+        labelElement.className = 'ai-count-label';
+        labelElement.textContent = label;
+
+        const valueElement = document.createElement('strong');
+        valueElement.className = 'ai-count-value';
+        valueElement.textContent = String(count);
+
+        badge.append(labelElement, valueElement);
         counts.appendChild(badge);
     });
     panel.appendChild(counts);
 
     if (lastAiSnapshot.processing || lastAiSnapshot.budgetBlockedReason || lastAiSnapshot.lastErrorCode) {
         const notice = document.createElement('div');
-        notice.className = 'ai-summary-notice';
+        notice.className = `ai-summary-notice${lastAiSnapshot.processing ? ' is-processing' : ''}`;
         if (lastAiSnapshot.processing) {
             notice.textContent = t('results.aiProcessing');
+            notice.title = notice.textContent;
         } else if (lastAiSnapshot.budgetBlockedReason) {
             notice.textContent = `${t('results.aiBudgetBlocked')}: ${lastAiSnapshot.budgetBlockedReason}`;
         } else {
