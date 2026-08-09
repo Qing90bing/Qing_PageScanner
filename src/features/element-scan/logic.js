@@ -17,17 +17,15 @@ import { updateModalContent } from '../../shared/ui/mainModal/index.js';
 import { uiContainer, uiLifecycle } from '../../shared/ui/uiContainer.js';
 import { getDynamicFab, getElementScanFab, updateFabTooltip } from '../../shared/ui/components/fab.js';
 import { showNotification } from '../../shared/ui/components/notification.js';
-import { t, getTranslationObject } from '../../shared/i18n/index.js';
+import { t } from '../../shared/i18n/index.js';
 import { simpleTemplate } from '../../shared/utils/dom/templating.js';
 import { log } from '../../shared/utils/core/logger.js';
-import { loadSettings } from '../settings/logic.js';
-import { isWorkerAllowed } from '../../shared/utils/core/csp-checker.js';
-import { filterAndNormalizeTexts } from '../../shared/utils/text/textProcessor.js';
-import { trustedWorkerUrl } from '../../shared/workers/worker-url.js';
+import { loadSettings } from '../../shared/services/settings.js';
 import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
 import { on, fire } from '../../shared/utils/core/eventBus.js';
 import { saveActiveSession, clearActiveSession, enablePersistence } from '../../shared/services/sessionPersistence.js';
 import { acquireScanMode, releaseScanMode, SCAN_MODES } from '../../shared/services/scanModeCoordinator.js';
+import { filterTextsWithWorker, resetTextFilterState, terminateTextFilterWorker } from './textFilter.js';
 
 // --- 模块级状态变量 ---
 
@@ -36,23 +34,21 @@ let isPaused = false;
 let isAdjusting = false;
 let currentTarget = null;
 let elementPath = [];
-let stagedTexts = new Set();
+const stagedTexts = new Set();
 let shouldResumeAfterModalClose = false;
-let fallbackNotificationShown = false; // 用于跟踪兼容模式通知是否已显示
 let isHighlightUpdateQueued = false; // 用于 requestAnimationFrame 节流
 
-// 自动保存（心跳）定时器
+// 定期刷新持久化会话的时间戳，避免页面刷新或跳转时会话过期。
 let autoSaveInterval = null;
-const AUTO_SAVE_INTERVAL_MS = 5000; // 5秒
+const AUTO_SAVE_INTERVAL_MS = 5000;
 
 // 用于跟踪滚动监听
 let scrollableParents = [];
 let scrollUpdateQueued = false;
 
-// 优化：持久化 Worker 实例和 Iframe 观察者
-let workerInstance = null;
+// 观察动态加入的同源 iframe，以便为其文档补充事件监听器。
 let iframeObserver = null;
-// 修复：防止暂存动画定时器与手动操作冲突
+// 暂存反馈期间延迟恢复选择模式；手动重选时会取消它。
 let reselectTimer = null;
 
 // --- 事件监听 ---
@@ -61,7 +57,7 @@ on('clearElementScan', () => {
     updateStagedCount();
 });
 
-// 新增：监听会话恢复事件
+// 页面启动后恢复上一页保存的元素扫描会话。
 on('resumeScanSession', async (state) => {
     if (state.mode === 'element-scan') {
         const elementScanFab = getElementScanFab();
@@ -69,23 +65,19 @@ on('resumeScanSession', async (state) => {
 
         // 确保按钮存在且当前未在扫描
         if (elementScanFab && !isElementScanActive()) {
-            // Check if there's saved state to restore
             if (state && state.mode === 'element-scan' && state.data && Array.isArray(state.data)) {
                 log(t('log.elementScan.resuming'));
 
                 // 只有当设置为 true 时才恢复数据
                 if (settings.elementScan_persistData) {
-                    // Assuming settings.elementScan_persistData is the equivalent of shouldPersistElementScanData()
                     state.data.forEach((item) => stagedTexts.add(item));
                     log(t('log.elementScan.restored', { count: stagedTexts.size }));
-                    // 恢复 UI 状态 (如果需要)
-                    // ...
                 } else {
-                    stagedTexts.clear(); // Clear if persistence is off but data was present
+                    stagedTexts.clear();
                     log(t('log.elementScan.skipRestore'));
                 }
             } else {
-                log(t('log.elementScan.startingNewSession')); // Log for starting a new session if no data to restore
+                log(t('log.elementScan.startingNewSession'));
             }
 
             // 自动启动扫描
@@ -204,7 +196,7 @@ function startElementScan(fabElement, options = {}) {
     }
     isActive = true;
     isAdjusting = false;
-    fallbackNotificationShown = false; // 重置通知状态
+    resetTextFilterState();
     fabElement.classList.add('is-recording');
     updateFabTooltip(fabElement, 'scan.stopSession'); // 更新自己的工具提示
     showTopCenterUI();
@@ -299,7 +291,7 @@ function attachIframeListeners(iframe) {
                     addListenersToDocument(doc);
                 }
             } catch (e) {
-                // ignore cross-origin access errors
+                // 跨域 iframe 不允许读取 document，跳过即可。
             }
         };
 
@@ -442,26 +434,18 @@ export function stopElementScan(fabElement) {
     }
 
     // 清理 Worker
-    terminateWorker();
+    terminateTextFilterWorker();
 
     elementPath = [];
     currentTarget = null;
     stagedTexts.clear();
-    fallbackNotificationShown = false; // 清理通知状态
+    resetTextFilterState();
     updateStagedCount();
     log(t('log.elementScan.stateReset'));
 
     // 释放 UI 容器的全局监听器
     uiLifecycle.release();
     releaseScanMode(SCAN_MODES.ELEMENT);
-}
-
-function terminateWorker() {
-    if (workerInstance) {
-        workerInstance.terminate();
-        workerInstance = null;
-        log(t('log.elementScan.worker.terminated'));
-    }
 }
 
 export function pauseElementScan() {
@@ -500,94 +484,6 @@ export function reselectElement() {
 
     addListenersToDocument(document);
     addListenersToIframes();
-}
-
-/**
- * @description 使用 Web Worker 过滤文本数组。
- * @param {string[]} texts - 要过滤的原始文本数组。
- * @param {object} settings - 当前的设置，包含过滤规则等。
- * @returns {Promise<string[]>} - 一个解析为过滤后文本数组的 Promise。
- */
-function filterTextsWithWorker(texts, settings) {
-    return new Promise(async (resolve) => {
-        const handleFallback = () => {
-            log(t('log.elementScan.worker.fallback'), 'info');
-            if (!fallbackNotificationShown) {
-                showNotification(t('notifications.cspWorkerWarning'), { type: 'info', duration: 5000 });
-                fallbackNotificationShown = true;
-            }
-
-            const logFiltered = (text, reason) => {
-                log(t('log.textProcessor.filtered', { text, reason }));
-            };
-
-            const filteredTexts = filterAndNormalizeTexts(
-                texts,
-                settings.filterRules,
-                settings.enableDebugLogging,
-                logFiltered
-            );
-            resolve(filteredTexts);
-        };
-
-        const workerAllowed = await isWorkerAllowed();
-        if (!workerAllowed) {
-            log(t('log.elementScan.worker.cspBlocked'), 'warn');
-            handleFallback();
-            return;
-        }
-
-        try {
-            // 如果实例不存在（或者之前被意外销毁），则创建新实例
-            if (!workerInstance) {
-                log(t('log.elementScan.worker.initializing'), 'info');
-                workerInstance = new Worker(trustedWorkerUrl);
-
-                // 设置通用的错误处理，防止未捕获的异常
-                workerInstance.onerror = () => {
-                    log(t('log.elementScan.worker.error'), 'error');
-                    // 注意：这里不 terminate，除非是严重错误。让单次请求的 handler 去处理回调逻辑。
-                    // 但为了稳健，如果 Worker 挂了，我们可能需要重置 workerInstance
-                };
-            }
-
-            // 为本次请求设置 specific handler
-            // 注意：由于 JS 单线程且此处操作通常是串行的（用户点击 -> 处理 -> 结束），
-            // 直接复用 onmessage 是安全的。如果支持并发，需要用 MessageId 映射。
-            workerInstance.onmessage = (event) => {
-                const { type, payload } = event.data;
-                if (type === 'textsFiltered') {
-                    resolve(payload.texts);
-                    // 不再 terminate worker
-                }
-            };
-
-            // 覆盖 onerror 以便捕获本次特定的错误并 fallback
-            workerInstance.onerror = () => {
-                log(t('log.elementScan.worker.runtimeError'), 'warn');
-                workerInstance.terminate();
-                workerInstance = null; // 销毁并重置，下次会重建
-                handleFallback();
-            };
-
-            workerInstance.postMessage({
-                type: 'filter-texts',
-                payload: {
-                    texts,
-                    filterRules: settings.filterRules,
-                    enableDebugLogging: settings.enableDebugLogging,
-                    translations: {
-                        workerLogPrefix: t('log.elementScan.worker.logPrefix'),
-                        textFiltered: t('log.textProcessor.filtered'),
-                        filterReasons: getTranslationObject('filterReasons'),
-                    },
-                },
-            });
-        } catch (initError) {
-            log(t('log.elementScan.worker.initSyncError', { error: initError.message }), 'error');
-            handleFallback();
-        }
-    });
 }
 
 export async function stageCurrentElement() {
@@ -663,7 +559,7 @@ function updateStagedCount() {
 function scheduledHighlightUpdate() {
     if (currentTarget) {
         // 计算 iframe 偏移量
-        let offset = { x: 0, y: 0 };
+        const offset = { x: 0, y: 0 };
         const doc = currentTarget.ownerDocument;
         if (doc && doc !== document && doc._frameElement) {
             const rect = doc._frameElement.getBoundingClientRect();
@@ -749,10 +645,7 @@ function handleContextMenu(event) {
 }
 
 function handleElementClick(event) {
-    // 关键修复：检查 event.detail。
-    // 真实的用户鼠标点击，event.detail >= 1。
-    // 由键盘（如空格键）触发的 click 事件，event.detail === 0。
-    // 这可以防止空格键快捷方式错误地触发展示工具栏的逻辑。
+    // 只处理真实的鼠标点击；键盘触发的 click 不应打开调整工具栏。
     if (event.detail === 0) {
         return; // 忽略由键盘触发的 click 事件
     }
@@ -770,11 +663,7 @@ function handleElementClick(event) {
 
     elementPath = [];
     let el = currentTarget;
-    // 修改：支持 iframe 内部元素的路径构建。
-    // 如果元素在 iframe 中，我们需要一直向上遍历到 iframe 的 body，
-    // 然后可能还需要继续向上遍历主文档（可选，视需求而定）。
-    // 目前的逻辑是：工具栏只调整当前文档内的层级。
-    // 如果选中的是 iframe 内的元素，调整范围就是 iframe 内。
+    // 元素路径只在所属文档内构建；iframe 内的选择不会跨越文档边界。
 
     const ownerDoc = currentTarget.ownerDocument;
     const body = ownerDoc.body;
@@ -787,7 +676,7 @@ function handleElementClick(event) {
     log(simpleTemplate(t('log.elementScan.pathBuilt'), { depth: elementPath.length }));
 
     // 计算工具栏需要的初始偏移量
-    let offset = { x: 0, y: 0 };
+    const offset = { x: 0, y: 0 };
     if (ownerDoc !== document && ownerDoc._frameElement) {
         const rect = ownerDoc._frameElement.getBoundingClientRect();
         offset.x = rect.left;
@@ -805,7 +694,7 @@ export function updateSelectionLevel(level) {
         const tagName = targetElement.tagName.toLowerCase();
         log(simpleTemplate(t('log.elementScan.adjustingLevel'), { level, tagName }));
 
-        let offset = { x: 0, y: 0 };
+        const offset = { x: 0, y: 0 };
         const doc = targetElement.ownerDocument;
         if (doc !== document && doc._frameElement) {
             const rect = doc._frameElement.getBoundingClientRect();
