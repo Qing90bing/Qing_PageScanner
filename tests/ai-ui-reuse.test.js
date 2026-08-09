@@ -153,6 +153,17 @@ test('AI pause blocks collection but manual submission remains available', async
     assert.match(footer, /aiRetryBtn\.disabled = snapshot\.processing \|\|/);
 });
 
+test('AI collection feedback flushes quickly without changing request batching', async () => {
+    const logic = await readFile(AI_SCAN_LOGIC_PATH, 'utf8');
+    const rootFlush = logic.match(/function scheduleRootFlush\(\) \{([\s\S]*?)\n\}/)?.[1] || '';
+
+    assert.match(logic, /const AI_COLLECTION_FLUSH_DELAY_MS = 200/);
+    assert.match(rootFlush, /if \(rootFlushTimer !== null\) return/);
+    assert.doesNotMatch(rootFlush, /clearTimeout\(rootFlushTimer\)/);
+    assert.match(logic, /scheduleAutoSubmit\(delayMs\)/);
+    assert.match(logic, /scheduleAutoSubmit\(aiSettings\.batch\.debounceMs\)/);
+});
+
 test('AI review items expose remove and return-to-editor actions', async () => {
     const [logic, content, aiUi, styles] = await Promise.all([
         readFile(AI_SCAN_LOGIC_PATH, 'utf8'),

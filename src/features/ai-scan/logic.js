@@ -73,6 +73,8 @@ let isClearing = false;
 let submissionInProgress = false;
 let userRemovedFingerprints = new Set();
 const MAX_PERSISTED_SESSION_ITEMS = 5000;
+// Keep collection feedback responsive without changing the longer request-batching debounce.
+const AI_COLLECTION_FLUSH_DELAY_MS = 200;
 const AI_OBSERVER_OPTIONS = Object.freeze({
     childList: true,
     subtree: true,
@@ -239,13 +241,12 @@ async function flushPendingRoots(runGeneration = generation) {
 
 function scheduleRootFlush() {
     if (isPaused) return;
-    if (rootFlushTimer !== null) clearTimeout(rootFlushTimer);
-    const delay = mergeAiSettings(loadSettings().ai).batch.debounceMs;
+    if (rootFlushTimer !== null) return;
     const runGeneration = generation;
     rootFlushTimer = setTimeout(() => {
         rootFlushTimer = null;
         void flushPendingRoots(runGeneration);
-    }, delay);
+    }, AI_COLLECTION_FLUSH_DELAY_MS);
 }
 
 function handleMutations(mutations) {
