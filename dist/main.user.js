@@ -12769,6 +12769,7 @@ ${entries.join("\n")}
   var submissionInProgress = false;
   var userRemovedFingerprints = /* @__PURE__ */ new Set();
   var MAX_PERSISTED_SESSION_ITEMS = 5e3;
+  var AI_COLLECTION_FLUSH_DELAY_MS = 200;
   var AI_OBSERVER_OPTIONS = Object.freeze({
     childList: true,
     subtree: true,
@@ -12912,13 +12913,12 @@ ${entries.join("\n")}
   }
   function scheduleRootFlush() {
     if (isPaused3) return;
-    if (rootFlushTimer !== null) clearTimeout(rootFlushTimer);
-    const delay = mergeAiSettings(loadSettings().ai).batch.debounceMs;
+    if (rootFlushTimer !== null) return;
     const runGeneration = generation;
     rootFlushTimer = setTimeout(() => {
       rootFlushTimer = null;
       void flushPendingRoots(runGeneration);
-    }, delay);
+    }, AI_COLLECTION_FLUSH_DELAY_MS);
   }
   function handleMutations2(mutations) {
     if (!isActive2 || isPaused3) return;
