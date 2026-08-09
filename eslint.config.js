@@ -12,11 +12,19 @@ const userscriptGlobals = {
     GM_unregisterMenuCommand: 'readonly',
     GM_xmlhttpRequest: 'readonly',
     __INJECTED_CSS__: 'readonly',
+    __PROCESSING_WORKER_STRING__: 'readonly',
+};
+
+const sharedRules = {
+    eqeqeq: ['error', 'always', { null: 'ignore' }],
+    'no-async-promise-executor': 'error',
+    'no-var': 'error',
+    'prefer-const': 'error',
 };
 
 export default [
     {
-        ignores: ['dist/**', 'node_modules/**', 'tests/**'],
+        ignores: ['dist/**', 'node_modules/**'],
     },
     {
         files: ['src/**/*.js'],
@@ -30,7 +38,10 @@ export default [
             },
         },
         rules: {
+            ...js.configs.recommended.rules,
+            ...sharedRules,
             'no-unused-vars': ['error', { argsIgnorePattern: '^_', caughtErrors: 'none' }],
+            'max-lines': ['error', { max: 900, skipBlankLines: true, skipComments: true }],
         },
     },
     {
@@ -40,6 +51,24 @@ export default [
             ecmaVersion: 'latest',
             sourceType: 'module',
             globals: globals.node,
+        },
+        rules: {
+            ...js.configs.recommended.rules,
+            ...sharedRules,
+        },
+    },
+    {
+        files: ['tests/**/*.js'],
+        ...js.configs.recommended,
+        languageOptions: {
+            ecmaVersion: 'latest',
+            sourceType: 'module',
+            globals: globals.node,
+        },
+        rules: {
+            ...js.configs.recommended.rules,
+            ...sharedRules,
+            'no-unused-vars': ['error', { argsIgnorePattern: '^_', caughtErrors: 'none' }],
         },
     },
 ];
