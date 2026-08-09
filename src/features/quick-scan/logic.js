@@ -5,7 +5,7 @@
  * @description 负责协调静态扫描 Web Worker 的创建、通信和结果处理。
  */
 
-import { loadSettings } from '../settings/logic.js';
+import { loadSettings } from '../../shared/services/settings.js';
 import { log } from '../../shared/utils/core/logger.js';
 import { isWorkerAllowed } from '../../shared/utils/core/csp-checker.js';
 import { formatTextsForTranslation } from '../../shared/utils/text/formatting.js';
@@ -20,43 +20,32 @@ import { extractAndProcessText, filterAndNormalizeTexts } from '../../shared/uti
  * @returns {Promise<{formattedText: string, count: number}>} - 返回一个 Promise，
  *          该 Promise 在扫描完成时解析为一个包含格式化文本和计数的对象。
  */
-export const performQuickScan = () => {
-    return new Promise(async (resolve, reject) => {
-        const { filterRules, enableDebugLogging, outputFormat, includeArrayBrackets } = loadSettings();
+export const performQuickScan = async () => {
+    const { filterRules, enableDebugLogging, outputFormat, includeArrayBrackets } = loadSettings();
 
-        // 并行执行文本提取和CSP检查
-        const [texts, workerAllowed] = await Promise.all([extractAndProcessText(), isWorkerAllowed()]);
+    // 并行执行文本提取和 CSP 检查
+    const [texts, workerAllowed] = await Promise.all([extractAndProcessText(), isWorkerAllowed()]);
 
-        // 备选方案逻辑
-        const runFallback = () => {
-            log(t('log.quickScan.switchToFallback'));
-            showNotification(t('notifications.cspWorkerWarning'), { type: 'info', duration: 5000 });
-            try {
-                const logFiltered = (text, reason) => {
-                    log(t('log.textProcessor.filtered', { text, reason }));
-                };
-
-                const filteredTexts = filterAndNormalizeTexts(texts, filterRules, enableDebugLogging, logFiltered);
-
-                const formattedText = formatTextsForTranslation(filteredTexts, outputFormat, { includeArrayBrackets });
-                const result = {
-                    formattedText,
-                    count: filteredTexts.length,
-                };
-
-                updateScanCount(result.count, 'static');
-                resolve(result);
-            } catch (fallbackError) {
-                log(t('log.quickScan.fallbackFailed', { error: fallbackError.message }), 'error');
-                reject(fallbackError);
-            }
+    const runFallback = () => {
+        log(t('log.quickScan.switchToFallback'));
+        showNotification(t('notifications.cspWorkerWarning'), { type: 'info', duration: 5000 });
+        const logFiltered = (text, reason) => {
+            log(t('log.textProcessor.filtered', { text, reason }));
         };
 
-        if (!workerAllowed) {
-            log(t('log.quickScan.worker.cspBlocked'), 'warn');
-            return runFallback();
-        }
+        const filteredTexts = filterAndNormalizeTexts(texts, filterRules, enableDebugLogging, logFiltered);
+        const formattedText = formatTextsForTranslation(filteredTexts, outputFormat, { includeArrayBrackets });
+        const result = { formattedText, count: filteredTexts.length };
+        updateScanCount(result.count, 'static');
+        return result;
+    };
 
+    if (!workerAllowed) {
+        log(t('log.quickScan.worker.cspBlocked'), 'warn');
+        return runFallback();
+    }
+
+    return new Promise((resolve) => {
         try {
             log(t('log.quickScan.worker.starting'));
             const worker = new Worker(trustedWorkerUrl);
@@ -75,10 +64,9 @@ export const performQuickScan = () => {
                 log(t('log.quickScan.worker.initFailed'), 'warn');
                 log(t('log.quickScan.worker.originalError', { error: error.message }), 'debug');
                 worker.terminate();
-                runFallback();
+                resolve(runFallback());
             };
 
-            // 只有在 onerror 没有立即触发的情况下，这些日志才有意义
             log(t('log.quickScan.worker.sendingData', { count: texts.length }));
             worker.postMessage({
                 type: 'process-single',
@@ -96,10 +84,9 @@ export const performQuickScan = () => {
                     },
                 },
             });
-        } catch (e) {
-            // 同步错误（例如，如果浏览器完全不支持 Worker）
-            log(t('log.quickScan.worker.initSyncError', { error: e.message }), 'error');
-            runFallback();
+        } catch (error) {
+            log(t('log.quickScan.worker.initSyncError', { error: error.message }), 'error');
+            resolve(runFallback());
         }
     });
 };
