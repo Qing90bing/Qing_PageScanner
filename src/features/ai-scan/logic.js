@@ -1,5 +1,5 @@
-import { loadSettings } from '../settings/logic.js';
-import { appConfig } from '../settings/config.js';
+import { loadSettings } from '../../shared/services/settings.js';
+import { scannerConfig } from '../../shared/config/scannerConfig.js';
 import { acquireScanMode, releaseScanMode, SCAN_MODES } from '../../shared/services/scanModeCoordinator.js';
 import {
     AI_ACTIONS,
@@ -33,12 +33,6 @@ import {
 } from '../../shared/services/ai/storage.js';
 import { matchStyleProfile } from '../../shared/services/ai/siteStyleStore.js';
 import {
-    createRegexRuleId,
-    hasDynamicRegexValue,
-    matchEditedRegexRulesToExisting,
-    validateRegexRuleDefinition,
-} from '../../shared/utils/text/regexRules.js';
-import {
     isTranslationBridgeActive,
     isTranslationBridgeIdle,
     registerTranslationBridgeClient,
@@ -47,7 +41,8 @@ import {
 } from '../../shared/services/translationBridge.js';
 import { fire } from '../../shared/utils/core/eventBus.js';
 import { buildAiDisplayData } from './resultView.js';
-import { createManualSummaryCandidate, reconcileAiSummarySources } from './summaryEdits.js';
+import { restoreAiSession, serializeAiSession } from './session.js';
+import { applyAiSummaryEditsToState, removeAiSummaryCandidate } from './summaryState.js';
 
 let isActive = false;
 let isPaused = false;
@@ -72,7 +67,6 @@ let persistenceChain = Promise.resolve();
 let isClearing = false;
 let submissionInProgress = false;
 let userRemovedFingerprints = new Set();
-const MAX_PERSISTED_SESSION_ITEMS = 5000;
 // Keep collection feedback responsive without changing the longer request-batching debounce.
 const AI_COLLECTION_FLUSH_DELAY_MS = 200;
 const AI_OBSERVER_OPTIONS = Object.freeze({
@@ -124,18 +118,14 @@ function markInFlightAsPending() {
 }
 
 function serializeSession() {
-    const persistedCandidates = Array.from(candidates.values()).slice(-MAX_PERSISTED_SESSION_ITEMS);
-    const persistedIds = new Set(persistedCandidates.map((candidate) => candidate.id));
-    return {
+    return serializeAiSession({
+        candidates,
+        decisions,
+        regexRules,
         siteKey: currentSiteKey,
         targetLanguage: currentTargetLanguage,
-        candidates: persistedCandidates,
-        decisions: Array.from(decisions.values()).filter((decision) => persistedIds.has(decision.id)),
-        regexRules: Array.from(regexRules.values()).filter(
-            (rule) => rule.sourceIds.length === 0 || rule.sourceIds.every((id) => persistedIds.has(id))
-        ),
         sessionUsage,
-    };
+    });
 }
 
 async function persistState() {
@@ -212,7 +202,7 @@ function collectFromRoot(root) {
         filterRules: settings.filterRules,
         targetLanguage: currentTargetLanguage,
         siteKey: currentSiteKey,
-        scannerConfig: appConfig.scanner,
+        scannerConfig,
     });
     return addCandidateBatch(extracted);
 }
@@ -278,132 +268,15 @@ function scheduleAutoSubmit(delayMs) {
 }
 
 async function restoreSession() {
-    const saved = await loadAiSession();
-    if (!saved || saved.siteKey !== currentSiteKey || saved.targetLanguage !== currentTargetLanguage) {
-        candidates = new Map();
-        candidateFingerprints = new Set();
-        decisions = new Map();
-        regexRules = new Map();
-        sessionUsage = { requests: 0, characters: 0 };
-        return;
-    }
-
-    const restoredCandidates = Array.isArray(saved.candidates) ? saved.candidates.filter(isSubmittableAiCandidate) : [];
-    restoredCandidates.forEach((candidate) => {
-        if (candidate.status === AI_CANDIDATE_STATUS.KEEP) {
-            candidate.status = AI_CANDIDATE_STATUS.REMOVED;
-        }
-        if (candidate.status === AI_CANDIDATE_STATUS.IN_FLIGHT) {
-            candidate.status = AI_CANDIDATE_STATUS.PENDING;
-        }
+    const restored = restoreAiSession(await loadAiSession(), {
+        siteKey: currentSiteKey,
+        targetLanguage: currentTargetLanguage,
     });
-    candidates = new Map(restoredCandidates.map((candidate) => [candidate.id, candidate]));
-    candidateFingerprints = new Set(restoredCandidates.map((candidate) => candidate.fingerprint).filter(Boolean));
-    const restoredDecisions = Array.isArray(saved.decisions) ? saved.decisions : [];
-    decisions = new Map(
-        restoredDecisions
-            .filter((decision) => candidates.has(decision.id))
-            .map((decision) => {
-                const candidate = candidates.get(decision.id);
-                if (decision.action === AI_ACTIONS.KEEP) {
-                    return [
-                        decision.id,
-                        { ...decision, action: AI_ACTIONS.REMOVE, status: AI_CANDIDATE_STATUS.REMOVED },
-                    ];
-                }
-                if (
-                    decision.action === AI_ACTIONS.TRANSLATE &&
-                    decision.translationType !== AI_TRANSLATION_TYPES.REGEX &&
-                    isUnchangedTranslation(candidate.sourceText, decision.translation)
-                ) {
-                    return [
-                        decision.id,
-                        {
-                            ...decision,
-                            action: AI_ACTIONS.REMOVE,
-                            translation: '',
-                            translationType: AI_TRANSLATION_TYPES.TEXT,
-                            reason: 'unchanged-translation',
-                            status: AI_CANDIDATE_STATUS.REMOVED,
-                        },
-                    ];
-                }
-                return [decision.id, decision];
-            })
-    );
-
-    const restoredRules = new Map();
-    const restoredRuleIds = new Set();
-    const candidateById = new Map(candidates);
-    const restoredRegexRules = Array.isArray(saved.regexRules) ? saved.regexRules : [];
-    restoredRegexRules.forEach((rawRule) => {
-        const ruleId = String(rawRule?.id || '').trim();
-        if (!ruleId || restoredRuleIds.has(ruleId)) return;
-        const sourceIds = Array.isArray(rawRule?.sourceIds)
-            ? rawRule.sourceIds.map((id) => String(id || '').trim()).filter(Boolean)
-            : [];
-        if (new Set(sourceIds).size !== sourceIds.length) return;
-        if (sourceIds.some((id) => !candidateById.has(id))) return;
-        const origin = rawRule?.origin === 'manual' || rawRule?.origin === 'user-edited' ? rawRule.origin : 'ai';
-        if (origin === 'ai' && sourceIds.length < 1) return;
-        const sourceTexts = sourceIds.map((id) => candidateById.get(id).sourceText);
-        const singleSample = origin === 'ai' && sourceIds.length === 1;
-        if (singleSample && !hasDynamicRegexValue(sourceTexts[0])) return;
-        const validated = validateRegexRuleDefinition(
-            { ...rawRule, id: ruleId, sourceIds, origin },
-            {
-                sourceTexts,
-                requireSourceMatch: origin === 'ai',
-                requireAnchors: singleSample,
-                requireDynamicCapture: singleSample,
-            }
-        );
-        if (!validated.valid) return;
-        restoredRuleIds.add(ruleId);
-        restoredRules.set(ruleId, validated.rule);
-    });
-    decisions.forEach((decision, id) => {
-        if (decision.translationType !== AI_TRANSLATION_TYPES.REGEX) {
-            const candidate = candidates.get(id);
-            if (candidate) candidate.status = decision.status;
-            return;
-        }
-        if (!restoredRules.has(decision.regexRuleId)) {
-            const candidate = candidates.get(id);
-            if (candidate) candidate.status = AI_CANDIDATE_STATUS.PENDING;
-            decisions.delete(id);
-            return;
-        }
-        const candidate = candidates.get(id);
-        if (candidate) candidate.status = decision.status;
-    });
-    restoredRules.forEach((rule, ruleId) => {
-        if (
-            rule.sourceIds.length > 0 &&
-            !rule.sourceIds.every((sourceId) => {
-                const decision = decisions.get(sourceId);
-                return (
-                    decision?.translationType === AI_TRANSLATION_TYPES.REGEX &&
-                    decision.status === AI_CANDIDATE_STATUS.TRANSLATED &&
-                    decision.regexRuleId === ruleId
-                );
-            })
-        ) {
-            restoredRules.delete(ruleId);
-            rule.sourceIds.forEach((sourceId) => {
-                const decision = decisions.get(sourceId);
-                if (decision?.translationType !== AI_TRANSLATION_TYPES.REGEX) return;
-                const candidate = candidates.get(sourceId);
-                if (candidate) candidate.status = AI_CANDIDATE_STATUS.PENDING;
-                decisions.delete(sourceId);
-            });
-        }
-    });
-    regexRules = restoredRules;
-    sessionUsage = {
-        requests: Math.max(0, Number(saved.sessionUsage?.requests) || 0),
-        characters: Math.max(0, Number(saved.sessionUsage?.characters) || 0),
-    };
+    candidates = restored.candidates;
+    candidateFingerprints = restored.candidateFingerprints;
+    decisions = restored.decisions;
+    regexRules = restored.regexRules;
+    sessionUsage = restored.sessionUsage;
 }
 
 export async function startAiScan() {
@@ -760,12 +633,25 @@ function persistReviewMutation(cacheChanged = false) {
     emitState();
 }
 
+function getSummaryState() {
+    return {
+        candidates,
+        candidateFingerprints,
+        decisions,
+        regexRules,
+        cache,
+        userRemovedFingerprints,
+        siteKey: currentSiteKey || window.location.origin,
+        targetLanguage: currentTargetLanguage,
+    };
+}
+
 export function removeAiReviewItem(candidateId) {
     const id = String(candidateId || '').trim();
     const decision = decisions.get(id);
     if (!isReviewDecision(decision) || !candidates.has(id)) return { changed: false };
 
-    const removed = removeAiCandidate(id);
+    const removed = removeAiSummaryCandidate(getSummaryState(), id);
     if (!removed.changed) return { changed: false };
     persistReviewMutation(removed.cacheChanged);
     return { changed: true };
@@ -849,160 +735,20 @@ export function getReviewItems() {
 }
 
 export function applyAiSummaryEdits({ remainingSourceTexts = null, editedRegexRules = null } = {}) {
-    const hasTextEdits = Array.isArray(remainingSourceTexts);
-    let changed = false;
-    let cacheChanged = false;
+    const state = getSummaryState();
+    const result = applyAiSummaryEditsToState(state, { remainingSourceTexts, editedRegexRules });
+    regexRules = state.regexRules;
 
-    let nextRegexRules = regexRules;
-    if (Array.isArray(editedRegexRules)) {
-        const existingRules = Array.from(regexRules.values());
-        const matchedRules = matchEditedRegexRulesToExisting(editedRegexRules, existingRules);
-        if (!matchedRules.valid) return { changed: false, error: matchedRules.error };
-
-        nextRegexRules = new Map();
-        const assignedSourceIds = new Set();
-        for (let index = 0; index < editedRegexRules.length; index += 1) {
-            const editedRule = editedRegexRules[index];
-            const requestedId = String(editedRule?.id || '').trim();
-            const existingRule = matchedRules.matches[index];
-            const ruleId =
-                requestedId ||
-                existingRule?.id ||
-                createRegexRuleId(
-                    editedRule?.pattern || '',
-                    editedRule?.flags || '',
-                    editedRule?.replacement || '',
-                    index
-                );
-            let uniqueRuleId = ruleId;
-            let suffix = 0;
-            while (
-                !requestedId &&
-                !existingRule &&
-                (regexRules.has(uniqueRuleId) || nextRegexRules.has(uniqueRuleId))
-            ) {
-                suffix += 1;
-                uniqueRuleId = `${ruleId}-${suffix}`;
-            }
-            if (nextRegexRules.has(uniqueRuleId)) return { changed: false, error: 'duplicate-regex-rule-id' };
-
-            const sourceIds = existingRule
-                ? [...existingRule.sourceIds]
-                : Array.isArray(editedRule?.sourceIds)
-                  ? editedRule.sourceIds.map((id) => String(id || '').trim()).filter(Boolean)
-                  : [];
-            if (sourceIds.some((id) => assignedSourceIds.has(id))) {
-                return { changed: false, error: 'overlapping-regex-rules' };
-            }
-            if (sourceIds.some((id) => !candidates.has(id))) return { changed: false, error: 'unknown-regex-source' };
-
-            const candidateSourceTexts = sourceIds.map((id) => candidates.get(id).sourceText);
-            const validated = validateRegexRuleDefinition(
-                {
-                    ...(existingRule || {}),
-                    ...editedRule,
-                    id: uniqueRuleId,
-                    sourceIds,
-                    confidence:
-                        existingRule?.confidence ??
-                        (Number.isFinite(Number(editedRule?.confidence)) ? Number(editedRule.confidence) : 1),
-                    origin: existingRule ? 'user-edited' : editedRule?.origin || 'manual',
-                },
-                { sourceTexts: candidateSourceTexts, requireSourceMatch: false }
-            );
-            if (!validated.valid) return { changed: false, error: validated.reason };
-            sourceIds.forEach((id) => assignedSourceIds.add(id));
-            nextRegexRules.set(uniqueRuleId, validated.rule);
-        }
-
-        regexRules.forEach((rule, ruleId) => {
-            if (nextRegexRules.has(ruleId)) return;
-            rule.sourceIds.forEach((id) => {
-                const removed = removeAiCandidate(id);
-                cacheChanged = cacheChanged || removed.cacheChanged;
-            });
-            changed = true;
-        });
-        if (nextRegexRules.size !== regexRules.size) changed = true;
-        else {
-            nextRegexRules.forEach((rule, ruleId) => {
-                const previous = regexRules.get(ruleId);
-                if (
-                    !previous ||
-                    previous.pattern !== rule.pattern ||
-                    previous.flags !== rule.flags ||
-                    previous.replacement !== rule.replacement
-                ) {
-                    changed = true;
-                }
-            });
-        }
-        regexRules = nextRegexRules;
-    }
-
-    const regexCandidateIds = new Set(
-        Array.from(regexRules.values()).flatMap((rule) => (Array.isArray(rule.sourceIds) ? rule.sourceIds : []))
-    );
-
-    if (hasTextEdits) {
-        const reconciliation = reconcileAiSummarySources(
-            remainingSourceTexts,
-            Array.from(candidates.values()),
-            regexCandidateIds
-        );
-
-        reconciliation.revivedCandidateIds.forEach((id) => {
-            const candidate = candidates.get(id);
-            if (!candidate) return;
-            candidate.status = AI_CANDIDATE_STATUS.PENDING;
-            decisions.delete(id);
-            if (candidate.fingerprint) userRemovedFingerprints.delete(candidate.fingerprint);
-            changed = true;
-        });
-
-        reconciliation.addedSourceTexts.forEach((sourceText) => {
-            const candidate = createManualSummaryCandidate(sourceText, {
-                siteKey: currentSiteKey || window.location.origin,
-                targetLanguage: currentTargetLanguage,
-            });
-            if (!candidate || candidateFingerprints.has(candidate.fingerprint)) return;
-            candidates.set(candidate.id, candidate);
-            candidateFingerprints.add(candidate.fingerprint);
-            userRemovedFingerprints.delete(candidate.fingerprint);
-            changed = true;
-        });
-
-        reconciliation.removedCandidateIds.forEach((id) => {
-            const removed = removeAiCandidate(id);
-            cacheChanged = cacheChanged || removed.cacheChanged;
-            changed = removed.changed || changed;
-        });
-    }
-
-    if (changed) {
+    if (result.changed) {
         const tasks = [persistState()];
-        if (cacheChanged) tasks.push(saveAiCache(cache));
+        if (result.cacheChanged) tasks.push(saveAiCache(cache));
         Promise.all(tasks).catch(() => {
             lastError = { code: 'storage' };
             emitState();
         });
         emitState();
     }
-    return { changed, error: null };
-}
-
-function removeAiCandidate(id) {
-    const candidate = candidates.get(id);
-    if (!candidate) return { changed: false, cacheChanged: false };
-    candidates.delete(id);
-    decisions.delete(id);
-    let cacheChanged = false;
-    if (candidate.fingerprint) {
-        candidateFingerprints.delete(candidate.fingerprint);
-        userRemovedFingerprints.add(candidate.fingerprint);
-        cacheChanged = cache.delete(candidate.fingerprint);
-    }
-    return { changed: true, cacheChanged };
+    return { changed: result.changed, error: result.error };
 }
 
 export function applyAiSummaryDeletions(remainingSourceTexts) {

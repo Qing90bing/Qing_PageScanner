@@ -15,7 +15,7 @@ import {
     stopAiScan,
     submitPending,
 } from './logic.js';
-import { loadSettings } from '../settings/logic.js';
+import { loadSettings } from '../../shared/services/settings.js';
 import { formatTextsForTranslation } from '../../shared/utils/text/formatting.js';
 import { parseSummarySourceTexts } from '../../shared/utils/text/summaryParser.js';
 import { formatRegexRulesForTranslation, parseRegexRules } from '../../shared/utils/text/regexRules.js';
