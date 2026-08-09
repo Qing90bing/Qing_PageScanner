@@ -1,7 +1,11 @@
 import { AI_ACTIONS, AI_CANDIDATE_STATUS } from '../../shared/services/ai/contracts.js';
 import { hasMeaningfulAiSourceText } from '../../shared/services/ai/candidateText.js';
 
-const HIDDEN_OUTPUT_STATUSES = new Set([AI_CANDIDATE_STATUS.KEEP, AI_CANDIDATE_STATUS.REMOVED]);
+export const HIDDEN_OUTPUT_STATUSES = new Set([AI_CANDIDATE_STATUS.KEEP, AI_CANDIDATE_STATUS.REMOVED]);
+
+export function isHiddenOutputStatus(status) {
+    return HIDDEN_OUTPUT_STATUSES.has(status);
+}
 
 /**
  * Build the editable summary view from the complete local candidate state.

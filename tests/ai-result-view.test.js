@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { buildAiDisplayPairs } from '../src/features/ai-scan/resultView.js';
+import { buildAiDisplayPairs, isHiddenOutputStatus } from '../src/features/ai-scan/resultView.js';
 
 test('pending and review candidates stay visible while removed and legacy keep items are excluded', () => {
     const candidates = [
@@ -35,4 +35,13 @@ test('blank persisted candidates never enter the AI summary', () => {
         ),
         [{ sourceText: 'Visible', translation: '' }]
     );
+});
+
+test('only hidden output statuses are exempt from user deletion sync', () => {
+    assert.equal(isHiddenOutputStatus('removed'), true);
+    assert.equal(isHiddenOutputStatus('keep'), true);
+    assert.equal(isHiddenOutputStatus('translated'), false);
+    assert.equal(isHiddenOutputStatus('pending'), false);
+    assert.equal(isHiddenOutputStatus('review'), false);
+    assert.equal(isHiddenOutputStatus('failed'), false);
 });

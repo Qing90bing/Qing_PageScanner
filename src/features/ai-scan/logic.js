@@ -35,7 +35,7 @@ import {
     waitForTranslationBridgeIdle,
 } from '../../shared/services/translationBridge.js';
 import { fire } from '../../shared/utils/core/eventBus.js';
-import { buildAiDisplayPairs } from './resultView.js';
+import { buildAiDisplayPairs, isHiddenOutputStatus } from './resultView.js';
 
 let isActive = false;
 let observer = null;
@@ -57,6 +57,7 @@ let budgetBlockedReason = null;
 let persistenceChain = Promise.resolve();
 let isClearing = false;
 let submissionInProgress = false;
+let userRemovedFingerprints = new Set();
 const MAX_PERSISTED_SESSION_ITEMS = 5000;
 
 function getCounts() {
@@ -131,7 +132,11 @@ function hydrateCachedDecision(candidate, cacheEntry) {
 function addCandidateBatch(newCandidates) {
     let added = 0;
     newCandidates.forEach((candidate) => {
-        if (!isSubmittableAiCandidate(candidate) || candidateFingerprints.has(candidate.fingerprint)) {
+        if (
+            !isSubmittableAiCandidate(candidate) ||
+            candidateFingerprints.has(candidate.fingerprint) ||
+            userRemovedFingerprints.has(candidate.fingerprint)
+        ) {
             return;
         }
         const cacheEntry = cache.get(candidate.fingerprint);
@@ -281,6 +286,7 @@ export async function startAiScan() {
     generation += 1;
     lastError = null;
     budgetBlockedReason = null;
+    userRemovedFingerprints = new Set();
     currentSiteKey = window.location.origin;
     currentTargetLanguage = aiSettings.targetLanguage;
 
@@ -606,6 +612,7 @@ export async function clearAiData() {
         sessionUsage = { requests: 0, characters: 0 };
         lastError = null;
         budgetBlockedReason = null;
+        userRemovedFingerprints.clear();
         await persistenceChain.catch(() => undefined);
         await Promise.all([
             clearAiSession(),
@@ -633,6 +640,39 @@ export function getReviewItems() {
     return Array.from(decisions.values()).filter(
         (decision) => decision.status === AI_CANDIDATE_STATUS.REVIEW || decision.status === AI_CANDIDATE_STATUS.FAILED
     );
+}
+
+export function applyAiSummaryDeletions(remainingSourceTexts) {
+    const remaining = new Set(Array.isArray(remainingSourceTexts) ? remainingSourceTexts : []);
+    let changed = false;
+    let cacheChanged = false;
+
+    candidates.forEach((candidate, id) => {
+        if (remaining.has(candidate.sourceText)) return;
+        // Removed (and legacy kept) items are intentionally absent from the
+        // editable summary; their absence is not a user deletion.
+        if (isHiddenOutputStatus(candidate.status)) return;
+
+        candidates.delete(id);
+        decisions.delete(id);
+        if (candidate.fingerprint) {
+            candidateFingerprints.delete(candidate.fingerprint);
+            userRemovedFingerprints.add(candidate.fingerprint);
+            if (cache.delete(candidate.fingerprint)) cacheChanged = true;
+        }
+        changed = true;
+    });
+
+    if (changed) {
+        const tasks = [persistState()];
+        if (cacheChanged) tasks.push(saveAiCache(cache));
+        Promise.all(tasks).catch(() => {
+            lastError = { code: 'storage' };
+            emitState();
+        });
+        emitState();
+    }
+    return changed;
 }
 
 export function getAiStateSnapshot() {

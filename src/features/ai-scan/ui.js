@@ -5,6 +5,7 @@ import {
     getReviewItems,
     hasAiData,
     isAiScanActive,
+    applyAiSummaryDeletions,
     retryReviewItems,
     startAiScan,
     stopAiScan,
@@ -12,6 +13,7 @@ import {
 } from './logic.js';
 import { loadSettings } from '../settings/logic.js';
 import { formatTextsForTranslation } from '../../shared/utils/text/formatting.js';
+import { parseSummarySourceTexts } from '../../shared/utils/text/summaryParser.js';
 import { on } from '../../shared/utils/core/eventBus.js';
 import { t } from '../../shared/i18n/index.js';
 import { showNotification } from '../../shared/ui/components/notification.js';
@@ -33,6 +35,7 @@ import * as modalState from '../../shared/ui/mainModal/modalState.js';
 
 let initialized = false;
 let aiCounterVisible = false;
+let textareaEditSyncAttached = false;
 
 function resetAiFab() {
     const aiFab = getAiFab();
@@ -68,6 +71,7 @@ function formatAiResults(pairs = getAiDisplayPairs()) {
 }
 
 function syncAiSummary(open = false) {
+    ensureTextareaEditSync();
     const snapshot = getAiStateSnapshot();
     const pairs = getAiDisplayPairs();
     updateAiSummaryPanel(snapshot, getReviewItems());
@@ -83,6 +87,22 @@ function syncAiSummary(open = false) {
     updateModalContent(pairs.length > 0 ? formatAiResults(pairs) : SHOW_PLACEHOLDER, open, 'ai-scan');
     updateAiSummaryPanel(snapshot, getReviewItems());
     updateAiFooterState(snapshot);
+}
+
+function syncAiSummaryEdits() {
+    if (modalState.currentMode !== 'ai-scan') return;
+    const settings = loadSettings();
+    const content = modalState.outputTextarea?.value || '';
+    const remaining = parseSummarySourceTexts(content, settings.outputFormat || 'array');
+    if (applyAiSummaryDeletions(remaining)) {
+        syncAiSummary(false);
+    }
+}
+
+function ensureTextareaEditSync() {
+    if (textareaEditSyncAttached || !modalState.outputTextarea) return;
+    modalState.outputTextarea.addEventListener('input', syncAiSummaryEdits);
+    textareaEditSyncAttached = true;
 }
 
 async function handleSubmit() {
