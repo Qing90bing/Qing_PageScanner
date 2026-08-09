@@ -5,10 +5,10 @@
  * @description 封装主模态框文本区域的行号计算和更新逻辑。
  */
 
-import { loadSettings } from '../../../features/settings/logic.js';
+import { loadSettings } from '../../services/settings.js';
 import * as state from './modalState.js';
 
-// --- 性能优化缓存 ---
+// 视觉换行和文本拆分缓存。
 // 缓存 calcStringLines 的计算结果：Map<string, number>
 // Key: 句子内容 (因为宽度作为外部条件清理缓存，所以key不需要包含宽度)
 const stringLinesCache = new Map();
@@ -21,10 +21,7 @@ let lastSplitLines = [];
 /**
  * @private
  * @description 计算单个字符串在给定宽度下会占据多少行（视觉换行）。
-/**
- * @private
- * @description 计算单个字符串在给定宽度下会占据多少行（视觉换行）。
- *              已添加 Memoization 缓存优化。
+ *              结果按文本和容器宽度缓存。
  * @param {string} sentence - 要计算的字符串。
  * @param {number} width - 容器的内容宽度。
  * @returns {number} 占据的行数。
@@ -45,14 +42,13 @@ function calcStringLines(sentence, width) {
     }
 
     // --- 计算逻辑 ---
-    // 优化：直接遍历字符串不仅代码更少，而且避免了为每个段落创建大量的临时字符数组
+    // 直接遍历字符串，避免为每个段落创建临时字符数组。
     let lineCount = 0;
     let currentLine = '';
 
     // 预检：如果整句宽度都小于容器宽度，直接返回 1
     // 这个检查非常快，能命中绝大多数短行的情况
     if (state.canvasContext.measureText(sentence).width <= width) {
-        lineCount = 1;
         stringLinesCache.set(cacheKey, 1);
         return 1;
     }
@@ -60,14 +56,7 @@ function calcStringLines(sentence, width) {
     for (let i = 0; i < sentence.length; i++) {
         const char = sentence[i];
 
-        // 优化：避免每次都重新测量整个 currentLine 的宽度
-        // 实际上 measureText 开销较大。累加字符宽度虽然不精确（因为字距调整），
-        // 但在等宽字体或简单场景下可以作为估算。
-        // 不过为了准确性，还是使用累加后的字符串测量。
-        // 进一步优化：currentLine 是在不断增长的，measureText(currentLine + char)
-        // 比 measureText(currentLine) + measureText(char) 准确。
-
-        // 这里保持原有逻辑准确性，重点在于 Memoization 已经能解决 99% 的重绘问题
+        // 保留完整字符串测量，保证字距调整和非等宽字体下的换行准确性。
         if (state.canvasContext.measureText(currentLine + char).width > width) {
             lineCount++;
             currentLine = char;
@@ -89,17 +78,11 @@ function calcStringLines(sentence, width) {
  * @description 计算文本区域内所有内容的视觉总行数，并生成行号数组和映射。
  * @returns {{lineNumbers: Array<string|number>, lineMap: Array<number>}} 包含行号数组和视觉行到真实行映射的对象。
  */
-/**
- * @private
- * @description 计算文本区域内所有内容的视觉总行数，并生成行号数组和映射。
- * @returns {{lineNumbers: Array<string|number>, lineMap: Array<number>}} 包含行号数组和视觉行到真实行映射的对象。
- */
 function calcLines() {
     const settings = loadSettings();
     const currentValue = state.outputTextarea.value;
 
-    // --- 优化：缓存 Split 结果 ---
-    // 只有当文本内容真正改变时才重新执行 split，避免滚动时的冗余计算
+    // 文本未变化时复用拆分结果，避免滚动时重复执行 split。
     let lines;
     if (currentValue === lastTextValue) {
         lines = lastSplitLines;
@@ -109,8 +92,8 @@ function calcLines() {
         lastSplitLines = lines;
     }
 
-    let lineNumbers = [];
-    let lineMap = []; // 映射：visualLineIndex -> realLineIndex
+    const lineNumbers = [];
+    const lineMap = []; // 映射：visualLineIndex -> realLineIndex
 
     if (settings.enableWordWrap) {
         // --- 自动换行开启时的复杂计算 ---
@@ -136,10 +119,6 @@ function calcLines() {
     } else {
         // --- 自动换行关闭时的简单计算 ---
         const totalLines = lines.length;
-        // 预分配数组大小，略微提升性能
-        // lineNumbers = new Array(totalLines);
-        // lineMap = new Array(totalLines);
-        // 但为了代码简洁和一致性，依然使用 push (现代JS引擎对 push 优化很好)
         for (let i = 0; i < totalLines; i++) {
             lineNumbers.push(i + 1);
             lineMap.push(i);
@@ -162,8 +141,7 @@ function _performActiveLineUpdate() {
     const text = textarea.value;
     const selectionEnd = textarea.selectionEnd;
 
-    // 性能优化：无需创建高消耗的 textBeforeCursor 子字符串
-    // 直接遍历计算换行符数量来确定 cursorRealLineIndex
+    // 直接统计换行符数量，避免为光标前文本创建临时子字符串。
     let cursorRealLineIndex = 0;
     for (let i = 0; i < selectionEnd; i++) {
         if (text[i] === '\n') {
@@ -176,12 +154,12 @@ function _performActiveLineUpdate() {
     if (settings.enableWordWrap) {
         // --- 自动换行开启时的复杂计算 ---
 
-        // 优化：复用 lastSplitLines
+        // 优先复用最近一次的拆分结果。
         let realLines;
         if (text === lastTextValue) {
             realLines = lastSplitLines;
         } else {
-            // 理论上这里极少进入，因为 calcLines 通常先执行
+            // calcLines 通常会先填充缓存；这里保留独立调用时的兜底逻辑。
             realLines = text.split('\n');
             lastTextValue = text;
             lastSplitLines = realLines;
@@ -202,7 +180,7 @@ function _performActiveLineUpdate() {
         let visualLineOffset = 0;
         let currentLine = '';
 
-        // 优化：直接遍历
+        // 逐字符测量当前视觉行，保持与 calcStringLines 相同的换行规则。
         for (let i = 0; i < lineContent.length; i++) {
             const char = lineContent[i];
             const nextLine = currentLine + char;

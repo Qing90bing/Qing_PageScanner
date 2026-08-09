@@ -1,4 +1,4 @@
-// src/shared/ui/mainModal.js
+// src/shared/ui/mainModal/index.js
 
 /**
  * @module mainModal
@@ -8,7 +8,7 @@
 
 import { performQuickScan } from '../../../features/quick-scan/logic.js';
 import { showNotification } from '../components/notification.js';
-import { loadSettings } from '../../../features/settings/logic.js';
+import { loadSettings } from '../../services/settings.js';
 import { log } from '../../utils/core/logger.js';
 import { t } from '../../i18n/index.js';
 import { simpleTemplate } from '../../utils/dom/templating.js';
@@ -45,11 +45,18 @@ const handleKeyDown = (event) => {
     }
 };
 
+const handleTextareaUpdate = () => {
+    updateLineNumbers();
+    updateStatistics();
+};
+
+const handleTextareaScroll = () => {
+    state.lineNumbersDiv.scrollTop = state.outputTextarea.scrollTop;
+};
+
 /**
  * @public
  * @description 创建并初始化主模态框。只在第一次调用时创建 DOM。
- * @param {object} callbacks - 包含回调函数的对象。
- * @param {object} callbacks - 包含回调函数的对象。
  */
 export function createMainModal() {
     if (state.modalOverlay) return; // 防止重复创建
@@ -66,17 +73,10 @@ export function createMainModal() {
     initializeLineNumbers();
 
     // 4. 绑定文本区域事件
-    const handleTextareaUpdate = () => {
-        updateLineNumbers();
-        updateStatistics();
-    };
-
     state.outputTextarea.addEventListener('input', handleTextareaUpdate);
     state.outputTextarea.addEventListener('click', updateActiveLine);
     state.outputTextarea.addEventListener('keyup', updateActiveLine);
-    state.outputTextarea.addEventListener('scroll', () => {
-        state.lineNumbersDiv.scrollTop = state.outputTextarea.scrollTop;
-    });
+    state.outputTextarea.addEventListener('scroll', handleTextareaScroll);
 
     // 5. 根据设置更新UI元素的可见性
     updateModalAddonsVisibility();
@@ -98,9 +98,7 @@ export function destroyMainModal() {
     state.outputTextarea.removeEventListener('input', handleTextareaUpdate);
     state.outputTextarea.removeEventListener('click', updateActiveLine);
     state.outputTextarea.removeEventListener('keyup', updateActiveLine);
-    state.outputTextarea.removeEventListener('scroll', () => {
-        state.lineNumbersDiv.scrollTop = state.outputTextarea.scrollTop;
-    });
+    state.outputTextarea.removeEventListener('scroll', handleTextareaScroll);
     closeModal(); // 确保 keydown 监听器被移除
 
     // 3. 从DOM中移除元素
@@ -127,26 +125,23 @@ export async function openModal() {
     updateModalContent(state.SHOW_LOADING, true, 'quick-scan');
 
     try {
-        // 2. 调用重构后的 performQuickScan，它现在内部处理所有逻辑
+        // 快速扫描服务负责提取、过滤和格式化；界面层只负责呈现结果。
         const { formattedText, count } = await performQuickScan();
 
-        // 在更新内容前隐藏加载动画，确保流畅性
+        // 在更新内容前隐藏加载动画，避免结果渲染与加载状态重叠。
         hideLoading();
 
-        // 4. Worker 完成后，更新UI
-        fullQuickScanContent = formattedText; // 存储完整内容
+        fullQuickScanContent = formattedText;
         updateModalContent(formattedText, false, 'quick-scan');
 
-        // 5. 显示成功通知
         const notificationText = simpleTemplate(t('scan.quickFinished'), { count });
         showNotification(notificationText, { type: 'success' });
     } catch (error) {
         hideLoading(); // 确保在出错时也隐藏加载动画
-        // 错误处理
         log(t('log.ui.modal.scanFailed', { error: error.message }));
         showNotification(t('scan.quickFailed'), { type: 'error' });
 
-        // 显示一个空状态或错误信息
+        // 保留可编辑的空结果状态，让用户仍能打开结果窗口。
         updateModalContent('[]', false, 'quick-scan');
     }
 }
@@ -266,8 +261,7 @@ export function updateModalContent(content, shouldOpen = false, mode = 'quick-sc
         state.modalOverlay.classList.add('is-visible');
         state.modalOverlay.addEventListener('keydown', handleKeyDown);
 
-        // 修复：确保在CSS过渡动画完成后再设置焦点。
-        // 这可以防止因元素在调用focus()时还不可见而导致的焦点设置失败。
+        // 等待 CSS 过渡结束后再聚焦，避免元素尚未可见导致 focus() 失败。
         // 使用 { once: true } 确保监听器在触发一次后自动移除。
         state.modalOverlay.addEventListener(
             'transitionend',
