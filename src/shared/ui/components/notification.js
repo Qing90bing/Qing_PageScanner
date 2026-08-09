@@ -1,7 +1,7 @@
 // src/shared/ui/components/notification.js
 
 import { createSVGFromString } from '../../utils/dom/dom.js';
-import { appConfig } from '../../../features/settings/config.js';
+import { uiConfig } from '../../config/uiConfig.js';
 import { infoIcon } from '../../../assets/icons/infoIcon.js';
 import { successIcon } from '../../../assets/icons/successIcon.js';
 import { closeIcon } from '../../../assets/icons/closeIcon.js';
@@ -88,9 +88,9 @@ function createNotificationElement(message, type = 'info') {
  * @param {string} message - 要显示的消息
  * @param {object} options - 配置项
  * @param {string} [options.type='info'] - 通知类型 ('info', 'success')
- * @param {number} [options.duration=appConfig.ui.notificationDuration] - 显示时长 (毫秒)
+ * @param {number} [options.duration=uiConfig.notification.durationMs] - 显示时长 (毫秒)
  */
-export function showNotification(message, { type = 'info', duration = appConfig.ui.notificationDuration } = {}) {
+export function showNotification(message, { type = 'info', duration = uiConfig.notification.durationMs } = {}) {
     const container = getNotificationContainer();
     const notification = createNotificationElement(message, type);
 

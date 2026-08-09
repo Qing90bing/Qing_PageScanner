@@ -11,9 +11,9 @@ import { summaryIcon } from '../../../assets/icons/summaryIcon.js';
 import { elementScanIcon } from '../../../assets/icons/elementScanIcon.js';
 import { aiIcon } from '../../../assets/icons/aiIcon.js';
 import { showTooltip, hideTooltip } from './tooltip.js';
-import { appConfig } from '../../../features/settings/config.js';
+import { uiConfig } from '../../config/uiConfig.js';
 import { on } from '../../utils/core/eventBus.js';
-import { loadSettings } from '../../../features/settings/logic.js';
+import { loadSettings } from '../../services/settings.js';
 import { t } from '../../i18n/index.js';
 import { createSVGFromString } from '../../utils/dom/dom.js';
 import { uiContainer } from '../uiContainer.js';
@@ -143,7 +143,7 @@ export function createFab({ callbacks, isVisible }) {
         // 触发进入动画
         setTimeout(() => {
             fabContainer.classList.add('fab-container-visible');
-        }, appConfig.ui.fabAnimationDelay); // 延迟以确保CSS过渡生效
+        }, uiConfig.fab.animationDelayMs); // 延迟以确保 CSS 过渡生效
     }
 
     // 更新位置

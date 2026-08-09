@@ -1,18 +1,15 @@
 // src/shared/utils/text/textProcessor.js
 
 /**
- * @module core/processor
- * @description 包含了脚本的核心文本处理功能，负责从页面 DOM 中提取、过滤和格式化文本。
+ * @module textProcessor
+ * @description 从页面 DOM 提取原始文本，并应用共享的扫描筛选规则。
  */
 
-import { appConfig } from '../../../features/settings/config.js';
+import { scannerConfig } from '../../config/scannerConfig.js';
 import { shouldFilter } from './filterLogic.js';
 
-// --- 性能优化 ---
-// 将忽略选择器的拼接移到函数外部。
-// 之前这行代码在递归遍历每个 DOM 元素时都会执行，如果在有 10000 个节点的页面上，
-// 就要重复拼接 10000 次字符串。现在只需执行 1 次。
-const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(', ');
+// 选择器只需拼接一次，避免递归遍历大型页面时重复创建字符串。
+const ignoredSelectorString = scannerConfig.ignoredSelectors.join(', ');
 const ourUiSelector = '#text-extractor-container';
 
 // 定义一个包含所有块级元素的 Set，用于高效查找。
@@ -58,7 +55,7 @@ const blockElements = new Set([
 /**
  * @private
  * @description 递归地遍历一个 DOM 节点及其后代（包括 Shadow DOM），提取属性和文本节点中的文本内容。
- *              此函数经过重构，能够识别块级元素和 <br> 标签，并在提取的文本中智能地插入换行符。
+ *              同时处理块级元素和 <br> 标签，并在结果中保留合理的换行。
  * @param {Node} node - 开始遍历的节点（可以是 Element, ShadowRoot, 或其他 Node 类型）。
  * @param {function(string): void} textCallback - 每当提取到一个原始文本字符串时，就会调用此回调函数。
  */
@@ -83,7 +80,7 @@ const traverseDOMAndExtract = (node, textCallback) => {
             }
 
             // 1. 首先提取当前元素自身的属性文本
-            const attributesToExtract = appConfig.scanner.attributesToExtract;
+            const attributesToExtract = scannerConfig.attributesToExtract;
             attributesToExtract.forEach((attr) => {
                 const attrValue = node.getAttribute(attr);
                 if (attrValue) {
@@ -165,10 +162,8 @@ export const extractAndProcessText = () => {
         if (!rawText) return;
         // 规范化文本，但不再合并多个换行符
         const normalizedText = rawText.normalize('NFC');
-        // 此处的修改至关重要：
-        // 1. 我们将 \r\n (Windows) 和 \r (旧 Mac) 统一为 \n (Unix)。
-        // 2. 我们不使用 `+` 量词，因此不会将多个 `\n` 合并为一个。
-        let text = normalizedText.replace(/\r\n|\r/g, '\n');
+        // 统一 Windows、旧 Mac 和 Unix 的换行符；不合并连续换行。
+        const text = normalizedText.replace(/\r\n|\r/g, '\n');
 
         // 我们仍然需要移除纯粹由不可见空格组成的字符串，但要保留包含换行符的字符串。
         if (text.trim() === '' && !text.includes('\n')) {
@@ -200,11 +195,7 @@ export const extractAndProcessText = () => {
  * @returns {string[]} 返回一个经过处理的、唯一的文本数组。
  */
 export const filterAndNormalizeTexts = (texts, filterRules, enableDebugLogging, logFiltered) => {
-    // 这里为了避免循环依赖，我们动态导入或者要求调用者传入 shouldFilter 逻辑。
-    // 但鉴于这是微创修改，我们假设 shouldFilter 已经在 processor-worker 中正确处理。
-    // 注意：此文件目前在项目中主要负责“提取”。过滤逻辑实际上主要发生在 workers/processing.worker.js 或 fallback.js 中。
-    // 为了保持此文件作为“提取器”的单一职责，我们保持原样，但在 filterAndNormalizeTexts 中
-    // 实际需要依赖 filterLogic.js。
+    // 提取和过滤共用同一套纯过滤规则；Worker 与主线程回退路径都会调用此函数。
 
     const uniqueTexts = new Set();
 

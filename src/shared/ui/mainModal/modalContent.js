@@ -13,7 +13,7 @@ import { infoIcon } from '../../../assets/icons/infoIcon.js';
 import { dynamicIcon } from '../../../assets/icons/dynamicIcon.js';
 import { translateIcon } from '../../../assets/icons/icon.js';
 import { loadingSpinner } from '../../../assets/icons/loadingSpinner.js';
-import { appConfig } from '../../../features/settings/config.js';
+import { uiConfig } from '../../config/uiConfig.js';
 
 let placeholder, unsubscribeLanguageChanged;
 let currentMode = 'quick-scan';
@@ -243,8 +243,8 @@ function createLoadingSpinner() {
  * @param {HTMLElement} modalContent - 模态框内容区的容器元素。
  */
 export function populateModalContent(modalContent) {
-    if (appConfig.ui.modalContentHeight) {
-        modalContent.style.height = appConfig.ui.modalContentHeight;
+    if (uiConfig.modal.contentHeight) {
+        modalContent.style.height = uiConfig.modal.contentHeight;
     }
 
     placeholder = document.createElement('div');
