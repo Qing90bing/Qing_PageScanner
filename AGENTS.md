@@ -54,7 +54,7 @@ npm run check
 ## Git 提交规范
 
 - 使用 Conventional Commits 类型前缀，例如 `feat:`、`fix:`、`refactor:`、`perf:`、`docs:`、`chore:` 和 `build:`。
-- 类型前缀后必须使用中文，格式为 `fix: 修复元素扫描工具栏渲染问题`。
+- 类型前缀后使用中文，格式为 `fix: 修复元素扫描工具栏渲染问题`。
 - 每个提交只表达一个变动点，不要把功能修复、重构、文档和构建产物混在同一提交中。
 - `dist/main.user.js` 只能在对应源码提交完成后单独使用 `build:` 提交更新。
 - 提交前先检查暂存区文件范围，再运行 `npm run check`。

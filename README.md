@@ -21,7 +21,7 @@ npm run check
 
 ## Git 提交
 
-提交标题保留 Conventional Commits 类型前缀，但描述统一使用中文，例如：
+提交标题保留 Conventional Commits 类型前缀，描述使用中文，例如：
 
 ```text
 fix: 修复元素扫描工具栏渲染问题
