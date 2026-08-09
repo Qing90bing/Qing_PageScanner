@@ -10,7 +10,6 @@ import {
     resumeElementScan,
 } from './logic.js';
 import { t } from '../../shared/i18n/index.js';
-import { createTrustedHTML } from '../../shared/utils/dom/trustedTypes.js';
 import { log } from '../../shared/utils/core/logger.js';
 import { createButton } from '../../shared/ui/components/button.js';
 import { reselectIcon } from '../../assets/icons/reselectIcon.js';
@@ -26,7 +25,8 @@ import {
 } from '../../shared/ui/components/counterWithHelp.js';
 import { CustomSlider } from '../../shared/ui/components/customSlider.js';
 import { openContextualSettingsPanel } from '../settings/ui.js';
-import { loadSettings, saveSettings, applySettings } from '../settings/logic.js';
+import { loadSettings, saveSettings } from '../../shared/services/settings.js';
+import { applySettings } from '../settings/logic.js';
 import { settingsIcon } from '../../assets/icons/settingsIcon.js';
 import { infoIcon } from '../../assets/icons/infoIcon.js';
 
@@ -135,7 +135,7 @@ export function updateHighlight(targetElement, offset = { x: 0, y: 0 }) {
     if (scanContainer.classList.contains('is-locked')) {
         scanContainer.classList.remove('is-locked');
     }
-    // 修复：同时也必须清除错误状态，防止快速移动时红色残留到下一个元素
+    // 清除错误状态，避免快速移动时红色反馈残留到下一个元素。
     if (scanContainer.classList.contains('is-error')) {
         scanContainer.classList.remove('is-error');
     }
@@ -215,17 +215,23 @@ export function createAdjustmentToolbar(elementPath, offset = { x: 0, y: 0 }) {
     toolbar.id = 'element-scan-toolbar';
     toolbar.style.pointerEvents = 'auto'; // 确保工具栏本身可交互，覆盖 uiContainer 的 pointer-events: none
 
-    // 创建静态部分（移除滑块的硬编码HTML）
-    const staticContent = `
-        <div id="element-scan-toolbar-title">${t('common.processingElement')}</div>
-        <div id="element-scan-toolbar-tag" title="${t('tooltip.dragHint')}">${getElementSelector(elementPath[0])}</div>
-        <div id="element-scan-slider-container"></div>
-        <div id="element-scan-toolbar-actions"></div>
-    `;
-    toolbar.innerHTML = createTrustedHTML(staticContent);
+    // 用 DOM API 创建静态部分，动态选择器只通过 textContent 写入。
+    const toolbarTitle = document.createElement('div');
+    toolbarTitle.id = 'element-scan-toolbar-title';
+    toolbarTitle.textContent = t('common.processingElement');
+
+    const toolbarTag = document.createElement('div');
+    toolbarTag.id = 'element-scan-toolbar-tag';
+    toolbarTag.title = t('tooltip.dragHint');
+    toolbarTag.textContent = getElementSelector(elementPath[0]);
+
+    const sliderContainer = document.createElement('div');
+    sliderContainer.id = 'element-scan-slider-container';
+    const actionsContainer = document.createElement('div');
+    actionsContainer.id = 'element-scan-toolbar-actions';
+    toolbar.append(toolbarTitle, toolbarTag, sliderContainer, actionsContainer);
 
     // 实例化并添加新的自定义滑块
-    const sliderContainer = toolbar.querySelector('#element-scan-slider-container');
     sliderInstance = new CustomSlider({
         min: 0,
         max: elementPath.length - 1,
@@ -240,8 +246,6 @@ export function createAdjustmentToolbar(elementPath, offset = { x: 0, y: 0 }) {
     uiContainer.appendChild(toolbar);
 
     // 动态创建并添加按钮
-    const actionsContainer = toolbar.querySelector('#element-scan-toolbar-actions');
-
     reselectBtn = createButton({
         id: 'element-scan-toolbar-reselect',
         textKey: 'common.reselect',
@@ -286,7 +290,7 @@ export function createAdjustmentToolbar(elementPath, offset = { x: 0, y: 0 }) {
     // 检查顶部计数器UI是否存在且可见，如果是，则为其高度保留空间
     const topCounter = uiContainer.querySelector('.counter-with-help-container.is-visible');
     const topOffset = topCounter ? topCounter.getBoundingClientRect().height + 5 : 0;
-    const margin = 20 + topOffset; // 工具栏与元素/屏幕边缘的最小间距 (Increased from 10 to 20)
+    const margin = 20 + topOffset; // 工具栏与元素或视口边缘的最小间距。
 
     let top, left;
 
@@ -309,7 +313,7 @@ export function createAdjustmentToolbar(elementPath, offset = { x: 0, y: 0 }) {
     };
 
     // 优先尝试将工具栏放在目标元素的上方或下方
-    // Use 20px gap instead of 10px to account for highlight border and larger toolbar
+    // 为高亮边框和较大的工具栏预留间距。
     const topAbove = absRect.top - toolbarRect.height - 20;
     const topBelow = absRect.bottom + 10;
 
@@ -439,7 +443,7 @@ export function cleanupToolbar() {
     if (toolbar) {
         log(t('log.elementScanUI.cleaningToolbar'));
 
-        // 关键修复：清理拖拽监听器，防止“僵尸”监听器残留
+        // 先清理拖拽监听器，避免工具栏销毁后仍响应鼠标事件。
         if (toolbarCleanup) {
             toolbarCleanup();
             toolbarCleanup = null;
@@ -574,7 +578,8 @@ export function playScanErrorAnimation() {
     if (!scanContainer) return;
 
     scanContainer.classList.remove('is-error');
-    void scanContainer.offsetWidth; // Force reflow
+    // 读取布局属性，强制浏览器提交上一帧样式以重新触发动画。
+    void scanContainer.offsetWidth;
     scanContainer.classList.add('is-error');
 
     setTimeout(() => {
