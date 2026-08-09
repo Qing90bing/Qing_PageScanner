@@ -5,6 +5,11 @@ export const AI_ACTIONS = Object.freeze({
     REVIEW: 'review',
 });
 
+export const AI_TRANSLATION_TYPES = Object.freeze({
+    TEXT: 'text',
+    REGEX: 'regex',
+});
+
 export const AI_CANDIDATE_STATUS = Object.freeze({
     PENDING: 'pending',
     IN_FLIGHT: 'inflight',
@@ -47,6 +52,7 @@ export const AI_DEFAULT_SETTINGS = Object.freeze({
     processingMode: AI_PROCESSING_MODES.MANUAL,
     targetLanguage: AI_TARGET_LANGUAGES.SIMPLIFIED_CHINESE,
     confidenceThreshold: 0.85,
+    includeRegexRuleComments: false,
     activeProviderId: DEFAULT_DEEPSEEK_PROVIDER.id,
     providers: [DEFAULT_DEEPSEEK_PROVIDER],
     requestTimeoutMs: 45000,
@@ -138,6 +144,7 @@ export function mergeAiSettings(value = {}) {
             ? value.targetLanguage
             : AI_DEFAULT_SETTINGS.targetLanguage,
         confidenceThreshold: clampNumber(value.confidenceThreshold, AI_DEFAULT_SETTINGS.confidenceThreshold, 0.5, 1),
+        includeRegexRuleComments: value.includeRegexRuleComments === true,
         activeProviderId,
         providers,
         requestTimeoutMs: clampNumber(value.requestTimeoutMs, AI_DEFAULT_SETTINGS.requestTimeoutMs, 5000, 120000),
@@ -224,9 +231,24 @@ export function createCandidateFingerprint(siteKey, targetLanguage, sourceText) 
  * @property {string} id
  * @property {'translate'|'keep'|'remove'|'review'} action
  * @property {string} translation
+ * @property {'text'|'regex'} translationType
+ * @property {string} [regexRuleId]
  * @property {number} confidence
  * @property {string} category
  * @property {string} reason
+ */
+
+/**
+ * @typedef {object} AiRegexRule
+ * @property {string} id
+ * @property {string[]} sourceIds
+ * @property {string} pattern
+ * @property {string} flags
+ * @property {string} replacement
+ * @property {number} confidence
+ * @property {string} category
+ * @property {string} reason
+ * @property {'ai'|'user-edited'|'manual'} origin
  */
 
 /**
@@ -236,6 +258,7 @@ export function createCandidateFingerprint(siteKey, targetLanguage, sourceText) 
  * @property {'auto'|'manual'} processingMode
  * @property {'zh-CN'|'zh-TW'} targetLanguage
  * @property {number} confidenceThreshold
+ * @property {boolean} includeRegexRuleComments
  * @property {string} activeProviderId
  * @property {AiProvider[]} providers
  */

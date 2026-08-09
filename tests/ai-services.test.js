@@ -46,6 +46,8 @@ test('settings allow only Simplified or Traditional Chinese targets and preserve
     assert.equal(mergeAiSettings({ targetLanguage: 'zh-TW' }).targetLanguage, 'zh-TW');
     assert.equal(mergeAiSettings({ processingMode: AI_PROCESSING_MODES.AUTO }).processingMode, 'auto');
     assert.equal(mergeAiSettings({ processingMode: 'invalid' }).processingMode, 'manual');
+    assert.equal(mergeAiSettings({}).includeRegexRuleComments, false);
+    assert.equal(mergeAiSettings({ includeRegexRuleComments: true }).includeRegexRuleComments, true);
     assert.deepEqual(mergeAiSettings({}).batch, AI_DEFAULT_SETTINGS.batch);
     assert.equal(AI_DEFAULT_SETTINGS.batch.maxItems, 200);
     assert.equal(AI_DEFAULT_SETTINGS.batch.maxCharacters, 60000);
@@ -152,6 +154,52 @@ test('prompt instructs only translate, remove, and review categories', () => {
     assert.doesNotMatch(JSON.stringify(request), /translate\|keep\|remove\|review/);
 });
 
+test('prompt identifies repeated dynamic-value shapes as regex candidates', () => {
+    const request = buildTranslationRequest({
+        provider,
+        targetLanguage: 'zh-CN',
+        styleProfile: null,
+        candidates: [
+            candidate('audio-a', 'Audio • Input: $3.50 / Output: $21.00'),
+            candidate('audio-b', 'Audio • Input: $0.50 / Output: $1.50'),
+            candidate('plain', 'Save settings'),
+        ],
+    });
+    const system = request.messages[0].content;
+    const user = JSON.parse(request.messages[1].content);
+
+    assert.match(system, /inspect regexCandidateGroups/);
+    assert.match(system, /Different dynamic values are not a reason to remove/);
+    assert.deepEqual(user.regexCandidateGroups, [
+        {
+            id: 'regex-candidate-1',
+            sourceIds: ['audio-a', 'audio-b'],
+            sharedShape: 'audio • input: <value> / output: <value>',
+        },
+    ]);
+});
+
+test('prompt offers a strict single dynamic sentence for future-proof regex translation', () => {
+    const request = buildTranslationRequest({
+        provider,
+        targetLanguage: 'zh-CN',
+        styleProfile: null,
+        candidates: [candidate('pricing', 'Text, image and video • Input: $0.25 / Output: $1.50')],
+    });
+    const system = request.messages[0].content;
+    const user = JSON.parse(request.messages[1].content);
+
+    assert.match(system, /one-item regexCandidateGroup/);
+    assert.match(system, /anchored with \^ and \$/);
+    assert.deepEqual(user.regexCandidateGroups, [
+        {
+            id: 'regex-candidate-1',
+            sourceIds: ['pricing'],
+            sharedShape: 'text, image and video • input: <value> / output: <value>',
+        },
+    ]);
+});
+
 test('legacy keep responses are normalized to remove and never enter the library', () => {
     const result = validateTranslationResponse(
         {
@@ -169,8 +217,31 @@ test('legacy keep responses are normalized to remove and never enter the library
         [candidate('brand', 'GitHub')],
         0.85
     );
-    assert.equal(result[0].action, 'remove');
-    assert.equal(result[0].status, 'removed');
+    assert.equal(result.decisions[0].action, 'remove');
+    assert.equal(result.decisions[0].status, 'removed');
+});
+
+test('unchanged AI translations are removed instead of entering the text library', () => {
+    const result = validateTranslationResponse(
+        {
+            items: [
+                {
+                    id: 'imagen',
+                    action: 'translate',
+                    translationType: 'text',
+                    translation: '  Imagen   4 Ultra  ',
+                    confidence: 0.99,
+                },
+            ],
+        },
+        [candidate('imagen', 'Imagen 4 Ultra')],
+        0.85
+    );
+
+    assert.equal(result.decisions[0].action, 'remove');
+    assert.equal(result.decisions[0].status, 'removed');
+    assert.equal(result.decisions[0].translation, '');
+    assert.equal(result.regexRules.length, 0);
 });
 
 test('large translation batches reserve more response tokens without exceeding the configured cap', () => {
@@ -181,7 +252,7 @@ test('large translation batches reserve more response tokens without exceeding t
         candidates: Array.from({ length: 100 }, (_, index) => candidate(`item-${index}`, 'x'.repeat(300))),
     });
 
-    assert.equal(request.max_tokens, 35344);
+    assert.equal(request.max_tokens, 40144);
 });
 
 test('DeepSeek translation requests disable thinking so JSON output keeps the response budget', () => {
@@ -243,9 +314,9 @@ test('response validation supports multilingual sources and routes low confidenc
         candidates,
         0.85
     );
-    assert.equal(result[0].status, 'translated');
-    assert.equal(result[1].reason, 'placeholder-mismatch');
-    assert.equal(result[2].reason, 'low-confidence');
+    assert.equal(result.decisions[0].status, 'translated');
+    assert.equal(result.decisions[1].reason, 'placeholder-mismatch');
+    assert.equal(result.decisions[2].reason, 'low-confidence');
 });
 
 test('placeholder protection covers named, positional, percent, route, and URL tokens', () => {

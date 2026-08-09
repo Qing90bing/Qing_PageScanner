@@ -167,7 +167,9 @@ export async function testProviderProcessing({
     let decision;
     try {
         const payload = parseJsonContent(response.content);
-        [decision] = validateTranslationResponse(payload, [PROVIDER_TEST_CANDIDATE], confidenceThreshold);
+        ({
+            decisions: [decision],
+        } = validateTranslationResponse(payload, [PROVIDER_TEST_CANDIDATE], confidenceThreshold));
     } catch (error) {
         throw new AiProviderError('processing-test-failed', error?.message || 'The processing test failed');
     }
