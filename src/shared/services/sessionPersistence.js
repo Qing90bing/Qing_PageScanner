@@ -4,12 +4,10 @@ import { getValue, setValue, deleteValue } from './tampermonkey.js';
 import { fire } from '../utils/core/eventBus.js';
 import { log } from '../utils/core/logger.js';
 import { t } from '../i18n/index.js';
-import { getSessionTexts } from '../../features/session-scan/logic.js';
 
 // 用于存储会话的唯一键
 const SESSION_KEY = 'qing_pagescanner_session';
-// 会话恢复的有效时间（例如：5分钟），防止加载过慢或意外关闭后依然恢复
-// 增加到 5 分钟以解决跨站跳转或网络加载慢导致的数据丢失问题
+// 会话最多保留 5 分钟，覆盖跨站跳转和慢速页面加载，同时避免恢复过期数据。
 const RESUME_TIMEOUT_MS = 300000;
 
 // 模块级锁，防止在用户手动停止后，由于异步或延迟操作导致的“僵尸”保存
@@ -36,16 +34,9 @@ export async function saveActiveSession(mode, data = null) {
         return;
     }
 
-    let sessionData = data;
-    if (mode === 'session-scan') {
-        // 对于动态扫描，我们从 logic 模块获取主线程的数据镜像
-        const textsMirror = getSessionTexts();
-        sessionData = Array.from(textsMirror);
-    }
-
     const sessionState = {
         mode,
-        data: sessionData,
+        data,
         timestamp: Date.now(),
     };
     await setValue(SESSION_KEY, JSON.stringify(sessionState));

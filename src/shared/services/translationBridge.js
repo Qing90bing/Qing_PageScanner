@@ -12,9 +12,7 @@ export const TRANSLATION_IDLE_STATE = 'idle';
 export const TRANSLATION_BRIDGE_WAIT_TIMEOUT_MS = 10000;
 export const TRANSLATION_BRIDGE_MAX_WAIT_MS = 60000;
 
-// The translation script only needs to publish bridge state while PageScanner
-// is actively using the session scanner. This keeps the protocol opt-in for
-// ordinary users who only install the translation script.
+// 只有动态扫描运行时才发布桥接状态，避免普通翻译用户被动参与协议。
 export const TRANSLATION_CLIENT_ATTRIBUTE = 'data-qing-page-scanner-client';
 export const TRANSLATION_CLIENT_EVENT = 'qing-page-scanner:client-ready';
 export const TRANSLATION_CLIENT_VALUE = 'active';
@@ -59,9 +57,8 @@ export function onTranslationBridgeStateChange(callback) {
 }
 
 /**
- * Wait for the initial translation pass to become idle. The timeout is only a
- * safety valve for a failed or outdated translation script; normal dynamic
- * synchronization is event-driven.
+ * 等待初始翻译批次进入 idle。超时仅用于兼容失效或过旧的翻译脚本；
+ * 正常的动态同步由事件驱动。
  */
 export function waitForTranslationBridgeIdle(timeoutMs = TRANSLATION_BRIDGE_WAIT_TIMEOUT_MS) {
     if (isTranslationBridgeIdle()) {

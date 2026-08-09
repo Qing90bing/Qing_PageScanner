@@ -19,7 +19,8 @@ import { simpleTemplate } from '../../shared/utils/dom/templating.js';
 import { on } from '../../shared/utils/core/eventBus.js';
 import { log } from '../../shared/utils/core/logger.js';
 import { openContextualSettingsPanel } from '../settings/ui.js';
-import { loadSettings, saveSettings, applySettings } from '../settings/logic.js';
+import { loadSettings, saveSettings } from '../../shared/services/settings.js';
+import { applySettings } from '../settings/logic.js';
 import { settingsIcon } from '../../assets/icons/settingsIcon.js';
 import { infoIcon } from '../../assets/icons/infoIcon.js';
 import { uiContainer } from '../../shared/ui/uiContainer.js';
@@ -122,8 +123,7 @@ const handleEscForSessionScan = (event) => {
         return;
     }
 
-    // 新增：检查是否有任何模态框或提示窗口处于打开状态。
-    // 如果有，则不执行任何操作，让它们自己的 ESC 逻辑处理事件。
+    // 如果其他界面层已经打开，则交由该界面自己的 Escape 逻辑处理。
     const isSettingsPanelOpen = uiContainer.querySelector('.settings-panel-overlay.is-visible');
     const isHelpTooltipOpen = uiContainer.querySelector('.info-tooltip-overlay.is-visible');
     const isMainModalOpen = modalOverlay.classList.contains('is-visible');
@@ -227,7 +227,7 @@ export function handleDynamicExtractClick(dynamicFab) {
     }
 }
 
-// 新增：监听会话恢复事件
+// 页面启动后尝试恢复上一页保存的动态扫描会话。
 on('resumeScanSession', async (state) => {
     if (state.mode === 'session-scan') {
         log(t('log.sessionScan.resuming'));

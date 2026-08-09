@@ -1,13 +1,13 @@
 // src/features/session-scan/logic.js
 
 /**
- * @module core/sessionExtractor
+ * @module sessionScan
  * @description 负责管理一个持续的文本提取“会话”，将繁重任务委托给 Web Worker。
  */
 
 import { extractAndProcessText } from '../../shared/utils/text/textProcessor.js';
-import { loadSettings } from '../settings/logic.js';
-import { appConfig } from '../settings/config.js';
+import { loadSettings } from '../../shared/services/settings.js';
+import { scannerConfig } from '../../shared/config/scannerConfig.js';
 import { log } from '../../shared/utils/core/logger.js';
 import { isWorkerAllowed } from '../../shared/utils/core/csp-checker.js';
 import { showNotification } from '../../shared/ui/components/notification.js';
@@ -37,13 +37,17 @@ let worker = null;
 let useFallback = false;
 let onSummaryCallback = null;
 let onUpdateCallback = null;
-let currentCount = 0; // 新增：在模块级别跟踪计数值
-let sessionTextsMirror = new Set(); // 主线程数据镜像
+let currentCount = 0; // 主线程镜像中的当前文本数量。
+const sessionTextsMirror = new Set(); // 主线程数据镜像
 let autoSaveInterval = null; // 自动保存定时器
-const AUTO_SAVE_INTERVAL_MS = 5000; // 5秒
-let pendingDynamicRoots = new Set();
+const AUTO_SAVE_INTERVAL_MS = 5000;
+const pendingDynamicRoots = new Set();
 let pendingDynamicFlushTimeout = null;
 let pendingDynamicWaitStartedAt = null;
+
+function saveSessionState() {
+    return saveActiveSession('session-scan', Array.from(sessionTextsMirror));
+}
 
 function clearPendingDynamicRoots() {
     pendingDynamicRoots.clear();
@@ -63,7 +67,7 @@ function processDynamicTexts(textsBatch) {
             const count = fallback.getCountInFallback();
             if (onUpdateCallback) onUpdateCallback(count);
             updateScanCount(count, 'session');
-            saveActiveSession('session-scan');
+            saveSessionState();
         }
     } else if (worker) {
         worker.postMessage({
@@ -88,7 +92,7 @@ function flushPendingDynamicRoots() {
     });
     clearPendingDynamicRoots();
     const textsBatch = [];
-    const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(', ');
+    const ignoredSelectorString = scannerConfig.ignoredSelectors.join(', ');
 
     roots.forEach((root) => {
         if (!root.isConnected || root.closest(ignoredSelectorString)) return;
@@ -113,8 +117,7 @@ function scheduleDynamicFlushFallback() {
     pendingDynamicFlushTimeout = setTimeout(() => {
         pendingDynamicFlushTimeout = null;
 
-        // A normal translation batch ends with an idle event. Do not read a
-        // partially translated DOM merely because the watchdog interval ran.
+        // 正常翻译批次会以 idle 事件结束；不要因为兜底计时器触发就读取未完成的 DOM。
         const bridgeStillBusy = isTranslationBridgeActive() && !isTranslationBridgeIdle();
         const waitedTooLong =
             pendingDynamicWaitStartedAt !== null &&
@@ -163,7 +166,7 @@ on('settingsSaved', () => {
 // --- MutationObserver 回调 ---
 const handleMutations = (mutations) => {
     if (!isRecording) return; // 防止停止后处理残留的 mutation
-    const ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(', ');
+    const ignoredSelectorString = scannerConfig.ignoredSelectors.join(', ');
 
     mutations.forEach((mutation) => {
         mutation.addedNodes.forEach((node) => {
@@ -176,8 +179,7 @@ const handleMutations = (mutations) => {
     if (pendingDynamicRoots.size === 0) return;
 
     if (isTranslationBridgeActive()) {
-        // The translation userscript emits an idle event after its complete
-        // time-sliced queue has drained. Read the nodes only then.
+        // 翻译脚本的分片队列完成后会发出 idle 事件，此时再读取新增节点。
         scheduleDynamicFlushFallback();
     } else {
         flushPendingDynamicRoots();
@@ -192,7 +194,7 @@ function clearSessionData() {
     currentCount = 0; // 重置计数值
     sessionTextsMirror.clear();
     clearPendingDynamicRoots();
-    saveActiveSession('session-scan'); // 保存清空后的状态
+    saveSessionState(); // 保存清空后的状态
 
     if (useFallback) {
         fallback.clearInFallback();
@@ -210,7 +212,7 @@ function clearSessionData() {
 export const start = async (onUpdate, resumedData = null) => {
     if (isRecording) return;
 
-    // Opt in to translation coordination only while PageScanner is active.
+    // 仅在动态扫描运行期间参与翻译状态协调。
     registerTranslationBridgeClient();
 
     // --- 1. 彻底清理旧状态 ---
@@ -265,7 +267,7 @@ export const start = async (onUpdate, resumedData = null) => {
             const count = fallback.getCountInFallback();
             if (onUpdateCallback) onUpdateCallback(count);
             updateScanCount(count, 'session');
-            saveActiveSession('session-scan'); // 初始化后保存
+            saveSessionState(); // 初始化后保存
         }
     };
 
@@ -336,18 +338,18 @@ export const start = async (onUpdate, resumedData = null) => {
     if (autoSaveInterval) clearInterval(autoSaveInterval);
     autoSaveInterval = setInterval(() => {
         if (isRecording) {
-            saveActiveSession('session-scan');
+            saveSessionState();
         }
     }, AUTO_SAVE_INTERVAL_MS);
 
     // 立即保存一次以初始化会话
-    saveActiveSession('session-scan');
+    saveSessionState();
 
     log(t('log.sessionScan.domObserver.started'));
 };
 
 const handleSessionScanUnload = () => {
-    saveActiveSession('session-scan');
+    saveSessionState();
 };
 
 export const stop = (onStopped) => {
@@ -394,10 +396,6 @@ export const stop = (onStopped) => {
             onStopped(0);
         }
     }
-};
-
-export const getSessionTexts = () => {
-    return sessionTextsMirror;
 };
 
 export const requestSummary = (onReady) => {
