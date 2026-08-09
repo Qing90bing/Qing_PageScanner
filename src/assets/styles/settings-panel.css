@@ -6,6 +6,7 @@
     left: 0;
     width: 100%;
     height: 100%;
+    outline: none;
     background-color: var(--main-overlay-bg);
     z-index: 2147483648;
     /* High z-index to stay above page content but below tooltips */
