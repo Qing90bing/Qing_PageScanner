@@ -70,7 +70,7 @@ var TextExtractor = (() => {
   function createHostElement() {
     const container = document.createElement("div");
     container.id = "text-extractor-container";
-    const supportsPopover = HTMLElement.prototype.hasOwnProperty("popover");
+    const supportsPopover = Object.prototype.hasOwnProperty.call(HTMLElement.prototype, "popover");
     if (supportsPopover) {
       container.popover = "manual";
     }
@@ -94,7 +94,7 @@ var TextExtractor = (() => {
       if (container.popover === "manual") {
         try {
           container.showPopover();
-        } catch (e) {
+        } catch {
         }
       }
     }
@@ -116,14 +116,14 @@ var TextExtractor = (() => {
         if (!this.container.isConnected) return;
         try {
           this.container.hidePopover();
-        } catch (e) {
+        } catch {
         }
         void this.container.offsetHeight;
         requestAnimationFrame(() => {
           if (!this.container.isConnected) return;
           try {
             this.container.showPopover();
-          } catch (e) {
+          } catch {
           }
         });
       }, 100);
@@ -169,7 +169,7 @@ var TextExtractor = (() => {
         if ((current === document.body || current === this.container) && originalElement && originalElement.isConnected) {
           try {
             originalElement.focus();
-          } catch (err) {
+          } catch {
           }
         }
       }, 0);
@@ -433,20 +433,12 @@ var TextExtractor = (() => {
     if (!tooltipElement) return;
     tooltipElement.classList.remove("is-visible");
   }
-  // src/assets/icons/themeIcon.js
-  var themeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 32.5-156t88-127Q256-817 330-848.5T488-880q80 0 151 27.5t124.5 76q53.5 48.5 85 115T880-518q0 115-70 176.5T640-280h-74q-9 0-12.5 5t-3.5 11q0 12 15 34.5t15 51.5q0 50-27.5 74T480-80Zm0-400Zm-220 40q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120-160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm200 0q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120 160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17ZM480-160q9 0 14.5-5t5.5-13q0-14-15-33t-15-57q0-42 29-67t71-25h70q66 0 113-38.5T800-518q0-121-92.5-201.5T488-800q-136 0-232 93t-96 227q0 133 93.5 226.5T480-160Z"/></svg>`;
-  // src/assets/icons/languageIcon.js
-  var languageIcon_default = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-155.5t86-127Q252-817 325-848.5T480-880q83 0 155.5 31.5t127 86q54.5 54.5 86 127T880-480q0 82-31.5 155t-86 127.5q-54.5 54.5-127 86T480-80Zm0-82q26-36 45-75t31-83H404q12 44 31 83t45 75Zm-104-16q-18-33-31.5-68.5T322-320H204q29 50 72.5 87t99.5 55Zm208 0q56-18 99.5-55t72.5-87H638q-9 38-22.5 73.5T584-178ZM170-400h136q-3-20-4.5-39.5T300-480q0-21 1.5-40.5T306-560H170q-5 20-7.5 39.5T160-480q0 21 2.5 40.5T170-400Zm216 0h188q3-20 4.5-39.5T580-480q0-21-1.5-40.5T574-560H386q-3 20-4.5 39.5T380-480q0 21 1.5 40.5T386-400Zm268 0h136q5-20 7.5-39.5T800-480q0-21-2.5-40.5T790-560H654q3 20 4.5 39.5T660-480q0 21-1.5 40.5T654-400Zm-16-240h118q-29-50-72.5-87T584-782q18 33 31.5 68.5T638-640Zm-234 0h152q-12-44-31-83t-45-75q-26 36-45 75t-31 83Zm-200 0h118q9-38 22.5-73.5T376-782q-56 18-99.5 55T204-640Z"/></svg>`;
-  // src/assets/icons/infoIcon.js
-  var infoIcon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>';
-  // src/assets/icons/lightThemeIcon.js
-  var lightThemeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm0 80q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Zm326-268Z"/></svg>`;
-  // src/assets/icons/darkThemeIcon.js
-  var darkThemeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Zm0-80q88 0 158-48.5T740-375q-20 5-40 8t-40 3q-123 0-209.5-86.5T364-660q0-20 3-40t8-40q-78 32-126.5 102T200-480q0 116 82 198t198 82Zm-10-270Z"/></svg>`;
-  // src/assets/icons/systemThemeIcon.js
-  var systemThemeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M320-120v-80h80v-80H160q-33 0-56.5-23.5T80-360v-400q0-33 23.5-56.5T160-840h640q33 0 56.5 23.5T880-760v400q0 33-23.5 56.5T800-280H560v80h80v80H320ZM160-360h640v-400H160v400Zm0 0v-400 400Z"/></svg>`;
-  // src/assets/icons/formatIcon.js
-  var formatIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M600-160v-80h120v-480H600v-80h200v640H600Zm-440 0v-640h200v80H240v480h120v80H160Z"/></svg>`;
+  // src/shared/config/uiConfig.js
+  var uiConfig = Object.freeze({
+    fab: Object.freeze({ animationDelayMs: 50 }),
+    modal: Object.freeze({ contentHeight: "400px" }),
+    notification: Object.freeze({ durationMs: 3e3 })
+  });
   // src/shared/i18n/en.json
   var en_default = {
     _meta: {
@@ -2143,6 +2135,60 @@ var TextExtractor = (() => {
       "name": "\u7E41\u9AD4\u4E2D\u6587"
     }
   ];
+  // src/shared/i18n/index.js
+  var translationModules = locales;
+  var supportedLanguages = [{ code: "auto", name: "Auto" }, ...resourceLanguages];
+  var translations = supportedLanguages.reduce((acc, lang) => {
+    if (translationModules[lang.code]) {
+      acc[lang.code] = translationModules[lang.code];
+    }
+    return acc;
+  }, {});
+  var currentLanguage = "en";
+  var currentTranslations = translations.en;
+  function setLanguage(lang) {
+    if (translations[lang]) {
+      currentLanguage = lang;
+      currentTranslations = translations[lang];
+      log(t("log.language.switched", { lang }));
+      fire("languageChanged", lang);
+    } else {
+      log(t("log.language.notFound", { lang }), "warn");
+      currentLanguage = "en";
+      currentTranslations = translations.en;
+    }
+  }
+  function t(key, replacements) {
+    const value = key.split(".").reduce((obj, k) => {
+      if (typeof obj === "object" && obj !== null && k in obj) {
+        return obj[k];
+      }
+      return void 0;
+    }, currentTranslations);
+    if (value === void 0) {
+      return key;
+    }
+    if (replacements) {
+      return value.replace(/{{\s*(\w+)\s*}}/g, (match, key2) => {
+        return Object.prototype.hasOwnProperty.call(replacements, key2) ? replacements[key2] : match;
+      });
+    }
+    return value;
+  }
+  function getTranslationObject(key) {
+    return key.split(".").reduce((obj, k) => {
+      if (typeof obj === "object" && obj !== null && k in obj) {
+        return obj[k];
+      }
+      return void 0;
+    }, currentTranslations);
+  }
+  function getAvailableLanguages() {
+    return supportedLanguages.map((lang) => ({
+      value: lang.code,
+      label: lang.name
+    }));
+  }
   // src/shared/utils/core/logger.js
   var isDebugEnabled = false;
   function updateLoggerState(isEnabled) {
@@ -2175,376 +2221,6 @@ var TextExtractor = (() => {
       });
     }
   }
-  // src/shared/i18n/index.js
-  var translationModules = locales;
-  var supportedLanguages = [{ code: "auto", name: "Auto" }, ...resourceLanguages];
-  var translations = supportedLanguages.reduce((acc, lang) => {
-    if (translationModules[lang.code]) {
-      acc[lang.code] = translationModules[lang.code];
-    }
-    return acc;
-  }, {});
-  var currentLanguage = "en";
-  var currentTranslations = translations.en;
-  function setLanguage(lang) {
-    if (translations[lang]) {
-      currentLanguage = lang;
-      currentTranslations = translations[lang];
-      log(t("log.language.switched", { lang }));
-      fire("languageChanged", lang);
-    } else {
-      log(t("log.language.notFound", { lang }), "warn");
-      currentLanguage = "en";
-      currentTranslations = translations.en;
-    }
-  }
-  function t(key, replacements) {
-    let value = key.split(".").reduce((obj, k) => {
-      if (typeof obj === "object" && obj !== null && k in obj) {
-        return obj[k];
-      }
-      return void 0;
-    }, currentTranslations);
-    if (value === void 0) {
-      return key;
-    }
-    if (replacements) {
-      return value.replace(/{{\s*(\w+)\s*}}/g, (match, key2) => {
-        return Object.prototype.hasOwnProperty.call(replacements, key2) ? replacements[key2] : match;
-      });
-    }
-    return value;
-  }
-  function getTranslationObject(key) {
-    return key.split(".").reduce((obj, k) => {
-      if (typeof obj === "object" && obj !== null && k in obj) {
-        return obj[k];
-      }
-      return void 0;
-    }, currentTranslations);
-  }
-  function getAvailableLanguages() {
-    return supportedLanguages.map((lang) => ({
-      value: lang.code,
-      label: lang.name
-    }));
-  }
-  // src/features/settings/config.js
-  var selectSettingsDefinitions = [
-    {
-      id: "theme-select",
-      key: "theme",
-      label: "settings.theme",
-      type: "image-card-select",
-      icon: themeIcon,
-      options: [
-        { value: "light", label: "settings.themes.light", icon: lightThemeIcon },
-        { value: "dark", label: "settings.themes.dark", icon: darkThemeIcon },
-        { value: "system", label: "settings.themes.system", icon: systemThemeIcon }
-      ]
-    },
-    {
-      id: "format-select",
-      key: "outputFormat",
-      // Match defaultSettings
-      label: "settings.format",
-      type: "image-card-select",
-      icon: formatIcon,
-      options: [
-        { value: "array", label: "settings.formats.array", previewType: "code-array" },
-        { value: "object", label: "settings.formats.object", previewType: "code-object" },
-        { value: "csv", label: "settings.formats.csv", previewType: "code-csv" }
-      ]
-    },
-    {
-      id: "language-select",
-      key: "language",
-      label: "settings.language",
-      icon: languageIcon_default,
-      options: getAvailableLanguages().map((lang) => ({
-        ...lang,
-        label: lang.value === "auto" ? "settings.languages.auto" : `settings.languages.${lang.value}`
-      }))
-    }
-  ];
-  var outputSettingsDefinitions = [
-    {
-      id: "include-array-brackets",
-      key: "includeArrayBrackets",
-      label: "settings.output.include_brackets",
-      tooltip: {
-        titleIcon: infoIcon,
-        title: "settings.output.include_brackets",
-        text: "tooltip.output.include_brackets"
-      }
-    }
-  ];
-  var filterDefinitions = [
-    {
-      id: "filter-numbers",
-      key: "numbers",
-      label: "settings.filters.numbers",
-      tooltip: { titleIcon: infoIcon, title: "settings.filters.numbers", text: "tooltip.filters.numbers" }
-    },
-    {
-      id: "filter-chinese",
-      key: "chinese",
-      label: "settings.filters.chinese",
-      tooltip: { titleIcon: infoIcon, title: "settings.filters.chinese", text: "tooltip.filters.chinese" }
-    },
-    {
-      id: "filter-contains-chinese",
-      key: "containsChinese",
-      label: "settings.filters.contains_chinese",
-      tooltip: {
-        titleIcon: infoIcon,
-        title: "settings.filters.contains_chinese",
-        text: "tooltip.filters.contains_chinese"
-      }
-    },
-    {
-      id: "filter-emoji-only",
-      key: "emojiOnly",
-      label: "settings.filters.emoji_only",
-      tooltip: { titleIcon: infoIcon, title: "settings.filters.emoji_only", text: "tooltip.filters.emoji_only" }
-    },
-    {
-      id: "filter-symbols",
-      key: "symbols",
-      label: "settings.filters.symbols",
-      tooltip: { titleIcon: infoIcon, title: "settings.filters.symbols", text: "tooltip.filters.symbols" }
-    },
-    {
-      id: "filter-term",
-      key: "termFilter",
-      label: "settings.filters.term",
-      tooltip: { titleIcon: infoIcon, title: "settings.filters.term", text: "tooltip.filters.term" }
-    },
-    {
-      id: "filter-single-letter",
-      key: "singleLetter",
-      label: "settings.filters.single_letter",
-      tooltip: {
-        titleIcon: infoIcon,
-        title: "settings.filters.single_letter",
-        text: "tooltip.filters.single_letter"
-      }
-    },
-    {
-      id: "filter-repeating-chars",
-      key: "repeatingChars",
-      label: "settings.filters.repeating_chars",
-      tooltip: {
-        titleIcon: infoIcon,
-        title: "settings.filters.repeating_chars",
-        text: "tooltip.filters.repeating_chars"
-      }
-    },
-    {
-      id: "filter-file-paths",
-      key: "filePath",
-      label: "settings.filters.file_paths",
-      tooltip: { titleIcon: infoIcon, title: "settings.filters.file_paths", text: "tooltip.filters.file_paths" }
-    },
-    {
-      id: "filter-hex-colors",
-      key: "hexColor",
-      label: "settings.filters.hex_color_codes",
-      tooltip: {
-        titleIcon: infoIcon,
-        title: "settings.filters.hex_color_codes",
-        text: "tooltip.filters.hex_color_codes"
-      }
-    },
-    {
-      id: "filter-emails",
-      key: "email",
-      label: "settings.filters.email_addresses",
-      tooltip: {
-        titleIcon: infoIcon,
-        title: "settings.filters.email_addresses",
-        text: "tooltip.filters.email_addresses"
-      }
-    },
-    {
-      id: "filter-uuids",
-      key: "uuid",
-      label: "settings.filters.uuids",
-      tooltip: { titleIcon: infoIcon, title: "settings.filters.uuids", text: "tooltip.filters.uuids" }
-    },
-    {
-      id: "filter-git-hashes",
-      key: "gitCommitHash",
-      label: "settings.filters.git_commit_hashes",
-      tooltip: {
-        titleIcon: infoIcon,
-        title: "settings.filters.git_commit_hashes",
-        text: "tooltip.filters.git_commit_hashes"
-      }
-    },
-    {
-      id: "filter-website-urls",
-      key: "websiteUrl",
-      label: "settings.filters.website_urls",
-      tooltip: {
-        titleIcon: infoIcon,
-        title: "settings.filters.website_urls_title",
-        text: "tooltip.filters.website_urls"
-      }
-    },
-    {
-      id: "filter-shorthand-numbers",
-      key: "shorthandNumber",
-      label: "settings.filters.shorthand_numbers",
-      tooltip: {
-        titleIcon: infoIcon,
-        title: "settings.filters.shorthand_numbers_title",
-        text: "tooltip.filters.shorthand_numbers"
-      }
-    }
-  ];
-  var relatedSettingsDefinitions = [
-    {
-      id: "show-fab",
-      key: "showFab",
-      label: "settings.display.show_fab",
-      tooltip: { titleIcon: infoIcon, title: "settings.display.show_fab", text: "tooltip.display.show_fab" }
-    },
-    {
-      id: "fab-position",
-      key: "fabPosition",
-      label: "settings.display.fab_position",
-      type: "select",
-      options: [
-        { value: "bottom-right", label: "settings.display.fab_positions.bottom_right" },
-        { value: "top-right", label: "settings.display.fab_positions.top_right" },
-        { value: "bottom-left", label: "settings.display.fab_positions.bottom_left" },
-        { value: "top-left", label: "settings.display.fab_positions.top_left" }
-      ]
-    },
-    {
-      id: "show-scan-count",
-      key: "showScanCount",
-      label: "settings.display.show_scan_count",
-      tooltip: {
-        titleIcon: infoIcon,
-        title: "settings.display.show_scan_count",
-        text: "tooltip.display.show_scan_count"
-      }
-    },
-    {
-      id: "show-line-numbers",
-      key: "showLineNumbers",
-      label: "settings.display.show_line_numbers",
-      tooltip: {
-        titleIcon: infoIcon,
-        title: "settings.display.show_line_numbers",
-        text: "tooltip.display.show_line_numbers"
-      }
-    },
-    {
-      id: "show-statistics",
-      key: "showStatistics",
-      label: "settings.display.show_statistics",
-      tooltip: {
-        titleIcon: infoIcon,
-        title: "settings.display.show_statistics",
-        text: "tooltip.display.show_statistics"
-      }
-    },
-    {
-      id: "enable-word-wrap",
-      key: "enableWordWrap",
-      label: "settings.display.enable_word_wrap",
-      tooltip: {
-        titleIcon: infoIcon,
-        title: "settings.display.enable_word_wrap",
-        text: "tooltip.display.enable_word_wrap"
-      }
-    },
-    {
-      id: "enable-text-truncation",
-      key: "enableTextTruncation",
-      label: "settings.display.text_truncation_limit",
-      linkedNumeric: {
-        id: "text-truncation-length",
-        key: "textTruncationLength"
-      },
-      tooltip: {
-        titleIcon: infoIcon,
-        title: "settings.display.text_truncation_limit",
-        text: "tooltip.display.text_truncation_limit"
-      }
-    },
-    {
-      id: "enable-debug-logging",
-      key: "enableDebugLogging",
-      label: "settings.advanced.enable_debug_logging",
-      tooltip: {
-        titleIcon: infoIcon,
-        title: "settings.advanced.enable_debug_logging",
-        text: "tooltip.advanced.enable_debug_logging"
-      }
-    }
-  ];
-  var appConfig = {
-    // UI相关的常量
-    ui: {
-      // 悬浮按钮进入动画的延迟时间（毫秒）
-      fabAnimationDelay: 50,
-      // 所有UI元素的工具提示文本
-      tooltips: {
-        summary: "\u67E5\u770B\u603B\u7ED3\u6587\u672C",
-        dynamicScan: "\u52A8\u6001\u626B\u63CF",
-        staticScan: "\u9759\u6001\u626B\u63CF"
-      },
-      // 动态扫描实时计数器的前缀文本
-      liveCounterPrefix: "\u5DF2\u53D1\u73B0\uFF1A",
-      // 主模态框内容区域的默认高度
-      modalContentHeight: "400px",
-      // 通知系统的默认显示时长（毫秒）
-      notificationDuration: 3e3
-    },
-    // 文本扫描与提取相关的常量
-    scanner: {
-      // 定义了文本提取的目标CSS选择器
-      targetSelectors: [
-        "p",
-        "h1",
-        "h2",
-        "h3",
-        "h4",
-        "h5",
-        "h6",
-        "li",
-        "td",
-        "th",
-        "pre",
-        "span",
-        "a",
-        "button",
-        "article",
-        "main",
-        "div",
-        "body *"
-      ],
-      // 定义了在扫描DOM元素时，需要提取其文本内容的属性列表
-      attributesToExtract: ["placeholder", "alt", "title", "aria-label"],
-      // 定义一个CSS选择器数组，任何匹配这些选择器的元素及其所有后代都将被文本提取过程完全忽略。
-      ignoredSelectors: [
-        // --- 语义化标签 ---
-        "script",
-        "style",
-        "noscript",
-        "code",
-        "pre",
-        "kbd",
-        // --- 常见的非内容区域 ---
-        ".no-translate",
-        ".view-line"
-      ]
-    }
-  };
   // src/shared/services/tampermonkey.js
   var registerMenuCommand = (caption, commandFunc) => {
     return GM_registerMenuCommand(caption, commandFunc);
@@ -2567,72 +2243,275 @@ var TextExtractor = (() => {
   var xmlHttpRequest = (details) => {
     return GM_xmlhttpRequest(details);
   };
-  // src/shared/ui/theme.js
-  function initTheme() {
-    const { theme } = loadSettings();
-    applyTheme(theme);
-  }
-  function applyTheme(theme) {
-    let finalTheme = theme;
-    if (theme === "system") {
-      finalTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-    }
-    uiContainer.host.setAttribute("data-theme", finalTheme);
-  }
-  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
-    const { theme } = loadSettings();
-    if (theme === "system") {
-      applyTheme("system");
+  var getScriptInfo = () => {
+    return typeof GM_info === "undefined" ? null : GM_info;
+  };
+  // src/shared/services/ai/contracts.js
+  var AI_ACTIONS = Object.freeze({
+    TRANSLATE: "translate",
+    KEEP: "keep",
+    REMOVE: "remove",
+    REVIEW: "review"
+  });
+  var AI_TRANSLATION_TYPES = Object.freeze({
+    TEXT: "text",
+    REGEX: "regex"
+  });
+  var AI_CANDIDATE_STATUS = Object.freeze({
+    PENDING: "pending",
+    IN_FLIGHT: "inflight",
+    TRANSLATED: "translated",
+    KEEP: "keep",
+    REMOVED: "removed",
+    REVIEW: "review",
+    FAILED: "failed"
+  });
+  var AI_PROCESSING_MODES = Object.freeze({
+    AUTO: "auto",
+    MANUAL: "manual"
+  });
+  var AI_TARGET_LANGUAGES = Object.freeze({
+    SIMPLIFIED_CHINESE: "zh-CN",
+    TRADITIONAL_CHINESE: "zh-TW"
+  });
+  var AI_RESPONSE_MODES = Object.freeze({
+    JSON: "json-mode",
+    PROMPT_JSON: "prompt-json"
+  });
+  var AI_SETTINGS_VERSION = 4;
+  var DEFAULT_DEEPSEEK_PROVIDER = Object.freeze({
+    id: "deepseek",
+    name: "DeepSeek",
+    apiUrl: "https://api.deepseek.com/chat/completions",
+    model: "deepseek-v4-flash",
+    protocol: "openai-chat-completions",
+    responseMode: AI_RESPONSE_MODES.JSON
+  });
+  var AI_DEFAULT_SETTINGS = Object.freeze({
+    version: AI_SETTINGS_VERSION,
+    enabled: true,
+    processingMode: AI_PROCESSING_MODES.MANUAL,
+    targetLanguage: AI_TARGET_LANGUAGES.SIMPLIFIED_CHINESE,
+    confidenceThreshold: 0.85,
+    includeRegexRuleComments: false,
+    activeProviderId: DEFAULT_DEEPSEEK_PROVIDER.id,
+    providers: [DEFAULT_DEEPSEEK_PROVIDER],
+    requestTimeoutMs: 45e3,
+    batch: {
+      maxItems: 200,
+      maxCharacters: 6e4,
+      maxEstimatedOutputTokens: 32768,
+      debounceMs: 1200
+    },
+    budget: {
+      maxRequestsPerSession: 100,
+      maxCharactersPerSession: 2e5,
+      maxEstimatedTokensPerDay: 1e5
     }
   });
-  // src/shared/i18n/management/languageManager.js
-  var SETTINGS_MENU_ID_KEY = "settings_menu_command_id";
-  async function updateSettingsMenu(onClick) {
-    const oldCommandId = await getValue(SETTINGS_MENU_ID_KEY, null);
-    if (oldCommandId) {
-      unregisterMenuCommand(oldCommandId);
-    }
-    const menuText = t("settings.panel.title");
-    const newCommandId = registerMenuCommand(menuText, onClick);
-    await setValue(SETTINGS_MENU_ID_KEY, newCommandId);
+  var ALLOWED_TARGETS = new Set(Object.values(AI_TARGET_LANGUAGES));
+  var ALLOWED_PROCESSING_MODES = new Set(Object.values(AI_PROCESSING_MODES));
+  var ALLOWED_RESPONSE_MODES = new Set(Object.values(AI_RESPONSE_MODES));
+  function clampNumber(value, fallback, min, max) {
+    const parsed = Number(value);
+    if (!Number.isFinite(parsed)) return fallback;
+    return Math.min(max, Math.max(min, parsed));
   }
-  function isLanguageSupported(langCode) {
-    return supportedLanguages.some((lang) => lang.code === langCode);
+  function normalizeProvider(provider, index = 0) {
+    const fallback = index === 0 ? DEFAULT_DEEPSEEK_PROVIDER : {
+      id: `custom-${index}`,
+      name: `Provider ${index + 1}`,
+      apiUrl: "",
+      model: "",
+      protocol: "openai-chat-completions",
+      responseMode: AI_RESPONSE_MODES.PROMPT_JSON
+    };
+    const id = String(provider?.id || fallback.id).replace(/[^a-zA-Z0-9_-]/g, "-");
+    return {
+      id: id || fallback.id,
+      name: String(provider?.name || fallback.name).trim().slice(0, 80),
+      apiUrl: String(provider?.apiUrl ?? fallback.apiUrl).trim().slice(0, 2048),
+      model: String(provider?.model ?? fallback.model).trim().slice(0, 120),
+      protocol: "openai-chat-completions",
+      responseMode: ALLOWED_RESPONSE_MODES.has(provider?.responseMode) ? provider.responseMode : fallback.responseMode
+    };
   }
-  function initializeLanguage(settings) {
-    let langToSet = "en";
-    let targetLang = "auto";
-    if (settings && settings.language) {
-      targetLang = settings.language;
-    }
-    if (targetLang === "auto") {
-      const browserLang = navigator.language;
-      if (isLanguageSupported(browserLang) && browserLang !== "auto") {
-        langToSet = browserLang;
-      } else {
-        if (browserLang.startsWith("zh")) {
-          if (browserLang.toLowerCase().includes("tw") || browserLang.toLowerCase().includes("hk") || browserLang.toLowerCase().includes("hant")) {
-            langToSet = "zh-TW";
-          } else {
-            langToSet = "zh-CN";
-          }
-        } else if (browserLang.startsWith("en")) {
-          langToSet = "en";
-        }
+  function mergeAiSettings(value = {}) {
+    const providers = Array.isArray(value.providers) && value.providers.length > 0 ? value.providers.map(normalizeProvider) : [normalizeProvider(DEFAULT_DEEPSEEK_PROVIDER)];
+    const providerIds = new Set(providers.map((provider) => provider.id));
+    const activeProviderId = providerIds.has(value.activeProviderId) ? value.activeProviderId : providers[0].id;
+    const shouldMigrateBatchDefaults = Number(value.version || 1) < AI_SETTINGS_VERSION && (Number(value.batch?.maxItems) === 20 && Number(value.batch?.maxCharacters) === 6e3 || Number(value.batch?.maxItems) === 100 && Number(value.batch?.maxCharacters) === 3e4 || Number(value.batch?.maxItems) === 200 && Number(value.batch?.maxCharacters) === 6e4 && Number(value.batch?.maxEstimatedOutputTokens) === 15360);
+    const batchValue = shouldMigrateBatchDefaults ? {
+      ...value.batch,
+      maxItems: AI_DEFAULT_SETTINGS.batch.maxItems,
+      maxCharacters: AI_DEFAULT_SETTINGS.batch.maxCharacters,
+      maxEstimatedOutputTokens: AI_DEFAULT_SETTINGS.batch.maxEstimatedOutputTokens
+    } : value.batch;
+    return {
+      version: AI_SETTINGS_VERSION,
+      enabled: value.enabled !== false,
+      processingMode: ALLOWED_PROCESSING_MODES.has(value.processingMode) ? value.processingMode : AI_DEFAULT_SETTINGS.processingMode,
+      targetLanguage: ALLOWED_TARGETS.has(value.targetLanguage) ? value.targetLanguage : AI_DEFAULT_SETTINGS.targetLanguage,
+      confidenceThreshold: clampNumber(value.confidenceThreshold, AI_DEFAULT_SETTINGS.confidenceThreshold, 0.5, 1),
+      includeRegexRuleComments: value.includeRegexRuleComments === true,
+      activeProviderId,
+      providers,
+      requestTimeoutMs: clampNumber(value.requestTimeoutMs, AI_DEFAULT_SETTINGS.requestTimeoutMs, 5e3, 12e4),
+      batch: {
+        maxItems: Math.round(clampNumber(batchValue?.maxItems, AI_DEFAULT_SETTINGS.batch.maxItems, 1, 500)),
+        maxCharacters: Math.round(
+          clampNumber(batchValue?.maxCharacters, AI_DEFAULT_SETTINGS.batch.maxCharacters, 1e3, 2e5)
+        ),
+        maxEstimatedOutputTokens: Math.round(
+          clampNumber(
+            batchValue?.maxEstimatedOutputTokens,
+            AI_DEFAULT_SETTINGS.batch.maxEstimatedOutputTokens,
+            4096,
+            131072
+          )
+        ),
+        debounceMs: Math.round(
+          clampNumber(batchValue?.debounceMs, AI_DEFAULT_SETTINGS.batch.debounceMs, 200, 1e4)
+        )
+      },
+      budget: {
+        maxRequestsPerSession: Math.round(
+          clampNumber(
+            value.budget?.maxRequestsPerSession,
+            AI_DEFAULT_SETTINGS.budget.maxRequestsPerSession,
+            1,
+            500
+          )
+        ),
+        maxCharactersPerSession: Math.round(
+          clampNumber(
+            value.budget?.maxCharactersPerSession,
+            AI_DEFAULT_SETTINGS.budget.maxCharactersPerSession,
+            1e3,
+            1e6
+          )
+        ),
+        maxEstimatedTokensPerDay: Math.round(
+          clampNumber(
+            value.budget?.maxEstimatedTokensPerDay,
+            AI_DEFAULT_SETTINGS.budget.maxEstimatedTokensPerDay,
+            1e3,
+            1e7
+          )
+        )
       }
-    } else {
-      if (isLanguageSupported(targetLang)) {
-        langToSet = targetLang;
-      }
-    }
-    setLanguage(langToSet);
+    };
   }
-  function switchLanguage(langCode) {
-    if (isLanguageSupported(langCode)) {
-      const settings = loadSettings();
-      settings.language = langCode;
-      initializeLanguage(settings);
+  function getActiveProvider(aiSettings) {
+    return aiSettings.providers.find((provider) => provider.id === aiSettings.activeProviderId) || aiSettings.providers[0] || null;
+  }
+  function hashText(value) {
+    let hash = 2166136261;
+    const input = String(value);
+    for (let index = 0; index < input.length; index += 1) {
+      hash ^= input.charCodeAt(index);
+      hash = Math.imul(hash, 16777619);
     }
+    return (hash >>> 0).toString(36);
+  }
+  function createCandidateFingerprint(siteKey, targetLanguage, sourceText) {
+    const normalizedText = String(sourceText).normalize("NFC").replace(/\s+/g, " ").trim();
+    return hashText(`${siteKey}\0${targetLanguage}\0${normalizedText}`);
+  }
+  // src/shared/services/settings.js
+  var defaultSettings = {
+    language: "auto",
+    outputFormat: "array",
+    includeArrayBrackets: true,
+    theme: "system",
+    showFab: true,
+    fabPosition: "bottom-right",
+    showScanCount: true,
+    showLineNumbers: true,
+    showStatistics: true,
+    enableWordWrap: false,
+    enableTextTruncation: true,
+    textTruncationLength: 5e4,
+    enableDebugLogging: false,
+    elementScan_persistData: true,
+    sessionScan_persistData: true,
+    ai: AI_DEFAULT_SETTINGS,
+    filterRules: {
+      numbers: true,
+      chinese: true,
+      containsChinese: false,
+      emojiOnly: true,
+      symbols: true,
+      termFilter: true,
+      singleLetter: false,
+      repeatingChars: true,
+      filePath: true,
+      hexColor: true,
+      email: true,
+      uuid: true,
+      gitCommitHash: true,
+      websiteUrl: true,
+      shorthandNumber: true
+    }
+  };
+  function loadSettings() {
+    const savedSettings = getValue("script_settings", null);
+    if (!savedSettings) return defaultSettings;
+    try {
+      const parsedSettings = JSON.parse(savedSettings);
+      return {
+        ...defaultSettings,
+        ...parsedSettings,
+        filterRules: {
+          ...defaultSettings.filterRules,
+          ...parsedSettings.filterRules || {}
+        },
+        ai: mergeAiSettings(parsedSettings.ai)
+      };
+    } catch (error) {
+      log(t("log.settings.parseError"), error);
+      return defaultSettings;
+    }
+  }
+  function saveSettings(newSettings) {
+    if (typeof newSettings !== "object" || newSettings === null) {
+      log(t("log.settings.invalidObject"), newSettings);
+      return;
+    }
+    const oldSettings = loadSettings();
+    Object.keys(newSettings).forEach((key) => {
+      if (key !== "filterRules" && oldSettings[key] !== newSettings[key]) {
+        log(
+          t("log.settings.changed", {
+            key,
+            oldValue: oldSettings[key],
+            newValue: newSettings[key]
+          })
+        );
+      }
+    });
+    const oldRules = oldSettings.filterRules || {};
+    const newRules = newSettings.filterRules || {};
+    const allRuleKeys = /* @__PURE__ */ new Set([...Object.keys(oldRules), ...Object.keys(newRules)]);
+    allRuleKeys.forEach((key) => {
+      const oldValue = !!oldRules[key];
+      const newValue = !!newRules[key];
+      if (oldValue !== newValue) {
+        const statusKey = newValue ? "log.settings.filterRuleChanged.enabled" : "log.settings.filterRuleChanged.disabled";
+        log(t(statusKey, { key }));
+      }
+    });
+    const mergedSettings = {
+      ...oldSettings,
+      ...newSettings,
+      filterRules: {
+        ...oldSettings.filterRules,
+        ...newSettings.filterRules || {}
+      },
+      ai: mergeAiSettings(newSettings.ai || oldSettings.ai)
+    };
+    setValue("script_settings", JSON.stringify(mergedSettings));
+    return mergedSettings;
   }
   // src/shared/utils/dom/trustedTypes.js
   var workerPolicy;
@@ -2715,6 +2594,239 @@ var TextExtractor = (() => {
       }
     }
     return htmlString;
+  }
+  // src/shared/utils/dom/dom.js
+  var parser = new DOMParser();
+  function createSVGFromString(svgString) {
+    if (!svgString || typeof svgString !== "string") return null;
+    const sanitizedSVG = createTrustedHTML(svgString.trim());
+    const doc = parser.parseFromString(sanitizedSVG, "image/svg+xml");
+    const svgNode = doc.documentElement;
+    if (!svgNode || svgNode.nodeName.toLowerCase() !== "svg" || svgNode.querySelector("parsererror")) {
+      log(t("log.dom.svgParseError"), svgString);
+      return null;
+    }
+    return document.importNode(svgNode, true);
+  }
+  // src/shared/services/scanModeCoordinator.js
+  var SCAN_MODES = Object.freeze({
+    IDLE: "idle",
+    DYNAMIC: "normal-dynamic",
+    STATIC: "static",
+    ELEMENT: "element",
+    AI: "ai"
+  });
+  var activeMode = SCAN_MODES.IDLE;
+  var listeners = /* @__PURE__ */ new Set();
+  function notify(previousMode) {
+    listeners.forEach((listener) => {
+      listener({ activeMode, previousMode });
+    });
+  }
+  function canAcquireScanMode(mode) {
+    return activeMode === SCAN_MODES.IDLE || activeMode === mode;
+  }
+  function acquireScanMode(mode) {
+    if (!Object.values(SCAN_MODES).includes(mode) || mode === SCAN_MODES.IDLE) {
+      return false;
+    }
+    if (!canAcquireScanMode(mode)) {
+      return false;
+    }
+    if (activeMode === mode) {
+      return true;
+    }
+    const previousMode = activeMode;
+    activeMode = mode;
+    notify(previousMode);
+    return true;
+  }
+  function releaseScanMode(mode) {
+    if (activeMode !== mode) {
+      return false;
+    }
+    const previousMode = activeMode;
+    activeMode = SCAN_MODES.IDLE;
+    notify(previousMode);
+    return true;
+  }
+  function subscribeScanMode(listener) {
+    listeners.add(listener);
+    return () => listeners.delete(listener);
+  }
+  // src/shared/ui/components/fabExclusiveState.js
+  var snapshots = /* @__PURE__ */ new Map();
+  function applyAiExclusiveFabState(fabs, isAiActive, setDisabled, setTooltip) {
+    const ordinaryFabs = fabs.filter(Boolean);
+    if (isAiActive) {
+      ordinaryFabs.forEach((fab) => {
+        if (!snapshots.has(fab)) {
+          snapshots.set(fab, {
+            disabled: Boolean(fab.disabled),
+            hadDisabledClass: fab.classList.contains("fab-disabled"),
+            ariaDisabled: fab.getAttribute("aria-disabled"),
+            tabIndex: fab.tabIndex,
+            tooltipKey: fab.dataset.tooltipKey
+          });
+        }
+        setDisabled(fab, true, "tooltip.disabled.ai_scan_active");
+      });
+      return;
+    }
+    ordinaryFabs.forEach((fab) => {
+      const snapshot = snapshots.get(fab);
+      if (!snapshot) return;
+      fab.disabled = snapshot.disabled;
+      fab.classList.toggle("fab-disabled", snapshot.hadDisabledClass);
+      fab.setAttribute("aria-disabled", snapshot.ariaDisabled || String(snapshot.disabled));
+      fab.tabIndex = snapshot.tabIndex;
+      setTooltip(fab, snapshot.tooltipKey);
+      snapshots.delete(fab);
+    });
+  }
+  // src/shared/ui/components/fab.js
+  var summaryFab;
+  var aiFab;
+  var dynamicFab;
+  var staticFab;
+  var elementScanFab;
+  var unsubscribeScanMode = null;
+  function syncAiFabAvailability() {
+    if (!aiFab) return;
+    const enabled = loadSettings().ai?.enabled !== false;
+    aiFab.classList.toggle("fab-feature-hidden", !enabled);
+    aiFab.setAttribute("aria-hidden", String(!enabled));
+    const tooltipKey = !enabled ? "tooltip.ai_disabled" : aiFab.classList.contains("is-recording") ? "tooltip.ai_scan_stop" : "tooltip.ai_scan";
+    setFabDisabled(aiFab, !enabled, tooltipKey);
+  }
+  function createSingleFab(className, iconSVGString, titleKey, onClick) {
+    const fab = document.createElement("div");
+    fab.className = `text-extractor-fab ${className}`;
+    fab.setAttribute("role", "button");
+    fab.setAttribute("aria-disabled", "false");
+    fab.setAttribute("aria-label", t(titleKey));
+    fab.tabIndex = 0;
+    const svgIcon = createSVGFromString(iconSVGString);
+    if (svgIcon) {
+      fab.appendChild(svgIcon);
+    }
+    fab.dataset.tooltipKey = titleKey;
+    fab.addEventListener("click", (event) => {
+      if (fab.classList.contains("fab-disabled")) {
+        event.stopPropagation();
+        return;
+      }
+      onClick(event);
+    });
+    fab.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      fab.click();
+    });
+    fab.addEventListener("mouseenter", () => {
+      showTooltip(fab, t(fab.dataset.tooltipKey));
+    });
+    fab.addEventListener("mouseleave", () => {
+      hideTooltip();
+    });
+    fab.style.pointerEvents = "auto";
+    return fab;
+  }
+  function createFab({ callbacks, isVisible }) {
+    const { onStaticExtract, onDynamicExtract, onSummary, onElementScan, onAiScan } = callbacks;
+    const fabContainer = document.createElement("div");
+    fabContainer.className = "text-extractor-fab-container";
+    summaryFab = createSingleFab("fab-summary", summaryIcon, "tooltip.summary", onSummary);
+    aiFab = createSingleFab("fab-ai-scan", aiIcon, "tooltip.ai_scan", () => onAiScan(aiFab));
+    dynamicFab = createSingleFab(
+      "fab-dynamic",
+      dynamicIcon,
+      "tooltip.dynamic_scan",
+      () => onDynamicExtract(dynamicFab)
+      // 将fab元素本身传回去，方便UI更新
+    );
+    staticFab = createSingleFab("fab-static", translateIcon, "tooltip.static_scan", onStaticExtract);
+    elementScanFab = createSingleFab(
+      "fab-element-scan",
+      elementScanIcon,
+      "tooltip.element_scan",
+      () => onElementScan(elementScanFab)
+    );
+    fabContainer.appendChild(summaryFab);
+    fabContainer.appendChild(aiFab);
+    fabContainer.appendChild(dynamicFab);
+    fabContainer.appendChild(staticFab);
+    fabContainer.appendChild(elementScanFab);
+    uiContainer.appendChild(fabContainer);
+    syncAiFabAvailability();
+    if (isVisible) {
+      setTimeout(() => {
+        fabContainer.classList.add("fab-container-visible");
+      }, uiConfig.fab.animationDelayMs);
+    }
+    updateFabPosition(fabContainer);
+    on("settingsSaved", () => {
+      updateFabPosition(fabContainer);
+      syncAiFabAvailability();
+    });
+    on("languageChanged", () => {
+      [summaryFab, aiFab, dynamicFab, staticFab, elementScanFab].forEach((fab) => {
+        if (fab?.dataset.tooltipKey) fab.setAttribute("aria-label", t(fab.dataset.tooltipKey));
+      });
+    });
+    if (unsubscribeScanMode) unsubscribeScanMode();
+    unsubscribeScanMode = subscribeScanMode(({ activeMode: activeMode2 }) => {
+      applyAiExclusiveFabState(
+        [dynamicFab, staticFab, elementScanFab],
+        activeMode2 === SCAN_MODES.AI,
+        setFabDisabled,
+        updateFabTooltip
+      );
+    });
+  }
+  function setFabDisabled(fabElement, disabled, tooltipKey = null) {
+    if (!fabElement) return;
+    fabElement.disabled = Boolean(disabled);
+    fabElement.classList.toggle("fab-disabled", Boolean(disabled));
+    fabElement.setAttribute("aria-disabled", String(Boolean(disabled)));
+    fabElement.tabIndex = disabled ? -1 : 0;
+    if (tooltipKey) updateFabTooltip(fabElement, tooltipKey);
+  }
+  function updateFabPosition(fabContainer) {
+    if (!fabContainer) return;
+    const settings = loadSettings();
+    const position = settings.fabPosition || "bottom-right";
+    fabContainer.classList.remove(
+      "fab-position-bottom-right",
+      "fab-position-top-right",
+      "fab-position-bottom-left",
+      "fab-position-top-left"
+    );
+    fabContainer.classList.add(`fab-position-${position}`);
+  }
+  function setFabIcon(fabElement, iconSVGString) {
+    while (fabElement.firstChild) {
+      fabElement.removeChild(fabElement.firstChild);
+    }
+    const newIcon = createSVGFromString(iconSVGString);
+    if (newIcon) {
+      fabElement.appendChild(newIcon);
+    }
+  }
+  function getDynamicFab() {
+    return dynamicFab;
+  }
+  function getAiFab() {
+    return aiFab;
+  }
+  function getElementScanFab() {
+    return elementScanFab;
+  }
+  function updateFabTooltip(fabElement, newTooltipKey) {
+    if (fabElement) {
+      fabElement.dataset.tooltipKey = newTooltipKey;
+      fabElement.setAttribute("aria-label", t(newTooltipKey));
+    }
   }
   // src/shared/utils/core/csp-checker.js
   var isAllowed = null;
@@ -4501,7 +4613,7 @@ ${result.join(",\n")}
   }, {});
   var currentTranslations = translations.en;
   function t(key, replacements) {
-    let value = key.split(".").reduce((obj, k) => {
+    const value = key.split(".").reduce((obj, k) => {
       if (typeof obj === "object" && obj !== null && k in obj) {
         return obj[k];
       }
@@ -4615,7 +4727,7 @@ ${result.join(",\n")}
     [
       "numbers",
       {
-        regex: /^[$\\\u20AC\\\xA3\\\xA5\\d,.\\s]+$/,
+        regex: /^[$\u20AC\xA3\xA5\\d,.\\s]+$/,
         label: FILTER_LABEL_KEYS.numbers
       }
     ],
@@ -4673,7 +4785,7 @@ ${result.join(",\n")}
     [
       "filePath",
       {
-        regex: /^(?:[a-zA-Z]:\\\\|\\\\\\\\|~|\\.\\.?\\/)[\\w\\-\\.\\/ \\\\]*[\\w\\-\\.]+\\.[\\w]{2,4}$/,
+        regex: /^(?:[a-zA-Z]:\\\\|\\\\\\\\|~|\\.\\.?\\/)[\\w./ \\\\-]*[\\w.-]+\\.[\\w]{2,4}$/,
         label: FILTER_LABEL_KEYS.filePath
       }
     ],
@@ -4790,7 +4902,7 @@ ${result.join(",\n")}
   var t2 = (key, replacements) => {
     let value = translations2[key] || key;
     if (replacements) {
-      let finalReplacements = { ...replacements };
+      const finalReplacements = { ...replacements };
       if (key === "textFiltered" && replacements.reason && translations2.filterReasons) {
         const reasonKey = replacements.reason;
         finalReplacements.reason = translations2.filterReasons[reasonKey] || reasonKey;
@@ -4880,7 +4992,7 @@ ${result.join(",\n")}
       /**
        * \u4F1A\u8BDD\u6A21\u5F0F\uFF1A\u5F00\u59CB\u4E00\u4E2A\u65B0\u7684\u4F1A\u8BDD
        */
-      case "session-start":
+      case "session-start": {
         const { initialData } = payload;
         sessionTexts.clear();
         const newTexts = [];
@@ -4900,25 +5012,26 @@ ${result.join(",\n")}
           }
         });
         break;
+      }
       /**
        * \u4F1A\u8BDD\u6A21\u5F0F\uFF1A\u6DFB\u52A0\u6587\u672C
        */
       case "session-add-texts": {
         const { texts } = payload;
-        const newTexts2 = [];
+        const newTexts = [];
         if (Array.isArray(texts)) {
           texts.forEach((text) => {
             if (processText(text, sessionTexts)) {
-              newTexts2.push(text);
+              newTexts.push(text);
             }
           });
         }
-        if (newTexts2.length > 0) {
+        if (newTexts.length > 0) {
           self.postMessage({
             type: "countUpdated",
             payload: {
               count: sessionTexts.size,
-              newTexts: newTexts2
+              newTexts
             }
           });
         }
@@ -4953,19 +5066,8 @@ ${result.join(",\n")}
 `], { type: "application/javascript" });
   var workerUrl = URL.createObjectURL(workerBlob);
   var trustedWorkerUrl = createTrustedWorkerUrl(workerUrl);
-  // src/shared/utils/dom/dom.js
-  var parser = new DOMParser();
-  function createSVGFromString(svgString) {
-    if (!svgString || typeof svgString !== "string") return null;
-    const sanitizedSVG = createTrustedHTML(svgString.trim());
-    const doc = parser.parseFromString(sanitizedSVG, "image/svg+xml");
-    const svgNode = doc.documentElement;
-    if (!svgNode || svgNode.nodeName.toLowerCase() !== "svg" || svgNode.querySelector("parsererror")) {
-      log(t("log.dom.svgParseError"), svgString);
-      return null;
-    }
-    return document.importNode(svgNode, true);
-  }
+  // src/assets/icons/infoIcon.js
+  var infoIcon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>';
   // src/assets/icons/successIcon.js
   var successIcon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q65 0 123 19t107 53l-58 59q-38-24-81-37.5T480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160q133 0 226.5-93.5T800-480q0-18-2-36t-6-35l65-65q11 32 17 66t6 70q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-56-216L254-466l56-56 114 114 400-401 56 56-456 457Z"/></svg>';
   // src/assets/icons/closeIcon.js
@@ -5018,7 +5120,7 @@ ${result.join(",\n")}
     });
     return notification;
   }
-  function showNotification(message, { type = "info", duration = appConfig.ui.notificationDuration } = {}) {
+  function showNotification(message, { type = "info", duration = uiConfig.notification.durationMs } = {}) {
     const container = getNotificationContainer();
     const notification = createNotificationElement(message, type);
     container.appendChild(notification);
@@ -5061,7 +5163,7 @@ ${result.join(",\n")}
   var simpleTemplate = (template, values) => {
     if (!template) return "";
     return template.replace(/{{\s*(\w+)\s*}}/g, (match, key) => {
-      return values.hasOwnProperty(key) ? values[key] : match;
+      return Object.prototype.hasOwnProperty.call(values, key) ? values[key] : match;
     });
   };
   // src/shared/ui/mainModal/modalHeader.js
@@ -5126,6 +5228,20 @@ ${result.join(",\n")}
     currentHeaderMode = mode;
     renderHeaderTitle();
   }
+  // src/shared/config/scannerConfig.js
+  var scannerConfig = Object.freeze({
+    attributesToExtract: Object.freeze(["placeholder", "alt", "title", "aria-label"]),
+    ignoredSelectors: Object.freeze([
+      "script",
+      "style",
+      "noscript",
+      "code",
+      "pre",
+      "kbd",
+      ".no-translate",
+      ".view-line"
+    ])
+  });
   // src/shared/utils/text/ignoredTerms.js
   var IGNORED_TERMS_ARRAY = [
     "Github",
@@ -5224,7 +5340,7 @@ ${result.join(",\n")}
     [
       "numbers",
       {
-        regex: /^[$\€\£\¥\d,.\s]+$/,
+        regex: /^[$€£¥\d,.\s]+$/,
         label: FILTER_LABEL_KEYS.numbers
       }
     ],
@@ -5282,7 +5398,7 @@ ${result.join(",\n")}
     [
       "filePath",
       {
-        regex: /^(?:[a-zA-Z]:\\|\\\\|~|\.\.?\/)[\w\-\.\/ \\]*[\w\-\.]+\.[\w]{2,4}$/,
+        regex: /^(?:[a-zA-Z]:\\|\\\\|~|\.\.?\/)[\w./ \\-]*[\w.-]+\.[\w]{2,4}$/,
         label: FILTER_LABEL_KEYS.filePath
       }
     ],
@@ -5343,7 +5459,7 @@ ${result.join(",\n")}
     return null;
   }
   // src/shared/utils/text/textProcessor.js
-  var ignoredSelectorString = appConfig.scanner.ignoredSelectors.join(", ");
+  var ignoredSelectorString = scannerConfig.ignoredSelectors.join(", ");
   var ourUiSelector = "#text-extractor-container";
   var blockElements = /* @__PURE__ */ new Set([
     "ADDRESS",
@@ -5394,7 +5510,7 @@ ${result.join(",\n")}
           textCallback("\n");
           return;
         }
-        const attributesToExtract = appConfig.scanner.attributesToExtract;
+        const attributesToExtract = scannerConfig.attributesToExtract;
         attributesToExtract.forEach((attr) => {
           const attrValue = node.getAttribute(attr);
           if (attrValue) {
@@ -5447,7 +5563,7 @@ ${result.join(",\n")}
     const processAndAddText = (rawText) => {
       if (!rawText) return;
       const normalizedText = rawText.normalize("NFC");
-      let text = normalizedText.replace(/\r\n|\r/g, "\n");
+      const text = normalizedText.replace(/\r\n|\r/g, "\n");
       if (text.trim() === "" && !text.includes("\n")) {
         return;
       }
@@ -5488,34 +5604,26 @@ ${result.join(",\n")}
     return texts;
   };
   // src/features/quick-scan/logic.js
-  var performQuickScan = () => {
-    return new Promise(async (resolve, reject) => {
-      const { filterRules: filterRules2, enableDebugLogging, outputFormat, includeArrayBrackets } = loadSettings();
-      const [texts, workerAllowed] = await Promise.all([extractAndProcessText(), isWorkerAllowed()]);
-      const runFallback = () => {
-        log(t("log.quickScan.switchToFallback"));
-        showNotification(t("notifications.cspWorkerWarning"), { type: "info", duration: 5e3 });
-        try {
-          const logFiltered = (text, reason) => {
-            log(t("log.textProcessor.filtered", { text, reason }));
-          };
-          const filteredTexts = filterAndNormalizeTexts(texts, filterRules2, enableDebugLogging, logFiltered);
-          const formattedText = formatTextsForTranslation(filteredTexts, outputFormat, { includeArrayBrackets });
-          const result = {
-            formattedText,
-            count: filteredTexts.length
-          };
-          updateScanCount(result.count, "static");
-          resolve(result);
-        } catch (fallbackError) {
-          log(t("log.quickScan.fallbackFailed", { error: fallbackError.message }), "error");
-          reject(fallbackError);
-        }
+  var performQuickScan = async () => {
+    const { filterRules: filterRules2, enableDebugLogging, outputFormat, includeArrayBrackets } = loadSettings();
+    const [texts, workerAllowed] = await Promise.all([extractAndProcessText(), isWorkerAllowed()]);
+    const runFallback2 = () => {
+      log(t("log.quickScan.switchToFallback"));
+      showNotification(t("notifications.cspWorkerWarning"), { type: "info", duration: 5e3 });
+      const logFiltered = (text, reason) => {
+        log(t("log.textProcessor.filtered", { text, reason }));
       };
-      if (!workerAllowed) {
-        log(t("log.quickScan.worker.cspBlocked"), "warn");
-        return runFallback();
-      }
+      const filteredTexts = filterAndNormalizeTexts(texts, filterRules2, enableDebugLogging, logFiltered);
+      const formattedText = formatTextsForTranslation(filteredTexts, outputFormat, { includeArrayBrackets });
+      const result = { formattedText, count: filteredTexts.length };
+      updateScanCount(result.count, "static");
+      return result;
+    };
+    if (!workerAllowed) {
+      log(t("log.quickScan.worker.cspBlocked"), "warn");
+      return runFallback2();
+    }
+    return new Promise((resolve) => {
       try {
         log(t("log.quickScan.worker.starting"));
         const worker2 = new Worker(trustedWorkerUrl);
@@ -5532,7 +5640,7 @@ ${result.join(",\n")}
           log(t("log.quickScan.worker.initFailed"), "warn");
           log(t("log.quickScan.worker.originalError", { error: error.message }), "debug");
           worker2.terminate();
-          runFallback();
+          resolve(runFallback2());
         };
         log(t("log.quickScan.worker.sendingData", { count: texts.length }));
         worker2.postMessage({
@@ -5551,9 +5659,9 @@ ${result.join(",\n")}
             }
           }
         });
-      } catch (e) {
-        log(t("log.quickScan.worker.initSyncError", { error: e.message }), "error");
-        runFallback();
+      } catch (error) {
+        log(t("log.quickScan.worker.initSyncError", { error: error.message }), "error");
+        resolve(runFallback2());
       }
     });
   };
@@ -5832,8 +5940,8 @@ ${result.join(",\n")}
     return loadingContainer2;
   }
   function populateModalContent(modalContent) {
-    if (appConfig.ui.modalContentHeight) {
-      modalContent.style.height = appConfig.ui.modalContentHeight;
+    if (uiConfig.modal.contentHeight) {
+      modalContent.style.height = uiConfig.modal.contentHeight;
     }
     placeholder2 = document.createElement("div");
     placeholder2.id = "modal-placeholder";
@@ -6257,7 +6365,6 @@ ${result.join(",\n")}
     let lineCount = 0;
     let currentLine = "";
     if (canvasContext.measureText(sentence).width <= width) {
-      lineCount = 1;
       stringLinesCache.set(cacheKey, 1);
       return 1;
     }
@@ -6287,8 +6394,8 @@ ${result.join(",\n")}
       lastTextValue = currentValue;
       lastSplitLines = lines;
     }
-    let lineNumbers = [];
-    let lineMap = [];
+    const lineNumbers = [];
+    const lineMap = [];
     if (settings.enableWordWrap) {
       const textareaStyles = window.getComputedStyle(outputTextarea);
       const paddingLeft = parseFloat(textareaStyles.paddingLeft);
@@ -6459,6 +6566,13 @@ ${result.join(",\n")}
       closeModal();
     }
   };
+  var handleTextareaUpdate = () => {
+    updateLineNumbers();
+    updateStatistics();
+  };
+  var handleTextareaScroll = () => {
+    lineNumbersDiv.scrollTop = outputTextarea.scrollTop;
+  };
   function createMainModal() {
     if (modalOverlay) return;
     const { modalHeader, modalContent, modalFooter } = createModalLayout();
@@ -6466,16 +6580,10 @@ ${result.join(",\n")}
     populateModalContent(modalContent);
     populateModalFooter(modalFooter, updateModalContent);
     initializeLineNumbers();
-    const handleTextareaUpdate2 = () => {
-      updateLineNumbers();
-      updateStatistics();
-    };
-    outputTextarea.addEventListener("input", handleTextareaUpdate2);
+    outputTextarea.addEventListener("input", handleTextareaUpdate);
     outputTextarea.addEventListener("click", updateActiveLine);
     outputTextarea.addEventListener("keyup", updateActiveLine);
-    outputTextarea.addEventListener("scroll", () => {
-      lineNumbersDiv.scrollTop = outputTextarea.scrollTop;
-    });
+    outputTextarea.addEventListener("scroll", handleTextareaScroll);
     updateModalAddonsVisibility();
   }
   async function openModal() {
@@ -6604,549 +6712,6 @@ ${result.join(",\n")}
       outputTextarea.classList.toggle("word-wrap-disabled", !settings.enableWordWrap);
     }
   }
-  // src/shared/services/ai/contracts.js
-  var AI_ACTIONS = Object.freeze({
-    TRANSLATE: "translate",
-    KEEP: "keep",
-    REMOVE: "remove",
-    REVIEW: "review"
-  });
-  var AI_TRANSLATION_TYPES = Object.freeze({
-    TEXT: "text",
-    REGEX: "regex"
-  });
-  var AI_CANDIDATE_STATUS = Object.freeze({
-    PENDING: "pending",
-    IN_FLIGHT: "inflight",
-    TRANSLATED: "translated",
-    KEEP: "keep",
-    REMOVED: "removed",
-    REVIEW: "review",
-    FAILED: "failed"
-  });
-  var AI_PROCESSING_MODES = Object.freeze({
-    AUTO: "auto",
-    MANUAL: "manual"
-  });
-  var AI_TARGET_LANGUAGES = Object.freeze({
-    SIMPLIFIED_CHINESE: "zh-CN",
-    TRADITIONAL_CHINESE: "zh-TW"
-  });
-  var AI_RESPONSE_MODES = Object.freeze({
-    JSON: "json-mode",
-    PROMPT_JSON: "prompt-json"
-  });
-  var AI_SETTINGS_VERSION = 4;
-  var DEFAULT_DEEPSEEK_PROVIDER = Object.freeze({
-    id: "deepseek",
-    name: "DeepSeek",
-    apiUrl: "https://api.deepseek.com/chat/completions",
-    model: "deepseek-v4-flash",
-    protocol: "openai-chat-completions",
-    responseMode: AI_RESPONSE_MODES.JSON
-  });
-  var AI_DEFAULT_SETTINGS = Object.freeze({
-    version: AI_SETTINGS_VERSION,
-    enabled: true,
-    processingMode: AI_PROCESSING_MODES.MANUAL,
-    targetLanguage: AI_TARGET_LANGUAGES.SIMPLIFIED_CHINESE,
-    confidenceThreshold: 0.85,
-    includeRegexRuleComments: false,
-    activeProviderId: DEFAULT_DEEPSEEK_PROVIDER.id,
-    providers: [DEFAULT_DEEPSEEK_PROVIDER],
-    requestTimeoutMs: 45e3,
-    batch: {
-      maxItems: 200,
-      maxCharacters: 6e4,
-      maxEstimatedOutputTokens: 32768,
-      debounceMs: 1200
-    },
-    budget: {
-      maxRequestsPerSession: 100,
-      maxCharactersPerSession: 2e5,
-      maxEstimatedTokensPerDay: 1e5
-    }
-  });
-  var ALLOWED_TARGETS = new Set(Object.values(AI_TARGET_LANGUAGES));
-  var ALLOWED_PROCESSING_MODES = new Set(Object.values(AI_PROCESSING_MODES));
-  var ALLOWED_RESPONSE_MODES = new Set(Object.values(AI_RESPONSE_MODES));
-  function clampNumber(value, fallback, min, max) {
-    const parsed = Number(value);
-    if (!Number.isFinite(parsed)) return fallback;
-    return Math.min(max, Math.max(min, parsed));
-  }
-  function normalizeProvider(provider, index = 0) {
-    const fallback = index === 0 ? DEFAULT_DEEPSEEK_PROVIDER : {
-      id: `custom-${index}`,
-      name: `Provider ${index + 1}`,
-      apiUrl: "",
-      model: "",
-      protocol: "openai-chat-completions",
-      responseMode: AI_RESPONSE_MODES.PROMPT_JSON
-    };
-    const id = String(provider?.id || fallback.id).replace(/[^a-zA-Z0-9_-]/g, "-");
-    return {
-      id: id || fallback.id,
-      name: String(provider?.name || fallback.name).trim().slice(0, 80),
-      apiUrl: String(provider?.apiUrl ?? fallback.apiUrl).trim().slice(0, 2048),
-      model: String(provider?.model ?? fallback.model).trim().slice(0, 120),
-      protocol: "openai-chat-completions",
-      responseMode: ALLOWED_RESPONSE_MODES.has(provider?.responseMode) ? provider.responseMode : fallback.responseMode
-    };
-  }
-  function mergeAiSettings(value = {}) {
-    const providers = Array.isArray(value.providers) && value.providers.length > 0 ? value.providers.map(normalizeProvider) : [normalizeProvider(DEFAULT_DEEPSEEK_PROVIDER)];
-    const providerIds = new Set(providers.map((provider) => provider.id));
-    const activeProviderId = providerIds.has(value.activeProviderId) ? value.activeProviderId : providers[0].id;
-    const shouldMigrateBatchDefaults = Number(value.version || 1) < AI_SETTINGS_VERSION && (Number(value.batch?.maxItems) === 20 && Number(value.batch?.maxCharacters) === 6e3 || Number(value.batch?.maxItems) === 100 && Number(value.batch?.maxCharacters) === 3e4 || Number(value.batch?.maxItems) === 200 && Number(value.batch?.maxCharacters) === 6e4 && Number(value.batch?.maxEstimatedOutputTokens) === 15360);
-    const batchValue = shouldMigrateBatchDefaults ? {
-      ...value.batch,
-      maxItems: AI_DEFAULT_SETTINGS.batch.maxItems,
-      maxCharacters: AI_DEFAULT_SETTINGS.batch.maxCharacters,
-      maxEstimatedOutputTokens: AI_DEFAULT_SETTINGS.batch.maxEstimatedOutputTokens
-    } : value.batch;
-    return {
-      version: AI_SETTINGS_VERSION,
-      enabled: value.enabled !== false,
-      processingMode: ALLOWED_PROCESSING_MODES.has(value.processingMode) ? value.processingMode : AI_DEFAULT_SETTINGS.processingMode,
-      targetLanguage: ALLOWED_TARGETS.has(value.targetLanguage) ? value.targetLanguage : AI_DEFAULT_SETTINGS.targetLanguage,
-      confidenceThreshold: clampNumber(value.confidenceThreshold, AI_DEFAULT_SETTINGS.confidenceThreshold, 0.5, 1),
-      includeRegexRuleComments: value.includeRegexRuleComments === true,
-      activeProviderId,
-      providers,
-      requestTimeoutMs: clampNumber(value.requestTimeoutMs, AI_DEFAULT_SETTINGS.requestTimeoutMs, 5e3, 12e4),
-      batch: {
-        maxItems: Math.round(clampNumber(batchValue?.maxItems, AI_DEFAULT_SETTINGS.batch.maxItems, 1, 500)),
-        maxCharacters: Math.round(
-          clampNumber(batchValue?.maxCharacters, AI_DEFAULT_SETTINGS.batch.maxCharacters, 1e3, 2e5)
-        ),
-        maxEstimatedOutputTokens: Math.round(
-          clampNumber(
-            batchValue?.maxEstimatedOutputTokens,
-            AI_DEFAULT_SETTINGS.batch.maxEstimatedOutputTokens,
-            4096,
-            131072
-          )
-        ),
-        debounceMs: Math.round(
-          clampNumber(batchValue?.debounceMs, AI_DEFAULT_SETTINGS.batch.debounceMs, 200, 1e4)
-        )
-      },
-      budget: {
-        maxRequestsPerSession: Math.round(
-          clampNumber(
-            value.budget?.maxRequestsPerSession,
-            AI_DEFAULT_SETTINGS.budget.maxRequestsPerSession,
-            1,
-            500
-          )
-        ),
-        maxCharactersPerSession: Math.round(
-          clampNumber(
-            value.budget?.maxCharactersPerSession,
-            AI_DEFAULT_SETTINGS.budget.maxCharactersPerSession,
-            1e3,
-            1e6
-          )
-        ),
-        maxEstimatedTokensPerDay: Math.round(
-          clampNumber(
-            value.budget?.maxEstimatedTokensPerDay,
-            AI_DEFAULT_SETTINGS.budget.maxEstimatedTokensPerDay,
-            1e3,
-            1e7
-          )
-        )
-      }
-    };
-  }
-  function getActiveProvider(aiSettings) {
-    return aiSettings.providers.find((provider) => provider.id === aiSettings.activeProviderId) || aiSettings.providers[0] || null;
-  }
-  function hashText(value) {
-    let hash = 2166136261;
-    const input = String(value);
-    for (let index = 0; index < input.length; index += 1) {
-      hash ^= input.charCodeAt(index);
-      hash = Math.imul(hash, 16777619);
-    }
-    return (hash >>> 0).toString(36);
-  }
-  function createCandidateFingerprint(siteKey, targetLanguage, sourceText) {
-    const normalizedText = String(sourceText).normalize("NFC").replace(/\s+/g, " ").trim();
-    return hashText(`${siteKey}\0${targetLanguage}\0${normalizedText}`);
-  }
-  // src/features/settings/logic.js
-  var defaultSettings = {
-    // 语言设置, 'auto' 表示自动检测
-    language: "auto",
-    // 输出格式设置, 'array' 或 'object'
-    outputFormat: "array",
-    // 是否在输出中包含首尾符号（如数组的 [] 或对象的 {}）
-    includeArrayBrackets: true,
-    // 主题设置, 可选值: 'light', 'dark', 'system'
-    theme: "system",
-    // 是否显示悬浮按钮
-    showFab: true,
-    // 悬浮按钮位置
-    fabPosition: "bottom-right",
-    // 是否在标题栏显示扫描计数
-    showScanCount: true,
-    // 是否显示行号
-    showLineNumbers: true,
-    // 是否显示统计信息
-    showStatistics: true,
-    // 是否启用文本自动换行
-    enableWordWrap: false,
-    // 是否启用文本截断
-    enableTextTruncation: true,
-    // 文本截断长度
-    textTruncationLength: 5e4,
-    // 是否启用调试日志
-    enableDebugLogging: false,
-    // -- 以下为特定扫描模式的设置 --
-    // 在元素扫描中跨页时是否保留已暂存的数据
-    elementScan_persistData: true,
-    // 在动态扫描中跨页时是否保留已扫描的数据
-    sessionScan_persistData: true,
-    ai: AI_DEFAULT_SETTINGS,
-    // 过滤规则设置
-    filterRules: {
-      // 是否过滤纯数字和货币符号组成的字符串
-      numbers: true,
-      // 是否过滤纯中文字符串
-      chinese: true,
-      // 是否过滤包含中文字符的字符串
-      containsChinese: false,
-      // 是否过滤纯表情符号字符串
-      emojiOnly: true,
-      // 是否过滤纯符号字符串
-      symbols: true,
-      // 是否过滤特定术语列表中的字符串
-      termFilter: true,
-      // 是否过滤纯单个英文字母
-      singleLetter: false,
-      // 是否过滤单一重复字符
-      repeatingChars: true,
-      // 是否过滤文件路径
-      filePath: true,
-      // 是否过滤十六进制颜色代码
-      hexColor: true,
-      // 是否过滤邮件地址
-      email: true,
-      // 是否过滤 UUID
-      uuid: true,
-      // 是否过滤 Git Commit Hash
-      gitCommitHash: true,
-      // 是否过滤网址
-      websiteUrl: true,
-      // 是否过滤带单位的简写数字
-      shorthandNumber: true
-    }
-  };
-  function applySettings(newSettings, oldSettings) {
-    updateLoggerState(newSettings.enableDebugLogging);
-    applyTheme(newSettings.theme);
-    const languageChanged = oldSettings.language !== newSettings.language;
-    if (languageChanged) {
-      switchLanguage(newSettings.language);
-    }
-    const fabContainer = uiContainer.querySelector(".text-extractor-fab-container");
-    if (fabContainer) {
-      fabContainer.classList.toggle("fab-container-visible", newSettings.showFab);
-    }
-    updateModalAddonsVisibility();
-    setTimeout(() => {
-      fire("settingsSaved");
-      showNotification(t("notifications.settingsSaved"), { type: "success" });
-    }, 50);
-  }
-  function loadSettings() {
-    const savedSettings = getValue("script_settings", null);
-    if (savedSettings) {
-      try {
-        const parsedSettings = JSON.parse(savedSettings);
-        const mergedSettings = {
-          ...defaultSettings,
-          // 级别1：应用默认设置
-          ...parsedSettings,
-          // 级别2：用已保存的设置覆盖
-          filterRules: {
-            ...defaultSettings.filterRules,
-            // 级别3：应用默认的过滤规则
-            ...parsedSettings.filterRules || {}
-            // 级别4：用已保存的过滤规则覆盖
-          },
-          ai: mergeAiSettings(parsedSettings.ai)
-        };
-        return mergedSettings;
-      } catch (error) {
-        log(t("log.settings.parseError"), error);
-        return defaultSettings;
-      }
-    }
-    return defaultSettings;
-  }
-  function saveSettings(newSettings) {
-    if (typeof newSettings !== "object" || newSettings === null) {
-      log(t("log.settings.invalidObject"), newSettings);
-      return;
-    }
-    const oldSettings = loadSettings();
-    Object.keys(newSettings).forEach((key) => {
-      if (key !== "filterRules" && oldSettings[key] !== newSettings[key]) {
-        log(
-          t("log.settings.changed", {
-            key,
-            oldValue: oldSettings[key],
-            newValue: newSettings[key]
-          })
-        );
-      }
-    });
-    const oldRules = oldSettings.filterRules || {};
-    const newRules = newSettings.filterRules || {};
-    const allRuleKeys = /* @__PURE__ */ new Set([...Object.keys(oldRules), ...Object.keys(newRules)]);
-    allRuleKeys.forEach((key) => {
-      const oldValue = !!oldRules[key];
-      const newValue = !!newRules[key];
-      if (oldValue !== newValue) {
-        const statusKey = newValue ? "log.settings.filterRuleChanged.enabled" : "log.settings.filterRuleChanged.disabled";
-        log(t(statusKey, { key }));
-      }
-    });
-    const mergedSettings = {
-      ...oldSettings,
-      ...newSettings,
-      filterRules: {
-        ...oldSettings.filterRules,
-        ...newSettings.filterRules || {}
-      },
-      ai: mergeAiSettings(newSettings.ai || oldSettings.ai)
-    };
-    setValue("script_settings", JSON.stringify(mergedSettings));
-    return mergedSettings;
-  }
-  // src/shared/services/scanModeCoordinator.js
-  var SCAN_MODES = Object.freeze({
-    IDLE: "idle",
-    DYNAMIC: "normal-dynamic",
-    STATIC: "static",
-    ELEMENT: "element",
-    AI: "ai"
-  });
-  var activeMode = SCAN_MODES.IDLE;
-  var listeners = /* @__PURE__ */ new Set();
-  function notify(previousMode) {
-    listeners.forEach((listener) => {
-      listener({ activeMode, previousMode });
-    });
-  }
-  function canAcquireScanMode(mode) {
-    return activeMode === SCAN_MODES.IDLE || activeMode === mode;
-  }
-  function acquireScanMode(mode) {
-    if (!Object.values(SCAN_MODES).includes(mode) || mode === SCAN_MODES.IDLE) {
-      return false;
-    }
-    if (!canAcquireScanMode(mode)) {
-      return false;
-    }
-    if (activeMode === mode) {
-      return true;
-    }
-    const previousMode = activeMode;
-    activeMode = mode;
-    notify(previousMode);
-    return true;
-  }
-  function releaseScanMode(mode) {
-    if (activeMode !== mode) {
-      return false;
-    }
-    const previousMode = activeMode;
-    activeMode = SCAN_MODES.IDLE;
-    notify(previousMode);
-    return true;
-  }
-  function subscribeScanMode(listener) {
-    listeners.add(listener);
-    return () => listeners.delete(listener);
-  }
-  // src/shared/ui/components/fabExclusiveState.js
-  var snapshots = /* @__PURE__ */ new Map();
-  function applyAiExclusiveFabState(fabs, isAiActive, setDisabled, setTooltip) {
-    const ordinaryFabs = fabs.filter(Boolean);
-    if (isAiActive) {
-      ordinaryFabs.forEach((fab) => {
-        if (!snapshots.has(fab)) {
-          snapshots.set(fab, {
-            disabled: Boolean(fab.disabled),
-            hadDisabledClass: fab.classList.contains("fab-disabled"),
-            ariaDisabled: fab.getAttribute("aria-disabled"),
-            tabIndex: fab.tabIndex,
-            tooltipKey: fab.dataset.tooltipKey
-          });
-        }
-        setDisabled(fab, true, "tooltip.disabled.ai_scan_active");
-      });
-      return;
-    }
-    ordinaryFabs.forEach((fab) => {
-      const snapshot = snapshots.get(fab);
-      if (!snapshot) return;
-      fab.disabled = snapshot.disabled;
-      fab.classList.toggle("fab-disabled", snapshot.hadDisabledClass);
-      fab.setAttribute("aria-disabled", snapshot.ariaDisabled || String(snapshot.disabled));
-      fab.tabIndex = snapshot.tabIndex;
-      setTooltip(fab, snapshot.tooltipKey);
-      snapshots.delete(fab);
-    });
-  }
-  // src/shared/ui/components/fab.js
-  var summaryFab;
-  var aiFab;
-  var dynamicFab;
-  var staticFab;
-  var elementScanFab;
-  var unsubscribeScanMode = null;
-  function syncAiFabAvailability() {
-    if (!aiFab) return;
-    const enabled = loadSettings().ai?.enabled !== false;
-    aiFab.classList.toggle("fab-feature-hidden", !enabled);
-    aiFab.setAttribute("aria-hidden", String(!enabled));
-    const tooltipKey = !enabled ? "tooltip.ai_disabled" : aiFab.classList.contains("is-recording") ? "tooltip.ai_scan_stop" : "tooltip.ai_scan";
-    setFabDisabled(aiFab, !enabled, tooltipKey);
-  }
-  function createSingleFab(className, iconSVGString, titleKey, onClick) {
-    const fab = document.createElement("div");
-    fab.className = `text-extractor-fab ${className}`;
-    fab.setAttribute("role", "button");
-    fab.setAttribute("aria-disabled", "false");
-    fab.setAttribute("aria-label", t(titleKey));
-    fab.tabIndex = 0;
-    const svgIcon = createSVGFromString(iconSVGString);
-    if (svgIcon) {
-      fab.appendChild(svgIcon);
-    }
-    fab.dataset.tooltipKey = titleKey;
-    fab.addEventListener("click", (event) => {
-      if (fab.classList.contains("fab-disabled")) {
-        event.stopPropagation();
-        return;
-      }
-      onClick(event);
-    });
-    fab.addEventListener("keydown", (event) => {
-      if (event.key !== "Enter" && event.key !== " ") return;
-      event.preventDefault();
-      fab.click();
-    });
-    fab.addEventListener("mouseenter", () => {
-      showTooltip(fab, t(fab.dataset.tooltipKey));
-    });
-    fab.addEventListener("mouseleave", () => {
-      hideTooltip();
-    });
-    fab.style.pointerEvents = "auto";
-    return fab;
-  }
-  function createFab({ callbacks, isVisible }) {
-    const { onStaticExtract, onDynamicExtract, onSummary, onElementScan, onAiScan } = callbacks;
-    const fabContainer = document.createElement("div");
-    fabContainer.className = "text-extractor-fab-container";
-    summaryFab = createSingleFab("fab-summary", summaryIcon, "tooltip.summary", onSummary);
-    aiFab = createSingleFab("fab-ai-scan", aiIcon, "tooltip.ai_scan", () => onAiScan(aiFab));
-    dynamicFab = createSingleFab(
-      "fab-dynamic",
-      dynamicIcon,
-      "tooltip.dynamic_scan",
-      () => onDynamicExtract(dynamicFab)
-      // 将fab元素本身传回去，方便UI更新
-    );
-    staticFab = createSingleFab("fab-static", translateIcon, "tooltip.static_scan", onStaticExtract);
-    elementScanFab = createSingleFab(
-      "fab-element-scan",
-      elementScanIcon,
-      "tooltip.element_scan",
-      () => onElementScan(elementScanFab)
-    );
-    fabContainer.appendChild(summaryFab);
-    fabContainer.appendChild(aiFab);
-    fabContainer.appendChild(dynamicFab);
-    fabContainer.appendChild(staticFab);
-    fabContainer.appendChild(elementScanFab);
-    uiContainer.appendChild(fabContainer);
-    syncAiFabAvailability();
-    if (isVisible) {
-      setTimeout(() => {
-        fabContainer.classList.add("fab-container-visible");
-      }, appConfig.ui.fabAnimationDelay);
-    }
-    updateFabPosition(fabContainer);
-    on("settingsSaved", () => {
-      updateFabPosition(fabContainer);
-      syncAiFabAvailability();
-    });
-    on("languageChanged", () => {
-      [summaryFab, aiFab, dynamicFab, staticFab, elementScanFab].forEach((fab) => {
-        if (fab?.dataset.tooltipKey) fab.setAttribute("aria-label", t(fab.dataset.tooltipKey));
-      });
-    });
-    if (unsubscribeScanMode) unsubscribeScanMode();
-    unsubscribeScanMode = subscribeScanMode(({ activeMode: activeMode2 }) => {
-      applyAiExclusiveFabState(
-        [dynamicFab, staticFab, elementScanFab],
-        activeMode2 === SCAN_MODES.AI,
-        setFabDisabled,
-        updateFabTooltip
-      );
-    });
-  }
-  function setFabDisabled(fabElement, disabled, tooltipKey = null) {
-    if (!fabElement) return;
-    fabElement.disabled = Boolean(disabled);
-    fabElement.classList.toggle("fab-disabled", Boolean(disabled));
-    fabElement.setAttribute("aria-disabled", String(Boolean(disabled)));
-    fabElement.tabIndex = disabled ? -1 : 0;
-    if (tooltipKey) updateFabTooltip(fabElement, tooltipKey);
-  }
-  function updateFabPosition(fabContainer) {
-    if (!fabContainer) return;
-    const settings = loadSettings();
-    const position = settings.fabPosition || "bottom-right";
-    fabContainer.classList.remove(
-      "fab-position-bottom-right",
-      "fab-position-top-right",
-      "fab-position-bottom-left",
-      "fab-position-top-left"
-    );
-    fabContainer.classList.add(`fab-position-${position}`);
-  }
-  function setFabIcon(fabElement, iconSVGString) {
-    while (fabElement.firstChild) {
-      fabElement.removeChild(fabElement.firstChild);
-    }
-    const newIcon = createSVGFromString(iconSVGString);
-    if (newIcon) {
-      fabElement.appendChild(newIcon);
-    }
-  }
-  function getDynamicFab() {
-    return dynamicFab;
-  }
-  function getAiFab() {
-    return aiFab;
-  }
-  function getElementScanFab() {
-    return elementScanFab;
-  }
-  function updateFabTooltip(fabElement, newTooltipKey) {
-    if (fabElement) {
-      fabElement.dataset.tooltipKey = newTooltipKey;
-      fabElement.setAttribute("aria-label", t(newTooltipKey));
-    }
-  }
   // src/features/quick-scan/ui.js
   async function handleQuickScanClick() {
     if (!acquireScanMode(SCAN_MODES.STATIC)) {
@@ -7201,14 +6766,9 @@ ${result.join(",\n")}
       log(t("log.persistence.saveBlocked"));
       return;
     }
-    let sessionData = data;
-    if (mode === "session-scan") {
-      const textsMirror = getSessionTexts();
-      sessionData = Array.from(textsMirror);
-    }
     const sessionState = {
       mode,
-      data: sessionData,
+      data,
       timestamp: Date.now()
     };
     await setValue(SESSION_KEY, JSON.stringify(sessionState));
@@ -7318,6 +6878,9 @@ ${result.join(",\n")}
   var pendingDynamicRoots = /* @__PURE__ */ new Set();
   var pendingDynamicFlushTimeout = null;
   var pendingDynamicWaitStartedAt = null;
+  function saveSessionState() {
+    return saveActiveSession("session-scan", Array.from(sessionTextsMirror));
+  }
   function clearPendingDynamicRoots() {
     pendingDynamicRoots.clear();
     pendingDynamicWaitStartedAt = null;
@@ -7334,7 +6897,7 @@ ${result.join(",\n")}
         const count = getCountInFallback();
         if (onUpdateCallback) onUpdateCallback(count);
         updateScanCount(count, "session");
-        saveActiveSession("session-scan");
+        saveSessionState();
       }
     } else if (worker) {
       worker.postMessage({
@@ -7357,7 +6920,7 @@ ${result.join(",\n")}
     });
     clearPendingDynamicRoots();
     const textsBatch = [];
-    const ignoredSelectorString2 = appConfig.scanner.ignoredSelectors.join(", ");
+    const ignoredSelectorString2 = scannerConfig.ignoredSelectors.join(", ");
     roots.forEach((root) => {
       if (!root.isConnected || root.closest(ignoredSelectorString2)) return;
       const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
@@ -7410,7 +6973,7 @@ ${result.join(",\n")}
   });
   var handleMutations = (mutations) => {
     if (!isRecording) return;
-    const ignoredSelectorString2 = appConfig.scanner.ignoredSelectors.join(", ");
+    const ignoredSelectorString2 = scannerConfig.ignoredSelectors.join(", ");
     mutations.forEach((mutation) => {
       mutation.addedNodes.forEach((node) => {
         if (node.nodeType !== Node.ELEMENT_NODE || node.closest(ignoredSelectorString2)) return;
@@ -7428,7 +6991,7 @@ ${result.join(",\n")}
     currentCount = 0;
     sessionTextsMirror.clear();
     clearPendingDynamicRoots();
-    saveActiveSession("session-scan");
+    saveSessionState();
     if (useFallback) {
       clearInFallback();
       if (onUpdateCallback) onUpdateCallback(0);
@@ -7483,7 +7046,7 @@ ${result.join(",\n")}
         const count = getCountInFallback();
         if (onUpdateCallback) onUpdateCallback(count);
         updateScanCount(count, "session");
-        saveActiveSession("session-scan");
+        saveSessionState();
       }
     };
     if (workerAllowed) {
@@ -7542,14 +7105,14 @@ ${result.join(",\n")}
     if (autoSaveInterval) clearInterval(autoSaveInterval);
     autoSaveInterval = setInterval(() => {
       if (isRecording) {
-        saveActiveSession("session-scan");
+        saveSessionState();
       }
     }, AUTO_SAVE_INTERVAL_MS);
-    saveActiveSession("session-scan");
+    saveSessionState();
     log(t("log.sessionScan.domObserver.started"));
   };
   var handleSessionScanUnload = () => {
-    saveActiveSession("session-scan");
+    saveSessionState();
   };
   var stop = (onStopped) => {
     if (!isRecording) {
@@ -7591,9 +7154,6 @@ ${result.join(",\n")}
         onStopped(0);
       }
     }
-  };
-  var getSessionTexts = () => {
-    return sessionTextsMirror;
   };
   var requestSummary = (onReady) => {
     if (!onReady) return;
@@ -8457,10 +8017,280 @@ ${result.join(",\n")}
     container.appendChild(input);
     return container;
   }
+  // src/assets/icons/themeIcon.js
+  var themeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 32.5-156t88-127Q256-817 330-848.5T488-880q80 0 151 27.5t124.5 76q53.5 48.5 85 115T880-518q0 115-70 176.5T640-280h-74q-9 0-12.5 5t-3.5 11q0 12 15 34.5t15 51.5q0 50-27.5 74T480-80Zm0-400Zm-220 40q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120-160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm200 0q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120 160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17ZM480-160q9 0 14.5-5t5.5-13q0-14-15-33t-15-57q0-42 29-67t71-25h70q66 0 113-38.5T800-518q0-121-92.5-201.5T488-800q-136 0-232 93t-96 227q0 133 93.5 226.5T480-160Z"/></svg>`;
+  // src/assets/icons/languageIcon.js
+  var languageIcon_default = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-155.5t86-127Q252-817 325-848.5T480-880q83 0 155.5 31.5t127 86q54.5 54.5 86 127T880-480q0 82-31.5 155t-86 127.5q-54.5 54.5-127 86T480-80Zm0-82q26-36 45-75t31-83H404q12 44 31 83t45 75Zm-104-16q-18-33-31.5-68.5T322-320H204q29 50 72.5 87t99.5 55Zm208 0q56-18 99.5-55t72.5-87H638q-9 38-22.5 73.5T584-178ZM170-400h136q-3-20-4.5-39.5T300-480q0-21 1.5-40.5T306-560H170q-5 20-7.5 39.5T160-480q0 21 2.5 40.5T170-400Zm216 0h188q3-20 4.5-39.5T580-480q0-21-1.5-40.5T574-560H386q-3 20-4.5 39.5T380-480q0 21 1.5 40.5T386-400Zm268 0h136q5-20 7.5-39.5T800-480q0-21-2.5-40.5T790-560H654q3 20 4.5 39.5T660-480q0 21-1.5 40.5T654-400Zm-16-240h118q-29-50-72.5-87T584-782q18 33 31.5 68.5T638-640Zm-234 0h152q-12-44-31-83t-45-75q-26 36-45 75t-31 83Zm-200 0h118q9-38 22.5-73.5T376-782q-56 18-99.5 55T204-640Z"/></svg>`;
+  // src/assets/icons/formatIcon.js
+  var formatIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M600-160v-80h120v-480H600v-80h200v640H600Zm-440 0v-640h200v80H240v480h120v80H160Z"/></svg>`;
   // src/assets/icons/relatedSettingsIcon.js
   var relatedSettingsIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M320-280h320v-400H320v400Zm80-80v-240h160v240H400Zm40-120h80v-80h-80v80ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/></svg>`;
   // src/assets/icons/filterIcon.js
   var filterIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M440-160q-17 0-28.5-11.5T400-200v-240L168-736q-15-20-4.5-42t36.5-22h560q26 0 36.5 22t-4.5 42L560-440v240q0 17-11.5 28.5T520-160h-80Zm40-308 198-252H282l198 252Zm0 0Z"/></svg>`;
+  // src/assets/icons/lightThemeIcon.js
+  var lightThemeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm0 80q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Zm326-268Z"/></svg>`;
+  // src/assets/icons/darkThemeIcon.js
+  var darkThemeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Zm0-80q88 0 158-48.5T740-375q-20 5-40 8t-40 3q-123 0-209.5-86.5T364-660q0-20 3-40t8-40q-78 32-126.5 102T200-480q0 116 82 198t198 82Zm-10-270Z"/></svg>`;
+  // src/assets/icons/systemThemeIcon.js
+  var systemThemeIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M320-120v-80h80v-80H160q-33 0-56.5-23.5T80-360v-400q0-33 23.5-56.5T160-840h640q33 0 56.5 23.5T880-760v400q0 33-23.5 56.5T800-280H560v80h80v80H320ZM160-360h640v-400H160v400Zm0 0v-400 400Z"/></svg>`;
+  // src/features/settings/config.js
+  var selectSettingsDefinitions = [
+    {
+      id: "theme-select",
+      key: "theme",
+      label: "settings.theme",
+      type: "image-card-select",
+      icon: themeIcon,
+      options: [
+        { value: "light", label: "settings.themes.light", icon: lightThemeIcon },
+        { value: "dark", label: "settings.themes.dark", icon: darkThemeIcon },
+        { value: "system", label: "settings.themes.system", icon: systemThemeIcon }
+      ]
+    },
+    {
+      id: "format-select",
+      key: "outputFormat",
+      // Match defaultSettings
+      label: "settings.format",
+      type: "image-card-select",
+      icon: formatIcon,
+      options: [
+        { value: "array", label: "settings.formats.array", previewType: "code-array" },
+        { value: "object", label: "settings.formats.object", previewType: "code-object" },
+        { value: "csv", label: "settings.formats.csv", previewType: "code-csv" }
+      ]
+    },
+    {
+      id: "language-select",
+      key: "language",
+      label: "settings.language",
+      icon: languageIcon_default,
+      options: getAvailableLanguages().map((lang) => ({
+        ...lang,
+        label: lang.value === "auto" ? "settings.languages.auto" : `settings.languages.${lang.value}`
+      }))
+    }
+  ];
+  var outputSettingsDefinitions = [
+    {
+      id: "include-array-brackets",
+      key: "includeArrayBrackets",
+      label: "settings.output.include_brackets",
+      tooltip: {
+        titleIcon: infoIcon,
+        title: "settings.output.include_brackets",
+        text: "tooltip.output.include_brackets"
+      }
+    }
+  ];
+  var filterDefinitions = [
+    {
+      id: "filter-numbers",
+      key: "numbers",
+      label: "settings.filters.numbers",
+      tooltip: { titleIcon: infoIcon, title: "settings.filters.numbers", text: "tooltip.filters.numbers" }
+    },
+    {
+      id: "filter-chinese",
+      key: "chinese",
+      label: "settings.filters.chinese",
+      tooltip: { titleIcon: infoIcon, title: "settings.filters.chinese", text: "tooltip.filters.chinese" }
+    },
+    {
+      id: "filter-contains-chinese",
+      key: "containsChinese",
+      label: "settings.filters.contains_chinese",
+      tooltip: {
+        titleIcon: infoIcon,
+        title: "settings.filters.contains_chinese",
+        text: "tooltip.filters.contains_chinese"
+      }
+    },
+    {
+      id: "filter-emoji-only",
+      key: "emojiOnly",
+      label: "settings.filters.emoji_only",
+      tooltip: { titleIcon: infoIcon, title: "settings.filters.emoji_only", text: "tooltip.filters.emoji_only" }
+    },
+    {
+      id: "filter-symbols",
+      key: "symbols",
+      label: "settings.filters.symbols",
+      tooltip: { titleIcon: infoIcon, title: "settings.filters.symbols", text: "tooltip.filters.symbols" }
+    },
+    {
+      id: "filter-term",
+      key: "termFilter",
+      label: "settings.filters.term",
+      tooltip: { titleIcon: infoIcon, title: "settings.filters.term", text: "tooltip.filters.term" }
+    },
+    {
+      id: "filter-single-letter",
+      key: "singleLetter",
+      label: "settings.filters.single_letter",
+      tooltip: {
+        titleIcon: infoIcon,
+        title: "settings.filters.single_letter",
+        text: "tooltip.filters.single_letter"
+      }
+    },
+    {
+      id: "filter-repeating-chars",
+      key: "repeatingChars",
+      label: "settings.filters.repeating_chars",
+      tooltip: {
+        titleIcon: infoIcon,
+        title: "settings.filters.repeating_chars",
+        text: "tooltip.filters.repeating_chars"
+      }
+    },
+    {
+      id: "filter-file-paths",
+      key: "filePath",
+      label: "settings.filters.file_paths",
+      tooltip: { titleIcon: infoIcon, title: "settings.filters.file_paths", text: "tooltip.filters.file_paths" }
+    },
+    {
+      id: "filter-hex-colors",
+      key: "hexColor",
+      label: "settings.filters.hex_color_codes",
+      tooltip: {
+        titleIcon: infoIcon,
+        title: "settings.filters.hex_color_codes",
+        text: "tooltip.filters.hex_color_codes"
+      }
+    },
+    {
+      id: "filter-emails",
+      key: "email",
+      label: "settings.filters.email_addresses",
+      tooltip: {
+        titleIcon: infoIcon,
+        title: "settings.filters.email_addresses",
+        text: "tooltip.filters.email_addresses"
+      }
+    },
+    {
+      id: "filter-uuids",
+      key: "uuid",
+      label: "settings.filters.uuids",
+      tooltip: { titleIcon: infoIcon, title: "settings.filters.uuids", text: "tooltip.filters.uuids" }
+    },
+    {
+      id: "filter-git-hashes",
+      key: "gitCommitHash",
+      label: "settings.filters.git_commit_hashes",
+      tooltip: {
+        titleIcon: infoIcon,
+        title: "settings.filters.git_commit_hashes",
+        text: "tooltip.filters.git_commit_hashes"
+      }
+    },
+    {
+      id: "filter-website-urls",
+      key: "websiteUrl",
+      label: "settings.filters.website_urls",
+      tooltip: {
+        titleIcon: infoIcon,
+        title: "settings.filters.website_urls_title",
+        text: "tooltip.filters.website_urls"
+      }
+    },
+    {
+      id: "filter-shorthand-numbers",
+      key: "shorthandNumber",
+      label: "settings.filters.shorthand_numbers",
+      tooltip: {
+        titleIcon: infoIcon,
+        title: "settings.filters.shorthand_numbers_title",
+        text: "tooltip.filters.shorthand_numbers"
+      }
+    }
+  ];
+  var relatedSettingsDefinitions = [
+    {
+      id: "show-fab",
+      key: "showFab",
+      label: "settings.display.show_fab",
+      tooltip: { titleIcon: infoIcon, title: "settings.display.show_fab", text: "tooltip.display.show_fab" }
+    },
+    {
+      id: "fab-position",
+      key: "fabPosition",
+      label: "settings.display.fab_position",
+      type: "select",
+      options: [
+        { value: "bottom-right", label: "settings.display.fab_positions.bottom_right" },
+        { value: "top-right", label: "settings.display.fab_positions.top_right" },
+        { value: "bottom-left", label: "settings.display.fab_positions.bottom_left" },
+        { value: "top-left", label: "settings.display.fab_positions.top_left" }
+      ]
+    },
+    {
+      id: "show-scan-count",
+      key: "showScanCount",
+      label: "settings.display.show_scan_count",
+      tooltip: {
+        titleIcon: infoIcon,
+        title: "settings.display.show_scan_count",
+        text: "tooltip.display.show_scan_count"
+      }
+    },
+    {
+      id: "show-line-numbers",
+      key: "showLineNumbers",
+      label: "settings.display.show_line_numbers",
+      tooltip: {
+        titleIcon: infoIcon,
+        title: "settings.display.show_line_numbers",
+        text: "tooltip.display.show_line_numbers"
+      }
+    },
+    {
+      id: "show-statistics",
+      key: "showStatistics",
+      label: "settings.display.show_statistics",
+      tooltip: {
+        titleIcon: infoIcon,
+        title: "settings.display.show_statistics",
+        text: "tooltip.display.show_statistics"
+      }
+    },
+    {
+      id: "enable-word-wrap",
+      key: "enableWordWrap",
+      label: "settings.display.enable_word_wrap",
+      tooltip: {
+        titleIcon: infoIcon,
+        title: "settings.display.enable_word_wrap",
+        text: "tooltip.display.enable_word_wrap"
+      }
+    },
+    {
+      id: "enable-text-truncation",
+      key: "enableTextTruncation",
+      label: "settings.display.text_truncation_limit",
+      linkedNumeric: {
+        id: "text-truncation-length",
+        key: "textTruncationLength"
+      },
+      tooltip: {
+        titleIcon: infoIcon,
+        title: "settings.display.text_truncation_limit",
+        text: "tooltip.display.text_truncation_limit"
+      }
+    },
+    {
+      id: "enable-debug-logging",
+      key: "enableDebugLogging",
+      label: "settings.advanced.enable_debug_logging",
+      tooltip: {
+        titleIcon: infoIcon,
+        title: "settings.advanced.enable_debug_logging",
+        text: "tooltip.advanced.enable_debug_logging"
+      }
+    }
+  ];
   // src/assets/icons/githubIcon.js
   var githubIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>';
   // src/features/settings/panelBuilder.js
@@ -8652,7 +8482,8 @@ ${result.join(",\n")}
     container.className = "about-tab-container";
     const logoContainer = document.createElement("div");
     logoContainer.className = "about-logo";
-    const iconSrc = typeof GM_info !== "undefined" && GM_info.script && GM_info.script.icon ? GM_info.script.icon : "";
+    const scriptInfo = getScriptInfo();
+    const iconSrc = scriptInfo?.script?.icon || "";
     if (iconSrc) {
       const img = document.createElement("img");
       img.src = iconSrc;
@@ -8662,7 +8493,7 @@ ${result.join(",\n")}
       img.style.objectFit = "contain";
       logoContainer.appendChild(img);
     } else {
-      logoContainer.innerHTML = translateIcon;
+      logoContainer.innerHTML = createTrustedHTML(translateIcon);
     }
     container.appendChild(logoContainer);
     const title = document.createElement("h2");
@@ -8671,7 +8502,7 @@ ${result.join(",\n")}
     container.appendChild(title);
     const version = document.createElement("p");
     version.className = "about-version";
-    const verNum = typeof GM_info !== "undefined" && GM_info.script ? GM_info.script.version : "1.0.0";
+    const verNum = scriptInfo?.script?.version || "1.0.0";
     version.textContent = `v${verNum}`;
     container.appendChild(version);
     const btnContainer = document.createElement("div");
@@ -8730,6 +8561,55 @@ ${result.join(",\n")}
   }
   // src/assets/icons/saveIcon.js
   var saveIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z"/></svg>`;
+  // src/shared/i18n/management/languageManager.js
+  var SETTINGS_MENU_ID_KEY = "settings_menu_command_id";
+  async function updateSettingsMenu(onClick) {
+    const oldCommandId = await getValue(SETTINGS_MENU_ID_KEY, null);
+    if (oldCommandId) {
+      unregisterMenuCommand(oldCommandId);
+    }
+    const menuText = t("settings.panel.title");
+    const newCommandId = registerMenuCommand(menuText, onClick);
+    await setValue(SETTINGS_MENU_ID_KEY, newCommandId);
+  }
+  function isLanguageSupported(langCode) {
+    return supportedLanguages.some((lang) => lang.code === langCode);
+  }
+  function initializeLanguage(settings) {
+    let langToSet = "en";
+    let targetLang = "auto";
+    if (settings && settings.language) {
+      targetLang = settings.language;
+    }
+    if (targetLang === "auto") {
+      const browserLang = navigator.language;
+      if (isLanguageSupported(browserLang) && browserLang !== "auto") {
+        langToSet = browserLang;
+      } else {
+        if (browserLang.startsWith("zh")) {
+          if (browserLang.toLowerCase().includes("tw") || browserLang.toLowerCase().includes("hk") || browserLang.toLowerCase().includes("hant")) {
+            langToSet = "zh-TW";
+          } else {
+            langToSet = "zh-CN";
+          }
+        } else if (browserLang.startsWith("en")) {
+          langToSet = "en";
+        }
+      }
+    } else {
+      if (isLanguageSupported(targetLang)) {
+        langToSet = targetLang;
+      }
+    }
+    setLanguage(langToSet);
+  }
+  function switchLanguage(langCode) {
+    if (isLanguageSupported(langCode)) {
+      const settings = loadSettings();
+      settings.language = langCode;
+      initializeLanguage(settings);
+    }
+  }
   // src/shared/services/ai/storage.js
   var SESSION_KEY2 = "qing_pagescanner_ai_session_v1";
   var CACHE_KEY = "qing_pagescanner_ai_cache_v1";
@@ -9957,6 +9837,142 @@ ${entries.join("\n")}
     const finishedAt = typeof performance !== "undefined" ? performance.now() : Date.now();
     return { latencyMs: Math.round(finishedAt - startedAt), translation: decision.translation };
   }
+  // src/shared/ui/components/formField.js
+  function createFieldShell(id, labelText, control) {
+    const container = document.createElement("div");
+    container.className = "tc-field-group";
+    const label = document.createElement("label");
+    label.className = "tc-field-label";
+    label.htmlFor = id;
+    label.textContent = labelText;
+    container.append(label, control);
+    return container;
+  }
+  function createTextField(id, labelText, value = "", options = {}) {
+    const { type = "text", rows, autocomplete, spellcheck = false } = options;
+    const input = rows ? document.createElement("textarea") : document.createElement("input");
+    input.id = id;
+    input.className = "tc-text-input";
+    input.value = value ?? "";
+    input.spellcheck = spellcheck;
+    if (rows) {
+      input.rows = rows;
+      input.classList.add("tc-text-input-multiline");
+    } else {
+      input.type = type;
+    }
+    if (autocomplete) {
+      input.autocomplete = autocomplete;
+    }
+    return { element: createFieldShell(id, labelText, input), input };
+  }
+  function createCustomSelectField(id, labelText, options, value) {
+    const mount = document.createElement("div");
+    mount.className = "tc-custom-select-mount";
+    const select = new CustomSelect(mount, options, value);
+    select.trigger.id = id;
+    return { element: createFieldShell(id, labelText, mount), select };
+  }
+  // src/shared/ui/components/toggleSwitch.js
+  function createToggleSwitch(id, title, description, checked = false) {
+    const input = document.createElement("input");
+    input.id = id;
+    input.className = "tc-toggle-input";
+    input.type = "checkbox";
+    input.setAttribute("role", "switch");
+    input.setAttribute("aria-describedby", `${id}-description`);
+    input.checked = Boolean(checked);
+    const titleElement = document.createElement("span");
+    titleElement.className = "tc-toggle-title";
+    titleElement.textContent = title;
+    const descriptionElement = document.createElement("span");
+    descriptionElement.id = `${id}-description`;
+    descriptionElement.className = "tc-toggle-description";
+    descriptionElement.textContent = description;
+    const copy = document.createElement("span");
+    copy.className = "tc-toggle-copy";
+    copy.append(titleElement, descriptionElement);
+    const control = document.createElement("span");
+    control.className = "tc-toggle-control";
+    control.setAttribute("aria-hidden", "true");
+    const element = document.createElement("label");
+    element.className = "tc-toggle-setting";
+    element.append(copy, input, control);
+    return { element, input };
+  }
+  // src/assets/icons/addIcon.js
+  var addIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>`;
+  // src/assets/icons/budgetIcon.js
+  var budgetIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M200-160q-33 0-56.5-23.5T120-240v-480q0-33 23.5-56.5T200-800h560q33 0 56.5 23.5T840-720v80H200v400h560v-80h80v80q0 33-23.5 56.5T760-160H200Zm360-160q-33 0-56.5-23.5T480-400v-160q0-33 23.5-56.5T560-640h280q33 0 56.5 23.5T920-560v160q0 33-23.5 56.5T840-320H560Zm280-80v-160H560v160h280Zm-640-80v240-480 240Z"/></svg>`;
+  // src/assets/icons/deleteIcon.js
+  var deleteIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>`;
+  // src/assets/icons/jsonIcon.js
+  var jsonIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M190-360h70q17 0 28.5-11.5T300-400v-200h-60v190h-40v-50h-50v60q0 17 11.5 28.5T190-360Zm177 0h60q17 0 28.5-11.5T467-400v-60q0-17-11.5-28.5T427-500h-50v-50h40v20h50v-30q0-17-11.5-28.5T427-600h-60q-17 0-28.5 11.5T327-560v60q0 17 11.5 28.5T367-460h50v50h-40v-20h-50v30q0 17 11.5 28.5T367-360Zm176-60v-120h40v120h-40Zm-10 60h60q17 0 28.5-11.5T633-400v-160q0-17-11.5-28.5T593-600h-60q-17 0-28.5 11.5T493-560v160q0 17 11.5 28.5T533-360Zm127 0h50v-105l40 105h50v-240h-50v105l-40-105h-50v240ZM120-160q-33 0-56.5-23.5T40-240v-480q0-33 23.5-56.5T120-800h720q33 0 56.5 23.5T920-720v480q0 33-23.5 56.5T840-160H120Zm0-80h720v-480H120v480Zm0 0v-480 480Z"/></svg>`;
+  // src/assets/icons/resetIcon.js
+  var resetIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q88 0 169 41t135 111v-152h80v320H544v-80h196q-42-70-110-115t-150-45q-117 0-198.5 81.5T200-480q0 117 81.5 198.5T480-200q94 0 168.5-57.5T752-408h82q-31 125-129.5 206.5T480-120Z"/></svg>`;
+  // src/assets/icons/speedIcon.js
+  var speedIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M418-340q24 24 62 23.5t56-27.5l224-336-336 224q-27 18-28 55.5t22 60.5Zm62-460q57 0 109 16.5t96 47.5l-70 47q-31-16-65.5-23.5T480-720q-133 0-226.5 93.5T160-400q0 42 11.5 81t32.5 74l-66 44q-28-46-43-96.5T80-400q0-83 31.5-155.5t85.5-126q54-53.5 127-85.5T480-800Zm278 124q42 53 62 120.5T840-420q0 57-14.5 109T784-211l-66-44q20-35 31-74t11-81q0-40-10-78t-30-72l38-116ZM480-120q-63 0-120.5-20.5T256-199l66-44q35 20 75 31.5t83 11.5q43 0 83-11.5t75-31.5l66 44q-46 38-103.5 58.5T480-120Z"/></svg>`;
+  // src/features/settings/aiPanel/helpers.js
+  function localizedOptions(options) {
+    return options.map(({ labelKey, ...option }) => ({ ...option, label: t(labelKey) }));
+  }
+  function createSelectField(id, labelKey, options, value) {
+    return createCustomSelectField(id, t(labelKey), localizedOptions(options), value);
+  }
+  function createNumberField(id, labelKey, value, options) {
+    const element = createNumericInput(id, t(labelKey), value, options);
+    element.classList.add("ai-number-field");
+    return { element, input: element.querySelector('input[type="number"]') };
+  }
+  function createSection(titleKey, icon) {
+    const section = document.createElement("section");
+    section.className = "ai-settings-section";
+    const header = document.createElement("header");
+    header.className = "ai-section-header setting-title-container";
+    header.appendChild(createIconTitle(icon, t(titleKey)));
+    const body = document.createElement("div");
+    body.className = "ai-section-body";
+    section.append(header, body);
+    return { section, body };
+  }
+  function numberValue(input, fallback) {
+    const value = Number(input.value);
+    return Number.isFinite(value) ? value : fallback;
+  }
+  // src/shared/ui/theme.js
+  function initTheme() {
+    const { theme } = loadSettings();
+    applyTheme(theme);
+  }
+  function applyTheme(theme) {
+    let finalTheme = theme;
+    if (theme === "system") {
+      finalTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    }
+    uiContainer.host.setAttribute("data-theme", finalTheme);
+  }
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+    const { theme } = loadSettings();
+    if (theme === "system") {
+      applyTheme("system");
+    }
+  });
+  // src/features/settings/logic.js
+  function applySettings(newSettings, oldSettings) {
+    updateLoggerState(newSettings.enableDebugLogging);
+    applyTheme(newSettings.theme);
+    const languageChanged = oldSettings.language !== newSettings.language;
+    if (languageChanged) {
+      switchLanguage(newSettings.language);
+    }
+    const fabContainer = uiContainer.querySelector(".text-extractor-fab-container");
+    if (fabContainer) {
+      fabContainer.classList.toggle("fab-container-visible", newSettings.showFab);
+    }
+    updateModalAddonsVisibility();
+    fire("settingsSaved");
+    showNotification(t("notifications.settingsSaved"), { type: "success" });
+  }
   // src/shared/services/ai/siteStyleStore.js
   var STYLE_KEY = "qing_pagescanner_ai_site_styles_v1";
   var MAX_PROFILES = 200;
@@ -10082,108 +10098,239 @@ ${entries.join("\n")}
       destroy: () => controller2.abort()
     };
   }
-  // src/shared/ui/components/formField.js
-  function createFieldShell(id, labelText, control) {
-    const container = document.createElement("div");
-    container.className = "tc-field-group";
-    const label = document.createElement("label");
-    label.className = "tc-field-label";
-    label.htmlFor = id;
-    label.textContent = labelText;
-    container.append(label, control);
-    return container;
-  }
-  function createTextField(id, labelText, value = "", options = {}) {
-    const { type = "text", rows, autocomplete, spellcheck = false } = options;
-    const input = rows ? document.createElement("textarea") : document.createElement("input");
-    input.id = id;
-    input.className = "tc-text-input";
-    input.value = value ?? "";
-    input.spellcheck = spellcheck;
-    if (rows) {
-      input.rows = rows;
-      input.classList.add("tc-text-input-multiline");
-    } else {
-      input.type = type;
+  // src/features/settings/aiPanel/siteStylesSection.js
+  function mountSiteStylesSection({ settings, target, registerSelect, registerButton, signal, isDestroyed }) {
+    const styles = createSection("settings.ai.siteStyles", themeIcon);
+    const stylesDescription = createIconTitle(infoIcon, t("settings.ai.siteStylesDescription"));
+    stylesDescription.classList.add("settings-info-notice", "ai-style-description");
+    stylesDescription.setAttribute("role", "note");
+    stylesDescription.firstElementChild?.classList.add("settings-info-notice-icon");
+    const styleToolbar = document.createElement("div");
+    styleToolbar.className = "ai-style-toolbar";
+    const styleSearch = createTextField("ai-style-search", t("settings.ai.searchStyles"), "", { type: "search" });
+    const styleSort = registerSelect(
+      createSelectField(
+        "ai-style-sort",
+        "settings.ai.sortStyles",
+        [
+          { value: "recent", labelKey: "settings.ai.sortRecent" },
+          { value: "origin", labelKey: "settings.ai.sortOrigin" }
+        ],
+        "recent"
+      )
+    );
+    styleToolbar.append(styleSearch.element, styleSort.element);
+    const styleWorkspace = document.createElement("div");
+    styleWorkspace.className = "ai-style-workspace";
+    const styleLibrary = document.createElement("div");
+    styleLibrary.className = "ai-style-library";
+    const styleLibraryTitle = document.createElement("div");
+    styleLibraryTitle.className = "ai-subsection-title";
+    styleLibraryTitle.appendChild(createIconTitle(themeIcon, t("settings.ai.styleLibrary")));
+    const styleList = document.createElement("div");
+    styleList.className = "ai-style-list";
+    const styleEditor = document.createElement("div");
+    styleEditor.className = "ai-style-editor";
+    const styleEditorTitle = document.createElement("div");
+    styleEditorTitle.className = "ai-subsection-title";
+    styleEditorTitle.appendChild(createIconTitle(settingsIcon, t("settings.ai.styleEditor")));
+    const origin = createTextField("ai-style-origin", t("settings.ai.styleOrigin"), window.location.origin);
+    const pathPrefix = createTextField("ai-style-path", t("settings.ai.stylePath"), "/");
+    const styleTarget = registerSelect(
+      createSelectField(
+        "ai-style-target",
+        "settings.ai.targetLanguage",
+        [
+          { value: "zh-CN", labelKey: "settings.ai.simplifiedChinese", icon: languageIcon_default },
+          { value: "zh-TW", labelKey: "settings.ai.traditionalChinese", icon: languageIcon_default }
+        ],
+        settings.targetLanguage
+      )
+    );
+    const tone = createTextField("ai-style-tone", t("settings.ai.styleTone"), t("settings.ai.defaultStyleTone"));
+    const glossary = createTextField("ai-style-glossary", t("settings.ai.styleGlossary"), "", { rows: 4 });
+    const punctuation = createTextField(
+      "ai-style-punctuation",
+      t("settings.ai.stylePunctuation"),
+      t("settings.ai.defaultStylePunctuation")
+    );
+    const instructions = createTextField("ai-style-instructions", t("settings.ai.styleInstructions"), "", {
+      rows: 4
+    });
+    tone.element.classList.add("ai-field-wide");
+    glossary.element.classList.add("ai-field-wide");
+    instructions.element.classList.add("ai-field-wide");
+    const styleForm = document.createElement("div");
+    styleForm.className = "ai-form-grid ai-style-form";
+    styleForm.append(tone.element, glossary.element, instructions.element);
+    const advancedStyleSettings = createDisclosure({
+      id: "ai-style-advanced",
+      title: t("settings.ai.advancedStyleSettings"),
+      icon: settingsIcon
+    });
+    advancedStyleSettings.element.classList.add("ai-style-advanced");
+    const advancedStyleForm = document.createElement("div");
+    advancedStyleForm.className = "ai-form-grid ai-style-advanced-form";
+    advancedStyleForm.append(origin.element, pathPrefix.element, styleTarget.element, punctuation.element);
+    advancedStyleSettings.content.appendChild(advancedStyleForm);
+    let styleProfiles = [];
+    let editingStyleId = null;
+    function updateStyleActionState() {
+      deleteStyleBtn.disabled = !editingStyleId;
+      clearStylesBtn.disabled = styleProfiles.length === 0;
     }
-    if (autocomplete) {
-      input.autocomplete = autocomplete;
+    function resetStyleForm() {
+      editingStyleId = null;
+      origin.input.value = window.location.origin;
+      pathPrefix.input.value = "/";
+      styleTarget.select.setValue(target.select.getValue());
+      tone.input.value = t("settings.ai.defaultStyleTone");
+      glossary.input.value = "";
+      punctuation.input.value = t("settings.ai.defaultStylePunctuation");
+      instructions.input.value = "";
+      advancedStyleSettings.setExpanded(false);
+      updateStyleActionState();
+      renderStyles();
     }
-    return { element: createFieldShell(id, labelText, input), input };
+    function editStyle(profile) {
+      editingStyleId = profile.id;
+      origin.input.value = profile.origin;
+      pathPrefix.input.value = profile.pathPrefix;
+      styleTarget.select.setValue(profile.targetLanguage);
+      tone.input.value = profile.tone;
+      glossary.input.value = profile.glossary;
+      punctuation.input.value = profile.punctuation;
+      instructions.input.value = profile.instructions;
+      advancedStyleSettings.setExpanded(
+        profile.origin !== window.location.origin || profile.pathPrefix !== "/" || profile.targetLanguage !== target.select.getValue() || profile.punctuation !== t("settings.ai.defaultStylePunctuation")
+      );
+      updateStyleActionState();
+      renderStyles();
+    }
+    function renderStyles() {
+      const query = styleSearch.input.value.trim().toLocaleLowerCase();
+      const visible = styleProfiles.filter(
+        (profile) => !query || [profile.origin, profile.pathPrefix, profile.tone, profile.glossary].some(
+          (value) => String(value).toLocaleLowerCase().includes(query)
+        )
+      );
+      visible.sort(
+        styleSort.select.getValue() === "origin" ? (left, right) => left.origin.localeCompare(right.origin) : (left, right) => right.updatedAt - left.updatedAt
+      );
+      styleList.replaceChildren();
+      visible.forEach((profile) => {
+        const row = document.createElement("button");
+        row.type = "button";
+        row.className = "ai-style-row";
+        row.classList.toggle("is-active", profile.id === editingStyleId);
+        row.setAttribute("aria-pressed", String(profile.id === editingStyleId));
+        row.appendChild(createIconTitle(themeIcon, `${profile.origin}${profile.pathPrefix}`));
+        const language = document.createElement("span");
+        language.className = "ai-style-row-meta";
+        language.textContent = profile.targetLanguage;
+        row.appendChild(language);
+        row.addEventListener("click", () => editStyle(profile), { signal });
+        styleList.appendChild(row);
+      });
+      if (visible.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "ai-style-empty";
+        empty.textContent = t("settings.ai.noStyles");
+        styleList.appendChild(empty);
+      }
+      updateStyleActionState();
+    }
+    styleSearch.input.addEventListener("input", renderStyles, { signal });
+    styleSort.select.container.addEventListener("custom-select-change", renderStyles, { signal });
+    const saveStyleBtn = registerButton(
+      createButton({
+        textKey: "settings.ai.saveStyle",
+        icon: saveIcon,
+        onClick: async () => {
+          if (!origin.input.value.trim()) {
+            showNotification(t("notifications.aiStyleOriginRequired"), { type: "error" });
+            return;
+          }
+          try {
+            await upsertStyleProfile({
+              id: editingStyleId,
+              origin: origin.input.value,
+              pathPrefix: pathPrefix.input.value,
+              targetLanguage: styleTarget.select.getValue(),
+              tone: tone.input.value,
+              glossary: glossary.input.value,
+              punctuation: punctuation.input.value,
+              instructions: instructions.input.value
+            });
+          } catch {
+            showNotification(t("notifications.aiStyleOriginRequired"), { type: "error" });
+            return;
+          }
+          styleProfiles = await loadStyleProfiles();
+          resetStyleForm();
+          showNotification(t("notifications.aiStyleSaved"), { type: "success" });
+        }
+      })
+    );
+    const resetStyleBtn = registerButton(
+      createButton({
+        textKey: "settings.ai.useCurrentSite",
+        icon: resetIcon,
+        onClick: resetStyleForm
+      })
+    );
+    const deleteStyleBtn = registerButton(
+      createButton({
+        textKey: "common.delete",
+        icon: deleteIcon,
+        disabled: true,
+        onClick: async () => {
+          if (!editingStyleId) return;
+          const confirmed = await showConfirmationModal(t("confirmation.deleteStyle"), warningIcon);
+          if (!confirmed) return;
+          await deleteStyleProfile(editingStyleId);
+          styleProfiles = await loadStyleProfiles();
+          resetStyleForm();
+        }
+      })
+    );
+    const clearStylesBtn = registerButton(
+      createButton({
+        textKey: "settings.ai.clearStyles",
+        icon: clearIcon,
+        disabled: true,
+        onClick: async () => {
+          const confirmed = await showConfirmationModal(t("confirmation.clearStyles"), warningIcon);
+          if (!confirmed) return;
+          await clearStyleProfiles();
+          styleProfiles = [];
+          resetStyleForm();
+        }
+      })
+    );
+    const styleLibraryFooter = document.createElement("div");
+    styleLibraryFooter.className = "ai-style-library-footer";
+    styleLibraryFooter.appendChild(clearStylesBtn);
+    styleLibrary.append(styleLibraryTitle, styleList, styleLibraryFooter);
+    const styleActions = document.createElement("div");
+    styleActions.className = "ai-action-footer ai-style-actions";
+    styleActions.append(resetStyleBtn, deleteStyleBtn, saveStyleBtn);
+    styleEditor.append(styleEditorTitle, styleForm, advancedStyleSettings.element, styleActions);
+    styleWorkspace.append(styleLibrary, styleEditor);
+    styles.body.append(stylesDescription, styleToolbar, styleWorkspace);
+    void loadStyleProfiles().then((profiles) => {
+      if (isDestroyed()) return;
+      styleProfiles = profiles;
+      renderStyles();
+    });
+    return {
+      element: styles.section,
+      destroy() {
+        advancedStyleSettings.destroy();
+      }
+    };
   }
-  function createCustomSelectField(id, labelText, options, value) {
-    const mount = document.createElement("div");
-    mount.className = "tc-custom-select-mount";
-    const select = new CustomSelect(mount, options, value);
-    select.trigger.id = id;
-    return { element: createFieldShell(id, labelText, mount), select };
-  }
-  // src/shared/ui/components/toggleSwitch.js
-  function createToggleSwitch(id, title, description, checked = false) {
-    const input = document.createElement("input");
-    input.id = id;
-    input.className = "tc-toggle-input";
-    input.type = "checkbox";
-    input.setAttribute("role", "switch");
-    input.setAttribute("aria-describedby", `${id}-description`);
-    input.checked = Boolean(checked);
-    const titleElement = document.createElement("span");
-    titleElement.className = "tc-toggle-title";
-    titleElement.textContent = title;
-    const descriptionElement = document.createElement("span");
-    descriptionElement.id = `${id}-description`;
-    descriptionElement.className = "tc-toggle-description";
-    descriptionElement.textContent = description;
-    const copy = document.createElement("span");
-    copy.className = "tc-toggle-copy";
-    copy.append(titleElement, descriptionElement);
-    const control = document.createElement("span");
-    control.className = "tc-toggle-control";
-    control.setAttribute("aria-hidden", "true");
-    const element = document.createElement("label");
-    element.className = "tc-toggle-setting";
-    element.append(copy, input, control);
-    return { element, input };
-  }
-  // src/assets/icons/addIcon.js
-  var addIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>`;
-  // src/assets/icons/budgetIcon.js
-  var budgetIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M200-160q-33 0-56.5-23.5T120-240v-480q0-33 23.5-56.5T200-800h560q33 0 56.5 23.5T840-720v80H200v400h560v-80h80v80q0 33-23.5 56.5T760-160H200Zm360-160q-33 0-56.5-23.5T480-400v-160q0-33 23.5-56.5T560-640h280q33 0 56.5 23.5T920-560v160q0 33-23.5 56.5T840-320H560Zm280-80v-160H560v160h280Zm-640-80v240-480 240Z"/></svg>`;
-  // src/assets/icons/deleteIcon.js
-  var deleteIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>`;
-  // src/assets/icons/jsonIcon.js
-  var jsonIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M190-360h70q17 0 28.5-11.5T300-400v-200h-60v190h-40v-50h-50v60q0 17 11.5 28.5T190-360Zm177 0h60q17 0 28.5-11.5T467-400v-60q0-17-11.5-28.5T427-500h-50v-50h40v20h50v-30q0-17-11.5-28.5T427-600h-60q-17 0-28.5 11.5T327-560v60q0 17 11.5 28.5T367-460h50v50h-40v-20h-50v30q0 17 11.5 28.5T367-360Zm176-60v-120h40v120h-40Zm-10 60h60q17 0 28.5-11.5T633-400v-160q0-17-11.5-28.5T593-600h-60q-17 0-28.5 11.5T493-560v160q0 17 11.5 28.5T533-360Zm127 0h50v-105l40 105h50v-240h-50v105l-40-105h-50v240ZM120-160q-33 0-56.5-23.5T40-240v-480q0-33 23.5-56.5T120-800h720q33 0 56.5 23.5T920-720v480q0 33-23.5 56.5T840-160H120Zm0-80h720v-480H120v480Zm0 0v-480 480Z"/></svg>`;
-  // src/assets/icons/resetIcon.js
-  var resetIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q88 0 169 41t135 111v-152h80v320H544v-80h196q-42-70-110-115t-150-45q-117 0-198.5 81.5T200-480q0 117 81.5 198.5T480-200q94 0 168.5-57.5T752-408h82q-31 125-129.5 206.5T480-120Z"/></svg>`;
-  // src/assets/icons/speedIcon.js
-  var speedIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M418-340q24 24 62 23.5t56-27.5l224-336-336 224q-27 18-28 55.5t22 60.5Zm62-460q57 0 109 16.5t96 47.5l-70 47q-31-16-65.5-23.5T480-720q-133 0-226.5 93.5T160-400q0 42 11.5 81t32.5 74l-66 44q-28-46-43-96.5T80-400q0-83 31.5-155.5t85.5-126q54-53.5 127-85.5T480-800Zm278 124q42 53 62 120.5T840-420q0 57-14.5 109T784-211l-66-44q20-35 31-74t11-81q0-40-10-78t-30-72l38-116ZM480-120q-63 0-120.5-20.5T256-199l66-44q35 20 75 31.5t83 11.5q43 0 83-11.5t75-31.5l66 44q-46 38-103.5 58.5T480-120Z"/></svg>`;
   // src/features/settings/aiPanel.js
-  function localizedOptions(options) {
-    return options.map(({ labelKey, ...option }) => ({ ...option, label: t(labelKey) }));
-  }
-  function createSelectField(id, labelKey, options, value) {
-    return createCustomSelectField(id, t(labelKey), localizedOptions(options), value);
-  }
-  function createNumberField(id, labelKey, value, options) {
-    const element = createNumericInput(id, t(labelKey), value, options);
-    element.classList.add("ai-number-field");
-    return { element, input: element.querySelector('input[type="number"]') };
-  }
-  function createSection(titleKey, icon) {
-    const section = document.createElement("section");
-    section.className = "ai-settings-section";
-    const header = document.createElement("header");
-    header.className = "ai-section-header setting-title-container";
-    header.appendChild(createIconTitle(icon, t(titleKey)));
-    const body = document.createElement("div");
-    body.className = "ai-section-body";
-    section.append(header, body);
-    return { section, body };
-  }
-  function numberValue(input, fallback) {
-    const value = Number(input.value);
-    return Number.isFinite(value) ? value : fallback;
-  }
   function mountAiSettingsPanel(container, currentAiSettings) {
     const settings = mergeAiSettings(currentAiSettings);
     let providers = settings.providers.map((provider2) => ({ ...provider2 }));
@@ -10198,6 +10345,10 @@ ${entries.join("\n")}
     const registerSelect = (field) => {
       selects.push(field.select);
       return field;
+    };
+    const registerButton = (button) => {
+      buttons.push(button);
+      return button;
     };
     const aiEnabled = createToggleSwitch(
       "ai-feature-enabled",
@@ -10550,226 +10701,18 @@ ${entries.join("\n")}
     budgetFooter.appendChild(resetUsageBtn);
     budgetFooter.appendChild(restoreDefaultsBtn);
     budget.body.append(budgetGrid, budgetFooter);
-    const styles = createSection("settings.ai.siteStyles", themeIcon);
-    const stylesDescription = createIconTitle(infoIcon, t("settings.ai.siteStylesDescription"));
-    stylesDescription.classList.add("settings-info-notice", "ai-style-description");
-    stylesDescription.setAttribute("role", "note");
-    stylesDescription.firstElementChild?.classList.add("settings-info-notice-icon");
-    const styleToolbar = document.createElement("div");
-    styleToolbar.className = "ai-style-toolbar";
-    const styleSearch = createTextField("ai-style-search", t("settings.ai.searchStyles"), "", { type: "search" });
-    const styleSort = registerSelect(
-      createSelectField(
-        "ai-style-sort",
-        "settings.ai.sortStyles",
-        [
-          { value: "recent", labelKey: "settings.ai.sortRecent" },
-          { value: "origin", labelKey: "settings.ai.sortOrigin" }
-        ],
-        "recent"
-      )
-    );
-    styleToolbar.append(styleSearch.element, styleSort.element);
-    const styleWorkspace = document.createElement("div");
-    styleWorkspace.className = "ai-style-workspace";
-    const styleLibrary = document.createElement("div");
-    styleLibrary.className = "ai-style-library";
-    const styleLibraryTitle = document.createElement("div");
-    styleLibraryTitle.className = "ai-subsection-title";
-    styleLibraryTitle.appendChild(createIconTitle(themeIcon, t("settings.ai.styleLibrary")));
-    const styleList = document.createElement("div");
-    styleList.className = "ai-style-list";
-    const styleEditor = document.createElement("div");
-    styleEditor.className = "ai-style-editor";
-    const styleEditorTitle = document.createElement("div");
-    styleEditorTitle.className = "ai-subsection-title";
-    styleEditorTitle.appendChild(createIconTitle(settingsIcon, t("settings.ai.styleEditor")));
-    const origin = createTextField("ai-style-origin", t("settings.ai.styleOrigin"), window.location.origin);
-    const pathPrefix = createTextField("ai-style-path", t("settings.ai.stylePath"), "/");
-    const styleTarget = registerSelect(
-      createSelectField(
-        "ai-style-target",
-        "settings.ai.targetLanguage",
-        [
-          { value: "zh-CN", labelKey: "settings.ai.simplifiedChinese", icon: languageIcon_default },
-          { value: "zh-TW", labelKey: "settings.ai.traditionalChinese", icon: languageIcon_default }
-        ],
-        settings.targetLanguage
-      )
-    );
-    const tone = createTextField("ai-style-tone", t("settings.ai.styleTone"), t("settings.ai.defaultStyleTone"));
-    const glossary = createTextField("ai-style-glossary", t("settings.ai.styleGlossary"), "", { rows: 4 });
-    const punctuation = createTextField(
-      "ai-style-punctuation",
-      t("settings.ai.stylePunctuation"),
-      t("settings.ai.defaultStylePunctuation")
-    );
-    const instructions = createTextField("ai-style-instructions", t("settings.ai.styleInstructions"), "", {
-      rows: 4
+    const siteStyles = mountSiteStylesSection({
+      settings,
+      target,
+      registerSelect,
+      registerButton,
+      signal,
+      isDestroyed: () => isDestroyed
     });
-    tone.element.classList.add("ai-field-wide");
-    glossary.element.classList.add("ai-field-wide");
-    instructions.element.classList.add("ai-field-wide");
-    const styleForm = document.createElement("div");
-    styleForm.className = "ai-form-grid ai-style-form";
-    styleForm.append(tone.element, glossary.element, instructions.element);
-    const advancedStyleSettings = createDisclosure({
-      id: "ai-style-advanced",
-      title: t("settings.ai.advancedStyleSettings"),
-      icon: settingsIcon
-    });
-    advancedStyleSettings.element.classList.add("ai-style-advanced");
-    const advancedStyleForm = document.createElement("div");
-    advancedStyleForm.className = "ai-form-grid ai-style-advanced-form";
-    advancedStyleForm.append(origin.element, pathPrefix.element, styleTarget.element, punctuation.element);
-    advancedStyleSettings.content.appendChild(advancedStyleForm);
-    let styleProfiles = [];
-    let editingStyleId = null;
-    function updateStyleActionState() {
-      deleteStyleBtn.disabled = !editingStyleId;
-      clearStylesBtn.disabled = styleProfiles.length === 0;
-    }
-    function resetStyleForm() {
-      editingStyleId = null;
-      origin.input.value = window.location.origin;
-      pathPrefix.input.value = "/";
-      styleTarget.select.setValue(target.select.getValue());
-      tone.input.value = t("settings.ai.defaultStyleTone");
-      glossary.input.value = "";
-      punctuation.input.value = t("settings.ai.defaultStylePunctuation");
-      instructions.input.value = "";
-      advancedStyleSettings.setExpanded(false);
-      updateStyleActionState();
-      renderStyles();
-    }
-    function editStyle(profile) {
-      editingStyleId = profile.id;
-      origin.input.value = profile.origin;
-      pathPrefix.input.value = profile.pathPrefix;
-      styleTarget.select.setValue(profile.targetLanguage);
-      tone.input.value = profile.tone;
-      glossary.input.value = profile.glossary;
-      punctuation.input.value = profile.punctuation;
-      instructions.input.value = profile.instructions;
-      advancedStyleSettings.setExpanded(
-        profile.origin !== window.location.origin || profile.pathPrefix !== "/" || profile.targetLanguage !== target.select.getValue() || profile.punctuation !== t("settings.ai.defaultStylePunctuation")
-      );
-      updateStyleActionState();
-      renderStyles();
-    }
-    function renderStyles() {
-      const query = styleSearch.input.value.trim().toLocaleLowerCase();
-      const visible = styleProfiles.filter(
-        (profile) => !query || [profile.origin, profile.pathPrefix, profile.tone, profile.glossary].some(
-          (value) => String(value).toLocaleLowerCase().includes(query)
-        )
-      );
-      visible.sort(
-        styleSort.select.getValue() === "origin" ? (left, right) => left.origin.localeCompare(right.origin) : (left, right) => right.updatedAt - left.updatedAt
-      );
-      styleList.replaceChildren();
-      visible.forEach((profile) => {
-        const row = document.createElement("button");
-        row.type = "button";
-        row.className = "ai-style-row";
-        row.classList.toggle("is-active", profile.id === editingStyleId);
-        row.setAttribute("aria-pressed", String(profile.id === editingStyleId));
-        row.appendChild(createIconTitle(themeIcon, `${profile.origin}${profile.pathPrefix}`));
-        const language = document.createElement("span");
-        language.className = "ai-style-row-meta";
-        language.textContent = profile.targetLanguage;
-        row.appendChild(language);
-        row.addEventListener("click", () => editStyle(profile));
-        styleList.appendChild(row);
-      });
-      if (visible.length === 0) {
-        const empty = document.createElement("div");
-        empty.className = "ai-style-empty";
-        empty.textContent = t("settings.ai.noStyles");
-        styleList.appendChild(empty);
-      }
-      updateStyleActionState();
-    }
-    styleSearch.input.addEventListener("input", renderStyles, { signal });
-    styleSort.select.container.addEventListener("custom-select-change", renderStyles, { signal });
-    const saveStyleBtn = createButton({
-      textKey: "settings.ai.saveStyle",
-      icon: saveIcon,
-      onClick: async () => {
-        if (!origin.input.value.trim()) {
-          showNotification(t("notifications.aiStyleOriginRequired"), { type: "error" });
-          return;
-        }
-        try {
-          await upsertStyleProfile({
-            id: editingStyleId,
-            origin: origin.input.value,
-            pathPrefix: pathPrefix.input.value,
-            targetLanguage: styleTarget.select.getValue(),
-            tone: tone.input.value,
-            glossary: glossary.input.value,
-            punctuation: punctuation.input.value,
-            instructions: instructions.input.value
-          });
-        } catch {
-          showNotification(t("notifications.aiStyleOriginRequired"), { type: "error" });
-          return;
-        }
-        styleProfiles = await loadStyleProfiles();
-        resetStyleForm();
-        showNotification(t("notifications.aiStyleSaved"), { type: "success" });
-      }
-    });
-    const resetStyleBtn = createButton({
-      textKey: "settings.ai.useCurrentSite",
-      icon: resetIcon,
-      onClick: resetStyleForm
-    });
-    const deleteStyleBtn = createButton({
-      textKey: "common.delete",
-      icon: deleteIcon,
-      disabled: true,
-      onClick: async () => {
-        if (!editingStyleId) return;
-        const confirmed = await showConfirmationModal(t("confirmation.deleteStyle"), warningIcon);
-        if (!confirmed) return;
-        await deleteStyleProfile(editingStyleId);
-        styleProfiles = await loadStyleProfiles();
-        resetStyleForm();
-      }
-    });
-    const clearStylesBtn = createButton({
-      textKey: "settings.ai.clearStyles",
-      icon: clearIcon,
-      disabled: true,
-      onClick: async () => {
-        const confirmed = await showConfirmationModal(t("confirmation.clearStyles"), warningIcon);
-        if (!confirmed) return;
-        await clearStyleProfiles();
-        styleProfiles = [];
-        resetStyleForm();
-      }
-    });
-    buttons.push(saveStyleBtn, resetStyleBtn, deleteStyleBtn, clearStylesBtn);
-    const styleLibraryFooter = document.createElement("div");
-    styleLibraryFooter.className = "ai-style-library-footer";
-    styleLibraryFooter.appendChild(clearStylesBtn);
-    styleLibrary.append(styleLibraryTitle, styleList, styleLibraryFooter);
-    const styleActions = document.createElement("div");
-    styleActions.className = "ai-action-footer ai-style-actions";
-    styleActions.append(resetStyleBtn, deleteStyleBtn, saveStyleBtn);
-    styleEditor.append(styleEditorTitle, styleForm, advancedStyleSettings.element, styleActions);
-    styleWorkspace.append(styleLibrary, styleEditor);
-    styles.body.append(stylesDescription, styleToolbar, styleWorkspace);
-    aiControls.append(general.section, provider.section, budget.section, styles.section);
+    aiControls.append(general.section, provider.section, budget.section, siteStyles.element);
     container.append(aiEnabled.element, aiBetaNotice, aiControls);
     syncAiControlsAvailability();
     void renderProviderForm();
-    void loadStyleProfiles().then((profiles) => {
-      if (isDestroyed) return;
-      styleProfiles = profiles;
-      renderStyles();
-    });
     return {
       async getSettings() {
         syncProviderFromForm();
@@ -10804,7 +10747,7 @@ ${entries.join("\n")}
         lifecycle.abort();
         selects.forEach((select) => select.destroy());
         buttons.forEach((button) => button.destroy?.());
-        advancedStyleSettings.destroy();
+        siteStyles.destroy();
       }
     };
   }
@@ -11037,9 +10980,12 @@ ${entries.join("\n")}
     let contextualPanel = document.createElement("div");
     contextualPanel.className = "settings-panel-overlay";
     contextualPanel.tabIndex = -1;
+    let isClosing = false;
+    let saveButton = null;
     const panelModal = buildContextualPanelDOM({ titleKey, icon, definitions, settings });
     contextualPanel.appendChild(panelModal);
     uiContainer.appendChild(contextualPanel);
+    const closeButton = contextualPanel.querySelector(".settings-panel-close");
     const handleKeyDown3 = (event) => {
       if (event.key === "Escape") {
         event.stopPropagation();
@@ -11047,14 +10993,17 @@ ${entries.join("\n")}
       }
     };
     const closePanel = () => {
-      if (contextualPanel) {
-        document.removeEventListener("keydown", handleKeyDown3, true);
-        contextualPanel.classList.remove("is-visible");
-        setTimeout(() => {
-          contextualPanel.remove();
-          contextualPanel = null;
-        }, 300);
-      }
+      if (!contextualPanel || isClosing) return;
+      isClosing = true;
+      const panelToRemove = contextualPanel;
+      document.removeEventListener("keydown", handleKeyDown3, true);
+      closeButton?.removeEventListener("click", closePanel);
+      saveButton?.destroy();
+      panelToRemove.classList.remove("is-visible");
+      setTimeout(() => {
+        panelToRemove.remove();
+        if (contextualPanel === panelToRemove) contextualPanel = null;
+      }, 300);
     };
     const handleSave2 = () => {
       const newSettings = {};
@@ -11070,14 +11019,14 @@ ${entries.join("\n")}
       closePanel();
     };
     const footer = contextualPanel.querySelector(".settings-panel-footer");
-    const saveButton = createButton({
+    saveButton = createButton({
       id: "save-contextual-settings-btn",
       textKey: "common.save",
       icon: saveIcon,
       onClick: handleSave2
     });
     footer.appendChild(saveButton);
-    contextualPanel.querySelector(".settings-panel-close").addEventListener("click", closePanel);
+    closeButton?.addEventListener("click", closePanel);
     document.addEventListener("keydown", handleKeyDown3, true);
     setTimeout(() => {
       if (contextualPanel) {
@@ -11371,7 +11320,7 @@ ${entries.join("\n")}
         const travelStart = this.padding + this.tickWidth / 2;
         const percentage = this.max > this.min ? (this.value - this.min) / (this.max - this.min) : 0;
         const thumbCenterTarget = travelStart + percentage * travelRange;
-        let newLeft = thumbCenterTarget - thumbWidth / 2;
+        const newLeft = thumbCenterTarget - thumbWidth / 2;
         this.thumb.style.left = `${newLeft}px`;
       });
     }
@@ -11542,14 +11491,18 @@ ${entries.join("\n")}
     toolbar = document.createElement("div");
     toolbar.id = "element-scan-toolbar";
     toolbar.style.pointerEvents = "auto";
-    const staticContent = `
-        <div id="element-scan-toolbar-title">${t("common.processingElement")}</div>
-        <div id="element-scan-toolbar-tag" title="${t("tooltip.dragHint")}">${getElementSelector(elementPath2[0])}</div>
-        <div id="element-scan-slider-container"></div>
-        <div id="element-scan-toolbar-actions"></div>
-    `;
-    toolbar.innerHTML = createTrustedHTML(staticContent);
-    const sliderContainer = toolbar.querySelector("#element-scan-slider-container");
+    const toolbarTitle = document.createElement("div");
+    toolbarTitle.id = "element-scan-toolbar-title";
+    toolbarTitle.textContent = t("common.processingElement");
+    const toolbarTag = document.createElement("div");
+    toolbarTag.id = "element-scan-toolbar-tag";
+    toolbarTag.title = t("tooltip.dragHint");
+    toolbarTag.textContent = getElementSelector(elementPath2[0]);
+    const sliderContainer = document.createElement("div");
+    sliderContainer.id = "element-scan-slider-container";
+    const actionsContainer = document.createElement("div");
+    actionsContainer.id = "element-scan-toolbar-actions";
+    toolbar.append(toolbarTitle, toolbarTag, sliderContainer, actionsContainer);
     sliderInstance = new CustomSlider({
       min: 0,
       max: elementPath2.length - 1,
@@ -11561,7 +11514,6 @@ ${entries.join("\n")}
     });
     sliderContainer.appendChild(sliderInstance.getElement());
     uiContainer.appendChild(toolbar);
-    const actionsContainer = toolbar.querySelector("#element-scan-toolbar-actions");
     reselectBtn = createButton({
       id: "element-scan-toolbar-reselect",
       textKey: "common.reselect",
@@ -11802,6 +11754,70 @@ ${entries.join("\n")}
       if (scanContainer) scanContainer.classList.remove("is-locked");
     }, 500);
   }
+  // src/features/element-scan/textFilter.js
+  var workerInstance = null;
+  var fallbackNotificationShown = false;
+  function runFallback(texts, settings) {
+    log(t("log.elementScan.worker.fallback"), "info");
+    if (!fallbackNotificationShown) {
+      showNotification(t("notifications.cspWorkerWarning"), { type: "info", duration: 5e3 });
+      fallbackNotificationShown = true;
+    }
+    const logFiltered = (text, reason) => {
+      log(t("log.textProcessor.filtered", { text, reason }));
+    };
+    return filterAndNormalizeTexts(texts, settings.filterRules, settings.enableDebugLogging, logFiltered);
+  }
+  function resetTextFilterState() {
+    fallbackNotificationShown = false;
+  }
+  function terminateTextFilterWorker() {
+    if (!workerInstance) return;
+    workerInstance.terminate();
+    workerInstance = null;
+    log(t("log.elementScan.worker.terminated"));
+  }
+  async function filterTextsWithWorker(texts, settings) {
+    const workerAllowed = await isWorkerAllowed();
+    if (!workerAllowed) {
+      log(t("log.elementScan.worker.cspBlocked"), "warn");
+      return runFallback(texts, settings);
+    }
+    return new Promise((resolve) => {
+      try {
+        if (!workerInstance) {
+          log(t("log.elementScan.worker.initializing"), "info");
+          workerInstance = new Worker(trustedWorkerUrl);
+        }
+        workerInstance.onmessage = (event) => {
+          const { type, payload } = event.data;
+          if (type === "textsFiltered") resolve(payload.texts);
+        };
+        workerInstance.onerror = () => {
+          log(t("log.elementScan.worker.runtimeError"), "warn");
+          workerInstance.terminate();
+          workerInstance = null;
+          resolve(runFallback(texts, settings));
+        };
+        workerInstance.postMessage({
+          type: "filter-texts",
+          payload: {
+            texts,
+            filterRules: settings.filterRules,
+            enableDebugLogging: settings.enableDebugLogging,
+            translations: {
+              workerLogPrefix: t("log.elementScan.worker.logPrefix"),
+              textFiltered: t("log.textProcessor.filtered"),
+              filterReasons: getTranslationObject("filterReasons")
+            }
+          }
+        });
+      } catch (error) {
+        log(t("log.elementScan.worker.initSyncError", { error: error.message }), "error");
+        resolve(runFallback(texts, settings));
+      }
+    });
+  }
   // src/features/element-scan/logic.js
   var isActive = false;
   var isPaused2 = false;
@@ -11810,13 +11826,11 @@ ${entries.join("\n")}
   var elementPath = [];
   var stagedTexts = /* @__PURE__ */ new Set();
   var shouldResumeAfterModalClose = false;
-  var fallbackNotificationShown = false;
   var isHighlightUpdateQueued = false;
   var autoSaveInterval2 = null;
   var AUTO_SAVE_INTERVAL_MS2 = 5e3;
   var scrollableParents = [];
   var scrollUpdateQueued = false;
-  var workerInstance = null;
   var iframeObserver = null;
   var reselectTimer = null;
   on("clearElementScan", () => {
@@ -11843,7 +11857,7 @@ ${entries.join("\n")}
         const started = startElementScan(elementScanFab2, { silent: true });
         if (!started) return;
         updateStagedCount();
-        saveSessionState();
+        saveSessionState2();
         if (settings.elementScan_persistData) {
           showNotification(t("notifications.elementScanResumed"), { type: "info" });
         } else {
@@ -11923,7 +11937,7 @@ ${entries.join("\n")}
     }
     isActive = true;
     isAdjusting = false;
-    fallbackNotificationShown = false;
+    resetTextFilterState();
     fabElement.classList.add("is-recording");
     updateFabTooltip(fabElement, "scan.stopSession");
     showTopCenterUI2();
@@ -11942,7 +11956,7 @@ ${entries.join("\n")}
     if (autoSaveInterval2) clearInterval(autoSaveInterval2);
     autoSaveInterval2 = setInterval(() => {
       if (isElementScanActive()) {
-        saveSessionState();
+        saveSessionState2();
       }
     }, AUTO_SAVE_INTERVAL_MS2);
     log(t("log.elementScan.listenersAdded"));
@@ -12039,12 +12053,12 @@ ${entries.join("\n")}
       }
     });
   }
-  function saveSessionState() {
+  function saveSessionState2() {
     saveActiveSession("element-scan", Array.from(stagedTexts));
   }
   function handleElementScanUnload() {
     if (isElementScanActive()) {
-      saveSessionState();
+      saveSessionState2();
     }
   }
   function stopElementScan(fabElement) {
@@ -12086,22 +12100,15 @@ ${entries.join("\n")}
       clearTimeout(reselectTimer);
       reselectTimer = null;
     }
-    terminateWorker();
+    terminateTextFilterWorker();
     elementPath = [];
     currentTarget = null;
     stagedTexts.clear();
-    fallbackNotificationShown = false;
+    resetTextFilterState();
     updateStagedCount();
     log(t("log.elementScan.stateReset"));
     uiLifecycle.release();
     releaseScanMode(SCAN_MODES.ELEMENT);
-  }
-  function terminateWorker() {
-    if (workerInstance) {
-      workerInstance.terminate();
-      workerInstance = null;
-      log(t("log.elementScan.worker.terminated"));
-    }
   }
   function pauseElementScan() {
     if (!isActive || isPaused2) return;
@@ -12132,70 +12139,6 @@ ${entries.join("\n")}
     removeScrollListeners();
     addListenersToDocument(document);
     addListenersToIframes();
-  }
-  function filterTextsWithWorker(texts, settings) {
-    return new Promise(async (resolve) => {
-      const handleFallback = () => {
-        log(t("log.elementScan.worker.fallback"), "info");
-        if (!fallbackNotificationShown) {
-          showNotification(t("notifications.cspWorkerWarning"), { type: "info", duration: 5e3 });
-          fallbackNotificationShown = true;
-        }
-        const logFiltered = (text, reason) => {
-          log(t("log.textProcessor.filtered", { text, reason }));
-        };
-        const filteredTexts = filterAndNormalizeTexts(
-          texts,
-          settings.filterRules,
-          settings.enableDebugLogging,
-          logFiltered
-        );
-        resolve(filteredTexts);
-      };
-      const workerAllowed = await isWorkerAllowed();
-      if (!workerAllowed) {
-        log(t("log.elementScan.worker.cspBlocked"), "warn");
-        handleFallback();
-        return;
-      }
-      try {
-        if (!workerInstance) {
-          log(t("log.elementScan.worker.initializing"), "info");
-          workerInstance = new Worker(trustedWorkerUrl);
-          workerInstance.onerror = () => {
-            log(t("log.elementScan.worker.error"), "error");
-          };
-        }
-        workerInstance.onmessage = (event) => {
-          const { type, payload } = event.data;
-          if (type === "textsFiltered") {
-            resolve(payload.texts);
-          }
-        };
-        workerInstance.onerror = () => {
-          log(t("log.elementScan.worker.runtimeError"), "warn");
-          workerInstance.terminate();
-          workerInstance = null;
-          handleFallback();
-        };
-        workerInstance.postMessage({
-          type: "filter-texts",
-          payload: {
-            texts,
-            filterRules: settings.filterRules,
-            enableDebugLogging: settings.enableDebugLogging,
-            translations: {
-              workerLogPrefix: t("log.elementScan.worker.logPrefix"),
-              textFiltered: t("log.textProcessor.filtered"),
-              filterReasons: getTranslationObject("filterReasons")
-            }
-          }
-        });
-      } catch (initError) {
-        log(t("log.elementScan.worker.initSyncError", { error: initError.message }), "error");
-        handleFallback();
-      }
-    });
   }
   async function stageCurrentElement() {
     if (!currentTarget) return;
@@ -12234,12 +12177,12 @@ ${entries.join("\n")}
   function updateStagedCount() {
     fire("stagedCountChanged", stagedTexts.size);
     if (isActive) {
-      saveSessionState();
+      saveSessionState2();
     }
   }
   function scheduledHighlightUpdate() {
     if (currentTarget) {
-      let offset = { x: 0, y: 0 };
+      const offset = { x: 0, y: 0 };
       const doc = currentTarget.ownerDocument;
       if (doc && doc !== document && doc._frameElement) {
         const rect = doc._frameElement.getBoundingClientRect();
@@ -12325,7 +12268,7 @@ ${entries.join("\n")}
     }
     elementPath.push(body);
     log(simpleTemplate(t("log.elementScan.pathBuilt"), { depth: elementPath.length }));
-    let offset = { x: 0, y: 0 };
+    const offset = { x: 0, y: 0 };
     if (ownerDoc !== document && ownerDoc._frameElement) {
       const rect = ownerDoc._frameElement.getBoundingClientRect();
       offset.x = rect.left;
@@ -12340,7 +12283,7 @@ ${entries.join("\n")}
       currentTarget = targetElement;
       const tagName = targetElement.tagName.toLowerCase();
       log(simpleTemplate(t("log.elementScan.adjustingLevel"), { level, tagName }));
-      let offset = { x: 0, y: 0 };
+      const offset = { x: 0, y: 0 };
       const doc = targetElement.ownerDocument;
       if (doc !== document && doc._frameElement) {
         const rect = doc._frameElement.getBoundingClientRect();
@@ -12574,11 +12517,11 @@ ${entries.join("\n")}
       addCandidate(walker.currentNode.parentElement, walker.currentNode.nodeValue);
     }
   }
-  function extractAiCandidates(root, { filterRules: filterRules2, targetLanguage, scannerConfig, siteKey = window.location.origin }) {
+  function extractAiCandidates(root, { filterRules: filterRules2, targetLanguage, scannerConfig: scannerConfig2, siteKey = window.location.origin }) {
     const candidates2 = /* @__PURE__ */ new Map();
     const isDocumentRoot = root?.nodeType === Node.DOCUMENT_NODE;
-    const attributesToExtract = Array.isArray(scannerConfig?.attributesToExtract) ? scannerConfig.attributesToExtract : [];
-    const ignoredSelectors = Array.isArray(scannerConfig?.ignoredSelectors) ? scannerConfig.ignoredSelectors : [];
+    const attributesToExtract = Array.isArray(scannerConfig2?.attributesToExtract) ? scannerConfig2.attributesToExtract : [];
+    const ignoredSelectors = Array.isArray(scannerConfig2?.ignoredSelectors) ? scannerConfig2.ignoredSelectors : [];
     const ignoredSelector = [...ignoredSelectors, "#text-extractor-container"].join(", ");
     const addCandidate = (element, rawText) => {
       const sourceText = normalizeText(rawText).slice(0, MAX_LOCAL_TEXT_LENGTH);
@@ -12692,6 +12635,149 @@ ${entries.join("\n")}
     });
     return { textPairs, regexRules: visibleRegexRules };
   }
+  // src/features/ai-scan/session.js
+  var DEFAULT_SESSION_USAGE = Object.freeze({ requests: 0, characters: 0 });
+  function createEmptyAiSessionState() {
+    return {
+      candidates: /* @__PURE__ */ new Map(),
+      candidateFingerprints: /* @__PURE__ */ new Set(),
+      decisions: /* @__PURE__ */ new Map(),
+      regexRules: /* @__PURE__ */ new Map(),
+      sessionUsage: { ...DEFAULT_SESSION_USAGE }
+    };
+  }
+  function serializeAiSession({
+    candidates: candidates2,
+    decisions: decisions2,
+    regexRules: regexRules2,
+    siteKey,
+    targetLanguage,
+    sessionUsage: sessionUsage2,
+    maxItems = 5e3
+  }) {
+    const persistedCandidates = Array.from(candidates2.values()).slice(-maxItems);
+    const persistedIds = new Set(persistedCandidates.map((candidate) => candidate.id));
+    return {
+      siteKey,
+      targetLanguage,
+      candidates: persistedCandidates,
+      decisions: Array.from(decisions2.values()).filter((decision) => persistedIds.has(decision.id)),
+      regexRules: Array.from(regexRules2.values()).filter(
+        (rule) => rule.sourceIds.length === 0 || rule.sourceIds.every((id) => persistedIds.has(id))
+      ),
+      sessionUsage: sessionUsage2
+    };
+  }
+  function normalizeCandidate(candidate) {
+    if (candidate.status === AI_CANDIDATE_STATUS.KEEP) {
+      candidate.status = AI_CANDIDATE_STATUS.REMOVED;
+    }
+    if (candidate.status === AI_CANDIDATE_STATUS.IN_FLIGHT) {
+      candidate.status = AI_CANDIDATE_STATUS.PENDING;
+    }
+    return candidate;
+  }
+  function normalizeDecision(decision, candidate) {
+    if (decision.action === AI_ACTIONS.KEEP) {
+      return { ...decision, action: AI_ACTIONS.REMOVE, status: AI_CANDIDATE_STATUS.REMOVED };
+    }
+    if (decision.action === AI_ACTIONS.TRANSLATE && decision.translationType !== AI_TRANSLATION_TYPES.REGEX && isUnchangedTranslation(candidate.sourceText, decision.translation)) {
+      return {
+        ...decision,
+        action: AI_ACTIONS.REMOVE,
+        translation: "",
+        translationType: AI_TRANSLATION_TYPES.TEXT,
+        reason: "unchanged-translation",
+        status: AI_CANDIDATE_STATUS.REMOVED
+      };
+    }
+    return decision;
+  }
+  function restoreRegexRules(savedRules, candidates2) {
+    const restoredRules = /* @__PURE__ */ new Map();
+    const restoredRuleIds = /* @__PURE__ */ new Set();
+    const restoredRegexRules = Array.isArray(savedRules) ? savedRules : [];
+    restoredRegexRules.forEach((rawRule) => {
+      const ruleId = String(rawRule?.id || "").trim();
+      if (!ruleId || restoredRuleIds.has(ruleId)) return;
+      const sourceIds = Array.isArray(rawRule?.sourceIds) ? rawRule.sourceIds.map((id) => String(id || "").trim()).filter(Boolean) : [];
+      if (new Set(sourceIds).size !== sourceIds.length) return;
+      if (sourceIds.some((id) => !candidates2.has(id))) return;
+      const origin = rawRule?.origin === "manual" || rawRule?.origin === "user-edited" ? rawRule.origin : "ai";
+      if (origin === "ai" && sourceIds.length < 1) return;
+      const sourceTexts = sourceIds.map((id) => candidates2.get(id).sourceText);
+      const singleSample = origin === "ai" && sourceIds.length === 1;
+      if (singleSample && !hasDynamicRegexValue(sourceTexts[0])) return;
+      const validated = validateRegexRuleDefinition(
+        { ...rawRule, id: ruleId, sourceIds, origin },
+        {
+          sourceTexts,
+          requireSourceMatch: origin === "ai",
+          requireAnchors: singleSample,
+          requireDynamicCapture: singleSample
+        }
+      );
+      if (!validated.valid) return;
+      restoredRuleIds.add(ruleId);
+      restoredRules.set(ruleId, validated.rule);
+    });
+    return restoredRules;
+  }
+  function reconcileRestoredStatuses(candidates2, decisions2, regexRules2) {
+    decisions2.forEach((decision, id) => {
+      const candidate = candidates2.get(id);
+      if (!candidate) return;
+      if (decision.translationType !== AI_TRANSLATION_TYPES.REGEX) {
+        candidate.status = decision.status;
+        return;
+      }
+      if (!regexRules2.has(decision.regexRuleId)) {
+        candidate.status = AI_CANDIDATE_STATUS.PENDING;
+        decisions2.delete(id);
+        return;
+      }
+      candidate.status = decision.status;
+    });
+    regexRules2.forEach((rule, ruleId) => {
+      const isConsistent = rule.sourceIds.length === 0 || rule.sourceIds.every((sourceId) => {
+        const decision = decisions2.get(sourceId);
+        return decision?.translationType === AI_TRANSLATION_TYPES.REGEX && decision.status === AI_CANDIDATE_STATUS.TRANSLATED && decision.regexRuleId === ruleId;
+      });
+      if (isConsistent) return;
+      regexRules2.delete(ruleId);
+      rule.sourceIds.forEach((sourceId) => {
+        const decision = decisions2.get(sourceId);
+        if (decision?.translationType !== AI_TRANSLATION_TYPES.REGEX) return;
+        const candidate = candidates2.get(sourceId);
+        if (candidate) candidate.status = AI_CANDIDATE_STATUS.PENDING;
+        decisions2.delete(sourceId);
+      });
+    });
+  }
+  function restoreAiSession(saved, { siteKey, targetLanguage } = {}) {
+    if (!saved || saved.siteKey !== siteKey || saved.targetLanguage !== targetLanguage) {
+      return createEmptyAiSessionState();
+    }
+    const restoredCandidates = Array.isArray(saved.candidates) ? saved.candidates.filter(isSubmittableAiCandidate).map(normalizeCandidate) : [];
+    const candidates2 = new Map(restoredCandidates.map((candidate) => [candidate.id, candidate]));
+    const candidateFingerprints2 = new Set(restoredCandidates.map((candidate) => candidate.fingerprint).filter(Boolean));
+    const restoredDecisions = Array.isArray(saved.decisions) ? saved.decisions : [];
+    const decisions2 = new Map(
+      restoredDecisions.filter((decision) => candidates2.has(decision.id)).map((decision) => [decision.id, normalizeDecision(decision, candidates2.get(decision.id))])
+    );
+    const regexRules2 = restoreRegexRules(saved.regexRules, candidates2);
+    reconcileRestoredStatuses(candidates2, decisions2, regexRules2);
+    return {
+      candidates: candidates2,
+      candidateFingerprints: candidateFingerprints2,
+      decisions: decisions2,
+      regexRules: regexRules2,
+      sessionUsage: {
+        requests: Math.max(0, Number(saved.sessionUsage?.requests) || 0),
+        characters: Math.max(0, Number(saved.sessionUsage?.characters) || 0)
+      }
+    };
+  }
   // src/features/ai-scan/summaryEdits.js
   var MAX_MANUAL_SOURCE_LENGTH = 1e5;
   function normalizeSourceList(sourceTexts) {
@@ -12744,6 +12830,127 @@ ${entries.join("\n")}
     ).map((candidate) => candidate.id);
     return { addedSourceTexts, revivedCandidateIds, removedCandidateIds };
   }
+  // src/features/ai-scan/summaryState.js
+  function removeAiSummaryCandidate(state, id) {
+    const candidate = state.candidates.get(id);
+    if (!candidate) return { changed: false, cacheChanged: false };
+    state.candidates.delete(id);
+    state.decisions.delete(id);
+    let cacheChanged = false;
+    if (candidate.fingerprint) {
+      state.candidateFingerprints.delete(candidate.fingerprint);
+      state.userRemovedFingerprints.add(candidate.fingerprint);
+      cacheChanged = state.cache.delete(candidate.fingerprint);
+    }
+    return { changed: true, cacheChanged };
+  }
+  function applyAiSummaryEditsToState(state, { remainingSourceTexts = null, editedRegexRules = null } = {}) {
+    const hasTextEdits = Array.isArray(remainingSourceTexts);
+    let changed = false;
+    let cacheChanged = false;
+    let regexRules2 = state.regexRules;
+    if (Array.isArray(editedRegexRules)) {
+      const existingRules = Array.from(regexRules2.values());
+      const matchedRules = matchEditedRegexRulesToExisting(editedRegexRules, existingRules);
+      if (!matchedRules.valid) return { changed: false, error: matchedRules.error };
+      const nextRegexRules = /* @__PURE__ */ new Map();
+      const assignedSourceIds = /* @__PURE__ */ new Set();
+      for (let index = 0; index < editedRegexRules.length; index += 1) {
+        const editedRule = editedRegexRules[index];
+        const requestedId = String(editedRule?.id || "").trim();
+        const existingRule = matchedRules.matches[index];
+        const ruleId = requestedId || existingRule?.id || createRegexRuleId(
+          editedRule?.pattern || "",
+          editedRule?.flags || "",
+          editedRule?.replacement || "",
+          index
+        );
+        let uniqueRuleId = ruleId;
+        let suffix = 0;
+        while (!requestedId && !existingRule && (regexRules2.has(uniqueRuleId) || nextRegexRules.has(uniqueRuleId))) {
+          suffix += 1;
+          uniqueRuleId = `${ruleId}-${suffix}`;
+        }
+        if (nextRegexRules.has(uniqueRuleId)) return { changed: false, error: "duplicate-regex-rule-id" };
+        const sourceIds = existingRule ? [...existingRule.sourceIds] : Array.isArray(editedRule?.sourceIds) ? editedRule.sourceIds.map((id) => String(id || "").trim()).filter(Boolean) : [];
+        if (sourceIds.some((id) => assignedSourceIds.has(id))) {
+          return { changed: false, error: "overlapping-regex-rules" };
+        }
+        if (sourceIds.some((id) => !state.candidates.has(id))) {
+          return { changed: false, error: "unknown-regex-source" };
+        }
+        const candidateSourceTexts = sourceIds.map((id) => state.candidates.get(id).sourceText);
+        const validated = validateRegexRuleDefinition(
+          {
+            ...existingRule || {},
+            ...editedRule,
+            id: uniqueRuleId,
+            sourceIds,
+            confidence: existingRule?.confidence ?? (Number.isFinite(Number(editedRule?.confidence)) ? Number(editedRule.confidence) : 1),
+            origin: existingRule ? "user-edited" : editedRule?.origin || "manual"
+          },
+          { sourceTexts: candidateSourceTexts, requireSourceMatch: false }
+        );
+        if (!validated.valid) return { changed: false, error: validated.reason };
+        sourceIds.forEach((id) => assignedSourceIds.add(id));
+        nextRegexRules.set(uniqueRuleId, validated.rule);
+      }
+      regexRules2.forEach((rule, ruleId) => {
+        if (nextRegexRules.has(ruleId)) return;
+        rule.sourceIds.forEach((id) => {
+          const removed = removeAiSummaryCandidate(state, id);
+          cacheChanged = cacheChanged || removed.cacheChanged;
+        });
+        changed = true;
+      });
+      if (nextRegexRules.size !== regexRules2.size) changed = true;
+      else {
+        nextRegexRules.forEach((rule, ruleId) => {
+          const previous = regexRules2.get(ruleId);
+          if (!previous || previous.pattern !== rule.pattern || previous.flags !== rule.flags || previous.replacement !== rule.replacement) {
+            changed = true;
+          }
+        });
+      }
+      regexRules2 = nextRegexRules;
+    }
+    const regexCandidateIds = new Set(
+      Array.from(regexRules2.values()).flatMap((rule) => Array.isArray(rule.sourceIds) ? rule.sourceIds : [])
+    );
+    if (hasTextEdits) {
+      const reconciliation = reconcileAiSummarySources(
+        remainingSourceTexts,
+        Array.from(state.candidates.values()),
+        regexCandidateIds
+      );
+      reconciliation.revivedCandidateIds.forEach((id) => {
+        const candidate = state.candidates.get(id);
+        if (!candidate) return;
+        candidate.status = AI_CANDIDATE_STATUS.PENDING;
+        state.decisions.delete(id);
+        if (candidate.fingerprint) state.userRemovedFingerprints.delete(candidate.fingerprint);
+        changed = true;
+      });
+      reconciliation.addedSourceTexts.forEach((sourceText) => {
+        const candidate = createManualSummaryCandidate(sourceText, {
+          siteKey: state.siteKey,
+          targetLanguage: state.targetLanguage
+        });
+        if (!candidate || state.candidateFingerprints.has(candidate.fingerprint)) return;
+        state.candidates.set(candidate.id, candidate);
+        state.candidateFingerprints.add(candidate.fingerprint);
+        state.userRemovedFingerprints.delete(candidate.fingerprint);
+        changed = true;
+      });
+      reconciliation.removedCandidateIds.forEach((id) => {
+        const removed = removeAiSummaryCandidate(state, id);
+        cacheChanged = cacheChanged || removed.cacheChanged;
+        changed = removed.changed || changed;
+      });
+    }
+    state.regexRules = regexRules2;
+    return { changed, cacheChanged, error: null };
+  }
   // src/features/ai-scan/logic.js
   var isActive2 = false;
   var isPaused3 = false;
@@ -12768,7 +12975,6 @@ ${entries.join("\n")}
   var isClearing = false;
   var submissionInProgress = false;
   var userRemovedFingerprints = /* @__PURE__ */ new Set();
-  var MAX_PERSISTED_SESSION_ITEMS = 5e3;
   var AI_COLLECTION_FLUSH_DELAY_MS = 200;
   var AI_OBSERVER_OPTIONS = Object.freeze({
     childList: true,
@@ -12815,18 +13021,14 @@ ${entries.join("\n")}
     inFlightCandidateIds = [];
   }
   function serializeSession() {
-    const persistedCandidates = Array.from(candidates.values()).slice(-MAX_PERSISTED_SESSION_ITEMS);
-    const persistedIds = new Set(persistedCandidates.map((candidate) => candidate.id));
-    return {
+    return serializeAiSession({
+      candidates,
+      decisions,
+      regexRules,
       siteKey: currentSiteKey,
       targetLanguage: currentTargetLanguage,
-      candidates: persistedCandidates,
-      decisions: Array.from(decisions.values()).filter((decision) => persistedIds.has(decision.id)),
-      regexRules: Array.from(regexRules.values()).filter(
-        (rule) => rule.sourceIds.length === 0 || rule.sourceIds.every((id) => persistedIds.has(id))
-      ),
       sessionUsage
-    };
+    });
   }
   async function persistState() {
     const snapshot = serializeSession();
@@ -12887,7 +13089,7 @@ ${entries.join("\n")}
       filterRules: settings.filterRules,
       targetLanguage: currentTargetLanguage,
       siteKey: currentSiteKey,
-      scannerConfig: appConfig.scanner
+      scannerConfig
     });
     return addCandidateBatch(extracted);
   }
@@ -12947,115 +13149,15 @@ ${entries.join("\n")}
     }, delayMs);
   }
   async function restoreSession() {
-    const saved = await loadAiSession();
-    if (!saved || saved.siteKey !== currentSiteKey || saved.targetLanguage !== currentTargetLanguage) {
-      candidates = /* @__PURE__ */ new Map();
-      candidateFingerprints = /* @__PURE__ */ new Set();
-      decisions = /* @__PURE__ */ new Map();
-      regexRules = /* @__PURE__ */ new Map();
-      sessionUsage = { requests: 0, characters: 0 };
-      return;
-    }
-    const restoredCandidates = Array.isArray(saved.candidates) ? saved.candidates.filter(isSubmittableAiCandidate) : [];
-    restoredCandidates.forEach((candidate) => {
-      if (candidate.status === AI_CANDIDATE_STATUS.KEEP) {
-        candidate.status = AI_CANDIDATE_STATUS.REMOVED;
-      }
-      if (candidate.status === AI_CANDIDATE_STATUS.IN_FLIGHT) {
-        candidate.status = AI_CANDIDATE_STATUS.PENDING;
-      }
+    const restored = restoreAiSession(await loadAiSession(), {
+      siteKey: currentSiteKey,
+      targetLanguage: currentTargetLanguage
     });
-    candidates = new Map(restoredCandidates.map((candidate) => [candidate.id, candidate]));
-    candidateFingerprints = new Set(restoredCandidates.map((candidate) => candidate.fingerprint).filter(Boolean));
-    const restoredDecisions = Array.isArray(saved.decisions) ? saved.decisions : [];
-    decisions = new Map(
-      restoredDecisions.filter((decision) => candidates.has(decision.id)).map((decision) => {
-        const candidate = candidates.get(decision.id);
-        if (decision.action === AI_ACTIONS.KEEP) {
-          return [
-            decision.id,
-            { ...decision, action: AI_ACTIONS.REMOVE, status: AI_CANDIDATE_STATUS.REMOVED }
-          ];
-        }
-        if (decision.action === AI_ACTIONS.TRANSLATE && decision.translationType !== AI_TRANSLATION_TYPES.REGEX && isUnchangedTranslation(candidate.sourceText, decision.translation)) {
-          return [
-            decision.id,
-            {
-              ...decision,
-              action: AI_ACTIONS.REMOVE,
-              translation: "",
-              translationType: AI_TRANSLATION_TYPES.TEXT,
-              reason: "unchanged-translation",
-              status: AI_CANDIDATE_STATUS.REMOVED
-            }
-          ];
-        }
-        return [decision.id, decision];
-      })
-    );
-    const restoredRules = /* @__PURE__ */ new Map();
-    const restoredRuleIds = /* @__PURE__ */ new Set();
-    const candidateById = new Map(candidates);
-    const restoredRegexRules = Array.isArray(saved.regexRules) ? saved.regexRules : [];
-    restoredRegexRules.forEach((rawRule) => {
-      const ruleId = String(rawRule?.id || "").trim();
-      if (!ruleId || restoredRuleIds.has(ruleId)) return;
-      const sourceIds = Array.isArray(rawRule?.sourceIds) ? rawRule.sourceIds.map((id) => String(id || "").trim()).filter(Boolean) : [];
-      if (new Set(sourceIds).size !== sourceIds.length) return;
-      if (sourceIds.some((id) => !candidateById.has(id))) return;
-      const origin = rawRule?.origin === "manual" || rawRule?.origin === "user-edited" ? rawRule.origin : "ai";
-      if (origin === "ai" && sourceIds.length < 1) return;
-      const sourceTexts = sourceIds.map((id) => candidateById.get(id).sourceText);
-      const singleSample = origin === "ai" && sourceIds.length === 1;
-      if (singleSample && !hasDynamicRegexValue(sourceTexts[0])) return;
-      const validated = validateRegexRuleDefinition(
-        { ...rawRule, id: ruleId, sourceIds, origin },
-        {
-          sourceTexts,
-          requireSourceMatch: origin === "ai",
-          requireAnchors: singleSample,
-          requireDynamicCapture: singleSample
-        }
-      );
-      if (!validated.valid) return;
-      restoredRuleIds.add(ruleId);
-      restoredRules.set(ruleId, validated.rule);
-    });
-    decisions.forEach((decision, id) => {
-      if (decision.translationType !== AI_TRANSLATION_TYPES.REGEX) {
-        const candidate2 = candidates.get(id);
-        if (candidate2) candidate2.status = decision.status;
-        return;
-      }
-      if (!restoredRules.has(decision.regexRuleId)) {
-        const candidate2 = candidates.get(id);
-        if (candidate2) candidate2.status = AI_CANDIDATE_STATUS.PENDING;
-        decisions.delete(id);
-        return;
-      }
-      const candidate = candidates.get(id);
-      if (candidate) candidate.status = decision.status;
-    });
-    restoredRules.forEach((rule, ruleId) => {
-      if (rule.sourceIds.length > 0 && !rule.sourceIds.every((sourceId) => {
-        const decision = decisions.get(sourceId);
-        return decision?.translationType === AI_TRANSLATION_TYPES.REGEX && decision.status === AI_CANDIDATE_STATUS.TRANSLATED && decision.regexRuleId === ruleId;
-      })) {
-        restoredRules.delete(ruleId);
-        rule.sourceIds.forEach((sourceId) => {
-          const decision = decisions.get(sourceId);
-          if (decision?.translationType !== AI_TRANSLATION_TYPES.REGEX) return;
-          const candidate = candidates.get(sourceId);
-          if (candidate) candidate.status = AI_CANDIDATE_STATUS.PENDING;
-          decisions.delete(sourceId);
-        });
-      }
-    });
-    regexRules = restoredRules;
-    sessionUsage = {
-      requests: Math.max(0, Number(saved.sessionUsage?.requests) || 0),
-      characters: Math.max(0, Number(saved.sessionUsage?.characters) || 0)
-    };
+    candidates = restored.candidates;
+    candidateFingerprints = restored.candidateFingerprints;
+    decisions = restored.decisions;
+    regexRules = restored.regexRules;
+    sessionUsage = restored.sessionUsage;
   }
   async function startAiScan() {
     if (isActive2) return { started: true };
@@ -13372,11 +13474,23 @@ ${entries.join("\n")}
     });
     emitState();
   }
+  function getSummaryState() {
+    return {
+      candidates,
+      candidateFingerprints,
+      decisions,
+      regexRules,
+      cache,
+      userRemovedFingerprints,
+      siteKey: currentSiteKey || window.location.origin,
+      targetLanguage: currentTargetLanguage
+    };
+  }
   function removeAiReviewItem(candidateId) {
     const id = String(candidateId || "").trim();
     const decision = decisions.get(id);
     if (!isReviewDecision(decision) || !candidates.has(id)) return { changed: false };
-    const removed = removeAiCandidate(id);
+    const removed = removeAiSummaryCandidate(getSummaryState(), id);
     if (!removed.changed) return { changed: false };
     persistReviewMutation(removed.cacheChanged);
     return { changed: true };
@@ -13435,130 +13549,19 @@ ${entries.join("\n")}
     );
   }
   function applyAiSummaryEdits({ remainingSourceTexts = null, editedRegexRules = null } = {}) {
-    const hasTextEdits = Array.isArray(remainingSourceTexts);
-    let changed = false;
-    let cacheChanged = false;
-    let nextRegexRules = regexRules;
-    if (Array.isArray(editedRegexRules)) {
-      const existingRules = Array.from(regexRules.values());
-      const matchedRules = matchEditedRegexRulesToExisting(editedRegexRules, existingRules);
-      if (!matchedRules.valid) return { changed: false, error: matchedRules.error };
-      nextRegexRules = /* @__PURE__ */ new Map();
-      const assignedSourceIds = /* @__PURE__ */ new Set();
-      for (let index = 0; index < editedRegexRules.length; index += 1) {
-        const editedRule = editedRegexRules[index];
-        const requestedId = String(editedRule?.id || "").trim();
-        const existingRule = matchedRules.matches[index];
-        const ruleId = requestedId || existingRule?.id || createRegexRuleId(
-          editedRule?.pattern || "",
-          editedRule?.flags || "",
-          editedRule?.replacement || "",
-          index
-        );
-        let uniqueRuleId = ruleId;
-        let suffix = 0;
-        while (!requestedId && !existingRule && (regexRules.has(uniqueRuleId) || nextRegexRules.has(uniqueRuleId))) {
-          suffix += 1;
-          uniqueRuleId = `${ruleId}-${suffix}`;
-        }
-        if (nextRegexRules.has(uniqueRuleId)) return { changed: false, error: "duplicate-regex-rule-id" };
-        const sourceIds = existingRule ? [...existingRule.sourceIds] : Array.isArray(editedRule?.sourceIds) ? editedRule.sourceIds.map((id) => String(id || "").trim()).filter(Boolean) : [];
-        if (sourceIds.some((id) => assignedSourceIds.has(id))) {
-          return { changed: false, error: "overlapping-regex-rules" };
-        }
-        if (sourceIds.some((id) => !candidates.has(id))) return { changed: false, error: "unknown-regex-source" };
-        const candidateSourceTexts = sourceIds.map((id) => candidates.get(id).sourceText);
-        const validated = validateRegexRuleDefinition(
-          {
-            ...existingRule || {},
-            ...editedRule,
-            id: uniqueRuleId,
-            sourceIds,
-            confidence: existingRule?.confidence ?? (Number.isFinite(Number(editedRule?.confidence)) ? Number(editedRule.confidence) : 1),
-            origin: existingRule ? "user-edited" : editedRule?.origin || "manual"
-          },
-          { sourceTexts: candidateSourceTexts, requireSourceMatch: false }
-        );
-        if (!validated.valid) return { changed: false, error: validated.reason };
-        sourceIds.forEach((id) => assignedSourceIds.add(id));
-        nextRegexRules.set(uniqueRuleId, validated.rule);
-      }
-      regexRules.forEach((rule, ruleId) => {
-        if (nextRegexRules.has(ruleId)) return;
-        rule.sourceIds.forEach((id) => {
-          const removed = removeAiCandidate(id);
-          cacheChanged = cacheChanged || removed.cacheChanged;
-        });
-        changed = true;
-      });
-      if (nextRegexRules.size !== regexRules.size) changed = true;
-      else {
-        nextRegexRules.forEach((rule, ruleId) => {
-          const previous = regexRules.get(ruleId);
-          if (!previous || previous.pattern !== rule.pattern || previous.flags !== rule.flags || previous.replacement !== rule.replacement) {
-            changed = true;
-          }
-        });
-      }
-      regexRules = nextRegexRules;
-    }
-    const regexCandidateIds = new Set(
-      Array.from(regexRules.values()).flatMap((rule) => Array.isArray(rule.sourceIds) ? rule.sourceIds : [])
-    );
-    if (hasTextEdits) {
-      const reconciliation = reconcileAiSummarySources(
-        remainingSourceTexts,
-        Array.from(candidates.values()),
-        regexCandidateIds
-      );
-      reconciliation.revivedCandidateIds.forEach((id) => {
-        const candidate = candidates.get(id);
-        if (!candidate) return;
-        candidate.status = AI_CANDIDATE_STATUS.PENDING;
-        decisions.delete(id);
-        if (candidate.fingerprint) userRemovedFingerprints.delete(candidate.fingerprint);
-        changed = true;
-      });
-      reconciliation.addedSourceTexts.forEach((sourceText) => {
-        const candidate = createManualSummaryCandidate(sourceText, {
-          siteKey: currentSiteKey || window.location.origin,
-          targetLanguage: currentTargetLanguage
-        });
-        if (!candidate || candidateFingerprints.has(candidate.fingerprint)) return;
-        candidates.set(candidate.id, candidate);
-        candidateFingerprints.add(candidate.fingerprint);
-        userRemovedFingerprints.delete(candidate.fingerprint);
-        changed = true;
-      });
-      reconciliation.removedCandidateIds.forEach((id) => {
-        const removed = removeAiCandidate(id);
-        cacheChanged = cacheChanged || removed.cacheChanged;
-        changed = removed.changed || changed;
-      });
-    }
-    if (changed) {
+    const state = getSummaryState();
+    const result = applyAiSummaryEditsToState(state, { remainingSourceTexts, editedRegexRules });
+    regexRules = state.regexRules;
+    if (result.changed) {
       const tasks = [persistState()];
-      if (cacheChanged) tasks.push(saveAiCache(cache));
+      if (result.cacheChanged) tasks.push(saveAiCache(cache));
       Promise.all(tasks).catch(() => {
         lastError = { code: "storage" };
         emitState();
       });
       emitState();
     }
-    return { changed, error: null };
-  }
-  function removeAiCandidate(id) {
-    const candidate = candidates.get(id);
-    if (!candidate) return { changed: false, cacheChanged: false };
-    candidates.delete(id);
-    decisions.delete(id);
-    let cacheChanged = false;
-    if (candidate.fingerprint) {
-      candidateFingerprints.delete(candidate.fingerprint);
-      userRemovedFingerprints.add(candidate.fingerprint);
-      cacheChanged = cache.delete(candidate.fingerprint);
-    }
-    return { changed: true, cacheChanged };
+    return { changed: result.changed, error: result.error };
   }
   function getAiStateSnapshot() {
     return {
