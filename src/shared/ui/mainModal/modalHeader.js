@@ -12,7 +12,7 @@ import { on } from '../../utils/core/eventBus.js';
 import { summaryIcon } from '../../../assets/icons/summaryIcon.js';
 import { aiIcon } from '../../../assets/icons/aiIcon.js';
 import { closeIcon } from '../../../assets/icons/closeIcon.js';
-import { loadSettings } from '../../../features/settings/logic.js';
+import { loadSettings } from '../../services/settings.js';
 import { simpleTemplate } from '../../utils/dom/templating.js';
 
 let titleContainer, scanCountDisplay, closeBtn, unsubscribeLanguageChanged, unsubscribeSettingsSaved;
