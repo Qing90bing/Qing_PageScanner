@@ -211,6 +211,8 @@
         "aiRequestError": "請求失敗",
         "aiReviewItems": "待複核內容",
         "aiReviewRequired": "需人工複核",
+        "aiReviewReturnToEditor": "返回編輯框",
+        "aiReviewRemove": "移除",
         "aiRegexEditError": "正則規則需複核",
         "aiOutput": {
             "text": "純文字",

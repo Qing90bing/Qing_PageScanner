@@ -7,6 +7,8 @@ import {
     hasAiData,
     isAiScanActive,
     pauseAiScan,
+    removeAiReviewItem,
+    restoreAiReviewItem,
     resumeAiScan,
     retryReviewItems,
     startAiScan,
@@ -269,6 +271,16 @@ export function initializeAiScanUI() {
     on('ai-retry-review', async () => {
         await retryReviewItems();
         syncAiSummary(false);
+    });
+    on('ai-review-remove', (candidateId) => {
+        const result = removeAiReviewItem(candidateId);
+        if (result.changed) syncAiSummary(false, { resetDrafts: true });
+    });
+    on('ai-review-return-to-editor', (candidateId) => {
+        const result = restoreAiReviewItem(candidateId);
+        if (!result.changed) return;
+        modalState.setAiOutputType('text');
+        syncAiSummary(false, { resetDrafts: true });
     });
     on('ai-clear', async () => {
         await clearAiData();

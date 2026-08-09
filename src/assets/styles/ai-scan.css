@@ -175,7 +175,8 @@
 
 .ai-review-item {
     display: grid;
-    grid-template-columns: minmax(0, 2fr) minmax(120px, 1fr);
+    grid-template-columns: minmax(0, 2fr) minmax(120px, 1fr) auto;
+    align-items: start;
     gap: 12px;
     padding: 8px 0;
     border-bottom: 1px solid var(--main-border);
@@ -188,6 +189,49 @@
 
 .ai-review-reason {
     color: var(--main-text-secondary);
+}
+
+.ai-review-actions {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.ai-review-action {
+    min-height: 30px;
+    padding: 4px 9px;
+    border: 1px solid var(--main-border);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--main-text);
+    font: inherit;
+    line-height: 20px;
+    cursor: pointer;
+    transition:
+        background-color 0.2s,
+        border-color 0.2s,
+        color 0.2s;
+}
+
+.ai-review-action:hover {
+    border-color: var(--main-primary);
+    background-color: color-mix(in srgb, var(--main-primary) 10%, transparent);
+}
+
+.ai-review-action:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--main-primary) 72%, transparent);
+    outline-offset: 2px;
+}
+
+.ai-review-remove-action {
+    color: color-mix(in srgb, #c2413a 88%, var(--main-text));
+}
+
+.ai-review-action:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
 }
 
 .ai-submit-btn,
@@ -564,6 +608,10 @@
     .ai-budget-grid,
     .ai-review-item {
         grid-template-columns: 1fr;
+    }
+
+    .ai-review-actions {
+        justify-content: flex-start;
     }
 
     .ai-style-advanced-form {

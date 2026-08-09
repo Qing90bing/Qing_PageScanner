@@ -481,7 +481,7 @@ export async function stopAiScan() {
 }
 
 async function performSubmitPending() {
-    if (!isActive || currentRequest || isClearing) return { submitted: false, reason: 'inactive-or-busy' };
+    if (currentRequest || isClearing) return { submitted: false, reason: 'inactive-or-busy' };
     const submissionGeneration = generation;
 
     const settings = loadSettings();
@@ -515,7 +515,7 @@ async function performSubmitPending() {
         await persistState();
         emitState();
     }
-    if (!isActive || generation !== submissionGeneration || isClearing) {
+    if (generation !== submissionGeneration || isClearing) {
         return { submitted: false, reason: 'stale' };
     }
     if (batch.candidates.length === 0) return { submitted: false, reason: 'empty' };
@@ -525,7 +525,7 @@ async function performSubmitPending() {
         matchStyleProfile(window.location, currentTargetLanguage),
         loadDailyUsage(),
     ]);
-    if (!isActive || generation !== submissionGeneration || isClearing) {
+    if (generation !== submissionGeneration || isClearing) {
         return { submitted: false, reason: 'stale' };
     }
     const pageContext = buildPageContext({ targetLanguage: currentTargetLanguage });
@@ -566,7 +566,7 @@ async function performSubmitPending() {
         emitState();
         return { submitted: false, reason: 'storage' };
     }
-    if (!isActive || generation !== submissionGeneration || isClearing) {
+    if (generation !== submissionGeneration || isClearing) {
         return { submitted: false, reason: 'stale' };
     }
 
@@ -591,7 +591,7 @@ async function performSubmitPending() {
         });
         currentRequest = requestHandle;
         const response = await requestHandle.promise;
-        if (!isActive || requestGeneration !== generation) {
+        if (requestGeneration !== generation) {
             return { submitted: false, reason: 'stale' };
         }
 
@@ -686,10 +686,7 @@ async function performSubmitPending() {
 }
 
 export async function submitPending() {
-    if (isPaused) {
-        return { submitted: false, reason: 'paused' };
-    }
-    if (!isActive || currentRequest || isClearing || submissionInProgress) {
+    if (currentRequest || isClearing || submissionInProgress) {
         return { submitted: false, reason: 'inactive-or-busy' };
     }
 
@@ -746,6 +743,44 @@ export async function retryReviewItems() {
     await persistState();
     emitState();
     return submitPending();
+}
+
+function isReviewDecision(decision) {
+    return decision?.status === AI_CANDIDATE_STATUS.REVIEW || decision?.status === AI_CANDIDATE_STATUS.FAILED;
+}
+
+function persistReviewMutation(cacheChanged = false) {
+    const tasks = [persistState()];
+    if (cacheChanged) tasks.push(saveAiCache(cache));
+    Promise.all(tasks).catch(() => {
+        lastError = { code: 'storage' };
+        emitState();
+    });
+    emitState();
+}
+
+export function removeAiReviewItem(candidateId) {
+    const id = String(candidateId || '').trim();
+    const decision = decisions.get(id);
+    if (!isReviewDecision(decision) || !candidates.has(id)) return { changed: false };
+
+    const removed = removeAiCandidate(id);
+    if (!removed.changed) return { changed: false };
+    persistReviewMutation(removed.cacheChanged);
+    return { changed: true };
+}
+
+export function restoreAiReviewItem(candidateId) {
+    const id = String(candidateId || '').trim();
+    const candidate = candidates.get(id);
+    const decision = decisions.get(id);
+    if (!candidate || !isReviewDecision(decision)) return { changed: false };
+
+    candidate.status = AI_CANDIDATE_STATUS.PENDING;
+    decisions.delete(id);
+    budgetBlockedReason = null;
+    persistReviewMutation();
+    return { changed: true };
 }
 
 export async function clearAiData() {

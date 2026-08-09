@@ -213,6 +213,8 @@
         "aiRequestError": "请求失败",
         "aiReviewItems": "待复核内容",
         "aiReviewRequired": "需人工复核",
+        "aiReviewReturnToEditor": "返回编辑框",
+        "aiReviewRemove": "移除",
         "aiRegexEditError": "正则规则需复核",
         "aiOutput": {
             "text": "纯文本",

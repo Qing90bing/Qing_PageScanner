@@ -211,6 +211,8 @@
         "aiRequestError": "Request failed",
         "aiReviewItems": "Items to Review",
         "aiReviewRequired": "Review required",
+        "aiReviewReturnToEditor": "Return to editor",
+        "aiReviewRemove": "Remove",
         "aiRegexEditError": "Regex rule needs review",
         "aiOutput": {
             "text": "Pure text",

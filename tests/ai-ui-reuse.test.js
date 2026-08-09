@@ -134,7 +134,7 @@ test('AI scan reuses the shared top counter and the AI feature switch controls i
     assert.match(fab, /ai\?\.enabled !== false/);
 });
 
-test('AI pause blocks collection and submission until resume', async () => {
+test('AI pause blocks collection but manual submission remains available', async () => {
     const [logic, footer] = await Promise.all([
         readFile(AI_SCAN_LOGIC_PATH, 'utf8'),
         readFile(MODAL_FOOTER_PATH, 'utf8'),
@@ -142,9 +142,35 @@ test('AI pause blocks collection and submission until resume', async () => {
 
     assert.match(logic, /export function pauseAiScan\(\)[\s\S]*observer\.disconnect\(\)/);
     assert.match(logic, /export function resumeAiScan\(\)[\s\S]*observer\.observe\(document\.body/);
-    assert.match(logic, /export async function submitPending\(\) \{\s*if \(isPaused\)/);
+    assert.match(
+        logic,
+        /export async function submitPending\(\) \{\s*if \(currentRequest \|\| isClearing \|\| submissionInProgress\)/
+    );
+    assert.doesNotMatch(logic, /export async function submitPending\(\) \{\s*if \(isPaused\)/);
+    assert.doesNotMatch(logic, /async function performSubmitPending\(\) \{\s*if \(!isActive \|\| currentRequest/);
     assert.match(logic, /function handleMutations\(mutations\) \{\s*if \(!isActive \|\| isPaused\) return/);
-    assert.match(footer, /!snapshot\.active \|\| snapshot\.paused \|\| snapshot\.processing/);
+    assert.match(footer, /aiSubmitBtn\.disabled = snapshot\.processing \|\|/);
+    assert.match(footer, /aiRetryBtn\.disabled = snapshot\.processing \|\|/);
+});
+
+test('AI review items expose remove and return-to-editor actions', async () => {
+    const [logic, content, aiUi, styles] = await Promise.all([
+        readFile(AI_SCAN_LOGIC_PATH, 'utf8'),
+        readFile(MODAL_CONTENT_PATH, 'utf8'),
+        readFile(AI_SCAN_UI_PATH, 'utf8'),
+        readFile(AI_STYLES_PATH, 'utf8'),
+    ]);
+
+    assert.match(logic, /export function removeAiReviewItem\(candidateId\)/);
+    assert.match(logic, /export function restoreAiReviewItem\(candidateId\)/);
+    assert.match(content, /returnButton\.dataset\.reviewAction = 'return-to-editor'/);
+    assert.match(content, /fire\('ai-review-return-to-editor', item\.id\)/);
+    assert.match(content, /fire\('ai-review-remove', item\.id\)/);
+    assert.match(aiUi, /on\('ai-review-remove'/);
+    assert.match(aiUi, /on\('ai-review-return-to-editor'/);
+    assert.match(aiUi, /modalState\.setAiOutputType\('text'\)/);
+    assert.match(styles, /grid-template-columns: minmax\(0, 2fr\) minmax\(120px, 1fr\) auto/);
+    assert.match(styles, /\.ai-review-actions/);
 });
 
 test('FAB bottom positioning follows the visible stack height', async () => {

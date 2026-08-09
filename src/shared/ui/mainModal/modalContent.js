@@ -144,7 +144,29 @@ function renderAiSummaryPanel() {
             const reason = document.createElement('div');
             reason.className = 'ai-review-reason';
             reason.textContent = item.reason || item.category || t('results.aiReviewRequired');
-            row.append(source, reason);
+            const actions = document.createElement('div');
+            actions.className = 'ai-review-actions';
+
+            const returnButton = document.createElement('button');
+            returnButton.type = 'button';
+            returnButton.className = 'ai-review-action ai-review-return-action';
+            returnButton.dataset.reviewAction = 'return-to-editor';
+            returnButton.textContent = t('results.aiReviewReturnToEditor');
+            returnButton.setAttribute('aria-label', returnButton.textContent);
+            returnButton.disabled = Boolean(lastAiSnapshot.processing);
+            returnButton.addEventListener('click', () => fire('ai-review-return-to-editor', item.id));
+
+            const removeButton = document.createElement('button');
+            removeButton.type = 'button';
+            removeButton.className = 'ai-review-action ai-review-remove-action';
+            removeButton.dataset.reviewAction = 'remove';
+            removeButton.textContent = t('results.aiReviewRemove');
+            removeButton.setAttribute('aria-label', removeButton.textContent);
+            removeButton.disabled = Boolean(lastAiSnapshot.processing);
+            removeButton.addEventListener('click', () => fire('ai-review-remove', item.id));
+
+            actions.append(returnButton, removeButton);
+            row.append(source, reason, actions);
             details.appendChild(row);
         });
         panel.appendChild(details);
