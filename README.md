@@ -19,6 +19,18 @@ npm run check
 - `npm run format`：使用 Prettier 格式化项目文件。
 - `npm run check`：运行完整本地门禁。
 
+## Git 提交
+
+提交标题保留 Conventional Commits 类型前缀，但描述统一使用中文，例如：
+
+```text
+fix: 修复元素扫描工具栏渲染问题
+refactor: 拆分设置存储与设置面板
+build: 更新用户脚本构建产物
+```
+
+每个提交只包含一个变动点。源码、文档和构建产物应分别提交，提交前确认暂存区范围并运行 `npm run check`。
+
 ## 项目结构
 
 ```text
