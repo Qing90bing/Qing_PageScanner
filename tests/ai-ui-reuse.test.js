@@ -15,6 +15,45 @@ const AI_ICON_PATH = new URL('../src/assets/icons/aiIcon.js', import.meta.url);
 const SETTINGS_STYLES_PATH = new URL('../src/assets/styles/settings-panel.css', import.meta.url);
 const CUSTOM_SELECT_STYLES_PATH = new URL('../src/assets/styles/custom-select.css', import.meta.url);
 const AI_SCAN_LOGIC_PATH = new URL('../src/features/ai-scan/logic.js', import.meta.url);
+const MODAL_CONTENT_PATH = new URL('../src/shared/ui/mainModal/modalContent.js', import.meta.url);
+const MAIN_MODAL_PATH = new URL('../src/shared/ui/mainModal/index.js', import.meta.url);
+const MODAL_FOOTER_PATH = new URL('../src/shared/ui/mainModal/modalFooter.js', import.meta.url);
+const LOCALE_PATHS = {
+    en: new URL('../src/shared/i18n/en.json', import.meta.url),
+    'zh-CN': new URL('../src/shared/i18n/zh-CN.json', import.meta.url),
+    'zh-TW': new URL('../src/shared/i18n/zh-TW.json', import.meta.url),
+};
+
+test('AI summary statuses use concise consistent labels in every locale', async () => {
+    const locales = Object.fromEntries(
+        await Promise.all(
+            Object.entries(LOCALE_PATHS).map(async ([locale, path]) => [
+                locale,
+                JSON.parse(await readFile(path, 'utf8')),
+            ])
+        )
+    );
+
+    assert.deepEqual(
+        Object.fromEntries(
+            Object.entries(locales).map(([locale, messages]) => [
+                locale,
+                [
+                    messages.results.aiRunning,
+                    messages.results.aiPaused,
+                    messages.results.aiStopped,
+                    messages.results.aiProcessing,
+                    messages.results.aiRequestError,
+                ],
+            ])
+        ),
+        {
+            en: ['Working', 'Paused', 'Stopped', 'Processing…', 'Request failed'],
+            'zh-CN': ['工作中', '已暂停', '已停止', '处理中…', '请求失败'],
+            'zh-TW': ['工作中', '已暫停', '已停止', '處理中…', '請求失敗'],
+        }
+    );
+});
 
 test('AI settings reuse shared controls instead of native select duplicates', async () => {
     const source = await readFile(AI_PANEL_PATH, 'utf8');
@@ -77,6 +116,7 @@ test('shared text buttons use one icon and label geometry', async () => {
     assert.match(iconTitle, /tc-icon-title-icon/);
     assert.match(forms, /\.tc-button > \.tc-icon-title/);
     assert.match(forms, /line-height: 20px/);
+    assert.match(button, /let iconWrapper = iconOnly \? button : button\.querySelector\('\.tc-icon-title-icon'\)/);
     assert.match(button, /iconWrapper\.appendChild\(newIconElement\)/);
     assert.doesNotMatch(button, /button\.appendChild\(newIconElement\)/);
 });
@@ -87,8 +127,24 @@ test('AI scan reuses the shared top counter and the AI feature switch controls i
     assert.match(aiUi, /createCounterWithHelp/);
     assert.match(aiUi, /showCounterWithHelp/);
     assert.match(aiUi, /hideCounterWithHelp/);
+    assert.match(aiUi, /onPause: \(\) => \{[\s\S]*pauseAiScan\(\)/);
+    assert.match(aiUi, /onResume: \(\) => \{[\s\S]*resumeAiScan\(\)/);
+    assert.match(aiUi, /scanType: 'AiScan'/);
     assert.match(fab, /fab-feature-hidden/);
     assert.match(fab, /ai\?\.enabled !== false/);
+});
+
+test('AI pause blocks collection and submission until resume', async () => {
+    const [logic, footer] = await Promise.all([
+        readFile(AI_SCAN_LOGIC_PATH, 'utf8'),
+        readFile(MODAL_FOOTER_PATH, 'utf8'),
+    ]);
+
+    assert.match(logic, /export function pauseAiScan\(\)[\s\S]*observer\.disconnect\(\)/);
+    assert.match(logic, /export function resumeAiScan\(\)[\s\S]*observer\.observe\(document\.body/);
+    assert.match(logic, /export async function submitPending\(\) \{\s*if \(isPaused\)/);
+    assert.match(logic, /function handleMutations\(mutations\) \{\s*if \(!isActive \|\| isPaused\) return/);
+    assert.match(footer, /!snapshot\.active \|\| snapshot\.paused \|\| snapshot\.processing/);
 });
 
 test('FAB bottom positioning follows the visible stack height', async () => {
@@ -149,11 +205,51 @@ test('advanced site matching uses the same reusable editor-card surface', async 
     assert.match(styles, /\.ai-style-advanced \.tc-disclosure-content\s*\{[\s\S]*padding: 18px/);
 });
 
+test('site translation preferences use one consistent vertical flow', async () => {
+    const styles = await readFile(AI_STYLES_PATH, 'utf8');
+
+    assert.match(styles, /\.ai-style-toolbar\s*\{[\s\S]*?flex-direction: column;[\s\S]*?\}/);
+    assert.match(styles, /\.ai-style-workspace\s*\{[\s\S]*?flex-direction: column;[\s\S]*?\}/);
+    assert.match(styles, /\.ai-style-library,[\s\S]*?\.ai-style-editor\s*\{[\s\S]*?width: 100%;/);
+});
+
 test('AI summary renders local candidate pairs before provider submission', async () => {
     const [logic, ui] = await Promise.all([readFile(AI_SCAN_LOGIC_PATH, 'utf8'), readFile(AI_SCAN_UI_PATH, 'utf8')]);
 
     assert.match(logic, /export function getAiDisplayPairs/);
-    assert.match(ui, /const pairs = getAiDisplayPairs\(\)/);
+    assert.match(ui, /const data = getAiDisplayData\(\)/);
     assert.doesNotMatch(ui, /const pairs = getAcceptedTranslationPairs\(\)/);
-    assert.match(ui, /finally\s*\{\s*syncAiSummary\(false\)/);
+    assert.match(ui, /finally\s*\{\s*syncAiSummary\(false, \{ resetDrafts: true \}\)/);
+});
+
+test('an empty AI result remains editable and refreshes stale line metadata', async () => {
+    const source = await readFile(MAIN_MODAL_PATH, 'utf8');
+    const emptyOutputBranch = source.match(
+        /else if \(content === state\.SHOW_PLACEHOLDER\) \{([\s\S]*?)\n    \} else \{/
+    )?.[1];
+
+    assert.ok(emptyOutputBranch);
+    assert.match(emptyOutputBranch, /if \(isAiMode\) \{[\s\S]*state\.outputTextarea\.readOnly = false/);
+    assert.match(emptyOutputBranch, /updateLineNumbers\(\)/);
+    assert.match(emptyOutputBranch, /updateStatistics\(\)/);
+    assert.match(emptyOutputBranch, /updateActiveLine\(\)/);
+    assert.match(emptyOutputBranch, /else \{\s*state\.outputTextarea\.readOnly = true/);
+});
+
+test('an AI draft remains editable after the user clears all summary text', async () => {
+    const source = await readFile(MAIN_MODAL_PATH, 'utf8');
+    const renderedContentBranch = source.match(
+        /requestAnimationFrame\(\(\) => \{([\s\S]*?)\n        \}\);\n    \}/
+    )?.[1];
+
+    assert.ok(renderedContentBranch);
+    assert.match(renderedContentBranch, /state\.outputTextarea\.readOnly = mode !== 'ai-scan' && !isData/);
+    assert.doesNotMatch(renderedContentBranch, /state\.outputTextarea\.readOnly = !isData/);
+});
+
+test('AI summary output tabs publish their selection through the shared event bus', async () => {
+    const source = await readFile(MODAL_CONTENT_PATH, 'utf8');
+
+    assert.match(source, /import \{ fire, on \} from '\.\.\/\.\.\/utils\/core\/eventBus\.js';/);
+    assert.match(source, /button\.addEventListener\('click', \(\) => fire\('ai-output-type-change', type\)\)/);
 });

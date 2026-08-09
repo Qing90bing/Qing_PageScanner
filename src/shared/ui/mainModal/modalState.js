@@ -13,6 +13,8 @@ export let statsContainer = null;
 export let placeholder = null;
 export let loadingContainer = null;
 export let aiSummaryPanel = null;
+export let aiOutputTabs = null;
+export let aiOutputType = 'text';
 
 // --- 状态与上下文 ---
 export let canvasContext = null; // 用于文本宽度计算的Canvas上下文
@@ -46,6 +48,9 @@ export function setLoadingContainer(element) {
 export function setAiSummaryPanel(element) {
     aiSummaryPanel = element;
 }
+export function setAiOutputTabs(element) {
+    aiOutputTabs = element;
+}
 export function setCanvasContext(context) {
     canvasContext = context;
 }
@@ -58,6 +63,12 @@ export function setCurrentMode(mode) {
 export function getCurrentMode() {
     return currentMode;
 }
+export function setAiOutputType(type) {
+    aiOutputType = type === 'regex' ? 'regex' : 'text';
+}
+export function getAiOutputType() {
+    return aiOutputType;
+}
 
 export function resetState() {
     modalOverlay = null;
@@ -67,7 +78,9 @@ export function resetState() {
     placeholder = null;
     loadingContainer = null;
     aiSummaryPanel = null;
+    aiOutputTabs = null;
     canvasContext = null;
     currentLineMap = [];
     currentMode = 'quick-scan';
+    aiOutputType = 'text';
 }

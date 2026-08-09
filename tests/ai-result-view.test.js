@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { buildAiDisplayPairs, isHiddenOutputStatus } from '../src/features/ai-scan/resultView.js';
+import { buildAiDisplayData, buildAiDisplayPairs, isHiddenOutputStatus } from '../src/features/ai-scan/resultView.js';
 
 test('pending and review candidates stay visible while removed and legacy keep items are excluded', () => {
     const candidates = [
@@ -44,4 +44,31 @@ test('only hidden output statuses are exempt from user deletion sync', () => {
     assert.equal(isHiddenOutputStatus('pending'), false);
     assert.equal(isHiddenOutputStatus('review'), false);
     assert.equal(isHiddenOutputStatus('failed'), false);
+});
+
+test('regex candidates appear only in the regex output and do not duplicate pure text output', () => {
+    const data = buildAiDisplayData(
+        [
+            { id: 'a', sourceText: 'Created 1 day ago', status: 'translated' },
+            { id: 'b', sourceText: 'Created 2 days ago', status: 'translated' },
+            { id: 'text', sourceText: 'Save', status: 'translated' },
+        ],
+        [
+            { id: 'a', action: 'translate', translationType: 'regex', regexRuleId: 'days', translation: '' },
+            { id: 'b', action: 'translate', translationType: 'regex', regexRuleId: 'days', translation: '' },
+            { id: 'text', action: 'translate', translationType: 'text', translation: '保存' },
+        ],
+        [
+            {
+                id: 'days',
+                sourceIds: ['a', 'b'],
+                pattern: '^Created (\\d+) days? ago$',
+                flags: 'i',
+                replacement: '创建于 $1 天前',
+            },
+        ]
+    );
+
+    assert.deepEqual(data.textPairs, [{ sourceText: 'Save', translation: '保存' }]);
+    assert.equal(data.regexRules.length, 1);
 });

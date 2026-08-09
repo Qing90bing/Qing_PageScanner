@@ -17,6 +17,38 @@
     display: flex;
 }
 
+.ai-output-tabs {
+    display: none;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.ai-output-tabs.is-visible {
+    display: flex;
+}
+
+.ai-output-tab {
+    border: 1px solid var(--main-border);
+    border-radius: 7px;
+    padding: 5px 11px;
+    background: var(--main-bg);
+    color: var(--main-text-secondary);
+    cursor: pointer;
+    font: inherit;
+    font-size: 12px;
+}
+
+.ai-output-tab:hover,
+.ai-output-tab.is-active {
+    border-color: var(--main-primary);
+    background: color-mix(in srgb, var(--main-primary) 10%, var(--main-bg));
+    color: var(--main-text);
+}
+
+.ai-output-tab.is-active {
+    font-weight: 700;
+}
+
 .ai-summary-status {
     display: flex;
     align-items: center;
@@ -41,6 +73,11 @@
 .ai-status-dot.is-active {
     background: #22a559;
     box-shadow: 0 0 0 3px color-mix(in srgb, #22a559 18%, transparent);
+}
+
+.ai-status-dot.is-paused {
+    background: #d18b16;
+    box-shadow: 0 0 0 3px color-mix(in srgb, #d18b16 18%, transparent);
 }
 
 .ai-summary-counts {
@@ -118,6 +155,10 @@
     text-align: right;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.ai-summary-notice.is-error {
+    color: color-mix(in srgb, #c2413a 88%, var(--main-text));
 }
 
 .ai-review-list {
@@ -361,20 +402,21 @@
 }
 
 .ai-style-toolbar {
-    display: grid;
-    grid-template-columns: minmax(0, 2fr) minmax(180px, 1fr);
+    display: flex;
+    flex-direction: column;
     gap: 20px;
 }
 
 .ai-style-workspace {
-    display: grid;
-    grid-template-columns: minmax(240px, 0.78fr) minmax(0, 2fr);
+    display: flex;
+    flex-direction: column;
     align-items: start;
     gap: 20px;
 }
 
 .ai-style-library,
 .ai-style-editor {
+    width: 100%;
     min-width: 0;
     padding: 18px;
     border: 1px solid var(--main-border);
@@ -494,10 +536,6 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .ai-style-workspace {
-        grid-template-columns: 1fr;
-    }
-
     .ai-style-list {
         max-height: 220px;
     }
@@ -524,7 +562,6 @@
     .ai-form-grid,
     .ai-general-grid,
     .ai-budget-grid,
-    .ai-style-toolbar,
     .ai-review-item {
         grid-template-columns: 1fr;
     }

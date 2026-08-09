@@ -8,7 +8,7 @@
 import { createSVGFromString } from '../../utils/dom/dom.js';
 import * as state from './modalState.js';
 import { t } from '../../i18n/index.js';
-import { on } from '../../utils/core/eventBus.js';
+import { fire, on } from '../../utils/core/eventBus.js';
 import { infoIcon } from '../../../assets/icons/infoIcon.js';
 import { dynamicIcon } from '../../../assets/icons/dynamicIcon.js';
 import { translateIcon } from '../../../assets/icons/icon.js';
@@ -19,6 +19,37 @@ let placeholder, unsubscribeLanguageChanged;
 let currentMode = 'quick-scan';
 let lastAiSnapshot = null;
 let lastAiReviewItems = [];
+let lastAiEditError = '';
+
+function renderAiOutputTabs(activeType = state.getAiOutputType()) {
+    if (!state.aiOutputTabs) return;
+    state.aiOutputTabs.querySelectorAll('[data-ai-output-type]').forEach((button) => {
+        const isActive = button.dataset.aiOutputType === activeType;
+        button.classList.toggle('is-active', isActive);
+        button.setAttribute('aria-selected', String(isActive));
+    });
+}
+
+function createAiOutputTabs() {
+    const tabs = document.createElement('div');
+    tabs.className = 'ai-output-tabs';
+    tabs.setAttribute('role', 'tablist');
+    [
+        ['text', 'results.aiOutput.text'],
+        ['regex', 'results.aiOutput.regex'],
+    ].forEach(([type]) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'ai-output-tab';
+        button.dataset.aiOutputType = type;
+        button.setAttribute('role', 'tab');
+        button.addEventListener('click', () => fire('ai-output-type-change', type));
+        tabs.appendChild(button);
+    });
+    state.setAiOutputTabs(tabs);
+    updateAiOutputTabs();
+    return tabs;
+}
 
 function renderAiSummaryPanel() {
     const panel = state.aiSummaryPanel;
@@ -30,11 +61,18 @@ function renderAiSummaryPanel() {
     status.className = 'ai-summary-status';
     status.setAttribute('role', 'status');
     const statusDot = document.createElement('span');
-    statusDot.className = `ai-status-dot ${lastAiSnapshot.active ? 'is-active' : ''}`;
+    statusDot.className = `ai-status-dot ${
+        lastAiSnapshot.paused ? 'is-paused' : lastAiSnapshot.active ? 'is-active' : ''
+    }`;
     statusDot.setAttribute('aria-hidden', 'true');
     const statusText = document.createElement('span');
     statusText.className = 'ai-summary-status-text';
-    statusText.textContent = t(lastAiSnapshot.active ? 'results.aiRunning' : 'results.aiStopped');
+    const statusKey = lastAiSnapshot.paused
+        ? 'results.aiPaused'
+        : lastAiSnapshot.active
+          ? 'results.aiRunning'
+          : 'results.aiStopped';
+    statusText.textContent = t(statusKey);
     status.append(statusDot, statusText);
     panel.appendChild(status);
 
@@ -43,6 +81,8 @@ function renderAiSummaryPanel() {
     const countItems = [
         ['pending', 'results.aiCounts.pending'],
         ['translated', 'results.aiCounts.translated'],
+        ['textRules', 'results.aiCounts.textRules'],
+        ['regexRules', 'results.aiCounts.regexRules'],
         ['removed', 'results.aiCounts.removed'],
         ['review', 'results.aiCounts.review'],
         ['failed', 'results.aiCounts.failed'],
@@ -79,6 +119,13 @@ function renderAiSummaryPanel() {
         } else {
             notice.textContent = `${t('results.aiRequestError')}: ${lastAiSnapshot.lastErrorCode}`;
         }
+        panel.appendChild(notice);
+    }
+
+    if (lastAiEditError) {
+        const notice = document.createElement('div');
+        notice.className = 'ai-summary-notice is-error';
+        notice.textContent = `${t('results.aiRegexEditError')}: ${lastAiEditError}`;
         panel.appendChild(notice);
     }
 
@@ -188,6 +235,8 @@ export function populateModalContent(modalContent) {
     aiSummaryPanel.setAttribute('aria-live', 'polite');
     state.setAiSummaryPanel(aiSummaryPanel);
 
+    const aiOutputTabs = createAiOutputTabs();
+
     const textareaContainer = document.createElement('div');
     textareaContainer.className = 'tc-textarea-container';
 
@@ -208,11 +257,13 @@ export function populateModalContent(modalContent) {
 
     modalContent.appendChild(placeholder);
     modalContent.appendChild(aiSummaryPanel);
+    modalContent.appendChild(aiOutputTabs);
     modalContent.appendChild(textareaContainer);
     modalContent.appendChild(loadingContainer);
 
     unsubscribeLanguageChanged = on('languageChanged', () => {
         rerenderPlaceholder();
+        updateAiOutputTabs();
         renderAiSummaryPanel();
     });
 }
@@ -226,6 +277,9 @@ export function destroyModalContent() {
         unsubscribeLanguageChanged = null;
     }
     placeholder = null;
+    lastAiSnapshot = null;
+    lastAiReviewItems = [];
+    lastAiEditError = '';
 }
 
 /**
@@ -250,14 +304,25 @@ export function setModalContentMode(mode) {
     if (state.aiSummaryPanel) {
         state.aiSummaryPanel.classList.toggle('is-visible', currentMode === 'ai-scan');
     }
+    if (state.aiOutputTabs) state.aiOutputTabs.classList.toggle('is-visible', currentMode === 'ai-scan');
 }
 
 /**
  * @param {object} snapshot
  * @param {Array<object>} reviewItems
  */
-export function updateAiSummaryPanel(snapshot, reviewItems = []) {
+export function updateAiSummaryPanel(snapshot, reviewItems = [], editError = '') {
     lastAiSnapshot = snapshot;
     lastAiReviewItems = reviewItems;
+    lastAiEditError = editError || '';
     renderAiSummaryPanel();
+}
+
+export function updateAiOutputTabs(activeType = state.getAiOutputType()) {
+    if (!state.aiOutputTabs) return;
+    state.aiOutputTabs.querySelectorAll('[data-ai-output-type]').forEach((button) => {
+        const type = button.dataset.aiOutputType;
+        button.textContent = t(type === 'regex' ? 'results.aiOutput.regex' : 'results.aiOutput.text');
+    });
+    renderAiOutputTabs(activeType);
 }

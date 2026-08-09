@@ -166,8 +166,14 @@ export function mountAiSettingsPanel(container, currentAiSettings) {
         settings.confidenceThreshold,
         { min: 0.5, max: 1, step: 0.01 }
     );
+    const regexRuleComments = createToggleSwitch(
+        'ai-regex-rule-comments',
+        t('settings.ai.regexRuleComments'),
+        t('settings.ai.regexRuleCommentsDescription'),
+        settings.includeRegexRuleComments
+    );
     generalGrid.append(mode.element, target.element, confidence.element);
-    general.body.appendChild(generalGrid);
+    general.body.append(generalGrid, regexRuleComments.element);
 
     const provider = createSection('settings.ai.provider', settingsIcon);
     const providerToolbar = document.createElement('div');
@@ -715,6 +721,7 @@ export function mountAiSettingsPanel(container, currentAiSettings) {
                 processingMode: mode.select.getValue(),
                 targetLanguage: target.select.getValue(),
                 confidenceThreshold: numberValue(confidence.input, settings.confidenceThreshold),
+                includeRegexRuleComments: regexRuleComments.input.checked,
                 activeProviderId,
                 providers,
                 requestTimeoutMs: numberValue(timeout.input, settings.requestTimeoutMs / 1000) * 1000,

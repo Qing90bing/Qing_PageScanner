@@ -5,6 +5,7 @@ import {
     AI_ACTIONS,
     AI_CANDIDATE_STATUS,
     AI_PROCESSING_MODES,
+    AI_TRANSLATION_TYPES,
     getActiveProvider,
     mergeAiSettings,
 } from '../../shared/services/ai/contracts.js';
@@ -12,7 +13,11 @@ import { extractAiCandidates } from '../../shared/services/ai/candidateExtractor
 import { buildPageContext } from '../../shared/services/ai/pageContextBuilder.js';
 import { buildTranslationRequest } from '../../shared/services/ai/promptBuilder.js';
 import { createChatCompletionRequest, validateProviderConfiguration } from '../../shared/services/ai/providerClient.js';
-import { parseJsonContent, validateTranslationResponse } from '../../shared/services/ai/responseValidator.js';
+import {
+    isUnchangedTranslation,
+    parseJsonContent,
+    validateTranslationResponse,
+} from '../../shared/services/ai/responseValidator.js';
 import { checkBudget, selectBatch } from '../../shared/services/ai/budgetGuard.js';
 import { isSubmittableAiCandidate } from '../../shared/services/ai/candidateText.js';
 import {
@@ -28,6 +33,12 @@ import {
 } from '../../shared/services/ai/storage.js';
 import { matchStyleProfile } from '../../shared/services/ai/siteStyleStore.js';
 import {
+    createRegexRuleId,
+    hasDynamicRegexValue,
+    matchEditedRegexRulesToExisting,
+    validateRegexRuleDefinition,
+} from '../../shared/utils/text/regexRules.js';
+import {
     isTranslationBridgeActive,
     isTranslationBridgeIdle,
     registerTranslationBridgeClient,
@@ -35,9 +46,11 @@ import {
     waitForTranslationBridgeIdle,
 } from '../../shared/services/translationBridge.js';
 import { fire } from '../../shared/utils/core/eventBus.js';
-import { buildAiDisplayPairs, isHiddenOutputStatus } from './resultView.js';
+import { buildAiDisplayData } from './resultView.js';
+import { createManualSummaryCandidate, reconcileAiSummarySources } from './summaryEdits.js';
 
 let isActive = false;
+let isPaused = false;
 let observer = null;
 let rootFlushTimer = null;
 let autoSubmitTimer = null;
@@ -45,6 +58,7 @@ let pendingRoots = new Set();
 let candidates = new Map();
 let candidateFingerprints = new Set();
 let decisions = new Map();
+let regexRules = new Map();
 let cache = new Map();
 let currentRequest = null;
 let inFlightCandidateIds = [];
@@ -59,6 +73,13 @@ let isClearing = false;
 let submissionInProgress = false;
 let userRemovedFingerprints = new Set();
 const MAX_PERSISTED_SESSION_ITEMS = 5000;
+const AI_OBSERVER_OPTIONS = Object.freeze({
+    childList: true,
+    subtree: true,
+    characterData: true,
+    attributes: true,
+    attributeFilter: ['placeholder', 'alt', 'title', 'aria-label'],
+});
 
 function getCounts() {
     const counts = {
@@ -70,11 +91,18 @@ function getCounts() {
         removed: 0,
         review: 0,
         failed: 0,
+        textRules: 0,
+        regexRules: regexRules.size,
     };
     candidates.forEach((candidate) => {
         if (Object.prototype.hasOwnProperty.call(counts, candidate.status)) {
             counts[candidate.status] += 1;
         }
+    });
+    decisions.forEach((decision) => {
+        if (decision.status !== AI_CANDIDATE_STATUS.TRANSLATED || decision.action !== AI_ACTIONS.TRANSLATE) return;
+        if (decision.translationType === AI_TRANSLATION_TYPES.REGEX) return;
+        counts.textRules += 1;
     });
     return counts;
 }
@@ -101,6 +129,9 @@ function serializeSession() {
         targetLanguage: currentTargetLanguage,
         candidates: persistedCandidates,
         decisions: Array.from(decisions.values()).filter((decision) => persistedIds.has(decision.id)),
+        regexRules: Array.from(regexRules.values()).filter(
+            (rule) => rule.sourceIds.length === 0 || rule.sourceIds.every((id) => persistedIds.has(id))
+        ),
         sessionUsage,
     };
 }
@@ -113,7 +144,9 @@ async function persistState() {
 
 function hydrateCachedDecision(candidate, cacheEntry) {
     const cachedDecision = cacheEntry?.decision;
-    if (!cachedDecision) return false;
+    // Regex rules are deliberately session-scoped and must never be hydrated
+    // from the per-source translation cache.
+    if (!cachedDecision || cachedDecision.translationType === AI_TRANSLATION_TYPES.REGEX) return false;
 
     const decision = {
         ...cachedDecision,
@@ -122,6 +155,17 @@ function hydrateCachedDecision(candidate, cacheEntry) {
     };
     if (decision.action === AI_ACTIONS.KEEP) {
         decision.action = AI_ACTIONS.REMOVE;
+        decision.status = AI_CANDIDATE_STATUS.REMOVED;
+    }
+    if (
+        decision.action === AI_ACTIONS.TRANSLATE &&
+        decision.translationType !== AI_TRANSLATION_TYPES.REGEX &&
+        isUnchangedTranslation(candidate.sourceText, decision.translation)
+    ) {
+        decision.action = AI_ACTIONS.REMOVE;
+        decision.translation = '';
+        decision.translationType = AI_TRANSLATION_TYPES.TEXT;
+        decision.reason = 'unchanged-translation';
         decision.status = AI_CANDIDATE_STATUS.REMOVED;
     }
     decisions.set(candidate.id, decision);
@@ -172,11 +216,11 @@ function collectFromRoot(root) {
 }
 
 async function flushPendingRoots(runGeneration = generation) {
-    if (!isActive || runGeneration !== generation || pendingRoots.size === 0) return;
+    if (!isActive || isPaused || runGeneration !== generation || pendingRoots.size === 0) return;
     if (isTranslationBridgeActive() && !isTranslationBridgeIdle()) {
         await waitForTranslationBridgeIdle();
     }
-    if (!isActive || runGeneration !== generation) return;
+    if (!isActive || isPaused || runGeneration !== generation) return;
 
     const roots = Array.from(pendingRoots);
     pendingRoots = new Set();
@@ -194,6 +238,7 @@ async function flushPendingRoots(runGeneration = generation) {
 }
 
 function scheduleRootFlush() {
+    if (isPaused) return;
     if (rootFlushTimer !== null) clearTimeout(rootFlushTimer);
     const delay = mergeAiSettings(loadSettings().ai).batch.debounceMs;
     const runGeneration = generation;
@@ -204,7 +249,7 @@ function scheduleRootFlush() {
 }
 
 function handleMutations(mutations) {
-    if (!isActive) return;
+    if (!isActive || isPaused) return;
     mutations.forEach((mutation) => {
         if (mutation.type === 'characterData') {
             pendingRoots.add(mutation.target);
@@ -220,12 +265,12 @@ function handleMutations(mutations) {
 }
 
 function scheduleAutoSubmit(delayMs) {
-    if (!isActive || currentRequest) return;
+    if (!isActive || isPaused || currentRequest) return;
     if (autoSubmitTimer !== null) clearTimeout(autoSubmitTimer);
     const runGeneration = generation;
     autoSubmitTimer = setTimeout(() => {
         autoSubmitTimer = null;
-        if (isActive && runGeneration === generation) {
+        if (isActive && !isPaused && runGeneration === generation) {
             void submitPending();
         }
     }, delayMs);
@@ -237,6 +282,7 @@ async function restoreSession() {
         candidates = new Map();
         candidateFingerprints = new Set();
         decisions = new Map();
+        regexRules = new Map();
         sessionUsage = { requests: 0, characters: 0 };
         return;
     }
@@ -257,15 +303,102 @@ async function restoreSession() {
         restoredDecisions
             .filter((decision) => candidates.has(decision.id))
             .map((decision) => {
+                const candidate = candidates.get(decision.id);
                 if (decision.action === AI_ACTIONS.KEEP) {
                     return [
                         decision.id,
                         { ...decision, action: AI_ACTIONS.REMOVE, status: AI_CANDIDATE_STATUS.REMOVED },
                     ];
                 }
+                if (
+                    decision.action === AI_ACTIONS.TRANSLATE &&
+                    decision.translationType !== AI_TRANSLATION_TYPES.REGEX &&
+                    isUnchangedTranslation(candidate.sourceText, decision.translation)
+                ) {
+                    return [
+                        decision.id,
+                        {
+                            ...decision,
+                            action: AI_ACTIONS.REMOVE,
+                            translation: '',
+                            translationType: AI_TRANSLATION_TYPES.TEXT,
+                            reason: 'unchanged-translation',
+                            status: AI_CANDIDATE_STATUS.REMOVED,
+                        },
+                    ];
+                }
                 return [decision.id, decision];
             })
     );
+
+    const restoredRules = new Map();
+    const restoredRuleIds = new Set();
+    const candidateById = new Map(candidates);
+    const restoredRegexRules = Array.isArray(saved.regexRules) ? saved.regexRules : [];
+    restoredRegexRules.forEach((rawRule) => {
+        const ruleId = String(rawRule?.id || '').trim();
+        if (!ruleId || restoredRuleIds.has(ruleId)) return;
+        const sourceIds = Array.isArray(rawRule?.sourceIds)
+            ? rawRule.sourceIds.map((id) => String(id || '').trim()).filter(Boolean)
+            : [];
+        if (new Set(sourceIds).size !== sourceIds.length) return;
+        if (sourceIds.some((id) => !candidateById.has(id))) return;
+        const origin = rawRule?.origin === 'manual' || rawRule?.origin === 'user-edited' ? rawRule.origin : 'ai';
+        if (origin === 'ai' && sourceIds.length < 1) return;
+        const sourceTexts = sourceIds.map((id) => candidateById.get(id).sourceText);
+        const singleSample = origin === 'ai' && sourceIds.length === 1;
+        if (singleSample && !hasDynamicRegexValue(sourceTexts[0])) return;
+        const validated = validateRegexRuleDefinition(
+            { ...rawRule, id: ruleId, sourceIds, origin },
+            {
+                sourceTexts,
+                requireSourceMatch: origin === 'ai',
+                requireAnchors: singleSample,
+                requireDynamicCapture: singleSample,
+            }
+        );
+        if (!validated.valid) return;
+        restoredRuleIds.add(ruleId);
+        restoredRules.set(ruleId, validated.rule);
+    });
+    decisions.forEach((decision, id) => {
+        if (decision.translationType !== AI_TRANSLATION_TYPES.REGEX) {
+            const candidate = candidates.get(id);
+            if (candidate) candidate.status = decision.status;
+            return;
+        }
+        if (!restoredRules.has(decision.regexRuleId)) {
+            const candidate = candidates.get(id);
+            if (candidate) candidate.status = AI_CANDIDATE_STATUS.PENDING;
+            decisions.delete(id);
+            return;
+        }
+        const candidate = candidates.get(id);
+        if (candidate) candidate.status = decision.status;
+    });
+    restoredRules.forEach((rule, ruleId) => {
+        if (
+            rule.sourceIds.length > 0 &&
+            !rule.sourceIds.every((sourceId) => {
+                const decision = decisions.get(sourceId);
+                return (
+                    decision?.translationType === AI_TRANSLATION_TYPES.REGEX &&
+                    decision.status === AI_CANDIDATE_STATUS.TRANSLATED &&
+                    decision.regexRuleId === ruleId
+                );
+            })
+        ) {
+            restoredRules.delete(ruleId);
+            rule.sourceIds.forEach((sourceId) => {
+                const decision = decisions.get(sourceId);
+                if (decision?.translationType !== AI_TRANSLATION_TYPES.REGEX) return;
+                const candidate = candidates.get(sourceId);
+                if (candidate) candidate.status = AI_CANDIDATE_STATUS.PENDING;
+                decisions.delete(sourceId);
+            });
+        }
+    });
+    regexRules = restoredRules;
     sessionUsage = {
         requests: Math.max(0, Number(saved.sessionUsage?.requests) || 0),
         characters: Math.max(0, Number(saved.sessionUsage?.characters) || 0),
@@ -283,6 +416,7 @@ export async function startAiScan() {
     }
 
     isActive = true;
+    isPaused = false;
     generation += 1;
     lastError = null;
     budgetBlockedReason = null;
@@ -299,17 +433,12 @@ export async function startAiScan() {
 
         collectFromRoot(document);
         observer = new MutationObserver(handleMutations);
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true,
-            characterData: true,
-            attributes: true,
-            attributeFilter: ['placeholder', 'alt', 'title', 'aria-label'],
-        });
+        observer.observe(document.body, AI_OBSERVER_OPTIONS);
         emitState();
         return { started: true };
     } catch (error) {
         isActive = false;
+        isPaused = false;
         unregisterTranslationBridgeClient();
         releaseScanMode(SCAN_MODES.AI);
         lastError = error;
@@ -325,6 +454,7 @@ export async function stopAiScan() {
     }
 
     isActive = false;
+    isPaused = false;
     generation += 1;
     if (observer) {
         observer.disconnect();
@@ -467,12 +597,30 @@ async function performSubmitPending() {
 
         const parsed = parseJsonContent(response.content);
         const validated = validateTranslationResponse(parsed, batch.candidates, aiSettings.confidenceThreshold);
-        validated.forEach((decision) => {
+        const regexRuleIdMap = new Map();
+        validated.regexRules.forEach((rule) => {
+            let ruleId = rule.id;
+            let suffix = 0;
+            while (regexRules.has(ruleId)) {
+                suffix += 1;
+                ruleId = `${rule.id}-${suffix}`;
+            }
+            regexRuleIdMap.set(rule.id, ruleId);
+            regexRules.set(ruleId, { ...rule, id: ruleId });
+        });
+        validated.decisions.forEach((decision) => {
             const candidate = candidates.get(decision.id);
             if (!candidate) return;
-            candidate.status = decision.status;
-            decisions.set(decision.id, decision);
-            if ([AI_ACTIONS.TRANSLATE, AI_ACTIONS.KEEP, AI_ACTIONS.REMOVE].includes(decision.action)) {
+            const storedDecision =
+                decision.translationType === AI_TRANSLATION_TYPES.REGEX && regexRuleIdMap.has(decision.regexRuleId)
+                    ? { ...decision, regexRuleId: regexRuleIdMap.get(decision.regexRuleId) }
+                    : decision;
+            candidate.status = storedDecision.status;
+            decisions.set(decision.id, storedDecision);
+            if (
+                storedDecision.translationType !== AI_TRANSLATION_TYPES.REGEX &&
+                [AI_ACTIONS.TRANSLATE, AI_ACTIONS.KEEP, AI_ACTIONS.REMOVE].includes(storedDecision.action)
+            ) {
                 cache.set(candidate.fingerprint, {
                     fingerprint: candidate.fingerprint,
                     siteKey: candidate.siteKey,
@@ -481,13 +629,15 @@ async function performSubmitPending() {
                     providerId: provider.id,
                     model: provider.model,
                     styleVersion: styleProfile?.version || 0,
-                    decision,
+                    decision: storedDecision,
                     updatedAt: Date.now(),
                 });
+            } else if (storedDecision.translationType === AI_TRANSLATION_TYPES.REGEX) {
+                cache.delete(candidate.fingerprint);
             }
         });
         await Promise.all([saveAiCache(cache), persistState()]);
-        return { submitted: true, count: validated.length };
+        return { submitted: true, count: validated.decisions.length };
     } catch (error) {
         if (requestGeneration !== generation) {
             return { submitted: false, reason: 'stale' };
@@ -536,6 +686,9 @@ async function performSubmitPending() {
 }
 
 export async function submitPending() {
+    if (isPaused) {
+        return { submitted: false, reason: 'paused' };
+    }
     if (!isActive || currentRequest || isClearing || submissionInProgress) {
         return { submitted: false, reason: 'inactive-or-busy' };
     }
@@ -570,6 +723,7 @@ export async function submitPending() {
         if (
             result?.submitted &&
             isActive &&
+            !isPaused &&
             !isClearing &&
             latestSettings.processingMode === AI_PROCESSING_MODES.AUTO &&
             Array.from(candidates.values()).some((candidate) => candidate.status === AI_CANDIDATE_STATUS.PENDING) &&
@@ -609,6 +763,7 @@ export async function clearAiData() {
         candidates.clear();
         candidateFingerprints.clear();
         decisions.clear();
+        regexRules.clear();
         sessionUsage = { requests: 0, characters: 0 };
         lastError = null;
         budgetBlockedReason = null;
@@ -627,13 +782,28 @@ export async function clearAiData() {
 export function getAcceptedTranslationPairs() {
     return Array.from(decisions.values())
         .filter(
-            (decision) => decision.action === AI_ACTIONS.TRANSLATE && decision.status === AI_CANDIDATE_STATUS.TRANSLATED
+            (decision) =>
+                decision.action === AI_ACTIONS.TRANSLATE &&
+                decision.status === AI_CANDIDATE_STATUS.TRANSLATED &&
+                decision.translationType !== AI_TRANSLATION_TYPES.REGEX
         )
         .map((decision) => ({ sourceText: decision.sourceText, translation: decision.translation }));
 }
 
 export function getAiDisplayPairs() {
-    return buildAiDisplayPairs(Array.from(candidates.values()), Array.from(decisions.values()));
+    return getAiDisplayData().textPairs;
+}
+
+export function getAiDisplayData() {
+    return buildAiDisplayData(
+        Array.from(candidates.values()),
+        Array.from(decisions.values()),
+        Array.from(regexRules.values())
+    );
+}
+
+export function getAiRegexRules() {
+    return Array.from(regexRules.values()).map((rule) => ({ ...rule, sourceIds: [...rule.sourceIds] }));
 }
 
 export function getReviewItems() {
@@ -642,26 +812,136 @@ export function getReviewItems() {
     );
 }
 
-export function applyAiSummaryDeletions(remainingSourceTexts) {
-    const remaining = new Set(Array.isArray(remainingSourceTexts) ? remainingSourceTexts : []);
+export function applyAiSummaryEdits({ remainingSourceTexts = null, editedRegexRules = null } = {}) {
+    const hasTextEdits = Array.isArray(remainingSourceTexts);
     let changed = false;
     let cacheChanged = false;
 
-    candidates.forEach((candidate, id) => {
-        if (remaining.has(candidate.sourceText)) return;
-        // Removed (and legacy kept) items are intentionally absent from the
-        // editable summary; their absence is not a user deletion.
-        if (isHiddenOutputStatus(candidate.status)) return;
+    let nextRegexRules = regexRules;
+    if (Array.isArray(editedRegexRules)) {
+        const existingRules = Array.from(regexRules.values());
+        const matchedRules = matchEditedRegexRulesToExisting(editedRegexRules, existingRules);
+        if (!matchedRules.valid) return { changed: false, error: matchedRules.error };
 
-        candidates.delete(id);
-        decisions.delete(id);
-        if (candidate.fingerprint) {
-            candidateFingerprints.delete(candidate.fingerprint);
-            userRemovedFingerprints.add(candidate.fingerprint);
-            if (cache.delete(candidate.fingerprint)) cacheChanged = true;
+        nextRegexRules = new Map();
+        const assignedSourceIds = new Set();
+        for (let index = 0; index < editedRegexRules.length; index += 1) {
+            const editedRule = editedRegexRules[index];
+            const requestedId = String(editedRule?.id || '').trim();
+            const existingRule = matchedRules.matches[index];
+            const ruleId =
+                requestedId ||
+                existingRule?.id ||
+                createRegexRuleId(
+                    editedRule?.pattern || '',
+                    editedRule?.flags || '',
+                    editedRule?.replacement || '',
+                    index
+                );
+            let uniqueRuleId = ruleId;
+            let suffix = 0;
+            while (
+                !requestedId &&
+                !existingRule &&
+                (regexRules.has(uniqueRuleId) || nextRegexRules.has(uniqueRuleId))
+            ) {
+                suffix += 1;
+                uniqueRuleId = `${ruleId}-${suffix}`;
+            }
+            if (nextRegexRules.has(uniqueRuleId)) return { changed: false, error: 'duplicate-regex-rule-id' };
+
+            const sourceIds = existingRule
+                ? [...existingRule.sourceIds]
+                : Array.isArray(editedRule?.sourceIds)
+                  ? editedRule.sourceIds.map((id) => String(id || '').trim()).filter(Boolean)
+                  : [];
+            if (sourceIds.some((id) => assignedSourceIds.has(id))) {
+                return { changed: false, error: 'overlapping-regex-rules' };
+            }
+            if (sourceIds.some((id) => !candidates.has(id))) return { changed: false, error: 'unknown-regex-source' };
+
+            const candidateSourceTexts = sourceIds.map((id) => candidates.get(id).sourceText);
+            const validated = validateRegexRuleDefinition(
+                {
+                    ...(existingRule || {}),
+                    ...editedRule,
+                    id: uniqueRuleId,
+                    sourceIds,
+                    confidence:
+                        existingRule?.confidence ??
+                        (Number.isFinite(Number(editedRule?.confidence)) ? Number(editedRule.confidence) : 1),
+                    origin: existingRule ? 'user-edited' : editedRule?.origin || 'manual',
+                },
+                { sourceTexts: candidateSourceTexts, requireSourceMatch: false }
+            );
+            if (!validated.valid) return { changed: false, error: validated.reason };
+            sourceIds.forEach((id) => assignedSourceIds.add(id));
+            nextRegexRules.set(uniqueRuleId, validated.rule);
         }
-        changed = true;
-    });
+
+        regexRules.forEach((rule, ruleId) => {
+            if (nextRegexRules.has(ruleId)) return;
+            rule.sourceIds.forEach((id) => {
+                const removed = removeAiCandidate(id);
+                cacheChanged = cacheChanged || removed.cacheChanged;
+            });
+            changed = true;
+        });
+        if (nextRegexRules.size !== regexRules.size) changed = true;
+        else {
+            nextRegexRules.forEach((rule, ruleId) => {
+                const previous = regexRules.get(ruleId);
+                if (
+                    !previous ||
+                    previous.pattern !== rule.pattern ||
+                    previous.flags !== rule.flags ||
+                    previous.replacement !== rule.replacement
+                ) {
+                    changed = true;
+                }
+            });
+        }
+        regexRules = nextRegexRules;
+    }
+
+    const regexCandidateIds = new Set(
+        Array.from(regexRules.values()).flatMap((rule) => (Array.isArray(rule.sourceIds) ? rule.sourceIds : []))
+    );
+
+    if (hasTextEdits) {
+        const reconciliation = reconcileAiSummarySources(
+            remainingSourceTexts,
+            Array.from(candidates.values()),
+            regexCandidateIds
+        );
+
+        reconciliation.revivedCandidateIds.forEach((id) => {
+            const candidate = candidates.get(id);
+            if (!candidate) return;
+            candidate.status = AI_CANDIDATE_STATUS.PENDING;
+            decisions.delete(id);
+            if (candidate.fingerprint) userRemovedFingerprints.delete(candidate.fingerprint);
+            changed = true;
+        });
+
+        reconciliation.addedSourceTexts.forEach((sourceText) => {
+            const candidate = createManualSummaryCandidate(sourceText, {
+                siteKey: currentSiteKey || window.location.origin,
+                targetLanguage: currentTargetLanguage,
+            });
+            if (!candidate || candidateFingerprints.has(candidate.fingerprint)) return;
+            candidates.set(candidate.id, candidate);
+            candidateFingerprints.add(candidate.fingerprint);
+            userRemovedFingerprints.delete(candidate.fingerprint);
+            changed = true;
+        });
+
+        reconciliation.removedCandidateIds.forEach((id) => {
+            const removed = removeAiCandidate(id);
+            cacheChanged = cacheChanged || removed.cacheChanged;
+            changed = removed.changed || changed;
+        });
+    }
 
     if (changed) {
         const tasks = [persistState()];
@@ -672,12 +952,31 @@ export function applyAiSummaryDeletions(remainingSourceTexts) {
         });
         emitState();
     }
-    return changed;
+    return { changed, error: null };
+}
+
+function removeAiCandidate(id) {
+    const candidate = candidates.get(id);
+    if (!candidate) return { changed: false, cacheChanged: false };
+    candidates.delete(id);
+    decisions.delete(id);
+    let cacheChanged = false;
+    if (candidate.fingerprint) {
+        candidateFingerprints.delete(candidate.fingerprint);
+        userRemovedFingerprints.add(candidate.fingerprint);
+        cacheChanged = cache.delete(candidate.fingerprint);
+    }
+    return { changed: true, cacheChanged };
+}
+
+export function applyAiSummaryDeletions(remainingSourceTexts) {
+    return applyAiSummaryEdits({ remainingSourceTexts }).changed;
 }
 
 export function getAiStateSnapshot() {
     return {
         active: isActive,
+        paused: isPaused,
         processing: Boolean(currentRequest) || submissionInProgress,
         counts: getCounts(),
         sessionUsage: { ...sessionUsage },
@@ -690,6 +989,43 @@ export function isAiScanActive() {
     return isActive;
 }
 
+export function isAiScanPaused() {
+    return isPaused;
+}
+
+export function pauseAiScan() {
+    if (!isActive || isPaused) return false;
+    isPaused = true;
+    if (observer) observer.disconnect();
+    if (rootFlushTimer !== null) {
+        clearTimeout(rootFlushTimer);
+        rootFlushTimer = null;
+    }
+    if (autoSubmitTimer !== null) {
+        clearTimeout(autoSubmitTimer);
+        autoSubmitTimer = null;
+    }
+    pendingRoots.clear();
+    emitState();
+    return true;
+}
+
+export function resumeAiScan() {
+    if (!isActive || !isPaused) return false;
+    isPaused = false;
+    if (observer && document.body) observer.observe(document.body, AI_OBSERVER_OPTIONS);
+    const aiSettings = mergeAiSettings(loadSettings().ai);
+    if (
+        aiSettings.processingMode === AI_PROCESSING_MODES.AUTO &&
+        Array.from(candidates.values()).some((candidate) => candidate.status === AI_CANDIDATE_STATUS.PENDING) &&
+        !budgetBlockedReason
+    ) {
+        scheduleAutoSubmit(aiSettings.batch.debounceMs);
+    }
+    emitState();
+    return true;
+}
+
 export function hasAiData() {
-    return candidates.size > 0 || decisions.size > 0;
+    return candidates.size > 0 || decisions.size > 0 || regexRules.size > 0;
 }

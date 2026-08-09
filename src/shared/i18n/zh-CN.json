@@ -122,6 +122,8 @@
             "simplifiedChinese": "中文简体",
             "traditionalChinese": "中文繁体",
             "confidenceThreshold": "置信度阈值",
+            "regexRuleComments": "包含正则规则 ID 注释",
+            "regexRuleCommentsDescription": "在正则输出中添加 // qps-rule:<id> 注释，便于稳定识别规则。默认关闭以保持代码简洁。",
             "provider": "供应商配置",
             "currentProvider": "当前供应商",
             "providerName": "供应商名称",
@@ -203,16 +205,24 @@
         "scanCountSession": "已扫描 {{count}} 个项目",
         "scanCountStatic": "共扫描 {{count}} 个项目",
         "scanCountAi": "AI 已收集 {{count}} 个项目",
-        "aiRunning": "AI 翻译进行中",
-        "aiStopped": "AI 翻译已停止",
-        "aiProcessing": "供应商正在处理当前批次…",
-        "aiBudgetBlocked": "已停止发送，达到预算限制",
-        "aiRequestError": "最近一次请求失败",
+        "aiRunning": "工作中",
+        "aiPaused": "已暂停",
+        "aiStopped": "已停止",
+        "aiProcessing": "处理中…",
+        "aiBudgetBlocked": "发送已暂停，达到预算限制",
+        "aiRequestError": "请求失败",
         "aiReviewItems": "待复核内容",
-        "aiReviewRequired": "需要人工复核",
+        "aiReviewRequired": "需人工复核",
+        "aiRegexEditError": "正则规则需复核",
+        "aiOutput": {
+            "text": "纯文本",
+            "regex": "正则翻译"
+        },
         "aiCounts": {
             "pending": "待处理",
             "translated": "已翻译",
+            "textRules": "纯文本规则",
+            "regexRules": "正则规则",
             "removed": "移除",
             "review": "待复核",
             "failed": "失败"
@@ -244,6 +254,8 @@
         "cspWorkerWarning": "因网站安全限制，已切换至兼容扫描模式。",
         "scanModeConflict": "请先停止当前扫描模式，再启动另一种扫描。",
         "aiScanStarted": "AI 翻译已开始。",
+        "aiScanPaused": "AI 翻译已暂停。",
+        "aiScanContinued": "AI 翻译已恢复。",
         "aiScanStopped": "AI 翻译已停止。",
         "aiScanStartFailed": "AI 翻译启动失败。",
         "aiDisabled": "AI 功能已关闭，请先在设置中启用。",
@@ -289,6 +301,8 @@
         "resumeElementScan": "恢复元素扫描",
         "pauseSessionScan": "暂停动态扫描",
         "resumeSessionScan": "恢复动态扫描",
+        "pauseAiScan": "暂停 AI 翻译",
+        "resumeAiScan": "恢复 AI 翻译",
         "tooltipHelp": "帮助",
         "persistData": {
             "title": "数据持久化说明",
@@ -299,7 +313,7 @@
         },
         "disabled": {
             "scan_in_progress": "另一项扫描正在进行中",
-            "ai_scan_active": "AI 翻译进行中，普通扫描已禁用"
+            "ai_scan_active": "AI 工作中，普通扫描已禁用"
         },
         "filters": {
             "title": "内容过滤器说明",

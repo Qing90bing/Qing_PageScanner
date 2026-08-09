@@ -164,11 +164,12 @@ export function updateAiFooterState(snapshot) {
         clearBtn.disabled = (snapshot.counts?.total || 0) === 0;
     }
     if (aiSubmitBtn) {
-        aiSubmitBtn.disabled = !snapshot.active || snapshot.processing || (snapshot.counts?.pending || 0) === 0;
+        aiSubmitBtn.disabled =
+            !snapshot.active || snapshot.paused || snapshot.processing || (snapshot.counts?.pending || 0) === 0;
     }
     if (aiRetryBtn) {
         const retryCount = (snapshot.counts?.review || 0) + (snapshot.counts?.failed || 0);
-        aiRetryBtn.disabled = !snapshot.active || snapshot.processing || retryCount === 0;
+        aiRetryBtn.disabled = !snapshot.active || snapshot.paused || snapshot.processing || retryCount === 0;
     }
     if (currentFooterMode !== 'ai-scan') return;
 }

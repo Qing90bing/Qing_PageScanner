@@ -200,6 +200,7 @@ export function updateModalContent(content, shouldOpen = false, mode = 'quick-sc
         state.placeholder.classList.remove('is-visible');
         textareaContainer.classList.add('is-visible');
         state.outputTextarea.value = '';
+        state.outputTextarea.readOnly = true;
         showLoading();
         setButtonsDisabled(true);
     } else if (content === state.SHOW_PLACEHOLDER) {
@@ -207,7 +208,15 @@ export function updateModalContent(content, shouldOpen = false, mode = 'quick-sc
         const isAiMode = mode === 'ai-scan';
         textareaContainer.classList.toggle('is-visible', isAiMode);
         state.placeholder.classList.toggle('is-visible', !isAiMode);
-        if (isAiMode) state.outputTextarea.value = '';
+        if (isAiMode) {
+            state.outputTextarea.value = '';
+            state.outputTextarea.readOnly = false;
+            updateLineNumbers();
+            updateStatistics();
+            updateActiveLine();
+        } else {
+            state.outputTextarea.readOnly = true;
+        }
         setButtonsDisabled(true);
     } else {
         hideLoading();
@@ -236,10 +245,15 @@ export function updateModalContent(content, shouldOpen = false, mode = 'quick-sc
         requestAnimationFrame(() => {
             state.outputTextarea.value = displayText; // 显示可能被截断的文本
             setButtonsDisabled(!isData);
-            state.outputTextarea.readOnly = !isData;
+            state.outputTextarea.readOnly = mode !== 'ai-scan' && !isData;
 
             // 手动触发一次更新，以确保统计和行号正确显示
-            state.outputTextarea.dispatchEvent(new Event('input'));
+            if (mode === 'ai-scan') {
+                updateLineNumbers();
+                updateStatistics();
+            } else {
+                state.outputTextarea.dispatchEvent(new Event('input'));
+            }
 
             // 确保活动行在内容渲染后更新
             updateActiveLine();

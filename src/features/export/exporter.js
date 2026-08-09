@@ -7,7 +7,7 @@
 
 import { log } from '../../shared/utils/core/logger.js';
 import { on } from '../../shared/utils/core/eventBus.js';
-import { getCurrentMode, outputTextarea } from '../../shared/ui/mainModal/modalState.js';
+import { getAiOutputType, getCurrentMode, outputTextarea } from '../../shared/ui/mainModal/modalState.js';
 import { fullQuickScanContent } from '../../shared/ui/mainModal/index.js';
 import { t } from '../../shared/i18n/index.js';
 import { requestSummary } from '../session-scan/logic.js';
@@ -60,31 +60,41 @@ function exportToFile() {
     const outputFormat = settings.outputFormat || 'array';
 
     // 定义核心处理函数
-    const processAndDownload = (text) => {
-        if (!text || text.trim() === '' || text.trim() === '[]' || text.trim() === '{}') {
+    const processAndDownload = (text, outputType = 'text') => {
+        if (
+            !text ||
+            text.trim() === '' ||
+            text.trim() === '[]' ||
+            text.trim() === '{}' ||
+            text.trim() === 'regexRules: []'
+        ) {
             log(t('log.exporter.noContent'));
             return;
         }
 
         let filename, mimeType;
 
-        switch (outputFormat) {
-            case 'array':
-                filename = generateFilename('txt');
-                mimeType = 'text/plain;charset=utf-8;';
-                break;
-            case 'object':
-                filename = generateFilename('json');
-                mimeType = 'application/json;charset=utf-8;';
-                break;
-            case 'csv':
-                filename = generateFilename('csv');
-                mimeType = 'text/csv;charset=utf-8;';
-                break;
-            default:
-                filename = generateFilename('txt');
-                mimeType = 'text/plain;charset=utf-8;';
-        }
+        if (currentMode === 'ai-scan' && outputType === 'regex') {
+            filename = generateFilename('js');
+            mimeType = 'text/javascript;charset=utf-8;';
+        } else
+            switch (outputFormat) {
+                case 'array':
+                    filename = generateFilename('txt');
+                    mimeType = 'text/plain;charset=utf-8;';
+                    break;
+                case 'object':
+                    filename = generateFilename('json');
+                    mimeType = 'application/json;charset=utf-8;';
+                    break;
+                case 'csv':
+                    filename = generateFilename('csv');
+                    mimeType = 'text/csv;charset=utf-8;';
+                    break;
+                default:
+                    filename = generateFilename('txt');
+                    mimeType = 'text/plain;charset=utf-8;';
+            }
 
         // 此时 text 已经是符合 outputFormat 的格式字符串（因为 Worker 已经处理过了）
         downloadFile(filename, text, mimeType);
@@ -98,6 +108,7 @@ function exportToFile() {
     // 2. 检查是否有截断警告
     const truncationWarning = t('scan.truncationWarning');
     const isTruncated = currentUiContent && currentUiContent.includes(truncationWarning);
+    const aiOutputType = currentMode === 'ai-scan' ? getAiOutputType() : 'text';
 
     // Determine content to export
     let contentToExport = null;
@@ -111,7 +122,9 @@ function exportToFile() {
 
     if (contentSource === 'ui' && contentToExport && contentToExport.length > 0) {
         log(t('log.exporter.exportingUserContent'));
-        processAndDownload(contentToExport);
+        processAndDownload(contentToExport, aiOutputType);
+    } else if (currentMode === 'ai-scan') {
+        log(t('log.exporter.noContent'));
     } else {
         log(t('log.exporter.exportingRawData'));
         // 回退到原始数据

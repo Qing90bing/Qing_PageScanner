@@ -1,11 +1,13 @@
 import {
     clearAiData,
-    getAiDisplayPairs,
+    applyAiSummaryEdits,
+    getAiDisplayData,
     getAiStateSnapshot,
     getReviewItems,
     hasAiData,
     isAiScanActive,
-    applyAiSummaryDeletions,
+    pauseAiScan,
+    resumeAiScan,
     retryReviewItems,
     startAiScan,
     stopAiScan,
@@ -14,6 +16,7 @@ import {
 import { loadSettings } from '../settings/logic.js';
 import { formatTextsForTranslation } from '../../shared/utils/text/formatting.js';
 import { parseSummarySourceTexts } from '../../shared/utils/text/summaryParser.js';
+import { formatRegexRulesForTranslation, parseRegexRules } from '../../shared/utils/text/regexRules.js';
 import { on } from '../../shared/utils/core/eventBus.js';
 import { t } from '../../shared/i18n/index.js';
 import { showNotification } from '../../shared/ui/components/notification.js';
@@ -29,13 +32,19 @@ import { aiIcon } from '../../assets/icons/aiIcon.js';
 import { stopIcon } from '../../assets/icons/stopIcon.js';
 import { updateModalContent, SHOW_PLACEHOLDER } from '../../shared/ui/mainModal/index.js';
 import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
-import { updateAiSummaryPanel } from '../../shared/ui/mainModal/modalContent.js';
+import { updateAiOutputTabs, updateAiSummaryPanel } from '../../shared/ui/mainModal/modalContent.js';
 import { updateAiFooterState } from '../../shared/ui/mainModal/modalFooter.js';
 import * as modalState from '../../shared/ui/mainModal/modalState.js';
 
 let initialized = false;
 let aiCounterVisible = false;
-let textareaEditSyncAttached = false;
+let textareaEditSyncElement = null;
+const aiDrafts = { text: '', regex: '' };
+const aiDraftDirty = { text: false, regex: false };
+let aiSummaryEditError = '';
+let lastAiOutputFormat = null;
+let renderingAiSummary = false;
+let applyingAiSummaryEdit = false;
 
 function resetAiFab() {
     const aiFab = getAiFab();
@@ -50,6 +59,17 @@ function showAiCounter(snapshot = getAiStateSnapshot()) {
         createCounterWithHelp({
             counterKey: 'common.discovered',
             helpKey: 'tutorial.aiScan',
+            onPause: () => {
+                if (pauseAiScan()) {
+                    showNotification(t('notifications.aiScanPaused'), { type: 'info' });
+                }
+            },
+            onResume: () => {
+                if (resumeAiScan()) {
+                    showNotification(t('notifications.aiScanContinued'), { type: 'success' });
+                }
+            },
+            scanType: 'AiScan',
         });
         showCounterWithHelp();
         aiCounterVisible = true;
@@ -63,18 +83,50 @@ function hideAiCounter() {
     aiCounterVisible = false;
 }
 
-function formatAiResults(pairs = getAiDisplayPairs()) {
+function resetAiDrafts() {
+    aiDrafts.text = '';
+    aiDrafts.regex = '';
+    aiDraftDirty.text = false;
+    aiDraftDirty.regex = false;
+    aiSummaryEditError = '';
+}
+
+function formatAiTextResults(pairs = getAiDisplayData().textPairs) {
     const settings = loadSettings();
     return formatTextsForTranslation(pairs, settings.outputFormat, {
         includeArrayBrackets: settings.includeArrayBrackets,
     });
 }
 
-function syncAiSummary(open = false) {
+function formatAiRegexResults(rules = getAiDisplayData().regexRules) {
+    const settings = loadSettings();
+    return formatRegexRulesForTranslation(rules, {
+        includeRuleComments: settings.ai?.includeRegexRuleComments === true,
+    });
+}
+
+function getAiOutputContent(data, type) {
+    if (aiDraftDirty[type]) return aiDrafts[type];
+    if (type === 'regex') return data.regexRules.length > 0 ? formatAiRegexResults(data.regexRules) : SHOW_PLACEHOLDER;
+    return data.textPairs.length > 0 ? formatAiTextResults(data.textPairs) : SHOW_PLACEHOLDER;
+}
+
+function syncAiSummary(open = false, options = {}) {
+    if (options.resetDrafts) resetAiDrafts();
     ensureTextareaEditSync();
     const snapshot = getAiStateSnapshot();
-    const pairs = getAiDisplayPairs();
-    updateAiSummaryPanel(snapshot, getReviewItems());
+    const data = getAiDisplayData();
+    const settings = loadSettings();
+    if (lastAiOutputFormat !== settings.outputFormat) {
+        if (lastAiOutputFormat !== null) {
+            aiDrafts.text = '';
+            aiDraftDirty.text = false;
+        }
+        lastAiOutputFormat = settings.outputFormat;
+    }
+    const outputType = modalState.getAiOutputType();
+    updateAiOutputTabs(outputType);
+    updateAiSummaryPanel(snapshot, getReviewItems(), aiSummaryEditError);
     updateAiFooterState(snapshot);
     updateScanCount(snapshot.counts.total, 'ai');
 
@@ -84,25 +136,69 @@ function syncAiSummary(open = false) {
         if (!visibleAiModal) return;
     }
 
-    updateModalContent(pairs.length > 0 ? formatAiResults(pairs) : SHOW_PLACEHOLDER, open, 'ai-scan');
-    updateAiSummaryPanel(snapshot, getReviewItems());
+    renderingAiSummary = true;
+    updateModalContent(getAiOutputContent(data, outputType), open, 'ai-scan');
+    renderingAiSummary = false;
+    updateAiOutputTabs(outputType);
+    updateAiSummaryPanel(snapshot, getReviewItems(), aiSummaryEditError);
     updateAiFooterState(snapshot);
 }
 
+function switchAiOutputType(type) {
+    if (type !== 'text' && type !== 'regex') return;
+    modalState.setAiOutputType(type);
+    syncAiSummary(false);
+}
+
 function syncAiSummaryEdits() {
-    if (modalState.currentMode !== 'ai-scan') return;
+    if (modalState.currentMode !== 'ai-scan' || renderingAiSummary) return;
     const settings = loadSettings();
     const content = modalState.outputTextarea?.value || '';
+    const outputType = modalState.getAiOutputType();
+    aiDrafts[outputType] = content;
+    aiDraftDirty[outputType] = true;
+    if (outputType === 'regex') {
+        const parsed = parseRegexRules(content);
+        if (!parsed.valid) {
+            aiSummaryEditError = parsed.error || 'invalid-regex-output';
+            updateAiSummaryPanel(getAiStateSnapshot(), getReviewItems(), aiSummaryEditError);
+            return;
+        }
+        let result;
+        applyingAiSummaryEdit = true;
+        try {
+            result = applyAiSummaryEdits({ editedRegexRules: parsed.rules });
+        } finally {
+            applyingAiSummaryEdit = false;
+        }
+        if (result.error) {
+            aiSummaryEditError = result.error;
+            updateAiSummaryPanel(getAiStateSnapshot(), getReviewItems(), aiSummaryEditError);
+            return;
+        }
+        aiSummaryEditError = '';
+        if (result.changed) syncAiSummary(false);
+        return;
+    }
+
     const remaining = parseSummarySourceTexts(content, settings.outputFormat || 'array');
-    if (applyAiSummaryDeletions(remaining)) {
+    let result;
+    applyingAiSummaryEdit = true;
+    try {
+        result = applyAiSummaryEdits({ remainingSourceTexts: remaining });
+    } finally {
+        applyingAiSummaryEdit = false;
+    }
+    if (result.changed) {
+        aiSummaryEditError = '';
         syncAiSummary(false);
     }
 }
 
 function ensureTextareaEditSync() {
-    if (textareaEditSyncAttached || !modalState.outputTextarea) return;
+    if (textareaEditSyncElement === modalState.outputTextarea || !modalState.outputTextarea) return;
     modalState.outputTextarea.addEventListener('input', syncAiSummaryEdits);
-    textareaEditSyncAttached = true;
+    textareaEditSyncElement = modalState.outputTextarea;
 }
 
 async function handleSubmit() {
@@ -118,7 +214,7 @@ async function handleSubmit() {
     } catch {
         showNotification(t('notifications.aiRequestFailed'), { type: 'error' });
     } finally {
-        syncAiSummary(false);
+        syncAiSummary(false, { resetDrafts: true });
     }
 }
 
@@ -163,10 +259,12 @@ export function initializeAiScanUI() {
     initialized = true;
 
     on('aiStateChanged', (snapshot) => {
+        if (!applyingAiSummaryEdit && (aiDraftDirty.text || aiDraftDirty.regex)) resetAiDrafts();
         if (snapshot.active) showAiCounter(snapshot);
         else hideAiCounter();
         syncAiSummary(false);
     });
+    on('ai-output-type-change', switchAiOutputType);
     on('ai-submit-pending', () => void handleSubmit());
     on('ai-retry-review', async () => {
         await retryReviewItems();
@@ -174,7 +272,7 @@ export function initializeAiScanUI() {
     });
     on('ai-clear', async () => {
         await clearAiData();
-        syncAiSummary(false);
+        syncAiSummary(false, { resetDrafts: true });
     });
     on('settingsSaved', () => {
         const aiSettings = mergeAiSettings(loadSettings().ai);
@@ -187,7 +285,7 @@ export function initializeAiScanUI() {
         if (hasAiData()) syncAiSummary(false);
     });
     on('languageChanged', () => {
-        if (hasAiData()) syncAiSummary(false);
+        if (hasAiData()) syncAiSummary(false, { resetDrafts: true });
     });
     on('aiBudgetBlocked', () => {
         showNotification(t('notifications.aiBudgetBlocked'), { type: 'warning' });

@@ -79,7 +79,7 @@ export function createButton({
         const newIconElement = createSVGFromString(newIcon);
         if (!newIconElement) return;
         const oldIconElements = Array.from(button.querySelectorAll('svg'));
-        let iconWrapper = button.querySelector('.tc-icon-title-icon');
+        let iconWrapper = iconOnly ? button : button.querySelector('.tc-icon-title-icon');
         if (!iconWrapper) {
             iconWrapper = document.createElement('span');
             iconWrapper.className = 'tc-icon-title-icon';

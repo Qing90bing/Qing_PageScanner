@@ -120,6 +120,8 @@
             "simplifiedChinese": "Simplified Chinese",
             "traditionalChinese": "Traditional Chinese",
             "confidenceThreshold": "Confidence Threshold",
+            "regexRuleComments": "Include Regex Rule ID Comments",
+            "regexRuleCommentsDescription": "Adds // qps-rule:<id> comments to regex output for stable rule identification. Disabled by default for cleaner code.",
             "provider": "Provider Configuration",
             "currentProvider": "Current Provider",
             "providerName": "Name",
@@ -201,16 +203,24 @@
         "scanCountSession": "Scanned {{count}} items",
         "scanCountStatic": "Total {{count}} items scanned",
         "scanCountAi": "AI collected {{count}} items",
-        "aiRunning": "AI translation is in progress",
-        "aiStopped": "AI translation stopped",
-        "aiProcessing": "The provider is processing the current batch…",
-        "aiBudgetBlocked": "Sending stopped because a budget limit was reached",
-        "aiRequestError": "Most recent request failed",
+        "aiRunning": "Working",
+        "aiPaused": "Paused",
+        "aiStopped": "Stopped",
+        "aiProcessing": "Processing…",
+        "aiBudgetBlocked": "Sending paused due to budget limit",
+        "aiRequestError": "Request failed",
         "aiReviewItems": "Items to Review",
-        "aiReviewRequired": "Manual review required",
+        "aiReviewRequired": "Review required",
+        "aiRegexEditError": "Regex rule needs review",
+        "aiOutput": {
+            "text": "Pure text",
+            "regex": "Regex rules"
+        },
         "aiCounts": {
             "pending": "Pending",
             "translated": "Translated",
+            "textRules": "Text rules",
+            "regexRules": "Regex rules",
             "removed": "Removed",
             "review": "Review",
             "failed": "Failed"
@@ -242,6 +252,8 @@
         "cspWorkerWarning": "Switched to compatibility scan mode due to website security restrictions.",
         "scanModeConflict": "Stop the active scan mode before starting another one.",
         "aiScanStarted": "AI translation started.",
+        "aiScanPaused": "AI translation paused.",
+        "aiScanContinued": "AI translation resumed.",
         "aiScanStopped": "AI translation stopped.",
         "aiScanStartFailed": "AI translation failed to start.",
         "aiDisabled": "AI features are disabled. Enable them in Settings first.",
@@ -287,6 +299,8 @@
         "resumeElementScan": "Resume Element Scan",
         "pauseSessionScan": "Pause Dynamic Scan",
         "resumeSessionScan": "Resume Dynamic Scan",
+        "pauseAiScan": "Pause AI Translation",
+        "resumeAiScan": "Resume AI Translation",
         "tooltipHelp": "Help",
         "persistData": {
             "title": "Data Persistence Explanation",
@@ -297,7 +311,7 @@
         },
         "disabled": {
             "scan_in_progress": "Another scan is in progress",
-            "ai_scan_active": "Regular scans are disabled while AI translation is running"
+            "ai_scan_active": "Regular scans are disabled while AI is working"
         },
         "filters": {
             "title": "Content Filter Explanation",
