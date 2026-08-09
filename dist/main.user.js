@@ -112,6 +112,7 @@ var TextExtractor = (() => {
       if (!this.supportsPopover) return;
       if (this.promoteTimeout) clearTimeout(this.promoteTimeout);
       this.promoteTimeout = setTimeout(() => {
+        this.promoteTimeout = null;
         if (!this.container.isConnected) return;
         try {
           this.container.hidePopover();
@@ -119,13 +120,8 @@ var TextExtractor = (() => {
         }
         void this.container.offsetHeight;
         requestAnimationFrame(() => {
+          if (!this.container.isConnected) return;
           try {
-            if (this.container.parentElement === document.body) {
-              document.body.removeChild(this.container);
-            } else if (this.container.parentElement) {
-              this.container.remove();
-            }
-            document.body.appendChild(this.container);
             this.container.showPopover();
           } catch (e) {
           }
@@ -574,6 +570,8 @@ var TextExtractor = (() => {
         simplifiedChinese: "Simplified Chinese",
         traditionalChinese: "Traditional Chinese",
         confidenceThreshold: "Confidence Threshold",
+        regexRuleComments: "Include Regex Rule ID Comments",
+        regexRuleCommentsDescription: "Adds // qps-rule:<id> comments to regex output for stable rule identification. Disabled by default for cleaner code.",
         provider: "Provider Configuration",
         currentProvider: "Current Provider",
         providerName: "Name",
@@ -655,16 +653,24 @@ var TextExtractor = (() => {
       scanCountSession: "Scanned {{count}} items",
       scanCountStatic: "Total {{count}} items scanned",
       scanCountAi: "AI collected {{count}} items",
-      aiRunning: "AI translation is in progress",
-      aiStopped: "AI translation stopped",
-      aiProcessing: "The provider is processing the current batch\u2026",
-      aiBudgetBlocked: "Sending stopped because a budget limit was reached",
-      aiRequestError: "Most recent request failed",
+      aiRunning: "Working",
+      aiPaused: "Paused",
+      aiStopped: "Stopped",
+      aiProcessing: "Processing\u2026",
+      aiBudgetBlocked: "Sending paused due to budget limit",
+      aiRequestError: "Request failed",
       aiReviewItems: "Items to Review",
-      aiReviewRequired: "Manual review required",
+      aiReviewRequired: "Review required",
+      aiRegexEditError: "Regex rule needs review",
+      aiOutput: {
+        text: "Pure text",
+        regex: "Regex rules"
+      },
       aiCounts: {
         pending: "Pending",
         translated: "Translated",
+        textRules: "Text rules",
+        regexRules: "Regex rules",
         removed: "Removed",
         review: "Review",
         failed: "Failed"
@@ -696,6 +702,8 @@ var TextExtractor = (() => {
       cspWorkerWarning: "Switched to compatibility scan mode due to website security restrictions.",
       scanModeConflict: "Stop the active scan mode before starting another one.",
       aiScanStarted: "AI translation started.",
+      aiScanPaused: "AI translation paused.",
+      aiScanContinued: "AI translation resumed.",
       aiScanStopped: "AI translation stopped.",
       aiScanStartFailed: "AI translation failed to start.",
       aiDisabled: "AI features are disabled. Enable them in Settings first.",
@@ -741,6 +749,8 @@ var TextExtractor = (() => {
       resumeElementScan: "Resume Element Scan",
       pauseSessionScan: "Pause Dynamic Scan",
       resumeSessionScan: "Resume Dynamic Scan",
+      pauseAiScan: "Pause AI Translation",
+      resumeAiScan: "Resume AI Translation",
       tooltipHelp: "Help",
       persistData: {
         title: "Data Persistence Explanation",
@@ -751,7 +761,7 @@ var TextExtractor = (() => {
       },
       disabled: {
         scan_in_progress: "Another scan is in progress",
-        ai_scan_active: "Regular scans are disabled while AI translation is running"
+        ai_scan_active: "Regular scans are disabled while AI is working"
       },
       filters: {
         title: "Content Filter Explanation",
@@ -1118,6 +1128,8 @@ var TextExtractor = (() => {
         simplifiedChinese: "\u4E2D\u6587\u7B80\u4F53",
         traditionalChinese: "\u4E2D\u6587\u7E41\u4F53",
         confidenceThreshold: "\u7F6E\u4FE1\u5EA6\u9608\u503C",
+        regexRuleComments: "\u5305\u542B\u6B63\u5219\u89C4\u5219 ID \u6CE8\u91CA",
+        regexRuleCommentsDescription: "\u5728\u6B63\u5219\u8F93\u51FA\u4E2D\u6DFB\u52A0 // qps-rule:<id> \u6CE8\u91CA\uFF0C\u4FBF\u4E8E\u7A33\u5B9A\u8BC6\u522B\u89C4\u5219\u3002\u9ED8\u8BA4\u5173\u95ED\u4EE5\u4FDD\u6301\u4EE3\u7801\u7B80\u6D01\u3002",
         provider: "\u4F9B\u5E94\u5546\u914D\u7F6E",
         currentProvider: "\u5F53\u524D\u4F9B\u5E94\u5546",
         providerName: "\u4F9B\u5E94\u5546\u540D\u79F0",
@@ -1199,16 +1211,24 @@ var TextExtractor = (() => {
       scanCountSession: "\u5DF2\u626B\u63CF {{count}} \u4E2A\u9879\u76EE",
       scanCountStatic: "\u5171\u626B\u63CF {{count}} \u4E2A\u9879\u76EE",
       scanCountAi: "AI \u5DF2\u6536\u96C6 {{count}} \u4E2A\u9879\u76EE",
-      aiRunning: "AI \u7FFB\u8BD1\u8FDB\u884C\u4E2D",
-      aiStopped: "AI \u7FFB\u8BD1\u5DF2\u505C\u6B62",
-      aiProcessing: "\u4F9B\u5E94\u5546\u6B63\u5728\u5904\u7406\u5F53\u524D\u6279\u6B21\u2026",
-      aiBudgetBlocked: "\u5DF2\u505C\u6B62\u53D1\u9001\uFF0C\u8FBE\u5230\u9884\u7B97\u9650\u5236",
-      aiRequestError: "\u6700\u8FD1\u4E00\u6B21\u8BF7\u6C42\u5931\u8D25",
+      aiRunning: "\u5DE5\u4F5C\u4E2D",
+      aiPaused: "\u5DF2\u6682\u505C",
+      aiStopped: "\u5DF2\u505C\u6B62",
+      aiProcessing: "\u5904\u7406\u4E2D\u2026",
+      aiBudgetBlocked: "\u53D1\u9001\u5DF2\u6682\u505C\uFF0C\u8FBE\u5230\u9884\u7B97\u9650\u5236",
+      aiRequestError: "\u8BF7\u6C42\u5931\u8D25",
       aiReviewItems: "\u5F85\u590D\u6838\u5185\u5BB9",
-      aiReviewRequired: "\u9700\u8981\u4EBA\u5DE5\u590D\u6838",
+      aiReviewRequired: "\u9700\u4EBA\u5DE5\u590D\u6838",
+      aiRegexEditError: "\u6B63\u5219\u89C4\u5219\u9700\u590D\u6838",
+      aiOutput: {
+        text: "\u7EAF\u6587\u672C",
+        regex: "\u6B63\u5219\u7FFB\u8BD1"
+      },
       aiCounts: {
         pending: "\u5F85\u5904\u7406",
         translated: "\u5DF2\u7FFB\u8BD1",
+        textRules: "\u7EAF\u6587\u672C\u89C4\u5219",
+        regexRules: "\u6B63\u5219\u89C4\u5219",
         removed: "\u79FB\u9664",
         review: "\u5F85\u590D\u6838",
         failed: "\u5931\u8D25"
@@ -1240,6 +1260,8 @@ var TextExtractor = (() => {
       cspWorkerWarning: "\u56E0\u7F51\u7AD9\u5B89\u5168\u9650\u5236\uFF0C\u5DF2\u5207\u6362\u81F3\u517C\u5BB9\u626B\u63CF\u6A21\u5F0F\u3002",
       scanModeConflict: "\u8BF7\u5148\u505C\u6B62\u5F53\u524D\u626B\u63CF\u6A21\u5F0F\uFF0C\u518D\u542F\u52A8\u53E6\u4E00\u79CD\u626B\u63CF\u3002",
       aiScanStarted: "AI \u7FFB\u8BD1\u5DF2\u5F00\u59CB\u3002",
+      aiScanPaused: "AI \u7FFB\u8BD1\u5DF2\u6682\u505C\u3002",
+      aiScanContinued: "AI \u7FFB\u8BD1\u5DF2\u6062\u590D\u3002",
       aiScanStopped: "AI \u7FFB\u8BD1\u5DF2\u505C\u6B62\u3002",
       aiScanStartFailed: "AI \u7FFB\u8BD1\u542F\u52A8\u5931\u8D25\u3002",
       aiDisabled: "AI \u529F\u80FD\u5DF2\u5173\u95ED\uFF0C\u8BF7\u5148\u5728\u8BBE\u7F6E\u4E2D\u542F\u7528\u3002",
@@ -1285,6 +1307,8 @@ var TextExtractor = (() => {
       resumeElementScan: "\u6062\u590D\u5143\u7D20\u626B\u63CF",
       pauseSessionScan: "\u6682\u505C\u52A8\u6001\u626B\u63CF",
       resumeSessionScan: "\u6062\u590D\u52A8\u6001\u626B\u63CF",
+      pauseAiScan: "\u6682\u505C AI \u7FFB\u8BD1",
+      resumeAiScan: "\u6062\u590D AI \u7FFB\u8BD1",
       tooltipHelp: "\u5E2E\u52A9",
       persistData: {
         title: "\u6570\u636E\u6301\u4E45\u5316\u8BF4\u660E",
@@ -1295,7 +1319,7 @@ var TextExtractor = (() => {
       },
       disabled: {
         scan_in_progress: "\u53E6\u4E00\u9879\u626B\u63CF\u6B63\u5728\u8FDB\u884C\u4E2D",
-        ai_scan_active: "AI \u7FFB\u8BD1\u8FDB\u884C\u4E2D\uFF0C\u666E\u901A\u626B\u63CF\u5DF2\u7981\u7528"
+        ai_scan_active: "AI \u5DE5\u4F5C\u4E2D\uFF0C\u666E\u901A\u626B\u63CF\u5DF2\u7981\u7528"
       },
       filters: {
         title: "\u5185\u5BB9\u8FC7\u6EE4\u5668\u8BF4\u660E",
@@ -1660,6 +1684,8 @@ var TextExtractor = (() => {
         simplifiedChinese: "\u4E2D\u6587\u7C21\u9AD4",
         traditionalChinese: "\u4E2D\u6587\u7E41\u9AD4",
         confidenceThreshold: "\u4FE1\u5FC3\u5EA6\u95BE\u503C",
+        regexRuleComments: "\u5305\u542B\u6B63\u5247\u898F\u5247 ID \u8A3B\u89E3",
+        regexRuleCommentsDescription: "\u5728\u6B63\u5247\u8F38\u51FA\u4E2D\u52A0\u5165 // qps-rule:<id> \u8A3B\u89E3\uFF0C\u65B9\u4FBF\u7A69\u5B9A\u8B58\u5225\u898F\u5247\u3002\u9810\u8A2D\u95DC\u9589\u4EE5\u4FDD\u6301\u7A0B\u5F0F\u78BC\u7C21\u6F54\u3002",
         provider: "\u4F9B\u61C9\u5546\u8A2D\u5B9A",
         currentProvider: "\u76EE\u524D\u4F9B\u61C9\u5546",
         providerName: "\u4F9B\u61C9\u5546\u540D\u7A31",
@@ -1741,16 +1767,24 @@ var TextExtractor = (() => {
       scanCountSession: "\u5DF2\u6383\u63CF {{count}} \u500B\u9805\u76EE",
       scanCountStatic: "\u5171\u6383\u63CF {{count}} \u500B\u9805\u76EE",
       scanCountAi: "AI \u5DF2\u6536\u96C6 {{count}} \u500B\u9805\u76EE",
-      aiRunning: "AI \u7FFB\u8B6F\u9032\u884C\u4E2D",
-      aiStopped: "AI \u7FFB\u8B6F\u5DF2\u505C\u6B62",
-      aiProcessing: "\u4F9B\u61C9\u5546\u6B63\u5728\u8655\u7406\u76EE\u524D\u6279\u6B21\u2026",
-      aiBudgetBlocked: "\u5DF2\u505C\u6B62\u50B3\u9001\uFF0C\u9054\u5230\u9810\u7B97\u9650\u5236",
-      aiRequestError: "\u6700\u8FD1\u4E00\u6B21\u8ACB\u6C42\u5931\u6557",
+      aiRunning: "\u5DE5\u4F5C\u4E2D",
+      aiPaused: "\u5DF2\u66AB\u505C",
+      aiStopped: "\u5DF2\u505C\u6B62",
+      aiProcessing: "\u8655\u7406\u4E2D\u2026",
+      aiBudgetBlocked: "\u50B3\u9001\u5DF2\u66AB\u505C\uFF0C\u9054\u5230\u9810\u7B97\u9650\u5236",
+      aiRequestError: "\u8ACB\u6C42\u5931\u6557",
       aiReviewItems: "\u5F85\u8907\u6838\u5167\u5BB9",
-      aiReviewRequired: "\u9700\u8981\u4EBA\u5DE5\u8907\u6838",
+      aiReviewRequired: "\u9700\u4EBA\u5DE5\u8907\u6838",
+      aiRegexEditError: "\u6B63\u5247\u898F\u5247\u9700\u8907\u6838",
+      aiOutput: {
+        text: "\u7D14\u6587\u5B57",
+        regex: "\u6B63\u5247\u7FFB\u8B6F"
+      },
       aiCounts: {
         pending: "\u5F85\u8655\u7406",
         translated: "\u5DF2\u7FFB\u8B6F",
+        textRules: "\u7D14\u6587\u5B57\u898F\u5247",
+        regexRules: "\u6B63\u5247\u898F\u5247",
         removed: "\u79FB\u9664",
         review: "\u5F85\u8907\u6838",
         failed: "\u5931\u6557"
@@ -1782,6 +1816,8 @@ var TextExtractor = (() => {
       cspWorkerWarning: "\u56E0\u7DB2\u7AD9\u5B89\u5168\u9650\u5236\uFF0C\u5DF2\u5207\u63DB\u81F3\u76F8\u5BB9\u6383\u63CF\u6A21\u5F0F\u3002",
       scanModeConflict: "\u8ACB\u5148\u505C\u6B62\u76EE\u524D\u6383\u63CF\u6A21\u5F0F\uFF0C\u518D\u555F\u52D5\u53E6\u4E00\u7A2E\u6383\u63CF\u3002",
       aiScanStarted: "AI \u7FFB\u8B6F\u5DF2\u958B\u59CB\u3002",
+      aiScanPaused: "AI \u7FFB\u8B6F\u5DF2\u66AB\u505C\u3002",
+      aiScanContinued: "AI \u7FFB\u8B6F\u5DF2\u6062\u5FA9\u3002",
       aiScanStopped: "AI \u7FFB\u8B6F\u5DF2\u505C\u6B62\u3002",
       aiScanStartFailed: "AI \u7FFB\u8B6F\u555F\u52D5\u5931\u6557\u3002",
       aiDisabled: "AI \u529F\u80FD\u5DF2\u95DC\u9589\uFF0C\u8ACB\u5148\u5728\u8A2D\u5B9A\u4E2D\u555F\u7528\u3002",
@@ -1827,6 +1863,8 @@ var TextExtractor = (() => {
       resumeElementScan: "\u6062\u5FA9\u5143\u7D20\u6383\u63CF",
       pauseSessionScan: "\u66AB\u505C\u52D5\u614B\u6383\u63CF",
       resumeSessionScan: "\u6062\u5FA9\u52D5\u614B\u6383\u63CF",
+      pauseAiScan: "\u66AB\u505C AI \u7FFB\u8B6F",
+      resumeAiScan: "\u6062\u5FA9 AI \u7FFB\u8B6F",
       tooltipHelp: "\u5E6B\u52A9",
       persistData: {
         title: "\u8CC7\u6599\u6301\u4E45\u5316\u8AAA\u660E",
@@ -1837,7 +1875,7 @@ var TextExtractor = (() => {
       },
       disabled: {
         scan_in_progress: "\u53E6\u4E00\u9805\u6383\u63CF\u6B63\u5728\u9032\u884C\u4E2D",
-        ai_scan_active: "AI \u7FFB\u8B6F\u9032\u884C\u4E2D\uFF0C\u666E\u901A\u6383\u63CF\u5DF2\u505C\u7528"
+        ai_scan_active: "AI \u5DE5\u4F5C\u4E2D\uFF0C\u4E00\u822C\u6383\u63CF\u5DF2\u505C\u7528"
       },
       filters: {
         title: "\u5167\u5BB9\u904E\u6FFE\u5668\u8AAA\u660E",
@@ -2873,6 +2911,8 @@ ${result.join(",\n")}
         simplifiedChinese: "Simplified Chinese",
         traditionalChinese: "Traditional Chinese",
         confidenceThreshold: "Confidence Threshold",
+        regexRuleComments: "Include Regex Rule ID Comments",
+        regexRuleCommentsDescription: "Adds // qps-rule:<id> comments to regex output for stable rule identification. Disabled by default for cleaner code.",
         provider: "Provider Configuration",
         currentProvider: "Current Provider",
         providerName: "Name",
@@ -2954,16 +2994,24 @@ ${result.join(",\n")}
       scanCountSession: "Scanned {{count}} items",
       scanCountStatic: "Total {{count}} items scanned",
       scanCountAi: "AI collected {{count}} items",
-      aiRunning: "AI translation is in progress",
-      aiStopped: "AI translation stopped",
-      aiProcessing: "The provider is processing the current batch\\u2026",
-      aiBudgetBlocked: "Sending stopped because a budget limit was reached",
-      aiRequestError: "Most recent request failed",
+      aiRunning: "Working",
+      aiPaused: "Paused",
+      aiStopped: "Stopped",
+      aiProcessing: "Processing\\u2026",
+      aiBudgetBlocked: "Sending paused due to budget limit",
+      aiRequestError: "Request failed",
       aiReviewItems: "Items to Review",
-      aiReviewRequired: "Manual review required",
+      aiReviewRequired: "Review required",
+      aiRegexEditError: "Regex rule needs review",
+      aiOutput: {
+        text: "Pure text",
+        regex: "Regex rules"
+      },
       aiCounts: {
         pending: "Pending",
         translated: "Translated",
+        textRules: "Text rules",
+        regexRules: "Regex rules",
         removed: "Removed",
         review: "Review",
         failed: "Failed"
@@ -2995,6 +3043,8 @@ ${result.join(",\n")}
       cspWorkerWarning: "Switched to compatibility scan mode due to website security restrictions.",
       scanModeConflict: "Stop the active scan mode before starting another one.",
       aiScanStarted: "AI translation started.",
+      aiScanPaused: "AI translation paused.",
+      aiScanContinued: "AI translation resumed.",
       aiScanStopped: "AI translation stopped.",
       aiScanStartFailed: "AI translation failed to start.",
       aiDisabled: "AI features are disabled. Enable them in Settings first.",
@@ -3040,6 +3090,8 @@ ${result.join(",\n")}
       resumeElementScan: "Resume Element Scan",
       pauseSessionScan: "Pause Dynamic Scan",
       resumeSessionScan: "Resume Dynamic Scan",
+      pauseAiScan: "Pause AI Translation",
+      resumeAiScan: "Resume AI Translation",
       tooltipHelp: "Help",
       persistData: {
         title: "Data Persistence Explanation",
@@ -3050,7 +3102,7 @@ ${result.join(",\n")}
       },
       disabled: {
         scan_in_progress: "Another scan is in progress",
-        ai_scan_active: "Regular scans are disabled while AI translation is running"
+        ai_scan_active: "Regular scans are disabled while AI is working"
       },
       filters: {
         title: "Content Filter Explanation",
@@ -3417,6 +3469,8 @@ ${result.join(",\n")}
         simplifiedChinese: "\\u4E2D\\u6587\\u7B80\\u4F53",
         traditionalChinese: "\\u4E2D\\u6587\\u7E41\\u4F53",
         confidenceThreshold: "\\u7F6E\\u4FE1\\u5EA6\\u9608\\u503C",
+        regexRuleComments: "\\u5305\\u542B\\u6B63\\u5219\\u89C4\\u5219 ID \\u6CE8\\u91CA",
+        regexRuleCommentsDescription: "\\u5728\\u6B63\\u5219\\u8F93\\u51FA\\u4E2D\\u6DFB\\u52A0 // qps-rule:<id> \\u6CE8\\u91CA\\uFF0C\\u4FBF\\u4E8E\\u7A33\\u5B9A\\u8BC6\\u522B\\u89C4\\u5219\\u3002\\u9ED8\\u8BA4\\u5173\\u95ED\\u4EE5\\u4FDD\\u6301\\u4EE3\\u7801\\u7B80\\u6D01\\u3002",
         provider: "\\u4F9B\\u5E94\\u5546\\u914D\\u7F6E",
         currentProvider: "\\u5F53\\u524D\\u4F9B\\u5E94\\u5546",
         providerName: "\\u4F9B\\u5E94\\u5546\\u540D\\u79F0",
@@ -3498,16 +3552,24 @@ ${result.join(",\n")}
       scanCountSession: "\\u5DF2\\u626B\\u63CF {{count}} \\u4E2A\\u9879\\u76EE",
       scanCountStatic: "\\u5171\\u626B\\u63CF {{count}} \\u4E2A\\u9879\\u76EE",
       scanCountAi: "AI \\u5DF2\\u6536\\u96C6 {{count}} \\u4E2A\\u9879\\u76EE",
-      aiRunning: "AI \\u7FFB\\u8BD1\\u8FDB\\u884C\\u4E2D",
-      aiStopped: "AI \\u7FFB\\u8BD1\\u5DF2\\u505C\\u6B62",
-      aiProcessing: "\\u4F9B\\u5E94\\u5546\\u6B63\\u5728\\u5904\\u7406\\u5F53\\u524D\\u6279\\u6B21\\u2026",
-      aiBudgetBlocked: "\\u5DF2\\u505C\\u6B62\\u53D1\\u9001\\uFF0C\\u8FBE\\u5230\\u9884\\u7B97\\u9650\\u5236",
-      aiRequestError: "\\u6700\\u8FD1\\u4E00\\u6B21\\u8BF7\\u6C42\\u5931\\u8D25",
+      aiRunning: "\\u5DE5\\u4F5C\\u4E2D",
+      aiPaused: "\\u5DF2\\u6682\\u505C",
+      aiStopped: "\\u5DF2\\u505C\\u6B62",
+      aiProcessing: "\\u5904\\u7406\\u4E2D\\u2026",
+      aiBudgetBlocked: "\\u53D1\\u9001\\u5DF2\\u6682\\u505C\\uFF0C\\u8FBE\\u5230\\u9884\\u7B97\\u9650\\u5236",
+      aiRequestError: "\\u8BF7\\u6C42\\u5931\\u8D25",
       aiReviewItems: "\\u5F85\\u590D\\u6838\\u5185\\u5BB9",
-      aiReviewRequired: "\\u9700\\u8981\\u4EBA\\u5DE5\\u590D\\u6838",
+      aiReviewRequired: "\\u9700\\u4EBA\\u5DE5\\u590D\\u6838",
+      aiRegexEditError: "\\u6B63\\u5219\\u89C4\\u5219\\u9700\\u590D\\u6838",
+      aiOutput: {
+        text: "\\u7EAF\\u6587\\u672C",
+        regex: "\\u6B63\\u5219\\u7FFB\\u8BD1"
+      },
       aiCounts: {
         pending: "\\u5F85\\u5904\\u7406",
         translated: "\\u5DF2\\u7FFB\\u8BD1",
+        textRules: "\\u7EAF\\u6587\\u672C\\u89C4\\u5219",
+        regexRules: "\\u6B63\\u5219\\u89C4\\u5219",
         removed: "\\u79FB\\u9664",
         review: "\\u5F85\\u590D\\u6838",
         failed: "\\u5931\\u8D25"
@@ -3539,6 +3601,8 @@ ${result.join(",\n")}
       cspWorkerWarning: "\\u56E0\\u7F51\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u6362\\u81F3\\u517C\\u5BB9\\u626B\\u63CF\\u6A21\\u5F0F\\u3002",
       scanModeConflict: "\\u8BF7\\u5148\\u505C\\u6B62\\u5F53\\u524D\\u626B\\u63CF\\u6A21\\u5F0F\\uFF0C\\u518D\\u542F\\u52A8\\u53E6\\u4E00\\u79CD\\u626B\\u63CF\\u3002",
       aiScanStarted: "AI \\u7FFB\\u8BD1\\u5DF2\\u5F00\\u59CB\\u3002",
+      aiScanPaused: "AI \\u7FFB\\u8BD1\\u5DF2\\u6682\\u505C\\u3002",
+      aiScanContinued: "AI \\u7FFB\\u8BD1\\u5DF2\\u6062\\u590D\\u3002",
       aiScanStopped: "AI \\u7FFB\\u8BD1\\u5DF2\\u505C\\u6B62\\u3002",
       aiScanStartFailed: "AI \\u7FFB\\u8BD1\\u542F\\u52A8\\u5931\\u8D25\\u3002",
       aiDisabled: "AI \\u529F\\u80FD\\u5DF2\\u5173\\u95ED\\uFF0C\\u8BF7\\u5148\\u5728\\u8BBE\\u7F6E\\u4E2D\\u542F\\u7528\\u3002",
@@ -3584,6 +3648,8 @@ ${result.join(",\n")}
       resumeElementScan: "\\u6062\\u590D\\u5143\\u7D20\\u626B\\u63CF",
       pauseSessionScan: "\\u6682\\u505C\\u52A8\\u6001\\u626B\\u63CF",
       resumeSessionScan: "\\u6062\\u590D\\u52A8\\u6001\\u626B\\u63CF",
+      pauseAiScan: "\\u6682\\u505C AI \\u7FFB\\u8BD1",
+      resumeAiScan: "\\u6062\\u590D AI \\u7FFB\\u8BD1",
       tooltipHelp: "\\u5E2E\\u52A9",
       persistData: {
         title: "\\u6570\\u636E\\u6301\\u4E45\\u5316\\u8BF4\\u660E",
@@ -3594,7 +3660,7 @@ ${result.join(",\n")}
       },
       disabled: {
         scan_in_progress: "\\u53E6\\u4E00\\u9879\\u626B\\u63CF\\u6B63\\u5728\\u8FDB\\u884C\\u4E2D",
-        ai_scan_active: "AI \\u7FFB\\u8BD1\\u8FDB\\u884C\\u4E2D\\uFF0C\\u666E\\u901A\\u626B\\u63CF\\u5DF2\\u7981\\u7528"
+        ai_scan_active: "AI \\u5DE5\\u4F5C\\u4E2D\\uFF0C\\u666E\\u901A\\u626B\\u63CF\\u5DF2\\u7981\\u7528"
       },
       filters: {
         title: "\\u5185\\u5BB9\\u8FC7\\u6EE4\\u5668\\u8BF4\\u660E",
@@ -3959,6 +4025,8 @@ ${result.join(",\n")}
         simplifiedChinese: "\\u4E2D\\u6587\\u7C21\\u9AD4",
         traditionalChinese: "\\u4E2D\\u6587\\u7E41\\u9AD4",
         confidenceThreshold: "\\u4FE1\\u5FC3\\u5EA6\\u95BE\\u503C",
+        regexRuleComments: "\\u5305\\u542B\\u6B63\\u5247\\u898F\\u5247 ID \\u8A3B\\u89E3",
+        regexRuleCommentsDescription: "\\u5728\\u6B63\\u5247\\u8F38\\u51FA\\u4E2D\\u52A0\\u5165 // qps-rule:<id> \\u8A3B\\u89E3\\uFF0C\\u65B9\\u4FBF\\u7A69\\u5B9A\\u8B58\\u5225\\u898F\\u5247\\u3002\\u9810\\u8A2D\\u95DC\\u9589\\u4EE5\\u4FDD\\u6301\\u7A0B\\u5F0F\\u78BC\\u7C21\\u6F54\\u3002",
         provider: "\\u4F9B\\u61C9\\u5546\\u8A2D\\u5B9A",
         currentProvider: "\\u76EE\\u524D\\u4F9B\\u61C9\\u5546",
         providerName: "\\u4F9B\\u61C9\\u5546\\u540D\\u7A31",
@@ -4040,16 +4108,24 @@ ${result.join(",\n")}
       scanCountSession: "\\u5DF2\\u6383\\u63CF {{count}} \\u500B\\u9805\\u76EE",
       scanCountStatic: "\\u5171\\u6383\\u63CF {{count}} \\u500B\\u9805\\u76EE",
       scanCountAi: "AI \\u5DF2\\u6536\\u96C6 {{count}} \\u500B\\u9805\\u76EE",
-      aiRunning: "AI \\u7FFB\\u8B6F\\u9032\\u884C\\u4E2D",
-      aiStopped: "AI \\u7FFB\\u8B6F\\u5DF2\\u505C\\u6B62",
-      aiProcessing: "\\u4F9B\\u61C9\\u5546\\u6B63\\u5728\\u8655\\u7406\\u76EE\\u524D\\u6279\\u6B21\\u2026",
-      aiBudgetBlocked: "\\u5DF2\\u505C\\u6B62\\u50B3\\u9001\\uFF0C\\u9054\\u5230\\u9810\\u7B97\\u9650\\u5236",
-      aiRequestError: "\\u6700\\u8FD1\\u4E00\\u6B21\\u8ACB\\u6C42\\u5931\\u6557",
+      aiRunning: "\\u5DE5\\u4F5C\\u4E2D",
+      aiPaused: "\\u5DF2\\u66AB\\u505C",
+      aiStopped: "\\u5DF2\\u505C\\u6B62",
+      aiProcessing: "\\u8655\\u7406\\u4E2D\\u2026",
+      aiBudgetBlocked: "\\u50B3\\u9001\\u5DF2\\u66AB\\u505C\\uFF0C\\u9054\\u5230\\u9810\\u7B97\\u9650\\u5236",
+      aiRequestError: "\\u8ACB\\u6C42\\u5931\\u6557",
       aiReviewItems: "\\u5F85\\u8907\\u6838\\u5167\\u5BB9",
-      aiReviewRequired: "\\u9700\\u8981\\u4EBA\\u5DE5\\u8907\\u6838",
+      aiReviewRequired: "\\u9700\\u4EBA\\u5DE5\\u8907\\u6838",
+      aiRegexEditError: "\\u6B63\\u5247\\u898F\\u5247\\u9700\\u8907\\u6838",
+      aiOutput: {
+        text: "\\u7D14\\u6587\\u5B57",
+        regex: "\\u6B63\\u5247\\u7FFB\\u8B6F"
+      },
       aiCounts: {
         pending: "\\u5F85\\u8655\\u7406",
         translated: "\\u5DF2\\u7FFB\\u8B6F",
+        textRules: "\\u7D14\\u6587\\u5B57\\u898F\\u5247",
+        regexRules: "\\u6B63\\u5247\\u898F\\u5247",
         removed: "\\u79FB\\u9664",
         review: "\\u5F85\\u8907\\u6838",
         failed: "\\u5931\\u6557"
@@ -4081,6 +4157,8 @@ ${result.join(",\n")}
       cspWorkerWarning: "\\u56E0\\u7DB2\\u7AD9\\u5B89\\u5168\\u9650\\u5236\\uFF0C\\u5DF2\\u5207\\u63DB\\u81F3\\u76F8\\u5BB9\\u6383\\u63CF\\u6A21\\u5F0F\\u3002",
       scanModeConflict: "\\u8ACB\\u5148\\u505C\\u6B62\\u76EE\\u524D\\u6383\\u63CF\\u6A21\\u5F0F\\uFF0C\\u518D\\u555F\\u52D5\\u53E6\\u4E00\\u7A2E\\u6383\\u63CF\\u3002",
       aiScanStarted: "AI \\u7FFB\\u8B6F\\u5DF2\\u958B\\u59CB\\u3002",
+      aiScanPaused: "AI \\u7FFB\\u8B6F\\u5DF2\\u66AB\\u505C\\u3002",
+      aiScanContinued: "AI \\u7FFB\\u8B6F\\u5DF2\\u6062\\u5FA9\\u3002",
       aiScanStopped: "AI \\u7FFB\\u8B6F\\u5DF2\\u505C\\u6B62\\u3002",
       aiScanStartFailed: "AI \\u7FFB\\u8B6F\\u555F\\u52D5\\u5931\\u6557\\u3002",
       aiDisabled: "AI \\u529F\\u80FD\\u5DF2\\u95DC\\u9589\\uFF0C\\u8ACB\\u5148\\u5728\\u8A2D\\u5B9A\\u4E2D\\u555F\\u7528\\u3002",
@@ -4126,6 +4204,8 @@ ${result.join(",\n")}
       resumeElementScan: "\\u6062\\u5FA9\\u5143\\u7D20\\u6383\\u63CF",
       pauseSessionScan: "\\u66AB\\u505C\\u52D5\\u614B\\u6383\\u63CF",
       resumeSessionScan: "\\u6062\\u5FA9\\u52D5\\u614B\\u6383\\u63CF",
+      pauseAiScan: "\\u66AB\\u505C AI \\u7FFB\\u8B6F",
+      resumeAiScan: "\\u6062\\u5FA9 AI \\u7FFB\\u8B6F",
       tooltipHelp: "\\u5E6B\\u52A9",
       persistData: {
         title: "\\u8CC7\\u6599\\u6301\\u4E45\\u5316\\u8AAA\\u660E",
@@ -4136,7 +4216,7 @@ ${result.join(",\n")}
       },
       disabled: {
         scan_in_progress: "\\u53E6\\u4E00\\u9805\\u6383\\u63CF\\u6B63\\u5728\\u9032\\u884C\\u4E2D",
-        ai_scan_active: "AI \\u7FFB\\u8B6F\\u9032\\u884C\\u4E2D\\uFF0C\\u666E\\u901A\\u6383\\u63CF\\u5DF2\\u505C\\u7528"
+        ai_scan_active: "AI \\u5DE5\\u4F5C\\u4E2D\\uFF0C\\u4E00\\u822C\\u6383\\u63CF\\u5DF2\\u505C\\u7528"
       },
       filters: {
         title: "\\u5167\\u5BB9\\u904E\\u6FFE\\u5668\\u8AAA\\u660E",
@@ -4879,6 +4959,7 @@ ${result.join(",\n")}
   // src/assets/icons/closeIcon.js
   var closeIcon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>';
   // src/shared/ui/components/notification.js
+  var NOTIFICATION_TRANSITION_MS = 500;
   var notificationContainer = null;
   function getNotificationContainer() {
     if (!notificationContainer) {
@@ -4892,14 +4973,11 @@ ${result.join(",\n")}
     if (!notification || notification.classList.contains("tc-notification-fade-out")) {
       return;
     }
+    notification.classList.remove("tc-notification-visible");
     notification.classList.add("tc-notification-fade-out");
-    notification.addEventListener(
-      "animationend",
-      () => {
-        notification.remove();
-      },
-      { once: true }
-    );
+    setTimeout(() => {
+      notification.remove();
+    }, NOTIFICATION_TRANSITION_MS);
   }
   function createNotificationElement(message, type = "info") {
     const notification = document.createElement("div");
@@ -4932,6 +5010,11 @@ ${result.join(",\n")}
     const container = getNotificationContainer();
     const notification = createNotificationElement(message, type);
     container.appendChild(notification);
+    requestAnimationFrame(() => {
+      if (notification.isConnected && !notification.classList.contains("tc-notification-fade-out")) {
+        notification.classList.add("tc-notification-visible");
+      }
+    });
     const timer = setTimeout(() => {
       closeNotification(notification);
     }, duration);
@@ -5470,6 +5553,8 @@ ${result.join(",\n")}
   var placeholder = null;
   var loadingContainer = null;
   var aiSummaryPanel = null;
+  var aiOutputTabs = null;
+  var aiOutputType = "text";
   var canvasContext = null;
   var currentLineMap = [];
   var currentMode = "quick-scan";
@@ -5496,6 +5581,9 @@ ${result.join(",\n")}
   function setAiSummaryPanel(element) {
     aiSummaryPanel = element;
   }
+  function setAiOutputTabs(element) {
+    aiOutputTabs = element;
+  }
   function setCanvasContext(context) {
     canvasContext = context;
   }
@@ -5507,6 +5595,12 @@ ${result.join(",\n")}
   }
   function getCurrentMode() {
     return currentMode;
+  }
+  function setAiOutputType(type) {
+    aiOutputType = type === "regex" ? "regex" : "text";
+  }
+  function getAiOutputType() {
+    return aiOutputType;
   }
   // src/shared/ui/mainModal/modalLayout.js
   function createModalLayout() {
@@ -5544,6 +5638,35 @@ ${result.join(",\n")}
   var currentMode2 = "quick-scan";
   var lastAiSnapshot = null;
   var lastAiReviewItems = [];
+  var lastAiEditError = "";
+  function renderAiOutputTabs(activeType = getAiOutputType()) {
+    if (!aiOutputTabs) return;
+    aiOutputTabs.querySelectorAll("[data-ai-output-type]").forEach((button) => {
+      const isActive3 = button.dataset.aiOutputType === activeType;
+      button.classList.toggle("is-active", isActive3);
+      button.setAttribute("aria-selected", String(isActive3));
+    });
+  }
+  function createAiOutputTabs() {
+    const tabs = document.createElement("div");
+    tabs.className = "ai-output-tabs";
+    tabs.setAttribute("role", "tablist");
+    [
+      ["text", "results.aiOutput.text"],
+      ["regex", "results.aiOutput.regex"]
+    ].forEach(([type]) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "ai-output-tab";
+      button.dataset.aiOutputType = type;
+      button.setAttribute("role", "tab");
+      button.addEventListener("click", () => fire("ai-output-type-change", type));
+      tabs.appendChild(button);
+    });
+    setAiOutputTabs(tabs);
+    updateAiOutputTabs();
+    return tabs;
+  }
   function renderAiSummaryPanel() {
     const panel = aiSummaryPanel;
     if (!panel) return;
@@ -5553,11 +5676,12 @@ ${result.join(",\n")}
     status.className = "ai-summary-status";
     status.setAttribute("role", "status");
     const statusDot = document.createElement("span");
-    statusDot.className = `ai-status-dot ${lastAiSnapshot.active ? "is-active" : ""}`;
+    statusDot.className = `ai-status-dot ${lastAiSnapshot.paused ? "is-paused" : lastAiSnapshot.active ? "is-active" : ""}`;
     statusDot.setAttribute("aria-hidden", "true");
     const statusText = document.createElement("span");
     statusText.className = "ai-summary-status-text";
-    statusText.textContent = t(lastAiSnapshot.active ? "results.aiRunning" : "results.aiStopped");
+    const statusKey = lastAiSnapshot.paused ? "results.aiPaused" : lastAiSnapshot.active ? "results.aiRunning" : "results.aiStopped";
+    statusText.textContent = t(statusKey);
     status.append(statusDot, statusText);
     panel.appendChild(status);
     const counts = document.createElement("div");
@@ -5565,6 +5689,8 @@ ${result.join(",\n")}
     const countItems = [
       ["pending", "results.aiCounts.pending"],
       ["translated", "results.aiCounts.translated"],
+      ["textRules", "results.aiCounts.textRules"],
+      ["regexRules", "results.aiCounts.regexRules"],
       ["removed", "results.aiCounts.removed"],
       ["review", "results.aiCounts.review"],
       ["failed", "results.aiCounts.failed"]
@@ -5597,6 +5723,12 @@ ${result.join(",\n")}
       } else {
         notice.textContent = `${t("results.aiRequestError")}: ${lastAiSnapshot.lastErrorCode}`;
       }
+      panel.appendChild(notice);
+    }
+    if (lastAiEditError) {
+      const notice = document.createElement("div");
+      notice.className = "ai-summary-notice is-error";
+      notice.textContent = `${t("results.aiRegexEditError")}: ${lastAiEditError}`;
       panel.appendChild(notice);
     }
     if (lastAiReviewItems.length > 0) {
@@ -5680,6 +5812,7 @@ ${result.join(",\n")}
     aiSummaryPanel2.className = "ai-summary-panel";
     aiSummaryPanel2.setAttribute("aria-live", "polite");
     setAiSummaryPanel(aiSummaryPanel2);
+    const aiOutputTabs2 = createAiOutputTabs();
     const textareaContainer = document.createElement("div");
     textareaContainer.className = "tc-textarea-container";
     const lineNumbersDiv2 = document.createElement("div");
@@ -5695,10 +5828,12 @@ ${result.join(",\n")}
     setLoadingContainer(loadingContainer2);
     modalContent.appendChild(placeholder2);
     modalContent.appendChild(aiSummaryPanel2);
+    modalContent.appendChild(aiOutputTabs2);
     modalContent.appendChild(textareaContainer);
     modalContent.appendChild(loadingContainer2);
     unsubscribeLanguageChanged2 = on("languageChanged", () => {
       rerenderPlaceholder();
+      updateAiOutputTabs();
       renderAiSummaryPanel();
     });
   }
@@ -5715,11 +5850,21 @@ ${result.join(",\n")}
     if (aiSummaryPanel) {
       aiSummaryPanel.classList.toggle("is-visible", currentMode2 === "ai-scan");
     }
+    if (aiOutputTabs) aiOutputTabs.classList.toggle("is-visible", currentMode2 === "ai-scan");
   }
-  function updateAiSummaryPanel(snapshot, reviewItems = []) {
+  function updateAiSummaryPanel(snapshot, reviewItems = [], editError = "") {
     lastAiSnapshot = snapshot;
     lastAiReviewItems = reviewItems;
+    lastAiEditError = editError || "";
     renderAiSummaryPanel();
+  }
+  function updateAiOutputTabs(activeType = getAiOutputType()) {
+    if (!aiOutputTabs) return;
+    aiOutputTabs.querySelectorAll("[data-ai-output-type]").forEach((button) => {
+      const type = button.dataset.aiOutputType;
+      button.textContent = t(type === "regex" ? "results.aiOutput.regex" : "results.aiOutput.text");
+    });
+    renderAiOutputTabs(activeType);
   }
   // src/assets/icons/copyIcon.js
   var copyIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M120-220v-80h80v80h-80Zm0-140v-80h80v80h-80Zm0-140v-80h80v80h-80ZM260-80v-80h80v80h-80Zm100-160q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480Zm40 240v-80h80v80h-80Zm-200 0q-33 0-56.5-23.5T120-160h80v80Zm340 0v-80h80q0 33-23.5 56.5T540-80ZM120-640q0-33 23.5-56.5T200-720v80h-80Zm420 80Z"/></svg>`;
@@ -5776,7 +5921,7 @@ ${result.join(",\n")}
       const newIconElement = createSVGFromString(newIcon);
       if (!newIconElement) return;
       const oldIconElements = Array.from(button.querySelectorAll("svg"));
-      let iconWrapper = button.querySelector(".tc-icon-title-icon");
+      let iconWrapper = iconOnly ? button : button.querySelector(".tc-icon-title-icon");
       if (!iconWrapper) {
         iconWrapper = document.createElement("span");
         iconWrapper.className = "tc-icon-title-icon";
@@ -6046,11 +6191,11 @@ ${result.join(",\n")}
       clearBtn.disabled = (snapshot.counts?.total || 0) === 0;
     }
     if (aiSubmitBtn) {
-      aiSubmitBtn.disabled = !snapshot.active || snapshot.processing || (snapshot.counts?.pending || 0) === 0;
+      aiSubmitBtn.disabled = !snapshot.active || snapshot.paused || snapshot.processing || (snapshot.counts?.pending || 0) === 0;
     }
     if (aiRetryBtn) {
       const retryCount = (snapshot.counts?.review || 0) + (snapshot.counts?.failed || 0);
-      aiRetryBtn.disabled = !snapshot.active || snapshot.processing || retryCount === 0;
+      aiRetryBtn.disabled = !snapshot.active || snapshot.paused || snapshot.processing || retryCount === 0;
     }
     if (currentFooterMode !== "ai-scan") return;
   }
@@ -6354,6 +6499,7 @@ ${result.join(",\n")}
       placeholder.classList.remove("is-visible");
       textareaContainer.classList.add("is-visible");
       outputTextarea.value = "";
+      outputTextarea.readOnly = true;
       showLoading();
       setButtonsDisabled(true);
     } else if (content === SHOW_PLACEHOLDER) {
@@ -6361,7 +6507,15 @@ ${result.join(",\n")}
       const isAiMode = mode === "ai-scan";
       textareaContainer.classList.toggle("is-visible", isAiMode);
       placeholder.classList.toggle("is-visible", !isAiMode);
-      if (isAiMode) outputTextarea.value = "";
+      if (isAiMode) {
+        outputTextarea.value = "";
+        outputTextarea.readOnly = false;
+        updateLineNumbers();
+        updateStatistics();
+        updateActiveLine();
+      } else {
+        outputTextarea.readOnly = true;
+      }
       setButtonsDisabled(true);
     } else {
       hideLoading();
@@ -6382,8 +6536,13 @@ ${result.join(",\n")}
       requestAnimationFrame(() => {
         outputTextarea.value = displayText;
         setButtonsDisabled(!isData);
-        outputTextarea.readOnly = !isData;
-        outputTextarea.dispatchEvent(new Event("input"));
+        outputTextarea.readOnly = mode !== "ai-scan" && !isData;
+        if (mode === "ai-scan") {
+          updateLineNumbers();
+          updateStatistics();
+        } else {
+          outputTextarea.dispatchEvent(new Event("input"));
+        }
         updateActiveLine();
       });
     }
@@ -6421,6 +6580,10 @@ ${result.join(",\n")}
     REMOVE: "remove",
     REVIEW: "review"
   });
+  var AI_TRANSLATION_TYPES = Object.freeze({
+    TEXT: "text",
+    REGEX: "regex"
+  });
   var AI_CANDIDATE_STATUS = Object.freeze({
     PENDING: "pending",
     IN_FLIGHT: "inflight",
@@ -6457,6 +6620,7 @@ ${result.join(",\n")}
     processingMode: AI_PROCESSING_MODES.MANUAL,
     targetLanguage: AI_TARGET_LANGUAGES.SIMPLIFIED_CHINESE,
     confidenceThreshold: 0.85,
+    includeRegexRuleComments: false,
     activeProviderId: DEFAULT_DEEPSEEK_PROVIDER.id,
     providers: [DEFAULT_DEEPSEEK_PROVIDER],
     requestTimeoutMs: 45e3,
@@ -6516,6 +6680,7 @@ ${result.join(",\n")}
       processingMode: ALLOWED_PROCESSING_MODES.has(value.processingMode) ? value.processingMode : AI_DEFAULT_SETTINGS.processingMode,
       targetLanguage: ALLOWED_TARGETS.has(value.targetLanguage) ? value.targetLanguage : AI_DEFAULT_SETTINGS.targetLanguage,
       confidenceThreshold: clampNumber(value.confidenceThreshold, AI_DEFAULT_SETTINGS.confidenceThreshold, 0.5, 1),
+      includeRegexRuleComments: value.includeRegexRuleComments === true,
       activeProviderId,
       providers,
       requestTimeoutMs: clampNumber(value.requestTimeoutMs, AI_DEFAULT_SETTINGS.requestTimeoutMs, 5e3, 12e4),
@@ -7643,7 +7808,7 @@ ${result.join(",\n")}
     pauseResumeButton.click();
   }
   function createCounterWithHelp({ counterKey, helpKey, onPause, onResume, scanType, onSettingsClick }) {
-    let isPaused3 = false;
+    let isPaused4 = false;
     counterWithHelpContainer = document.createElement("div");
     counterWithHelpContainer.className = "counter-with-help-container";
     counterWithHelpContainer.style.pointerEvents = "auto";
@@ -7661,8 +7826,8 @@ ${result.join(",\n")}
         iconOnly: true,
         tooltipKey: `tooltip.pause${scanType}`,
         onClick: () => {
-          isPaused3 = !isPaused3;
-          if (isPaused3) {
+          isPaused4 = !isPaused4;
+          if (isPaused4) {
             onPause();
             pauseResumeButton.updateIcon(resumeIcon);
             pauseResumeButton.updateText(`tooltip.resume${scanType}`);
@@ -8680,11 +8845,468 @@ ${result.join(",\n")}
     }
     return { allowed: true, reason: null, estimatedTokens };
   }
+  // src/shared/utils/text/regexRules.js
+  var MAX_REGEX_PATTERN_LENGTH = 1e3;
+  var MAX_REGEX_REPLACEMENT_LENGTH = 1e3;
+  var ALLOWED_REGEX_FLAGS = /^[dgimsuvy]*$/;
+  var RULE_MARKER_PATTERN = /qps-rule:([a-zA-Z0-9_-]+)/;
+  var DYNAMIC_VALUE_MARKER = "<value>";
+  var DYNAMIC_VALUE_PATTERN = /[$€£¥₹]\s*\d+(?:[.,]\d+)*|\b\d+(?:\.\d+)+(?:[a-z]+)?\b|\b\d+(?:[.,]\d+)?(?:p|k|m|b|ms|s)?\b/gi;
+  function createDynamicRegexShape(sourceText) {
+    const shape = String(sourceText || "").replace(/\s+/g, " ").trim().replace(DYNAMIC_VALUE_PATTERN, DYNAMIC_VALUE_MARKER);
+    return shape.includes(DYNAMIC_VALUE_MARKER) ? shape.toLocaleLowerCase("en-US") : "";
+  }
+  function hasDynamicRegexValue(sourceText) {
+    return Boolean(createDynamicRegexShape(sourceText));
+  }
+  function isSingleSampleRegexCandidate(sourceText) {
+    return hasDynamicRegexValue(sourceText) && /[•:()/]/.test(String(sourceText || ""));
+  }
+  function escapeFixedRegexText(value) {
+    return String(value).split(/(\s+)/).map((part) => /^\s+$/.test(part) ? "\\s+" : part.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("");
+  }
+  function capturePatternForDynamicValue(value) {
+    const currency = String(value).match(/^([$€£¥₹])\s*\d/);
+    if (currency) return `(${escapeFixedRegexText(currency[1])}\\s*[\\d,.]+)`;
+    const unit = String(value).match(/(?:p|k|m|b|ms|s)$/i)?.[0];
+    if (unit) return `(\\d+(?:[.,]\\d+)?${escapeFixedRegexText(unit)})`;
+    if (/\d(?:\.\d+)+/.test(value)) return "(\\d+(?:\\.\\d+)+)";
+    return "(\\d+(?:[.,]\\d+)?)";
+  }
+  function createSingleSampleRegexRule({ id, sourceId, sourceText, translation, confidence = 1 }) {
+    const source = String(sourceText || "");
+    const target = String(translation || "");
+    if (!isSingleSampleRegexCandidate(source) || !target || source.trim() === target.trim()) return null;
+    const values = Array.from(source.matchAll(new RegExp(DYNAMIC_VALUE_PATTERN.source, DYNAMIC_VALUE_PATTERN.flags)));
+    if (values.length === 0) return null;
+    let sourceIndex = 0;
+    let translationIndex = 0;
+    let pattern = "^";
+    let replacement = "";
+    for (let index = 0; index < values.length; index += 1) {
+      const value = values[index][0];
+      const valueIndex = values[index].index;
+      const targetValueIndex = target.indexOf(value, translationIndex);
+      if (targetValueIndex < 0) return null;
+      pattern += escapeFixedRegexText(source.slice(sourceIndex, valueIndex));
+      pattern += capturePatternForDynamicValue(value);
+      replacement += target.slice(translationIndex, targetValueIndex);
+      replacement += `$${index + 1}`;
+      sourceIndex = valueIndex + value.length;
+      translationIndex = targetValueIndex + value.length;
+    }
+    pattern += `${escapeFixedRegexText(source.slice(sourceIndex))}$`;
+    replacement += target.slice(translationIndex);
+    const rule = {
+      id,
+      sourceIds: [sourceId],
+      pattern,
+      flags: "i",
+      replacement,
+      confidence,
+      category: "single-sample-dynamic",
+      reason: "future-proof-dynamic-value",
+      origin: "ai"
+    };
+    const validated = validateRegexRuleDefinition(rule, {
+      sourceTexts: [source],
+      requireSourceMatch: true,
+      requireAnchors: true,
+      requireDynamicCapture: true
+    });
+    return validated.valid ? validated.rule : null;
+  }
+  function matchEditedRegexRulesToExisting(editedRules, existingRules) {
+    const edited = Array.isArray(editedRules) ? editedRules : [];
+    const existing = Array.isArray(existingRules) ? existingRules : [];
+    const existingById = new Map(existing.map((rule) => [rule.id, rule]));
+    const matches = Array(edited.length).fill(null);
+    const usedIds = /* @__PURE__ */ new Set();
+    edited.forEach((rule, index) => {
+      const requestedId = String(rule?.id || "").trim();
+      const match = requestedId ? existingById.get(requestedId) : null;
+      if (!match) return;
+      matches[index] = match;
+      usedIds.add(match.id);
+    });
+    edited.forEach((rule, index) => {
+      if (rule?.id || matches[index]) return;
+      const exactMatch = existing.find(
+        (candidate) => !usedIds.has(candidate.id) && candidate.pattern === rule.pattern && candidate.flags === rule.flags && candidate.replacement === rule.replacement
+      );
+      if (!exactMatch) return;
+      matches[index] = exactMatch;
+      usedIds.add(exactMatch.id);
+    });
+    const unmatchedEditedIndexes = edited.map((rule, index) => ({ rule, index })).filter(({ rule, index }) => !rule?.id && !matches[index]).map(({ index }) => index);
+    const unmatchedExisting = existing.filter((rule) => !usedIds.has(rule.id));
+    if (unmatchedEditedIndexes.length === 1 && unmatchedExisting.length === 1) {
+      matches[unmatchedEditedIndexes[0]] = unmatchedExisting[0];
+    } else if (unmatchedEditedIndexes.length > 0 && unmatchedExisting.length > 0) {
+      return { valid: false, matches: [], error: "ambiguous-regex-edit" };
+    }
+    return { valid: true, matches };
+  }
+  function hasDuplicateCharacters(value) {
+    return new Set(value).size !== value.length;
+  }
+  function hasUnsafeRegexShape(pattern) {
+    return /\((?:[^()\\]|\\.)*(?:[+*]|\{\d+,\})(?:[^()\\]|\\.)*\)(?:[+*]|\{\d+,\})/.test(pattern);
+  }
+  function countCapturingGroups(pattern) {
+    let count = 0;
+    let escaped = false;
+    let inCharacterClass = false;
+    for (let index = 0; index < pattern.length; index += 1) {
+      const character = pattern[index];
+      if (escaped) {
+        escaped = false;
+        continue;
+      }
+      if (character === "\\") {
+        escaped = true;
+        continue;
+      }
+      if (character === "[") {
+        inCharacterClass = true;
+        continue;
+      }
+      if (character === "]" && inCharacterClass) {
+        inCharacterClass = false;
+        continue;
+      }
+      if (!inCharacterClass && character === "(" && pattern[index + 1] !== "?") count += 1;
+    }
+    return count;
+  }
+  function replacementGroupReferences(replacement) {
+    const references = [];
+    const pattern = /\$(\d{1,2})/g;
+    let match;
+    while ((match = pattern.exec(replacement)) !== null) {
+      references.push(Number(match[1]));
+    }
+    return references;
+  }
+  function normalizeRuleId(value, fallback = "") {
+    const normalized = String(value || "").trim().replace(/[^a-zA-Z0-9_-]/g, "-").slice(0, 80);
+    return normalized || fallback;
+  }
+  function testRuleAgainstSource(regex, sourceText) {
+    regex.lastIndex = 0;
+    const matched = regex.test(String(sourceText || ""));
+    regex.lastIndex = 0;
+    return matched;
+  }
+  function validateRegexRuleDefinition(rule, options = {}) {
+    const sourceTexts = Array.isArray(options.sourceTexts) ? options.sourceTexts.map(String) : [];
+    const requireSourceMatch = options.requireSourceMatch !== false;
+    const pattern = typeof rule?.pattern === "string" ? rule.pattern : "";
+    const flags = typeof rule?.flags === "string" ? rule.flags : "";
+    const replacement = typeof rule?.replacement === "string" ? rule.replacement : "";
+    const sourceIds = Array.isArray(rule?.sourceIds) ? Array.from(new Set(rule.sourceIds.map((id) => String(id).trim()).filter(Boolean))).slice(0, 100) : [];
+    if (!pattern || pattern.length > MAX_REGEX_PATTERN_LENGTH) return { valid: false, reason: "invalid-regex-pattern" };
+    if (replacement.length > MAX_REGEX_REPLACEMENT_LENGTH) {
+      return { valid: false, reason: "invalid-regex-replacement" };
+    }
+    if (!ALLOWED_REGEX_FLAGS.test(flags) || hasDuplicateCharacters(flags)) {
+      return { valid: false, reason: "invalid-regex-flags" };
+    }
+    if (hasUnsafeRegexShape(pattern)) return { valid: false, reason: "unsafe-regex-pattern" };
+    if (options.requireAnchors && (!pattern.startsWith("^") || !pattern.endsWith("$"))) {
+      return { valid: false, reason: "unanchored-single-sample-regex" };
+    }
+    let regex;
+    try {
+      regex = new RegExp(pattern, flags);
+    } catch {
+      return { valid: false, reason: "invalid-regex-pattern" };
+    }
+    const groupCount = countCapturingGroups(pattern);
+    const groupReferences = replacementGroupReferences(replacement);
+    if (groupReferences.some((group) => group < 1 || group > groupCount)) {
+      return { valid: false, reason: "invalid-regex-capture" };
+    }
+    if (options.requireDynamicCapture && (groupCount < 1 || groupReferences.length < 1)) {
+      return { valid: false, reason: "missing-single-sample-capture" };
+    }
+    if (requireSourceMatch && sourceTexts.some((sourceText) => !testRuleAgainstSource(regex, sourceText))) {
+      return { valid: false, reason: "regex-source-mismatch" };
+    }
+    const normalized = {
+      id: normalizeRuleId(rule?.id, createRegexRuleId(pattern, flags, replacement)),
+      sourceIds,
+      pattern,
+      flags,
+      replacement,
+      confidence: Number.isFinite(Number(rule?.confidence)) ? Number(rule.confidence) : 0,
+      category: typeof rule?.category === "string" ? rule.category.slice(0, 80) : "",
+      reason: typeof rule?.reason === "string" ? rule.reason.slice(0, 300) : "",
+      origin: rule?.origin === "manual" || rule?.origin === "user-edited" ? rule.origin : "ai"
+    };
+    return { valid: true, rule: normalized };
+  }
+  function escapeRegexLiteral(pattern) {
+    const source = String(pattern);
+    let result = "";
+    let backslashRun = 0;
+    for (const character of source) {
+      if (character === "\\") {
+        result += character;
+        backslashRun += 1;
+        continue;
+      }
+      if (character === "/") {
+        result += backslashRun % 2 === 0 ? "\\/" : "/";
+      } else if (character === "\r") {
+        result += "\\r";
+      } else if (character === "\n") {
+        result += "\\n";
+      } else {
+        result += character;
+      }
+      backslashRun = 0;
+    }
+    return result;
+  }
+  function markerForRuleId(ruleId) {
+    const safeId = normalizeRuleId(ruleId, "regex-rule");
+    return `qps-rule:${safeId}`;
+  }
+  function formatRegexRulesForTranslation(rules, options = {}) {
+    const includePropertyWrapper = options.includePropertyWrapper !== false;
+    const includeRuleComments = options.includeRuleComments === true;
+    const normalizedRules = Array.isArray(rules) ? rules : [];
+    if (normalizedRules.length === 0) return includePropertyWrapper ? "regexRules: []" : "[]";
+    const entries = normalizedRules.map((rule, index) => {
+      const pattern = escapeRegexLiteral(rule.pattern);
+      const flags = String(rule.flags || "");
+      const replacement = JSON.stringify(String(rule.replacement || ""));
+      const ruleId = rule.id || createRegexRuleId(rule.pattern, flags, rule.replacement, index);
+      const marker = includeRuleComments ? ` // ${markerForRuleId(ruleId)}` : "";
+      return `    [/${pattern}/${flags}, ${replacement}],${marker}`;
+    });
+    const body = `[
+${entries.join("\n")}
+]`;
+    return includePropertyWrapper ? `regexRules: ${body}` : body;
+  }
+  function isWhitespace(character) {
+    return Boolean(character && /\s/.test(character));
+  }
+  function skipWhitespaceAndComments(source, start2) {
+    let index = start2;
+    while (index < source.length) {
+      if (isWhitespace(source[index]) || source[index] === ",") {
+        index += 1;
+        continue;
+      }
+      if (source.startsWith("//", index)) {
+        const end = source.indexOf("\n", index + 2);
+        index = end < 0 ? source.length : end + 1;
+        continue;
+      }
+      if (source.startsWith("/*", index)) {
+        const end = source.indexOf("*/", index + 2);
+        if (end < 0) return { index: source.length, error: "unterminated-comment" };
+        index = end + 2;
+        continue;
+      }
+      break;
+    }
+    return { index };
+  }
+  function parseRegexLiteral(source, start2) {
+    if (source[start2] !== "/") return { error: "expected-regex" };
+    let index = start2 + 1;
+    let escaped = false;
+    let inCharacterClass = false;
+    while (index < source.length) {
+      const character = source[index];
+      if (escaped) {
+        escaped = false;
+        index += 1;
+        continue;
+      }
+      if (character === "\\") {
+        escaped = true;
+        index += 1;
+        continue;
+      }
+      if (character === "\n" || character === "\r") return { error: "invalid-regex-pattern" };
+      if (character === "[") inCharacterClass = true;
+      if (character === "]" && inCharacterClass) inCharacterClass = false;
+      if (character === "/" && !inCharacterClass) break;
+      index += 1;
+    }
+    if (index >= source.length) return { error: "unterminated-regex" };
+    const pattern = source.slice(start2 + 1, index);
+    index += 1;
+    const flagsStart = index;
+    while (index < source.length && /[a-z]/i.test(source[index])) index += 1;
+    return { pattern, flags: source.slice(flagsStart, index), index };
+  }
+  function parseStringLiteral(source, start2) {
+    const quote = source[start2];
+    if (quote !== '"' && quote !== "'") return { error: "expected-string" };
+    let index = start2 + 1;
+    let result = "";
+    while (index < source.length) {
+      const character = source[index];
+      if (character === quote) return { value: result, index: index + 1 };
+      if (character !== "\\") {
+        if (character === "\n" || character === "\r") return { error: "unterminated-string" };
+        result += character;
+        index += 1;
+        continue;
+      }
+      index += 1;
+      if (index >= source.length) return { error: "unterminated-string" };
+      const escaped = source[index];
+      const escapeMap = { n: "\n", r: "\r", t: "	", b: "\b", f: "\f", v: "\v", 0: "\0" };
+      if (escapeMap[escaped] !== void 0) {
+        result += escapeMap[escaped];
+        index += 1;
+        continue;
+      }
+      if (escaped === "u" && /^[0-9a-f]{4}$/i.test(source.slice(index + 1, index + 5))) {
+        result += String.fromCharCode(parseInt(source.slice(index + 1, index + 5), 16));
+        index += 5;
+        continue;
+      }
+      if (escaped === "x" && /^[0-9a-f]{2}$/i.test(source.slice(index + 1, index + 3))) {
+        result += String.fromCharCode(parseInt(source.slice(index + 1, index + 3), 16));
+        index += 3;
+        continue;
+      }
+      result += escaped;
+      index += 1;
+    }
+    return { error: "unterminated-string" };
+  }
+  function readRuleMarker(source, start2) {
+    let index = start2;
+    let marker = null;
+    while (index < source.length) {
+      if (isWhitespace(source[index]) || source[index] === ",") {
+        index += 1;
+        continue;
+      }
+      if (source.startsWith("//", index)) {
+        const end = source.indexOf("\n", index + 2);
+        const comment = source.slice(index + 2, end < 0 ? source.length : end);
+        marker = comment.match(RULE_MARKER_PATTERN)?.[1] || marker;
+        index = end < 0 ? source.length : end + 1;
+        continue;
+      }
+      if (source.startsWith("/*", index)) {
+        const end = source.indexOf("*/", index + 2);
+        if (end < 0) return { error: "unterminated-comment" };
+        const comment = source.slice(index + 2, end);
+        marker = comment.match(RULE_MARKER_PATTERN)?.[1] || marker;
+        index = end + 2;
+        continue;
+      }
+      break;
+    }
+    return { index, marker };
+  }
+  function parseRegexRules(content) {
+    if (typeof content !== "string" || !content.trim()) return { valid: false, rules: [], error: "empty-regex-output" };
+    const source = content.replace(/^\uFEFF/, "").trim();
+    let index = 0;
+    if (source.startsWith("regexRules")) {
+      index = "regexRules".length;
+      while (isWhitespace(source[index])) index += 1;
+      if (source[index] !== ":") return { valid: false, rules: [], error: "invalid-regex-wrapper" };
+      index += 1;
+    }
+    while (isWhitespace(source[index])) index += 1;
+    if (source[index] !== "[") return { valid: false, rules: [], error: "invalid-regex-wrapper" };
+    index += 1;
+    const rules = [];
+    const ids = /* @__PURE__ */ new Set();
+    while (index < source.length) {
+      const skipped = skipWhitespaceAndComments(source, index);
+      if (skipped.error) return { valid: false, rules: [], error: skipped.error };
+      index = skipped.index;
+      if (source[index] === "]") {
+        index += 1;
+        break;
+      }
+      if (source[index] !== "[") return { valid: false, rules: [], error: "invalid-regex-entry" };
+      index += 1;
+      const regexResult = parseRegexLiteral(source, index);
+      if (regexResult.error) return { valid: false, rules: [], error: regexResult.error };
+      index = regexResult.index;
+      while (isWhitespace(source[index])) index += 1;
+      if (source[index] !== ",") return { valid: false, rules: [], error: "invalid-regex-entry" };
+      index += 1;
+      while (isWhitespace(source[index])) index += 1;
+      const stringResult = parseStringLiteral(source, index);
+      if (stringResult.error) return { valid: false, rules: [], error: stringResult.error };
+      index = stringResult.index;
+      while (isWhitespace(source[index])) index += 1;
+      if (source[index] !== "]") return { valid: false, rules: [], error: "invalid-regex-entry" };
+      index += 1;
+      const markerResult = readRuleMarker(source, index);
+      if (markerResult.error) return { valid: false, rules: [], error: markerResult.error };
+      index = markerResult.index;
+      if (markerResult.marker && ids.has(markerResult.marker)) {
+        return { valid: false, rules: [], error: "duplicate-regex-rule-id" };
+      }
+      if (markerResult.marker) ids.add(markerResult.marker);
+      const parsedRule = {
+        id: markerResult.marker || null,
+        sourceIds: [],
+        pattern: regexResult.pattern,
+        flags: regexResult.flags,
+        replacement: stringResult.value,
+        origin: markerResult.marker ? "user-edited" : "manual"
+      };
+      const syntaxCheck = validateRegexRuleDefinition(parsedRule, { requireSourceMatch: false });
+      if (!syntaxCheck.valid) return { valid: false, rules: [], error: syntaxCheck.reason };
+      rules.push(parsedRule);
+      if (source[index] === ",") index += 1;
+    }
+    const trailing = skipWhitespaceAndComments(source, index);
+    if (trailing.error || trailing.index !== source.length) {
+      return { valid: false, rules: [], error: trailing.error || "unexpected-regex-content" };
+    }
+    return { valid: true, rules };
+  }
+  function createRegexRuleId(pattern, flags, replacement, index = 0) {
+    const seed = `${pattern}\0${flags}\0${replacement}\0${index}`;
+    let hash = 2166136261;
+    for (let characterIndex = 0; characterIndex < seed.length; characterIndex += 1) {
+      hash ^= seed.charCodeAt(characterIndex);
+      hash = Math.imul(hash, 16777619);
+    }
+    return `regex-${(hash >>> 0).toString(36)}`;
+  }
   // src/shared/services/ai/promptBuilder.js
   var TARGET_LABELS = {
     "zh-CN": "Simplified Chinese",
     "zh-TW": "Traditional Chinese"
   };
+  var REGEX_HINT_LIMIT = 24;
+  function buildRegexCandidateGroups(candidates2) {
+    const groupsByShape = /* @__PURE__ */ new Map();
+    candidates2.forEach((candidate, index) => {
+      const shape = createDynamicRegexShape(candidate.sourceText);
+      if (!shape) return;
+      const group = groupsByShape.get(shape) || { shape, sourceIds: [], firstIndex: index };
+      group.sourceIds.push(candidate.id);
+      groupsByShape.set(shape, group);
+    });
+    return Array.from(groupsByShape.values()).filter(
+      (group) => group.sourceIds.length >= 2 || isSingleSampleRegexCandidate(candidates2[group.firstIndex]?.sourceText)
+    ).sort((left, right) => right.sourceIds.length - left.sourceIds.length || left.firstIndex - right.firstIndex).slice(0, REGEX_HINT_LIMIT).map((group, index) => ({
+      id: `regex-candidate-${index + 1}`,
+      sourceIds: group.sourceIds,
+      sharedShape: group.shape
+    }));
+  }
   function limitText(value, maxLength) {
     return String(value || "").replace(/\s+/g, " ").trim().slice(0, maxLength);
   }
@@ -8741,23 +9363,37 @@ ${result.join(",\n")}
       "review: uncertain meaning or insufficient context.",
       "URLs, codes, identifiers, numbers, emails, and similar noise are usually already removed by local filters before submission.",
       "Preserve every placeholder exactly. Do not add, remove, rename, or translate placeholders.",
-      "Return one result for every input id. Never return HTML or Markdown.",
-      'Return JSON with shape {"items":[{"id":"...","action":"translate|remove|review","translation":"...","confidence":0.0,"category":"...","reason":"..."}]}.'
+      "Return one item result for every input id. Never return HTML or Markdown outside JSON strings.",
+      'For normal translatable items, use translationType "text" and put the translated text in translation.',
+      "Before classifying individual items, inspect regexCandidateGroups and the full item list for repeated source structures. The groups are non-authoritative hints: use a group only when its items can safely share one translated replacement.",
+      "Within this batch, prefer a regex rule when at least two source items share a translatable fixed sentence shell and differ only in reusable values such as prices, counts, dates, durations, or versions. Different dynamic values are not a reason to remove the items.",
+      "A one-item regexCandidateGroup may also become one regex rule when the source contains an explicit value that is likely to change later, such as a price, count, date, duration, resolution, or version inside an otherwise stable translatable sentence. This is allowed to future-proof a site change without waiting for a second sample.",
+      "A single-sample rule must be anchored with ^ and $, capture every changing value, reuse those captures in replacement, and keep all fixed source wording literal and specific. Never create a single-sample regex for ordinary static copy or an untranslated model/product name.",
+      "Do not create a regex merely to preserve an untranslated proper name. If the fixed shell does not need translation or a shared replacement would mistranslate any source, keep the normal classification.",
+      "For a regex rule, capture dynamic values with numbered capture groups, preserve those values with $1, $2, and so on, and keep the rule specific to the provided examples. Prefer an anchored pattern for a complete UI string.",
+      'Example: sources "Audio \u2022 Input: $3.50 / Output: $21.00" and "Audio \u2022 Input: $0.50 / Output: $1.50" should share a specific anchored regex that captures the two prices and translates the fixed Audio/Input/Output shell.',
+      'Every regex source id must appear in exactly one regex rule. A repeated-template rule has at least two distinct source ids; a strict future-proof single-sample rule has exactly one. Items assigned to a regex rule use translationType "regex", an empty translation, and the matching regexRuleId.',
+      'The action field always describes the classification and must be exactly "translate", "remove", or "review". Never put "text" or "regex" in action.',
+      'A valid regex item looks exactly like {"id":"candidate-a","action":"translate","translationType":"regex","regexRuleId":"rule-a","translation":"","confidence":0.96}.',
+      'Return JSON with shape {"items":[{"id":"...","action":"translate|remove|review","translationType":"text|regex","regexRuleId":"...","translation":"...","confidence":0.0,"category":"...","reason":"..."}],"regexRules":[{"id":"...","sourceIds":["..."],"pattern":"...","flags":"i","replacement":"...","confidence":0.0,"category":"...","reason":"..."}]}.'
     ].join("\n");
+    const regexCandidateGroups = buildRegexCandidateGroups(validCandidates);
     const userContent = JSON.stringify({
       targetLanguage,
       sourceLanguageHint: "auto",
       ...pageContext ? { page: sanitizePageContext(pageContext) } : {},
       style,
+      regexCandidateGroups,
       items: validCandidates.map((candidate) => ({
         id: candidate.id,
         sourceText: candidate.sourceText,
         context: sanitizeContext(candidate.context)
       }))
     });
+    const regexRuleReserve = Math.min(8192, Math.max(512, Math.ceil(validCandidates.length / 2) * 96));
     const maxOutputTokens = Math.min(
       AI_RESPONSE_TOKEN_LIMIT,
-      Math.max(1024, estimateBatchResponseTokens(validCandidates) + 512)
+      Math.max(1024, estimateBatchResponseTokens(validCandidates) + 512 + regexRuleReserve)
     );
     const request = {
       model: provider.model,
@@ -8818,17 +9454,94 @@ ${result.join(",\n")}
   function placeholdersMatch(sourceText, translation) {
     return JSON.stringify(extractPlaceholders(sourceText)) === JSON.stringify(extractPlaceholders(translation));
   }
-  function createReview(candidate, reason, item = {}) {
+  function normalizeComparableText(value) {
+    return String(value || "").normalize("NFC").replace(/\s+/g, " ").trim();
+  }
+  function isUnchangedTranslation(sourceText, translation) {
+    return normalizeComparableText(sourceText) === normalizeComparableText(translation);
+  }
+  function normalizeResponseId(value) {
+    return String(value || "").trim().slice(0, 120);
+  }
+  function normalizeRegexReference(value) {
+    return normalizeResponseId(value).replace(/[^a-zA-Z0-9_-]/g, "-").slice(0, 80);
+  }
+  function normalizedConfidence(value) {
+    const confidence = Number(value);
+    return Number.isFinite(confidence) && confidence >= 0 && confidence <= 1 ? confidence : null;
+  }
+  function createReview(candidate, reason, item = {}, translationType = AI_TRANSLATION_TYPES.TEXT, regexRuleId = "") {
     return {
       id: candidate.id,
       sourceText: candidate.sourceText,
       action: AI_ACTIONS.REVIEW,
-      translation: typeof item.translation === "string" ? item.translation.trim() : "",
-      confidence: Number.isFinite(Number(item.confidence)) ? Number(item.confidence) : 0,
+      translation: translationType === AI_TRANSLATION_TYPES.TEXT && typeof item.translation === "string" ? item.translation.trim() : "",
+      translationType,
+      ...regexRuleId ? { regexRuleId } : {},
+      confidence: normalizedConfidence(item.confidence) ?? 0,
       category: typeof item.category === "string" ? item.category.slice(0, 80) : "validation",
       reason,
       status: AI_CANDIDATE_STATUS.REVIEW
     };
+  }
+  function normalizeAction(item) {
+    if (item?.action === AI_ACTIONS.KEEP) return AI_ACTIONS.REMOVE;
+    if (item?.action === AI_TRANSLATION_TYPES.REGEX && item?.translationType !== AI_TRANSLATION_TYPES.TEXT && normalizeRegexReference(item?.regexRuleId)) {
+      return AI_ACTIONS.TRANSLATE;
+    }
+    return item?.action;
+  }
+  function normalizeTranslationType(item) {
+    if (item?.translationType === AI_TRANSLATION_TYPES.REGEX) return AI_TRANSLATION_TYPES.REGEX;
+    if (item?.action === AI_TRANSLATION_TYPES.REGEX && item?.translationType !== AI_TRANSLATION_TYPES.TEXT && normalizeRegexReference(item?.regexRuleId)) {
+      return AI_TRANSLATION_TYPES.REGEX;
+    }
+    return AI_TRANSLATION_TYPES.TEXT;
+  }
+  function isConfidentTranslation(item, confidenceThreshold) {
+    const confidence = normalizedConfidence(item?.confidence);
+    return confidence !== null && confidence >= confidenceThreshold;
+  }
+  function isRegexItemForRule(item, ruleId, confidenceThreshold) {
+    return normalizeAction(item) === AI_ACTIONS.TRANSLATE && normalizeTranslationType(item) === AI_TRANSLATION_TYPES.REGEX && normalizeRegexReference(item?.regexRuleId) === ruleId && isConfidentTranslation(item, confidenceThreshold);
+  }
+  function validateRegexResponseRule(rawRule, candidates2, responseById, confidenceThreshold, assignedSourceIds) {
+    const ruleId = normalizeRegexReference(rawRule?.id);
+    const rawSourceIds = Array.isArray(rawRule?.sourceIds) ? rawRule.sourceIds.map(normalizeResponseId) : [];
+    const sourceIds = rawSourceIds.filter(Boolean);
+    const invalidSourceIds = rawSourceIds.some((id) => !id) || rawSourceIds.length !== new Set(rawSourceIds).size || sourceIds.length < 1;
+    if (!ruleId || invalidSourceIds) return { valid: false, ruleId, sourceIds, reason: "invalid-regex-sources" };
+    if (sourceIds.some((id) => !responseById.has(id))) {
+      return { valid: false, ruleId, sourceIds, reason: "unknown-regex-source" };
+    }
+    if (sourceIds.some((id) => assignedSourceIds.has(id))) {
+      return { valid: false, ruleId, sourceIds, reason: "overlapping-regex-rules" };
+    }
+    const ruleConfidence = normalizedConfidence(rawRule?.confidence);
+    if (ruleConfidence === null || ruleConfidence < confidenceThreshold) {
+      return { valid: false, ruleId, sourceIds, reason: "low-confidence-regex-rule" };
+    }
+    if (sourceIds.some((id) => !isRegexItemForRule(responseById.get(id), ruleId, confidenceThreshold))) {
+      return { valid: false, ruleId, sourceIds, reason: "regex-item-mismatch" };
+    }
+    const candidatesById = new Map(candidates2.map((candidate) => [candidate.id, candidate]));
+    const sourceTexts = sourceIds.map((id) => candidatesById.get(id)?.sourceText || "");
+    const singleSample = sourceIds.length === 1;
+    if (singleSample && !hasDynamicRegexValue(sourceTexts[0])) {
+      return { valid: false, ruleId, sourceIds, reason: "invalid-single-sample-regex" };
+    }
+    const validated = validateRegexRuleDefinition(
+      { ...rawRule, id: ruleId, sourceIds, confidence: ruleConfidence },
+      {
+        sourceTexts,
+        requireSourceMatch: true,
+        requireAnchors: singleSample,
+        requireDynamicCapture: singleSample
+      }
+    );
+    if (!validated.valid) return { valid: false, ruleId, sourceIds, reason: validated.reason };
+    sourceIds.forEach((id) => assignedSourceIds.add(id));
+    return { valid: true, ruleId, sourceIds, rule: validated.rule };
   }
   function validateTranslationResponse(payload, candidates2, confidenceThreshold) {
     const candidateMap = new Map(candidates2.map((candidate) => [candidate.id, candidate]));
@@ -8839,40 +9552,217 @@ ${result.join(",\n")}
         responseById.set(item.id, item);
       }
     });
-    return candidates2.map((candidate) => {
+    const assignedSourceIds = /* @__PURE__ */ new Set();
+    const validRegexRules = /* @__PURE__ */ new Map();
+    const invalidRegexReasons = /* @__PURE__ */ new Map();
+    const invalidRegexSourceReasons = /* @__PURE__ */ new Map();
+    const rawRules = Array.isArray(payload?.regexRules) ? payload.regexRules : [];
+    const seenRuleIds = /* @__PURE__ */ new Set();
+    rawRules.forEach((rawRule) => {
+      const ruleId = normalizeRegexReference(rawRule?.id);
+      const sourceIds = Array.isArray(rawRule?.sourceIds) ? rawRule.sourceIds.map(normalizeResponseId).filter(Boolean) : [];
+      if (seenRuleIds.has(ruleId)) {
+        invalidRegexReasons.set(ruleId, "duplicate-regex-rule-id");
+        sourceIds.forEach((id) => {
+          invalidRegexReasons.set(id, "duplicate-regex-rule-id");
+          invalidRegexSourceReasons.set(id, "duplicate-regex-rule-id");
+        });
+        return;
+      }
+      seenRuleIds.add(ruleId);
+      const result = validateRegexResponseRule(
+        rawRule,
+        candidates2,
+        responseById,
+        confidenceThreshold,
+        assignedSourceIds
+      );
+      if (result.valid) {
+        validRegexRules.set(result.ruleId, result.rule);
+      } else {
+        invalidRegexReasons.set(result.ruleId, result.reason);
+        result.sourceIds.forEach((id) => {
+          invalidRegexReasons.set(id, result.reason);
+          invalidRegexSourceReasons.set(id, result.reason);
+        });
+      }
+    });
+    const decisions2 = candidates2.map((candidate) => {
       const item = responseById.get(candidate.id);
-      if (!item) return createReview(candidate, "missing-result");
-      const action = item.action === AI_ACTIONS.KEEP ? AI_ACTIONS.REMOVE : item.action;
-      if (!ALLOWED_ACTIONS.has(action)) return createReview(candidate, "invalid-action", item);
-      const confidence = Number(item.confidence);
-      if (!Number.isFinite(confidence) || confidence < 0 || confidence > 1) {
-        return createReview(candidate, "invalid-confidence", item);
-      }
+      if (!item) return createReview(candidate, "missing-result", item);
+      const action = normalizeAction(item);
+      const confidence = normalizedConfidence(item.confidence);
+      const translationType = normalizeTranslationType(item);
+      const regexRuleId = normalizeRegexReference(item.regexRuleId);
+      if (!ALLOWED_ACTIONS.has(action)) return createReview(candidate, "invalid-action", item, translationType);
+      if (confidence === null)
+        return createReview(candidate, "invalid-confidence", item, translationType, regexRuleId);
       if (action === AI_ACTIONS.REVIEW || confidence < confidenceThreshold) {
-        return createReview(candidate, item.reason || "low-confidence", item);
+        return createReview(candidate, item.reason || "low-confidence", item, translationType, regexRuleId);
       }
-      const translation = typeof item.translation === "string" ? item.translation.trim() : "";
+      if (invalidRegexSourceReasons.has(candidate.id)) {
+        return createReview(
+          candidate,
+          invalidRegexSourceReasons.get(candidate.id),
+          item,
+          translationType,
+          regexRuleId
+        );
+      }
+      if (action === AI_ACTIONS.TRANSLATE && translationType === AI_TRANSLATION_TYPES.REGEX) {
+        if (!regexRuleId || !validRegexRules.has(regexRuleId) || invalidRegexReasons.has(candidate.id)) {
+          return createReview(
+            candidate,
+            invalidRegexReasons.get(candidate.id) || "invalid-regex-rule",
+            item,
+            translationType,
+            regexRuleId
+          );
+        }
+        return {
+          id: candidate.id,
+          sourceText: candidate.sourceText,
+          action,
+          translation: "",
+          translationType,
+          regexRuleId,
+          confidence,
+          category: typeof item.category === "string" ? item.category.slice(0, 80) : "",
+          reason: typeof item.reason === "string" ? item.reason.slice(0, 300) : "",
+          status: AI_CANDIDATE_STATUS.TRANSLATED
+        };
+      }
       if (action === AI_ACTIONS.TRANSLATE) {
+        const translation = typeof item.translation === "string" ? item.translation.trim() : "";
         if (!translation) return createReview(candidate, "empty-translation", item);
+        if (isUnchangedTranslation(candidate.sourceText, translation)) {
+          return {
+            id: candidate.id,
+            sourceText: candidate.sourceText,
+            action: AI_ACTIONS.REMOVE,
+            translation: "",
+            translationType: AI_TRANSLATION_TYPES.TEXT,
+            confidence,
+            category: typeof item.category === "string" ? item.category.slice(0, 80) : "",
+            reason: typeof item.reason === "string" && item.reason ? item.reason.slice(0, 300) : "unchanged-translation",
+            status: AI_CANDIDATE_STATUS.REMOVED
+          };
+        }
         if (!placeholdersMatch(candidate.sourceText, translation)) {
           return createReview(candidate, "placeholder-mismatch", item);
         }
+        return {
+          id: candidate.id,
+          sourceText: candidate.sourceText,
+          action,
+          translation,
+          translationType: AI_TRANSLATION_TYPES.TEXT,
+          confidence,
+          category: typeof item.category === "string" ? item.category.slice(0, 80) : "",
+          reason: typeof item.reason === "string" ? item.reason.slice(0, 300) : "",
+          status: AI_CANDIDATE_STATUS.TRANSLATED
+        };
       }
-      const statusMap = {
-        [AI_ACTIONS.TRANSLATE]: AI_CANDIDATE_STATUS.TRANSLATED,
-        [AI_ACTIONS.REMOVE]: AI_CANDIDATE_STATUS.REMOVED
-      };
+      const status = action === AI_ACTIONS.REMOVE ? AI_CANDIDATE_STATUS.REMOVED : AI_CANDIDATE_STATUS.REVIEW;
       return {
         id: candidate.id,
         sourceText: candidate.sourceText,
         action,
-        translation: action === AI_ACTIONS.TRANSLATE ? translation : "",
+        translation: "",
+        translationType: AI_TRANSLATION_TYPES.TEXT,
         confidence,
         category: typeof item.category === "string" ? item.category.slice(0, 80) : "",
         reason: typeof item.reason === "string" ? item.reason.slice(0, 300) : "",
-        status: statusMap[action]
+        status
       };
     });
+    const decisionById = new Map(decisions2.map((decision) => [decision.id, decision]));
+    const invalidValidatedRuleIds = new Set(
+      Array.from(validRegexRules.entries()).filter(
+        ([, rule]) => !rule.sourceIds.every((sourceId) => {
+          const decision = decisionById.get(sourceId);
+          return decision?.translationType === AI_TRANSLATION_TYPES.REGEX && decision.status === AI_CANDIDATE_STATUS.TRANSLATED && decision.regexRuleId === rule.id;
+        })
+      ).map(([id]) => id)
+    );
+    const finalDecisions = decisions2.map((decision) => {
+      if (!invalidValidatedRuleIds.has(decision.regexRuleId)) return decision;
+      const candidate = candidateMap.get(decision.id);
+      return createReview(
+        candidate,
+        "invalid-regex-group",
+        responseById.get(decision.id),
+        AI_TRANSLATION_TYPES.REGEX,
+        decision.regexRuleId
+      );
+    });
+    const finalDecisionById = new Map(finalDecisions.map((decision) => [decision.id, decision]));
+    const finalRegexRules = Array.from(validRegexRules.entries()).filter(
+      ([, rule]) => rule.sourceIds.every((sourceId) => {
+        const decision = finalDecisionById.get(sourceId);
+        return decision?.translationType === AI_TRANSLATION_TYPES.REGEX && decision.status === AI_CANDIDATE_STATUS.TRANSLATED && decision.regexRuleId === rule.id;
+      })
+    ).map(([, rule]) => rule);
+    const usedRuleIds = new Set(finalRegexRules.map((rule) => rule.id));
+    const promotedRulesByShape = /* @__PURE__ */ new Map();
+    const promotedDecisions = finalDecisions.map((decision) => {
+      if (decision.action !== AI_ACTIONS.TRANSLATE || decision.translationType !== AI_TRANSLATION_TYPES.TEXT || decision.status !== AI_CANDIDATE_STATUS.TRANSLATED) {
+        return decision;
+      }
+      const candidate = candidateMap.get(decision.id);
+      const generatedId = createRegexRuleId(candidate.sourceText, "i", decision.translation);
+      const promotedRule = createSingleSampleRegexRule({
+        id: generatedId,
+        sourceId: candidate.id,
+        sourceText: candidate.sourceText,
+        translation: decision.translation,
+        confidence: decision.confidence
+      });
+      if (!promotedRule) return decision;
+      if (finalRegexRules.some((rule) => {
+        const regex = new RegExp(rule.pattern, rule.flags);
+        regex.lastIndex = 0;
+        return regex.test(candidate.sourceText);
+      })) {
+        return decision;
+      }
+      const shapeKey = `${promotedRule.pattern}\0${promotedRule.flags}\0${promotedRule.replacement}`;
+      const existingPromotedRule = promotedRulesByShape.get(shapeKey);
+      if (existingPromotedRule) {
+        existingPromotedRule.sourceIds.push(candidate.id);
+        existingPromotedRule.confidence = Math.min(existingPromotedRule.confidence, decision.confidence);
+        return {
+          ...decision,
+          translation: "",
+          translationType: AI_TRANSLATION_TYPES.REGEX,
+          regexRuleId: existingPromotedRule.id
+        };
+      }
+      let ruleId = generatedId;
+      let suffix = 0;
+      while (usedRuleIds.has(ruleId)) {
+        suffix += 1;
+        ruleId = `${generatedId}-${suffix}`;
+      }
+      usedRuleIds.add(ruleId);
+      const storedRule = {
+        ...promotedRule,
+        id: ruleId,
+        category: decision.category || promotedRule.category,
+        reason: decision.reason || promotedRule.reason
+      };
+      promotedRulesByShape.set(shapeKey, storedRule);
+      return {
+        ...decision,
+        translation: "",
+        translationType: AI_TRANSLATION_TYPES.REGEX,
+        regexRuleId: ruleId
+      };
+    });
+    return {
+      decisions: promotedDecisions,
+      regexRules: [...finalRegexRules, ...promotedRulesByShape.values()]
+    };
   }
   // src/shared/services/ai/providerClient.js
   var AiProviderError = class extends Error {
@@ -9021,7 +9911,9 @@ ${result.join(",\n")}
     let decision;
     try {
       const payload = parseJsonContent(response.content);
-      [decision] = validateTranslationResponse(payload, [PROVIDER_TEST_CANDIDATE], confidenceThreshold);
+      ({
+        decisions: [decision]
+      } = validateTranslationResponse(payload, [PROVIDER_TEST_CANDIDATE], confidenceThreshold));
     } catch (error) {
       throw new AiProviderError("processing-test-failed", error?.message || "The processing test failed");
     }
@@ -9338,8 +10230,14 @@ ${result.join(",\n")}
       settings.confidenceThreshold,
       { min: 0.5, max: 1, step: 0.01 }
     );
+    const regexRuleComments = createToggleSwitch(
+      "ai-regex-rule-comments",
+      t("settings.ai.regexRuleComments"),
+      t("settings.ai.regexRuleCommentsDescription"),
+      settings.includeRegexRuleComments
+    );
     generalGrid.append(mode.element, target.element, confidence.element);
-    general.body.appendChild(generalGrid);
+    general.body.append(generalGrid, regexRuleComments.element);
     const provider = createSection("settings.ai.provider", settingsIcon);
     const providerToolbar = document.createElement("div");
     providerToolbar.className = "ai-provider-toolbar";
@@ -9850,6 +10748,7 @@ ${result.join(",\n")}
           processingMode: mode.select.getValue(),
           targetLanguage: target.select.getValue(),
           confidenceThreshold: numberValue(confidence.input, settings.confidenceThreshold),
+          includeRegexRuleComments: regexRuleComments.input.checked,
           activeProviderId,
           providers,
           requestTimeoutMs: numberValue(timeout.input, settings.requestTimeoutMs / 1e3) * 1e3,
@@ -11746,21 +12645,77 @@ ${result.join(",\n")}
   function isHiddenOutputStatus(status) {
     return HIDDEN_OUTPUT_STATUSES.has(status);
   }
-  function buildAiDisplayPairs(candidateItems, decisionItems) {
+  function buildAiDisplayData(candidateItems, decisionItems, regexRules2 = []) {
     const decisionById = new Map(decisionItems.map((decision) => [decision.id, decision]));
-    return candidateItems.filter(
-      (candidate) => hasMeaningfulAiSourceText(candidate.sourceText) && !HIDDEN_OUTPUT_STATUSES.has(candidate.status)
+    const visibleRegexRules = Array.isArray(regexRules2) ? regexRules2.filter((rule) => typeof rule?.id === "string" && rule.id.trim() && Array.isArray(rule.sourceIds)) : [];
+    const regexCandidateIds = new Set(visibleRegexRules.flatMap((rule) => rule.sourceIds));
+    const textPairs = candidateItems.filter(
+      (candidate) => hasMeaningfulAiSourceText(candidate.sourceText) && !HIDDEN_OUTPUT_STATUSES.has(candidate.status) && !regexCandidateIds.has(candidate.id)
     ).map((candidate) => {
       const decision = decisionById.get(candidate.id);
-      const hasValidatedTranslation = candidate.status === AI_CANDIDATE_STATUS.TRANSLATED && decision?.action === AI_ACTIONS.TRANSLATE && typeof decision.translation === "string";
+      const hasValidatedTranslation = candidate.status === AI_CANDIDATE_STATUS.TRANSLATED && decision?.action === AI_ACTIONS.TRANSLATE && decision?.translationType !== AI_TRANSLATION_TYPES.REGEX && typeof decision.translation === "string";
       return {
         sourceText: candidate.sourceText,
         translation: hasValidatedTranslation ? decision.translation : ""
       };
     });
+    return { textPairs, regexRules: visibleRegexRules };
+  }
+  // src/features/ai-scan/summaryEdits.js
+  var MAX_MANUAL_SOURCE_LENGTH = 1e5;
+  function normalizeSourceList(sourceTexts) {
+    return Array.from(
+      new Set(
+        sourceTexts.map((sourceText) => normalizeAiSourceText(sourceText).slice(0, MAX_MANUAL_SOURCE_LENGTH)).filter(Boolean)
+      )
+    );
+  }
+  function createManualSummaryCandidate(sourceText, { siteKey, targetLanguage }) {
+    const normalizedSourceText = normalizeAiSourceText(sourceText).slice(0, MAX_MANUAL_SOURCE_LENGTH);
+    if (!normalizedSourceText) return null;
+    const fingerprint = createCandidateFingerprint(siteKey, targetLanguage, normalizedSourceText);
+    return {
+      id: `ai-manual-${fingerprint}-${normalizedSourceText.length}`,
+      sourceText: normalizedSourceText,
+      siteKey,
+      targetLanguage,
+      fingerprint,
+      context: {},
+      status: AI_CANDIDATE_STATUS.PENDING,
+      origin: "summary-editor"
+    };
+  }
+  function reconcileAiSummarySources(sourceTexts, currentCandidates, protectedCandidateIds = []) {
+    const remainingSourceTexts = normalizeSourceList(Array.isArray(sourceTexts) ? sourceTexts : []);
+    const remaining = new Set(remainingSourceTexts);
+    const protectedIds = new Set(protectedCandidateIds);
+    const candidatesBySource = /* @__PURE__ */ new Map();
+    currentCandidates.forEach((candidate) => {
+      const sourceText = normalizeAiSourceText(candidate?.sourceText);
+      if (!sourceText) return;
+      const matches = candidatesBySource.get(sourceText) || [];
+      matches.push(candidate);
+      candidatesBySource.set(sourceText, matches);
+    });
+    const addedSourceTexts = [];
+    const revivedCandidateIds = [];
+    remainingSourceTexts.forEach((sourceText) => {
+      const matches = candidatesBySource.get(sourceText) || [];
+      if (matches.some((candidate) => protectedIds.has(candidate.id) || !isHiddenOutputStatus(candidate.status))) {
+        return;
+      }
+      const hiddenCandidate = matches.find((candidate) => isHiddenOutputStatus(candidate.status));
+      if (hiddenCandidate) revivedCandidateIds.push(hiddenCandidate.id);
+      else addedSourceTexts.push(sourceText);
+    });
+    const removedCandidateIds = currentCandidates.filter(
+      (candidate) => !protectedIds.has(candidate.id) && !isHiddenOutputStatus(candidate.status) && !remaining.has(normalizeAiSourceText(candidate.sourceText))
+    ).map((candidate) => candidate.id);
+    return { addedSourceTexts, revivedCandidateIds, removedCandidateIds };
   }
   // src/features/ai-scan/logic.js
   var isActive2 = false;
+  var isPaused3 = false;
   var observer2 = null;
   var rootFlushTimer = null;
   var autoSubmitTimer = null;
@@ -11768,6 +12723,7 @@ ${result.join(",\n")}
   var candidates = /* @__PURE__ */ new Map();
   var candidateFingerprints = /* @__PURE__ */ new Set();
   var decisions = /* @__PURE__ */ new Map();
+  var regexRules = /* @__PURE__ */ new Map();
   var cache = /* @__PURE__ */ new Map();
   var currentRequest = null;
   var inFlightCandidateIds = [];
@@ -11782,6 +12738,13 @@ ${result.join(",\n")}
   var submissionInProgress = false;
   var userRemovedFingerprints = /* @__PURE__ */ new Set();
   var MAX_PERSISTED_SESSION_ITEMS = 5e3;
+  var AI_OBSERVER_OPTIONS = Object.freeze({
+    childList: true,
+    subtree: true,
+    characterData: true,
+    attributes: true,
+    attributeFilter: ["placeholder", "alt", "title", "aria-label"]
+  });
   function getCounts() {
     const counts = {
       total: candidates.size,
@@ -11791,12 +12754,19 @@ ${result.join(",\n")}
       keep: 0,
       removed: 0,
       review: 0,
-      failed: 0
+      failed: 0,
+      textRules: 0,
+      regexRules: regexRules.size
     };
     candidates.forEach((candidate) => {
       if (Object.prototype.hasOwnProperty.call(counts, candidate.status)) {
         counts[candidate.status] += 1;
       }
+    });
+    decisions.forEach((decision) => {
+      if (decision.status !== AI_CANDIDATE_STATUS.TRANSLATED || decision.action !== AI_ACTIONS.TRANSLATE) return;
+      if (decision.translationType === AI_TRANSLATION_TYPES.REGEX) return;
+      counts.textRules += 1;
     });
     return counts;
   }
@@ -11820,6 +12790,9 @@ ${result.join(",\n")}
       targetLanguage: currentTargetLanguage,
       candidates: persistedCandidates,
       decisions: Array.from(decisions.values()).filter((decision) => persistedIds.has(decision.id)),
+      regexRules: Array.from(regexRules.values()).filter(
+        (rule) => rule.sourceIds.length === 0 || rule.sourceIds.every((id) => persistedIds.has(id))
+      ),
       sessionUsage
     };
   }
@@ -11830,7 +12803,7 @@ ${result.join(",\n")}
   }
   function hydrateCachedDecision(candidate, cacheEntry) {
     const cachedDecision = cacheEntry?.decision;
-    if (!cachedDecision) return false;
+    if (!cachedDecision || cachedDecision.translationType === AI_TRANSLATION_TYPES.REGEX) return false;
     const decision = {
       ...cachedDecision,
       id: candidate.id,
@@ -11838,6 +12811,13 @@ ${result.join(",\n")}
     };
     if (decision.action === AI_ACTIONS.KEEP) {
       decision.action = AI_ACTIONS.REMOVE;
+      decision.status = AI_CANDIDATE_STATUS.REMOVED;
+    }
+    if (decision.action === AI_ACTIONS.TRANSLATE && decision.translationType !== AI_TRANSLATION_TYPES.REGEX && isUnchangedTranslation(candidate.sourceText, decision.translation)) {
+      decision.action = AI_ACTIONS.REMOVE;
+      decision.translation = "";
+      decision.translationType = AI_TRANSLATION_TYPES.TEXT;
+      decision.reason = "unchanged-translation";
       decision.status = AI_CANDIDATE_STATUS.REMOVED;
     }
     decisions.set(candidate.id, decision);
@@ -11880,11 +12860,11 @@ ${result.join(",\n")}
     return addCandidateBatch(extracted);
   }
   async function flushPendingRoots(runGeneration = generation) {
-    if (!isActive2 || runGeneration !== generation || pendingRoots.size === 0) return;
+    if (!isActive2 || isPaused3 || runGeneration !== generation || pendingRoots.size === 0) return;
     if (isTranslationBridgeActive() && !isTranslationBridgeIdle()) {
       await waitForTranslationBridgeIdle();
     }
-    if (!isActive2 || runGeneration !== generation) return;
+    if (!isActive2 || isPaused3 || runGeneration !== generation) return;
     const roots = Array.from(pendingRoots);
     pendingRoots = /* @__PURE__ */ new Set();
     const rootSet = new Set(roots.filter((root) => root?.nodeType === Node.ELEMENT_NODE));
@@ -11900,6 +12880,7 @@ ${result.join(",\n")}
     topLevelRoots.forEach(collectFromRoot);
   }
   function scheduleRootFlush() {
+    if (isPaused3) return;
     if (rootFlushTimer !== null) clearTimeout(rootFlushTimer);
     const delay = mergeAiSettings(loadSettings().ai).batch.debounceMs;
     const runGeneration = generation;
@@ -11909,7 +12890,7 @@ ${result.join(",\n")}
     }, delay);
   }
   function handleMutations2(mutations) {
-    if (!isActive2) return;
+    if (!isActive2 || isPaused3) return;
     mutations.forEach((mutation) => {
       if (mutation.type === "characterData") {
         pendingRoots.add(mutation.target);
@@ -11924,12 +12905,12 @@ ${result.join(",\n")}
     if (pendingRoots.size > 0) scheduleRootFlush();
   }
   function scheduleAutoSubmit(delayMs) {
-    if (!isActive2 || currentRequest) return;
+    if (!isActive2 || isPaused3 || currentRequest) return;
     if (autoSubmitTimer !== null) clearTimeout(autoSubmitTimer);
     const runGeneration = generation;
     autoSubmitTimer = setTimeout(() => {
       autoSubmitTimer = null;
-      if (isActive2 && runGeneration === generation) {
+      if (isActive2 && !isPaused3 && runGeneration === generation) {
         void submitPending();
       }
     }, delayMs);
@@ -11940,6 +12921,7 @@ ${result.join(",\n")}
       candidates = /* @__PURE__ */ new Map();
       candidateFingerprints = /* @__PURE__ */ new Set();
       decisions = /* @__PURE__ */ new Map();
+      regexRules = /* @__PURE__ */ new Map();
       sessionUsage = { requests: 0, characters: 0 };
       return;
     }
@@ -11957,15 +12939,88 @@ ${result.join(",\n")}
     const restoredDecisions = Array.isArray(saved.decisions) ? saved.decisions : [];
     decisions = new Map(
       restoredDecisions.filter((decision) => candidates.has(decision.id)).map((decision) => {
+        const candidate = candidates.get(decision.id);
         if (decision.action === AI_ACTIONS.KEEP) {
           return [
             decision.id,
             { ...decision, action: AI_ACTIONS.REMOVE, status: AI_CANDIDATE_STATUS.REMOVED }
           ];
         }
+        if (decision.action === AI_ACTIONS.TRANSLATE && decision.translationType !== AI_TRANSLATION_TYPES.REGEX && isUnchangedTranslation(candidate.sourceText, decision.translation)) {
+          return [
+            decision.id,
+            {
+              ...decision,
+              action: AI_ACTIONS.REMOVE,
+              translation: "",
+              translationType: AI_TRANSLATION_TYPES.TEXT,
+              reason: "unchanged-translation",
+              status: AI_CANDIDATE_STATUS.REMOVED
+            }
+          ];
+        }
         return [decision.id, decision];
       })
     );
+    const restoredRules = /* @__PURE__ */ new Map();
+    const restoredRuleIds = /* @__PURE__ */ new Set();
+    const candidateById = new Map(candidates);
+    const restoredRegexRules = Array.isArray(saved.regexRules) ? saved.regexRules : [];
+    restoredRegexRules.forEach((rawRule) => {
+      const ruleId = String(rawRule?.id || "").trim();
+      if (!ruleId || restoredRuleIds.has(ruleId)) return;
+      const sourceIds = Array.isArray(rawRule?.sourceIds) ? rawRule.sourceIds.map((id) => String(id || "").trim()).filter(Boolean) : [];
+      if (new Set(sourceIds).size !== sourceIds.length) return;
+      if (sourceIds.some((id) => !candidateById.has(id))) return;
+      const origin = rawRule?.origin === "manual" || rawRule?.origin === "user-edited" ? rawRule.origin : "ai";
+      if (origin === "ai" && sourceIds.length < 1) return;
+      const sourceTexts = sourceIds.map((id) => candidateById.get(id).sourceText);
+      const singleSample = origin === "ai" && sourceIds.length === 1;
+      if (singleSample && !hasDynamicRegexValue(sourceTexts[0])) return;
+      const validated = validateRegexRuleDefinition(
+        { ...rawRule, id: ruleId, sourceIds, origin },
+        {
+          sourceTexts,
+          requireSourceMatch: origin === "ai",
+          requireAnchors: singleSample,
+          requireDynamicCapture: singleSample
+        }
+      );
+      if (!validated.valid) return;
+      restoredRuleIds.add(ruleId);
+      restoredRules.set(ruleId, validated.rule);
+    });
+    decisions.forEach((decision, id) => {
+      if (decision.translationType !== AI_TRANSLATION_TYPES.REGEX) {
+        const candidate2 = candidates.get(id);
+        if (candidate2) candidate2.status = decision.status;
+        return;
+      }
+      if (!restoredRules.has(decision.regexRuleId)) {
+        const candidate2 = candidates.get(id);
+        if (candidate2) candidate2.status = AI_CANDIDATE_STATUS.PENDING;
+        decisions.delete(id);
+        return;
+      }
+      const candidate = candidates.get(id);
+      if (candidate) candidate.status = decision.status;
+    });
+    restoredRules.forEach((rule, ruleId) => {
+      if (rule.sourceIds.length > 0 && !rule.sourceIds.every((sourceId) => {
+        const decision = decisions.get(sourceId);
+        return decision?.translationType === AI_TRANSLATION_TYPES.REGEX && decision.status === AI_CANDIDATE_STATUS.TRANSLATED && decision.regexRuleId === ruleId;
+      })) {
+        restoredRules.delete(ruleId);
+        rule.sourceIds.forEach((sourceId) => {
+          const decision = decisions.get(sourceId);
+          if (decision?.translationType !== AI_TRANSLATION_TYPES.REGEX) return;
+          const candidate = candidates.get(sourceId);
+          if (candidate) candidate.status = AI_CANDIDATE_STATUS.PENDING;
+          decisions.delete(sourceId);
+        });
+      }
+    });
+    regexRules = restoredRules;
     sessionUsage = {
       requests: Math.max(0, Number(saved.sessionUsage?.requests) || 0),
       characters: Math.max(0, Number(saved.sessionUsage?.characters) || 0)
@@ -11981,6 +13036,7 @@ ${result.join(",\n")}
       return { started: false, reason: "mode-conflict" };
     }
     isActive2 = true;
+    isPaused3 = false;
     generation += 1;
     lastError = null;
     budgetBlockedReason = null;
@@ -11995,17 +13051,12 @@ ${result.join(",\n")}
       if (!isActive2) return { started: false, reason: "stopped" };
       collectFromRoot(document);
       observer2 = new MutationObserver(handleMutations2);
-      observer2.observe(document.body, {
-        childList: true,
-        subtree: true,
-        characterData: true,
-        attributes: true,
-        attributeFilter: ["placeholder", "alt", "title", "aria-label"]
-      });
+      observer2.observe(document.body, AI_OBSERVER_OPTIONS);
       emitState();
       return { started: true };
     } catch (error) {
       isActive2 = false;
+      isPaused3 = false;
       unregisterTranslationBridgeClient();
       releaseScanMode(SCAN_MODES.AI);
       lastError = error;
@@ -12019,6 +13070,7 @@ ${result.join(",\n")}
       return;
     }
     isActive2 = false;
+    isPaused3 = false;
     generation += 1;
     if (observer2) {
       observer2.disconnect();
@@ -12153,12 +13205,24 @@ ${result.join(",\n")}
       }
       const parsed = parseJsonContent(response.content);
       const validated = validateTranslationResponse(parsed, batch.candidates, aiSettings.confidenceThreshold);
-      validated.forEach((decision) => {
+      const regexRuleIdMap = /* @__PURE__ */ new Map();
+      validated.regexRules.forEach((rule) => {
+        let ruleId = rule.id;
+        let suffix = 0;
+        while (regexRules.has(ruleId)) {
+          suffix += 1;
+          ruleId = `${rule.id}-${suffix}`;
+        }
+        regexRuleIdMap.set(rule.id, ruleId);
+        regexRules.set(ruleId, { ...rule, id: ruleId });
+      });
+      validated.decisions.forEach((decision) => {
         const candidate = candidates.get(decision.id);
         if (!candidate) return;
-        candidate.status = decision.status;
-        decisions.set(decision.id, decision);
-        if ([AI_ACTIONS.TRANSLATE, AI_ACTIONS.KEEP, AI_ACTIONS.REMOVE].includes(decision.action)) {
+        const storedDecision = decision.translationType === AI_TRANSLATION_TYPES.REGEX && regexRuleIdMap.has(decision.regexRuleId) ? { ...decision, regexRuleId: regexRuleIdMap.get(decision.regexRuleId) } : decision;
+        candidate.status = storedDecision.status;
+        decisions.set(decision.id, storedDecision);
+        if (storedDecision.translationType !== AI_TRANSLATION_TYPES.REGEX && [AI_ACTIONS.TRANSLATE, AI_ACTIONS.KEEP, AI_ACTIONS.REMOVE].includes(storedDecision.action)) {
           cache.set(candidate.fingerprint, {
             fingerprint: candidate.fingerprint,
             siteKey: candidate.siteKey,
@@ -12167,13 +13231,15 @@ ${result.join(",\n")}
             providerId: provider.id,
             model: provider.model,
             styleVersion: styleProfile?.version || 0,
-            decision,
+            decision: storedDecision,
             updatedAt: Date.now()
           });
+        } else if (storedDecision.translationType === AI_TRANSLATION_TYPES.REGEX) {
+          cache.delete(candidate.fingerprint);
         }
       });
       await Promise.all([saveAiCache(cache), persistState()]);
-      return { submitted: true, count: validated.length };
+      return { submitted: true, count: validated.decisions.length };
     } catch (error) {
       if (requestGeneration !== generation) {
         return { submitted: false, reason: "stale" };
@@ -12216,6 +13282,9 @@ ${result.join(",\n")}
     }
   }
   async function submitPending() {
+    if (isPaused3) {
+      return { submitted: false, reason: "paused" };
+    }
     if (!isActive2 || currentRequest || isClearing || submissionInProgress) {
       return { submitted: false, reason: "inactive-or-busy" };
     }
@@ -12245,7 +13314,7 @@ ${result.join(",\n")}
       submissionInProgress = false;
       emitState();
       const latestSettings = mergeAiSettings(loadSettings().ai);
-      if (result?.submitted && isActive2 && !isClearing && latestSettings.processingMode === AI_PROCESSING_MODES.AUTO && Array.from(candidates.values()).some((candidate) => candidate.status === AI_CANDIDATE_STATUS.PENDING) && !budgetBlockedReason) {
+      if (result?.submitted && isActive2 && !isPaused3 && !isClearing && latestSettings.processingMode === AI_PROCESSING_MODES.AUTO && Array.from(candidates.values()).some((candidate) => candidate.status === AI_CANDIDATE_STATUS.PENDING) && !budgetBlockedReason) {
         queueMicrotask(() => void submitPending());
       }
     }
@@ -12278,6 +13347,7 @@ ${result.join(",\n")}
       candidates.clear();
       candidateFingerprints.clear();
       decisions.clear();
+      regexRules.clear();
       sessionUsage = { requests: 0, characters: 0 };
       lastError = null;
       budgetBlockedReason = null;
@@ -12292,30 +13362,120 @@ ${result.join(",\n")}
       isClearing = false;
     }
   }
-  function getAiDisplayPairs() {
-    return buildAiDisplayPairs(Array.from(candidates.values()), Array.from(decisions.values()));
+  function getAiDisplayData() {
+    return buildAiDisplayData(
+      Array.from(candidates.values()),
+      Array.from(decisions.values()),
+      Array.from(regexRules.values())
+    );
   }
   function getReviewItems() {
     return Array.from(decisions.values()).filter(
       (decision) => decision.status === AI_CANDIDATE_STATUS.REVIEW || decision.status === AI_CANDIDATE_STATUS.FAILED
     );
   }
-  function applyAiSummaryDeletions(remainingSourceTexts) {
-    const remaining = new Set(Array.isArray(remainingSourceTexts) ? remainingSourceTexts : []);
+  function applyAiSummaryEdits({ remainingSourceTexts = null, editedRegexRules = null } = {}) {
+    const hasTextEdits = Array.isArray(remainingSourceTexts);
     let changed = false;
     let cacheChanged = false;
-    candidates.forEach((candidate, id) => {
-      if (remaining.has(candidate.sourceText)) return;
-      if (isHiddenOutputStatus(candidate.status)) return;
-      candidates.delete(id);
-      decisions.delete(id);
-      if (candidate.fingerprint) {
-        candidateFingerprints.delete(candidate.fingerprint);
-        userRemovedFingerprints.add(candidate.fingerprint);
-        if (cache.delete(candidate.fingerprint)) cacheChanged = true;
+    let nextRegexRules = regexRules;
+    if (Array.isArray(editedRegexRules)) {
+      const existingRules = Array.from(regexRules.values());
+      const matchedRules = matchEditedRegexRulesToExisting(editedRegexRules, existingRules);
+      if (!matchedRules.valid) return { changed: false, error: matchedRules.error };
+      nextRegexRules = /* @__PURE__ */ new Map();
+      const assignedSourceIds = /* @__PURE__ */ new Set();
+      for (let index = 0; index < editedRegexRules.length; index += 1) {
+        const editedRule = editedRegexRules[index];
+        const requestedId = String(editedRule?.id || "").trim();
+        const existingRule = matchedRules.matches[index];
+        const ruleId = requestedId || existingRule?.id || createRegexRuleId(
+          editedRule?.pattern || "",
+          editedRule?.flags || "",
+          editedRule?.replacement || "",
+          index
+        );
+        let uniqueRuleId = ruleId;
+        let suffix = 0;
+        while (!requestedId && !existingRule && (regexRules.has(uniqueRuleId) || nextRegexRules.has(uniqueRuleId))) {
+          suffix += 1;
+          uniqueRuleId = `${ruleId}-${suffix}`;
+        }
+        if (nextRegexRules.has(uniqueRuleId)) return { changed: false, error: "duplicate-regex-rule-id" };
+        const sourceIds = existingRule ? [...existingRule.sourceIds] : Array.isArray(editedRule?.sourceIds) ? editedRule.sourceIds.map((id) => String(id || "").trim()).filter(Boolean) : [];
+        if (sourceIds.some((id) => assignedSourceIds.has(id))) {
+          return { changed: false, error: "overlapping-regex-rules" };
+        }
+        if (sourceIds.some((id) => !candidates.has(id))) return { changed: false, error: "unknown-regex-source" };
+        const candidateSourceTexts = sourceIds.map((id) => candidates.get(id).sourceText);
+        const validated = validateRegexRuleDefinition(
+          {
+            ...existingRule || {},
+            ...editedRule,
+            id: uniqueRuleId,
+            sourceIds,
+            confidence: existingRule?.confidence ?? (Number.isFinite(Number(editedRule?.confidence)) ? Number(editedRule.confidence) : 1),
+            origin: existingRule ? "user-edited" : editedRule?.origin || "manual"
+          },
+          { sourceTexts: candidateSourceTexts, requireSourceMatch: false }
+        );
+        if (!validated.valid) return { changed: false, error: validated.reason };
+        sourceIds.forEach((id) => assignedSourceIds.add(id));
+        nextRegexRules.set(uniqueRuleId, validated.rule);
       }
-      changed = true;
-    });
+      regexRules.forEach((rule, ruleId) => {
+        if (nextRegexRules.has(ruleId)) return;
+        rule.sourceIds.forEach((id) => {
+          const removed = removeAiCandidate(id);
+          cacheChanged = cacheChanged || removed.cacheChanged;
+        });
+        changed = true;
+      });
+      if (nextRegexRules.size !== regexRules.size) changed = true;
+      else {
+        nextRegexRules.forEach((rule, ruleId) => {
+          const previous = regexRules.get(ruleId);
+          if (!previous || previous.pattern !== rule.pattern || previous.flags !== rule.flags || previous.replacement !== rule.replacement) {
+            changed = true;
+          }
+        });
+      }
+      regexRules = nextRegexRules;
+    }
+    const regexCandidateIds = new Set(
+      Array.from(regexRules.values()).flatMap((rule) => Array.isArray(rule.sourceIds) ? rule.sourceIds : [])
+    );
+    if (hasTextEdits) {
+      const reconciliation = reconcileAiSummarySources(
+        remainingSourceTexts,
+        Array.from(candidates.values()),
+        regexCandidateIds
+      );
+      reconciliation.revivedCandidateIds.forEach((id) => {
+        const candidate = candidates.get(id);
+        if (!candidate) return;
+        candidate.status = AI_CANDIDATE_STATUS.PENDING;
+        decisions.delete(id);
+        if (candidate.fingerprint) userRemovedFingerprints.delete(candidate.fingerprint);
+        changed = true;
+      });
+      reconciliation.addedSourceTexts.forEach((sourceText) => {
+        const candidate = createManualSummaryCandidate(sourceText, {
+          siteKey: currentSiteKey || window.location.origin,
+          targetLanguage: currentTargetLanguage
+        });
+        if (!candidate || candidateFingerprints.has(candidate.fingerprint)) return;
+        candidates.set(candidate.id, candidate);
+        candidateFingerprints.add(candidate.fingerprint);
+        userRemovedFingerprints.delete(candidate.fingerprint);
+        changed = true;
+      });
+      reconciliation.removedCandidateIds.forEach((id) => {
+        const removed = removeAiCandidate(id);
+        cacheChanged = cacheChanged || removed.cacheChanged;
+        changed = removed.changed || changed;
+      });
+    }
     if (changed) {
       const tasks = [persistState()];
       if (cacheChanged) tasks.push(saveAiCache(cache));
@@ -12325,11 +13485,25 @@ ${result.join(",\n")}
       });
       emitState();
     }
-    return changed;
+    return { changed, error: null };
+  }
+  function removeAiCandidate(id) {
+    const candidate = candidates.get(id);
+    if (!candidate) return { changed: false, cacheChanged: false };
+    candidates.delete(id);
+    decisions.delete(id);
+    let cacheChanged = false;
+    if (candidate.fingerprint) {
+      candidateFingerprints.delete(candidate.fingerprint);
+      userRemovedFingerprints.add(candidate.fingerprint);
+      cacheChanged = cache.delete(candidate.fingerprint);
+    }
+    return { changed: true, cacheChanged };
   }
   function getAiStateSnapshot() {
     return {
       active: isActive2,
+      paused: isPaused3,
       processing: Boolean(currentRequest) || submissionInProgress,
       counts: getCounts(),
       sessionUsage: { ...sessionUsage },
@@ -12340,8 +13514,35 @@ ${result.join(",\n")}
   function isAiScanActive() {
     return isActive2;
   }
+  function pauseAiScan() {
+    if (!isActive2 || isPaused3) return false;
+    isPaused3 = true;
+    if (observer2) observer2.disconnect();
+    if (rootFlushTimer !== null) {
+      clearTimeout(rootFlushTimer);
+      rootFlushTimer = null;
+    }
+    if (autoSubmitTimer !== null) {
+      clearTimeout(autoSubmitTimer);
+      autoSubmitTimer = null;
+    }
+    pendingRoots.clear();
+    emitState();
+    return true;
+  }
+  function resumeAiScan() {
+    if (!isActive2 || !isPaused3) return false;
+    isPaused3 = false;
+    if (observer2 && document.body) observer2.observe(document.body, AI_OBSERVER_OPTIONS);
+    const aiSettings = mergeAiSettings(loadSettings().ai);
+    if (aiSettings.processingMode === AI_PROCESSING_MODES.AUTO && Array.from(candidates.values()).some((candidate) => candidate.status === AI_CANDIDATE_STATUS.PENDING) && !budgetBlockedReason) {
+      scheduleAutoSubmit(aiSettings.batch.debounceMs);
+    }
+    emitState();
+    return true;
+  }
   function hasAiData() {
-    return candidates.size > 0 || decisions.size > 0;
+    return candidates.size > 0 || decisions.size > 0 || regexRules.size > 0;
   }
   // src/shared/utils/text/summaryParser.js
   var ARRAY_ENTRY_PATTERN = /\[\s*("(?:\\.|[^"\\])*")\s*,\s*("(?:\\.|[^"\\])*")?\s*\]/g;
@@ -12387,7 +13588,13 @@ ${result.join(",\n")}
   // src/features/ai-scan/ui.js
   var initialized = false;
   var aiCounterVisible = false;
-  var textareaEditSyncAttached = false;
+  var textareaEditSyncElement = null;
+  var aiDrafts = { text: "", regex: "" };
+  var aiDraftDirty = { text: false, regex: false };
+  var aiSummaryEditError = "";
+  var lastAiOutputFormat = null;
+  var renderingAiSummary = false;
+  var applyingAiSummaryEdit = false;
   function resetAiFab() {
     const aiFab2 = getAiFab();
     if (!aiFab2) return;
@@ -12399,7 +13606,18 @@ ${result.join(",\n")}
     if (!aiCounterVisible) {
       createCounterWithHelp({
         counterKey: "common.discovered",
-        helpKey: "tutorial.aiScan"
+        helpKey: "tutorial.aiScan",
+        onPause: () => {
+          if (pauseAiScan()) {
+            showNotification(t("notifications.aiScanPaused"), { type: "info" });
+          }
+        },
+        onResume: () => {
+          if (resumeAiScan()) {
+            showNotification(t("notifications.aiScanContinued"), { type: "success" });
+          }
+        },
+        scanType: "AiScan"
       });
       showCounterWithHelp();
       aiCounterVisible = true;
@@ -12411,40 +13629,111 @@ ${result.join(",\n")}
     hideCounterWithHelp();
     aiCounterVisible = false;
   }
-  function formatAiResults(pairs = getAiDisplayPairs()) {
+  function resetAiDrafts() {
+    aiDrafts.text = "";
+    aiDrafts.regex = "";
+    aiDraftDirty.text = false;
+    aiDraftDirty.regex = false;
+    aiSummaryEditError = "";
+  }
+  function formatAiTextResults(pairs = getAiDisplayData().textPairs) {
     const settings = loadSettings();
     return formatTextsForTranslation(pairs, settings.outputFormat, {
       includeArrayBrackets: settings.includeArrayBrackets
     });
   }
-  function syncAiSummary(open = false) {
+  function formatAiRegexResults(rules = getAiDisplayData().regexRules) {
+    const settings = loadSettings();
+    return formatRegexRulesForTranslation(rules, {
+      includeRuleComments: settings.ai?.includeRegexRuleComments === true
+    });
+  }
+  function getAiOutputContent(data, type) {
+    if (aiDraftDirty[type]) return aiDrafts[type];
+    if (type === "regex") return data.regexRules.length > 0 ? formatAiRegexResults(data.regexRules) : SHOW_PLACEHOLDER;
+    return data.textPairs.length > 0 ? formatAiTextResults(data.textPairs) : SHOW_PLACEHOLDER;
+  }
+  function syncAiSummary(open = false, options = {}) {
+    if (options.resetDrafts) resetAiDrafts();
     ensureTextareaEditSync();
     const snapshot = getAiStateSnapshot();
-    const pairs = getAiDisplayPairs();
-    updateAiSummaryPanel(snapshot, getReviewItems());
+    const data = getAiDisplayData();
+    const settings = loadSettings();
+    if (lastAiOutputFormat !== settings.outputFormat) {
+      if (lastAiOutputFormat !== null) {
+        aiDrafts.text = "";
+        aiDraftDirty.text = false;
+      }
+      lastAiOutputFormat = settings.outputFormat;
+    }
+    const outputType = getAiOutputType();
+    updateAiOutputTabs(outputType);
+    updateAiSummaryPanel(snapshot, getReviewItems(), aiSummaryEditError);
     updateAiFooterState(snapshot);
     updateScanCount(snapshot.counts.total, "ai");
     if (!open) {
       const visibleAiModal = currentMode === "ai-scan" && modalOverlay?.classList.contains("is-visible");
       if (!visibleAiModal) return;
     }
-    updateModalContent(pairs.length > 0 ? formatAiResults(pairs) : SHOW_PLACEHOLDER, open, "ai-scan");
-    updateAiSummaryPanel(snapshot, getReviewItems());
+    renderingAiSummary = true;
+    updateModalContent(getAiOutputContent(data, outputType), open, "ai-scan");
+    renderingAiSummary = false;
+    updateAiOutputTabs(outputType);
+    updateAiSummaryPanel(snapshot, getReviewItems(), aiSummaryEditError);
     updateAiFooterState(snapshot);
   }
+  function switchAiOutputType(type) {
+    if (type !== "text" && type !== "regex") return;
+    setAiOutputType(type);
+    syncAiSummary(false);
+  }
   function syncAiSummaryEdits() {
-    if (currentMode !== "ai-scan") return;
+    if (currentMode !== "ai-scan" || renderingAiSummary) return;
     const settings = loadSettings();
     const content = outputTextarea?.value || "";
+    const outputType = getAiOutputType();
+    aiDrafts[outputType] = content;
+    aiDraftDirty[outputType] = true;
+    if (outputType === "regex") {
+      const parsed = parseRegexRules(content);
+      if (!parsed.valid) {
+        aiSummaryEditError = parsed.error || "invalid-regex-output";
+        updateAiSummaryPanel(getAiStateSnapshot(), getReviewItems(), aiSummaryEditError);
+        return;
+      }
+      let result2;
+      applyingAiSummaryEdit = true;
+      try {
+        result2 = applyAiSummaryEdits({ editedRegexRules: parsed.rules });
+      } finally {
+        applyingAiSummaryEdit = false;
+      }
+      if (result2.error) {
+        aiSummaryEditError = result2.error;
+        updateAiSummaryPanel(getAiStateSnapshot(), getReviewItems(), aiSummaryEditError);
+        return;
+      }
+      aiSummaryEditError = "";
+      if (result2.changed) syncAiSummary(false);
+      return;
+    }
     const remaining = parseSummarySourceTexts(content, settings.outputFormat || "array");
-    if (applyAiSummaryDeletions(remaining)) {
+    let result;
+    applyingAiSummaryEdit = true;
+    try {
+      result = applyAiSummaryEdits({ remainingSourceTexts: remaining });
+    } finally {
+      applyingAiSummaryEdit = false;
+    }
+    if (result.changed) {
+      aiSummaryEditError = "";
       syncAiSummary(false);
     }
   }
   function ensureTextareaEditSync() {
-    if (textareaEditSyncAttached || !outputTextarea) return;
+    if (textareaEditSyncElement === outputTextarea || !outputTextarea) return;
     outputTextarea.addEventListener("input", syncAiSummaryEdits);
-    textareaEditSyncAttached = true;
+    textareaEditSyncElement = outputTextarea;
   }
   async function handleSubmit() {
     try {
@@ -12459,7 +13748,7 @@ ${result.join(",\n")}
     } catch {
       showNotification(t("notifications.aiRequestFailed"), { type: "error" });
     } finally {
-      syncAiSummary(false);
+      syncAiSummary(false, { resetDrafts: true });
     }
   }
   async function handleAiScanClick(aiFab2) {
@@ -12497,10 +13786,12 @@ ${result.join(",\n")}
     if (initialized) return;
     initialized = true;
     on("aiStateChanged", (snapshot) => {
+      if (!applyingAiSummaryEdit && (aiDraftDirty.text || aiDraftDirty.regex)) resetAiDrafts();
       if (snapshot.active) showAiCounter(snapshot);
       else hideAiCounter();
       syncAiSummary(false);
     });
+    on("ai-output-type-change", switchAiOutputType);
     on("ai-submit-pending", () => void handleSubmit());
     on("ai-retry-review", async () => {
       await retryReviewItems();
@@ -12508,7 +13799,7 @@ ${result.join(",\n")}
     });
     on("ai-clear", async () => {
       await clearAiData();
-      syncAiSummary(false);
+      syncAiSummary(false, { resetDrafts: true });
     });
     on("settingsSaved", () => {
       const aiSettings = mergeAiSettings(loadSettings().ai);
@@ -12521,7 +13812,7 @@ ${result.join(",\n")}
       if (hasAiData()) syncAiSummary(false);
     });
     on("languageChanged", () => {
-      if (hasAiData()) syncAiSummary(false);
+      if (hasAiData()) syncAiSummary(false, { resetDrafts: true });
     });
     on("aiBudgetBlocked", () => {
       showNotification(t("notifications.aiBudgetBlocked"), { type: "warning" });
@@ -12612,34 +13903,39 @@ ${result.join(",\n")}
     const currentMode3 = getCurrentMode();
     const settings = loadSettings();
     const outputFormat = settings.outputFormat || "array";
-    const processAndDownload = (text) => {
-      if (!text || text.trim() === "" || text.trim() === "[]" || text.trim() === "{}") {
+    const processAndDownload = (text, outputType = "text") => {
+      if (!text || text.trim() === "" || text.trim() === "[]" || text.trim() === "{}" || text.trim() === "regexRules: []") {
         log(t("log.exporter.noContent"));
         return;
       }
       let filename, mimeType;
-      switch (outputFormat) {
-        case "array":
-          filename = generateFilename("txt");
-          mimeType = "text/plain;charset=utf-8;";
-          break;
-        case "object":
-          filename = generateFilename("json");
-          mimeType = "application/json;charset=utf-8;";
-          break;
-        case "csv":
-          filename = generateFilename("csv");
-          mimeType = "text/csv;charset=utf-8;";
-          break;
-        default:
-          filename = generateFilename("txt");
-          mimeType = "text/plain;charset=utf-8;";
-      }
+      if (currentMode3 === "ai-scan" && outputType === "regex") {
+        filename = generateFilename("js");
+        mimeType = "text/javascript;charset=utf-8;";
+      } else
+        switch (outputFormat) {
+          case "array":
+            filename = generateFilename("txt");
+            mimeType = "text/plain;charset=utf-8;";
+            break;
+          case "object":
+            filename = generateFilename("json");
+            mimeType = "application/json;charset=utf-8;";
+            break;
+          case "csv":
+            filename = generateFilename("csv");
+            mimeType = "text/csv;charset=utf-8;";
+            break;
+          default:
+            filename = generateFilename("txt");
+            mimeType = "text/plain;charset=utf-8;";
+        }
       downloadFile(filename, text, mimeType);
     };
     const currentUiContent = outputTextarea ? outputTextarea.value : null;
     const truncationWarning = t("scan.truncationWarning");
     const isTruncated = currentUiContent && currentUiContent.includes(truncationWarning);
+    const aiOutputType2 = currentMode3 === "ai-scan" ? getAiOutputType() : "text";
     let contentToExport = null;
     let contentSource = "raw";
     if (currentUiContent && !isTruncated && currentUiContent.trim() !== "") {
@@ -12648,7 +13944,9 @@ ${result.join(",\n")}
     }
     if (contentSource === "ui" && contentToExport && contentToExport.length > 0) {
       log(t("log.exporter.exportingUserContent"));
-      processAndDownload(contentToExport);
+      processAndDownload(contentToExport, aiOutputType2);
+    } else if (currentMode3 === "ai-scan") {
+      log(t("log.exporter.noContent"));
     } else {
       log(t("log.exporter.exportingRawData"));
       if (currentMode3 === "session-scan") {
@@ -12675,7 +13973,7 @@ ${result.join(",\n")}
     log(t("log.main.initializing"));
     log(t("log.main.initialSettingsLoaded"), settings);
     const styleElement = document.createElement("style");
-    styleElement.textContent = `:host{box-sizing:border-box;font-family:Menlo,Monaco,Cascadia Code,PingFang SC,monospace,sans-serif;font-size:16px;line-height:1.5;text-align:left;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;--color-bg:#fff;--color-text:#333;--color-text-secondary:#666;--color-border:#e0e0e0;--color-overlay-bg:rgba(0,0,0,.5);--color-shadow:rgba(0,0,0,.2);--color-primary:#1a73e8;--color-primary-hover:#185abc;--color-primary-text:#fff;--color-toast-bg:#333;--color-toast-text:#fff;--color-textarea-bg:#fff;--color-textarea-border:#ccc;--color-tooltip-bg:#333;--color-tooltip-text:#fff;--color-line-number-text:#888;--color-line-number-active-text:#000;--dark-color-bg:#2d2d2d;--dark-color-text:#f0f0f0;--dark-color-text-secondary:#aaa;--dark-color-border:#555;--dark-color-overlay-bg:rgba(0,0,0,.7);--dark-color-shadow:rgba(0,0,0,.4);--dark-color-primary:#1e90ff;--dark-color-primary-hover:#1c86ee;--dark-color-primary-text:#fff;--dark-color-toast-bg:#eee;--dark-color-toast-text:#111;--dark-color-textarea-bg:#3a3a3a;--dark-color-textarea-border:#666;--dark-color-tooltip-bg:#e0e0e0;--dark-color-tooltip-text:#111;--dark-color-line-number-text:#777;--dark-color-line-number-active-text:#fff;--color-scrollbar-thumb:#c1c1c1;--color-scrollbar-thumb-hover:#a8a8a8;--color-scrollbar-border:#fff;--dark-color-scrollbar-thumb:#555;--dark-color-scrollbar-thumb-hover:#777;--dark-color-scrollbar-border:#2d2d2d}*,:after,:before{box-sizing:inherit}button,input,optgroup,select,textarea{color:inherit;font-family:inherit;font-size:100%;line-height:1.15;margin:0}:host([data-theme=light]){--main-bg:var(--color-bg);--main-text:var(--color-text);--main-text-secondary:var(--color-text-secondary);--tc-secondary-text-color:var(--color-text-secondary);--main-border:var(--color-border);--main-overlay-bg:var(--color-overlay-bg);--main-shadow:var(--color-shadow);--main-primary:var(--color-primary);--main-primary-hover:var(--color-primary-hover);--main-primary-text:var(--color-primary-text);--main-toast-bg:var(--color-toast-bg);--main-toast-text:var(--color-toast-text);--main-textarea-bg:var(--color-textarea-bg);--main-textarea-border:var(--color-textarea-border);--main-tooltip-bg:var(--color-tooltip-bg);--main-tooltip-text:var(--color-tooltip-text);--main-disabled:#ccc;--main-disabled-text:#666;--main-line-number-text:var(--color-line-number-text);--main-line-number-active-text:var(--color-line-number-active-text);--tc-scrollbar-thumb-color:var(--color-scrollbar-thumb);--tc-scrollbar-thumb-hover-color:var(--color-scrollbar-thumb-hover);--tc-scrollbar-border-color:var(--color-scrollbar-border);--main-bg-a:hsla(0,0%,100%,.6)}:host([data-theme=dark]){--main-bg:var(--dark-color-bg);--main-text:var(--dark-color-text);--main-text-secondary:var(--dark-color-text-secondary);--tc-secondary-text-color:var(--dark-color-text-secondary);--main-border:var(--dark-color-border);--main-overlay-bg:var(--dark-color-overlay-bg);--main-shadow:var(--dark-color-shadow);--main-primary:var(--dark-color-primary);--main-primary-hover:var(--dark-color-primary-hover);--main-primary-text:var(--dark-color-primary-text);--main-toast-bg:var(--dark-color-toast-bg);--main-toast-text:var(--dark-color-toast-text);--main-textarea-bg:var(--dark-color-textarea-bg);--main-textarea-border:var(--dark-color-textarea-border);--main-tooltip-bg:var(--dark-color-tooltip-bg);--main-tooltip-text:var(--dark-color-tooltip-text);--main-disabled:#444;--main-disabled-text:#888;--main-line-number-text:var(--dark-color-line-number-text);--main-line-number-active-text:var(--dark-color-line-number-active-text);--tc-scrollbar-thumb-color:var(--dark-color-scrollbar-thumb);--tc-scrollbar-thumb-hover-color:var(--dark-color-scrollbar-thumb-hover);--tc-scrollbar-border-color:var(--dark-color-scrollbar-border);--main-bg-a:rgba(45,45,45,.6)}.ai-summary-panel{align-items:center;background:color-mix(in srgb,var(--main-primary) 5%,var(--main-bg));border:1px solid var(--main-border);border-radius:10px;column-gap:18px;display:none;flex:0 0 auto;flex-wrap:wrap;margin-bottom:10px;min-width:0;padding:8px 12px;row-gap:4px}.ai-summary-panel.is-visible{display:flex}.ai-summary-status{align-items:center;color:var(--main-text);display:flex;flex:0 0 auto;font-size:13px;font-weight:700;gap:12px;line-height:20px;min-height:22px;white-space:nowrap}.ai-status-dot{background:var(--main-disabled-text);border-radius:50%;flex:0 0 8px;height:8px;width:8px}.ai-status-dot.is-active{background:#22a559;box-shadow:0 0 0 3px color-mix(in srgb,#22a559 18%,transparent)}.ai-summary-counts{align-items:center;color:var(--main-text-secondary);display:flex;flex:1 1 auto;flex-wrap:wrap;min-width:0}.ai-count-badge{align-items:baseline;border-left:1px solid color-mix(in srgb,var(--main-border) 80%,transparent);color:var(--main-text-secondary);display:inline-flex;font-size:13px;gap:5px;line-height:18px;min-height:20px;padding:2px 10px;white-space:nowrap}.ai-count-badge:first-child{border-left:0;padding-left:0}.ai-count-label{white-space:nowrap}.ai-count-value{color:var(--main-text-secondary);font-size:13px;font-variant-numeric:tabular-nums;font-weight:700}.ai-count-pending.is-nonzero .ai-count-value{color:color-mix(in srgb,var(--main-primary) 88%,var(--main-text))}.ai-count-translated.is-nonzero .ai-count-value{color:color-mix(in srgb,#238b57 88%,var(--main-text))}.ai-count-review.is-nonzero .ai-count-value{color:color-mix(in srgb,#b45309 88%,var(--main-text))}.ai-count-failed.is-nonzero .ai-count-value{color:color-mix(in srgb,#c2413a 88%,var(--main-text))}.ai-summary-notice{border-top:1px solid color-mix(in srgb,var(--main-border) 72%,transparent);color:var(--main-text-secondary);flex:1 0 100%;font-size:13px;line-height:18px;margin-top:2px;padding-top:5px}.ai-summary-notice.is-processing{border-top:0;flex:0 1 auto;margin:0 0 0 auto;max-width:min(34%,280px);min-width:0;overflow:hidden;padding:0 0 0 12px;text-align:right;text-overflow:ellipsis;white-space:nowrap}.ai-review-list{border-top:1px solid var(--main-border);flex:1 0 100%;margin-top:2px;padding-top:6px}.ai-review-list summary{cursor:pointer;font-weight:600}.ai-review-item{border-bottom:1px solid var(--main-border);display:grid;font-size:12px;gap:12px;grid-template-columns:minmax(0,2fr) minmax(120px,1fr);padding:8px 0}.ai-review-source{overflow-wrap:anywhere}.ai-review-reason{color:var(--main-text-secondary)}.ai-retry-btn,.ai-submit-btn{display:none}.ai-retry-btn.is-visible,.ai-submit-btn.is-visible{display:inline-flex}.ai-settings-mount{--ai-content-gap:20px}.ai-settings-controls,.ai-settings-mount{display:flex;flex-direction:column;gap:28px}.ai-settings-controls{filter:grayscale(0);opacity:1;transition:opacity .2s ease,filter .2s ease}.ai-settings-controls.is-disabled{cursor:not-allowed;filter:grayscale(.45);opacity:.42;pointer-events:none;user-select:none}.ai-settings-controls.is-disabled *{cursor:not-allowed}.ai-beta-badge{align-items:center;background:color-mix(in srgb,var(--main-warning,#d97706) 16%,transparent);border-radius:999px;color:var(--main-warning,#d97706);display:inline-flex;font-size:11px;font-weight:700;line-height:18px;margin-left:8px;padding:1px 8px;vertical-align:middle}.ai-settings-mount .ai-beta-notice{margin:0}.ai-settings-section{border-bottom:1px solid var(--main-border);padding:0 0 28px}.ai-settings-section:last-child{border-bottom:0;padding-bottom:4px}.ai-section-header{color:var(--main-text);font-size:17px;margin:0 0 18px}.ai-section-header svg{fill:currentColor;height:22px;width:22px}.ai-section-header .tc-icon-title-icon{flex-basis:22px;height:22px;width:22px}.ai-section-header .icon-title-text{line-height:22px}.ai-section-body{display:flex;flex-direction:column;gap:var(--ai-content-gap)}.ai-form-grid{display:grid;gap:18px 20px;grid-template-columns:repeat(2,minmax(0,1fr))}.ai-budget-grid,.ai-general-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.ai-field-wide{grid-column:1/-1}.ai-settings-mount .ai-number-field{align-items:stretch;display:flex;flex-direction:column;gap:8px}.ai-number-field .numeric-input{font-variant-numeric:tabular-nums;min-height:42px;padding:9px 12px;width:100%}.ai-provider-toolbar{align-items:end;display:flex;gap:16px}.ai-provider-picker{flex:1 1 340px}.ai-compact-actions{display:flex;flex:0 0 auto;gap:10px}.ai-provider-key-row{align-items:end;display:grid;gap:12px;grid-template-columns:minmax(0,1fr) auto auto}.ai-provider-test-description,.ai-style-description{margin:0}.ai-action-footer{align-items:center;border-top:1px solid color-mix(in srgb,var(--main-border) 72%,transparent);display:flex;gap:16px;justify-content:space-between;min-height:42px;padding-top:16px}.ai-action-footer-end{justify-content:flex-end}.ai-provider-status{color:var(--main-text-secondary);font-size:13px;line-height:1.5;min-width:0}.ai-provider-status[data-state=success]{color:#36a269}.ai-provider-status[data-state=error]{color:#d95757}.ai-provider-footer[hidden]{display:none}.ai-style-advanced-form{grid-template-columns:repeat(2,minmax(0,1fr))}.tc-disclosure.ai-style-advanced{background-color:color-mix(in srgb,var(--main-textarea-bg) 64%,var(--main-bg));border-color:var(--main-border);border-radius:12px}.ai-style-advanced .tc-disclosure-trigger{font-size:14px;min-height:48px;padding:12px 14px}.ai-style-advanced .tc-disclosure-trigger>.tc-icon-title{min-height:20px}.ai-style-advanced .tc-disclosure-content{background-color:color-mix(in srgb,var(--main-bg) 76%,transparent);padding:18px}.ai-style-toolbar{display:grid;gap:20px;grid-template-columns:minmax(0,2fr) minmax(180px,1fr)}.ai-style-workspace{align-items:start;display:grid;gap:20px;grid-template-columns:minmax(240px,.78fr) minmax(0,2fr)}.ai-style-editor,.ai-style-library{background-color:color-mix(in srgb,var(--main-textarea-bg) 64%,var(--main-bg));border:1px solid var(--main-border);border-radius:12px;min-width:0;padding:18px}.ai-subsection-title{color:var(--main-text);font-size:14px;font-weight:700;margin-bottom:14px}.ai-subsection-title svg{fill:currentColor;height:19px;width:19px}.ai-style-list{background-color:var(--main-bg);border:1px solid var(--main-border);border-radius:10px;max-height:340px;min-height:180px;overflow-y:auto}.ai-style-row{align-items:center;background:transparent;border:0;border-bottom:1px solid var(--main-border);color:var(--main-text);cursor:pointer;display:flex;gap:10px;justify-content:space-between;min-height:48px;padding:10px 12px;text-align:left;transition:background-color .2s,color .2s,transform .15s;width:100%}.ai-style-row:hover{background:color-mix(in srgb,var(--main-primary) 8%,transparent)}.ai-style-row:active{transform:scale(.98)}.ai-style-row:focus-visible{outline:2px solid color-mix(in srgb,var(--main-primary) 72%,transparent);outline-offset:-2px;position:relative;z-index:1}.ai-style-row.is-active{background-color:color-mix(in srgb,var(--main-primary) 12%,var(--main-bg));color:var(--main-primary)}.ai-style-row>div{min-width:0}.ai-style-row .icon-title-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ai-style-row svg{fill:currentColor;flex:0 0 auto;height:18px;width:18px}.ai-style-row-meta{color:var(--main-text-secondary);flex:0 0 auto;font-size:11px}.ai-style-empty{color:var(--main-text-secondary);display:grid;font-size:13px;min-height:180px;padding:20px;place-items:center;text-align:center}.ai-style-library-footer{display:flex;justify-content:flex-end;margin-top:14px}.ai-style-actions{flex-wrap:wrap;justify-content:flex-end}@media (max-width:1100px){.ai-budget-grid,.ai-general-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.ai-style-workspace{grid-template-columns:1fr}.ai-style-list{max-height:220px}}@media (max-width:700px){.ai-summary-panel{row-gap:2px}.ai-summary-notice.is-processing{border-top:1px solid color-mix(in srgb,var(--main-border) 72%,transparent);flex-basis:100%;margin-left:0;max-width:none;padding:4px 0 0;text-align:left}.ai-settings-mount{gap:24px}.ai-budget-grid,.ai-form-grid,.ai-general-grid,.ai-review-item,.ai-style-advanced-form,.ai-style-toolbar{grid-template-columns:1fr}.ai-provider-toolbar{align-items:stretch;flex-direction:column}.ai-provider-key-row{grid-template-columns:1fr}.ai-provider-picker{flex-basis:auto}.ai-action-footer{align-items:stretch;flex-direction:column}.ai-compact-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.ai-action-footer-end,.ai-style-actions{align-items:flex-end}.ai-style-editor,.ai-style-library{padding:16px}.text-extractor-modal-footer{align-items:flex-start;flex-direction:column;gap:10px}}@media (max-width:450px){.ai-compact-actions{grid-template-columns:1fr}}@media (prefers-reduced-motion:reduce){.ai-style-row{transition:none}}.confirmation-modal-overlay{align-items:center;background-color:var(--main-overlay-bg);display:flex;height:100%;justify-content:center;left:0;opacity:0;pointer-events:none;position:fixed;top:0;transition:opacity .3s ease,visibility .3s ease;visibility:hidden;width:100%;z-index:2147483647}.confirmation-modal-overlay.is-visible{opacity:1;pointer-events:auto;visibility:visible}.confirmation-modal-content{background-color:var(--main-bg);border-radius:16px;box-shadow:0 10px 30px var(--main-shadow);color:var(--main-text);font-family:Menlo,Monaco,Cascadia Code,PingFang SC;padding:30px;text-align:center;transform:scale(.95);transition:transform .3s ease;width:400px}.confirmation-modal-overlay.is-visible .confirmation-modal-content{transform:scale(1)}.confirmation-modal-icon{margin-bottom:20px}.confirmation-modal-icon svg{fill:var(--main-text);height:56px;width:56px}.confirmation-modal-text{font-size:16px;line-height:1.6;margin:0 0 25px}.confirmation-modal-buttons{display:flex;gap:15px;justify-content:center}.confirmation-modal-button{border:none;border-radius:9999px;cursor:pointer;font-size:14px;font-weight:700;padding:12px 24px;transition:background-color .2s ease,transform .2s ease}.confirmation-modal-button.confirm{background-color:var(--main-primary);color:var(--main-primary-text)}.confirmation-modal-button.confirm:hover{background-color:var(--main-primary-hover)}.confirmation-modal-button.cancel{background-color:transparent;border:1px solid var(--main-border);color:var(--main-text)}.confirmation-modal-button.cancel:hover{background-color:var(--main-shadow)}.counter-with-help-container{align-items:center;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);background-color:var(--main-bg-a);border:1px solid var(--main-border);border-radius:24px;box-shadow:var(--main-shadow);box-sizing:border-box;display:flex;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;gap:12px;height:42px;left:50%;opacity:0;padding:8px 12px;pointer-events:all;position:fixed;top:20px;transform:translate(-50%,-150%);transition:transform .4s var(--easing-standard,cubic-bezier(.4,0,.2,1)),opacity .4s var(--easing-standard,cubic-bezier(.4,0,.2,1));z-index:2147483645}.counter-with-help-container.is-visible{opacity:1;transform:translate(-50%)}.counter-with-help-separator{background-color:var(--main-border);height:16px;width:1px}.counter-with-help-container .tc-icon-button,.counter-with-help-container .tc-top-center-counter{backdrop-filter:none;-webkit-backdrop-filter:none;background-color:transparent;border:none;box-shadow:none;margin:0;opacity:1;padding:0;position:static;transform:none;transition:none}.counter-with-help-container .tc-icon-button{align-items:center;border-radius:50%;color:var(--main-text-secondary);display:flex;height:32px;justify-content:center;position:relative;transition:color .2s,background-color .2s;width:32px}.counter-with-help-container .tc-icon-button:hover{background-color:var(--main-border);color:var(--main-text)}.counter-with-help-container .tc-icon-button svg{fill:currentColor;height:20px;left:50%;position:absolute;top:50%;transform:translate(-50%,-50%);transition:opacity .3s ease-in-out;width:20px}.counter-actions-container{align-items:center;display:flex;gap:4px}.counter-with-help-container .tc-top-center-counter{font-size:14px;font-weight:500;margin-left:9px}.counter-with-help-container .tc-top-center-counter span{color:var(--main-primary);font-size:16px;font-weight:700;margin-left:6px;margin-right:2px}.custom-select-container{position:relative;user-select:none;width:100%}.custom-select-trigger{align-items:center;background-color:var(--main-textarea-bg);border:1px solid var(--main-textarea-border);border-radius:12px;box-sizing:border-box;color:var(--main-text);cursor:pointer;display:flex;font-size:15px;font-weight:500;gap:12px;justify-content:space-between;min-height:42px;padding:7px 10px;transition:border-color .2s,box-shadow .2s}.selected-option-content{align-items:center;display:flex;flex:1 1 auto;min-width:0}.custom-select-option>.tc-icon-title,.selected-option-content>.tc-icon-title{align-items:center;line-height:20px;min-height:20px}.selected-option-content>.tc-icon-title{width:100%}.custom-select-option .icon-title-text,.custom-select-trigger .icon-title-text{line-height:20px}.custom-select-trigger:focus-visible{outline:2px solid color-mix(in srgb,var(--main-primary) 72%,transparent);outline-offset:2px}.custom-select-trigger:hover{border-color:var(--main-primary);box-shadow:0 0 0 2px rgba(30,144,255,.1)}.custom-select-container.open .custom-select-trigger{border-color:var(--main-primary);box-shadow:0 0 0 2px rgba(30,144,255,.2)}.custom-select-arrow{align-items:center;display:flex;flex:0 0 20px;height:20px;justify-content:center;transform-origin:center;transition:transform .3s ease;width:20px}.custom-select-container.open .custom-select-arrow{transform:rotate(180deg)}.custom-select-options{background-color:var(--main-bg);border:1px solid var(--main-border);border-radius:12px;box-shadow:0 4px 12px var(--main-shadow);left:0;max-height:0;opacity:0;overflow:hidden;position:absolute;right:0;top:calc(100% + 4px);transition:max-height .2s ease-out,opacity .2s ease-out,visibility 0s .2s;visibility:hidden;z-index:2147483647}.custom-select-container.open .custom-select-options{max-height:200px;opacity:1;transition:max-height .2s ease-out,opacity .2s ease-out;visibility:visible}.custom-select-option{align-items:center;cursor:pointer;display:flex;gap:8px;min-height:40px;padding:8px 12px;transition:background-color .2s}.custom-select-option svg,.custom-select-trigger svg{display:block;fill:currentColor;height:20px;width:20px}.custom-select-arrow svg{height:18px;width:18px}.custom-select-option:hover{background-color:var(--main-border)}.custom-select-option.selected{color:var(--main-primary);font-weight:600}.custom-select-option .option-icon,.custom-slider-container{align-items:center;display:flex}.custom-slider-container{flex-direction:column;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;width:100%}.custom-slider-info-text{color:var(--main-text-secondary);font-size:15px;font-weight:500;margin:12px 0 0}.custom-slider-wrapper{align-items:center;display:flex;gap:8px;height:20px;margin:5px 0;width:100%}.custom-slider-label{color:var(--main-text-secondary);font-size:12px;user-select:none;white-space:nowrap}.custom-slider-track{background-color:var(--main-textarea-bg);border:1px solid var(--main-textarea-border);border-radius:4px;cursor:pointer;flex-grow:1;height:8px;position:relative}.custom-slider-ticks{align-items:center;box-sizing:border-box;display:flex;height:100%;justify-content:space-between;left:0;padding:0 4px;pointer-events:none;position:absolute;right:0}.custom-slider-tick{background-color:var(--main-border);border-radius:50%;height:4px;width:4px}.custom-slider-thumb{background-color:var(--main-primary);border:2px solid var(--main-bg);border-radius:50%;box-shadow:0 2px 4px var(--main-shadow);cursor:grab;height:18px;position:absolute;top:50%;transform:translateY(-50%);transition:transform .1s ease-out,left .1s ease-out;width:18px;will-change:transform,left}.custom-slider-thumb:hover{transform:translateY(-50%) scale(1.1)}.custom-slider-thumb.is-dragging{cursor:grabbing;transform:translateY(-50%) scale(1.2)}.tc-dropdown-menu{animation:slide-up-fade-in .3s ease forwards;background-color:var(--color-bg);border:1px solid var(--color-border);border-radius:16px;bottom:calc(100% + 8px);box-shadow:0 5px 15px var(--main-shadow);display:none;min-width:100%;overflow:hidden;position:absolute;right:51%;width:max-content;z-index:2147483647}.tc-dropdown-menu.visible{display:block}.tc-dropdown-menu button{align-items:center;background-color:transparent;border:none;color:var(--main-text);cursor:pointer;display:flex;font-size:14px;gap:12px;padding:10px 16px;text-align:left;transition:background-color .2s ease;width:100%}.tc-dropdown-menu button:hover{background-color:#f0f0f0}:host([data-theme=dark]) .tc-dropdown-menu{background-color:var(--dark-color-bg);border-color:var(--dark-color-border)}:host([data-theme=dark]) .tc-dropdown-menu button:hover{background-color:hsla(0,0%,100%,.1)}.tc-export-btn-container{position:relative}@keyframes slide-up-fade-in{0%{opacity:0;transform:translateY(10px) translateX(50%)}to{opacity:1;transform:translateY(0) translateX(50%)}}@keyframes slide-down-fade-out{0%{opacity:1;transform:translateY(0) translateX(50%)}to{opacity:0;transform:translateY(10px) translateX(50%)}}.tc-dropdown-menu.is-hiding{animation:slide-down-fade-out .3s ease forwards}#element-scan-container{opacity:0;pointer-events:none;position:absolute;transition:all .2s cubic-bezier(.19,1,.22,1),opacity .2s ease-in-out,visibility 0s linear .2s;visibility:hidden;z-index:2147483644}#element-scan-highlight-border{background-color:rgba(52,152,219,.2);border:4px solid #3498db;border-radius:6px 6px 6px 0;box-sizing:border-box;height:100%;width:100%}#element-scan-tag-name{background-color:#3498db;border-radius:0 0 6px 6px;color:#fff;font-size:12px;left:0;padding:4px 8px;position:absolute;top:100%;transition:background-color .1s ease-out,opacity .2s ease-out;white-space:nowrap;z-index:1}#element-scan-tag-name,#element-scan-toolbar{font-family:Menlo,Monaco,Cascadia Code,PingFang SC;pointer-events:auto}#element-scan-toolbar{background-color:var(--main-bg);border:1px solid var(--main-border);border-radius:20px;box-shadow:0 4px 12px rgba(0,0,0,.15);cursor:move;display:flex;flex-direction:column;opacity:0;padding:16px;position:fixed;transform:scale(.95);transition:opacity .2s cubic-bezier(.19,1,.22,1),transform .2s cubic-bezier(.19,1,.22,1),visibility 0s linear .2s;visibility:hidden;width:fit-content;z-index:2147483645}#element-scan-container.is-visible,#element-scan-toolbar.is-visible{opacity:1;transform:scale(1);transition-delay:0s;visibility:visible}#element-scan-toolbar-tag,#element-scan-toolbar-title,.custom-slider-info-text{user-select:none}#element-scan-toolbar-title{font-size:20px;margin-bottom:16px}#element-scan-toolbar-tag,#element-scan-toolbar-title{color:var(--main-text);font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-weight:700;text-align:center}#element-scan-toolbar-tag{border-radius:4px;font-size:14px;padding:0 8px;transition:opacity .1s ease-in-out}#element-scan-slider-container{min-width:380px}#element-scan-level-slider{width:100%}#element-scan-toolbar-actions{display:flex;gap:6px;justify-content:space-between;white-space:nowrap}#element-scan-toolbar-actions button{align-items:center;border:none;border-radius:20px;color:var(--main-primary-text);cursor:pointer;display:flex;flex-grow:1;font-size:15px;gap:6px;justify-content:center;margin:6px 0 0;padding:10px 16px;transition:background-color .1s ease-in-out,transform .1s ease-in-out}#element-scan-toolbar-actions button:active{transform:scale(.95)}#element-scan-toolbar-confirm:hover{background-color:#27ae60}#element-scan-toolbar-confirm{background-color:#2ecc71}#element-scan-toolbar-cancel:hover{background-color:#c0392b}#element-scan-toolbar-cancel{background-color:#e74c3c}#element-scan-toolbar-reselect{background-color:var(--main-primary)}#element-scan-toolbar-reselect:hover{background-color:var(--main-primary-hover)}#element-scan-toolbar-stage:hover{background-color:#7f8c8d}#element-scan-toolbar-stage{background-color:#95a5a6}.text-extractor-fab.is-recording{animation:tc-breathing 2s ease-in-out infinite;background-color:#f39c12}.text-extractor-fab.is-recording:hover{background-color:#e67e22}@keyframes scan-pulse{0%{box-shadow:0 0 0 0 rgba(243,156,18,.7)}50%{box-shadow:0 0 0 4px rgba(243,156,18,.5)}to{box-shadow:0 0 0 10px rgba(243,156,18,0)}}@keyframes scan-confirm-flash{0%{box-shadow:0 0 0 0 rgba(46,204,113,.7)}50%{box-shadow:0 0 0 4px rgba(46,204,113,.5)}to{box-shadow:0 0 0 10px rgba(46,204,113,0)}}#element-scan-container.is-locked #element-scan-highlight-border{animation:scan-pulse .5s cubic-bezier(.25,.8,.25,1);background-color:rgba(243,156,18,.1);border-color:#f39c12}#element-scan-container.is-confirmed #element-scan-highlight-border{animation:scan-confirm-flash .5s cubic-bezier(.25,.8,.25,1) forwards;background-color:rgba(46,204,113,.1);border-color:#2ecc71}#element-scan-container.is-confirmed #element-scan-tag-name{opacity:0;transition:opacity .2s ease-out}#element-scan-container.is-error #element-scan-highlight-border{animation:scan-error-pulse .5s cubic-bezier(.25,.8,.25,1)}@keyframes scan-error-pulse{0%{box-shadow:0 0 0 0 rgba(231,76,60,.7);transform:scale(1)}50%{box-shadow:0 0 0 4px rgba(231,76,60,.5);transform:scale(1.03)}to{box-shadow:0 0 0 10px rgba(231,76,60,0);transform:scale(1)}}#element-scan-container.is-error #element-scan-highlight-border{animation:scan-error-pulse .6s cubic-bezier(.25,.8,.25,1);background-color:rgba(231,76,60,.1);border-color:#e74c3c}#element-scan-container.is-locked #element-scan-tag-name{background-color:#f39c12}#element-scan-container.is-error #element-scan-tag-name{background-color:#e74c3c}#element-scan-container.is-confirmed #element-scan-tag-name{background-color:#2ecc71}.fab-position-top-right{transform:translate(-30px,30px)}.fab-position-bottom-right{transform:translate(-30px,calc(100vh - 100% - 30px))}.fab-position-top-left{transform:translate(calc(-100vw + 100% + 30px + var(--scrollbar-width)),30px)}.fab-position-bottom-left{transform:translate(calc(-100vw + 100% + 30px + var(--scrollbar-width)),calc(100vh - 100% - 30px))}.code-preview{align-items:center;display:flex;height:100%;justify-content:center;padding:10px;width:100%}.code-preview .wrapper-bracket,.code-preview .wrapper-indent{display:inline;opacity:1;transition:opacity .2s ease-in-out}.code-preview.hide-brackets .wrapper-bracket,.code-preview.hide-brackets .wrapper-indent{opacity:0}.code-text-preview{color:var(--main-text-secondary);font-family:Menlo,Monaco,Consolas,Courier New,monospace;font-size:14px;line-height:1.4;overflow:hidden;text-align:left;white-space:nowrap}.image-card-option.selected .code-text-preview{color:var(--main-text)}.code-text-preview .punct{color:var(--main-text-secondary);font-weight:700}.code-text-preview .str{color:var(--main-primary)}.image-card-option.selected .code-text-preview .punct{color:var(--main-text)}.tc-button{background-color:var(--main-primary);border:none;border-radius:999px;color:var(--main-primary-text);cursor:pointer;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:16px;font-weight:500;justify-content:center;line-height:1;min-height:42px;padding:10px 20px;touch-action:manipulation;transition:background-color .2s,transform .15s,box-shadow .2s}.tc-button,.tc-icon-title{align-items:center;display:inline-flex}.tc-icon-title{gap:8px;line-height:20px;min-width:0}.tc-icon-title-icon{align-items:center;display:inline-flex;flex:0 0 20px;height:20px;justify-content:center;width:20px}.tc-icon-title-icon svg{display:block;fill:currentColor;height:100%;width:100%}.icon-title-text{display:block;line-height:20px;min-width:0}.tc-button>.tc-icon-title{line-height:20px;min-height:20px;white-space:nowrap}.tc-button svg{display:block;fill:currentColor;flex:0 0 auto;height:20px;width:20px}.tc-icon-title-icon svg.is-icon-entering,.tc-icon-title-icon svg.is-icon-leaving{inset:0;position:absolute;transition:opacity .2s ease}.tc-icon-title-icon.is-changing{position:relative}.tc-button:focus-visible{outline:2px solid color-mix(in srgb,var(--main-primary) 72%,transparent);outline-offset:2px}.tc-button:hover{background-color:var(--main-primary-hover);box-shadow:0 2px 8px rgba(0,0,0,.15)}.tc-button:active{transform:scale(.97)}.tc-button:disabled{background-color:var(--main-disabled);box-shadow:none;color:var(--main-disabled-text);cursor:not-allowed}.tc-toggle-setting{align-items:center;background:var(--main-bg);border:1px solid var(--main-border);border-radius:12px;color:var(--main-text);cursor:pointer;display:grid;gap:20px;grid-template-columns:minmax(0,1fr) auto;min-height:72px;padding:14px 16px}.tc-toggle-copy{display:flex;flex-direction:column;gap:5px;min-width:0}.tc-toggle-title{font-size:15px;font-weight:700}.tc-toggle-description{color:var(--main-text-secondary);font-size:13px;line-height:1.5}.tc-toggle-input{height:1px;opacity:0;pointer-events:none;position:absolute;width:1px}.tc-toggle-control{background:var(--main-disabled);border-radius:999px;height:26px;position:relative;transition:background-color .2s,box-shadow .2s;width:48px}.tc-toggle-control:after{background:var(--main-primary-text);border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,.28);content:"";height:20px;left:3px;position:absolute;top:3px;transition:transform .2s;width:20px}.tc-toggle-input:checked+.tc-toggle-control{background:var(--main-primary)}.tc-toggle-input:checked+.tc-toggle-control:after{transform:translateX(22px)}.tc-toggle-input:focus-visible+.tc-toggle-control{box-shadow:0 0 0 3px color-mix(in srgb,var(--main-primary) 25%,transparent)}.tc-disclosure{background:var(--main-bg);border:1px solid var(--main-border);border-radius:10px;overflow:hidden}.tc-disclosure-trigger{align-items:center;background:transparent;border:0;color:var(--main-text);cursor:pointer;display:flex;font-size:14px;font-weight:700;gap:16px;justify-content:space-between;min-height:44px;padding:10px 14px;text-align:left;width:100%}.tc-disclosure-trigger:hover{background:color-mix(in srgb,var(--main-primary) 7%,transparent)}.tc-disclosure-trigger:focus-visible{outline:2px solid color-mix(in srgb,var(--main-primary) 72%,transparent);outline-offset:-2px}.tc-disclosure-arrow{display:grid;flex:0 0 20px;height:20px;place-items:center;transition:transform .2s ease;width:20px}.tc-disclosure-arrow svg{display:block;fill:currentColor;height:20px;width:20px}.tc-disclosure-trigger[aria-expanded=true] .tc-disclosure-arrow{transform:rotate(180deg)}.tc-disclosure-content{border-top:1px solid var(--main-border);padding:16px}.tc-disclosure-content[hidden]{display:none}.tc-field-group{display:flex;flex-direction:column;gap:8px;min-width:0}.numeric-input-label,.tc-field-label{color:var(--main-text);font-size:14px;font-weight:600;line-height:1.4}.tc-text-input{background-color:var(--main-textarea-bg);border:1px solid var(--main-textarea-border);border-radius:10px;color:var(--main-text);font-family:inherit;font-size:14px;line-height:1.45;min-height:42px;padding:9px 12px;transition:border-color .2s,box-shadow .2s;width:100%}.tc-text-input:hover{border-color:color-mix(in srgb,var(--main-primary) 60%,var(--main-textarea-border))}.tc-text-input:focus{border-color:var(--main-primary);box-shadow:0 0 0 2px color-mix(in srgb,var(--main-primary) 18%,transparent);outline:none}.tc-text-input-multiline{min-height:104px;resize:vertical}.tc-textarea{background-color:var(--main-textarea-bg);border:1px solid var(--main-textarea-border);border-radius:8px;box-sizing:border-box;color:var(--main-text);font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:14px;height:100%;line-height:1.5;padding:12px 18px 12px 12px;resize:none;width:100%}.tc-textarea:focus{outline:none}.tc-textarea::-webkit-scrollbar-thumb{background-color:var(--main-border)}.tc-textarea::-webkit-scrollbar-thumb:hover{background-color:var(--main-primary)}.tc-textarea::-webkit-scrollbar-button{display:none}.tc-select{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:var(--main-textarea-bg);background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='currentColor' viewBox='0 0 16 16'%3E%3Cpath d='M8 11 2 5h12z'/%3E%3C/svg%3E");background-position:right 12px center;background-repeat:no-repeat;background-size:12px;border:1px solid var(--main-textarea-border);border-radius:8px;color:var(--main-text);cursor:pointer;display:block;font-size:14px;padding:10px 36px 10px 12px;transition:border-color .2s,box-shadow .2s;width:100%}.tc-select:hover{border-color:var(--main-primary);box-shadow:0 0 0 2px var(--main-primary-hover-bg,rgba(30,144,255,.1))}.info-tooltip-overlay{align-items:center;background-color:var(--main-overlay-bg);display:flex;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;height:100%;justify-content:center;left:0;opacity:0;pointer-events:none;position:fixed;top:0;transition:opacity .3s ease,visibility .3s;visibility:hidden;width:100%;z-index:2147483647}.info-tooltip-overlay.is-visible{opacity:1;pointer-events:auto;visibility:visible}.info-tooltip-modal{background-color:var(--main-bg);border:1px solid var(--main-border);border-radius:16px;box-shadow:0 5px 15px var(--main-shadow);color:var(--main-text);display:flex;flex-direction:column;max-height:80vh;max-width:80vw;overflow:hidden;padding:0;position:relative;transform:scale(.95);transition:transform .3s ease;width:480px}.info-tooltip-overlay.is-visible .info-tooltip-modal{transform:scale(1)}.info-tooltip-header{align-items:center;border-bottom:1px solid var(--main-border);display:flex;justify-content:space-between;padding:20px}.info-tooltip-title-container{align-items:center;display:flex;gap:10px}.info-tooltip-title-icon{color:var(--secondary-text);height:20px;width:20px}.info-tooltip-title{font-size:18px;font-weight:700;margin:0}.info-tooltip-close{align-items:center;background-color:transparent;border-radius:50%;color:var(--main-text);cursor:pointer;display:flex;height:32px;justify-content:center;transition:background-color .2s,transform .15s;width:32px}.info-tooltip-close:hover{background-color:var(--main-border)}.info-tooltip-close:active{transform:scale(.9)}.info-tooltip-close svg{height:18px;width:18px}.info-tooltip-content{overflow-y:auto;padding:24px}.info-tooltip-content p{font-size:16px;line-height:1.7;margin:0 0 15px}.info-tooltip-content p:last-child{margin-bottom:0}.info-tooltip-content strong{color:var(--primary-accent);font-weight:600}.info-tooltip-image{animation:fadeIn .3s forwards;border-radius:8px;display:block;height:auto;margin-left:auto;margin-right:auto;margin-top:10px;max-width:100%;opacity:0}.info-icon{align-items:center;border-radius:50%;color:var(--secondary-text);cursor:pointer;display:inline-flex;height:20px;justify-content:center;margin-left:8px;transition:background-color .2s,color .2s;vertical-align:text-bottom;width:20px}.info-icon:hover{background-color:var(--main-border);color:var(--primary-accent)}.info-icon svg{height:16px;width:16px}kbd{background-color:var(--main-bg);border:solid var(--main-border);border-radius:4px;border-width:1px 1px 3px;box-shadow:0 1px 1px var(--main-shadow);color:var(--main-text);display:inline-block;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:.85em;font-weight:700;line-height:1;margin:0 5px;padding:3px 6px;position:relative;top:-3px;vertical-align:baseline;white-space:nowrap}.gm-loading-overlay{align-items:center;background-color:hsla(0,0%,50%,.2);display:flex;height:100%;justify-content:center;left:0;opacity:0;position:absolute;top:0;transition:opacity .2s,visibility .2s;visibility:hidden;width:100%;z-index:10}.gm-loading-overlay.is-visible{opacity:1;visibility:visible}.gm-loading-spinner svg{color:var(--color-icon);height:48px;width:48px}.text-extractor-fab-container{align-items:center;display:flex;flex-direction:column;gap:0;opacity:0;pointer-events:none;position:fixed;right:0;top:0;transform-origin:top right;transition:opacity .3s ease,visibility .3s,transform .3s ease-in-out;visibility:hidden;z-index:2147483645}.text-extractor-fab-container.fab-container-visible{opacity:1;visibility:visible}.text-extractor-fab{align-items:center;background-color:var(--main-primary);border:1px solid var(--main-border);border-radius:50%;box-shadow:0 4px 8px var(--main-shadow);box-sizing:border-box;color:var(--main-primary-text);cursor:pointer;display:flex;flex:0 0 auto;height:56px;justify-content:center;margin-top:12px;max-height:56px;overflow:hidden;pointer-events:auto;position:relative;transform-origin:center;transition:background-color .3s,height .3s var(--easing-standard,cubic-bezier(.4,0,.2,1)),max-height .3s var(--easing-standard,cubic-bezier(.4,0,.2,1)),margin-top .3s var(--easing-standard,cubic-bezier(.4,0,.2,1)),opacity .2s ease,transform .2s,box-shadow .3s,color .3s,visibility 0s;width:56px}.text-extractor-fab:first-child{margin-top:0}.text-extractor-fab:hover{background-color:var(--main-primary-hover);box-shadow:0 6px 12px var(--main-shadow);transform:scale(1.05)}.text-extractor-fab.fab-feature-hidden{border-width:0;height:0;margin-top:0;max-height:0;opacity:0;pointer-events:none;transform:scale(.72);transition:height .3s var(--easing-standard,cubic-bezier(.4,0,.2,1)),max-height .3s var(--easing-standard,cubic-bezier(.4,0,.2,1)),margin-top .3s var(--easing-standard,cubic-bezier(.4,0,.2,1)),opacity .18s ease,transform .2s ease,visibility 0s .3s;visibility:hidden}.text-extractor-fab:active{transform:scale(.95);transition-duration:.1s}.text-extractor-fab svg{fill:currentColor;height:26px;width:26px}.text-extractor-modal-overlay{align-items:center;background-color:var(--main-overlay-bg);display:flex;height:100%;justify-content:center;left:0;opacity:0;pointer-events:none;position:fixed;top:0;transition:opacity .3s ease,visibility .3s;visibility:hidden;width:100%;z-index:2147483646}.text-extractor-modal-overlay.is-visible{opacity:1;pointer-events:auto;visibility:visible}.text-extractor-modal{background-color:var(--main-bg);border-radius:16px;box-shadow:0 5px 15px var(--main-shadow);color:var(--main-text);display:flex;flex-direction:column;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;height:min(760px,calc(100vh - 56px));max-height:90vh;max-width:960px;transform:scale(.95);transition:transform .3s ease;width:min(960px,calc(100vw - 40px))}.text-extractor-modal-overlay.is-visible .text-extractor-modal{transform:scale(1)}.text-extractor-modal-header{align-items:center;border-bottom:1px solid var(--main-border);color:var(--main-text);display:flex;font-size:18px;font-weight:700;justify-content:space-between;padding:18px}#main-modal-title-container{align-items:center;display:flex;min-height:32px;min-width:0}#main-modal-title-container>.tc-icon-title{gap:10px;min-height:32px}#main-modal-title-container .tc-icon-title-icon{flex-basis:24px;height:24px;width:24px}#main-modal-title-container>.tc-icon-title>.icon-title-text{line-height:24px}.tc-close-button{align-items:center;background-color:transparent;border:0;border-radius:50%;color:var(--main-text);cursor:pointer;display:flex;flex:0 0 32px;height:32px;justify-content:center;line-height:0;padding:0;transition:background-color .2s,transform .15s;width:32px}.tc-close-button svg{display:block;fill:currentColor;height:24px;width:24px}.tc-close-button:active,.tc-close-button:hover{background-color:var(--main-border)}.tc-close-button:active{transform:scale(.9)}.text-extractor-modal-content{display:flex;flex-direction:column;flex-grow:1;overflow-y:auto;padding:18px;position:relative}.tc-textarea-container{box-sizing:border-box;flex:1;height:100%;min-height:0;opacity:0;transition:opacity .2s ease-in-out,visibility .2s ease-in-out;visibility:hidden;width:100%}.tc-textarea-container.is-visible{opacity:1;visibility:visible}.text-extractor-modal-footer{align-items:center;border-top:1px solid var(--main-border);display:flex;justify-content:space-between;padding:18px}.tc-footer-buttons{align-items:center;display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end}@keyframes tc-breathing{0%{box-shadow:0 4px 8px var(--main-shadow),0 0 0 0 rgba(243,156,18,.4)}70%{box-shadow:0 4px 12px var(--main-shadow),0 0 0 10px rgba(243,156,18,0)}to{box-shadow:0 4px 8px var(--main-shadow),0 0 0 0 rgba(243,156,18,0)}}#scan-count-display{align-items:center;color:var(--tc-secondary-text-color);display:flex;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:14px;line-height:20px;margin-left:2px;min-height:20px;opacity:0;transition:opacity .3s ease-in-out}.header-right-controls{align-items:center;display:flex;min-height:32px}@media (prefers-reduced-motion:reduce){.text-extractor-fab,.text-extractor-fab-container,.text-extractor-fab.fab-feature-hidden{transition-duration:.01ms}}#scan-count-display.is-visible{opacity:1}.text-extractor-fab-container.fab-container-visible .text-extractor-fab.fab-disabled{background-color:var(--main-disabled);box-shadow:none;color:var(--main-disabled-text);cursor:not-allowed;transform:none}.tc-help-icon-button{align-items:center;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);background-color:var(--main-bg-a);border:1px solid var(--main-border);border-radius:50%;box-shadow:var(--main-shadow);color:var(--main-text-secondary);cursor:pointer;display:flex;justify-content:center;padding:0;transition:color .2s,transform .2s,background-color .2s}.tc-help-icon-button:hover{background-color:var(--main-border);color:var(--main-text)}.tc-help-icon-button svg{height:20px;width:20px}.action-key{background-color:var(--main-bg);border:solid var(--main-border);border-radius:4px;border-width:1px 1px 3px;box-shadow:0 1px 1px var(--main-shadow);color:var(--main-text);display:inline-block;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:.85em;font-weight:700;line-height:1;margin:0 5px;padding:3px 6px;position:relative;top:-3px;vertical-align:baseline;white-space:nowrap}.tc-textarea-container{border:1px solid var(--main-textarea-border);border-radius:8px;display:flex;flex-grow:1;overflow:hidden;position:relative}.tc-line-numbers{background-color:var(--tc-secondary-bg-color);border-right:1px solid var(--tc-border-color);box-sizing:border-box;color:var(--main-line-number-text);font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:14px;line-height:1.5;margin-right:0;max-width:0;opacity:0;overflow:hidden;padding:10px 0 8px;text-align:right;transition:max-width .3s ease,opacity .3s ease,padding .3s ease,margin-right .3s ease;user-select:none;width:var(--line-number-width,40px)}.tc-line-numbers>div{box-sizing:border-box;padding:0 4px;transition:color .2s ease-in-out;white-space:nowrap}.tc-line-numbers>div.is-active{color:var(--main-line-number-active-text);font-weight:700}.tc-textarea-container .tc-textarea{border:none;border-radius:0;box-sizing:border-box;flex-grow:1;font-size:14px;line-height:1.5;padding:10px 10px 8px;resize:none;scrollbar-gutter:stable}.tc-textarea-container .tc-textarea:focus{box-shadow:none;outline:none}.tc-textarea.word-wrap-disabled{overflow-x:auto;white-space:pre}.tc-line-numbers.is-visible{margin-right:4px;max-width:var(--line-number-width,40px);opacity:1;padding:10px 4px}.tc-stats-container{align-items:center;color:var(--tc-secondary-text-color);display:flex;flex-grow:1;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:14px;opacity:0;transition:opacity .3s ease,visibility .3s ease;visibility:hidden}.tc-stats-container.is-visible{opacity:1;visibility:visible}.tc-textarea::-webkit-scrollbar{height:6px;width:6px}.tc-textarea::-webkit-scrollbar-track{background:transparent}.tc-textarea::-webkit-scrollbar-thumb{background:var(--tc-scrollbar-thumb-color);border:1px solid var(--tc-scrollbar-border-color);border-radius:3px}.tc-textarea::-webkit-scrollbar-thumb:hover{background:var(--tc-scrollbar-thumb-hover-color)}@keyframes line-number-enter{0%{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}.line-number-enter-active{animation:line-number-enter .2s ease-out}.tc-notification-container{display:flex;flex-direction:column;gap:10px;pointer-events:none;position:fixed;right:20px;top:20px;z-index:2147483647}.tc-notification{align-items:center;animation:tc-notification-fade-in .5s forwards;background-color:var(--main-bg,#fff);border:1px solid var(--main-border,#eee);border-radius:16px;box-shadow:0 4px 12px var(--main-shadow,rgba(0,0,0,.15));color:var(--main-text,#333);display:flex;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;opacity:0;padding:12px 16px;pointer-events:auto;transform:translateX(100%);transition:box-shadow .3s;width:320px}.tc-notification:hover{box-shadow:0 6px 16px var(--main-shadow,rgba(0,0,0,.2))}.tc-notification-icon{align-items:center;display:flex;margin-right:12px}.tc-notification-icon svg{height:20px;width:20px}.tc-notification-info .tc-notification-icon{color:#3498db}.tc-notification-success .tc-notification-icon{color:#2ecc71}.tc-notification-content{flex-grow:1;font-size:14px;line-height:1.4}.tc-notification-close{cursor:pointer;opacity:.6;padding:4px;transition:opacity .3s}.tc-notification-close:hover{opacity:1}.tc-notification-close svg{height:16px;stroke:var(--main-text,#333);width:16px}@keyframes tc-notification-fade-in{to{opacity:1;transform:translateX(0)}}.tc-notification-fade-out{animation:tc-notification-fade-out .5s forwards}@keyframes tc-notification-fade-out{0%{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(100%)}}#modal-placeholder{align-items:center;box-sizing:border-box;color:var(--text-color-secondary);display:flex;flex-direction:column;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;height:100%;justify-content:center;left:0;opacity:0;padding:20px;position:absolute;text-align:center;top:0;transition:opacity .2s ease-in-out,visibility .2s ease-in-out;visibility:hidden;width:100%}#modal-placeholder.is-visible{opacity:1;visibility:visible}.placeholder-icon{color:var(--text-color-secondary)}.placeholder-icon svg{height:48px;width:48px}#modal-placeholder p{font-size:14px;margin:4px 0}.placeholder-actions{align-items:center;color:var(--text-color-primary);display:flex;gap:6px}.placeholder-action-icon svg{fill:currentColor;height:18px;vertical-align:middle;width:18px}#modal-placeholder strong{font-weight:600}.settings-panel-overlay{align-items:center;background-color:var(--main-overlay-bg);display:flex;height:100%;justify-content:center;left:0;opacity:0;pointer-events:none;position:fixed;top:0;transition:opacity .3s ease,visibility .3s;visibility:hidden;width:100%;z-index:2147483648}.settings-panel-overlay.is-visible{opacity:1;pointer-events:auto;visibility:visible}.settings-panel-modal{background-color:var(--main-bg);border:1px solid var(--main-border);border-radius:16px;box-shadow:0 5px 15px var(--main-shadow);color:var(--main-text);display:flex;flex-direction:column;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;height:min(760px,calc(100vh - 56px));max-height:90vh;max-width:1040px;overflow:hidden;overscroll-behavior:contain;transform:scale(.95);transition:transform .3s ease;width:min(1040px,calc(100vw - 48px))}.settings-panel-content{flex-grow:1;overflow-y:auto;padding:20px}.settings-panel-overlay.is-visible .settings-panel-modal{transform:scale(1)}.settings-panel-header{align-items:center;border-bottom:1px solid var(--main-border);display:flex;flex-shrink:0;font-size:18px;font-weight:700;justify-content:space-between;padding:16px 20px}#contextual-settings-title-container,#settings-panel-title-container{align-items:center;display:flex;min-height:32px;min-width:0}#contextual-settings-title-container>.tc-icon-title,#settings-panel-title-container>.tc-icon-title{gap:10px;min-height:32px}#contextual-settings-title-container .tc-icon-title-icon,#settings-panel-title-container .tc-icon-title-icon{flex-basis:24px;height:24px;width:24px}#contextual-settings-title-container .icon-title-text,#settings-panel-title-container .icon-title-text{line-height:24px}.settings-panel-body{display:flex;flex:1;overflow:hidden}.settings-sidebar{background-color:color-mix(in srgb,var(--main-bg) 97%,var(--main-text));border-right:1px solid var(--main-border);box-sizing:border-box;display:flex;flex-direction:column;flex-shrink:0;position:relative;width:220px}.sidebar-highlight{background-color:color-mix(in srgb,var(--main-primary) 10%,transparent);border-left:3px solid var(--main-primary);box-sizing:border-box;left:0;pointer-events:none;position:absolute;top:0;transition:transform .2s cubic-bezier(.4,0,.2,1),height .2s ease;width:100%;z-index:0}.settings-sidebar-item{align-items:center;background:transparent;border-left:3px solid transparent;box-sizing:border-box;color:var(--main-text);cursor:pointer;display:flex;font-size:15px;font-weight:500;gap:10px;padding:12px 20px;position:relative;transition:color .2s,background-color .2s;z-index:1}.settings-sidebar-item:hover{background-color:color-mix(in srgb,var(--main-textarea-bg) 50%,transparent)}.settings-sidebar-item.active{border-left-color:transparent;color:var(--main-primary)}.settings-sidebar-item svg{display:block;fill:currentColor;flex:0 0 22px;height:22px;width:22px}.settings-sidebar-item>span{display:block;line-height:22px}.settings-content-area{background-color:var(--main-bg);display:flex;flex:1;flex-direction:column;overflow:hidden;position:relative}.settings-tab-content{display:none;flex:1;overflow-y:auto;padding:20px}.settings-tab-content.active{animation:fadeIn .2s ease;display:block}#tab-ai.settings-tab-content{padding:28px 32px}@keyframes fadeIn{0%{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}.setting-item{margin-bottom:12px}.setting-item>label{display:block;font-weight:500;margin-bottom:8px}.setting-title-container{align-items:center;display:flex;font-size:16px;font-weight:700;gap:8px;margin-bottom:12px}.settings-info-notice{align-items:center;background-color:color-mix(in srgb,var(--main-primary) 8%,var(--main-bg));border:1px solid color-mix(in srgb,var(--main-primary) 28%,var(--main-border));border-radius:10px;color:var(--main-text-secondary);display:flex;font-size:13px;gap:10px;line-height:1.5;margin:0 0 16px;padding:10px 12px}.settings-info-notice-icon{align-items:center;color:var(--main-primary);display:flex;flex:0 0 auto;justify-content:center}.settings-info-notice-icon svg{display:block;height:20px;width:20px}.settings-info-notice .icon-title-text{margin:0;min-width:0}.settings-tab-content::-webkit-scrollbar{width:6px}.settings-tab-content::-webkit-scrollbar-track{background:transparent}.settings-tab-content::-webkit-scrollbar-thumb{background-color:var(--main-border);border-radius:3px}.settings-tab-content::-webkit-scrollbar-thumb:hover{background-color:var(--main-primary)}.settings-tab-content::-webkit-scrollbar-button{display:none}.settings-panel-footer{background-color:var(--main-bg);border-top:1px solid var(--main-border);flex-shrink:0;padding:16px 20px;text-align:right}.checkbox-group{color:var(--main-text);cursor:pointer;display:block;height:20px;line-height:20px;margin-left:2px;margin-top:12px;padding-left:30px;position:relative;user-select:none}.checkbox-group input{cursor:pointer;height:0;opacity:0;position:absolute;width:0}.checkmark{background-color:var(--main-textarea-bg);border:1px solid var(--main-textarea-border);border-radius:3px;height:18px;left:0;position:absolute;top:0;transition:all .2s;width:18px}.checkbox-group:hover input~.checkmark{border-color:var(--main-primary)}.checkbox-group input:checked~.checkmark{background-color:var(--main-primary);border-color:var(--main-primary)}.checkmark:after{content:"";display:none;position:absolute}.checkbox-group input:checked~.checkmark:after{display:block}.checkbox-group .checkmark:after{border:solid var(--main-bg);border-width:0 2px 2px 0;height:10px;left:6px;top:2px;transform:rotate(45deg);width:5px}.composite-setting-container{font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-weight:500;margin-left:0;margin-top:14px}.composite-setting-container .checkbox-group{margin-top:0}.linked-numeric-input{margin-left:32px;margin-top:8px}.numeric-input-group{align-items:center;display:flex;gap:8px}.numeric-input{background-color:var(--main-textarea-bg);border:1px solid var(--main-textarea-border);border-radius:8px;color:var(--main-text);font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:14px;padding:6px 8px;transition:border-color .2s,box-shadow .2s,background-color .2s,color .2s;width:100px}.numeric-input:focus{border-color:var(--main-primary);box-shadow:0 0 0 2px color-mix(in srgb,var(--main-primary) 20%,transparent);outline:none}.numeric-input:disabled{background-color:var(--main-disabled);border-color:var(--main-border);color:var(--main-disabled-text);cursor:not-allowed}.setting-item-select{align-items:center;display:flex;font-weight:500;justify-content:space-between;margin-left:32px}.image-card-select-container{display:flex;gap:16px;justify-content:space-between;width:100%}.image-card-option{background-color:var(--main-bg);border:1px solid var(--main-border);border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.05);cursor:pointer;display:flex;flex:1;flex-direction:column;overflow:hidden;padding:0;position:relative;transition:border-color .2s,box-shadow .2s}.image-card-option:hover{border-color:var(--main-primary);box-shadow:0 2px 8px rgba(0,0,0,.08);transform:none}.image-card-option.selected{background-color:color-mix(in srgb,var(--main-primary) 5%,var(--main-bg));border-color:var(--main-primary);box-shadow:0 0 0 2px color-mix(in srgb,var(--main-primary) 20%,transparent)}.image-card-preview{background-color:var(--main-textarea-bg);border-bottom:1px solid var(--main-border);height:110px;padding:16px;transition:background-color .2s,border-bottom-color .2s}.image-card-preview,.schematic-container{align-items:center;display:flex;justify-content:center}.schematic-container{height:100%;width:100%}.schematic-card{align-items:center;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,.1);display:flex;gap:8px;height:60px;padding:8px;transition:background-color .2s;width:100px}.schematic-icon-box{border-radius:6px;flex-shrink:0;height:24px;width:24px}.schematic-lines{display:flex;flex:1;flex-direction:column;gap:6px}.schematic-line{border-radius:3px;height:6px;width:100%}.schematic-line.secondary{width:60%}.image-card-option[data-value=light] .image-card-preview{background-color:#f1f5f9}.image-card-option[data-value=light] .schematic-card{background-color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.05)}.image-card-option[data-value=light] .schematic-icon-box{background-color:#e2e8f0}.image-card-option[data-value=light] .schematic-line{background-color:#cbd5e1}.image-card-option[data-value=dark] .image-card-preview{background-color:#0f172a}.image-card-option[data-value=dark] .schematic-card{background-color:#1e293b;box-shadow:0 2px 8px rgba(0,0,0,.2)}.image-card-option[data-value=dark] .schematic-icon-box{background-color:#334155}.image-card-option[data-value=dark] .schematic-line{background-color:#475569}.image-card-option[data-value=system] .image-card-preview{background-color:#1e293b}.image-card-option[data-value=system] .schematic-card{background-color:#334155;border:1px solid #475569}.image-card-option[data-value=system] .schematic-icon-box{background-color:#475569}.image-card-option[data-value=system] .schematic-line{background-color:#64748b}.image-card-label{align-items:center;display:flex;font-size:14px;font-weight:500;justify-content:flex-start;padding:12px}.image-card-radio{align-items:center;background-color:transparent;border:1px solid var(--main-border);border-radius:50%;display:flex;flex-shrink:0;height:16px;justify-content:center;margin-right:8px;transition:all .2s;width:16px}.radio-dot{background-color:var(--main-primary);border-radius:50%;height:8px;opacity:0;transform:scale(0);transition:all .2s cubic-bezier(.4,0,.2,1);width:8px}.image-card-option.selected .image-card-radio{border-color:var(--main-primary)}.image-card-option.selected .radio-dot{opacity:1;transform:scale(1)}.image-card-label-icon{align-items:center;color:var(--main-text-secondary);display:flex;margin-left:4px}.image-card-option.selected .image-card-label-icon{color:var(--main-primary)}.image-card-label-icon svg{fill:currentColor;height:18px;width:18px}@media (prefers-color-scheme:light){.image-card-option[data-value=system] .image-card-preview{background-color:#f1f5f9}.image-card-option[data-value=system] .schematic-card{background-color:#fff;border:none;box-shadow:0 2px 8px rgba(0,0,0,.05)}.image-card-option[data-value=system] .schematic-icon-box{background-color:#e2e8f0}.image-card-option[data-value=system] .schematic-line{background-color:#cbd5e1}}@media (prefers-color-scheme:dark){.image-card-option[data-value=system] .image-card-preview{background-color:#0f172a}.image-card-option[data-value=system] .schematic-card{background-color:#1e293b;border:none;box-shadow:0 2px 8px rgba(0,0,0,.2)}.image-card-option[data-value=system] .schematic-icon-box{background-color:#334155}.image-card-option[data-value=system] .schematic-line{background-color:#475569}}.about-tab-container{align-items:center;display:flex;flex-direction:column;height:100%;justify-content:center;padding-bottom:40px;text-align:center}.about-logo{color:var(--main-primary);height:100px;margin-bottom:18px;width:100px}.about-logo svg{fill:currentColor;height:100%;width:100%}.about-title{color:var(--main-text);font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:24px;font-weight:700;margin:0 0 6px}.about-description{color:var(--main-text-secondary);font-size:14px;line-height:1.5;margin:0 0 24px;max-width:400px}.about-version{color:var(--main-text-secondary);font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:16px;margin:0 0 16px}.about-actions{display:flex;gap:16px}#about-github-btn svg{height:20px;width:20px}@media (max-width:900px){.settings-panel-modal{height:calc(100vh - 28px);max-height:none;width:calc(100vw - 28px)}.settings-sidebar{width:180px}.settings-sidebar-item{padding-inline:14px}#tab-ai.settings-tab-content{padding:24px}}@media (max-width:700px){.settings-panel-modal{border-radius:12px;height:calc(100vh - 16px);width:calc(100vw - 16px)}.settings-panel-header{padding:14px 16px}.settings-panel-body{flex-direction:column}.settings-sidebar{border-bottom:1px solid var(--main-border);border-right:0;flex-direction:row;overflow-x:auto;width:100%}.sidebar-highlight{display:none}.settings-sidebar-item{border-left:0;flex:0 0 auto;min-height:44px;padding:10px 12px}.settings-sidebar-item.active{background-color:color-mix(in srgb,var(--main-primary) 10%,transparent)}.settings-sidebar-item svg{height:20px;width:20px}#tab-ai.settings-tab-content,.settings-tab-content{padding:18px}.settings-panel-footer{padding:12px 16px}}.text-extractor-tooltip{background-color:var(--main-tooltip-bg);border:1px solid var(--main-border);border-radius:16px;box-shadow:0 2px 5px var(--main-shadow);color:var(--main-tooltip-text);font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:14px;font-weight:700;opacity:0;padding:8px 12px;pointer-events:none;position:fixed;transition:opacity .2s ease,visibility .2s;visibility:hidden;white-space:nowrap;z-index:2147483647}.text-extractor-tooltip.is-visible{opacity:1;visibility:visible}`;
+    styleElement.textContent = `:host{box-sizing:border-box;font-family:Menlo,Monaco,Cascadia Code,PingFang SC,monospace,sans-serif;font-size:16px;line-height:1.5;text-align:left;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;--color-bg:#fff;--color-text:#333;--color-text-secondary:#666;--color-border:#e0e0e0;--color-overlay-bg:rgba(0,0,0,.5);--color-shadow:rgba(0,0,0,.2);--color-primary:#1a73e8;--color-primary-hover:#185abc;--color-primary-text:#fff;--color-toast-bg:#333;--color-toast-text:#fff;--color-textarea-bg:#fff;--color-textarea-border:#ccc;--color-tooltip-bg:#333;--color-tooltip-text:#fff;--color-line-number-text:#888;--color-line-number-active-text:#000;--dark-color-bg:#2d2d2d;--dark-color-text:#f0f0f0;--dark-color-text-secondary:#aaa;--dark-color-border:#555;--dark-color-overlay-bg:rgba(0,0,0,.7);--dark-color-shadow:rgba(0,0,0,.4);--dark-color-primary:#1e90ff;--dark-color-primary-hover:#1c86ee;--dark-color-primary-text:#fff;--dark-color-toast-bg:#eee;--dark-color-toast-text:#111;--dark-color-textarea-bg:#3a3a3a;--dark-color-textarea-border:#666;--dark-color-tooltip-bg:#e0e0e0;--dark-color-tooltip-text:#111;--dark-color-line-number-text:#777;--dark-color-line-number-active-text:#fff;--color-scrollbar-thumb:#c1c1c1;--color-scrollbar-thumb-hover:#a8a8a8;--color-scrollbar-border:#fff;--dark-color-scrollbar-thumb:#555;--dark-color-scrollbar-thumb-hover:#777;--dark-color-scrollbar-border:#2d2d2d}*,:after,:before{box-sizing:inherit}button,input,optgroup,select,textarea{color:inherit;font-family:inherit;font-size:100%;line-height:1.15;margin:0}:host([data-theme=light]){--main-bg:var(--color-bg);--main-text:var(--color-text);--main-text-secondary:var(--color-text-secondary);--tc-secondary-text-color:var(--color-text-secondary);--main-border:var(--color-border);--main-overlay-bg:var(--color-overlay-bg);--main-shadow:var(--color-shadow);--main-primary:var(--color-primary);--main-primary-hover:var(--color-primary-hover);--main-primary-text:var(--color-primary-text);--main-toast-bg:var(--color-toast-bg);--main-toast-text:var(--color-toast-text);--main-textarea-bg:var(--color-textarea-bg);--main-textarea-border:var(--color-textarea-border);--main-tooltip-bg:var(--color-tooltip-bg);--main-tooltip-text:var(--color-tooltip-text);--main-disabled:#ccc;--main-disabled-text:#666;--main-line-number-text:var(--color-line-number-text);--main-line-number-active-text:var(--color-line-number-active-text);--tc-scrollbar-thumb-color:var(--color-scrollbar-thumb);--tc-scrollbar-thumb-hover-color:var(--color-scrollbar-thumb-hover);--tc-scrollbar-border-color:var(--color-scrollbar-border);--main-bg-a:hsla(0,0%,100%,.6)}:host([data-theme=dark]){--main-bg:var(--dark-color-bg);--main-text:var(--dark-color-text);--main-text-secondary:var(--dark-color-text-secondary);--tc-secondary-text-color:var(--dark-color-text-secondary);--main-border:var(--dark-color-border);--main-overlay-bg:var(--dark-color-overlay-bg);--main-shadow:var(--dark-color-shadow);--main-primary:var(--dark-color-primary);--main-primary-hover:var(--dark-color-primary-hover);--main-primary-text:var(--dark-color-primary-text);--main-toast-bg:var(--dark-color-toast-bg);--main-toast-text:var(--dark-color-toast-text);--main-textarea-bg:var(--dark-color-textarea-bg);--main-textarea-border:var(--dark-color-textarea-border);--main-tooltip-bg:var(--dark-color-tooltip-bg);--main-tooltip-text:var(--dark-color-tooltip-text);--main-disabled:#444;--main-disabled-text:#888;--main-line-number-text:var(--dark-color-line-number-text);--main-line-number-active-text:var(--dark-color-line-number-active-text);--tc-scrollbar-thumb-color:var(--dark-color-scrollbar-thumb);--tc-scrollbar-thumb-hover-color:var(--dark-color-scrollbar-thumb-hover);--tc-scrollbar-border-color:var(--dark-color-scrollbar-border);--main-bg-a:rgba(45,45,45,.6)}.ai-summary-panel{align-items:center;background:color-mix(in srgb,var(--main-primary) 5%,var(--main-bg));border:1px solid var(--main-border);border-radius:10px;column-gap:18px;display:none;flex:0 0 auto;flex-wrap:wrap;margin-bottom:10px;min-width:0;padding:8px 12px;row-gap:4px}.ai-summary-panel.is-visible{display:flex}.ai-output-tabs{display:none;gap:6px;margin-bottom:8px}.ai-output-tabs.is-visible{display:flex}.ai-output-tab{background:var(--main-bg);border:1px solid var(--main-border);border-radius:7px;color:var(--main-text-secondary);cursor:pointer;font:inherit;font-size:12px;padding:5px 11px}.ai-output-tab.is-active,.ai-output-tab:hover{background:color-mix(in srgb,var(--main-primary) 10%,var(--main-bg));border-color:var(--main-primary);color:var(--main-text)}.ai-output-tab.is-active{font-weight:700}.ai-summary-status{align-items:center;color:var(--main-text);display:flex;flex:0 0 auto;font-size:13px;font-weight:700;gap:12px;line-height:20px;min-height:22px;white-space:nowrap}.ai-status-dot{background:var(--main-disabled-text);border-radius:50%;flex:0 0 8px;height:8px;width:8px}.ai-status-dot.is-active{background:#22a559;box-shadow:0 0 0 3px color-mix(in srgb,#22a559 18%,transparent)}.ai-status-dot.is-paused{background:#d18b16;box-shadow:0 0 0 3px color-mix(in srgb,#d18b16 18%,transparent)}.ai-summary-counts{align-items:center;color:var(--main-text-secondary);display:flex;flex:1 1 auto;flex-wrap:wrap;min-width:0}.ai-count-badge{align-items:baseline;border-left:1px solid color-mix(in srgb,var(--main-border) 80%,transparent);color:var(--main-text-secondary);display:inline-flex;font-size:13px;gap:5px;line-height:18px;min-height:20px;padding:2px 10px;white-space:nowrap}.ai-count-badge:first-child{border-left:0;padding-left:0}.ai-count-label{white-space:nowrap}.ai-count-value{color:var(--main-text-secondary);font-size:13px;font-variant-numeric:tabular-nums;font-weight:700}.ai-count-pending.is-nonzero .ai-count-value{color:color-mix(in srgb,var(--main-primary) 88%,var(--main-text))}.ai-count-translated.is-nonzero .ai-count-value{color:color-mix(in srgb,#238b57 88%,var(--main-text))}.ai-count-review.is-nonzero .ai-count-value{color:color-mix(in srgb,#b45309 88%,var(--main-text))}.ai-count-failed.is-nonzero .ai-count-value{color:color-mix(in srgb,#c2413a 88%,var(--main-text))}.ai-summary-notice{border-top:1px solid color-mix(in srgb,var(--main-border) 72%,transparent);color:var(--main-text-secondary);flex:1 0 100%;font-size:13px;line-height:18px;margin-top:2px;padding-top:5px}.ai-summary-notice.is-processing{border-top:0;flex:0 1 auto;margin:0 0 0 auto;max-width:min(34%,280px);min-width:0;overflow:hidden;padding:0 0 0 12px;text-align:right;text-overflow:ellipsis;white-space:nowrap}.ai-summary-notice.is-error{color:color-mix(in srgb,#c2413a 88%,var(--main-text))}.ai-review-list{border-top:1px solid var(--main-border);flex:1 0 100%;margin-top:2px;padding-top:6px}.ai-review-list summary{cursor:pointer;font-weight:600}.ai-review-item{border-bottom:1px solid var(--main-border);display:grid;font-size:12px;gap:12px;grid-template-columns:minmax(0,2fr) minmax(120px,1fr);padding:8px 0}.ai-review-source{overflow-wrap:anywhere}.ai-review-reason{color:var(--main-text-secondary)}.ai-retry-btn,.ai-submit-btn{display:none}.ai-retry-btn.is-visible,.ai-submit-btn.is-visible{display:inline-flex}.ai-settings-mount{--ai-content-gap:20px}.ai-settings-controls,.ai-settings-mount{display:flex;flex-direction:column;gap:28px}.ai-settings-controls{filter:grayscale(0);opacity:1;transition:opacity .2s ease,filter .2s ease}.ai-settings-controls.is-disabled{cursor:not-allowed;filter:grayscale(.45);opacity:.42;pointer-events:none;user-select:none}.ai-settings-controls.is-disabled *{cursor:not-allowed}.ai-beta-badge{align-items:center;background:color-mix(in srgb,var(--main-warning,#d97706) 16%,transparent);border-radius:999px;color:var(--main-warning,#d97706);display:inline-flex;font-size:11px;font-weight:700;line-height:18px;margin-left:8px;padding:1px 8px;vertical-align:middle}.ai-settings-mount .ai-beta-notice{margin:0}.ai-settings-section{border-bottom:1px solid var(--main-border);padding:0 0 28px}.ai-settings-section:last-child{border-bottom:0;padding-bottom:4px}.ai-section-header{color:var(--main-text);font-size:17px;margin:0 0 18px}.ai-section-header svg{fill:currentColor;height:22px;width:22px}.ai-section-header .tc-icon-title-icon{flex-basis:22px;height:22px;width:22px}.ai-section-header .icon-title-text{line-height:22px}.ai-section-body{display:flex;flex-direction:column;gap:var(--ai-content-gap)}.ai-form-grid{display:grid;gap:18px 20px;grid-template-columns:repeat(2,minmax(0,1fr))}.ai-budget-grid,.ai-general-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.ai-field-wide{grid-column:1/-1}.ai-settings-mount .ai-number-field{align-items:stretch;display:flex;flex-direction:column;gap:8px}.ai-number-field .numeric-input{font-variant-numeric:tabular-nums;min-height:42px;padding:9px 12px;width:100%}.ai-provider-toolbar{align-items:end;display:flex;gap:16px}.ai-provider-picker{flex:1 1 340px}.ai-compact-actions{display:flex;flex:0 0 auto;gap:10px}.ai-provider-key-row{align-items:end;display:grid;gap:12px;grid-template-columns:minmax(0,1fr) auto auto}.ai-provider-test-description,.ai-style-description{margin:0}.ai-action-footer{align-items:center;border-top:1px solid color-mix(in srgb,var(--main-border) 72%,transparent);display:flex;gap:16px;justify-content:space-between;min-height:42px;padding-top:16px}.ai-action-footer-end{justify-content:flex-end}.ai-provider-status{color:var(--main-text-secondary);font-size:13px;line-height:1.5;min-width:0}.ai-provider-status[data-state=success]{color:#36a269}.ai-provider-status[data-state=error]{color:#d95757}.ai-provider-footer[hidden]{display:none}.ai-style-advanced-form{grid-template-columns:repeat(2,minmax(0,1fr))}.tc-disclosure.ai-style-advanced{background-color:color-mix(in srgb,var(--main-textarea-bg) 64%,var(--main-bg));border-color:var(--main-border);border-radius:12px}.ai-style-advanced .tc-disclosure-trigger{font-size:14px;min-height:48px;padding:12px 14px}.ai-style-advanced .tc-disclosure-trigger>.tc-icon-title{min-height:20px}.ai-style-advanced .tc-disclosure-content{background-color:color-mix(in srgb,var(--main-bg) 76%,transparent);padding:18px}.ai-style-toolbar,.ai-style-workspace{display:flex;flex-direction:column;gap:20px}.ai-style-workspace{align-items:start}.ai-style-editor,.ai-style-library{background-color:color-mix(in srgb,var(--main-textarea-bg) 64%,var(--main-bg));border:1px solid var(--main-border);border-radius:12px;min-width:0;padding:18px;width:100%}.ai-subsection-title{color:var(--main-text);font-size:14px;font-weight:700;margin-bottom:14px}.ai-subsection-title svg{fill:currentColor;height:19px;width:19px}.ai-style-list{background-color:var(--main-bg);border:1px solid var(--main-border);border-radius:10px;max-height:340px;min-height:180px;overflow-y:auto}.ai-style-row{align-items:center;background:transparent;border:0;border-bottom:1px solid var(--main-border);color:var(--main-text);cursor:pointer;display:flex;gap:10px;justify-content:space-between;min-height:48px;padding:10px 12px;text-align:left;transition:background-color .2s,color .2s,transform .15s;width:100%}.ai-style-row:hover{background:color-mix(in srgb,var(--main-primary) 8%,transparent)}.ai-style-row:active{transform:scale(.98)}.ai-style-row:focus-visible{outline:2px solid color-mix(in srgb,var(--main-primary) 72%,transparent);outline-offset:-2px;position:relative;z-index:1}.ai-style-row.is-active{background-color:color-mix(in srgb,var(--main-primary) 12%,var(--main-bg));color:var(--main-primary)}.ai-style-row>div{min-width:0}.ai-style-row .icon-title-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ai-style-row svg{fill:currentColor;flex:0 0 auto;height:18px;width:18px}.ai-style-row-meta{color:var(--main-text-secondary);flex:0 0 auto;font-size:11px}.ai-style-empty{color:var(--main-text-secondary);display:grid;font-size:13px;min-height:180px;padding:20px;place-items:center;text-align:center}.ai-style-library-footer{display:flex;justify-content:flex-end;margin-top:14px}.ai-style-actions{flex-wrap:wrap;justify-content:flex-end}@media (max-width:1100px){.ai-budget-grid,.ai-general-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.ai-style-list{max-height:220px}}@media (max-width:700px){.ai-summary-panel{row-gap:2px}.ai-summary-notice.is-processing{border-top:1px solid color-mix(in srgb,var(--main-border) 72%,transparent);flex-basis:100%;margin-left:0;max-width:none;padding:4px 0 0;text-align:left}.ai-settings-mount{gap:24px}.ai-budget-grid,.ai-form-grid,.ai-general-grid,.ai-review-item,.ai-style-advanced-form{grid-template-columns:1fr}.ai-provider-toolbar{align-items:stretch;flex-direction:column}.ai-provider-key-row{grid-template-columns:1fr}.ai-provider-picker{flex-basis:auto}.ai-action-footer{align-items:stretch;flex-direction:column}.ai-compact-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.ai-action-footer-end,.ai-style-actions{align-items:flex-end}.ai-style-editor,.ai-style-library{padding:16px}.text-extractor-modal-footer{align-items:flex-start;flex-direction:column;gap:10px}}@media (max-width:450px){.ai-compact-actions{grid-template-columns:1fr}}@media (prefers-reduced-motion:reduce){.ai-style-row{transition:none}}.confirmation-modal-overlay{align-items:center;background-color:var(--main-overlay-bg);display:flex;height:100%;justify-content:center;left:0;opacity:0;pointer-events:none;position:fixed;top:0;transition:opacity .3s ease,visibility .3s ease;visibility:hidden;width:100%;z-index:2147483647}.confirmation-modal-overlay.is-visible{opacity:1;pointer-events:auto;visibility:visible}.confirmation-modal-content{background-color:var(--main-bg);border-radius:16px;box-shadow:0 10px 30px var(--main-shadow);color:var(--main-text);font-family:Menlo,Monaco,Cascadia Code,PingFang SC;padding:30px;text-align:center;transform:scale(.95);transition:transform .3s ease;width:400px}.confirmation-modal-overlay.is-visible .confirmation-modal-content{transform:scale(1)}.confirmation-modal-icon{margin-bottom:20px}.confirmation-modal-icon svg{fill:var(--main-text);height:56px;width:56px}.confirmation-modal-text{font-size:16px;line-height:1.6;margin:0 0 25px}.confirmation-modal-buttons{display:flex;gap:15px;justify-content:center}.confirmation-modal-button{border:none;border-radius:9999px;cursor:pointer;font-size:14px;font-weight:700;padding:12px 24px;transition:background-color .2s ease,transform .2s ease}.confirmation-modal-button.confirm{background-color:var(--main-primary);color:var(--main-primary-text)}.confirmation-modal-button.confirm:hover{background-color:var(--main-primary-hover)}.confirmation-modal-button.cancel{background-color:transparent;border:1px solid var(--main-border);color:var(--main-text)}.confirmation-modal-button.cancel:hover{background-color:var(--main-shadow)}.counter-with-help-container{align-items:center;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);background-color:var(--main-bg-a);border:1px solid var(--main-border);border-radius:24px;box-shadow:var(--main-shadow);box-sizing:border-box;display:flex;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;gap:12px;height:42px;left:50%;opacity:0;padding:8px 12px;pointer-events:all;position:fixed;top:20px;transform:translate(-50%,-150%);transition:transform .4s var(--easing-standard,cubic-bezier(.4,0,.2,1)),opacity .4s var(--easing-standard,cubic-bezier(.4,0,.2,1));z-index:2147483645}.counter-with-help-container.is-visible{opacity:1;transform:translate(-50%)}.counter-with-help-separator{background-color:var(--main-border);height:16px;width:1px}.counter-with-help-container .tc-icon-button,.counter-with-help-container .tc-top-center-counter{backdrop-filter:none;-webkit-backdrop-filter:none;background-color:transparent;border:none;box-shadow:none;margin:0;opacity:1;padding:0;position:static;transform:none;transition:none}.counter-with-help-container .tc-icon-button{align-items:center;border-radius:50%;color:var(--main-text-secondary);display:flex;height:32px;justify-content:center;position:relative;transition:color .2s,background-color .2s;width:32px}.counter-with-help-container .tc-icon-button:hover{background-color:var(--main-border);color:var(--main-text)}.counter-with-help-container .tc-icon-button svg{fill:currentColor;height:20px;left:50%;position:absolute;top:50%;transform:translate(-50%,-50%);transition:opacity .3s ease-in-out;width:20px}.counter-actions-container{align-items:center;display:flex;gap:4px}.counter-with-help-container .tc-top-center-counter{font-size:14px;font-weight:500;margin-left:9px}.counter-with-help-container .tc-top-center-counter span{color:var(--main-primary);font-size:16px;font-weight:700;margin-left:6px;margin-right:2px}.custom-select-container{position:relative;user-select:none;width:100%}.custom-select-trigger{align-items:center;background-color:var(--main-textarea-bg);border:1px solid var(--main-textarea-border);border-radius:12px;box-sizing:border-box;color:var(--main-text);cursor:pointer;display:flex;font-size:15px;font-weight:500;gap:12px;justify-content:space-between;min-height:42px;padding:7px 10px;transition:border-color .2s,box-shadow .2s}.selected-option-content{align-items:center;display:flex;flex:1 1 auto;min-width:0}.custom-select-option>.tc-icon-title,.selected-option-content>.tc-icon-title{align-items:center;line-height:20px;min-height:20px}.selected-option-content>.tc-icon-title{width:100%}.custom-select-option .icon-title-text,.custom-select-trigger .icon-title-text{line-height:20px}.custom-select-trigger:focus-visible{outline:2px solid color-mix(in srgb,var(--main-primary) 72%,transparent);outline-offset:2px}.custom-select-trigger:hover{border-color:var(--main-primary);box-shadow:0 0 0 2px rgba(30,144,255,.1)}.custom-select-container.open .custom-select-trigger{border-color:var(--main-primary);box-shadow:0 0 0 2px rgba(30,144,255,.2)}.custom-select-arrow{align-items:center;display:flex;flex:0 0 20px;height:20px;justify-content:center;transform-origin:center;transition:transform .3s ease;width:20px}.custom-select-container.open .custom-select-arrow{transform:rotate(180deg)}.custom-select-options{background-color:var(--main-bg);border:1px solid var(--main-border);border-radius:12px;box-shadow:0 4px 12px var(--main-shadow);left:0;max-height:0;opacity:0;overflow:hidden;position:absolute;right:0;top:calc(100% + 4px);transition:max-height .2s ease-out,opacity .2s ease-out,visibility 0s .2s;visibility:hidden;z-index:2147483647}.custom-select-container.open .custom-select-options{max-height:200px;opacity:1;transition:max-height .2s ease-out,opacity .2s ease-out;visibility:visible}.custom-select-option{align-items:center;cursor:pointer;display:flex;gap:8px;min-height:40px;padding:8px 12px;transition:background-color .2s}.custom-select-option svg,.custom-select-trigger svg{display:block;fill:currentColor;height:20px;width:20px}.custom-select-arrow svg{height:18px;width:18px}.custom-select-option:hover{background-color:var(--main-border)}.custom-select-option.selected{color:var(--main-primary);font-weight:600}.custom-select-option .option-icon,.custom-slider-container{align-items:center;display:flex}.custom-slider-container{flex-direction:column;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;width:100%}.custom-slider-info-text{color:var(--main-text-secondary);font-size:15px;font-weight:500;margin:12px 0 0}.custom-slider-wrapper{align-items:center;display:flex;gap:8px;height:20px;margin:5px 0;width:100%}.custom-slider-label{color:var(--main-text-secondary);font-size:12px;user-select:none;white-space:nowrap}.custom-slider-track{background-color:var(--main-textarea-bg);border:1px solid var(--main-textarea-border);border-radius:4px;cursor:pointer;flex-grow:1;height:8px;position:relative}.custom-slider-ticks{align-items:center;box-sizing:border-box;display:flex;height:100%;justify-content:space-between;left:0;padding:0 4px;pointer-events:none;position:absolute;right:0}.custom-slider-tick{background-color:var(--main-border);border-radius:50%;height:4px;width:4px}.custom-slider-thumb{background-color:var(--main-primary);border:2px solid var(--main-bg);border-radius:50%;box-shadow:0 2px 4px var(--main-shadow);cursor:grab;height:18px;position:absolute;top:50%;transform:translateY(-50%);transition:transform .1s ease-out,left .1s ease-out;width:18px;will-change:transform,left}.custom-slider-thumb:hover{transform:translateY(-50%) scale(1.1)}.custom-slider-thumb.is-dragging{cursor:grabbing;transform:translateY(-50%) scale(1.2)}.tc-dropdown-menu{animation:slide-up-fade-in .3s ease forwards;background-color:var(--color-bg);border:1px solid var(--color-border);border-radius:16px;bottom:calc(100% + 8px);box-shadow:0 5px 15px var(--main-shadow);display:none;min-width:100%;overflow:hidden;position:absolute;right:51%;width:max-content;z-index:2147483647}.tc-dropdown-menu.visible{display:block}.tc-dropdown-menu button{align-items:center;background-color:transparent;border:none;color:var(--main-text);cursor:pointer;display:flex;font-size:14px;gap:12px;padding:10px 16px;text-align:left;transition:background-color .2s ease;width:100%}.tc-dropdown-menu button:hover{background-color:#f0f0f0}:host([data-theme=dark]) .tc-dropdown-menu{background-color:var(--dark-color-bg);border-color:var(--dark-color-border)}:host([data-theme=dark]) .tc-dropdown-menu button:hover{background-color:hsla(0,0%,100%,.1)}.tc-export-btn-container{position:relative}@keyframes slide-up-fade-in{0%{opacity:0;transform:translateY(10px) translateX(50%)}to{opacity:1;transform:translateY(0) translateX(50%)}}@keyframes slide-down-fade-out{0%{opacity:1;transform:translateY(0) translateX(50%)}to{opacity:0;transform:translateY(10px) translateX(50%)}}.tc-dropdown-menu.is-hiding{animation:slide-down-fade-out .3s ease forwards}#element-scan-container{opacity:0;pointer-events:none;position:absolute;transition:all .2s cubic-bezier(.19,1,.22,1),opacity .2s ease-in-out,visibility 0s linear .2s;visibility:hidden;z-index:2147483644}#element-scan-highlight-border{background-color:rgba(52,152,219,.2);border:4px solid #3498db;border-radius:6px 6px 6px 0;box-sizing:border-box;height:100%;width:100%}#element-scan-tag-name{background-color:#3498db;border-radius:0 0 6px 6px;color:#fff;font-size:12px;left:0;padding:4px 8px;position:absolute;top:100%;transition:background-color .1s ease-out,opacity .2s ease-out;white-space:nowrap;z-index:1}#element-scan-tag-name,#element-scan-toolbar{font-family:Menlo,Monaco,Cascadia Code,PingFang SC;pointer-events:auto}#element-scan-toolbar{background-color:var(--main-bg);border:1px solid var(--main-border);border-radius:20px;box-shadow:0 4px 12px rgba(0,0,0,.15);cursor:move;display:flex;flex-direction:column;opacity:0;padding:16px;position:fixed;transform:scale(.95);transition:opacity .2s cubic-bezier(.19,1,.22,1),transform .2s cubic-bezier(.19,1,.22,1),visibility 0s linear .2s;visibility:hidden;width:fit-content;z-index:2147483645}#element-scan-container.is-visible,#element-scan-toolbar.is-visible{opacity:1;transform:scale(1);transition-delay:0s;visibility:visible}#element-scan-toolbar-tag,#element-scan-toolbar-title,.custom-slider-info-text{user-select:none}#element-scan-toolbar-title{font-size:20px;margin-bottom:16px}#element-scan-toolbar-tag,#element-scan-toolbar-title{color:var(--main-text);font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-weight:700;text-align:center}#element-scan-toolbar-tag{border-radius:4px;font-size:14px;padding:0 8px;transition:opacity .1s ease-in-out}#element-scan-slider-container{min-width:380px}#element-scan-level-slider{width:100%}#element-scan-toolbar-actions{display:flex;gap:6px;justify-content:space-between;white-space:nowrap}#element-scan-toolbar-actions button{align-items:center;border:none;border-radius:20px;color:var(--main-primary-text);cursor:pointer;display:flex;flex-grow:1;font-size:15px;gap:6px;justify-content:center;margin:6px 0 0;padding:10px 16px;transition:background-color .1s ease-in-out,transform .1s ease-in-out}#element-scan-toolbar-actions button:active{transform:scale(.95)}#element-scan-toolbar-confirm:hover{background-color:#27ae60}#element-scan-toolbar-confirm{background-color:#2ecc71}#element-scan-toolbar-cancel:hover{background-color:#c0392b}#element-scan-toolbar-cancel{background-color:#e74c3c}#element-scan-toolbar-reselect{background-color:var(--main-primary)}#element-scan-toolbar-reselect:hover{background-color:var(--main-primary-hover)}#element-scan-toolbar-stage:hover{background-color:#7f8c8d}#element-scan-toolbar-stage{background-color:#95a5a6}.text-extractor-fab.is-recording{animation:tc-breathing 2s ease-in-out infinite;background-color:#f39c12}.text-extractor-fab.is-recording:hover{background-color:#e67e22}@keyframes scan-pulse{0%{box-shadow:0 0 0 0 rgba(243,156,18,.7)}50%{box-shadow:0 0 0 4px rgba(243,156,18,.5)}to{box-shadow:0 0 0 10px rgba(243,156,18,0)}}@keyframes scan-confirm-flash{0%{box-shadow:0 0 0 0 rgba(46,204,113,.7)}50%{box-shadow:0 0 0 4px rgba(46,204,113,.5)}to{box-shadow:0 0 0 10px rgba(46,204,113,0)}}#element-scan-container.is-locked #element-scan-highlight-border{animation:scan-pulse .5s cubic-bezier(.25,.8,.25,1);background-color:rgba(243,156,18,.1);border-color:#f39c12}#element-scan-container.is-confirmed #element-scan-highlight-border{animation:scan-confirm-flash .5s cubic-bezier(.25,.8,.25,1) forwards;background-color:rgba(46,204,113,.1);border-color:#2ecc71}#element-scan-container.is-confirmed #element-scan-tag-name{opacity:0;transition:opacity .2s ease-out}#element-scan-container.is-error #element-scan-highlight-border{animation:scan-error-pulse .5s cubic-bezier(.25,.8,.25,1)}@keyframes scan-error-pulse{0%{box-shadow:0 0 0 0 rgba(231,76,60,.7);transform:scale(1)}50%{box-shadow:0 0 0 4px rgba(231,76,60,.5);transform:scale(1.03)}to{box-shadow:0 0 0 10px rgba(231,76,60,0);transform:scale(1)}}#element-scan-container.is-error #element-scan-highlight-border{animation:scan-error-pulse .6s cubic-bezier(.25,.8,.25,1);background-color:rgba(231,76,60,.1);border-color:#e74c3c}#element-scan-container.is-locked #element-scan-tag-name{background-color:#f39c12}#element-scan-container.is-error #element-scan-tag-name{background-color:#e74c3c}#element-scan-container.is-confirmed #element-scan-tag-name{background-color:#2ecc71}.fab-position-top-right{transform:translate(-30px,30px)}.fab-position-bottom-right{transform:translate(-30px,calc(100vh - 100% - 30px))}.fab-position-top-left{transform:translate(calc(-100vw + 100% + 30px + var(--scrollbar-width)),30px)}.fab-position-bottom-left{transform:translate(calc(-100vw + 100% + 30px + var(--scrollbar-width)),calc(100vh - 100% - 30px))}.code-preview{align-items:center;display:flex;height:100%;justify-content:center;padding:10px;width:100%}.code-preview .wrapper-bracket,.code-preview .wrapper-indent{display:inline;opacity:1;transition:opacity .2s ease-in-out}.code-preview.hide-brackets .wrapper-bracket,.code-preview.hide-brackets .wrapper-indent{opacity:0}.code-text-preview{color:var(--main-text-secondary);font-family:Menlo,Monaco,Consolas,Courier New,monospace;font-size:14px;line-height:1.4;overflow:hidden;text-align:left;white-space:nowrap}.image-card-option.selected .code-text-preview{color:var(--main-text)}.code-text-preview .punct{color:var(--main-text-secondary);font-weight:700}.code-text-preview .str{color:var(--main-primary)}.image-card-option.selected .code-text-preview .punct{color:var(--main-text)}.tc-button{background-color:var(--main-primary);border:none;border-radius:999px;color:var(--main-primary-text);cursor:pointer;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:16px;font-weight:500;justify-content:center;line-height:1;min-height:42px;padding:10px 20px;touch-action:manipulation;transition:background-color .2s,transform .15s,box-shadow .2s}.tc-button,.tc-icon-title{align-items:center;display:inline-flex}.tc-icon-title{gap:8px;line-height:20px;min-width:0}.tc-icon-title-icon{align-items:center;display:inline-flex;flex:0 0 20px;height:20px;justify-content:center;width:20px}.tc-icon-title-icon svg{display:block;fill:currentColor;height:100%;width:100%}.icon-title-text{display:block;line-height:20px;min-width:0}.tc-button>.tc-icon-title{line-height:20px;min-height:20px;white-space:nowrap}.tc-button svg{display:block;fill:currentColor;flex:0 0 auto;height:20px;width:20px}.tc-icon-title-icon svg.is-icon-entering,.tc-icon-title-icon svg.is-icon-leaving{inset:0;position:absolute;transition:opacity .2s ease}.tc-icon-title-icon.is-changing{position:relative}.tc-button:focus-visible{outline:2px solid color-mix(in srgb,var(--main-primary) 72%,transparent);outline-offset:2px}.tc-button:hover{background-color:var(--main-primary-hover);box-shadow:0 2px 8px rgba(0,0,0,.15)}.tc-button:active{transform:scale(.97)}.tc-button:disabled{background-color:var(--main-disabled);box-shadow:none;color:var(--main-disabled-text);cursor:not-allowed}.tc-toggle-setting{align-items:center;background:var(--main-bg);border:1px solid var(--main-border);border-radius:12px;color:var(--main-text);cursor:pointer;display:grid;gap:20px;grid-template-columns:minmax(0,1fr) auto;min-height:72px;padding:14px 16px}.tc-toggle-copy{display:flex;flex-direction:column;gap:5px;min-width:0}.tc-toggle-title{font-size:15px;font-weight:700}.tc-toggle-description{color:var(--main-text-secondary);font-size:13px;line-height:1.5}.tc-toggle-input{height:1px;opacity:0;pointer-events:none;position:absolute;width:1px}.tc-toggle-control{background:var(--main-disabled);border-radius:999px;height:26px;position:relative;transition:background-color .2s,box-shadow .2s;width:48px}.tc-toggle-control:after{background:var(--main-primary-text);border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,.28);content:"";height:20px;left:3px;position:absolute;top:3px;transition:transform .2s;width:20px}.tc-toggle-input:checked+.tc-toggle-control{background:var(--main-primary)}.tc-toggle-input:checked+.tc-toggle-control:after{transform:translateX(22px)}.tc-toggle-input:focus-visible+.tc-toggle-control{box-shadow:0 0 0 3px color-mix(in srgb,var(--main-primary) 25%,transparent)}.tc-disclosure{background:var(--main-bg);border:1px solid var(--main-border);border-radius:10px;overflow:hidden}.tc-disclosure-trigger{align-items:center;background:transparent;border:0;color:var(--main-text);cursor:pointer;display:flex;font-size:14px;font-weight:700;gap:16px;justify-content:space-between;min-height:44px;padding:10px 14px;text-align:left;width:100%}.tc-disclosure-trigger:hover{background:color-mix(in srgb,var(--main-primary) 7%,transparent)}.tc-disclosure-trigger:focus-visible{outline:2px solid color-mix(in srgb,var(--main-primary) 72%,transparent);outline-offset:-2px}.tc-disclosure-arrow{display:grid;flex:0 0 20px;height:20px;place-items:center;transition:transform .2s ease;width:20px}.tc-disclosure-arrow svg{display:block;fill:currentColor;height:20px;width:20px}.tc-disclosure-trigger[aria-expanded=true] .tc-disclosure-arrow{transform:rotate(180deg)}.tc-disclosure-content{border-top:1px solid var(--main-border);padding:16px}.tc-disclosure-content[hidden]{display:none}.tc-field-group{display:flex;flex-direction:column;gap:8px;min-width:0}.numeric-input-label,.tc-field-label{color:var(--main-text);font-size:14px;font-weight:600;line-height:1.4}.tc-text-input{background-color:var(--main-textarea-bg);border:1px solid var(--main-textarea-border);border-radius:10px;color:var(--main-text);font-family:inherit;font-size:14px;line-height:1.45;min-height:42px;padding:9px 12px;transition:border-color .2s,box-shadow .2s;width:100%}.tc-text-input:hover{border-color:color-mix(in srgb,var(--main-primary) 60%,var(--main-textarea-border))}.tc-text-input:focus{border-color:var(--main-primary);box-shadow:0 0 0 2px color-mix(in srgb,var(--main-primary) 18%,transparent);outline:none}.tc-text-input-multiline{min-height:104px;resize:vertical}.tc-textarea{background-color:var(--main-textarea-bg);border:1px solid var(--main-textarea-border);border-radius:8px;box-sizing:border-box;color:var(--main-text);font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:14px;height:100%;line-height:1.5;padding:12px 18px 12px 12px;resize:none;width:100%}.tc-textarea:focus{outline:none}.tc-textarea::-webkit-scrollbar-thumb{background-color:var(--main-border)}.tc-textarea::-webkit-scrollbar-thumb:hover{background-color:var(--main-primary)}.tc-textarea::-webkit-scrollbar-button{display:none}.tc-select{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:var(--main-textarea-bg);background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='currentColor' viewBox='0 0 16 16'%3E%3Cpath d='M8 11 2 5h12z'/%3E%3C/svg%3E");background-position:right 12px center;background-repeat:no-repeat;background-size:12px;border:1px solid var(--main-textarea-border);border-radius:8px;color:var(--main-text);cursor:pointer;display:block;font-size:14px;padding:10px 36px 10px 12px;transition:border-color .2s,box-shadow .2s;width:100%}.tc-select:hover{border-color:var(--main-primary);box-shadow:0 0 0 2px var(--main-primary-hover-bg,rgba(30,144,255,.1))}.info-tooltip-overlay{align-items:center;background-color:var(--main-overlay-bg);display:flex;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;height:100%;justify-content:center;left:0;opacity:0;pointer-events:none;position:fixed;top:0;transition:opacity .3s ease,visibility .3s;visibility:hidden;width:100%;z-index:2147483647}.info-tooltip-overlay.is-visible{opacity:1;pointer-events:auto;visibility:visible}.info-tooltip-modal{background-color:var(--main-bg);border:1px solid var(--main-border);border-radius:16px;box-shadow:0 5px 15px var(--main-shadow);color:var(--main-text);display:flex;flex-direction:column;max-height:80vh;max-width:80vw;overflow:hidden;padding:0;position:relative;transform:scale(.95);transition:transform .3s ease;width:480px}.info-tooltip-overlay.is-visible .info-tooltip-modal{transform:scale(1)}.info-tooltip-header{align-items:center;border-bottom:1px solid var(--main-border);display:flex;justify-content:space-between;padding:20px}.info-tooltip-title-container{align-items:center;display:flex;gap:10px}.info-tooltip-title-icon{color:var(--secondary-text);height:20px;width:20px}.info-tooltip-title{font-size:18px;font-weight:700;margin:0}.info-tooltip-close{align-items:center;background-color:transparent;border-radius:50%;color:var(--main-text);cursor:pointer;display:flex;height:32px;justify-content:center;transition:background-color .2s,transform .15s;width:32px}.info-tooltip-close:hover{background-color:var(--main-border)}.info-tooltip-close:active{transform:scale(.9)}.info-tooltip-close svg{height:18px;width:18px}.info-tooltip-content{overflow-y:auto;padding:24px}.info-tooltip-content p{font-size:16px;line-height:1.7;margin:0 0 15px}.info-tooltip-content p:last-child{margin-bottom:0}.info-tooltip-content strong{color:var(--primary-accent);font-weight:600}.info-tooltip-image{animation:fadeIn .3s forwards;border-radius:8px;display:block;height:auto;margin-left:auto;margin-right:auto;margin-top:10px;max-width:100%;opacity:0}.info-icon{align-items:center;border-radius:50%;color:var(--secondary-text);cursor:pointer;display:inline-flex;height:20px;justify-content:center;margin-left:8px;transition:background-color .2s,color .2s;vertical-align:text-bottom;width:20px}.info-icon:hover{background-color:var(--main-border);color:var(--primary-accent)}.info-icon svg{height:16px;width:16px}kbd{background-color:var(--main-bg);border:solid var(--main-border);border-radius:4px;border-width:1px 1px 3px;box-shadow:0 1px 1px var(--main-shadow);color:var(--main-text);display:inline-block;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:.85em;font-weight:700;line-height:1;margin:0 5px;padding:3px 6px;position:relative;top:-3px;vertical-align:baseline;white-space:nowrap}.gm-loading-overlay{align-items:center;background-color:hsla(0,0%,50%,.2);display:flex;height:100%;justify-content:center;left:0;opacity:0;position:absolute;top:0;transition:opacity .2s,visibility .2s;visibility:hidden;width:100%;z-index:10}.gm-loading-overlay.is-visible{opacity:1;visibility:visible}.gm-loading-spinner svg{color:var(--color-icon);height:48px;width:48px}.text-extractor-fab-container{align-items:center;display:flex;flex-direction:column;gap:0;opacity:0;pointer-events:none;position:fixed;right:0;top:0;transform-origin:top right;transition:opacity .3s ease,visibility .3s,transform .3s ease-in-out;visibility:hidden;z-index:2147483645}.text-extractor-fab-container.fab-container-visible{opacity:1;visibility:visible}.text-extractor-fab{align-items:center;background-color:var(--main-primary);border:1px solid var(--main-border);border-radius:50%;box-shadow:0 4px 8px var(--main-shadow);box-sizing:border-box;color:var(--main-primary-text);cursor:pointer;display:flex;flex:0 0 auto;height:56px;justify-content:center;margin-top:12px;max-height:56px;overflow:hidden;pointer-events:auto;position:relative;transform-origin:center;transition:background-color .3s,height .3s var(--easing-standard,cubic-bezier(.4,0,.2,1)),max-height .3s var(--easing-standard,cubic-bezier(.4,0,.2,1)),margin-top .3s var(--easing-standard,cubic-bezier(.4,0,.2,1)),opacity .2s ease,transform .2s,box-shadow .3s,color .3s,visibility 0s;width:56px}.text-extractor-fab:first-child{margin-top:0}.text-extractor-fab:hover{background-color:var(--main-primary-hover);box-shadow:0 6px 12px var(--main-shadow);transform:scale(1.05)}.text-extractor-fab.fab-feature-hidden{border-width:0;height:0;margin-top:0;max-height:0;opacity:0;pointer-events:none;transform:scale(.72);transition:height .3s var(--easing-standard,cubic-bezier(.4,0,.2,1)),max-height .3s var(--easing-standard,cubic-bezier(.4,0,.2,1)),margin-top .3s var(--easing-standard,cubic-bezier(.4,0,.2,1)),opacity .18s ease,transform .2s ease,visibility 0s .3s;visibility:hidden}.text-extractor-fab:active{transform:scale(.95);transition-duration:.1s}.text-extractor-fab svg{fill:currentColor;height:26px;width:26px}.text-extractor-modal-overlay{align-items:center;background-color:var(--main-overlay-bg);display:flex;height:100%;justify-content:center;left:0;opacity:0;pointer-events:none;position:fixed;top:0;transition:opacity .3s ease,visibility .3s;visibility:hidden;width:100%;z-index:2147483646}.text-extractor-modal-overlay.is-visible{opacity:1;pointer-events:auto;visibility:visible}.text-extractor-modal{background-color:var(--main-bg);border-radius:16px;box-shadow:0 5px 15px var(--main-shadow);color:var(--main-text);display:flex;flex-direction:column;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;height:min(760px,calc(100vh - 56px));max-height:90vh;max-width:960px;transform:scale(.95);transition:transform .3s ease;width:min(960px,calc(100vw - 40px))}.text-extractor-modal-overlay.is-visible .text-extractor-modal{transform:scale(1)}.text-extractor-modal-header{align-items:center;border-bottom:1px solid var(--main-border);color:var(--main-text);display:flex;font-size:18px;font-weight:700;justify-content:space-between;padding:18px}#main-modal-title-container{align-items:center;display:flex;min-height:32px;min-width:0}#main-modal-title-container>.tc-icon-title{gap:10px;min-height:32px}#main-modal-title-container .tc-icon-title-icon{flex-basis:24px;height:24px;width:24px}#main-modal-title-container>.tc-icon-title>.icon-title-text{line-height:24px}.tc-close-button{align-items:center;background-color:transparent;border:0;border-radius:50%;color:var(--main-text);cursor:pointer;display:flex;flex:0 0 32px;height:32px;justify-content:center;line-height:0;padding:0;transition:background-color .2s,transform .15s;width:32px}.tc-close-button svg{display:block;fill:currentColor;height:24px;width:24px}.tc-close-button:active,.tc-close-button:hover{background-color:var(--main-border)}.tc-close-button:active{transform:scale(.9)}.text-extractor-modal-content{display:flex;flex-direction:column;flex-grow:1;overflow-y:auto;padding:18px;position:relative}.tc-textarea-container{box-sizing:border-box;flex:1;height:100%;min-height:0;opacity:0;transition:opacity .2s ease-in-out,visibility .2s ease-in-out;visibility:hidden;width:100%}.tc-textarea-container.is-visible{opacity:1;visibility:visible}.text-extractor-modal-footer{align-items:center;border-top:1px solid var(--main-border);display:flex;justify-content:space-between;padding:18px}.tc-footer-buttons{align-items:center;display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end}@keyframes tc-breathing{0%{box-shadow:0 4px 8px var(--main-shadow),0 0 0 0 rgba(243,156,18,.4)}70%{box-shadow:0 4px 12px var(--main-shadow),0 0 0 10px rgba(243,156,18,0)}to{box-shadow:0 4px 8px var(--main-shadow),0 0 0 0 rgba(243,156,18,0)}}#scan-count-display{align-items:center;color:var(--tc-secondary-text-color);display:flex;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:14px;line-height:20px;margin-left:2px;min-height:20px;opacity:0;transition:opacity .3s ease-in-out}.header-right-controls{align-items:center;display:flex;min-height:32px}@media (prefers-reduced-motion:reduce){.text-extractor-fab,.text-extractor-fab-container,.text-extractor-fab.fab-feature-hidden{transition-duration:.01ms}}#scan-count-display.is-visible{opacity:1}.text-extractor-fab-container.fab-container-visible .text-extractor-fab.fab-disabled{background-color:var(--main-disabled);box-shadow:none;color:var(--main-disabled-text);cursor:not-allowed;transform:none}.tc-help-icon-button{align-items:center;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);background-color:var(--main-bg-a);border:1px solid var(--main-border);border-radius:50%;box-shadow:var(--main-shadow);color:var(--main-text-secondary);cursor:pointer;display:flex;justify-content:center;padding:0;transition:color .2s,transform .2s,background-color .2s}.tc-help-icon-button:hover{background-color:var(--main-border);color:var(--main-text)}.tc-help-icon-button svg{height:20px;width:20px}.action-key{background-color:var(--main-bg);border:solid var(--main-border);border-radius:4px;border-width:1px 1px 3px;box-shadow:0 1px 1px var(--main-shadow);color:var(--main-text);display:inline-block;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:.85em;font-weight:700;line-height:1;margin:0 5px;padding:3px 6px;position:relative;top:-3px;vertical-align:baseline;white-space:nowrap}.tc-textarea-container{border:1px solid var(--main-textarea-border);border-radius:8px;display:flex;flex-grow:1;overflow:hidden;position:relative}.tc-line-numbers{background-color:var(--tc-secondary-bg-color);border-right:1px solid var(--tc-border-color);box-sizing:border-box;color:var(--main-line-number-text);font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:14px;line-height:1.5;margin-right:0;max-width:0;opacity:0;overflow:hidden;padding:10px 0 8px;text-align:right;transition:max-width .3s ease,opacity .3s ease,padding .3s ease,margin-right .3s ease;user-select:none;width:var(--line-number-width,40px)}.tc-line-numbers>div{box-sizing:border-box;padding:0 4px;transition:color .2s ease-in-out;white-space:nowrap}.tc-line-numbers>div.is-active{color:var(--main-line-number-active-text);font-weight:700}.tc-textarea-container .tc-textarea{border:none;border-radius:0;box-sizing:border-box;flex-grow:1;font-size:14px;line-height:1.5;padding:10px 10px 8px;resize:none;scrollbar-gutter:stable}.tc-textarea-container .tc-textarea:focus{box-shadow:none;outline:none}.tc-textarea.word-wrap-disabled{overflow-x:auto;white-space:pre}.tc-line-numbers.is-visible{margin-right:4px;max-width:var(--line-number-width,40px);opacity:1;padding:10px 4px}.tc-stats-container{align-items:center;color:var(--tc-secondary-text-color);display:flex;flex-grow:1;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:14px;opacity:0;transition:opacity .3s ease,visibility .3s ease;visibility:hidden}.tc-stats-container.is-visible{opacity:1;visibility:visible}.tc-textarea::-webkit-scrollbar{height:6px;width:6px}.tc-textarea::-webkit-scrollbar-track{background:transparent}.tc-textarea::-webkit-scrollbar-thumb{background:var(--tc-scrollbar-thumb-color);border:1px solid var(--tc-scrollbar-border-color);border-radius:3px}.tc-textarea::-webkit-scrollbar-thumb:hover{background:var(--tc-scrollbar-thumb-hover-color)}@keyframes line-number-enter{0%{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}.line-number-enter-active{animation:line-number-enter .2s ease-out}.tc-notification-container{display:flex;flex-direction:column;gap:10px;pointer-events:none;position:fixed;right:20px;top:20px;z-index:2147483647}.tc-notification{align-items:center;background-color:var(--main-bg,#fff);border:1px solid var(--main-border,#eee);border-radius:16px;box-shadow:0 4px 12px var(--main-shadow,rgba(0,0,0,.15));color:var(--main-text,#333);display:flex;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;opacity:0;padding:12px 16px;pointer-events:auto;transform:translateX(100%);transition:opacity .5s ease,transform .5s ease,box-shadow .3s;width:320px}.tc-notification-visible{opacity:1;transform:translateX(0)}.tc-notification:hover{box-shadow:0 6px 16px var(--main-shadow,rgba(0,0,0,.2))}.tc-notification-icon{align-items:center;display:flex;margin-right:12px}.tc-notification-icon svg{height:20px;width:20px}.tc-notification-info .tc-notification-icon{color:#3498db}.tc-notification-success .tc-notification-icon{color:#2ecc71}.tc-notification-content{flex-grow:1;font-size:14px;line-height:1.4}.tc-notification-close{cursor:pointer;opacity:.6;padding:4px;transition:opacity .3s}.tc-notification-close:hover{opacity:1}.tc-notification-close svg{height:16px;stroke:var(--main-text,#333);width:16px}.tc-notification-fade-out{opacity:0;transform:translateX(100%)}#modal-placeholder{align-items:center;box-sizing:border-box;color:var(--text-color-secondary);display:flex;flex-direction:column;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;height:100%;justify-content:center;left:0;opacity:0;padding:20px;position:absolute;text-align:center;top:0;transition:opacity .2s ease-in-out,visibility .2s ease-in-out;visibility:hidden;width:100%}#modal-placeholder.is-visible{opacity:1;visibility:visible}.placeholder-icon{color:var(--text-color-secondary)}.placeholder-icon svg{height:48px;width:48px}#modal-placeholder p{font-size:14px;margin:4px 0}.placeholder-actions{align-items:center;color:var(--text-color-primary);display:flex;gap:6px}.placeholder-action-icon svg{fill:currentColor;height:18px;vertical-align:middle;width:18px}#modal-placeholder strong{font-weight:600}.settings-panel-overlay{align-items:center;background-color:var(--main-overlay-bg);display:flex;height:100%;justify-content:center;left:0;opacity:0;pointer-events:none;position:fixed;top:0;transition:opacity .3s ease,visibility .3s;visibility:hidden;width:100%;z-index:2147483648}.settings-panel-overlay.is-visible{opacity:1;pointer-events:auto;visibility:visible}.settings-panel-modal{background-color:var(--main-bg);border:1px solid var(--main-border);border-radius:16px;box-shadow:0 5px 15px var(--main-shadow);color:var(--main-text);display:flex;flex-direction:column;font-family:Menlo,Monaco,Cascadia Code,PingFang SC;height:min(760px,calc(100vh - 56px));max-height:90vh;max-width:1040px;overflow:hidden;overscroll-behavior:contain;transform:scale(.95);transition:transform .3s ease;width:min(1040px,calc(100vw - 48px))}.settings-panel-content{flex-grow:1;overflow-y:auto;padding:20px}.settings-panel-overlay.is-visible .settings-panel-modal{transform:scale(1)}.settings-panel-header{align-items:center;border-bottom:1px solid var(--main-border);display:flex;flex-shrink:0;font-size:18px;font-weight:700;justify-content:space-between;padding:16px 20px}#contextual-settings-title-container,#settings-panel-title-container{align-items:center;display:flex;min-height:32px;min-width:0}#contextual-settings-title-container>.tc-icon-title,#settings-panel-title-container>.tc-icon-title{gap:10px;min-height:32px}#contextual-settings-title-container .tc-icon-title-icon,#settings-panel-title-container .tc-icon-title-icon{flex-basis:24px;height:24px;width:24px}#contextual-settings-title-container .icon-title-text,#settings-panel-title-container .icon-title-text{line-height:24px}.settings-panel-body{display:flex;flex:1;overflow:hidden}.settings-sidebar{background-color:color-mix(in srgb,var(--main-bg) 97%,var(--main-text));border-right:1px solid var(--main-border);box-sizing:border-box;display:flex;flex-direction:column;flex-shrink:0;position:relative;width:220px}.sidebar-highlight{background-color:color-mix(in srgb,var(--main-primary) 10%,transparent);border-left:3px solid var(--main-primary);box-sizing:border-box;left:0;pointer-events:none;position:absolute;top:0;transition:transform .2s cubic-bezier(.4,0,.2,1),height .2s ease;width:100%;z-index:0}.settings-sidebar-item{align-items:center;background:transparent;border-left:3px solid transparent;box-sizing:border-box;color:var(--main-text);cursor:pointer;display:flex;font-size:15px;font-weight:500;gap:10px;padding:12px 20px;position:relative;transition:color .2s,background-color .2s;z-index:1}.settings-sidebar-item:hover{background-color:color-mix(in srgb,var(--main-textarea-bg) 50%,transparent)}.settings-sidebar-item.active{border-left-color:transparent;color:var(--main-primary)}.settings-sidebar-item svg{display:block;fill:currentColor;flex:0 0 22px;height:22px;width:22px}.settings-sidebar-item>span{display:block;line-height:22px}.settings-content-area{background-color:var(--main-bg);display:flex;flex:1;flex-direction:column;overflow:hidden;position:relative}.settings-tab-content{display:none;flex:1;overflow-y:auto;padding:20px}.settings-tab-content.active{animation:fadeIn .2s ease;display:block}#tab-ai.settings-tab-content{padding:28px 32px}@keyframes fadeIn{0%{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}.setting-item{margin-bottom:12px}.setting-item>label{display:block;font-weight:500;margin-bottom:8px}.setting-title-container{align-items:center;display:flex;font-size:16px;font-weight:700;gap:8px;margin-bottom:12px}.settings-info-notice{align-items:center;background-color:color-mix(in srgb,var(--main-primary) 8%,var(--main-bg));border:1px solid color-mix(in srgb,var(--main-primary) 28%,var(--main-border));border-radius:10px;color:var(--main-text-secondary);display:flex;font-size:13px;gap:10px;line-height:1.5;margin:0 0 16px;padding:10px 12px}.settings-info-notice-icon{align-items:center;color:var(--main-primary);display:flex;flex:0 0 auto;justify-content:center}.settings-info-notice-icon svg{display:block;height:20px;width:20px}.settings-info-notice .icon-title-text{margin:0;min-width:0}.settings-tab-content::-webkit-scrollbar{width:6px}.settings-tab-content::-webkit-scrollbar-track{background:transparent}.settings-tab-content::-webkit-scrollbar-thumb{background-color:var(--main-border);border-radius:3px}.settings-tab-content::-webkit-scrollbar-thumb:hover{background-color:var(--main-primary)}.settings-tab-content::-webkit-scrollbar-button{display:none}.settings-panel-footer{background-color:var(--main-bg);border-top:1px solid var(--main-border);flex-shrink:0;padding:16px 20px;text-align:right}.checkbox-group{color:var(--main-text);cursor:pointer;display:block;height:20px;line-height:20px;margin-left:2px;margin-top:12px;padding-left:30px;position:relative;user-select:none}.checkbox-group input{cursor:pointer;height:0;opacity:0;position:absolute;width:0}.checkmark{background-color:var(--main-textarea-bg);border:1px solid var(--main-textarea-border);border-radius:3px;height:18px;left:0;position:absolute;top:0;transition:all .2s;width:18px}.checkbox-group:hover input~.checkmark{border-color:var(--main-primary)}.checkbox-group input:checked~.checkmark{background-color:var(--main-primary);border-color:var(--main-primary)}.checkmark:after{content:"";display:none;position:absolute}.checkbox-group input:checked~.checkmark:after{display:block}.checkbox-group .checkmark:after{border:solid var(--main-bg);border-width:0 2px 2px 0;height:10px;left:6px;top:2px;transform:rotate(45deg);width:5px}.composite-setting-container{font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-weight:500;margin-left:0;margin-top:14px}.composite-setting-container .checkbox-group{margin-top:0}.linked-numeric-input{margin-left:32px;margin-top:8px}.numeric-input-group{align-items:center;display:flex;gap:8px}.numeric-input{background-color:var(--main-textarea-bg);border:1px solid var(--main-textarea-border);border-radius:8px;color:var(--main-text);font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:14px;padding:6px 8px;transition:border-color .2s,box-shadow .2s,background-color .2s,color .2s;width:100px}.numeric-input:focus{border-color:var(--main-primary);box-shadow:0 0 0 2px color-mix(in srgb,var(--main-primary) 20%,transparent);outline:none}.numeric-input:disabled{background-color:var(--main-disabled);border-color:var(--main-border);color:var(--main-disabled-text);cursor:not-allowed}.setting-item-select{align-items:center;display:flex;font-weight:500;justify-content:space-between;margin-left:32px}.image-card-select-container{display:flex;gap:16px;justify-content:space-between;width:100%}.image-card-option{background-color:var(--main-bg);border:1px solid var(--main-border);border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.05);cursor:pointer;display:flex;flex:1;flex-direction:column;overflow:hidden;padding:0;position:relative;transition:border-color .2s,box-shadow .2s}.image-card-option:hover{border-color:var(--main-primary);box-shadow:0 2px 8px rgba(0,0,0,.08);transform:none}.image-card-option.selected{background-color:color-mix(in srgb,var(--main-primary) 5%,var(--main-bg));border-color:var(--main-primary);box-shadow:0 0 0 2px color-mix(in srgb,var(--main-primary) 20%,transparent)}.image-card-preview{background-color:var(--main-textarea-bg);border-bottom:1px solid var(--main-border);height:110px;padding:16px;transition:background-color .2s,border-bottom-color .2s}.image-card-preview,.schematic-container{align-items:center;display:flex;justify-content:center}.schematic-container{height:100%;width:100%}.schematic-card{align-items:center;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,.1);display:flex;gap:8px;height:60px;padding:8px;transition:background-color .2s;width:100px}.schematic-icon-box{border-radius:6px;flex-shrink:0;height:24px;width:24px}.schematic-lines{display:flex;flex:1;flex-direction:column;gap:6px}.schematic-line{border-radius:3px;height:6px;width:100%}.schematic-line.secondary{width:60%}.image-card-option[data-value=light] .image-card-preview{background-color:#f1f5f9}.image-card-option[data-value=light] .schematic-card{background-color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.05)}.image-card-option[data-value=light] .schematic-icon-box{background-color:#e2e8f0}.image-card-option[data-value=light] .schematic-line{background-color:#cbd5e1}.image-card-option[data-value=dark] .image-card-preview{background-color:#0f172a}.image-card-option[data-value=dark] .schematic-card{background-color:#1e293b;box-shadow:0 2px 8px rgba(0,0,0,.2)}.image-card-option[data-value=dark] .schematic-icon-box{background-color:#334155}.image-card-option[data-value=dark] .schematic-line{background-color:#475569}.image-card-option[data-value=system] .image-card-preview{background-color:#1e293b}.image-card-option[data-value=system] .schematic-card{background-color:#334155;border:1px solid #475569}.image-card-option[data-value=system] .schematic-icon-box{background-color:#475569}.image-card-option[data-value=system] .schematic-line{background-color:#64748b}.image-card-label{align-items:center;display:flex;font-size:14px;font-weight:500;justify-content:flex-start;padding:12px}.image-card-radio{align-items:center;background-color:transparent;border:1px solid var(--main-border);border-radius:50%;display:flex;flex-shrink:0;height:16px;justify-content:center;margin-right:8px;transition:all .2s;width:16px}.radio-dot{background-color:var(--main-primary);border-radius:50%;height:8px;opacity:0;transform:scale(0);transition:all .2s cubic-bezier(.4,0,.2,1);width:8px}.image-card-option.selected .image-card-radio{border-color:var(--main-primary)}.image-card-option.selected .radio-dot{opacity:1;transform:scale(1)}.image-card-label-icon{align-items:center;color:var(--main-text-secondary);display:flex;margin-left:4px}.image-card-option.selected .image-card-label-icon{color:var(--main-primary)}.image-card-label-icon svg{fill:currentColor;height:18px;width:18px}@media (prefers-color-scheme:light){.image-card-option[data-value=system] .image-card-preview{background-color:#f1f5f9}.image-card-option[data-value=system] .schematic-card{background-color:#fff;border:none;box-shadow:0 2px 8px rgba(0,0,0,.05)}.image-card-option[data-value=system] .schematic-icon-box{background-color:#e2e8f0}.image-card-option[data-value=system] .schematic-line{background-color:#cbd5e1}}@media (prefers-color-scheme:dark){.image-card-option[data-value=system] .image-card-preview{background-color:#0f172a}.image-card-option[data-value=system] .schematic-card{background-color:#1e293b;border:none;box-shadow:0 2px 8px rgba(0,0,0,.2)}.image-card-option[data-value=system] .schematic-icon-box{background-color:#334155}.image-card-option[data-value=system] .schematic-line{background-color:#475569}}.about-tab-container{align-items:center;display:flex;flex-direction:column;height:100%;justify-content:center;padding-bottom:40px;text-align:center}.about-logo{color:var(--main-primary);height:100px;margin-bottom:18px;width:100px}.about-logo svg{fill:currentColor;height:100%;width:100%}.about-title{color:var(--main-text);font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:24px;font-weight:700;margin:0 0 6px}.about-description{color:var(--main-text-secondary);font-size:14px;line-height:1.5;margin:0 0 24px;max-width:400px}.about-version{color:var(--main-text-secondary);font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:16px;margin:0 0 16px}.about-actions{display:flex;gap:16px}#about-github-btn svg{height:20px;width:20px}@media (max-width:900px){.settings-panel-modal{height:calc(100vh - 28px);max-height:none;width:calc(100vw - 28px)}.settings-sidebar{width:180px}.settings-sidebar-item{padding-inline:14px}#tab-ai.settings-tab-content{padding:24px}}@media (max-width:700px){.settings-panel-modal{border-radius:12px;height:calc(100vh - 16px);width:calc(100vw - 16px)}.settings-panel-header{padding:14px 16px}.settings-panel-body{flex-direction:column}.settings-sidebar{border-bottom:1px solid var(--main-border);border-right:0;flex-direction:row;overflow-x:auto;width:100%}.sidebar-highlight{display:none}.settings-sidebar-item{border-left:0;flex:0 0 auto;min-height:44px;padding:10px 12px}.settings-sidebar-item.active{background-color:color-mix(in srgb,var(--main-primary) 10%,transparent)}.settings-sidebar-item svg{height:20px;width:20px}#tab-ai.settings-tab-content,.settings-tab-content{padding:18px}.settings-panel-footer{padding:12px 16px}}.text-extractor-tooltip{background-color:var(--main-tooltip-bg);border:1px solid var(--main-border);border-radius:16px;box-shadow:0 2px 5px var(--main-shadow);color:var(--main-tooltip-text);font-family:Menlo,Monaco,Cascadia Code,PingFang SC;font-size:14px;font-weight:700;opacity:0;padding:8px 12px;pointer-events:none;position:fixed;transition:opacity .2s ease,visibility .2s;visibility:hidden;white-space:nowrap;z-index:2147483647}.text-extractor-tooltip.is-visible{opacity:1;visibility:visible}`;
     uiContainer.appendChild(styleElement);
     initTheme();
     initialize();
