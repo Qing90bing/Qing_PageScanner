@@ -1,9 +1,8 @@
-// src/core/ignoredTerms.js
+// src/shared/utils/text/ignoredTerms.js
 
 /**
- * @module core/ignoredTerms
- * @description 该文件专门用于存放需要过滤的特定术语列表。
- * 将列表分离到独立文件中，便于未来管理和扩展（例如，从远程URL加载）。
+ * @module ignoredTerms
+ * @description 维护不应进入待翻译结果的品牌名、技术术语和服务名称。
  */
 
 /**
@@ -86,7 +85,7 @@ const IGNORED_TERMS_ARRAY = [
     'eBay',
 ];
 
-// 新增：基于数组创建一个 Set
+// Set 适合在过滤阶段进行高频的精确查找。
 const IGNORED_TERMS_SET = new Set(IGNORED_TERMS_ARRAY);
 
 // 默认导出 Set

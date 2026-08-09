@@ -1,7 +1,7 @@
 // src/shared/ui/components/tooltip.js
 
 let tooltipElement = null; // 单例模式的元素
-let hideTimeout = null;
+const hideTimeout = null;
 
 import { uiContainer } from '../uiContainer.js';
 

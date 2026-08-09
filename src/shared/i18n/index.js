@@ -56,7 +56,7 @@ export function getLanguage() {
  */
 export function t(key, replacements) {
     // 通过点状路径深入对象查找值
-    let value = key.split('.').reduce((obj, k) => {
+    const value = key.split('.').reduce((obj, k) => {
         // 确保在路径的每一步我们都有一个有效的对象
         if (typeof obj === 'object' && obj !== null && k in obj) {
             return obj[k];
@@ -68,9 +68,7 @@ export function t(key, replacements) {
         return key; // 如果找不到翻译，返回原始键
     }
 
-    // 优化：使用单次正则扫描进行替换
-    // 相比于之前的遍历 keys 并创建多个 RegExp，这种方式只需要扫描一次字符串。
-    // 同时也自动处理了 key 周围可能存在的空格，更健壮。
+    // 用一次正则扫描完成占位符替换，并允许占位符两侧存在空格。
     if (replacements) {
         return value.replace(/{{\s*(\w+)\s*}}/g, (match, key) => {
             // 如果 replacements 中有这个 key，就替换，否则保留原样

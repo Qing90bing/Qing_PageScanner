@@ -1,4 +1,4 @@
-// src/shared/ui/confirmationModal.js
+// src/shared/ui/components/confirmationModal.js
 import { createSVGFromString } from '../../utils/dom/dom.js';
 import { uiContainer } from '../uiContainer.js'; // 直接导入Shadow DOM根
 import { createButton } from './button.js';

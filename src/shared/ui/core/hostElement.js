@@ -23,7 +23,7 @@ export function createHostElement() {
     container.id = 'text-extractor-container';
 
     // --- Popover API 检测 ---
-    const supportsPopover = HTMLElement.prototype.hasOwnProperty('popover');
+    const supportsPopover = Object.prototype.hasOwnProperty.call(HTMLElement.prototype, 'popover');
     if (supportsPopover) {
         container.popover = 'manual';
     }
@@ -58,7 +58,9 @@ export function attachToBody(container) {
         if (container.popover === 'manual') {
             try {
                 container.showPopover();
-            } catch (e) {}
+            } catch {
+                // 浏览器可能支持属性但拒绝当前时机的 Top Layer 操作。
+            }
         }
     }
 }
@@ -88,7 +90,9 @@ export class TopLayerManager {
             // 1. 尝试隐藏 Popover (清理 Top Layer 状态)
             try {
                 this.container.hidePopover();
-            } catch (e) {}
+            } catch {
+                // 隐藏失败时继续执行回流和后续提升尝试。
+            }
 
             // 2. 强制浏览器回流 (Reflow)
             void this.container.offsetHeight;
@@ -100,7 +104,9 @@ export class TopLayerManager {
                     // 再次显示 (推入 Top Layer 栈顶)
                     // 保持宿主节点连接，避免网站交互导致后代 CSS 动画重新播放。
                     this.container.showPopover();
-                } catch (e) {}
+                } catch {
+                    // 页面状态变化时重新显示可能失败，下一次观察到变化时再尝试。
+                }
             });
         }, 100);
     }

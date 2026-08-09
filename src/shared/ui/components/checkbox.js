@@ -1,4 +1,4 @@
-// src/shared/ui/checkbox.js
+// src/shared/ui/components/checkbox.js
 import { createSVGFromString } from '../../utils/dom/dom.js';
 import { infoIcon } from '../../../assets/icons/infoIcon.js';
 import { infoTooltip } from './infoTooltip.js';

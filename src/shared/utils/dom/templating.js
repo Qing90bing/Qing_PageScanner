@@ -1,4 +1,4 @@
-// src/shared/utils/templating.js
+// src/shared/utils/dom/templating.js
 
 /**
  * 一个简单的模板字符串替换函数。
@@ -10,6 +10,6 @@ export const simpleTemplate = (template, values) => {
     if (!template) return '';
     // 使用 {{key}} 作为占位符，并允许 key 两边有空格
     return template.replace(/{{\s*(\w+)\s*}}/g, (match, key) => {
-        return values.hasOwnProperty(key) ? values[key] : match;
+        return Object.prototype.hasOwnProperty.call(values, key) ? values[key] : match;
     });
 };

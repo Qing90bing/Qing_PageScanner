@@ -1,4 +1,4 @@
-// src/shared/ui/components/Tooltip.js
+// src/shared/ui/components/infoTooltip.js
 import { createSVGFromString } from '../../utils/dom/dom.js';
 import { closeIcon } from '../../../assets/icons/closeIcon.js';
 import { uiContainer } from '../uiContainer.js';

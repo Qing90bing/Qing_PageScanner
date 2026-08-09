@@ -1,4 +1,4 @@
-// src/shared/utils/logger.js
+// src/shared/utils/core/logger.js
 
 /**
  * @module logger

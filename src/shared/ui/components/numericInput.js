@@ -1,4 +1,4 @@
-// src/shared/ui/numericInput.js
+// src/shared/ui/components/numericInput.js
 
 /**
  * @public

@@ -61,7 +61,9 @@ export class EventIsolator {
             ) {
                 try {
                     originalElement.focus();
-                } catch (err) {}
+                } catch {
+                    // 元素可能已被宿主页面移除，焦点恢复失败时无需打断当前事件。
+                }
             }
         }, 0);
     }

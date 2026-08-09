@@ -1,4 +1,4 @@
-// src/shared/utils/trustedTypes.js
+// src/shared/utils/dom/trustedTypes.js
 import { log } from '../core/logger.js';
 import { t } from '../../i18n/index.js';
 

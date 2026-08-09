@@ -1,4 +1,4 @@
-// src/shared/utils/dom.js
+// src/shared/utils/dom/dom.js
 import { log } from '../core/logger.js';
 import { t } from '../../i18n/index.js';
 import { createTrustedHTML } from './trustedTypes.js';
@@ -8,9 +8,7 @@ import { createTrustedHTML } from './trustedTypes.js';
  * @description DOM相关的辅助函数。
  */
 
-// 优化点：将 DOMParser 的实例化移到函数外部。
-// 这样整个应用生命周期只创建一次解析器，而不是每次创建图标都重新创建。
-// 对于可能有几十个图标的页面，这能节省不少内存和CPU。
+// 复用 DOMParser，避免每次创建图标时重复实例化解析器。
 const parser = new DOMParser();
 
 /**

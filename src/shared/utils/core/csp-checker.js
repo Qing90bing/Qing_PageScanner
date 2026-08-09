@@ -1,4 +1,4 @@
-// src/shared/utils/csp-checker.js
+// src/shared/utils/core/csp-checker.js
 
 /**
  * @file CSP Checker

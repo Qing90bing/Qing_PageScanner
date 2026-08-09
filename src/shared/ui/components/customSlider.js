@@ -115,7 +115,7 @@ export class CustomSlider {
             const travelStart = this.padding + this.tickWidth / 2;
             const percentage = this.max > this.min ? (this.value - this.min) / (this.max - this.min) : 0;
             const thumbCenterTarget = travelStart + percentage * travelRange;
-            let newLeft = thumbCenterTarget - thumbWidth / 2;
+            const newLeft = thumbCenterTarget - thumbWidth / 2;
             this.thumb.style.left = `${newLeft}px`;
         });
     }

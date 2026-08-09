@@ -1,4 +1,4 @@
-// src/shared/utils/eventBus.js
+// src/shared/utils/core/eventBus.js
 import { log } from './logger.js';
 import { t } from '../../i18n/index.js';
 

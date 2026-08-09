@@ -1,4 +1,4 @@
-// src/shared/utils/filterLogic.js
+// src/shared/utils/text/filterLogic.js
 
 /**
  * @module filterLogic
@@ -33,7 +33,7 @@ const ruleChecks = new Map([
     [
         'numbers',
         {
-            regex: /^[$\€\£\¥\d,.\s]+$/,
+            regex: /^[$€£¥\d,.\s]+$/,
             label: FILTER_LABEL_KEYS.numbers,
         },
     ],
@@ -91,7 +91,7 @@ const ruleChecks = new Map([
     [
         'filePath',
         {
-            regex: /^(?:[a-zA-Z]:\\|\\\\|~|\.\.?\/)[\w\-\.\/ \\]*[\w\-\.]+\.[\w]{2,4}$/,
+            regex: /^(?:[a-zA-Z]:\\|\\\\|~|\.\.?\/)[\w./ \\-]*[\w.-]+\.[\w]{2,4}$/,
             label: FILTER_LABEL_KEYS.filePath,
         },
     ],

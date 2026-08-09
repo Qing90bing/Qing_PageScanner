@@ -1,4 +1,4 @@
-// src/shared/utils/processing.worker.js
+// src/shared/workers/processing.worker.js
 
 /**
  * @module ProcessingWorker
@@ -14,7 +14,7 @@ import { shouldFilter } from '../utils/text/filterLogic.js';
 import { formatTextsForTranslation } from '../utils/text/formatting.js';
 
 // --- 状态变量 ---
-let sessionTexts = new Set();
+const sessionTexts = new Set();
 let filterRules = {};
 let translations = {};
 let enableDebugLogging = false;
@@ -32,7 +32,7 @@ let includeArrayBrackets = true; // 是否包含首尾符号
 const t = (key, replacements) => {
     let value = translations[key] || key;
     if (replacements) {
-        let finalReplacements = { ...replacements };
+        const finalReplacements = { ...replacements };
         if (key === 'textFiltered' && replacements.reason && translations.filterReasons) {
             const reasonKey = replacements.reason;
             finalReplacements.reason = translations.filterReasons[reasonKey] || reasonKey;
@@ -150,7 +150,7 @@ self.onmessage = (event) => {
         /**
          * 会话模式：开始一个新的会话
          */
-        case 'session-start':
+        case 'session-start': {
             const { initialData } = payload;
             sessionTexts.clear();
             const newTexts = [];
@@ -171,6 +171,7 @@ self.onmessage = (event) => {
                 },
             });
             break;
+        }
 
         /**
          * 会话模式：添加文本

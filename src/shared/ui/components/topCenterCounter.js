@@ -67,8 +67,7 @@ export function updateTopCenterCounter(element, newCount) {
     if (!element || !element._countSpan) return;
 
     const countSpan = element._countSpan;
-    // 关键修复：直接从DOM读取当前显示的数值作为动画的起始点。
-    // 这消除了对模块级`currentCount`变量的依赖，使组件变为无状态。
+    // 从 DOM 读取当前显示值作为动画起点，使组件不依赖模块级计数状态。
     const start = parseInt(countSpan.textContent, 10) || 0;
     const end = newCount;
 
