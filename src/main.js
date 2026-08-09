@@ -5,7 +5,7 @@ import { initTheme } from './shared/ui/theme.js';
 import { initialize as initializeSettings } from './features/settings/index.js';
 import { uiContainer } from './shared/ui/uiContainer.js';
 import { log, updateLoggerState } from './shared/utils/core/logger.js';
-import { loadSettings } from './features/settings/logic.js';
+import { loadSettings } from './shared/services/settings.js';
 import { initializeExporter } from './features/export/exporter.js';
 import { t } from './shared/i18n/index.js';
 import { initializeLanguage } from './shared/i18n/management/languageManager.js';

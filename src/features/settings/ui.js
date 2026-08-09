@@ -204,7 +204,7 @@ function showSettingsPanel(currentSettings, onSave) {
         isTooltipVisible = false;
     });
 
-    // 修复：确保在CSS过渡动画完成后再设置焦点。
+    // 等待 CSS 过渡完成后再聚焦，避免面板尚未可见时 focus() 失败。
     settingsPanel.addEventListener(
         'transitionend',
         () => {
@@ -340,8 +340,7 @@ async function handleSave(onSave) {
  * @param {function} onOpen - 当用户点击菜单命令时触发的回调，用于打开面板。
  */
 export function initSettingsPanel(onOpen) {
-    // 关键修复：确保只有在顶层窗口的脚本实例才能注册菜单命令。
-    // 这可以防止在有 iframe 的页面上因脚本被多次注入而导致菜单重复。
+    // 只让顶层窗口注册菜单命令，避免 iframe 中重复注入脚本导致菜单重复。
     if (window.top === window.self) {
         // 使用“立即执行的异步函数表达式”来处理异步操作，避免阻塞主线程
         (async () => {
@@ -369,30 +368,36 @@ export function openContextualSettingsPanel({ titleKey, icon, definitions, setti
     let contextualPanel = document.createElement('div');
     contextualPanel.className = 'settings-panel-overlay';
     contextualPanel.tabIndex = -1;
+    let isClosing = false;
+    let saveButton = null;
 
     const panelModal = buildContextualPanelDOM({ titleKey, icon, definitions, settings });
     contextualPanel.appendChild(panelModal);
     uiContainer.appendChild(contextualPanel);
+    const closeButton = contextualPanel.querySelector('.settings-panel-close');
 
     const handleKeyDown = (event) => {
         if (event.key === 'Escape') {
-            // 关键修复：阻止事件继续传播。
-            // 这样，当这个监听器处理了 ESC 键后，就不会再触发
-            // 其他（如下层的“选取元素扫描”）全局监听器了。
+            // 面板处理 Escape 后停止传播，避免触发底层扫描模块的快捷键。
             event.stopPropagation();
             closePanel();
         }
     };
 
     const closePanel = () => {
-        if (contextualPanel) {
-            document.removeEventListener('keydown', handleKeyDown, true);
-            contextualPanel.classList.remove('is-visible');
-            setTimeout(() => {
-                contextualPanel.remove();
-                contextualPanel = null;
-            }, 300);
-        }
+        if (!contextualPanel || isClosing) return;
+        isClosing = true;
+        const panelToRemove = contextualPanel;
+        document.removeEventListener('keydown', handleKeyDown, true);
+        closeButton?.removeEventListener('click', closePanel);
+        saveButton?.destroy();
+        panelToRemove.classList.remove('is-visible');
+
+        // 等待设置面板的 CSS 退出动画完成后再移除节点。
+        setTimeout(() => {
+            panelToRemove.remove();
+            if (contextualPanel === panelToRemove) contextualPanel = null;
+        }, 300);
     };
 
     const handleSave = () => {
@@ -410,7 +415,7 @@ export function openContextualSettingsPanel({ titleKey, icon, definitions, setti
     };
 
     const footer = contextualPanel.querySelector('.settings-panel-footer');
-    const saveButton = createButton({
+    saveButton = createButton({
         id: 'save-contextual-settings-btn',
         textKey: 'common.save',
         icon: saveIcon,
@@ -418,7 +423,7 @@ export function openContextualSettingsPanel({ titleKey, icon, definitions, setti
     });
     footer.appendChild(saveButton);
 
-    contextualPanel.querySelector('.settings-panel-close').addEventListener('click', closePanel);
+    closeButton?.addEventListener('click', closePanel);
     document.addEventListener('keydown', handleKeyDown, true);
 
     setTimeout(() => {

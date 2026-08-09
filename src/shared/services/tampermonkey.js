@@ -68,3 +68,11 @@ export const deleteValue = (key) => {
 export const xmlHttpRequest = (details) => {
     return GM_xmlhttpRequest(details);
 };
+
+/**
+ * 读取当前 UserScript 的元信息。
+ * @returns {object|null}
+ */
+export const getScriptInfo = () => {
+    return typeof GM_info === 'undefined' ? null : GM_info;
+};

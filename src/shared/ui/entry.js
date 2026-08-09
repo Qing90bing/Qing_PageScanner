@@ -11,7 +11,7 @@ import { createMainModal } from './mainModal/index.js';
 import { handleQuickScanClick } from '../../features/quick-scan/ui.js';
 import { handleDynamicExtractClick } from '../../features/session-scan/ui.js';
 import { handleElementScanClick } from '../../features/element-scan/logic.js';
-import { loadSettings } from '../../features/settings/logic.js';
+import { loadSettings } from '../services/settings.js';
 import { handleSummaryClick } from './summaryHandler.js'; // New import
 import { handleAiScanClick, initializeAiScanUI } from '../../features/ai-scan/ui.js';
 

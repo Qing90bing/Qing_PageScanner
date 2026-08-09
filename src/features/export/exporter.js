@@ -11,7 +11,7 @@ import { getAiOutputType, getCurrentMode, outputTextarea } from '../../shared/ui
 import { fullQuickScanContent } from '../../shared/ui/mainModal/index.js';
 import { t } from '../../shared/i18n/index.js';
 import { requestSummary } from '../session-scan/logic.js';
-import { loadSettings } from '../../features/settings/logic.js';
+import { loadSettings } from '../../shared/services/settings.js';
 
 /**
  * @private

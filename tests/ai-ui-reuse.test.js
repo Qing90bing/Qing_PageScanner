@@ -3,6 +3,8 @@ import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 
 const AI_PANEL_PATH = new URL('../src/features/settings/aiPanel.js', import.meta.url);
+const AI_PANEL_HELPERS_PATH = new URL('../src/features/settings/aiPanel/helpers.js', import.meta.url);
+const AI_STYLE_SECTION_PATH = new URL('../src/features/settings/aiPanel/siteStylesSection.js', import.meta.url);
 const AI_SCAN_UI_PATH = new URL('../src/features/ai-scan/ui.js', import.meta.url);
 const FAB_PATH = new URL('../src/shared/ui/components/fab.js', import.meta.url);
 const FAB_STYLES_PATH = new URL('../src/assets/styles/fab.css', import.meta.url);
@@ -56,7 +58,13 @@ test('AI summary statuses use concise consistent labels in every locale', async 
 });
 
 test('AI settings reuse shared controls instead of native select duplicates', async () => {
-    const source = await readFile(AI_PANEL_PATH, 'utf8');
+    const source = (
+        await Promise.all([
+            readFile(AI_PANEL_PATH, 'utf8'),
+            readFile(AI_PANEL_HELPERS_PATH, 'utf8'),
+            readFile(AI_STYLE_SECTION_PATH, 'utf8'),
+        ])
+    ).join('\n');
 
     assert.match(source, /createCustomSelectField/);
     assert.match(source, /createNumericInput/);
@@ -68,7 +76,9 @@ test('AI settings reuse shared controls instead of native select duplicates', as
 });
 
 test('AI settings actions use distinct semantic icons', async () => {
-    const source = await readFile(AI_PANEL_PATH, 'utf8');
+    const source = (await Promise.all([readFile(AI_PANEL_PATH, 'utf8'), readFile(AI_STYLE_SECTION_PATH, 'utf8')])).join(
+        '\n'
+    );
 
     for (const icon of ['addIcon', 'deleteIcon', 'resetIcon', 'saveIcon', 'speedIcon', 'clearIcon']) {
         assert.match(source, new RegExp(`icon: ${icon}`));
@@ -235,7 +245,10 @@ test('shared custom selects reserve one aligned row for icon, label, and arrow',
 });
 
 test('advanced site matching uses the same reusable editor-card surface', async () => {
-    const [panel, styles] = await Promise.all([readFile(AI_PANEL_PATH, 'utf8'), readFile(AI_STYLES_PATH, 'utf8')]);
+    const [panel, styles] = await Promise.all([
+        readFile(AI_STYLE_SECTION_PATH, 'utf8'),
+        readFile(AI_STYLES_PATH, 'utf8'),
+    ]);
 
     assert.match(panel, /advancedStyleSettings\.element\.classList\.add\('ai-style-advanced'\)/);
     assert.match(styles, /\.ai-style-advanced\s*\{[\s\S]*border-radius: 12px/);
@@ -262,7 +275,7 @@ test('AI summary renders local candidate pairs before provider submission', asyn
 test('an empty AI result remains editable and refreshes stale line metadata', async () => {
     const source = await readFile(MAIN_MODAL_PATH, 'utf8');
     const emptyOutputBranch = source.match(
-        /else if \(content === state\.SHOW_PLACEHOLDER\) \{([\s\S]*?)\n    \} else \{/
+        /else if \(content === state\.SHOW_PLACEHOLDER\) \{([\s\S]*?)\n {4}\} else \{/
     )?.[1];
 
     assert.ok(emptyOutputBranch);
@@ -275,9 +288,7 @@ test('an empty AI result remains editable and refreshes stale line metadata', as
 
 test('an AI draft remains editable after the user clears all summary text', async () => {
     const source = await readFile(MAIN_MODAL_PATH, 'utf8');
-    const renderedContentBranch = source.match(
-        /requestAnimationFrame\(\(\) => \{([\s\S]*?)\n        \}\);\n    \}/
-    )?.[1];
+    const renderedContentBranch = source.match(/requestAnimationFrame\(\(\) => \{([\s\S]*?)\n {8}\}\);\n {4}\}/)?.[1];
 
     assert.ok(renderedContentBranch);
     assert.match(renderedContentBranch, /state\.outputTextarea\.readOnly = mode !== 'ai-scan' && !isData/);
@@ -289,4 +300,13 @@ test('AI summary output tabs publish their selection through the shared event bu
 
     assert.match(source, /import \{ fire, on \} from '\.\.\/\.\.\/utils\/core\/eventBus\.js';/);
     assert.match(source, /button\.addEventListener\('click', \(\) => fire\('ai-output-type-change', type\)\)/);
+});
+
+test('main modal removes the same textarea handlers that it installs', async () => {
+    const source = await readFile(MAIN_MODAL_PATH, 'utf8');
+
+    assert.match(source, /const handleTextareaScroll = \(\) =>/);
+    assert.match(source, /addEventListener\('scroll', handleTextareaScroll\)/);
+    assert.match(source, /removeEventListener\('scroll', handleTextareaScroll\)/);
+    assert.doesNotMatch(source, /removeEventListener\('scroll', \(\) =>/);
 });

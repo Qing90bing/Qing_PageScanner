@@ -2,7 +2,7 @@
 
 import { setLanguage as setI18nLanguage, t, supportedLanguages } from '../index.js';
 import { registerMenuCommand, unregisterMenuCommand, getValue, setValue } from '../../services/tampermonkey.js';
-import { loadSettings } from '../../../features/settings/logic.js';
+import { loadSettings } from '../../services/settings.js';
 
 /**
  * @description
@@ -110,10 +110,7 @@ export function switchLanguage(langCode) {
     if (isLanguageSupported(langCode)) {
         const settings = loadSettings();
         settings.language = langCode;
-        // 注意：我们这里不需要调用 saveSettings(settings)，因为 switchLanguage
-        // 通常是由 logic.js 中的 applySettings 调用的，而 applySettings
-        // 之前通常已经保存了设置。重复保存是多余的，但无害。
-        // 关键是调用 initializeLanguage 来计算并设置正确的 i18n 语言。
+        // 不在这里重复写入存储；调用方已负责保存设置，本函数只更新运行时语言。
 
         // 重新调用初始化逻辑来应用正确的语言显示
         initializeLanguage(settings);

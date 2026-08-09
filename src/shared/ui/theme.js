@@ -1,5 +1,5 @@
 // src/ui/theme.js
-import { loadSettings } from '../../features/settings/logic.js';
+import { loadSettings } from '../services/settings.js';
 import { uiContainer } from './uiContainer.js';
 
 /**
