@@ -24,9 +24,16 @@
     width: 320px;
     opacity: 0;
     transform: translateX(100%);
-    animation: tc-notification-fade-in 0.5s forwards;
-    transition: box-shadow 0.3s;
+    transition:
+        opacity 0.5s ease,
+        transform 0.5s ease,
+        box-shadow 0.3s;
     pointer-events: auto; /* 关键：恢复单个通知的可点击性 */
+}
+
+.tc-notification-visible {
+    opacity: 1;
+    transform: translateX(0);
 }
 
 .tc-notification:hover {
@@ -75,24 +82,7 @@
     stroke: var(--main-text, #333);
 }
 
-@keyframes tc-notification-fade-in {
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
 .tc-notification-fade-out {
-    animation: tc-notification-fade-out 0.5s forwards;
-}
-
-@keyframes tc-notification-fade-out {
-    from {
-        opacity: 1;
-        transform: translateX(0);
-    }
-    to {
-        opacity: 0;
-        transform: translateX(100%);
-    }
+    opacity: 0;
+    transform: translateX(100%);
 }

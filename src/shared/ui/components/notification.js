@@ -7,6 +7,8 @@ import { successIcon } from '../../../assets/icons/successIcon.js';
 import { closeIcon } from '../../../assets/icons/closeIcon.js';
 import { uiContainer } from '../uiContainer.js';
 
+const NOTIFICATION_TRANSITION_MS = 500;
+
 // 存储通知的容器
 let notificationContainer = null;
 
@@ -33,14 +35,11 @@ function closeNotification(notification) {
         return;
     }
 
+    notification.classList.remove('tc-notification-visible');
     notification.classList.add('tc-notification-fade-out');
-    notification.addEventListener(
-        'animationend',
-        () => {
-            notification.remove();
-        },
-        { once: true }
-    ); // 使用 once 确保事件监听器在执行后自动移除
+    setTimeout(() => {
+        notification.remove();
+    }, NOTIFICATION_TRANSITION_MS);
 }
 
 /**
@@ -96,6 +95,12 @@ export function showNotification(message, { type = 'info', duration = appConfig.
     const notification = createNotificationElement(message, type);
 
     container.appendChild(notification);
+
+    requestAnimationFrame(() => {
+        if (notification.isConnected && !notification.classList.contains('tc-notification-fade-out')) {
+            notification.classList.add('tc-notification-visible');
+        }
+    });
 
     // 自动关闭计时器
     const timer = setTimeout(() => {

@@ -82,6 +82,7 @@ export class TopLayerManager {
         if (this.promoteTimeout) clearTimeout(this.promoteTimeout);
 
         this.promoteTimeout = setTimeout(() => {
+            this.promoteTimeout = null;
             if (!this.container.isConnected) return;
 
             // 1. 尝试隐藏 Popover (清理 Top Layer 状态)
@@ -94,16 +95,10 @@ export class TopLayerManager {
 
             // 3. 异步重新显示
             requestAnimationFrame(() => {
+                if (!this.container.isConnected) return;
                 try {
-                    // 物理移动 DOM 节点至最后
-                    if (this.container.parentElement === document.body) {
-                        document.body.removeChild(this.container);
-                    } else if (this.container.parentElement) {
-                        this.container.remove();
-                    }
-                    document.body.appendChild(this.container);
-
                     // 再次显示 (推入 Top Layer 栈顶)
+                    // 保持宿主节点连接，避免网站交互导致后代 CSS 动画重新播放。
                     this.container.showPopover();
                 } catch (e) {}
             });
