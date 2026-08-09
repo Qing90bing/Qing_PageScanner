@@ -30,7 +30,7 @@
 .code-text-preview {
     font-family: 'Menlo', 'Monaco', 'Consolas', 'Courier New', monospace;
     font-size: 14px;
-    /* Increased to 14px as requested */
+    /* 预览文本使用略大的字号，便于阅读。 */
     line-height: 1.4;
     color: var(--main-text-secondary);
     text-align: left;

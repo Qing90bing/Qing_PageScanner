@@ -16,7 +16,7 @@
         opacity 0.3s ease,
         visibility 0.3s,
         transform 0.3s ease-in-out;
-    /* 新增：为 transform 设置一个基点 */
+    /* 让缩放动画围绕右上角展开。 */
     transform-origin: top right;
     pointer-events: none; /* 容器本身不拦截，让子元素决定 */
 }
@@ -111,20 +111,20 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    /* --- 新增：动画相关属性 --- */
+    /* 默认隐藏，显示状态由 is-visible 控制。 */
     opacity: 0;
     visibility: hidden;
     transition:
         opacity 0.3s ease,
         visibility 0.3s;
-    pointer-events: none; /* 新增：默认不拦截鼠标事件 */
+    pointer-events: none; /* 隐藏时不拦截页面交互。 */
 }
 
-/* 新增：可见状态 */
+/* 可见状态恢复交互。 */
 .text-extractor-modal-overlay.is-visible {
     opacity: 1;
     visibility: visible;
-    pointer-events: auto; /* 新增：可见时恢复事件拦截 */
+    pointer-events: auto;
 }
 
 .text-extractor-modal {
@@ -139,12 +139,12 @@
     box-shadow: 0 5px 15px var(--main-shadow);
     display: flex;
     flex-direction: column;
-    /* --- 新增：动画相关属性 --- */
+    /* 与遮罩同步缩放模态框。 */
     transform: scale(0.95);
     transition: transform 0.3s ease;
 }
 
-/* 新增：可见状态下的模态框样式 */
+/* 遮罩可见时恢复模态框尺寸。 */
 .text-extractor-modal-overlay.is-visible .text-extractor-modal {
     transform: scale(1);
 }
@@ -222,12 +222,12 @@
     padding: 18px;
     overflow-y: auto;
     flex-grow: 1;
-    display: flex; /* 新增：启用flexbox布局 */
+    display: flex;
     flex-direction: column;
-    position: relative; /* 新增：为子元素的绝对定位提供基准 */
+    position: relative; /* 为子元素的绝对定位提供基准。 */
 }
 
-/* 新增：文本区域容器的动画样式 */
+/* 文本区域的显示过渡。 */
 .tc-textarea-container {
     opacity: 0;
     visibility: hidden;
@@ -237,7 +237,7 @@
     width: 100%; /* 确保它填满父容器 */
     height: 100%;
     display: flex; /* 保持其flex布局 */
-    box-sizing: border-box; /* 新增：修正尺寸计算 */
+    box-sizing: border-box;
     min-height: 0;
     flex: 1;
 }
@@ -251,7 +251,7 @@
     padding: 18px;
     border-top: 1px solid var(--main-border);
     display: flex;
-    justify-content: space-between; /* 修改：让内容两端对齐 */
+    justify-content: space-between; /* 将页脚内容分布到两端。 */
     align-items: center;
 }
 
@@ -259,7 +259,7 @@
 .tc-footer-buttons {
     display: flex;
     align-items: center;
-    gap: 10px; /* 新增：按钮之间的间距 */
+    gap: 10px;
     flex-wrap: wrap;
     justify-content: flex-end;
 }

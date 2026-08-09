@@ -9,11 +9,11 @@
     outline: none;
     background-color: var(--main-overlay-bg);
     z-index: 2147483648;
-    /* High z-index to stay above page content but below tooltips */
+    /* 位于页面内容之上、提示层之下。 */
     display: flex;
     justify-content: center;
     align-items: center;
-    /* --- 新增：动画相关属性 --- */
+    /* 默认隐藏，显示状态由 is-visible 控制。 */
     opacity: 0;
     visibility: hidden;
     transition:
@@ -23,12 +23,12 @@
     /* 默认不拦截，避免不可见时阻挡 */
 }
 
-/* 新增：可见状态 */
+/* 可见状态恢复交互。 */
 .settings-panel-overlay.is-visible {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
-    /* 关键：模态框显示时恢复交互 */
+    /* 模态框显示时恢复交互。 */
 }
 
 .settings-panel-modal {
@@ -45,7 +45,7 @@
     max-height: 90vh;
     display: flex;
     flex-direction: column;
-    /* --- 新增：动画相关属性 --- */
+    /* 与遮罩同步缩放面板。 */
     transform: scale(0.95);
     transition: transform 0.3s ease;
     overflow: hidden;
@@ -53,10 +53,7 @@
     /* 防止圆角被子元素遮挡 */
 }
 
-/* 关键修复：移除上下文面板的特定尺寸覆盖，使其与主设置面板大小保持一致 (800x600) */
-/* .settings-panel-modal.contextual-settings-modal { ... } 已移除 */
-
-/* 关键修复：确保内容区域填充剩余空间，使 Footer 沉底 */
+/* 内容区占据剩余高度，让页脚保持在面板底部。 */
 .settings-panel-content {
     padding: 20px;
     overflow-y: auto;
@@ -66,7 +63,7 @@
 /* 移除上下文面板内容的特定样式覆盖 */
 /* .contextual-settings-modal .settings-panel-content { ... } 已移除 */
 
-/* 新增：可见状态下的模态框样式 */
+/* 遮罩可见时恢复面板尺寸。 */
 .settings-panel-overlay.is-visible .settings-panel-modal {
     transform: scale(1);
 }
@@ -109,7 +106,7 @@
     line-height: 24px;
 }
 
-/* --- 新增：主体布局（侧边栏 + 内容区） --- */
+/* 主体布局：侧边栏与内容区。 */
 .settings-panel-body {
     display: flex;
     flex: 1;
@@ -117,7 +114,7 @@
     /* 内部滚动 */
 }
 
-/* --- 新增：侧边栏样式 --- */
+/* 设置项侧边栏。 */
 .settings-sidebar {
     width: 220px;
     border-right: 1px solid var(--main-border);
@@ -137,7 +134,7 @@
     position: absolute;
     left: 0;
     top: 0;
-    /* 关键修复：确保从容器顶部开始定位，配合 offsetTop 使用 */
+    /* 从容器顶部定位，配合 offsetTop 更新高亮位置。 */
     width: 100%;
     /* 初始高度和位置将在 JS 中动态设置 */
     background-color: color-mix(in srgb, var(--main-primary) 10%, transparent);
@@ -160,7 +157,7 @@
     font-size: 15px;
     font-weight: 500;
     color: var(--main-text);
-    /* 关键修复：添加 background-color 到 transition 列表中 */
+    /* 背景色与文字颜色同步过渡。 */
     transition:
         color 0.2s,
         background-color 0.2s;
@@ -202,7 +199,7 @@
     line-height: 22px;
 }
 
-/* --- 新增：内容区域样式 --- */
+/* 设置内容区域。 */
 .settings-content-area {
     flex: 1;
     display: flex;
