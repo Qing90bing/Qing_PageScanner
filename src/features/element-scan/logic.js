@@ -26,6 +26,7 @@ import { on, fire } from '../../shared/utils/core/eventBus.js';
 import { saveActiveSession, clearActiveSession, enablePersistence } from '../../shared/services/sessionPersistence.js';
 import { acquireScanMode, releaseScanMode, SCAN_MODES } from '../../shared/services/scanModeCoordinator.js';
 import { filterTextsWithWorker, resetTextFilterState, terminateTextFilterWorker } from './textFilter.js';
+import { createIframeListenerRegistry } from './iframeListenerRegistry.js';
 
 // --- 模块级状态变量 ---
 
@@ -50,6 +51,11 @@ let scrollUpdateQueued = false;
 let iframeObserver = null;
 // 暂存反馈期间延迟恢复选择模式；手动重选时会取消它。
 let reselectTimer = null;
+const iframeListenerRegistry = createIframeListenerRegistry({
+    canAttach: () => isActive && !isPaused,
+    onAttach: addListenersToDocument,
+    onDetach: removeListenersFromDocument,
+});
 
 // --- 事件监听 ---
 on('clearElementScan', () => {
@@ -285,40 +291,17 @@ function addListenersToIframes() {
  * @param {HTMLIFrameElement} iframe
  */
 function attachIframeListeners(iframe) {
-    try {
-        const attach = (win) => {
-            try {
-                const doc = win.document;
-                if (doc) {
-                    doc._frameElement = iframe;
-                    addListenersToDocument(doc);
-                }
-            } catch (e) {
-                // 跨域 iframe 不允许读取 document，跳过即可。
-            }
-        };
+    iframeListenerRegistry.watch(iframe);
+}
 
-        if (
-            iframe.contentWindow &&
-            iframe.contentWindow.document &&
-            iframe.contentWindow.document.readyState === 'complete'
-        ) {
-            attach(iframe.contentWindow);
-        } else {
-            // 如果 iframe 还没加载完，监听 load 事件
-            iframe.addEventListener(
-                'load',
-                () => {
-                    if (iframe.contentWindow) {
-                        attach(iframe.contentWindow);
-                    }
-                },
-                { once: true }
-            );
+function collectIframeElements(nodes, target) {
+    nodes.forEach((node) => {
+        if (node.tagName === 'IFRAME') {
+            target.add(node);
+        } else if (node.nodeType === Node.ELEMENT_NODE && node.querySelectorAll) {
+            node.querySelectorAll('iframe').forEach((iframe) => target.add(iframe));
         }
-    } catch (e) {
-        // 忽略跨域 iframe
-    }
+    });
 }
 
 /**
@@ -328,21 +311,16 @@ function setupIframeObserver() {
     if (iframeObserver) return;
 
     iframeObserver = new MutationObserver((mutations) => {
+        const removedIframes = new Set();
+        const addedIframes = new Set();
+
         mutations.forEach((mutation) => {
-            if (mutation.addedNodes.length) {
-                mutation.addedNodes.forEach((node) => {
-                    // 直接检查 iframe 标签
-                    if (node.tagName === 'IFRAME') {
-                        attachIframeListeners(node);
-                    }
-                    // 检查容器内部是否包含 iframe
-                    else if (node.nodeType === Node.ELEMENT_NODE && node.querySelectorAll) {
-                        const nestedIframes = node.querySelectorAll('iframe');
-                        nestedIframes.forEach(attachIframeListeners);
-                    }
-                });
-            }
+            collectIframeElements(mutation.removedNodes, removedIframes);
+            collectIframeElements(mutation.addedNodes, addedIframes);
         });
+
+        removedIframes.forEach((iframe) => iframeListenerRegistry.unwatch(iframe));
+        addedIframes.forEach(attachIframeListeners);
     });
 
     iframeObserver.observe(document.body, { childList: true, subtree: true });
@@ -352,25 +330,15 @@ function setupIframeObserver() {
 /**
  * 移除所有 Iframe 的监听器。
  */
-function removeListenersFromIframes() {
+function removeListenersFromIframes({ reset = false } = {}) {
     // 停止观察
     if (iframeObserver) {
         iframeObserver.disconnect();
         iframeObserver = null;
     }
 
-    const iframes = document.querySelectorAll('iframe');
-    iframes.forEach((iframe) => {
-        try {
-            const iframeDoc = iframe.contentDocument || (iframe.contentWindow && iframe.contentWindow.document);
-            if (iframeDoc) {
-                removeListenersFromDocument(iframeDoc);
-                delete iframeDoc._frameElement;
-            }
-        } catch (e) {
-            // 忽略跨域
-        }
-    });
+    if (reset) iframeListenerRegistry.reset();
+    else iframeListenerRegistry.detachAll();
 }
 
 /**
@@ -414,7 +382,7 @@ export function stopElementScan(fabElement) {
     }
 
     removeListenersFromDocument(document);
-    removeListenersFromIframes();
+    removeListenersFromIframes({ reset: true });
     window.removeEventListener('beforeunload', handleElementScanUnload);
 
     if (autoSaveInterval) {
@@ -487,6 +455,7 @@ export function reselectElement() {
 
     addListenersToDocument(document);
     addListenersToIframes();
+    setupIframeObserver();
 }
 
 export async function stageCurrentElement() {
@@ -553,6 +522,16 @@ function updateStagedCount() {
     }
 }
 
+function getDocumentOffset(doc) {
+    if (!doc || doc === document) return { x: 0, y: 0 };
+
+    const frameElement = iframeListenerRegistry.getFrameElement(doc);
+    if (!frameElement) return { x: 0, y: 0 };
+
+    const rect = frameElement.getBoundingClientRect();
+    return { x: rect.left, y: rect.top };
+}
+
 /**
  * @private
  * @function scheduledHighlightUpdate
@@ -561,14 +540,7 @@ function updateStagedCount() {
  */
 function scheduledHighlightUpdate() {
     if (currentTarget) {
-        // 计算 iframe 偏移量
-        const offset = { x: 0, y: 0 };
-        const doc = currentTarget.ownerDocument;
-        if (doc && doc !== document && doc._frameElement) {
-            const rect = doc._frameElement.getBoundingClientRect();
-            offset.x = rect.left;
-            offset.y = rect.top;
-        }
+        const offset = getDocumentOffset(currentTarget.ownerDocument);
         updateHighlight(currentTarget, offset);
     }
     isHighlightUpdateQueued = false;
@@ -679,12 +651,7 @@ function handleElementClick(event) {
     log(simpleTemplate(t('log.elementScan.pathBuilt'), { depth: elementPath.length }));
 
     // 计算工具栏需要的初始偏移量
-    const offset = { x: 0, y: 0 };
-    if (ownerDoc !== document && ownerDoc._frameElement) {
-        const rect = ownerDoc._frameElement.getBoundingClientRect();
-        offset.x = rect.left;
-        offset.y = rect.top;
-    }
+    const offset = getDocumentOffset(ownerDoc);
 
     createAdjustmentToolbar(elementPath, offset, {
         onSelectionLevelChange: updateSelectionLevel,
@@ -702,13 +669,7 @@ export function updateSelectionLevel(level) {
         const tagName = targetElement.tagName.toLowerCase();
         log(simpleTemplate(t('log.elementScan.adjustingLevel'), { level, tagName }));
 
-        const offset = { x: 0, y: 0 };
-        const doc = targetElement.ownerDocument;
-        if (doc !== document && doc._frameElement) {
-            const rect = doc._frameElement.getBoundingClientRect();
-            offset.x = rect.left;
-            offset.y = rect.top;
-        }
+        const offset = getDocumentOffset(targetElement.ownerDocument);
 
         updateHighlight(targetElement, offset);
     }
