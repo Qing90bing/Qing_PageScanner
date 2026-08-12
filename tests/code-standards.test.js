@@ -138,7 +138,9 @@ test('source module graph stays acyclic', async () => {
         visited.add(file);
     };
 
-    graph.keys().forEach(visit);
+    for (const file of graph.keys()) {
+        visit(file);
+    }
     assert.deepEqual([...cycles].sort(), []);
 });
 
