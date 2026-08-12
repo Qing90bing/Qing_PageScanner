@@ -14,6 +14,8 @@ const AI_STYLES_PATH = new URL('../src/assets/styles/ai-scan.css', import.meta.u
 const FORMS_STYLES_PATH = new URL('../src/assets/styles/forms.css', import.meta.url);
 const ICON_TITLE_PATH = new URL('../src/shared/ui/components/iconTitle.js', import.meta.url);
 const BUTTON_PATH = new URL('../src/shared/ui/components/button.js', import.meta.url);
+const TOGGLE_PATH = new URL('../src/shared/ui/components/toggleSwitch.js', import.meta.url);
+const SETTINGS_PANEL_BUILDER_PATH = new URL('../src/features/settings/panelBuilder.js', import.meta.url);
 const AI_ICON_PATH = new URL('../src/assets/icons/aiIcon.js', import.meta.url);
 const SETTINGS_STYLES_PATH = new URL('../src/assets/styles/settings-panel.css', import.meta.url);
 const CUSTOM_SELECT_STYLES_PATH = new URL('../src/assets/styles/custom-select.css', import.meta.url);
@@ -159,6 +161,23 @@ test('shared text buttons use one icon and label geometry', async () => {
     assert.match(button, /let iconWrapper = iconOnly \? button : button\.querySelector\('\.tc-icon-title-icon'\)/);
     assert.match(button, /iconWrapper\.appendChild\(newIconElement\)/);
     assert.doesNotMatch(button, /button\.appendChild\(newIconElement\)/);
+});
+
+test('all settings booleans reuse the shared switch component', async () => {
+    const [toggle, panelBuilder, forms, settingsStyles] = await Promise.all([
+        readFile(TOGGLE_PATH, 'utf8'),
+        readFile(SETTINGS_PANEL_BUILDER_PATH, 'utf8'),
+        readFile(FORMS_STYLES_PATH, 'utf8'),
+        readFile(SETTINGS_STYLES_PATH, 'utf8'),
+    ]);
+
+    assert.match(toggle, /setAttribute\('role', 'switch'\)/);
+    assert.match(toggle, /tooltipConfig\?\.text/);
+    assert.match(panelBuilder, /createToggleSwitch/);
+    assert.doesNotMatch(panelBuilder, /createCheckbox/);
+    assert.match(forms, /\.tc-toggle-control\s*\{[\s\S]*width: 72px[\s\S]*height: 38px/);
+    assert.match(settingsStyles, /\.setting-item > \.tc-toggle-setting/);
+    assert.doesNotMatch(settingsStyles, /checkbox-group|checkmark/);
 });
 
 test('AI scan reuses the shared top counter and the AI feature switch controls its FAB', async () => {

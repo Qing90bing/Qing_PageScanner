@@ -1,8 +1,8 @@
 // src/features/settings/panelBuilder.js
 
-import { createCheckbox } from '../../shared/ui/components/checkbox.js';
 import { CustomSelect } from '../../shared/ui/components/customSelect.js';
 import { createNumericInput } from '../../shared/ui/components/numericInput.js';
+import { createToggleSwitch } from '../../shared/ui/components/toggleSwitch.js';
 import { createSVGFromString } from '../../shared/utils/dom/dom.js';
 import { closeIcon } from '../../assets/icons/closeIcon.js';
 import { themeIcon } from '../../assets/icons/themeIcon.js';
@@ -36,6 +36,10 @@ const TABS = [
     { id: 'tab-ai', label: 'settings.ai.title', icon: aiIcon },
     { id: 'tab-about', label: 'settings.about', icon: infoIcon },
 ];
+
+function createSettingsToggle(id, label, checked, tooltip) {
+    return createToggleSwitch(id, label, '', checked, tooltip).element;
+}
 
 /**
  * @private
@@ -119,14 +123,14 @@ export function buildPanelDOM(settings) {
     filterTab.appendChild(filterNotice);
     // 填充过滤规则项
     filterDefinitions.forEach((filter) => {
-        const checkboxElement = createCheckbox(
+        const toggleElement = createSettingsToggle(
             filter.id,
             t(filter.label),
             settings.filterRules[filter.key],
             filter.tooltip
         );
-        checkboxElement.classList.add('setting-item');
-        filterTab.appendChild(checkboxElement);
+        toggleElement.classList.add('setting-item');
+        filterTab.appendChild(toggleElement);
     });
     contentArea.appendChild(filterTab);
 
@@ -144,14 +148,14 @@ export function buildPanelDOM(settings) {
     }
     // 添加输出设置勾选框（首尾符号开关）
     outputSettingsDefinitions.forEach((setting) => {
-        const checkboxElement = createCheckbox(
+        const toggleElement = createSettingsToggle(
             setting.id,
             t(setting.label),
             settings.includeArrayBrackets,
             setting.tooltip
         );
-        checkboxElement.classList.add('setting-item');
-        formatTab.appendChild(checkboxElement);
+        toggleElement.classList.add('setting-item');
+        formatTab.appendChild(toggleElement);
     });
     contentArea.appendChild(formatTab);
 
@@ -243,8 +247,13 @@ function createRelatedSettingDOM(setting, settings) {
         const compositeContainer = document.createElement('div');
         compositeContainer.className = 'composite-setting-container';
 
-        const checkboxElement = createCheckbox(setting.id, t(setting.label), settings[setting.key], setting.tooltip);
-        compositeContainer.appendChild(checkboxElement);
+        const toggleElement = createSettingsToggle(
+            setting.id,
+            t(setting.label),
+            settings[setting.key],
+            setting.tooltip
+        );
+        compositeContainer.appendChild(toggleElement);
 
         const numericConfig = setting.linkedNumeric;
         const numericValue = settings[numericConfig.key];
@@ -257,9 +266,9 @@ function createRelatedSettingDOM(setting, settings) {
         numericInputElement.classList.add('linked-numeric-input');
         compositeContainer.appendChild(numericInputElement);
 
-        const checkbox = checkboxElement.querySelector('input[type="checkbox"]');
+        const toggleInput = toggleElement.querySelector('input[type="checkbox"]');
         const numericInput = numericInputElement.querySelector('input[type="number"]');
-        checkbox.addEventListener('change', (event) => {
+        toggleInput.addEventListener('change', (event) => {
             numericInput.disabled = !event.target.checked;
         });
 
@@ -282,8 +291,7 @@ function createRelatedSettingDOM(setting, settings) {
         selectContainer.appendChild(selectWrapper);
         item.appendChild(selectContainer);
     } else {
-        const checkboxElement = createCheckbox(setting.id, t(setting.label), settings[setting.key], setting.tooltip);
-        item.appendChild(checkboxElement);
+        item.appendChild(createSettingsToggle(setting.id, t(setting.label), settings[setting.key], setting.tooltip));
     }
     return item;
 }
@@ -382,13 +390,13 @@ export function buildContextualPanelDOM({ titleKey, icon, definitions, settings 
         item.className = 'setting-item';
 
         if (setting.type === 'checkbox') {
-            const checkboxElement = createCheckbox(
+            const toggleElement = createSettingsToggle(
                 setting.id,
                 t(setting.label),
                 settings[setting.key],
                 setting.tooltip
             );
-            item.appendChild(checkboxElement);
+            item.appendChild(toggleElement);
         }
 
         content.appendChild(item);

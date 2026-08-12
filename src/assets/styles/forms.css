@@ -109,12 +109,36 @@
     background: var(--main-bg);
     color: var(--main-text);
     cursor: pointer;
+    transition:
+        border-color 0.2s,
+        background-color 0.2s,
+        box-shadow 0.2s;
+}
+
+.tc-toggle-setting:hover {
+    border-color: var(--main-primary);
+    background-color: color-mix(in srgb, var(--main-primary) 3%, var(--main-bg));
+}
+
+.tc-toggle-setting:focus-within {
+    outline: 2px solid color-mix(in srgb, var(--main-primary) 72%, transparent);
+    outline-offset: 2px;
+}
+
+.tc-toggle-setting-compact {
+    min-height: 56px;
 }
 
 .tc-toggle-copy {
     display: flex;
     flex-direction: column;
     gap: 5px;
+    min-width: 0;
+}
+
+.tc-toggle-title-row {
+    display: flex;
+    align-items: center;
     min-width: 0;
 }
 
@@ -139,8 +163,8 @@
 
 .tc-toggle-control {
     position: relative;
-    width: 48px;
-    height: 26px;
+    width: 72px;
+    height: 38px;
     border-radius: 999px;
     background: var(--main-disabled);
     transition:
@@ -150,10 +174,10 @@
 
 .tc-toggle-control::after {
     position: absolute;
-    top: 3px;
-    left: 3px;
-    width: 20px;
-    height: 20px;
+    top: 4px;
+    left: 4px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     background: var(--main-primary-text);
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.28);
@@ -166,7 +190,7 @@
 }
 
 .tc-toggle-input:checked + .tc-toggle-control::after {
-    transform: translateX(22px);
+    transform: translateX(34px);
 }
 
 .tc-toggle-input:focus-visible + .tc-toggle-control {
