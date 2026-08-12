@@ -8583,6 +8583,10 @@ ${result.join(",\n")}
     });
     contentArea.appendChild(formatTab);
     const languageTab = createTabContent("tab-language", false);
+    const languageTitleContainer = document.createElement("div");
+    languageTitleContainer.id = "language-setting-title-container";
+    languageTitleContainer.className = "setting-title-container";
+    languageTab.appendChild(languageTitleContainer);
     const langDef = selectSettingsDefinitions.find((d) => d.key === "language");
     if (langDef) {
       languageTab.appendChild(createSelectSettingDOM(langDef));
@@ -11023,6 +11027,10 @@ ${entries.join("\n")}
     const relatedTitleContainer = settingsPanel.querySelector("#related-setting-title-container");
     if (relatedTitleContainer) {
       relatedTitleContainer.appendChild(createIconTitle(relatedSettingsIcon, t("settings.relatedSettings")));
+    }
+    const languageTitleContainer = settingsPanel.querySelector("#language-setting-title-container");
+    if (languageTitleContainer) {
+      languageTitleContainer.appendChild(createIconTitle(languageIcon_default, t("settings.language")));
     }
     const filterTitleContainer = settingsPanel.querySelector("#filter-setting-title-container");
     if (filterTitleContainer) {
