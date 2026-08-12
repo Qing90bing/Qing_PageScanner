@@ -439,6 +439,71 @@ var TextExtractor = (() => {
     modal: Object.freeze({ contentHeight: "400px" }),
     notification: Object.freeze({ durationMs: 3e3 })
   });
+  // src/shared/utils/core/logger.js
+  var DEFAULT_LOG_PREFIX = "[Qing PageScanner]";
+  var loggerState = {
+    isDebugEnabled: false,
+    prefix: DEFAULT_LOG_PREFIX
+  };
+  function updateLoggerState(isEnabled) {
+    loggerState.isDebugEnabled = Boolean(isEnabled);
+  }
+  function updateLoggerPrefix(prefix) {
+    const normalizedPrefix = String(prefix || "").trim();
+    loggerState.prefix = normalizedPrefix || DEFAULT_LOG_PREFIX;
+  }
+  function log(...args) {
+    if (loggerState.isDebugEnabled) {
+      console.log(loggerState.prefix, ...args);
+    }
+  }
+  // src/shared/utils/core/eventBus.js
+  var events = {};
+  function on(eventName, callback) {
+    if (!events[eventName]) {
+      events[eventName] = [];
+    }
+    events[eventName].push(callback);
+    return () => {
+      events[eventName] = events[eventName].filter((cb) => cb !== callback);
+    };
+  }
+  function fire(eventName, data) {
+    if (events[eventName]) {
+      events[eventName].forEach((callback) => {
+        try {
+          callback(data);
+        } catch (error) {
+          log(`Event bus callback failed: ${eventName}`, error);
+        }
+      });
+    }
+  }
+  // src/shared/services/tampermonkey.js
+  var registerMenuCommand = (caption, commandFunc) => {
+    return GM_registerMenuCommand(caption, commandFunc);
+  };
+  var unregisterMenuCommand = (commandId) => {
+    GM_unregisterMenuCommand(commandId);
+  };
+  var setClipboard = (text) => {
+    GM_setClipboard(text, "text");
+  };
+  var getValue = (key, defaultValue) => {
+    return GM_getValue(key, defaultValue);
+  };
+  var setValue = (key, value) => {
+    return GM_setValue(key, value);
+  };
+  var deleteValue = (key) => {
+    return GM_deleteValue(key);
+  };
+  var xmlHttpRequest = (details) => {
+    return GM_xmlhttpRequest(details);
+  };
+  var getScriptInfo = () => {
+    return typeof GM_info === "undefined" ? null : GM_info;
+  };
   // src/shared/i18n/en.json
   var en_default = {
     _meta: {
@@ -2180,12 +2245,14 @@ var TextExtractor = (() => {
     if (translations[lang]) {
       currentLanguage = lang;
       currentTranslations = translations[lang];
+      updateLoggerPrefix(t("log.prefix"));
       log(t("log.language.switched", { lang }));
       fire("languageChanged", lang);
     } else {
       log(t("log.language.notFound", { lang }), "warn");
       currentLanguage = "en";
       currentTranslations = translations.en;
+      updateLoggerPrefix(t("log.prefix"));
     }
   }
   function t(key, replacements) {
@@ -2219,63 +2286,6 @@ var TextExtractor = (() => {
       label: lang.name
     }));
   }
-  // src/shared/utils/core/logger.js
-  var isDebugEnabled = false;
-  function updateLoggerState(isEnabled) {
-    isDebugEnabled = isEnabled;
-  }
-  function log(...args) {
-    if (isDebugEnabled) {
-      console.log(t("log.prefix"), ...args);
-    }
-  }
-  // src/shared/utils/core/eventBus.js
-  var events = {};
-  function on(eventName, callback) {
-    if (!events[eventName]) {
-      events[eventName] = [];
-    }
-    events[eventName].push(callback);
-    return () => {
-      events[eventName] = events[eventName].filter((cb) => cb !== callback);
-    };
-  }
-  function fire(eventName, data) {
-    if (events[eventName]) {
-      events[eventName].forEach((callback) => {
-        try {
-          callback(data);
-        } catch (error) {
-          log(t("log.eventBus.callbackError", { eventName }), error);
-        }
-      });
-    }
-  }
-  // src/shared/services/tampermonkey.js
-  var registerMenuCommand = (caption, commandFunc) => {
-    return GM_registerMenuCommand(caption, commandFunc);
-  };
-  var unregisterMenuCommand = (commandId) => {
-    GM_unregisterMenuCommand(commandId);
-  };
-  var setClipboard = (text) => {
-    GM_setClipboard(text, "text");
-  };
-  var getValue = (key, defaultValue) => {
-    return GM_getValue(key, defaultValue);
-  };
-  var setValue = (key, value) => {
-    return GM_setValue(key, value);
-  };
-  var deleteValue = (key) => {
-    return GM_deleteValue(key);
-  };
-  var xmlHttpRequest = (details) => {
-    return GM_xmlhttpRequest(details);
-  };
-  var getScriptInfo = () => {
-    return typeof GM_info === "undefined" ? null : GM_info;
-  };
   // src/shared/services/ai/contracts.js
   var AI_ACTIONS = Object.freeze({
     TRANSLATE: "translate",
@@ -2676,6 +2686,9 @@ var TextExtractor = (() => {
       listener({ activeMode, previousMode });
     });
   }
+  function getActiveScanMode() {
+    return activeMode;
+  }
   function canAcquireScanMode(mode) {
     return activeMode === SCAN_MODES.IDLE || activeMode === mode;
   }
@@ -2709,32 +2722,56 @@ var TextExtractor = (() => {
   }
   // src/shared/ui/components/fabExclusiveState.js
   var snapshots = /* @__PURE__ */ new Map();
-  function applyAiExclusiveFabState(fabs, isAiActive, setDisabled, setTooltip) {
-    const ordinaryFabs = fabs.filter(Boolean);
-    if (isAiActive) {
-      ordinaryFabs.forEach((fab) => {
-        if (!snapshots.has(fab)) {
-          snapshots.set(fab, {
-            disabled: Boolean(fab.disabled),
-            hadDisabledClass: fab.classList.contains("fab-disabled"),
-            ariaDisabled: fab.getAttribute("aria-disabled"),
-            tabIndex: fab.tabIndex,
-            tooltipKey: fab.dataset.tooltipKey
-          });
-        }
-        setDisabled(fab, true, "tooltip.disabled.ai_scan_active");
-      });
-      return;
+  function getDisabledFabs(fabs, activeMode2) {
+    if (activeMode2 === SCAN_MODES.AI) {
+      return new Map(
+        [fabs.dynamic, fabs.static, fabs.element].filter(Boolean).map((fab) => [fab, "tooltip.disabled.ai_scan_active"])
+      );
     }
-    ordinaryFabs.forEach((fab) => {
-      const snapshot = snapshots.get(fab);
-      if (!snapshot) return;
-      fab.disabled = snapshot.disabled;
-      fab.classList.toggle("fab-disabled", snapshot.hadDisabledClass);
-      fab.setAttribute("aria-disabled", snapshot.ariaDisabled || String(snapshot.disabled));
-      fab.tabIndex = snapshot.tabIndex;
+    if (activeMode2 === SCAN_MODES.DYNAMIC && fabs.element) {
+      return /* @__PURE__ */ new Map([[fabs.element, "tooltip.disabled.scan_in_progress"]]);
+    }
+    if (activeMode2 === SCAN_MODES.ELEMENT && fabs.dynamic) {
+      return /* @__PURE__ */ new Map([[fabs.dynamic, "tooltip.disabled.scan_in_progress"]]);
+    }
+    return /* @__PURE__ */ new Map();
+  }
+  function captureFabState(fab) {
+    return {
+      disabled: Boolean(fab.disabled),
+      hadDisabledClass: fab.classList.contains("fab-disabled"),
+      ariaDisabled: fab.getAttribute("aria-disabled"),
+      tabIndex: fab.tabIndex,
+      tooltipKey: fab.dataset.tooltipKey
+    };
+  }
+  function restoreFabState(fab, snapshot, setTooltip) {
+    fab.disabled = snapshot.disabled;
+    fab.classList.toggle("fab-disabled", snapshot.hadDisabledClass);
+    if (snapshot.ariaDisabled === null) {
+      fab.removeAttribute("aria-disabled");
+    } else {
+      fab.setAttribute("aria-disabled", snapshot.ariaDisabled);
+    }
+    fab.tabIndex = snapshot.tabIndex;
+    if (typeof snapshot.tooltipKey === "undefined") {
+      delete fab.dataset.tooltipKey;
+    } else {
       setTooltip(fab, snapshot.tooltipKey);
+    }
+  }
+  function applyScanModeFabState(fabs, activeMode2, setDisabled, setTooltip) {
+    const disabledFabs = getDisabledFabs(fabs, activeMode2);
+    snapshots.forEach((snapshot, fab) => {
+      if (disabledFabs.has(fab)) return;
+      restoreFabState(fab, snapshot, setTooltip);
       snapshots.delete(fab);
+    });
+    disabledFabs.forEach((tooltipKey, fab) => {
+      if (!snapshots.has(fab)) {
+        snapshots.set(fab, captureFabState(fab));
+      }
+      setDisabled(fab, true, tooltipKey);
     });
   }
   // src/shared/ui/components/fab.js
@@ -2751,6 +2788,14 @@ var TextExtractor = (() => {
     aiFab.setAttribute("aria-hidden", String(!enabled));
     const tooltipKey = !enabled ? "tooltip.ai_disabled" : aiFab.classList.contains("is-recording") ? "tooltip.ai_scan_stop" : "tooltip.ai_scan";
     setFabDisabled(aiFab, !enabled, tooltipKey);
+  }
+  function syncScanModeFabState(activeMode2) {
+    applyScanModeFabState(
+      { dynamic: dynamicFab, static: staticFab, element: elementScanFab },
+      activeMode2,
+      setFabDisabled,
+      updateFabTooltip
+    );
   }
   function createSingleFab(className, iconSVGString, titleKey, onClick) {
     const fab = document.createElement("div");
@@ -2829,13 +2874,9 @@ var TextExtractor = (() => {
     });
     if (unsubscribeScanMode) unsubscribeScanMode();
     unsubscribeScanMode = subscribeScanMode(({ activeMode: activeMode2 }) => {
-      applyAiExclusiveFabState(
-        [dynamicFab, staticFab, elementScanFab],
-        activeMode2 === SCAN_MODES.AI,
-        setFabDisabled,
-        updateFabTooltip
-      );
+      syncScanModeFabState(activeMode2);
     });
+    syncScanModeFabState(getActiveScanMode());
   }
   function setFabDisabled(fabElement, disabled, tooltipKey = null) {
     if (!fabElement) return;
@@ -6853,6 +6894,21 @@ ${result.join(",\n")}
       releaseScanMode(SCAN_MODES.STATIC);
     }
   }
+  // src/shared/utils/dom/mutationRoots.js
+  var ELEMENT_NODE = 1;
+  function selectTopLevelMutationRoots(roots) {
+    const candidates2 = Array.from(roots);
+    const elementRoots = new Set(candidates2.filter((root) => root?.nodeType === ELEMENT_NODE));
+    return candidates2.filter((root) => {
+      if (root?.nodeType !== ELEMENT_NODE) return true;
+      let parent = root.parentElement;
+      while (parent) {
+        if (elementRoots.has(parent)) return false;
+        parent = parent.parentElement;
+      }
+      return true;
+    });
+  }
   // src/features/session-scan/fallback.js
   var sessionTexts = /* @__PURE__ */ new Set();
   var filterRules = {};
@@ -6881,6 +6937,26 @@ ${result.join(",\n")}
   function clearInFallback() {
     sessionTexts.clear();
     log(t("log.sessionScan.fallback.cleared"));
+  }
+  // src/features/session-scan/startup.js
+  async function prepareSessionStart({
+    waitForTranslationIdle,
+    extractInitialTexts,
+    readSettings,
+    checkWorkerAllowed,
+    isCurrent
+  }) {
+    const initialTextsPromise = waitForTranslationIdle().then(() => {
+      if (!isCurrent()) return null;
+      return extractInitialTexts();
+    });
+    const [initialTexts, settings, workerAllowed] = await Promise.all([
+      initialTextsPromise,
+      readSettings(),
+      checkWorkerAllowed()
+    ]);
+    if (!isCurrent() || initialTexts === null) return null;
+    return { initialTexts, settings, workerAllowed };
   }
   // src/shared/services/sessionPersistence.js
   var SESSION_KEY = "qing_pagescanner_session";
@@ -7006,6 +7082,7 @@ ${result.join(",\n")}
   var pendingDynamicRoots = /* @__PURE__ */ new Set();
   var pendingDynamicFlushTimeout = null;
   var pendingDynamicWaitStartedAt = null;
+  var sessionStartGeneration = 0;
   function saveSessionState() {
     return saveActiveSession("session-scan", Array.from(sessionTextsMirror));
   }
@@ -7037,15 +7114,7 @@ ${result.join(",\n")}
   function flushPendingDynamicRoots() {
     if (!isRecording || pendingDynamicRoots.size === 0) return;
     const pendingRoots2 = Array.from(pendingDynamicRoots);
-    const pendingRootSet = new Set(pendingRoots2);
-    const roots = pendingRoots2.filter((root) => {
-      let parent = root.parentElement;
-      while (parent) {
-        if (pendingRootSet.has(parent)) return false;
-        parent = parent.parentElement;
-      }
-      return true;
-    });
+    const roots = selectTopLevelMutationRoots(pendingRoots2);
     clearPendingDynamicRoots();
     const textsBatch = [];
     const ignoredSelectorString2 = scannerConfig.ignoredSelectors.join(", ");
@@ -7133,6 +7202,8 @@ ${result.join(",\n")}
   }
   var start = async (onUpdate, resumedData = null) => {
     if (isRecording) return;
+    const startGeneration = ++sessionStartGeneration;
+    const isCurrentStart = () => isRecording && sessionStartGeneration === startGeneration;
     registerTranslationBridgeClient();
     isPaused = false;
     if (worker) {
@@ -7149,11 +7220,26 @@ ${result.join(",\n")}
     onUpdateCallback = onUpdate;
     useFallback = false;
     isRecording = true;
-    const [initialTexts, settings, workerAllowed] = await Promise.all([
-      waitForTranslationBridgeIdle().then(() => extractAndProcessText()),
-      loadSettings(),
-      isWorkerAllowed()
-    ]);
+    let preparation;
+    try {
+      preparation = await prepareSessionStart({
+        waitForTranslationIdle: waitForTranslationBridgeIdle,
+        extractInitialTexts: extractAndProcessText,
+        readSettings: loadSettings,
+        checkWorkerAllowed: isWorkerAllowed,
+        isCurrent: isCurrentStart
+      });
+    } catch (error) {
+      if (!isCurrentStart()) return false;
+      sessionStartGeneration += 1;
+      isRecording = false;
+      isPaused = false;
+      onUpdateCallback = null;
+      unregisterTranslationBridgeClient();
+      throw error;
+    }
+    if (!preparation) return false;
+    const { initialTexts, settings, workerAllowed } = preparation;
     enablePersistence();
     if (resumedData && Array.isArray(resumedData)) {
       resumedData.forEach((text) => {
@@ -7240,11 +7326,13 @@ ${result.join(",\n")}
     }, AUTO_SAVE_INTERVAL_MS);
     saveSessionState();
     log(t("log.sessionScan.domObserver.started"));
+    return true;
   };
   var handleSessionScanUnload = () => {
     saveSessionState();
   };
   var stop = (onStopped) => {
+    sessionStartGeneration += 1;
     if (!isRecording) {
       unregisterTranslationBridgeClient();
       if (onStopped) onStopped(0);
@@ -7621,6 +7709,89 @@ ${result.join(",\n")}
   }
   // src/assets/icons/stopIcon.js
   var stopIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M280-280v-400h400v400H280Z"/></svg>`;
+  // src/shared/ui/theme.js
+  function initTheme() {
+    const { theme } = loadSettings();
+    applyTheme(theme);
+  }
+  function applyTheme(theme) {
+    let finalTheme = theme;
+    if (theme === "system") {
+      finalTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    }
+    uiContainer.host.setAttribute("data-theme", finalTheme);
+  }
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+    const { theme } = loadSettings();
+    if (theme === "system") {
+      applyTheme("system");
+    }
+  });
+  // src/shared/i18n/management/languageManager.js
+  var SETTINGS_MENU_ID_KEY = "settings_menu_command_id";
+  async function updateSettingsMenu(onClick) {
+    const oldCommandId = await getValue(SETTINGS_MENU_ID_KEY, null);
+    if (oldCommandId) {
+      unregisterMenuCommand(oldCommandId);
+    }
+    const menuText = t("settings.panel.title");
+    const newCommandId = registerMenuCommand(menuText, onClick);
+    await setValue(SETTINGS_MENU_ID_KEY, newCommandId);
+  }
+  function isLanguageSupported(langCode) {
+    return supportedLanguages.some((lang) => lang.code === langCode);
+  }
+  function getDetectedLanguageCode(browserLanguage = navigator.language) {
+    if (isLanguageSupported(browserLanguage) && browserLanguage !== "auto") {
+      return browserLanguage;
+    }
+    const normalizedBrowserLanguage = String(browserLanguage || "").toLowerCase();
+    if (normalizedBrowserLanguage.startsWith("zh")) {
+      if (normalizedBrowserLanguage.includes("tw") || normalizedBrowserLanguage.includes("hk") || normalizedBrowserLanguage.includes("hant")) {
+        return "zh-TW";
+      }
+      return "zh-CN";
+    }
+    return "en";
+  }
+  function initializeLanguage(settings) {
+    let langToSet = "en";
+    let targetLang = "auto";
+    if (settings && settings.language) {
+      targetLang = settings.language;
+    }
+    if (targetLang === "auto") {
+      langToSet = getDetectedLanguageCode();
+    } else {
+      if (isLanguageSupported(targetLang)) {
+        langToSet = targetLang;
+      }
+    }
+    setLanguage(langToSet);
+  }
+  function switchLanguage(langCode) {
+    if (isLanguageSupported(langCode)) {
+      const settings = loadSettings();
+      settings.language = langCode;
+      initializeLanguage(settings);
+    }
+  }
+  // src/features/settings/logic.js
+  function applySettings(newSettings, oldSettings) {
+    updateLoggerState(newSettings.enableDebugLogging);
+    applyTheme(newSettings.theme);
+    const languageChanged = oldSettings.language !== newSettings.language;
+    if (languageChanged) {
+      switchLanguage(newSettings.language);
+    }
+    const fabContainer = uiContainer.querySelector(".text-extractor-fab-container");
+    if (fabContainer) {
+      fabContainer.classList.toggle("fab-container-visible", newSettings.showFab);
+    }
+    updateModalAddonsVisibility();
+    fire("settingsSaved");
+    showNotification(t("notifications.settingsSaved"), { type: "success" });
+  }
   // src/shared/utils/dom/clickOutside.js
   function listenClickOutside(element, onClickOutside, { signal, shouldIgnore } = {}) {
     const handleDocumentClick = (event) => {
@@ -8796,55 +8967,6 @@ ${result.join(",\n")}
   }
   // src/assets/icons/saveIcon.js
   var saveIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z"/></svg>`;
-  // src/shared/i18n/management/languageManager.js
-  var SETTINGS_MENU_ID_KEY = "settings_menu_command_id";
-  async function updateSettingsMenu(onClick) {
-    const oldCommandId = await getValue(SETTINGS_MENU_ID_KEY, null);
-    if (oldCommandId) {
-      unregisterMenuCommand(oldCommandId);
-    }
-    const menuText = t("settings.panel.title");
-    const newCommandId = registerMenuCommand(menuText, onClick);
-    await setValue(SETTINGS_MENU_ID_KEY, newCommandId);
-  }
-  function isLanguageSupported(langCode) {
-    return supportedLanguages.some((lang) => lang.code === langCode);
-  }
-  function getDetectedLanguageCode(browserLanguage = navigator.language) {
-    if (isLanguageSupported(browserLanguage) && browserLanguage !== "auto") {
-      return browserLanguage;
-    }
-    const normalizedBrowserLanguage = String(browserLanguage || "").toLowerCase();
-    if (normalizedBrowserLanguage.startsWith("zh")) {
-      if (normalizedBrowserLanguage.includes("tw") || normalizedBrowserLanguage.includes("hk") || normalizedBrowserLanguage.includes("hant")) {
-        return "zh-TW";
-      }
-      return "zh-CN";
-    }
-    return "en";
-  }
-  function initializeLanguage(settings) {
-    let langToSet = "en";
-    let targetLang = "auto";
-    if (settings && settings.language) {
-      targetLang = settings.language;
-    }
-    if (targetLang === "auto") {
-      langToSet = getDetectedLanguageCode();
-    } else {
-      if (isLanguageSupported(targetLang)) {
-        langToSet = targetLang;
-      }
-    }
-    setLanguage(langToSet);
-  }
-  function switchLanguage(langCode) {
-    if (isLanguageSupported(langCode)) {
-      const settings = loadSettings();
-      settings.language = langCode;
-      initializeLanguage(settings);
-    }
-  }
   // src/shared/services/ai/storage.js
   var SESSION_KEY2 = "qing_pagescanner_ai_session_v1";
   var CACHE_KEY = "qing_pagescanner_ai_cache_v1";
@@ -10147,40 +10269,6 @@ ${entries.join("\n")}
     const value = Number(input.value);
     return Number.isFinite(value) ? value : fallback;
   }
-  // src/shared/ui/theme.js
-  function initTheme() {
-    const { theme } = loadSettings();
-    applyTheme(theme);
-  }
-  function applyTheme(theme) {
-    let finalTheme = theme;
-    if (theme === "system") {
-      finalTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-    }
-    uiContainer.host.setAttribute("data-theme", finalTheme);
-  }
-  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
-    const { theme } = loadSettings();
-    if (theme === "system") {
-      applyTheme("system");
-    }
-  });
-  // src/features/settings/logic.js
-  function applySettings(newSettings, oldSettings) {
-    updateLoggerState(newSettings.enableDebugLogging);
-    applyTheme(newSettings.theme);
-    const languageChanged = oldSettings.language !== newSettings.language;
-    if (languageChanged) {
-      switchLanguage(newSettings.language);
-    }
-    const fabContainer = uiContainer.querySelector(".text-extractor-fab-container");
-    if (fabContainer) {
-      fabContainer.classList.toggle("fab-container-visible", newSettings.showFab);
-    }
-    updateModalAddonsVisibility();
-    fire("settingsSaved");
-    showNotification(t("notifications.settingsSaved"), { type: "success" });
-  }
   // src/shared/services/ai/siteStyleStore.js
   var STYLE_KEY = "qing_pagescanner_ai_site_styles_v1";
   var MAX_PROFILES = 200;
@@ -11280,6 +11368,64 @@ ${entries.join("\n")}
       }
     }, 10);
   }
+  // src/features/settings/index.js
+  var SCAN_PERSISTENCE_CONTEXTS = Object.freeze({
+    "element-scan": Object.freeze({
+      definitionId: "persist-data-checkbox",
+      settingKey: "elementScan_persistData",
+      titleKey: "settings.contextual.elementScanTitle",
+      tooltipTextKey: "tooltip.persistData.text.elementScan"
+    }),
+    "session-scan": Object.freeze({
+      definitionId: "persist-data-checkbox-session",
+      settingKey: "sessionScan_persistData",
+      titleKey: "settings.contextual.sessionScanTitle",
+      tooltipTextKey: "tooltip.persistData.text.sessionScan"
+    })
+  });
+  function handleOpenSettings() {
+    const currentSettings = loadSettings();
+    openSettingsPanel(currentSettings, (newSettings) => {
+      const oldSettings = loadSettings();
+      const savedSettings = saveSettings(newSettings);
+      applySettings(savedSettings, oldSettings);
+    });
+  }
+  function initialize() {
+    initSettingsPanel(handleOpenSettings);
+  }
+  function openScanPersistenceSettings(scanMode) {
+    const context = SCAN_PERSISTENCE_CONTEXTS[scanMode];
+    if (!context) {
+      throw new TypeError(`Unsupported scan persistence mode: ${scanMode}`);
+    }
+    const currentSettings = loadSettings();
+    const definitions = [
+      {
+        id: context.definitionId,
+        key: context.settingKey,
+        type: "checkbox",
+        label: "settings.contextual.persistData",
+        tooltip: {
+          titleIcon: infoIcon,
+          title: "tooltip.persistData.title",
+          text: context.tooltipTextKey
+        }
+      }
+    ];
+    openContextualSettingsPanel({
+      titleKey: context.titleKey,
+      icon: settingsIcon,
+      definitions,
+      settings: currentSettings,
+      onSave: (newSettings) => {
+        const savedSettings = saveSettings({ ...currentSettings, ...newSettings });
+        if (savedSettings) {
+          applySettings(savedSettings, currentSettings);
+        }
+      }
+    });
+  }
   // src/features/session-scan/ui.js
   var currentSessionCount = 0;
   on("sessionCleared", () => {
@@ -11292,33 +11438,7 @@ ${entries.join("\n")}
       onPause: pauseSessionScan,
       onResume: resumeSessionScan,
       scanType: "SessionScan",
-      onSettingsClick: () => {
-        const currentSettings = loadSettings();
-        const definitions = [
-          {
-            id: "persist-data-checkbox-session",
-            key: "sessionScan_persistData",
-            type: "checkbox",
-            label: "settings.contextual.persistData",
-            tooltip: {
-              titleIcon: infoIcon,
-              title: "tooltip.persistData.title",
-              text: "tooltip.persistData.text.sessionScan"
-            }
-          }
-        ];
-        openContextualSettingsPanel({
-          titleKey: "settings.contextual.sessionScanTitle",
-          icon: settingsIcon,
-          definitions,
-          settings: currentSettings,
-          onSave: (newSettings) => {
-            const updatedSettings = { ...currentSettings, ...newSettings };
-            saveSettings(updatedSettings);
-            applySettings(updatedSettings, currentSettings);
-          }
-        });
-      }
+      onSettingsClick: () => openScanPersistenceSettings("session-scan")
     });
     showCounterWithHelp();
   }
@@ -11361,7 +11481,6 @@ ${entries.join("\n")}
     }
   };
   function handleDynamicExtractClick(dynamicFab2) {
-    const elementScanFab2 = getElementScanFab();
     if (isSessionRecording()) {
       log(t("scan.stopSession"));
       stop((finalCount) => {
@@ -11373,12 +11492,6 @@ ${entries.join("\n")}
       dynamicFab2.classList.remove("is-recording");
       updateFabTooltip(dynamicFab2, "tooltip.dynamic_scan");
       hideTopCenterUI();
-      if (elementScanFab2) {
-        elementScanFab2.classList.remove("fab-disabled");
-        if (elementScanFab2.dataset.originalTooltipKey) {
-          updateFabTooltip(elementScanFab2, elementScanFab2.dataset.originalTooltipKey);
-        }
-      }
       document.removeEventListener("keydown", handleEscForSessionScan, true);
       releaseScanMode(SCAN_MODES.DYNAMIC);
     } else {
@@ -11390,11 +11503,6 @@ ${entries.join("\n")}
       setFabIcon(dynamicFab2, stopIcon);
       dynamicFab2.classList.add("is-recording");
       updateFabTooltip(dynamicFab2, "scan.stopSession");
-      if (elementScanFab2) {
-        elementScanFab2.dataset.originalTooltipKey = elementScanFab2.dataset.tooltipKey;
-        updateFabTooltip(elementScanFab2, "tooltip.disabled.scan_in_progress");
-        elementScanFab2.classList.add("fab-disabled");
-      }
       showNotification(t("scan.sessionStarted"), { type: "info" });
       showTopCenterUI();
       void start((count) => {
@@ -11407,12 +11515,6 @@ ${entries.join("\n")}
         updateFabTooltip(dynamicFab2, "tooltip.dynamic_scan");
         hideTopCenterUI();
         document.removeEventListener("keydown", handleEscForSessionScan, true);
-        if (elementScanFab2) {
-          elementScanFab2.classList.remove("fab-disabled");
-          if (elementScanFab2.dataset.originalTooltipKey) {
-            updateFabTooltip(elementScanFab2, elementScanFab2.dataset.originalTooltipKey);
-          }
-        }
         releaseScanMode(SCAN_MODES.DYNAMIC);
         showNotification(t("notifications.scanFailed"), { type: "error" });
       });
@@ -11439,25 +11541,12 @@ ${entries.join("\n")}
           dynamicFab2.classList.remove("is-recording");
           updateFabTooltip(dynamicFab2, "tooltip.dynamic_scan");
           hideTopCenterUI();
-          const elementScanFab3 = getElementScanFab();
-          if (elementScanFab3) {
-            elementScanFab3.classList.remove("fab-disabled");
-            if (elementScanFab3.dataset.originalTooltipKey) {
-              updateFabTooltip(elementScanFab3, elementScanFab3.dataset.originalTooltipKey);
-            }
-          }
           log(t("log.main.resumeFailed"), error);
         });
         setFabIcon(dynamicFab2, stopIcon);
         dynamicFab2.classList.add("is-recording");
         updateFabTooltip(dynamicFab2, "scan.stopSession");
         showTopCenterUI();
-        const elementScanFab2 = getElementScanFab();
-        if (elementScanFab2) {
-          elementScanFab2.dataset.originalTooltipKey = elementScanFab2.dataset.tooltipKey;
-          updateFabTooltip(elementScanFab2, "tooltip.disabled.scan_in_progress");
-          elementScanFab2.classList.add("fab-disabled");
-        }
         if (settings.sessionScan_persistData) {
           showNotification(t("notifications.sessionScanResumed"), { type: "info" });
         } else {
@@ -11728,7 +11817,8 @@ ${entries.join("\n")}
       toolbarTag.style.opacity = "1";
     }, 100);
   }
-  function createAdjustmentToolbar(elementPath2, offset = { x: 0, y: 0 }) {
+  function createAdjustmentToolbar(elementPath2, offset = { x: 0, y: 0 }, actions) {
+    const { onSelectionLevelChange, onReselect, onStage, onConfirm } = actions;
     if (toolbar) cleanupToolbar();
     log(t("log.elementScanUI.creatingToolbar"));
     toolbar = document.createElement("div");
@@ -11752,7 +11842,7 @@ ${entries.join("\n")}
       value: 0,
       onChange: (newValue) => {
         log(simpleTemplate(t("log.elementScanUI.sliderChanged"), { level: newValue }));
-        updateSelectionLevel(newValue);
+        onSelectionLevelChange(newValue);
       }
     });
     sliderContainer.appendChild(sliderInstance.getElement());
@@ -11763,7 +11853,7 @@ ${entries.join("\n")}
       icon: reselectIcon,
       onClick: () => {
         log(t("log.elementScanUI.reselectClicked"));
-        reselectElement();
+        onReselect();
       }
     });
     stageBtn = createButton({
@@ -11772,7 +11862,7 @@ ${entries.join("\n")}
       icon: stashIcon,
       onClick: () => {
         log(t("log.elementScanUI.stageClicked"));
-        stageCurrentElement();
+        onStage();
       }
     });
     confirmBtn = createButton({
@@ -11781,7 +11871,7 @@ ${entries.join("\n")}
       icon: confirmIcon,
       onClick: () => {
         log(t("log.elementScanUI.confirmClicked"));
-        confirmSelectionAndExtract();
+        onConfirm();
       }
     });
     actionsContainer.appendChild(reselectBtn);
@@ -11917,40 +12007,14 @@ ${entries.join("\n")}
       }, 300);
     }
   }
-  function showTopCenterUI2() {
+  function showTopCenterUI2({ onPause, onResume }) {
     createCounterWithHelp({
       counterKey: "scan.stagedCount",
       helpKey: "tutorial.elementScan",
-      onPause: pauseElementScan,
-      onResume: resumeElementScan,
+      onPause,
+      onResume,
       scanType: "ElementScan",
-      onSettingsClick: () => {
-        const currentSettings = loadSettings();
-        const definitions = [
-          {
-            id: "persist-data-checkbox",
-            key: "elementScan_persistData",
-            type: "checkbox",
-            label: "settings.contextual.persistData",
-            tooltip: {
-              titleIcon: infoIcon,
-              title: "tooltip.persistData.title",
-              text: "tooltip.persistData.text.elementScan"
-            }
-          }
-        ];
-        openContextualSettingsPanel({
-          titleKey: "settings.contextual.elementScanTitle",
-          icon: settingsIcon,
-          definitions,
-          settings: currentSettings,
-          onSave: (newSettings) => {
-            const updatedSettings = { ...currentSettings, ...newSettings };
-            saveSettings(updatedSettings);
-            applySettings(updatedSettings, currentSettings);
-          }
-        });
-      }
+      onSettingsClick: () => openScanPersistenceSettings("element-scan")
     });
     showCounterWithHelp();
     if (!unsubscribeStagedCountChanged) {
@@ -12061,6 +12125,96 @@ ${entries.join("\n")}
       }
     });
   }
+  // src/features/element-scan/iframeListenerRegistry.js
+  function createIframeListenerRegistry({ canAttach, onAttach, onDetach }) {
+    const pendingLoadHandlers = /* @__PURE__ */ new Map();
+    const attachedDocuments = /* @__PURE__ */ new Set();
+    let frameByDocument = /* @__PURE__ */ new WeakMap();
+    let documentByFrame = /* @__PURE__ */ new WeakMap();
+    function readDocument(iframe) {
+      return iframe.contentDocument || iframe.contentWindow?.document || null;
+    }
+    function attachDocument(iframe, document2) {
+      if (!canAttach() || !document2) return false;
+      const previousDocument = documentByFrame.get(iframe);
+      if (previousDocument && previousDocument !== document2) {
+        detachDocument(previousDocument);
+        frameByDocument.delete(previousDocument);
+      }
+      frameByDocument.set(document2, iframe);
+      documentByFrame.set(iframe, document2);
+      if (attachedDocuments.has(document2)) return true;
+      onAttach(document2);
+      attachedDocuments.add(document2);
+      return true;
+    }
+    function detachDocument(document2) {
+      if (!document2 || !attachedDocuments.has(document2)) return false;
+      try {
+        onDetach(document2);
+      } finally {
+        attachedDocuments.delete(document2);
+      }
+      return true;
+    }
+    function removePendingLoadHandler(iframe) {
+      const handleLoad = pendingLoadHandlers.get(iframe);
+      if (!handleLoad) return false;
+      try {
+        iframe.removeEventListener("load", handleLoad);
+      } catch (_error) {
+      }
+      pendingLoadHandlers.delete(iframe);
+      return true;
+    }
+    function watch(iframe) {
+      if (!iframe || !canAttach() || pendingLoadHandlers.has(iframe)) return false;
+      try {
+        const document2 = readDocument(iframe);
+        if (document2?.readyState === "complete") {
+          return attachDocument(iframe, document2);
+        }
+        const handleLoad = () => {
+          pendingLoadHandlers.delete(iframe);
+          if (!canAttach()) return;
+          try {
+            attachDocument(iframe, readDocument(iframe));
+          } catch (_error) {
+          }
+        };
+        pendingLoadHandlers.set(iframe, handleLoad);
+        iframe.addEventListener("load", handleLoad, { once: true });
+        return true;
+      } catch (_error) {
+        pendingLoadHandlers.delete(iframe);
+        return false;
+      }
+    }
+    function unwatch(iframe) {
+      if (!iframe) return false;
+      const removedPendingHandler = removePendingLoadHandler(iframe);
+      const document2 = documentByFrame.get(iframe);
+      const detachedDocument = detachDocument(document2);
+      if (document2) {
+        documentByFrame.delete(iframe);
+        frameByDocument.delete(document2);
+      }
+      return removedPendingHandler || detachedDocument || Boolean(document2);
+    }
+    function detachAll() {
+      Array.from(pendingLoadHandlers.keys()).forEach(removePendingLoadHandler);
+      Array.from(attachedDocuments).forEach(detachDocument);
+    }
+    function reset() {
+      detachAll();
+      frameByDocument = /* @__PURE__ */ new WeakMap();
+      documentByFrame = /* @__PURE__ */ new WeakMap();
+    }
+    function getFrameElement(document2) {
+      return frameByDocument.get(document2) || null;
+    }
+    return Object.freeze({ watch, unwatch, detachAll, reset, getFrameElement });
+  }
   // src/features/element-scan/logic.js
   var isActive = false;
   var isPaused2 = false;
@@ -12076,6 +12230,11 @@ ${entries.join("\n")}
   var scrollUpdateQueued = false;
   var iframeObserver = null;
   var reselectTimer = null;
+  var iframeListenerRegistry = createIframeListenerRegistry({
+    canAttach: () => isActive && !isPaused2,
+    onAttach: addListenersToDocument,
+    onDetach: removeListenersFromDocument
+  });
   on("clearElementScan", () => {
     stagedTexts.clear();
     updateStagedCount();
@@ -12183,15 +12342,10 @@ ${entries.join("\n")}
     resetTextFilterState();
     fabElement.classList.add("is-recording");
     updateFabTooltip(fabElement, "scan.stopSession");
-    showTopCenterUI2();
-    const dynamicFab2 = getDynamicFab();
-    if (dynamicFab2) {
-      dynamicFab2.dataset.originalTooltipKey = dynamicFab2.dataset.tooltipKey;
-      updateFabTooltip(dynamicFab2, "tooltip.disabled.scan_in_progress");
-      dynamicFab2.classList.add("fab-disabled");
-    } else {
-      log(t("log.elementScan.dynamicFabNotFound"), "warn");
-    }
+    showTopCenterUI2({
+      onPause: pauseElementScan,
+      onResume: resumeElementScan
+    });
     addListenersToDocument(document);
     addListenersToIframes();
     setupIframeObserver();
@@ -12233,68 +12387,39 @@ ${entries.join("\n")}
     });
   }
   function attachIframeListeners(iframe) {
-    try {
-      const attach = (win) => {
-        try {
-          const doc = win.document;
-          if (doc) {
-            doc._frameElement = iframe;
-            addListenersToDocument(doc);
-          }
-        } catch (e) {
-        }
-      };
-      if (iframe.contentWindow && iframe.contentWindow.document && iframe.contentWindow.document.readyState === "complete") {
-        attach(iframe.contentWindow);
-      } else {
-        iframe.addEventListener(
-          "load",
-          () => {
-            if (iframe.contentWindow) {
-              attach(iframe.contentWindow);
-            }
-          },
-          { once: true }
-        );
+    iframeListenerRegistry.watch(iframe);
+  }
+  function collectIframeElements(nodes, target) {
+    nodes.forEach((node) => {
+      if (node.tagName === "IFRAME") {
+        target.add(node);
+      } else if (node.nodeType === Node.ELEMENT_NODE && node.querySelectorAll) {
+        node.querySelectorAll("iframe").forEach((iframe) => target.add(iframe));
       }
-    } catch (e) {
-    }
+    });
   }
   function setupIframeObserver() {
     if (iframeObserver) return;
     iframeObserver = new MutationObserver((mutations) => {
+      const removedIframes = /* @__PURE__ */ new Set();
+      const addedIframes = /* @__PURE__ */ new Set();
       mutations.forEach((mutation) => {
-        if (mutation.addedNodes.length) {
-          mutation.addedNodes.forEach((node) => {
-            if (node.tagName === "IFRAME") {
-              attachIframeListeners(node);
-            } else if (node.nodeType === Node.ELEMENT_NODE && node.querySelectorAll) {
-              const nestedIframes = node.querySelectorAll("iframe");
-              nestedIframes.forEach(attachIframeListeners);
-            }
-          });
-        }
+        collectIframeElements(mutation.removedNodes, removedIframes);
+        collectIframeElements(mutation.addedNodes, addedIframes);
       });
+      removedIframes.forEach((iframe) => iframeListenerRegistry.unwatch(iframe));
+      addedIframes.forEach(attachIframeListeners);
     });
     iframeObserver.observe(document.body, { childList: true, subtree: true });
     log(t("log.elementScan.iframeObserverStarted"));
   }
-  function removeListenersFromIframes() {
+  function removeListenersFromIframes({ reset = false } = {}) {
     if (iframeObserver) {
       iframeObserver.disconnect();
       iframeObserver = null;
     }
-    const iframes = document.querySelectorAll("iframe");
-    iframes.forEach((iframe) => {
-      try {
-        const iframeDoc = iframe.contentDocument || iframe.contentWindow && iframe.contentWindow.document;
-        if (iframeDoc) {
-          removeListenersFromDocument(iframeDoc);
-          delete iframeDoc._frameElement;
-        }
-      } catch (e) {
-      }
-    });
+    if (reset) iframeListenerRegistry.reset();
+    else iframeListenerRegistry.detachAll();
   }
   function saveSessionState2() {
     saveActiveSession("element-scan", Array.from(stagedTexts));
@@ -12317,17 +12442,8 @@ ${entries.join("\n")}
       fabElement.classList.remove("is-recording");
       updateFabTooltip(fabElement, "tooltip.element_scan");
     }
-    const dynamicFab2 = getDynamicFab();
-    if (dynamicFab2) {
-      dynamicFab2.classList.remove("fab-disabled");
-      if (dynamicFab2.dataset.originalTooltipKey) {
-        updateFabTooltip(dynamicFab2, dynamicFab2.dataset.originalTooltipKey);
-      }
-    } else {
-      log(t("log.elementScan.dynamicFabNotFound"), "warn");
-    }
     removeListenersFromDocument(document);
-    removeListenersFromIframes();
+    removeListenersFromIframes({ reset: true });
     window.removeEventListener("beforeunload", handleElementScanUnload);
     if (autoSaveInterval2) {
       clearInterval(autoSaveInterval2);
@@ -12382,6 +12498,7 @@ ${entries.join("\n")}
     removeScrollListeners();
     addListenersToDocument(document);
     addListenersToIframes();
+    setupIframeObserver();
   }
   async function stageCurrentElement() {
     if (!currentTarget) return;
@@ -12423,15 +12540,16 @@ ${entries.join("\n")}
       saveSessionState2();
     }
   }
+  function getDocumentOffset(doc) {
+    if (!doc || doc === document) return { x: 0, y: 0 };
+    const frameElement = iframeListenerRegistry.getFrameElement(doc);
+    if (!frameElement) return { x: 0, y: 0 };
+    const rect = frameElement.getBoundingClientRect();
+    return { x: rect.left, y: rect.top };
+  }
   function scheduledHighlightUpdate() {
     if (currentTarget) {
-      const offset = { x: 0, y: 0 };
-      const doc = currentTarget.ownerDocument;
-      if (doc && doc !== document && doc._frameElement) {
-        const rect = doc._frameElement.getBoundingClientRect();
-        offset.x = rect.left;
-        offset.y = rect.top;
-      }
+      const offset = getDocumentOffset(currentTarget.ownerDocument);
       updateHighlight(currentTarget, offset);
     }
     isHighlightUpdateQueued = false;
@@ -12511,13 +12629,13 @@ ${entries.join("\n")}
     }
     elementPath.push(body);
     log(simpleTemplate(t("log.elementScan.pathBuilt"), { depth: elementPath.length }));
-    const offset = { x: 0, y: 0 };
-    if (ownerDoc !== document && ownerDoc._frameElement) {
-      const rect = ownerDoc._frameElement.getBoundingClientRect();
-      offset.x = rect.left;
-      offset.y = rect.top;
-    }
-    createAdjustmentToolbar(elementPath, offset);
+    const offset = getDocumentOffset(ownerDoc);
+    createAdjustmentToolbar(elementPath, offset, {
+      onSelectionLevelChange: updateSelectionLevel,
+      onReselect: reselectElement,
+      onStage: stageCurrentElement,
+      onConfirm: confirmSelectionAndExtract
+    });
     addScrollListeners();
   }
   function updateSelectionLevel(level) {
@@ -12526,13 +12644,7 @@ ${entries.join("\n")}
       currentTarget = targetElement;
       const tagName = targetElement.tagName.toLowerCase();
       log(simpleTemplate(t("log.elementScan.adjustingLevel"), { level, tagName }));
-      const offset = { x: 0, y: 0 };
-      const doc = targetElement.ownerDocument;
-      if (doc !== document && doc._frameElement) {
-        const rect = doc._frameElement.getBoundingClientRect();
-        offset.x = rect.left;
-        offset.y = rect.top;
-      }
+      const offset = getDocumentOffset(targetElement.ownerDocument);
       updateHighlight(targetElement, offset);
     }
   }
@@ -13344,16 +13456,7 @@ ${entries.join("\n")}
     if (!isActive2 || isPaused3 || runGeneration !== generation) return;
     const roots = Array.from(pendingRoots);
     pendingRoots = /* @__PURE__ */ new Set();
-    const rootSet = new Set(roots.filter((root) => root?.nodeType === Node.ELEMENT_NODE));
-    const topLevelRoots = roots.filter((root) => {
-      if (root?.nodeType !== Node.ELEMENT_NODE) return true;
-      let parent = root.parentElement;
-      while (parent) {
-        if (rootSet.has(parent)) return false;
-        parent = parent.parentElement;
-      }
-      return true;
-    });
+    const topLevelRoots = selectTopLevelMutationRoots(roots);
     topLevelRoots.forEach(collectFromRoot);
   }
   function scheduleRootFlush() {
@@ -14181,18 +14284,6 @@ ${entries.join("\n")}
       },
       isVisible: settings.showFab
     });
-  }
-  // src/features/settings/index.js
-  function handleOpenSettings() {
-    const currentSettings = loadSettings();
-    openSettingsPanel(currentSettings, (newSettings) => {
-      const oldSettings = loadSettings();
-      const savedSettings = saveSettings(newSettings);
-      applySettings(savedSettings, oldSettings);
-    });
-  }
-  function initialize() {
-    initSettingsPanel(handleOpenSettings);
   }
   // src/features/export/exporter.js
   function getPageTitle() {
