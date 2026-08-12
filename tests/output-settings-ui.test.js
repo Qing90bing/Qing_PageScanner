@@ -13,18 +13,15 @@ test('wrapper symbols do not hide output indentation and tab size changes animat
     assert.ok(styles.includes('transition: width 0.22s ease;'));
 });
 
-test('format previews keep a visible fixed left-edge reference', async () => {
+test('format previews center visible code around one uniform left-edge reference', async () => {
     const styles = await readFile(FORMAT_PREVIEW_STYLES_PATH, 'utf8');
 
     assert.match(
         styles,
-        /\.code-text-preview\s*\{[\s\S]*?position: relative;[\s\S]*?width: min\(22ch, 100%\);[\s\S]*?padding-left: 1ch;/
+        /\.code-text-preview\s*\{[\s\S]*?width: max-content;[\s\S]*?max-width: 100%;[\s\S]*?padding-left: 1ch;[\s\S]*?border-left: 1px solid/
     );
-    assert.match(
-        styles,
-        /\.code-text-preview::before\s*\{[\s\S]*?position: absolute;[\s\S]*?top: 0\.15em;[\s\S]*?bottom: 0\.15em;[\s\S]*?left: 0;[\s\S]*?width: 1px;/
-    );
-    assert.match(styles, /\.image-card-option\.selected \.code-text-preview::before\s*\{/);
+    assert.doesNotMatch(styles, /\.code-text-preview::before\s*\{/);
+    assert.doesNotMatch(styles, /\.image-card-option\.selected \.code-text-preview::before\s*\{/);
 });
 
 test('tab size settings expose zero through three spaces', async () => {

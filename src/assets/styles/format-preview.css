@@ -36,10 +36,11 @@
 
 /* Code Text Container */
 .code-text-preview {
-    position: relative;
-    width: min(22ch, 100%);
+    width: max-content;
+    max-width: 100%;
     box-sizing: border-box;
     padding-left: 1ch;
+    border-left: 1px solid color-mix(in srgb, var(--main-text-secondary) 48%, transparent);
     font-family: 'Menlo', 'Monaco', 'Consolas', 'Courier New', monospace;
     font-size: 14px;
     line-height: 1.4;
@@ -52,30 +53,10 @@
     /* Hide overflow */
 }
 
-.code-text-preview::before {
-    content: '';
-    position: absolute;
-    top: 0.15em;
-    bottom: 0.15em;
-    left: 0;
-    width: 1px;
-    border-radius: 1px;
-    background-color: color-mix(in srgb, var(--main-text-secondary) 38%, transparent);
-    transition:
-        background-color 0.2s,
-        opacity 0.2s;
-    opacity: 0.72;
-}
-
 /* Selected State */
 .image-card-option.selected .code-text-preview {
     color: var(--main-text);
     /* Highlight text when selected */
-}
-
-.image-card-option.selected .code-text-preview::before {
-    background-color: color-mix(in srgb, var(--main-primary) 68%, transparent);
-    opacity: 1;
 }
 
 /* Syntax Highlighting (Simulated) */
