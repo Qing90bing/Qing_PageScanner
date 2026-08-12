@@ -106,6 +106,7 @@
         },
         "languages": {
             "auto": "Auto",
+            "auto_detected": "Auto ({{language}})",
             "en": "English (United States)",
             "zh-CN": "Chinese (Simplified)",
             "zh-TW": "Chinese (Traditional)"

@@ -46,6 +46,31 @@ function isLanguageSupported(langCode) {
 }
 
 /**
+ * @description 解析浏览器当前检测到的插件语言。
+ * @param {string} [browserLanguage=navigator.language] - 浏览器语言代码
+ * @returns {string} 支持的语言代码
+ */
+export function getDetectedLanguageCode(browserLanguage = navigator.language) {
+    if (isLanguageSupported(browserLanguage) && browserLanguage !== 'auto') {
+        return browserLanguage;
+    }
+
+    const normalizedBrowserLanguage = String(browserLanguage || '').toLowerCase();
+    if (normalizedBrowserLanguage.startsWith('zh')) {
+        if (
+            normalizedBrowserLanguage.includes('tw') ||
+            normalizedBrowserLanguage.includes('hk') ||
+            normalizedBrowserLanguage.includes('hant')
+        ) {
+            return 'zh-TW';
+        }
+        return 'zh-CN';
+    }
+
+    return 'en';
+}
+
+/**
  * 初始化语言设置。
  * 将根据用户保存的设置或浏览器语言来加载合适的翻译。
  * 严格匹配，如果找不到匹配的语言，则默认为英语。
@@ -62,31 +87,7 @@ export function initializeLanguage(settings) {
 
     // 如果是自动检测
     if (targetLang === 'auto') {
-        const browserLang = navigator.language;
-        // 尝试完全匹配 (e.g., 'zh-CN')
-        if (isLanguageSupported(browserLang) && browserLang !== 'auto') {
-            langToSet = browserLang;
-        } else {
-            // 尝试模糊匹配 (e.g., 'zh-Hans-CN' -> 'zh-CN')
-            // 这里我们需要更智能的匹配逻辑，或者简单地尝试匹配前缀
-            // 目前项目中只有 'zh-CN', 'zh-TW', 'en'
-            // 常见的浏览器语言代码: 'zh-CN', 'zh', 'en-US', 'en'
-
-            if (browserLang.startsWith('zh')) {
-                // 偏好简体中文，除非明确是繁体
-                if (
-                    browserLang.toLowerCase().includes('tw') ||
-                    browserLang.toLowerCase().includes('hk') ||
-                    browserLang.toLowerCase().includes('hant')
-                ) {
-                    langToSet = 'zh-TW';
-                } else {
-                    langToSet = 'zh-CN';
-                }
-            } else if (browserLang.startsWith('en')) {
-                langToSet = 'en';
-            }
-        }
+        langToSet = getDetectedLanguageCode();
     } else {
         // 用户手动选择了特定语言
         if (isLanguageSupported(targetLang)) {

@@ -106,6 +106,7 @@
         },
         "languages": {
             "auto": "自動檢測",
+            "auto_detected": "自動檢測（{{language}}）",
             "en": "英文 (美國)",
             "zh-CN": "簡體中文",
             "zh-TW": "繁體中文"

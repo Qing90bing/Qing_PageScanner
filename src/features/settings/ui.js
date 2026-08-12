@@ -19,7 +19,7 @@ import { filterIcon } from '../../assets/icons/filterIcon.js';
 import { saveIcon } from '../../assets/icons/saveIcon.js';
 import { relatedSettingsIcon } from '../../assets/icons/relatedSettingsIcon.js';
 import languageIcon from '../../assets/icons/languageIcon.js';
-import { updateSettingsMenu } from '../../shared/i18n/management/languageManager.js';
+import { getDetectedLanguageCode, updateSettingsMenu } from '../../shared/i18n/management/languageManager.js';
 import { createButton } from '../../shared/ui/components/button.js';
 import { mountAiSettingsPanel } from './aiPanel.js';
 
@@ -102,9 +102,15 @@ function showSettingsPanel(currentSettings, onSave) {
 
         const selectWrapper = settingsPanel.querySelector(`#${definition.id}-wrapper`);
         if (selectWrapper) {
+            const detectedLanguageCode = definition.key === 'language' ? getDetectedLanguageCode() : null;
             const options = definition.options.map((opt) => ({
                 ...opt,
-                label: t(opt.label),
+                label:
+                    definition.key === 'language' && opt.value === 'auto'
+                        ? t('settings.languages.auto_detected', {
+                              language: t(`settings.languages.${detectedLanguageCode}`),
+                          })
+                        : t(opt.label),
                 // 如果 config.js 中已经定义了 icon，这里会直接透传
             }));
 

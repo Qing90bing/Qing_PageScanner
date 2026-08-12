@@ -18,6 +18,7 @@ const TOGGLE_PATH = new URL('../src/shared/ui/components/toggleSwitch.js', impor
 const SETTINGS_PANEL_BUILDER_PATH = new URL('../src/features/settings/panelBuilder.js', import.meta.url);
 const SETTINGS_UI_PATH = new URL('../src/features/settings/ui.js', import.meta.url);
 const SETTINGS_CONFIG_PATH = new URL('../src/features/settings/config.js', import.meta.url);
+const LANGUAGE_MANAGER_PATH = new URL('../src/shared/i18n/management/languageManager.js', import.meta.url);
 const AI_ICON_PATH = new URL('../src/assets/icons/aiIcon.js', import.meta.url);
 const SETTINGS_STYLES_PATH = new URL('../src/assets/styles/settings-panel.css', import.meta.url);
 const CUSTOM_SELECT_STYLES_PATH = new URL('../src/assets/styles/custom-select.css', import.meta.url);
@@ -215,6 +216,23 @@ test('plugin language setting keeps its icon in a separate section title', async
     assert.deepEqual(
         localeContents.map((content) => JSON.parse(content).settings.plugin_language),
         ['Plugin Language', '插件语言', '外掛程式語言']
+    );
+});
+
+test('automatic language option identifies the detected locale', async () => {
+    const [languageManager, settingsUi, ...localeContents] = await Promise.all([
+        readFile(LANGUAGE_MANAGER_PATH, 'utf8'),
+        readFile(SETTINGS_UI_PATH, 'utf8'),
+        ...Object.values(LOCALE_PATHS).map((path) => readFile(path, 'utf8')),
+    ]);
+
+    assert.match(languageManager, /export function getDetectedLanguageCode/);
+    assert.match(languageManager, /langToSet = getDetectedLanguageCode\(\)/);
+    assert.match(settingsUi, /getDetectedLanguageCode\(\)/);
+    assert.match(settingsUi, /settings\.languages\.auto_detected/);
+    assert.deepEqual(
+        localeContents.map((content) => JSON.parse(content).settings.languages.auto_detected),
+        ['Auto ({{language}})', '自动检测（{{language}}）', '自動檢測（{{language}}）']
     );
 });
 
