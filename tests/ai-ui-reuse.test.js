@@ -288,7 +288,9 @@ test('an empty AI result remains editable and refreshes stale line metadata', as
 
 test('an AI draft remains editable after the user clears all summary text', async () => {
     const source = await readFile(MAIN_MODAL_PATH, 'utf8');
-    const renderedContentBranch = source.match(/requestAnimationFrame\(\(\) => \{([\s\S]*?)\n {8}\}\);\n {4}\}/)?.[1];
+    const renderedContentBranch = source.match(
+        /const isData = content && content\.trim\(\)\.length > 0;([\s\S]*?)requestAnimationFrame/
+    )?.[1];
 
     assert.ok(renderedContentBranch);
     assert.match(renderedContentBranch, /state\.outputTextarea\.readOnly = mode !== 'ai-scan' && !isData/);

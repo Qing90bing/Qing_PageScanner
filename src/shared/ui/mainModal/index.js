@@ -193,13 +193,15 @@ export function updateModalContent(content, shouldOpen = false, mode = 'quick-sc
 
     if (content === state.SHOW_LOADING) {
         state.placeholder.classList.remove('is-visible');
-        textareaContainer.classList.add('is-visible');
+        textareaContainer.classList.remove('is-visible');
+        textareaContainer.classList.add('is-loading');
         state.outputTextarea.value = '';
         state.outputTextarea.readOnly = true;
         showLoading();
         setButtonsDisabled(true);
     } else if (content === state.SHOW_PLACEHOLDER) {
         hideLoading();
+        textareaContainer.classList.remove('is-loading');
         const isAiMode = mode === 'ai-scan';
         textareaContainer.classList.toggle('is-visible', isAiMode);
         state.placeholder.classList.toggle('is-visible', !isAiMode);
@@ -215,8 +217,7 @@ export function updateModalContent(content, shouldOpen = false, mode = 'quick-sc
         setButtonsDisabled(true);
     } else {
         hideLoading();
-        state.placeholder.classList.remove('is-visible');
-        textareaContainer.classList.add('is-visible');
+        textareaContainer.classList.remove('is-loading');
 
         const settings = loadSettings();
         let displayText = content;
@@ -235,13 +236,15 @@ export function updateModalContent(content, shouldOpen = false, mode = 'quick-sc
             updateScanCount(0, mode);
         }
 
+        state.outputTextarea.value = displayText;
+        state.outputTextarea.readOnly = mode !== 'ai-scan' && !isData;
+        setButtonsDisabled(!isData);
+        state.placeholder.classList.remove('is-visible');
+        textareaContainer.classList.add('is-visible');
+
         // 使用 requestAnimationFrame 将重量级的 DOM 更新推迟到下一个浏览器重绘周期
         // 这确保了在隐藏加载动画后，UI更新能够最平滑地进行
         requestAnimationFrame(() => {
-            state.outputTextarea.value = displayText; // 显示可能被截断的文本
-            setButtonsDisabled(!isData);
-            state.outputTextarea.readOnly = mode !== 'ai-scan' && !isData;
-
             // 手动触发一次更新，以确保统计和行号正确显示
             if (mode === 'ai-scan') {
                 updateLineNumbers();

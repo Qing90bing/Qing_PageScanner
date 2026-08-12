@@ -99,16 +99,14 @@ export function showSessionSummary() {
     updateScanCount(currentSessionCount, 'session');
     updateModalContent(SHOW_LOADING, true, 'session-scan');
 
-    setTimeout(() => {
-        sessionExtractor.requestSummary((formattedText, count) => {
-            updateScanCount(count, 'session');
-            if (!formattedText || formattedText.trim().slice(1, -1).trim().length === 0) {
-                updateModalContent(SHOW_PLACEHOLDER, true, 'session-scan');
-            } else {
-                updateModalContent(formattedText, true, 'session-scan');
-            }
-        });
-    }, 50);
+    sessionExtractor.requestSummary((formattedText, count) => {
+        updateScanCount(count, 'session');
+        if (!formattedText || formattedText.trim().slice(1, -1).trim().length === 0) {
+            updateModalContent(SHOW_PLACEHOLDER, false, 'session-scan');
+        } else {
+            updateModalContent(formattedText, false, 'session-scan');
+        }
+    });
 }
 
 /**

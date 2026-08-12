@@ -231,9 +231,7 @@
 .tc-textarea-container {
     opacity: 0;
     visibility: hidden;
-    transition:
-        opacity 0.2s ease-in-out,
-        visibility 0.2s ease-in-out;
+    transition: opacity 0.2s ease-in-out;
     width: 100%; /* 确保它填满父容器 */
     height: 100%;
     display: flex; /* 保持其flex布局 */
@@ -245,6 +243,12 @@
 .tc-textarea-container.is-visible {
     opacity: 1;
     visibility: visible;
+}
+
+.tc-textarea-container.is-loading {
+    opacity: 0;
+    visibility: hidden;
+    transition: none;
 }
 
 .text-extractor-modal-footer {
