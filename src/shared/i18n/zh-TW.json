@@ -44,7 +44,15 @@
             "csv": "CSV 字串"
         },
         "output": {
-            "include_brackets": "包含首尾符號"
+            "include_brackets": "包含首尾符號",
+            "tab_size": "TAB 縮排空格數",
+            "tab_size_description": "按 TAB 時插入的空格數，最多 3 個，陣列和物件格式的縮排也會同步使用。",
+            "tab_size_options": {
+                "zero": "0 個空格",
+                "one": "1 個空格",
+                "two": "2 個空格",
+                "three": "3 個空格"
+            }
         },
         "relatedSettings": "相關設定",
         "filterRules": "內容過濾規則",

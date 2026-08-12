@@ -156,6 +156,7 @@ on('settingsSaved', () => {
             payload: {
                 outputFormat: settings.outputFormat,
                 includeArrayBrackets: settings.includeArrayBrackets,
+                tabSize: settings.tabSize,
             },
         });
         log(t('log.settings.changed', { key: 'outputFormat', oldValue: '', newValue: settings.outputFormat }));
@@ -250,7 +251,7 @@ export const start = async (onUpdate, resumedData = null) => {
             sessionTextsMirror.add(text);
         });
     }
-    const { filterRules, enableDebugLogging, outputFormat, includeArrayBrackets } = settings;
+    const { filterRules, enableDebugLogging, outputFormat, includeArrayBrackets, tabSize } = settings;
 
     // --- 4. 定义后备模式激活函数 ---
     const activateFallbackMode = () => {
@@ -307,6 +308,7 @@ export const start = async (onUpdate, resumedData = null) => {
                     enableDebugLogging,
                     outputFormat,
                     includeArrayBrackets,
+                    tabSize,
                     translations: {
                         workerLogPrefix: t('log.sessionScan.worker.logPrefix'),
                         textFiltered: t('log.textProcessor.filtered'),

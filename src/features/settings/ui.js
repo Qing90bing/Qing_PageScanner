@@ -31,6 +31,21 @@ let saveBtn = null;
 let unsubscribeTooltipShow = null;
 let unsubscribeTooltipHide = null;
 let aiPanelController = null;
+let bracketsCheckboxElement = null;
+let tabSizeSelectContainer = null;
+
+const handleBracketsChange = () => {
+    if (selectComponents.outputFormat && bracketsCheckboxElement) {
+        selectComponents.outputFormat.updateBracketsPreview(bracketsCheckboxElement.checked);
+    }
+};
+
+const handleTabSizeChange = (event) => {
+    const tabSize = Number(event.detail?.value);
+    if (selectComponents.outputFormat && Number.isInteger(tabSize)) {
+        selectComponents.outputFormat.updateTabSize(tabSize);
+    }
+};
 
 // --- 私有函数 ---
 
@@ -56,6 +71,7 @@ const handleKeyDown = (event) => {
 function showSettingsPanel(currentSettings, onSave) {
     log(t('log.settings.panel.opening'));
     if (settingsPanel) {
+        uiContainer.host.classList.add('settings-panel-open');
         setTimeout(() => settingsPanel.classList.add('is-visible'), 10);
         return;
     }
@@ -69,6 +85,7 @@ function showSettingsPanel(currentSettings, onSave) {
     settingsPanel.appendChild(panelModal);
 
     uiContainer.appendChild(settingsPanel);
+    uiContainer.host.classList.add('settings-panel-open');
 
     // --- 填充标题和组件 ---
     const titleContainer = settingsPanel.querySelector('#settings-panel-title-container');
@@ -93,28 +110,35 @@ function showSettingsPanel(currentSettings, onSave) {
             if (definition.type === 'image-card-select') {
                 // 对于输出格式，传入 includeArrayBrackets 设置
                 const includeBrackets = definition.key === 'outputFormat' ? currentSettings.includeArrayBrackets : true;
+                const tabSize = definition.key === 'outputFormat' ? currentSettings.tabSize : 2;
                 selectComponents[definition.key] = new ImageCardSelect(
                     selectWrapper,
                     options,
                     currentSettings[definition.key],
-                    includeBrackets
+                    includeBrackets,
+                    tabSize
                 );
             } else {
                 selectComponents[definition.key] = new CustomSelect(
                     selectWrapper,
                     options,
-                    currentSettings[definition.key]
+                    definition.valueType === 'number'
+                        ? String(currentSettings[definition.key])
+                        : currentSettings[definition.key]
                 );
             }
         }
     });
 
     // 为首尾符号开关勾选框添加 change 事件监听，动态更新预览卡片
-    const bracketsCheckbox = settingsPanel.querySelector('#include-array-brackets');
-    if (bracketsCheckbox && selectComponents.outputFormat) {
-        bracketsCheckbox.addEventListener('change', () => {
-            selectComponents.outputFormat.updateBracketsPreview(bracketsCheckbox.checked);
-        });
+    bracketsCheckboxElement = settingsPanel.querySelector('#include-array-brackets');
+    if (bracketsCheckboxElement && selectComponents.outputFormat) {
+        bracketsCheckboxElement.addEventListener('change', handleBracketsChange);
+    }
+
+    tabSizeSelectContainer = settingsPanel.querySelector('#tab-size-select-wrapper .custom-select-container');
+    if (tabSizeSelectContainer && selectComponents.outputFormat) {
+        tabSizeSelectContainer.addEventListener('custom-select-change', handleTabSizeChange);
     }
 
     const relatedTitleContainer = settingsPanel.querySelector('#related-setting-title-container');
@@ -228,12 +252,22 @@ function hideSettingsPanel() {
         log(t('log.settings.panel.closing'));
         settingsPanel.removeEventListener('keydown', handleKeyDown);
         settingsPanel.classList.remove('is-visible');
+        uiContainer.host.classList.remove('settings-panel-open');
 
         // 清理事件总线监听器
         if (unsubscribeTooltipShow) unsubscribeTooltipShow();
         if (unsubscribeTooltipHide) unsubscribeTooltipHide();
         unsubscribeTooltipShow = null;
         unsubscribeTooltipHide = null;
+
+        if (bracketsCheckboxElement) {
+            bracketsCheckboxElement.removeEventListener('change', handleBracketsChange);
+            bracketsCheckboxElement = null;
+        }
+        if (tabSizeSelectContainer) {
+            tabSizeSelectContainer.removeEventListener('custom-select-change', handleTabSizeChange);
+            tabSizeSelectContainer = null;
+        }
 
         // 销毁按钮和自定义选择组件
         if (saveBtn) {
@@ -271,7 +305,9 @@ async function handleSave(onSave) {
 
     // 1. 从所有选择组件收集值 (CustomSelect 和 ImageCardSelect)
     for (const key in selectComponents) {
-        newSettings[key] = selectComponents[key].getValue();
+        const definition = selectSettingsDefinitions.find((item) => item.key === key);
+        const value = selectComponents[key].getValue();
+        newSettings[key] = definition?.valueType === 'number' ? Number(value) : value;
     }
 
     // 2. 收集过滤规则

@@ -44,7 +44,15 @@
             "csv": "CSV String"
         },
         "output": {
-            "include_brackets": "Include Wrapper Symbols"
+            "include_brackets": "Include Wrapper Symbols",
+            "tab_size": "TAB Indent Spaces",
+            "tab_size_description": "Spaces inserted by TAB, up to 3. Array and object output use the same indentation.",
+            "tab_size_options": {
+                "zero": "0 spaces",
+                "one": "1 space",
+                "two": "2 spaces",
+                "three": "3 spaces"
+            }
         },
         "relatedSettings": "Related Settings",
         "filterRules": "Content Filtering Rules",

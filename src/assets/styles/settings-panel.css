@@ -31,6 +31,12 @@
     /* 模态框显示时恢复交互。 */
 }
 
+:host(.settings-panel-open) .text-extractor-fab-container {
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+}
+
 .settings-panel-modal {
     font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
     background-color: var(--main-bg);
@@ -247,6 +253,13 @@
     display: block;
     margin-bottom: 8px;
     font-weight: 500;
+}
+
+.setting-description {
+    margin: -4px 0 12px;
+    color: var(--main-text-secondary);
+    font-size: 13px;
+    line-height: 1.5;
 }
 
 .setting-title-container {
@@ -668,6 +681,39 @@
     fill: currentColor;
 }
 
+.output-indent-setting {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(150px, 220px);
+    align-items: center;
+    gap: 4px 16px;
+    margin: 14px 0 2px;
+    padding: 10px 14px;
+    border: 1px solid var(--main-border);
+    border-radius: 12px;
+    background-color: color-mix(in srgb, var(--main-textarea-bg) 52%, var(--main-bg));
+}
+
+.output-indent-setting .setting-title-container {
+    margin: 0;
+    font-size: 15px;
+}
+
+.output-indent-setting .setting-description {
+    grid-column: 1;
+    margin: -2px 0 0;
+}
+
+.output-indent-setting > [id$='-wrapper'] {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: center;
+    width: 100%;
+}
+
+.output-indent-setting .custom-select-container {
+    width: 100%;
+}
+
 /* --- Dynamic System Theme Behavior --- */
 
 @media (prefers-color-scheme: light) {
@@ -842,5 +888,21 @@
 
     .settings-panel-footer {
         padding: 12px 16px;
+    }
+
+    .output-indent-setting {
+        display: block;
+    }
+
+    .output-indent-setting .setting-description {
+        margin: -4px 0 10px;
+    }
+
+    .output-indent-setting .custom-select-container {
+        width: 100%;
+    }
+
+    .output-indent-setting > [id$='-wrapper'] {
+        width: 100%;
     }
 }

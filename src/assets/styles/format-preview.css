@@ -6,23 +6,31 @@
     align-items: center;
     justify-content: center;
     /* Center the code block horizontally */
-    height: 100%;
     width: 100%;
-    padding: 10px;
+    height: 100%;
+    min-width: 0;
+    padding: 10px 12px;
+    box-sizing: border-box;
     /* Add some padding around the code block */
 }
 
 /* 首尾符号包裹器 - 淡入淡出效果 */
-.code-preview .wrapper-bracket,
-.code-preview .wrapper-indent {
+.code-preview .wrapper-bracket {
     display: inline;
     opacity: 1;
     transition: opacity 0.2s ease-in-out;
 }
 
+.code-preview .wrapper-indent {
+    display: inline-block;
+    width: calc(var(--preview-indent-size, 2) * 1ch);
+    overflow: hidden;
+    transition: width 0.22s ease;
+    vertical-align: baseline;
+}
+
 /* 隐藏首尾符号时的样式 - 元素保持占位，只是透明 */
-.code-preview.hide-brackets .wrapper-bracket,
-.code-preview.hide-brackets .wrapper-indent {
+.code-preview.hide-brackets .wrapper-bracket {
     opacity: 0;
 }
 
@@ -30,7 +38,6 @@
 .code-text-preview {
     font-family: 'Menlo', 'Monaco', 'Consolas', 'Courier New', monospace;
     font-size: 14px;
-    /* 预览文本使用略大的字号，便于阅读。 */
     line-height: 1.4;
     color: var(--main-text-secondary);
     text-align: left;

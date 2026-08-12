@@ -34,6 +34,19 @@ export const selectSettingsDefinitions = [
         ],
     },
     {
+        id: 'tab-size-select',
+        key: 'tabSize',
+        label: 'settings.output.tab_size',
+        description: 'settings.output.tab_size_description',
+        valueType: 'number',
+        options: [
+            { value: '0', label: 'settings.output.tab_size_options.zero' },
+            { value: '1', label: 'settings.output.tab_size_options.one' },
+            { value: '2', label: 'settings.output.tab_size_options.two' },
+            { value: '3', label: 'settings.output.tab_size_options.three' },
+        ],
+    },
+    {
         id: 'language-select',
         key: 'language',
         label: 'settings.language',

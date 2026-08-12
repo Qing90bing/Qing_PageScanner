@@ -97,6 +97,7 @@ function formatAiTextResults(pairs = getAiDisplayData().textPairs) {
     const settings = loadSettings();
     return formatTextsForTranslation(pairs, settings.outputFormat, {
         includeArrayBrackets: settings.includeArrayBrackets,
+        tabSize: settings.tabSize,
     });
 }
 

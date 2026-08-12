@@ -136,6 +136,12 @@ export function buildPanelDOM(settings) {
     if (formatDef) {
         formatTab.appendChild(createSelectSettingDOM(formatDef));
     }
+    const tabSizeDef = selectSettingsDefinitions.find((d) => d.key === 'tabSize');
+    if (tabSizeDef) {
+        const tabSizeItem = createSelectSettingDOM(tabSizeDef);
+        tabSizeItem.classList.add('output-indent-setting');
+        formatTab.appendChild(tabSizeItem);
+    }
     // 添加输出设置勾选框（首尾符号开关）
     outputSettingsDefinitions.forEach((setting) => {
         const checkboxElement = createCheckbox(
@@ -216,6 +222,12 @@ function createSelectSettingDOM(definition) {
     selectWrapper.id = `${definition.id}-wrapper`;
 
     selectItem.appendChild(titleContainer);
+    if (definition.description) {
+        const description = document.createElement('p');
+        description.className = 'setting-description';
+        description.textContent = t(definition.description);
+        selectItem.appendChild(description);
+    }
     selectItem.appendChild(selectWrapper);
     return selectItem;
 }

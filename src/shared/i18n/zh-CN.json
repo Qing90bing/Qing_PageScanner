@@ -44,7 +44,15 @@
             "csv": "CSV 字符串"
         },
         "output": {
-            "include_brackets": "包含首尾符号"
+            "include_brackets": "包含首尾符号",
+            "tab_size": "TAB 缩进空格数",
+            "tab_size_description": "按 TAB 时插入的空格数，最多 3 个，数组和对象格式的缩进也会同步使用。",
+            "tab_size_options": {
+                "zero": "0 个空格",
+                "one": "1 个空格",
+                "two": "2 个空格",
+                "three": "3 个空格"
+            }
         },
         "relatedSettings": "相关设置",
         "filterRules": "内容过滤规则",

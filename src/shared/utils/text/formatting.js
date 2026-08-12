@@ -1,14 +1,17 @@
+import { DEFAULT_OUTPUT_TAB_SIZE, getOutputTabIndent } from '../../config/outputConfig.js';
+
 /**
  * 将原文或原文/译文对格式化为项目支持的三种输出格式。
  * 传入字符串时保持旧行为，译文默认为空字符串。
  *
  * @param {Array<string|{sourceText?: string, source?: string, translation?: string}|[string, string]>} texts
  * @param {'array'|'object'|'csv'} [format='array']
- * @param {{includeArrayBrackets?: boolean}} [options]
+ * @param {{includeArrayBrackets?: boolean, tabSize?: number}} [options]
  * @returns {string}
  */
 export const formatTextsForTranslation = (texts, format = 'array', options = {}) => {
-    const { includeArrayBrackets = true } = options;
+    const { includeArrayBrackets = true, tabSize = DEFAULT_OUTPUT_TAB_SIZE } = options;
+    const indent = getOutputTabIndent(tabSize);
     const pairs = Array.isArray(texts)
         ? texts
               .map((item) => {
@@ -36,7 +39,6 @@ export const formatTextsForTranslation = (texts, format = 'array', options = {})
     }
 
     if (format === 'object') {
-        const indent = includeArrayBrackets ? '    ' : '';
         const result = pairs.map(
             (pair) => `${indent}${JSON.stringify(pair.sourceText)}: ${JSON.stringify(pair.translation)}`
         );
@@ -53,7 +55,6 @@ export const formatTextsForTranslation = (texts, format = 'array', options = {})
             .join('\n');
     }
 
-    const indent = includeArrayBrackets ? '    ' : '';
     const result = pairs.map(
         (pair) => `${indent}[${JSON.stringify(pair.sourceText)}, ${JSON.stringify(pair.translation)}]`
     );

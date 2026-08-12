@@ -21,7 +21,7 @@ import { extractAndProcessText, filterAndNormalizeTexts } from '../../shared/uti
  *          该 Promise 在扫描完成时解析为一个包含格式化文本和计数的对象。
  */
 export const performQuickScan = async () => {
-    const { filterRules, enableDebugLogging, outputFormat, includeArrayBrackets } = loadSettings();
+    const { filterRules, enableDebugLogging, outputFormat, includeArrayBrackets, tabSize } = loadSettings();
 
     // 并行执行文本提取和 CSP 检查
     const [texts, workerAllowed] = await Promise.all([extractAndProcessText(), isWorkerAllowed()]);
@@ -34,7 +34,7 @@ export const performQuickScan = async () => {
         };
 
         const filteredTexts = filterAndNormalizeTexts(texts, filterRules, enableDebugLogging, logFiltered);
-        const formattedText = formatTextsForTranslation(filteredTexts, outputFormat, { includeArrayBrackets });
+        const formattedText = formatTextsForTranslation(filteredTexts, outputFormat, { includeArrayBrackets, tabSize });
         const result = { formattedText, count: filteredTexts.length };
         updateScanCount(result.count, 'static');
         return result;
@@ -76,6 +76,7 @@ export const performQuickScan = async () => {
                     enableDebugLogging,
                     outputFormat,
                     includeArrayBrackets,
+                    tabSize,
                     translations: {
                         workerLogPrefix: t('log.quickScan.worker.logPrefix'),
                         textFiltered: t('log.textProcessor.filtered'),

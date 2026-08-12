@@ -12,6 +12,8 @@
 import { shouldFilter } from '../utils/text/filterLogic.js';
 // @ts-ignore
 import { formatTextsForTranslation } from '../utils/text/formatting.js';
+// @ts-ignore
+import { DEFAULT_OUTPUT_TAB_SIZE } from '../config/outputConfig.js';
 
 // --- 状态变量 ---
 const sessionTexts = new Set();
@@ -20,6 +22,7 @@ let translations = {};
 let enableDebugLogging = false;
 let outputFormat = 'array'; // 输出格式状态
 let includeArrayBrackets = true; // 是否包含首尾符号
+let tabSize = DEFAULT_OUTPUT_TAB_SIZE;
 
 // --- 辅助函数 ---
 
@@ -100,6 +103,9 @@ self.onmessage = (event) => {
     if (payload && typeof payload.includeArrayBrackets !== 'undefined') {
         includeArrayBrackets = payload.includeArrayBrackets;
     }
+    if (payload && typeof payload.tabSize !== 'undefined') {
+        tabSize = payload.tabSize;
+    }
 
     switch (type) {
         /**
@@ -114,7 +120,10 @@ self.onmessage = (event) => {
             }
 
             const textsArray = Array.from(uniqueTexts);
-            const formattedText = formatTextsForTranslation(textsArray, outputFormat, { includeArrayBrackets });
+            const formattedText = formatTextsForTranslation(textsArray, outputFormat, {
+                includeArrayBrackets,
+                tabSize,
+            });
 
             log(t('scanComplete', { count: textsArray.length }));
             self.postMessage({
@@ -205,7 +214,10 @@ self.onmessage = (event) => {
          */
         case 'session-get-summary': {
             const sessionTextsArray = Array.from(sessionTexts);
-            const formattedText = formatTextsForTranslation(sessionTextsArray, outputFormat, { includeArrayBrackets });
+            const formattedText = formatTextsForTranslation(sessionTextsArray, outputFormat, {
+                includeArrayBrackets,
+                tabSize,
+            });
             self.postMessage({ type: 'summaryReady', payload: formattedText });
             break;
         }

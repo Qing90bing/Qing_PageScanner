@@ -9,6 +9,7 @@
 import { performQuickScan } from '../../../features/quick-scan/logic.js';
 import { showNotification } from '../components/notification.js';
 import { loadSettings } from '../../services/settings.js';
+import { getOutputTabIndent, normalizeOutputTabSize } from '../../config/outputConfig.js';
 import { log } from '../../utils/core/logger.js';
 import { t } from '../../i18n/index.js';
 import { simpleTemplate } from '../../utils/dom/templating.js';
@@ -50,6 +51,23 @@ const handleTextareaUpdate = () => {
     updateStatistics();
 };
 
+const handleTextareaKeyDown = (event) => {
+    if (event.key !== 'Tab' || event.shiftKey || !state.outputTextarea || state.outputTextarea.readOnly) return;
+    if (state.outputTextarea.disabled) return;
+
+    const indent = getOutputTabIndent(loadSettings().tabSize);
+    if (indent.length === 0) return;
+
+    event.preventDefault();
+    state.outputTextarea.setRangeText(
+        indent,
+        state.outputTextarea.selectionStart,
+        state.outputTextarea.selectionEnd,
+        'end'
+    );
+    state.outputTextarea.dispatchEvent(new Event('input', { bubbles: true }));
+};
+
 const handleTextareaScroll = () => {
     state.lineNumbersDiv.scrollTop = state.outputTextarea.scrollTop;
 };
@@ -74,6 +92,7 @@ export function createMainModal() {
 
     // 4. 绑定文本区域事件
     state.outputTextarea.addEventListener('input', handleTextareaUpdate);
+    state.outputTextarea.addEventListener('keydown', handleTextareaKeyDown);
     state.outputTextarea.addEventListener('click', updateActiveLine);
     state.outputTextarea.addEventListener('keyup', updateActiveLine);
     state.outputTextarea.addEventListener('scroll', handleTextareaScroll);
@@ -96,6 +115,7 @@ export function destroyMainModal() {
 
     // 2. 移除绑定的事件
     state.outputTextarea.removeEventListener('input', handleTextareaUpdate);
+    state.outputTextarea.removeEventListener('keydown', handleTextareaKeyDown);
     state.outputTextarea.removeEventListener('click', updateActiveLine);
     state.outputTextarea.removeEventListener('keyup', updateActiveLine);
     state.outputTextarea.removeEventListener('scroll', handleTextareaScroll);
@@ -296,5 +316,6 @@ export function updateModalAddonsVisibility() {
 
     if (state.outputTextarea) {
         state.outputTextarea.classList.toggle('word-wrap-disabled', !settings.enableWordWrap);
+        state.outputTextarea.style.tabSize = String(normalizeOutputTabSize(settings.tabSize));
     }
 }

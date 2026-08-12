@@ -2,6 +2,7 @@
 
 import { createSVGFromString } from '../../utils/dom/dom.js';
 import { createTrustedHTML } from '../../utils/dom/trustedTypes.js';
+import { normalizeOutputTabSize } from '../../config/outputConfig.js';
 
 /**
  * @class ImageCardSelect
@@ -13,11 +14,12 @@ export class ImageCardSelect {
      * @param {Array<Object>} options - 选项数组，每个对象包含 { value, label, icon, previewType }。
      * @param {string} initialValue - 初始选中的值。
      */
-    constructor(parentElement, options, initialValue, includeBrackets = true) {
+    constructor(parentElement, options, initialValue, includeBrackets = true, tabSize = 2) {
         this.parentElement = parentElement;
         this.options = options;
         this.currentValue = initialValue;
         this.includeBrackets = includeBrackets;
+        this.tabSize = normalizeOutputTabSize(tabSize);
         this.render();
         this.bindEvents();
     }
@@ -29,11 +31,15 @@ export class ImageCardSelect {
     render() {
         this.container = document.createElement('div');
         this.container.className = 'image-card-select-container';
+        this.container.setAttribute('role', 'radiogroup');
 
         this.options.forEach((option) => {
             const card = document.createElement('div');
             card.className = 'image-card-option';
             card.dataset.value = option.value;
+            card.setAttribute('role', 'radio');
+            card.tabIndex = 0;
+            card.setAttribute('aria-checked', String(option.value === this.currentValue));
             if (option.value === this.currentValue) {
                 card.classList.add('selected');
             }
@@ -138,13 +144,13 @@ export class ImageCardSelect {
         // 用 wrapper-bracket 和 wrapper-indent class 包裹首尾符号和缩进，便于 CSS 控制
         if (type === 'array') {
             codeBlock.innerHTML = createTrustedHTML(`
-                <span class="wrapper-bracket"><span class="punct">[</span><br></span><span class="wrapper-indent">&nbsp;&nbsp;</span><span class="punct">[</span><span class="str">"Hello"</span><span class="punct">,</span> <span class="str">""</span><span class="punct">],</span><br>
-                <span class="wrapper-indent">&nbsp;&nbsp;</span><span class="punct">[</span><span class="str">"World"</span><span class="punct">,</span> <span class="str">""</span><span class="punct">]</span><span class="wrapper-bracket"><br><span class="punct">]</span></span>
+                <span class="wrapper-bracket"><span class="punct">[</span><br></span><span class="wrapper-indent"></span><span class="punct">[</span><span class="str">"Hello"</span><span class="punct">,</span> <span class="str">""</span><span class="punct">],</span><br>
+                <span class="wrapper-indent"></span><span class="punct">[</span><span class="str">"World"</span><span class="punct">,</span> <span class="str">""</span><span class="punct">]</span><span class="wrapper-bracket"><br><span class="punct">]</span></span>
             `);
         } else if (type === 'object') {
             codeBlock.innerHTML = createTrustedHTML(`
-                <span class="wrapper-bracket"><span class="punct">{</span><br></span><span class="wrapper-indent">&nbsp;&nbsp;</span><span class="str">"Hello"</span><span class="punct">:</span> <span class="str">""</span><span class="punct">,</span><br>
-                <span class="wrapper-indent">&nbsp;&nbsp;</span><span class="str">"World"</span><span class="punct">:</span> <span class="str">""</span><span class="wrapper-bracket"><br><span class="punct">}</span></span>
+                <span class="wrapper-bracket"><span class="punct">{</span><br></span><span class="wrapper-indent"></span><span class="str">"Hello"</span><span class="punct">:</span> <span class="str">""</span><span class="punct">,</span><br>
+                <span class="wrapper-indent"></span><span class="str">"World"</span><span class="punct">:</span> <span class="str">""</span><span class="wrapper-bracket"><br><span class="punct">}</span></span>
             `);
         } else if (type === 'csv') {
             // CSV 格式不受 includeBrackets 影响
@@ -153,6 +159,10 @@ export class ImageCardSelect {
                 <span class="str">"World"</span><span class="punct">,</span><span class="str">""</span>
             `);
         }
+
+        codeBlock.querySelectorAll('.wrapper-indent').forEach((indentElement) => {
+            indentElement.style.setProperty('--preview-indent-size', String(this.tabSize));
+        });
 
         container.appendChild(codeBlock);
         return container;
@@ -169,7 +179,17 @@ export class ImageCardSelect {
                 this.select(card.dataset.value);
             }
         };
+        this.handleCardKeyDown = (event) => {
+            if (event.key !== 'Enter' && event.key !== ' ') return;
+
+            const card = event.target.closest('.image-card-option');
+            if (!card) return;
+
+            event.preventDefault();
+            this.select(card.dataset.value);
+        };
         this.container.addEventListener('click', this.handleCardClick);
+        this.container.addEventListener('keydown', this.handleCardKeyDown);
     }
 
     /**
@@ -187,8 +207,10 @@ export class ImageCardSelect {
         cards.forEach((card) => {
             if (card.dataset.value === value) {
                 card.classList.add('selected');
+                card.setAttribute('aria-checked', 'true');
             } else {
                 card.classList.remove('selected');
+                card.setAttribute('aria-checked', 'false');
             }
         });
     }
@@ -229,11 +251,26 @@ export class ImageCardSelect {
 
     /**
      * @public
+     * @param {number} tabSize - 预览中每级缩进使用的空格数。
+     */
+    updateTabSize(tabSize) {
+        const normalizedTabSize = normalizeOutputTabSize(tabSize);
+        if (this.tabSize === normalizedTabSize) return;
+
+        this.tabSize = normalizedTabSize;
+        this.container.querySelectorAll('.wrapper-indent').forEach((indentElement) => {
+            indentElement.style.setProperty('--preview-indent-size', String(this.tabSize));
+        });
+    }
+
+    /**
+     * @public
      * @description 销毁组件。
      */
     destroy() {
         if (this.container && this.handleCardClick) {
             this.container.removeEventListener('click', this.handleCardClick);
+            this.container.removeEventListener('keydown', this.handleCardKeyDown);
             this.container.remove();
         }
     }

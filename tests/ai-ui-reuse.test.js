@@ -308,6 +308,9 @@ test('main modal removes the same textarea handlers that it installs', async () 
     const source = await readFile(MAIN_MODAL_PATH, 'utf8');
 
     assert.match(source, /const handleTextareaScroll = \(\) =>/);
+    assert.match(source, /const handleTextareaKeyDown = \(event\) =>/);
+    assert.match(source, /addEventListener\('keydown', handleTextareaKeyDown\)/);
+    assert.match(source, /removeEventListener\('keydown', handleTextareaKeyDown\)/);
     assert.match(source, /addEventListener\('scroll', handleTextareaScroll\)/);
     assert.match(source, /removeEventListener\('scroll', handleTextareaScroll\)/);
     assert.doesNotMatch(source, /removeEventListener\('scroll', \(\) =>/);

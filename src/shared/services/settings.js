@@ -2,11 +2,13 @@ import { getValue, setValue } from './tampermonkey.js';
 import { log } from '../utils/core/logger.js';
 import { t } from '../i18n/index.js';
 import { AI_DEFAULT_SETTINGS, mergeAiSettings } from './ai/contracts.js';
+import { DEFAULT_OUTPUT_TAB_SIZE, normalizeOutputTabSize } from '../config/outputConfig.js';
 
 const defaultSettings = {
     language: 'auto',
     outputFormat: 'array',
     includeArrayBrackets: true,
+    tabSize: DEFAULT_OUTPUT_TAB_SIZE,
     theme: 'system',
     showFab: true,
     fabPosition: 'bottom-right',
@@ -49,6 +51,7 @@ export function loadSettings() {
         return {
             ...defaultSettings,
             ...parsedSettings,
+            tabSize: normalizeOutputTabSize(parsedSettings.tabSize),
             filterRules: {
                 ...defaultSettings.filterRules,
                 ...(parsedSettings.filterRules || {}),
@@ -68,13 +71,18 @@ export function saveSettings(newSettings) {
     }
 
     const oldSettings = loadSettings();
-    Object.keys(newSettings).forEach((key) => {
-        if (key !== 'filterRules' && oldSettings[key] !== newSettings[key]) {
+    const settingsToSave = { ...newSettings };
+    if (Object.prototype.hasOwnProperty.call(settingsToSave, 'tabSize')) {
+        settingsToSave.tabSize = normalizeOutputTabSize(settingsToSave.tabSize);
+    }
+
+    Object.keys(settingsToSave).forEach((key) => {
+        if (key !== 'filterRules' && oldSettings[key] !== settingsToSave[key]) {
             log(
                 t('log.settings.changed', {
                     key,
                     oldValue: oldSettings[key],
-                    newValue: newSettings[key],
+                    newValue: settingsToSave[key],
                 })
             );
         }
@@ -96,12 +104,12 @@ export function saveSettings(newSettings) {
 
     const mergedSettings = {
         ...oldSettings,
-        ...newSettings,
+        ...settingsToSave,
         filterRules: {
             ...oldSettings.filterRules,
-            ...(newSettings.filterRules || {}),
+            ...(settingsToSave.filterRules || {}),
         },
-        ai: mergeAiSettings(newSettings.ai || oldSettings.ai),
+        ai: mergeAiSettings(settingsToSave.ai || oldSettings.ai),
     };
 
     setValue('script_settings', JSON.stringify(mergedSettings));
