@@ -37,6 +37,7 @@
         "title": "設定",
         "theme": "主題",
         "language": "語言",
+        "plugin_language": "外掛程式語言",
         "format": "輸出格式",
         "formats": {
             "array": "嵌套陣列",

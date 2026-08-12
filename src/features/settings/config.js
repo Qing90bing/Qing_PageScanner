@@ -1,6 +1,5 @@
 // src/features/settings/config.js
 import { themeIcon } from '../../assets/icons/themeIcon.js';
-import languageIcon from '../../assets/icons/languageIcon.js';
 import { infoIcon } from '../../assets/icons/infoIcon.js';
 import { lightThemeIcon } from '../../assets/icons/lightThemeIcon.js';
 import { darkThemeIcon } from '../../assets/icons/darkThemeIcon.js';
@@ -49,8 +48,7 @@ export const selectSettingsDefinitions = [
     {
         id: 'language-select',
         key: 'language',
-        label: 'settings.language',
-        icon: languageIcon,
+        label: 'settings.plugin_language',
         options: getAvailableLanguages().map((lang) => ({
             ...lang,
             label: lang.value === 'auto' ? 'settings.languages.auto' : `settings.languages.${lang.value}`,

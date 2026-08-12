@@ -37,6 +37,7 @@
         "title": "设置",
         "theme": "主题",
         "language": "语言",
+        "plugin_language": "插件语言",
         "format": "输出格式",
         "formats": {
             "array": "嵌套数组",

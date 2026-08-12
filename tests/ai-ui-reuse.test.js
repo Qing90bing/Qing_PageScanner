@@ -16,6 +16,7 @@ const ICON_TITLE_PATH = new URL('../src/shared/ui/components/iconTitle.js', impo
 const BUTTON_PATH = new URL('../src/shared/ui/components/button.js', import.meta.url);
 const TOGGLE_PATH = new URL('../src/shared/ui/components/toggleSwitch.js', import.meta.url);
 const SETTINGS_PANEL_BUILDER_PATH = new URL('../src/features/settings/panelBuilder.js', import.meta.url);
+const SETTINGS_CONFIG_PATH = new URL('../src/features/settings/config.js', import.meta.url);
 const AI_ICON_PATH = new URL('../src/assets/icons/aiIcon.js', import.meta.url);
 const SETTINGS_STYLES_PATH = new URL('../src/assets/styles/settings-panel.css', import.meta.url);
 const CUSTOM_SELECT_STYLES_PATH = new URL('../src/assets/styles/custom-select.css', import.meta.url);
@@ -195,6 +196,21 @@ test('all settings booleans reuse the shared switch component', async () => {
     );
     assert.doesNotMatch(settingsStyles, /output-indent-setting|setting-item-select|composite-setting-container/);
     assert.doesNotMatch(settingsStyles, /checkbox-group|checkmark/);
+});
+
+test('plugin language setting keeps its icon in the sidebar only', async () => {
+    const [config, ...localeContents] = await Promise.all([
+        readFile(SETTINGS_CONFIG_PATH, 'utf8'),
+        ...Object.values(LOCALE_PATHS).map((path) => readFile(path, 'utf8')),
+    ]);
+    const languageDefinition = config.match(/id: 'language-select',[\s\S]*?\n\s{4}\},/)?.[0] || '';
+
+    assert.match(languageDefinition, /label: 'settings\.plugin_language'/);
+    assert.doesNotMatch(languageDefinition, /icon:/);
+    assert.deepEqual(
+        localeContents.map((content) => JSON.parse(content).settings.plugin_language),
+        ['Plugin Language', '插件语言', '外掛程式語言']
+    );
 });
 
 test('AI scan reuses the shared top counter and the AI feature switch controls its FAB', async () => {

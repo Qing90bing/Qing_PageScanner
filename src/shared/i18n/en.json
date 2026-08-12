@@ -37,6 +37,7 @@
         "title": "Settings",
         "theme": "Theme",
         "language": "Language",
+        "plugin_language": "Plugin Language",
         "format": "Output Format",
         "formats": {
             "array": "Nested Array",
