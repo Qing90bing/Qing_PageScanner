@@ -15,6 +15,7 @@ import { t, getTranslationObject } from '../../shared/i18n/index.js';
 import { fire, on } from '../../shared/utils/core/eventBus.js';
 import { selectTopLevelMutationRoots } from '../../shared/utils/dom/mutationRoots.js';
 import * as fallback from './fallback.js';
+import { prepareSessionStart } from './startup.js';
 import { trustedWorkerUrl } from '../../shared/workers/worker-url.js';
 import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
 import { saveActiveSession, clearActiveSession, enablePersistence } from '../../shared/services/sessionPersistence.js';
@@ -45,6 +46,7 @@ const AUTO_SAVE_INTERVAL_MS = 5000;
 const pendingDynamicRoots = new Set();
 let pendingDynamicFlushTimeout = null;
 let pendingDynamicWaitStartedAt = null;
+let sessionStartGeneration = 0;
 
 function saveSessionState() {
     return saveActiveSession('session-scan', Array.from(sessionTextsMirror));
@@ -206,6 +208,9 @@ function clearSessionData() {
 export const start = async (onUpdate, resumedData = null) => {
     if (isRecording) return;
 
+    const startGeneration = ++sessionStartGeneration;
+    const isCurrentStart = () => isRecording && sessionStartGeneration === startGeneration;
+
     // 仅在动态扫描运行期间参与翻译状态协调。
     registerTranslationBridgeClient();
 
@@ -229,11 +234,30 @@ export const start = async (onUpdate, resumedData = null) => {
     isRecording = true;
 
     // --- 3. 加载初始数据和设置 ---
-    const [initialTexts, settings, workerAllowed] = await Promise.all([
-        waitForTranslationBridgeIdle().then(() => extractAndProcessText()),
-        loadSettings(),
-        isWorkerAllowed(),
-    ]);
+    let preparation;
+    try {
+        preparation = await prepareSessionStart({
+            waitForTranslationIdle: waitForTranslationBridgeIdle,
+            extractInitialTexts: extractAndProcessText,
+            readSettings: loadSettings,
+            checkWorkerAllowed: isWorkerAllowed,
+            isCurrent: isCurrentStart,
+        });
+    } catch (error) {
+        if (!isCurrentStart()) return false;
+
+        sessionStartGeneration += 1;
+        isRecording = false;
+        isPaused = false;
+        onUpdateCallback = null;
+        unregisterTranslationBridgeClient();
+        throw error;
+    }
+
+    // stop() 或更新的一次 start() 已让本次初始化过期，不再创建任何长期资源。
+    if (!preparation) return false;
+
+    const { initialTexts, settings, workerAllowed } = preparation;
 
     // 在数据加载和初始保存之前，明确启用持久化
     enablePersistence();
@@ -341,6 +365,7 @@ export const start = async (onUpdate, resumedData = null) => {
     saveSessionState();
 
     log(t('log.sessionScan.domObserver.started'));
+    return true;
 };
 
 const handleSessionScanUnload = () => {
@@ -348,6 +373,8 @@ const handleSessionScanUnload = () => {
 };
 
 export const stop = (onStopped) => {
+    sessionStartGeneration += 1;
+
     if (!isRecording) {
         unregisterTranslationBridgeClient();
         if (onStopped) onStopped(0);
