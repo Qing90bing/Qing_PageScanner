@@ -1,6 +1,5 @@
 // src/shared/utils/core/eventBus.js
 import { log } from './logger.js';
-import { t } from '../../i18n/index.js';
 
 /**
  * @module eventBus
@@ -38,7 +37,7 @@ export function fire(eventName, data) {
             try {
                 callback(data);
             } catch (error) {
-                log(t('log.eventBus.callbackError', { eventName }), error);
+                log(`Event bus callback failed: ${eventName}`, error);
             }
         });
     }

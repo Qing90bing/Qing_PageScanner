@@ -1,7 +1,7 @@
 // src/shared/i18n/index.js
 import { locales, resourceLanguages } from 'virtual:locales';
 import { fire } from '../utils/core/eventBus.js';
-import { log } from '../utils/core/logger.js';
+import { log, updateLoggerPrefix } from '../utils/core/logger.js';
 
 // 将所有导入的翻译文件映射到一个对象中，以便通过语言代码进行动态访问。
 // 现在使用自动生成的 locales 对象，无需手动导入每个 JSON 文件。
@@ -31,12 +31,14 @@ export function setLanguage(lang) {
     if (translations[lang]) {
         currentLanguage = lang;
         currentTranslations = translations[lang];
+        updateLoggerPrefix(t('log.prefix'));
         log(t('log.language.switched', { lang }));
         fire('languageChanged', lang); // 通知UI重新渲染
     } else {
         log(t('log.language.notFound', { lang }), 'warn');
         currentLanguage = 'en';
         currentTranslations = translations.en;
+        updateLoggerPrefix(t('log.prefix'));
     }
 }
 

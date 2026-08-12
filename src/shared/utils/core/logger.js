@@ -5,10 +5,11 @@
  * @description 提供一个基于用户设置的条件化日志记录器。
  */
 
-import { t } from '../../i18n/index.js';
-
-// 模块级变量，用于缓存调试模式的状态
-let isDebugEnabled = false;
+const DEFAULT_LOG_PREFIX = '[Qing PageScanner]';
+const loggerState = {
+    isDebugEnabled: false,
+    prefix: DEFAULT_LOG_PREFIX,
+};
 
 /**
  * @public
@@ -16,7 +17,17 @@ let isDebugEnabled = false;
  * @param {boolean} isEnabled - 是否应启用日志记录。
  */
 export function updateLoggerState(isEnabled) {
-    isDebugEnabled = isEnabled;
+    loggerState.isDebugEnabled = Boolean(isEnabled);
+}
+
+/**
+ * @public
+ * @description 更新日志前缀。由国际化层在语言切换后主动注入，避免核心日志工具反向依赖国际化模块。
+ * @param {string} prefix - 已翻译的日志前缀。
+ */
+export function updateLoggerPrefix(prefix) {
+    const normalizedPrefix = String(prefix || '').trim();
+    loggerState.prefix = normalizedPrefix || DEFAULT_LOG_PREFIX;
 }
 
 /**
@@ -25,7 +36,7 @@ export function updateLoggerState(isEnabled) {
  * @param {...*} args - 要传递给 console.log 的参数。
  */
 export function log(...args) {
-    if (isDebugEnabled) {
-        console.log(t('log.prefix'), ...args);
+    if (loggerState.isDebugEnabled) {
+        console.log(loggerState.prefix, ...args);
     }
 }
