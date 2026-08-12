@@ -182,11 +182,13 @@ test('all settings booleans reuse the shared switch component', async () => {
     assert.match(panelBuilder, /setting-inline-card/);
     assert.match(panelBuilder, /setting-inline-control/);
     assert.match(panelBuilder, /setting-stack/);
+    assert.match(panelBuilder, /has-description/);
     assert.match(settingsStyles, /\.setting-item > \.tc-toggle-setting/);
     assert.match(settingsStyles, /--settings-item-gap: 12px/);
     assert.match(settingsStyles, /\.settings-tab-content > \.setting-item:last-child/);
     assert.match(settingsStyles, /\.setting-inline-card\s*\{[\s\S]*margin: 0 0 var\(--settings-item-gap, 12px\)/);
     assert.match(settingsStyles, /\.setting-inline-card\.linked-numeric-input/);
+    assert.match(settingsStyles, /\.setting-inline-card\.has-description[\s\S]*grid-row: 1 \/ span 2/);
     assert.match(
         settingsStyles,
         /@media \(max-width: 700px\) \{[\s\S]*\.setting-inline-card\.linked-numeric-input\s*\{\s*display: block;/

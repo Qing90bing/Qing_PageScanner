@@ -217,6 +217,9 @@ function createSelectSettingDOM(definition) {
     const selectItem = document.createElement('div');
     const isInlineSetting = definition.type !== 'image-card-select';
     selectItem.className = `setting-item${isInlineSetting ? ' setting-inline-card' : ''}`;
+    if (isInlineSetting && definition.description) {
+        selectItem.classList.add('has-description');
+    }
 
     const titleContainer = document.createElement('div');
     titleContainer.id = `${definition.id}-title-container`;

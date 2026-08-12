@@ -678,9 +678,14 @@
 .setting-inline-card > .setting-inline-control,
 .setting-inline-card > .numeric-input {
     grid-column: 2;
-    grid-row: 1 / span 2;
+    grid-row: 1;
     align-self: center;
     width: 100%;
+}
+
+.setting-inline-card.has-description > .setting-inline-control,
+.setting-inline-card.has-description > .numeric-input {
+    grid-row: 1 / span 2;
 }
 
 .setting-inline-card .custom-select-container {
