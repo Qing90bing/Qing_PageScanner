@@ -7,8 +7,14 @@ export const SCAN_MODES = Object.freeze({
 });
 
 let activeMode = SCAN_MODES.IDLE;
+const activeModes = new Set();
 const listeners = new Set();
 const supportedModes = new Set(Object.values(SCAN_MODES));
+const primaryModeOrder = [SCAN_MODES.AI, SCAN_MODES.DYNAMIC, SCAN_MODES.ELEMENT, SCAN_MODES.STATIC];
+
+function resolveActiveMode() {
+    return primaryModeOrder.find((mode) => activeModes.has(mode)) || SCAN_MODES.IDLE;
+}
 
 function notify(previousMode) {
     listeners.forEach((listener) => {
@@ -21,11 +27,13 @@ export function getActiveScanMode() {
 }
 
 export function canAcquireScanModeFrom(currentMode, requestedMode) {
+    if (!supportedModes.has(currentMode) || !supportedModes.has(requestedMode)) return false;
+    if (requestedMode === SCAN_MODES.IDLE) return false;
+    if (currentMode === SCAN_MODES.IDLE || currentMode === requestedMode) return true;
+
     return (
-        supportedModes.has(currentMode) &&
-        supportedModes.has(requestedMode) &&
-        requestedMode !== SCAN_MODES.IDLE &&
-        (currentMode === SCAN_MODES.IDLE || currentMode === requestedMode)
+        requestedMode === SCAN_MODES.STATIC &&
+        (currentMode === SCAN_MODES.DYNAMIC || currentMode === SCAN_MODES.ELEMENT)
     );
 }
 
@@ -42,24 +50,23 @@ export function acquireScanMode(mode) {
     }
 
     const previousMode = activeMode;
-    activeMode = mode;
-    notify(previousMode);
+    activeModes.add(mode);
+    activeMode = resolveActiveMode();
+    if (activeMode !== previousMode) notify(previousMode);
     return true;
 }
 
 export function releaseScanMode(mode) {
-    if (activeMode !== mode) {
-        return false;
-    }
+    if (!activeModes.delete(mode)) return false;
 
     const previousMode = activeMode;
-    activeMode = SCAN_MODES.IDLE;
-    notify(previousMode);
+    activeMode = resolveActiveMode();
+    if (activeMode !== previousMode) notify(previousMode);
     return true;
 }
 
 export function isScanModeActive(mode) {
-    return activeMode === mode;
+    return activeModes.has(mode);
 }
 
 export function subscribeScanMode(listener) {
@@ -69,6 +76,7 @@ export function subscribeScanMode(listener) {
 
 export function resetScanModeForTests() {
     const previousMode = activeMode;
+    activeModes.clear();
     activeMode = SCAN_MODES.IDLE;
     if (previousMode !== activeMode) {
         notify(previousMode);

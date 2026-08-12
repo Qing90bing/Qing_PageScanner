@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
     acquireScanMode,
     getActiveScanMode,
+    isScanModeActive,
     releaseScanMode,
     resetScanModeForTests,
     SCAN_MODES,
@@ -76,6 +77,30 @@ test('a running regular scan prevents AI from forcing a mode switch', () => {
     assert.equal(getActiveScanMode(), SCAN_MODES.DYNAMIC);
 });
 
+test('dynamic and element scans allow a temporary static scan without yielding the primary mode', () => {
+    [SCAN_MODES.DYNAMIC, SCAN_MODES.ELEMENT].forEach((primaryMode) => {
+        assert.equal(acquireScanMode(primaryMode), true);
+        assert.equal(acquireScanMode(SCAN_MODES.STATIC), true);
+        assert.equal(getActiveScanMode(), primaryMode);
+        assert.equal(isScanModeActive(primaryMode), true);
+        assert.equal(isScanModeActive(SCAN_MODES.STATIC), true);
+
+        assert.equal(releaseScanMode(SCAN_MODES.STATIC), true);
+        assert.equal(getActiveScanMode(), primaryMode);
+        assert.equal(releaseScanMode(primaryMode), true);
+    });
+});
+
+test('a temporary static scan remains active if its primary scan stops first', () => {
+    assert.equal(acquireScanMode(SCAN_MODES.DYNAMIC), true);
+    assert.equal(acquireScanMode(SCAN_MODES.STATIC), true);
+    assert.equal(releaseScanMode(SCAN_MODES.DYNAMIC), true);
+    assert.equal(getActiveScanMode(), SCAN_MODES.STATIC);
+    assert.equal(isScanModeActive(SCAN_MODES.STATIC), true);
+    assert.equal(releaseScanMode(SCAN_MODES.STATIC), true);
+    assert.equal(getActiveScanMode(), SCAN_MODES.IDLE);
+});
+
 test('AI mode disables all ordinary FABs and restores their exact previous states', () => {
     const dynamic = createFab();
     const staticFab = createFab({ disabled: true, tooltip: 'pre-disabled' });
@@ -109,6 +134,12 @@ test('every active scan mode disables every unavailable scan FAB', () => {
         [staticFab, SCAN_MODES.STATIC],
         [element, SCAN_MODES.ELEMENT],
     ]);
+    const enabledModesByActiveMode = new Map([
+        [SCAN_MODES.AI, new Set([SCAN_MODES.AI])],
+        [SCAN_MODES.DYNAMIC, new Set([SCAN_MODES.DYNAMIC, SCAN_MODES.STATIC])],
+        [SCAN_MODES.STATIC, new Set([SCAN_MODES.STATIC])],
+        [SCAN_MODES.ELEMENT, new Set([SCAN_MODES.STATIC, SCAN_MODES.ELEMENT])],
+    ]);
 
     Object.values(SCAN_MODES)
         .filter((mode) => mode !== SCAN_MODES.IDLE)
@@ -116,7 +147,7 @@ test('every active scan mode disables every unavailable scan FAB', () => {
             applyScanModeFabState(fabs, activeMode, setDisabled, setTooltip);
 
             modeByFab.forEach((mode, fab) => {
-                const shouldBeDisabled = mode !== activeMode;
+                const shouldBeDisabled = !enabledModesByActiveMode.get(activeMode).has(mode);
                 assert.equal(fab.disabled, shouldBeDisabled, `${mode} while ${activeMode} is active`);
                 if (shouldBeDisabled) {
                     const tooltipKey =
