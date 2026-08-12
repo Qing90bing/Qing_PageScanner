@@ -106,7 +106,7 @@
     padding: 10px 14px;
     border: 1px solid var(--main-border);
     border-radius: 12px;
-    background: var(--main-bg);
+    background: var(--settings-item-background, var(--main-bg));
     color: var(--main-text);
     cursor: pointer;
     transition:

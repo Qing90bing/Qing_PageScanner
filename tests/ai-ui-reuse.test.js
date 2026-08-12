@@ -179,6 +179,7 @@ test('all settings booleans reuse the shared switch component', async () => {
     assert.match(panelBuilder, /createToggleSwitch/);
     assert.doesNotMatch(panelBuilder, /createCheckbox/);
     assert.match(forms, /\.tc-toggle-setting\s*\{[\s\S]*gap: 16px[\s\S]*min-height: 52px[\s\S]*padding: 10px 14px/);
+    assert.match(forms, /background: var\(--settings-item-background, var\(--main-bg\)\)/);
     assert.match(forms, /\.tc-toggle-control\s*\{[\s\S]*width: 48px[\s\S]*height: 26px/);
     assert.doesNotMatch(toggle, /tc-toggle-setting-compact/);
     assert.doesNotMatch(forms, /tc-toggle-setting-compact/);
@@ -188,8 +189,16 @@ test('all settings booleans reuse the shared switch component', async () => {
     assert.match(panelBuilder, /has-description/);
     assert.match(settingsStyles, /\.setting-item > \.tc-toggle-setting/);
     assert.match(settingsStyles, /--settings-item-gap: 12px/);
+    assert.match(
+        settingsStyles,
+        /--settings-item-background: color-mix\(in srgb, var\(--main-textarea-bg\) 52%, var\(--main-bg\)\)/
+    );
     assert.match(settingsStyles, /\.settings-tab-content > \.setting-item:last-child/);
     assert.match(settingsStyles, /\.setting-inline-card\s*\{[\s\S]*margin: 0 0 var\(--settings-item-gap, 12px\)/);
+    assert.match(
+        settingsStyles,
+        /\.setting-inline-card\s*\{[\s\S]*background-color: var\(--settings-item-background\)/
+    );
     assert.match(settingsStyles, /\.setting-inline-card\.linked-numeric-input/);
     assert.match(settingsStyles, /\.setting-inline-card\.has-description[\s\S]*grid-row: 1 \/ span 2/);
     assert.match(

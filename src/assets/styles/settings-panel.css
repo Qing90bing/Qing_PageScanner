@@ -221,6 +221,7 @@
     overflow-y: auto;
     flex: 1;
     --settings-item-gap: 12px;
+    --settings-item-background: color-mix(in srgb, var(--main-textarea-bg) 52%, var(--main-bg));
 }
 
 .settings-tab-content.active {
@@ -653,7 +654,7 @@
     padding: 10px 14px;
     border: 1px solid var(--main-border);
     border-radius: 12px;
-    background-color: color-mix(in srgb, var(--main-textarea-bg) 52%, var(--main-bg));
+    background-color: var(--settings-item-background);
 }
 
 .setting-item > .setting-inline-card {
