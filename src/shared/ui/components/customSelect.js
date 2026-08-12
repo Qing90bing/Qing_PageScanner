@@ -6,6 +6,7 @@
  */
 
 import { createIconTitle } from './iconTitle.js';
+import { getCustomSelectOptionsMaxHeight } from './customSelectAnimation.js';
 import { listenClickOutside } from '../../utils/dom/clickOutside.js';
 import { createSVGFromString } from '../../utils/dom/dom.js';
 import { arrowDownIcon } from '../../../assets/icons/arrowDownIcon.js';
@@ -77,6 +78,7 @@ export class CustomSelect {
         }
 
         this.populateOptions();
+        this.syncOptionsHeight();
         this.updateSelectedContent(initialOption);
     }
 
@@ -100,6 +102,18 @@ export class CustomSelect {
 
             this.optionsContainer.appendChild(optionEl);
         });
+    }
+
+    /**
+     * @private
+     * Keep the opening animation duration independent from the number of options.
+     */
+    syncOptionsHeight() {
+        const contentHeight = this.optionsContainer?.scrollHeight;
+        if (!contentHeight) return;
+
+        const maxHeight = getCustomSelectOptionsMaxHeight(contentHeight);
+        this.optionsContainer.style.setProperty('--custom-select-options-height', `${maxHeight}px`);
     }
 
     /**
@@ -154,6 +168,9 @@ export class CustomSelect {
      */
     toggle() {
         this.isOpen = !this.isOpen;
+        if (this.isOpen) {
+            this.syncOptionsHeight();
+        }
         this.container.classList.toggle('open', this.isOpen);
         this.trigger.setAttribute('aria-expanded', String(this.isOpen));
 
@@ -268,6 +285,7 @@ export class CustomSelect {
 
         // 填充新选项并更新显示
         this.populateOptions();
+        this.syncOptionsHeight();
         const currentSelectedOption = this.options.find((opt) => opt.value === this.currentValue);
         if (currentSelectedOption) {
             this.updateSelectedContent(currentSelectedOption);

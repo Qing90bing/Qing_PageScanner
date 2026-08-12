@@ -103,7 +103,7 @@
 .custom-select-container.open .custom-select-options {
     visibility: visible;
     opacity: 1;
-    max-height: 200px; /* 或者一个足够大的值 */
+    max-height: var(--custom-select-options-height, 200px);
     /* 打开时，立即显示 visibility，不延迟 */
     transition:
         max-height 0.2s ease-out,

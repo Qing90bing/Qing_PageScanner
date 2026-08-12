@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import postcss from 'postcss';
+import { getCustomSelectOptionsMaxHeight } from '../src/shared/ui/components/customSelectAnimation.js';
 
 const AI_PANEL_PATH = new URL('../src/features/settings/aiPanel.js', import.meta.url);
 const AI_PANEL_HELPERS_PATH = new URL('../src/features/settings/aiPanel/helpers.js', import.meta.url);
@@ -22,6 +23,8 @@ const LANGUAGE_MANAGER_PATH = new URL('../src/shared/i18n/management/languageMan
 const AI_ICON_PATH = new URL('../src/assets/icons/aiIcon.js', import.meta.url);
 const SETTINGS_STYLES_PATH = new URL('../src/assets/styles/settings-panel.css', import.meta.url);
 const CUSTOM_SELECT_STYLES_PATH = new URL('../src/assets/styles/custom-select.css', import.meta.url);
+const CUSTOM_SELECT_ANIMATION_PATH = new URL('../src/shared/ui/components/customSelectAnimation.js', import.meta.url);
+const CUSTOM_SELECT_PATH = new URL('../src/shared/ui/components/customSelect.js', import.meta.url);
 const AI_SCAN_LOGIC_PATH = new URL('../src/features/ai-scan/logic.js', import.meta.url);
 const MODAL_CONTENT_PATH = new URL('../src/shared/ui/mainModal/modalContent.js', import.meta.url);
 const MAIN_MODAL_PATH = new URL('../src/shared/ui/mainModal/index.js', import.meta.url);
@@ -388,6 +391,23 @@ test('shared custom selects reserve one aligned row for icon, label, and arrow',
     assert.match(styles, /\.selected-option-content\s*\{[\s\S]*align-items: center/);
     assert.match(styles, /\.custom-select-arrow\s*\{[\s\S]*flex: 0 0 20px/);
     assert.match(styles, /\.selected-option-content > \.tc-icon-title\s*\{[\s\S]*width: 100%/);
+});
+
+test('custom select opening keeps a consistent duration for short option lists', async () => {
+    const [styles, component, animation] = await Promise.all([
+        readFile(CUSTOM_SELECT_STYLES_PATH, 'utf8'),
+        readFile(CUSTOM_SELECT_PATH, 'utf8'),
+        readFile(CUSTOM_SELECT_ANIMATION_PATH, 'utf8'),
+    ]);
+
+    assert.match(styles, /max-height: var\(--custom-select-options-height, 200px\)/);
+    assert.match(component, /this\.syncOptionsHeight\(\);/);
+    assert.match(component, /this\.optionsContainer\?\.scrollHeight/);
+    assert.match(component, /--custom-select-options-height/);
+    assert.match(animation, /return Math\.min\(numericHeight, CUSTOM_SELECT_OPTIONS_MAX_HEIGHT\)/);
+    assert.equal(getCustomSelectOptionsMaxHeight(112), 112);
+    assert.equal(getCustomSelectOptionsMaxHeight(224), 200);
+    assert.equal(getCustomSelectOptionsMaxHeight('invalid'), 200);
 });
 
 test('advanced site matching uses the same reusable editor-card surface', async () => {
