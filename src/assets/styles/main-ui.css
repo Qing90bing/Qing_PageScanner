@@ -131,8 +131,8 @@
     font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
     background-color: var(--main-bg);
     color: var(--main-text);
-    width: min(960px, calc(100vw - 40px));
-    max-width: 960px;
+    width: min(1040px, calc(100vw - 48px));
+    max-width: 1040px;
     height: min(760px, calc(100vh - 56px));
     max-height: 90vh;
     border-radius: 16px; /* 增大了圆角 */
@@ -304,6 +304,22 @@
     display: flex;
     min-height: 32px;
     align-items: center;
+}
+
+@media (max-width: 900px) {
+    .text-extractor-modal {
+        width: calc(100vw - 28px);
+        height: calc(100vh - 28px);
+        max-height: none;
+    }
+}
+
+@media (max-width: 700px) {
+    .text-extractor-modal {
+        width: calc(100vw - 16px);
+        height: calc(100vh - 16px);
+        border-radius: 12px;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {

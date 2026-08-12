@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
+import postcss from 'postcss';
 
 const AI_PANEL_PATH = new URL('../src/features/settings/aiPanel.js', import.meta.url);
 const AI_PANEL_HELPERS_PATH = new URL('../src/features/settings/aiPanel/helpers.js', import.meta.url);
@@ -25,6 +26,27 @@ const LOCALE_PATHS = {
     'zh-CN': new URL('../src/shared/i18n/zh-CN.json', import.meta.url),
     'zh-TW': new URL('../src/shared/i18n/zh-TW.json', import.meta.url),
 };
+
+function getCssDeclarations(css, selector, mediaQuery = null) {
+    const root = postcss.parse(css);
+    const declarations = {};
+
+    root.walkRules((rule) => {
+        if (rule.selector !== selector) return;
+
+        const isMatchingScope =
+            mediaQuery === null
+                ? rule.parent.type === 'root'
+                : rule.parent.type === 'atrule' && rule.parent.name === 'media' && rule.parent.params === mediaQuery;
+        if (!isMatchingScope) return;
+
+        for (const node of rule.nodes) {
+            if (node.type === 'decl') declarations[node.prop] = node.value;
+        }
+    });
+
+    return declarations;
+}
 
 test('AI summary statuses use concise consistent labels in every locale', async () => {
     const locales = Object.fromEntries(
@@ -96,16 +118,24 @@ test('AI cost controls expose a restore-defaults action wired to shared defaults
     assert.match(source, /AI_DEFAULT_SETTINGS\.requestTimeoutMs \/ 1000/);
 });
 
-test('summary modal height matches the settings panel height', async () => {
+test('summary modal dimensions match the settings panel at every viewport size', async () => {
     const [mainStyles, settingsStyles] = await Promise.all([
         readFile(MAIN_STYLES_PATH, 'utf8'),
         readFile(SETTINGS_STYLES_PATH, 'utf8'),
     ]);
 
-    assert.match(mainStyles, /\.text-extractor-modal\s*\{[\s\S]*height: min\(760px, calc\(100vh - 56px\)\)/);
-    assert.match(mainStyles, /\.text-extractor-modal\s*\{[\s\S]*max-height: 90vh/);
-    assert.match(settingsStyles, /\.settings-panel-modal\s*\{[\s\S]*height: min\(760px, calc\(100vh - 56px\)\)/);
-    assert.match(settingsStyles, /\.settings-panel-modal\s*\{[\s\S]*max-height: 90vh/);
+    for (const mediaQuery of [null, '(max-width: 900px)', '(max-width: 700px)']) {
+        const mainDimensions = getCssDeclarations(mainStyles, '.text-extractor-modal', mediaQuery);
+        const settingsDimensions = getCssDeclarations(settingsStyles, '.settings-panel-modal', mediaQuery);
+
+        for (const property of ['width', 'max-width', 'height', 'max-height']) {
+            assert.equal(
+                mainDimensions[property],
+                settingsDimensions[property],
+                `${mediaQuery || 'base'} ${property} should match between summary and settings panels`
+            );
+        }
+    }
 });
 
 test('the shared settings modal uses the compact workspace size', async () => {
