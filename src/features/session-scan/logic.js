@@ -13,6 +13,7 @@ import { isWorkerAllowed } from '../../shared/utils/core/csp-checker.js';
 import { showNotification } from '../../shared/ui/components/notification.js';
 import { t, getTranslationObject } from '../../shared/i18n/index.js';
 import { fire, on } from '../../shared/utils/core/eventBus.js';
+import { selectTopLevelMutationRoots } from '../../shared/utils/dom/mutationRoots.js';
 import * as fallback from './fallback.js';
 import { trustedWorkerUrl } from '../../shared/workers/worker-url.js';
 import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
@@ -81,15 +82,7 @@ function flushPendingDynamicRoots() {
     if (!isRecording || pendingDynamicRoots.size === 0) return;
 
     const pendingRoots = Array.from(pendingDynamicRoots);
-    const pendingRootSet = new Set(pendingRoots);
-    const roots = pendingRoots.filter((root) => {
-        let parent = root.parentElement;
-        while (parent) {
-            if (pendingRootSet.has(parent)) return false;
-            parent = parent.parentElement;
-        }
-        return true;
-    });
+    const roots = selectTopLevelMutationRoots(pendingRoots);
     clearPendingDynamicRoots();
     const textsBatch = [];
     const ignoredSelectorString = scannerConfig.ignoredSelectors.join(', ');

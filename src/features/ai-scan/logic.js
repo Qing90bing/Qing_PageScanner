@@ -40,6 +40,7 @@ import {
     waitForTranslationBridgeIdle,
 } from '../../shared/services/translationBridge.js';
 import { fire } from '../../shared/utils/core/eventBus.js';
+import { selectTopLevelMutationRoots } from '../../shared/utils/dom/mutationRoots.js';
 import { buildAiDisplayData } from './resultView.js';
 import { restoreAiSession, serializeAiSession } from './session.js';
 import { applyAiSummaryEditsToState, removeAiSummaryCandidate } from './summaryState.js';
@@ -216,16 +217,7 @@ async function flushPendingRoots(runGeneration = generation) {
 
     const roots = Array.from(pendingRoots);
     pendingRoots = new Set();
-    const rootSet = new Set(roots.filter((root) => root?.nodeType === Node.ELEMENT_NODE));
-    const topLevelRoots = roots.filter((root) => {
-        if (root?.nodeType !== Node.ELEMENT_NODE) return true;
-        let parent = root.parentElement;
-        while (parent) {
-            if (rootSet.has(parent)) return false;
-            parent = parent.parentElement;
-        }
-        return true;
-    });
+    const topLevelRoots = selectTopLevelMutationRoots(roots);
     topLevelRoots.forEach(collectFromRoot);
 }
 
