@@ -45,3 +45,19 @@ test('format and theme cards share one surface color and radius token', async ()
         /\.image-card-option\.selected \.image-card-label\s*\{[\s\S]*background-color: var\(--settings-card-label-selected-background, var\(--main-bg\)\)/
     );
 });
+
+test('information notices use a shared icon and text alignment grid', async () => {
+    const styles = await readFile(new URL('../src/assets/styles/forms.css', import.meta.url), 'utf8');
+    const panelBuilder = await readFile(new URL('../src/features/settings/panelBuilder.js', import.meta.url), 'utf8');
+    const noticeComponent = await readFile(
+        new URL('../src/shared/ui/components/infoNotice.js', import.meta.url),
+        'utf8'
+    );
+
+    assert.match(styles, /\.tc-info-notice\s*\{[\s\S]*grid-template-columns: 20px minmax\(0, 1fr\)/);
+    assert.match(styles, /\.tc-info-notice-icon\s*\{[\s\S]*width: 20px[\s\S]*height: 20px/);
+    assert.match(styles, /\.tc-info-notice-text\s*\{[\s\S]*line-height: 20px/);
+    assert.match(panelBuilder, /createInfoNotice\(infoIcon, t\('settings\.dynamicScanRefreshNotice'\)\)/);
+    assert.match(noticeComponent, /className = 'tc-info-notice-icon'/);
+    assert.match(noticeComponent, /className = 'tc-info-notice-text'/);
+});

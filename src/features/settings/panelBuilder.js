@@ -18,6 +18,7 @@ import {
 } from './config.js';
 import { t } from '../../shared/i18n/index.js';
 import { createIconTitle } from '../../shared/ui/components/iconTitle.js';
+import { createInfoNotice } from '../../shared/ui/components/infoNotice.js';
 import { infoIcon } from '../../assets/icons/infoIcon.js';
 import { githubIcon } from '../../assets/icons/githubIcon.js';
 import { translateIcon } from '../../assets/icons/icon.js';
@@ -112,14 +113,8 @@ export function buildPanelDOM(settings) {
     filterTitleContainer.id = 'filter-setting-title-container';
     filterTitleContainer.className = 'setting-title-container';
     filterTab.appendChild(filterTitleContainer);
-    const filterNotice = createIconTitle(infoIcon, t('settings.dynamicScanRefreshNotice'));
+    const filterNotice = createInfoNotice(infoIcon, t('settings.dynamicScanRefreshNotice'));
     filterNotice.classList.add('settings-info-notice');
-    filterNotice.setAttribute('role', 'note');
-    const filterNoticeIcon = filterNotice.firstElementChild;
-    if (filterNoticeIcon) {
-        filterNoticeIcon.classList.add('settings-info-notice-icon');
-        filterNoticeIcon.setAttribute('aria-hidden', 'true');
-    }
     filterTab.appendChild(filterNotice);
     // 填充过滤规则项
     filterDefinitions.forEach((filter) => {
