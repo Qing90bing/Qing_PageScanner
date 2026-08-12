@@ -143,7 +143,6 @@ export function buildPanelDOM(settings) {
     const tabSizeDef = selectSettingsDefinitions.find((d) => d.key === 'tabSize');
     if (tabSizeDef) {
         const tabSizeItem = createSelectSettingDOM(tabSizeDef);
-        tabSizeItem.classList.add('output-indent-setting');
         formatTab.appendChild(tabSizeItem);
     }
     // 添加输出设置勾选框（首尾符号开关）
@@ -216,7 +215,8 @@ function createTabContent(id, isActive) {
  */
 function createSelectSettingDOM(definition) {
     const selectItem = document.createElement('div');
-    selectItem.className = 'setting-item';
+    const isInlineSetting = definition.type !== 'image-card-select';
+    selectItem.className = `setting-item${isInlineSetting ? ' setting-inline-card' : ''}`;
 
     const titleContainer = document.createElement('div');
     titleContainer.id = `${definition.id}-title-container`;
@@ -224,6 +224,9 @@ function createSelectSettingDOM(definition) {
 
     const selectWrapper = document.createElement('div');
     selectWrapper.id = `${definition.id}-wrapper`;
+    if (isInlineSetting) {
+        selectWrapper.className = 'setting-inline-control';
+    }
 
     selectItem.appendChild(titleContainer);
     if (definition.description) {
@@ -244,8 +247,7 @@ function createRelatedSettingDOM(setting, settings) {
     item.className = 'setting-item';
 
     if (setting.linkedNumeric) {
-        const compositeContainer = document.createElement('div');
-        compositeContainer.className = 'composite-setting-container';
+        item.classList.add('setting-stack');
 
         const toggleElement = createSettingsToggle(
             setting.id,
@@ -253,7 +255,7 @@ function createRelatedSettingDOM(setting, settings) {
             settings[setting.key],
             setting.tooltip
         );
-        compositeContainer.appendChild(toggleElement);
+        item.appendChild(toggleElement);
 
         const numericConfig = setting.linkedNumeric;
         const numericValue = settings[numericConfig.key];
@@ -263,24 +265,23 @@ function createRelatedSettingDOM(setting, settings) {
             min: 5,
             disabled: !settings[setting.key],
         });
-        numericInputElement.classList.add('linked-numeric-input');
-        compositeContainer.appendChild(numericInputElement);
+        numericInputElement.classList.add('setting-inline-card', 'linked-numeric-input');
+        item.appendChild(numericInputElement);
 
         const toggleInput = toggleElement.querySelector('input[type="checkbox"]');
         const numericInput = numericInputElement.querySelector('input[type="number"]');
         toggleInput.addEventListener('change', (event) => {
             numericInput.disabled = !event.target.checked;
         });
-
-        item.appendChild(compositeContainer);
     } else if (setting.type === 'select') {
         const selectContainer = document.createElement('div');
-        selectContainer.className = 'setting-item-select';
+        selectContainer.className = 'setting-inline-card';
         const selectTitle = document.createElement('div');
-        selectTitle.className = 'setting-label';
+        selectTitle.className = 'setting-inline-label';
         selectTitle.textContent = t(setting.label);
         const selectWrapper = document.createElement('div');
         selectWrapper.id = setting.id;
+        selectWrapper.className = 'setting-inline-control';
         // 直接初始化 select，因为 logic 简单
         new CustomSelect(
             selectWrapper,

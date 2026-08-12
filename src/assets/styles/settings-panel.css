@@ -347,20 +347,15 @@
     font-weight: 400;
 }
 
-.composite-setting-container {
-    font-weight: 500;
-    font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
-    margin-top: 14px;
-    margin-left: 0px;
+.setting-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--settings-item-gap, 12px);
 }
 
-.composite-setting-container .tc-toggle-setting {
-    margin-top: 0;
-}
-
-.linked-numeric-input {
-    margin-top: 8px;
-    margin-left: 0;
+.setting-stack > .tc-toggle-setting,
+.setting-stack > .setting-inline-card {
+    margin-bottom: 0;
 }
 
 .numeric-input-group {
@@ -396,15 +391,6 @@
     color: var(--main-disabled-text);
     cursor: not-allowed;
     border-color: var(--main-border);
-}
-
-.setting-item-select {
-    font-weight: 500;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-left: 32px;
-    /* 微调 */
 }
 
 /* --- Image Card Select Styling: Schematic Version --- */
@@ -658,7 +644,7 @@
     fill: currentColor;
 }
 
-.output-indent-setting {
+.setting-inline-card {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(150px, 220px);
     align-items: center;
@@ -670,25 +656,46 @@
     background-color: color-mix(in srgb, var(--main-textarea-bg) 52%, var(--main-bg));
 }
 
-.output-indent-setting .setting-title-container {
-    margin: 0;
-    font-size: 15px;
+.setting-item > .setting-inline-card {
+    margin-bottom: 0;
 }
 
-.output-indent-setting .setting-description {
+.setting-inline-card > .setting-title-container,
+.setting-inline-card > .setting-inline-label,
+.setting-inline-card > .numeric-input-label {
+    grid-column: 1;
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.setting-inline-card > .setting-description {
     grid-column: 1;
     margin: -2px 0 0;
 }
 
-.output-indent-setting > [id$='-wrapper'] {
+.setting-inline-card > .setting-inline-control,
+.setting-inline-card > .numeric-input {
     grid-column: 2;
     grid-row: 1 / span 2;
     align-self: center;
     width: 100%;
 }
 
-.output-indent-setting .custom-select-container {
+.setting-inline-card .custom-select-container {
     width: 100%;
+}
+
+.setting-inline-card.linked-numeric-input {
+    display: grid;
+}
+
+.setting-inline-card.linked-numeric-input > .numeric-input {
+    box-sizing: border-box;
+    min-height: 42px;
+    padding: 9px 12px;
+    border-radius: 12px;
 }
 
 /* --- Dynamic System Theme Behavior --- */
@@ -877,19 +884,21 @@
         height: 116px;
     }
 
-    .output-indent-setting {
+    .setting-inline-card {
         display: block;
     }
 
-    .output-indent-setting .setting-description {
+    .setting-inline-card.linked-numeric-input {
+        display: block;
+    }
+
+    .setting-inline-card .setting-description {
         margin: -4px 0 10px;
     }
 
-    .output-indent-setting .custom-select-container {
-        width: 100%;
-    }
-
-    .output-indent-setting > [id$='-wrapper'] {
+    .setting-inline-card > .setting-inline-control,
+    .setting-inline-card > .numeric-input {
+        margin-top: 10px;
         width: 100%;
     }
 }

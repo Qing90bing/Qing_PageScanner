@@ -179,10 +179,19 @@ test('all settings booleans reuse the shared switch component', async () => {
     assert.match(forms, /\.tc-toggle-control\s*\{[\s\S]*width: 48px[\s\S]*height: 26px/);
     assert.doesNotMatch(toggle, /tc-toggle-setting-compact/);
     assert.doesNotMatch(forms, /tc-toggle-setting-compact/);
+    assert.match(panelBuilder, /setting-inline-card/);
+    assert.match(panelBuilder, /setting-inline-control/);
+    assert.match(panelBuilder, /setting-stack/);
     assert.match(settingsStyles, /\.setting-item > \.tc-toggle-setting/);
     assert.match(settingsStyles, /--settings-item-gap: 12px/);
     assert.match(settingsStyles, /\.settings-tab-content > \.setting-item:last-child/);
-    assert.match(settingsStyles, /\.output-indent-setting\s*\{[\s\S]*margin: 0 0 var\(--settings-item-gap, 12px\)/);
+    assert.match(settingsStyles, /\.setting-inline-card\s*\{[\s\S]*margin: 0 0 var\(--settings-item-gap, 12px\)/);
+    assert.match(settingsStyles, /\.setting-inline-card\.linked-numeric-input/);
+    assert.match(
+        settingsStyles,
+        /@media \(max-width: 700px\) \{[\s\S]*\.setting-inline-card\.linked-numeric-input\s*\{\s*display: block;/
+    );
+    assert.doesNotMatch(settingsStyles, /output-indent-setting|setting-item-select|composite-setting-container/);
     assert.doesNotMatch(settingsStyles, /checkbox-group|checkmark/);
 });
 
