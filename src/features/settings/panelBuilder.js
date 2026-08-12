@@ -160,6 +160,10 @@ export function buildPanelDOM(settings) {
 
     // 4. Language Tab Content
     const languageTab = createTabContent('tab-language', false);
+    const languageTitleContainer = document.createElement('div');
+    languageTitleContainer.id = 'language-setting-title-container';
+    languageTitleContainer.className = 'setting-title-container';
+    languageTab.appendChild(languageTitleContainer);
     const langDef = selectSettingsDefinitions.find((d) => d.key === 'language');
     if (langDef) {
         languageTab.appendChild(createSelectSettingDOM(langDef));

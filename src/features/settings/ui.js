@@ -18,6 +18,7 @@ import { settingsIcon } from '../../assets/icons/settingsIcon.js';
 import { filterIcon } from '../../assets/icons/filterIcon.js';
 import { saveIcon } from '../../assets/icons/saveIcon.js';
 import { relatedSettingsIcon } from '../../assets/icons/relatedSettingsIcon.js';
+import languageIcon from '../../assets/icons/languageIcon.js';
 import { updateSettingsMenu } from '../../shared/i18n/management/languageManager.js';
 import { createButton } from '../../shared/ui/components/button.js';
 import { mountAiSettingsPanel } from './aiPanel.js';
@@ -144,6 +145,11 @@ function showSettingsPanel(currentSettings, onSave) {
     const relatedTitleContainer = settingsPanel.querySelector('#related-setting-title-container');
     if (relatedTitleContainer) {
         relatedTitleContainer.appendChild(createIconTitle(relatedSettingsIcon, t('settings.relatedSettings')));
+    }
+
+    const languageTitleContainer = settingsPanel.querySelector('#language-setting-title-container');
+    if (languageTitleContainer) {
+        languageTitleContainer.appendChild(createIconTitle(languageIcon, t('settings.language')));
     }
 
     const filterTitleContainer = settingsPanel.querySelector('#filter-setting-title-container');
