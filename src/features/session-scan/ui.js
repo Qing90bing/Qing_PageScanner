@@ -18,11 +18,8 @@ import { stopIcon } from '../../assets/icons/stopIcon.js';
 import { simpleTemplate } from '../../shared/utils/dom/templating.js';
 import { on } from '../../shared/utils/core/eventBus.js';
 import { log } from '../../shared/utils/core/logger.js';
-import { openContextualSettingsPanel } from '../settings/ui.js';
-import { loadSettings, saveSettings } from '../../shared/services/settings.js';
-import { applySettings } from '../settings/logic.js';
-import { settingsIcon } from '../../assets/icons/settingsIcon.js';
-import { infoIcon } from '../../assets/icons/infoIcon.js';
+import { loadSettings } from '../../shared/services/settings.js';
+import { openScanPersistenceSettings } from '../settings/index.js';
 import { uiContainer } from '../../shared/ui/uiContainer.js';
 import { acquireScanMode, releaseScanMode, SCAN_MODES } from '../../shared/services/scanModeCoordinator.js';
 
@@ -45,33 +42,7 @@ function showTopCenterUI() {
         onPause: sessionExtractor.pauseSessionScan,
         onResume: sessionExtractor.resumeSessionScan,
         scanType: 'SessionScan',
-        onSettingsClick: () => {
-            const currentSettings = loadSettings();
-            const definitions = [
-                {
-                    id: 'persist-data-checkbox-session',
-                    key: 'sessionScan_persistData',
-                    type: 'checkbox',
-                    label: 'settings.contextual.persistData',
-                    tooltip: {
-                        titleIcon: infoIcon,
-                        title: 'tooltip.persistData.title',
-                        text: 'tooltip.persistData.text.sessionScan',
-                    },
-                },
-            ];
-            openContextualSettingsPanel({
-                titleKey: 'settings.contextual.sessionScanTitle',
-                icon: settingsIcon,
-                definitions: definitions,
-                settings: currentSettings,
-                onSave: (newSettings) => {
-                    const updatedSettings = { ...currentSettings, ...newSettings };
-                    saveSettings(updatedSettings);
-                    applySettings(updatedSettings, currentSettings);
-                },
-            });
-        },
+        onSettingsClick: () => openScanPersistenceSettings('session-scan'),
     });
     showCounterWithHelp();
 }

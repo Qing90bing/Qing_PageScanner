@@ -199,7 +199,10 @@ function startElementScan(fabElement, options = {}) {
     resetTextFilterState();
     fabElement.classList.add('is-recording');
     updateFabTooltip(fabElement, 'scan.stopSession'); // 更新自己的工具提示
-    showTopCenterUI();
+    showTopCenterUI({
+        onPause: pauseElementScan,
+        onResume: resumeElementScan,
+    });
 
     // 禁用“动态扫描”按钮并更新其工具提示
     const dynamicFab = getDynamicFab();
@@ -683,7 +686,12 @@ function handleElementClick(event) {
         offset.y = rect.top;
     }
 
-    createAdjustmentToolbar(elementPath, offset);
+    createAdjustmentToolbar(elementPath, offset, {
+        onSelectionLevelChange: updateSelectionLevel,
+        onReselect: reselectElement,
+        onStage: stageCurrentElement,
+        onConfirm: confirmSelectionAndExtract,
+    });
     addScrollListeners();
 }
 

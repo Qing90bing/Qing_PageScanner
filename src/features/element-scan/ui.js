@@ -1,14 +1,6 @@
 // src/features/element-scan/ui.js
 
 import { uiContainer } from '../../shared/ui/uiContainer.js';
-import {
-    updateSelectionLevel,
-    reselectElement,
-    confirmSelectionAndExtract,
-    stageCurrentElement,
-    pauseElementScan,
-    resumeElementScan,
-} from './logic.js';
 import { t } from '../../shared/i18n/index.js';
 import { log } from '../../shared/utils/core/logger.js';
 import { createButton } from '../../shared/ui/components/button.js';
@@ -24,11 +16,7 @@ import {
     updateCounterValue,
 } from '../../shared/ui/components/counterWithHelp.js';
 import { CustomSlider } from '../../shared/ui/components/customSlider.js';
-import { openContextualSettingsPanel } from '../settings/ui.js';
-import { loadSettings, saveSettings } from '../../shared/services/settings.js';
-import { applySettings } from '../settings/logic.js';
-import { settingsIcon } from '../../assets/icons/settingsIcon.js';
-import { infoIcon } from '../../assets/icons/infoIcon.js';
+import { openScanPersistenceSettings } from '../settings/index.js';
 
 // --- 模块级变量 ---
 let unsubscribeStagedCountChanged = null;
@@ -206,8 +194,10 @@ function updateToolbarTagAnimated(newText) {
  * @description 创建并显示层级调整工具栏。
  * @param {HTMLElement[]} elementPath - 从选中元素到 body 的 DOM 路径数组。
  * @param {object} [offset={x:0, y:0}] - 坐标偏移量，用于校正 iframe 内元素的相对位置。
+ * @param {object} actions - 工具栏动作，由元素扫描逻辑层显式注入。
  */
-export function createAdjustmentToolbar(elementPath, offset = { x: 0, y: 0 }) {
+export function createAdjustmentToolbar(elementPath, offset = { x: 0, y: 0 }, actions) {
+    const { onSelectionLevelChange, onReselect, onStage, onConfirm } = actions;
     if (toolbar) cleanupToolbar(); // 如果已存在旧的工具栏，先清理掉
 
     log(t('log.elementScanUI.creatingToolbar'));
@@ -238,7 +228,7 @@ export function createAdjustmentToolbar(elementPath, offset = { x: 0, y: 0 }) {
         value: 0,
         onChange: (newValue) => {
             log(simpleTemplate(t('log.elementScanUI.sliderChanged'), { level: newValue }));
-            updateSelectionLevel(newValue);
+            onSelectionLevelChange(newValue);
         },
     });
     sliderContainer.appendChild(sliderInstance.getElement());
@@ -252,7 +242,7 @@ export function createAdjustmentToolbar(elementPath, offset = { x: 0, y: 0 }) {
         icon: reselectIcon,
         onClick: () => {
             log(t('log.elementScanUI.reselectClicked'));
-            reselectElement();
+            onReselect();
         },
     });
 
@@ -262,7 +252,7 @@ export function createAdjustmentToolbar(elementPath, offset = { x: 0, y: 0 }) {
         icon: stashIcon,
         onClick: () => {
             log(t('log.elementScanUI.stageClicked'));
-            stageCurrentElement();
+            onStage();
         },
     });
 
@@ -272,7 +262,7 @@ export function createAdjustmentToolbar(elementPath, offset = { x: 0, y: 0 }) {
         icon: confirmIcon,
         onClick: () => {
             log(t('log.elementScanUI.confirmClicked'));
-            confirmSelectionAndExtract();
+            onConfirm();
         },
     });
 
@@ -482,41 +472,16 @@ export function cleanupToolbar() {
  * @public
  * @function showTopCenterUI
  * @description 显示顶部中央的“计数器与帮助”组合UI。
+ * @param {object} actions - 暂停与恢复动作，由元素扫描逻辑层显式注入。
  */
-export function showTopCenterUI() {
+export function showTopCenterUI({ onPause, onResume }) {
     createCounterWithHelp({
         counterKey: 'scan.stagedCount',
         helpKey: 'tutorial.elementScan',
-        onPause: pauseElementScan,
-        onResume: resumeElementScan,
+        onPause,
+        onResume,
         scanType: 'ElementScan',
-        onSettingsClick: () => {
-            const currentSettings = loadSettings();
-            const definitions = [
-                {
-                    id: 'persist-data-checkbox',
-                    key: 'elementScan_persistData',
-                    type: 'checkbox',
-                    label: 'settings.contextual.persistData',
-                    tooltip: {
-                        titleIcon: infoIcon,
-                        title: 'tooltip.persistData.title',
-                        text: 'tooltip.persistData.text.elementScan',
-                    },
-                },
-            ];
-            openContextualSettingsPanel({
-                titleKey: 'settings.contextual.elementScanTitle',
-                icon: settingsIcon,
-                definitions: definitions,
-                settings: currentSettings,
-                onSave: (newSettings) => {
-                    const updatedSettings = { ...currentSettings, ...newSettings };
-                    saveSettings(updatedSettings);
-                    applySettings(updatedSettings, currentSettings);
-                },
-            });
-        },
+        onSettingsClick: () => openScanPersistenceSettings('element-scan'),
     });
     showCounterWithHelp();
 

@@ -10,7 +10,7 @@ import { on } from '../../shared/utils/core/eventBus.js';
 import { getAiOutputType, getCurrentMode, outputTextarea } from '../../shared/ui/mainModal/modalState.js';
 import { fullQuickScanContent } from '../../shared/ui/mainModal/index.js';
 import { t } from '../../shared/i18n/index.js';
-import { requestSummary } from '../session-scan/logic.js';
+import { requestSummary } from '../session-scan/index.js';
 import { loadSettings } from '../../shared/services/settings.js';
 
 /**

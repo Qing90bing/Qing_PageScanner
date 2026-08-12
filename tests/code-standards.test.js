@@ -22,6 +22,41 @@ async function listJavaScriptFiles(directory) {
     return files;
 }
 
+function getStaticImportTargets(file, source, knownFiles) {
+    const targets = [];
+    const importPattern = /(?:import|export)\s+(?:[^'";]*?\s+from\s+)?['"]([^'"]+)['"]/g;
+    const code = source.replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, '');
+
+    for (const match of code.matchAll(importPattern)) {
+        const specifier = match[1];
+        if (!specifier.startsWith('.')) continue;
+
+        const target = new URL(specifier, file).href;
+        if (knownFiles.has(target)) targets.push(target);
+    }
+
+    return targets;
+}
+
+async function buildSourceGraph() {
+    const files = await listJavaScriptFiles(SOURCE_ROOT);
+    const knownFiles = new Set(files.map((file) => file.href));
+    const graph = new Map();
+
+    await Promise.all(
+        files.map(async (file) => {
+            const source = await readFile(file, 'utf8');
+            graph.set(file.href, getStaticImportTargets(file, source, knownFiles));
+        })
+    );
+
+    return graph;
+}
+
+function getSourcePath(fileHref) {
+    return decodeURIComponent(new URL(fileHref).pathname.slice(SOURCE_ROOT.pathname.length));
+}
+
 test('source HTML sinks use the trusted HTML boundary', async () => {
     const files = await listJavaScriptFiles(SOURCE_ROOT);
     const violations = [];
@@ -72,6 +107,62 @@ test('reusable shared layers do not import feature internals', async () => {
     }
 
     assert.deepEqual(violations, []);
+});
+
+test('source module graph stays acyclic', async () => {
+    const graph = await buildSourceGraph();
+    const visiting = new Set();
+    const visited = new Set();
+    const stack = [];
+    const cycles = new Set();
+
+    const recordCycle = (start) => {
+        const cycleStart = stack.indexOf(start);
+        const paths = stack.slice(cycleStart).map(getSourcePath);
+        const rotations = paths.map((_, index) => [...paths.slice(index), ...paths.slice(0, index)].join(' -> '));
+        cycles.add(rotations.sort()[0]);
+    };
+
+    const visit = (file) => {
+        if (visiting.has(file)) {
+            recordCycle(file);
+            return;
+        }
+        if (visited.has(file)) return;
+
+        visiting.add(file);
+        stack.push(file);
+        (graph.get(file) || []).forEach(visit);
+        stack.pop();
+        visiting.delete(file);
+        visited.add(file);
+    };
+
+    graph.keys().forEach(visit);
+    assert.deepEqual([...cycles].sort(), []);
+});
+
+test('feature modules use another feature public entry instead of its internals', async () => {
+    const graph = await buildSourceGraph();
+    const violations = [];
+    const getFeatureName = (fileHref) => new URL(fileHref).pathname.match(/\/features\/([^/]+)\//)?.[1] || null;
+
+    graph.forEach((targets, source) => {
+        const sourceFeature = getFeatureName(source);
+        if (!sourceFeature) return;
+
+        targets.forEach((target) => {
+            const targetFeature = getFeatureName(target);
+            if (!targetFeature || targetFeature === sourceFeature) return;
+
+            const isPublicEntry = new URL(target).pathname.endsWith(`/features/${targetFeature}/index.js`);
+            if (!isPublicEntry) {
+                violations.push(`${getSourcePath(source)} -> ${getSourcePath(target)}`);
+            }
+        });
+    });
+
+    assert.deepEqual(violations.sort(), []);
 });
 
 test('source linting keeps the recommended ESLint rules active', async () => {
