@@ -548,6 +548,7 @@ var TextExtractor = (() => {
       },
       languages: {
         auto: "Auto",
+        auto_detected: "Auto ({{language}})",
         en: "English (United States)",
         "zh-CN": "Chinese (Simplified)",
         "zh-TW": "Chinese (Traditional)"
@@ -1117,6 +1118,7 @@ var TextExtractor = (() => {
       },
       languages: {
         auto: "\u81EA\u52A8\u68C0\u6D4B",
+        auto_detected: "\u81EA\u52A8\u68C0\u6D4B\uFF08{{language}}\uFF09",
         en: "\u82F1\u6587 (\u7F8E\u56FD)",
         "zh-CN": "\u7B80\u4F53\u4E2D\u6587",
         "zh-TW": "\u7E41\u4F53\u4E2D\u6587"
@@ -1684,6 +1686,7 @@ var TextExtractor = (() => {
       },
       languages: {
         auto: "\u81EA\u52D5\u6AA2\u6E2C",
+        auto_detected: "\u81EA\u52D5\u6AA2\u6E2C\uFF08{{language}}\uFF09",
         en: "\u82F1\u6587 (\u7F8E\u570B)",
         "zh-CN": "\u7C21\u9AD4\u4E2D\u6587",
         "zh-TW": "\u7E41\u9AD4\u4E2D\u6587"
@@ -3064,6 +3067,7 @@ ${result.join(",\n")}
       },
       languages: {
         auto: "Auto",
+        auto_detected: "Auto ({{language}})",
         en: "English (United States)",
         "zh-CN": "Chinese (Simplified)",
         "zh-TW": "Chinese (Traditional)"
@@ -3633,6 +3637,7 @@ ${result.join(",\n")}
       },
       languages: {
         auto: "\\u81EA\\u52A8\\u68C0\\u6D4B",
+        auto_detected: "\\u81EA\\u52A8\\u68C0\\u6D4B\\uFF08{{language}}\\uFF09",
         en: "\\u82F1\\u6587 (\\u7F8E\\u56FD)",
         "zh-CN": "\\u7B80\\u4F53\\u4E2D\\u6587",
         "zh-TW": "\\u7E41\\u4F53\\u4E2D\\u6587"
@@ -4200,6 +4205,7 @@ ${result.join(",\n")}
       },
       languages: {
         auto: "\\u81EA\\u52D5\\u6AA2\\u6E2C",
+        auto_detected: "\\u81EA\\u52D5\\u6AA2\\u6E2C\\uFF08{{language}}\\uFF09",
         en: "\\u82F1\\u6587 (\\u7F8E\\u570B)",
         "zh-CN": "\\u7C21\\u9AD4\\u4E2D\\u6587",
         "zh-TW": "\\u7E41\\u9AD4\\u4E2D\\u6587"
@@ -8791,6 +8797,19 @@ ${result.join(",\n")}
   function isLanguageSupported(langCode) {
     return supportedLanguages.some((lang) => lang.code === langCode);
   }
+  function getDetectedLanguageCode(browserLanguage = navigator.language) {
+    if (isLanguageSupported(browserLanguage) && browserLanguage !== "auto") {
+      return browserLanguage;
+    }
+    const normalizedBrowserLanguage = String(browserLanguage || "").toLowerCase();
+    if (normalizedBrowserLanguage.startsWith("zh")) {
+      if (normalizedBrowserLanguage.includes("tw") || normalizedBrowserLanguage.includes("hk") || normalizedBrowserLanguage.includes("hant")) {
+        return "zh-TW";
+      }
+      return "zh-CN";
+    }
+    return "en";
+  }
   function initializeLanguage(settings) {
     let langToSet = "en";
     let targetLang = "auto";
@@ -8798,20 +8817,7 @@ ${result.join(",\n")}
       targetLang = settings.language;
     }
     if (targetLang === "auto") {
-      const browserLang = navigator.language;
-      if (isLanguageSupported(browserLang) && browserLang !== "auto") {
-        langToSet = browserLang;
-      } else {
-        if (browserLang.startsWith("zh")) {
-          if (browserLang.toLowerCase().includes("tw") || browserLang.toLowerCase().includes("hk") || browserLang.toLowerCase().includes("hant")) {
-            langToSet = "zh-TW";
-          } else {
-            langToSet = "zh-CN";
-          }
-        } else if (browserLang.startsWith("en")) {
-          langToSet = "en";
-        }
-      }
+      langToSet = getDetectedLanguageCode();
     } else {
       if (isLanguageSupported(targetLang)) {
         langToSet = targetLang;
@@ -10992,9 +10998,12 @@ ${entries.join("\n")}
       }
       const selectWrapper = settingsPanel.querySelector(`#${definition.id}-wrapper`);
       if (selectWrapper) {
+        const detectedLanguageCode = definition.key === "language" ? getDetectedLanguageCode() : null;
         const options = definition.options.map((opt) => ({
           ...opt,
-          label: t(opt.label)
+          label: definition.key === "language" && opt.value === "auto" ? t("settings.languages.auto_detected", {
+            language: t(`settings.languages.${detectedLanguageCode}`)
+          }) : t(opt.label)
           // 如果 config.js 中已经定义了 icon，这里会直接透传
         }));
         if (definition.type === "image-card-select") {
