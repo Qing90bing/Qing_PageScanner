@@ -18,7 +18,7 @@ import { t } from '../../i18n/index.js';
 import { createSVGFromString } from '../../utils/dom/dom.js';
 import { uiContainer } from '../uiContainer.js';
 import { getActiveScanMode, subscribeScanMode } from '../../services/scanModeCoordinator.js';
-import { applyScanModeFabState } from './fabExclusiveState.js';
+import { applyScanModeFabState, syncFabScanModeBaseline } from './fabExclusiveState.js';
 
 let summaryFab, aiFab, dynamicFab, staticFab, elementScanFab;
 let unsubscribeScanMode = null;
@@ -34,11 +34,12 @@ function syncAiFabAvailability() {
           ? 'tooltip.ai_scan_stop'
           : 'tooltip.ai_scan';
     setFabDisabled(aiFab, !enabled, tooltipKey);
+    syncFabScanModeBaseline(aiFab);
 }
 
 function syncScanModeFabState(activeMode) {
     applyScanModeFabState(
-        { dynamic: dynamicFab, static: staticFab, element: elementScanFab },
+        { ai: aiFab, dynamic: dynamicFab, static: staticFab, element: elementScanFab },
         activeMode,
         setFabDisabled,
         updateFabTooltip
@@ -161,6 +162,7 @@ export function createFab({ callbacks, isVisible }) {
     on('settingsSaved', () => {
         updateFabPosition(fabContainer);
         syncAiFabAvailability();
+        syncScanModeFabState(getActiveScanMode());
     });
     on('languageChanged', () => {
         [summaryFab, aiFab, dynamicFab, staticFab, elementScanFab].forEach((fab) => {

@@ -8,6 +8,7 @@ export const SCAN_MODES = Object.freeze({
 
 let activeMode = SCAN_MODES.IDLE;
 const listeners = new Set();
+const supportedModes = new Set(Object.values(SCAN_MODES));
 
 function notify(previousMode) {
     listeners.forEach((listener) => {
@@ -19,14 +20,20 @@ export function getActiveScanMode() {
     return activeMode;
 }
 
+export function canAcquireScanModeFrom(currentMode, requestedMode) {
+    return (
+        supportedModes.has(currentMode) &&
+        supportedModes.has(requestedMode) &&
+        requestedMode !== SCAN_MODES.IDLE &&
+        (currentMode === SCAN_MODES.IDLE || currentMode === requestedMode)
+    );
+}
+
 export function canAcquireScanMode(mode) {
-    return activeMode === SCAN_MODES.IDLE || activeMode === mode;
+    return canAcquireScanModeFrom(activeMode, mode);
 }
 
 export function acquireScanMode(mode) {
-    if (!Object.values(SCAN_MODES).includes(mode) || mode === SCAN_MODES.IDLE) {
-        return false;
-    }
     if (!canAcquireScanMode(mode)) {
         return false;
     }

@@ -1,22 +1,23 @@
-import { SCAN_MODES } from '../../services/scanModeCoordinator.js';
+import { canAcquireScanModeFrom, SCAN_MODES } from '../../services/scanModeCoordinator.js';
 
 const snapshots = new Map();
+const fabModes = Object.freeze({
+    ai: SCAN_MODES.AI,
+    dynamic: SCAN_MODES.DYNAMIC,
+    static: SCAN_MODES.STATIC,
+    element: SCAN_MODES.ELEMENT,
+});
 
 function getDisabledFabs(fabs, activeMode) {
-    if (activeMode === SCAN_MODES.AI) {
-        return new Map(
-            [fabs.dynamic, fabs.static, fabs.element]
-                .filter(Boolean)
-                .map((fab) => [fab, 'tooltip.disabled.ai_scan_active'])
-        );
-    }
-    if (activeMode === SCAN_MODES.DYNAMIC && fabs.element) {
-        return new Map([[fabs.element, 'tooltip.disabled.scan_in_progress']]);
-    }
-    if (activeMode === SCAN_MODES.ELEMENT && fabs.dynamic) {
-        return new Map([[fabs.dynamic, 'tooltip.disabled.scan_in_progress']]);
-    }
-    return new Map();
+    const tooltipKey =
+        activeMode === SCAN_MODES.AI ? 'tooltip.disabled.ai_scan_active' : 'tooltip.disabled.scan_in_progress';
+
+    return new Map(
+        Object.entries(fabModes)
+            .map(([fabName, mode]) => [fabs[fabName], mode])
+            .filter(([fab, mode]) => fab && !canAcquireScanModeFrom(activeMode, mode))
+            .map(([fab]) => [fab, tooltipKey])
+    );
 }
 
 function captureFabState(fab) {
@@ -47,7 +48,7 @@ function restoreFabState(fab, snapshot, setTooltip) {
 
 /**
  * 根据扫描协调器状态保存、禁用并恢复存在冲突的普通扫描 FAB。
- * @param {{dynamic?: HTMLElement, static?: HTMLElement, element?: HTMLElement}} fabs
+ * @param {{ai?: HTMLElement, dynamic?: HTMLElement, static?: HTMLElement, element?: HTMLElement}} fabs
  * @param {string} activeMode
  * @param {(fab: HTMLElement, disabled: boolean, tooltipKey?: string) => void} setDisabled
  * @param {(fab: HTMLElement, tooltipKey: string) => void} setTooltip
@@ -67,6 +68,11 @@ export function applyScanModeFabState(fabs, activeMode, setDisabled, setTooltip)
         }
         setDisabled(fab, true, tooltipKey);
     });
+}
+
+export function syncFabScanModeBaseline(fab) {
+    if (!fab || !snapshots.has(fab)) return;
+    snapshots.set(fab, captureFabState(fab));
 }
 
 export function resetFabScanModeStateForTests() {
