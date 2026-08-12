@@ -2681,6 +2681,7 @@ var TextExtractor = (() => {
   });
   var activeMode = SCAN_MODES.IDLE;
   var listeners = /* @__PURE__ */ new Set();
+  var supportedModes = new Set(Object.values(SCAN_MODES));
   function notify(previousMode) {
     listeners.forEach((listener) => {
       listener({ activeMode, previousMode });
@@ -2689,13 +2690,13 @@ var TextExtractor = (() => {
   function getActiveScanMode() {
     return activeMode;
   }
+  function canAcquireScanModeFrom(currentMode3, requestedMode) {
+    return supportedModes.has(currentMode3) && supportedModes.has(requestedMode) && requestedMode !== SCAN_MODES.IDLE && (currentMode3 === SCAN_MODES.IDLE || currentMode3 === requestedMode);
+  }
   function canAcquireScanMode(mode) {
-    return activeMode === SCAN_MODES.IDLE || activeMode === mode;
+    return canAcquireScanModeFrom(activeMode, mode);
   }
   function acquireScanMode(mode) {
-    if (!Object.values(SCAN_MODES).includes(mode) || mode === SCAN_MODES.IDLE) {
-      return false;
-    }
     if (!canAcquireScanMode(mode)) {
       return false;
     }
@@ -2722,19 +2723,17 @@ var TextExtractor = (() => {
   }
   // src/shared/ui/components/fabExclusiveState.js
   var snapshots = /* @__PURE__ */ new Map();
+  var fabModes = Object.freeze({
+    ai: SCAN_MODES.AI,
+    dynamic: SCAN_MODES.DYNAMIC,
+    static: SCAN_MODES.STATIC,
+    element: SCAN_MODES.ELEMENT
+  });
   function getDisabledFabs(fabs, activeMode2) {
-    if (activeMode2 === SCAN_MODES.AI) {
-      return new Map(
-        [fabs.dynamic, fabs.static, fabs.element].filter(Boolean).map((fab) => [fab, "tooltip.disabled.ai_scan_active"])
-      );
-    }
-    if (activeMode2 === SCAN_MODES.DYNAMIC && fabs.element) {
-      return /* @__PURE__ */ new Map([[fabs.element, "tooltip.disabled.scan_in_progress"]]);
-    }
-    if (activeMode2 === SCAN_MODES.ELEMENT && fabs.dynamic) {
-      return /* @__PURE__ */ new Map([[fabs.dynamic, "tooltip.disabled.scan_in_progress"]]);
-    }
-    return /* @__PURE__ */ new Map();
+    const tooltipKey = activeMode2 === SCAN_MODES.AI ? "tooltip.disabled.ai_scan_active" : "tooltip.disabled.scan_in_progress";
+    return new Map(
+      Object.entries(fabModes).map(([fabName, mode]) => [fabs[fabName], mode]).filter(([fab, mode]) => fab && !canAcquireScanModeFrom(activeMode2, mode)).map(([fab]) => [fab, tooltipKey])
+    );
   }
   function captureFabState(fab) {
     return {
@@ -2774,6 +2773,10 @@ var TextExtractor = (() => {
       setDisabled(fab, true, tooltipKey);
     });
   }
+  function syncFabScanModeBaseline(fab) {
+    if (!fab || !snapshots.has(fab)) return;
+    snapshots.set(fab, captureFabState(fab));
+  }
   // src/shared/ui/components/fab.js
   var summaryFab;
   var aiFab;
@@ -2788,10 +2791,11 @@ var TextExtractor = (() => {
     aiFab.setAttribute("aria-hidden", String(!enabled));
     const tooltipKey = !enabled ? "tooltip.ai_disabled" : aiFab.classList.contains("is-recording") ? "tooltip.ai_scan_stop" : "tooltip.ai_scan";
     setFabDisabled(aiFab, !enabled, tooltipKey);
+    syncFabScanModeBaseline(aiFab);
   }
   function syncScanModeFabState(activeMode2) {
     applyScanModeFabState(
-      { dynamic: dynamicFab, static: staticFab, element: elementScanFab },
+      { ai: aiFab, dynamic: dynamicFab, static: staticFab, element: elementScanFab },
       activeMode2,
       setFabDisabled,
       updateFabTooltip
@@ -2866,6 +2870,7 @@ var TextExtractor = (() => {
     on("settingsSaved", () => {
       updateFabPosition(fabContainer);
       syncAiFabAvailability();
+      syncScanModeFabState(getActiveScanMode());
     });
     on("languageChanged", () => {
       [summaryFab, aiFab, dynamicFab, staticFab, elementScanFab].forEach((fab) => {
