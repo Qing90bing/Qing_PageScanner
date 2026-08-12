@@ -16,6 +16,10 @@
 
 功能模块可以依赖 `shared`，但不要互相导入另一个功能模块的内部实现。用户设置的读写统一走 `src/shared/services/settings.js`，设置面板的副作用才留在 `src/features/settings/logic.js`。`shared/ui/entry.js`、`shared/ui/mainModal/` 和 `shared/ui/summaryHandler.js` 是应用组装层，可以连接功能入口；其中的可复用组件和服务不得反向依赖功能模块。
 
+## 图标规范
+
+- 使用新图标时，先从 [Google Fonts Icons](https://fonts.google.com/icons) 中查找并选择；使用 Google Material Symbols 时，在图标文件注释中记录图标名称和来源，避免手工绘制近似图标。
+
 ## JavaScript 规则
 
 - 使用原生 ES modules 和显式 `.js` 相对导入。
