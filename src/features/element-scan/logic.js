@@ -15,7 +15,7 @@ import { extractRawTextFromElement } from '../../shared/utils/text/textProcessor
 import { formatTextsForTranslation } from '../../shared/utils/text/formatting.js';
 import { updateModalContent } from '../../shared/ui/mainModal/index.js';
 import { uiContainer, uiLifecycle } from '../../shared/ui/uiContainer.js';
-import { getDynamicFab, getElementScanFab, updateFabTooltip } from '../../shared/ui/components/fab.js';
+import { getElementScanFab, updateFabTooltip } from '../../shared/ui/components/fab.js';
 import { showNotification } from '../../shared/ui/components/notification.js';
 import { t } from '../../shared/i18n/index.js';
 import { simpleTemplate } from '../../shared/utils/dom/templating.js';
@@ -210,16 +210,6 @@ function startElementScan(fabElement, options = {}) {
         onResume: resumeElementScan,
     });
 
-    // 禁用“动态扫描”按钮并更新其工具提示
-    const dynamicFab = getDynamicFab();
-    if (dynamicFab) {
-        dynamicFab.dataset.originalTooltipKey = dynamicFab.dataset.tooltipKey;
-        updateFabTooltip(dynamicFab, 'tooltip.disabled.scan_in_progress');
-        dynamicFab.classList.add('fab-disabled');
-    } else {
-        log(t('log.elementScan.dynamicFabNotFound'), 'warn');
-    }
-
     // 添加主文档监听器
     addListenersToDocument(document);
 
@@ -368,17 +358,6 @@ export function stopElementScan(fabElement) {
     if (fabElement) {
         fabElement.classList.remove('is-recording');
         updateFabTooltip(fabElement, 'tooltip.element_scan'); // 恢复自己的工具提示
-    }
-
-    // 启用“动态扫描”按钮并恢复其工具提示
-    const dynamicFab = getDynamicFab();
-    if (dynamicFab) {
-        dynamicFab.classList.remove('fab-disabled');
-        if (dynamicFab.dataset.originalTooltipKey) {
-            updateFabTooltip(dynamicFab, dynamicFab.dataset.originalTooltipKey);
-        }
-    } else {
-        log(t('log.elementScan.dynamicFabNotFound'), 'warn');
     }
 
     removeListenersFromDocument(document);

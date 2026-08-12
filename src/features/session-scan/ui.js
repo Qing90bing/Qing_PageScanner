@@ -12,7 +12,7 @@ import {
     updateCounterValue,
 } from '../../shared/ui/components/counterWithHelp.js';
 import { t } from '../../shared/i18n/index.js';
-import { setFabIcon, getElementScanFab, updateFabTooltip, getDynamicFab } from '../../shared/ui/components/fab.js';
+import { setFabIcon, updateFabTooltip, getDynamicFab } from '../../shared/ui/components/fab.js';
 import { dynamicIcon } from '../../assets/icons/dynamicIcon.js';
 import { stopIcon } from '../../assets/icons/stopIcon.js';
 import { simpleTemplate } from '../../shared/utils/dom/templating.js';
@@ -121,8 +121,6 @@ const handleEscForSessionScan = (event) => {
  * @description 处理“动态扫描”按钮的点击事件，负责启动或停止会话扫描。
  */
 export function handleDynamicExtractClick(dynamicFab) {
-    const elementScanFab = getElementScanFab();
-
     if (sessionExtractor.isSessionRecording()) {
         // --- 停止会话扫描 ---
         log(t('scan.stopSession'));
@@ -139,12 +137,6 @@ export function handleDynamicExtractClick(dynamicFab) {
 
         hideTopCenterUI();
 
-        if (elementScanFab) {
-            elementScanFab.classList.remove('fab-disabled');
-            if (elementScanFab.dataset.originalTooltipKey) {
-                updateFabTooltip(elementScanFab, elementScanFab.dataset.originalTooltipKey);
-            }
-        }
         // 在停止时移除键盘事件监听器
         document.removeEventListener('keydown', handleEscForSessionScan, true);
         releaseScanMode(SCAN_MODES.DYNAMIC);
@@ -159,12 +151,6 @@ export function handleDynamicExtractClick(dynamicFab) {
         setFabIcon(dynamicFab, stopIcon);
         dynamicFab.classList.add('is-recording');
         updateFabTooltip(dynamicFab, 'scan.stopSession');
-
-        if (elementScanFab) {
-            elementScanFab.dataset.originalTooltipKey = elementScanFab.dataset.tooltipKey;
-            updateFabTooltip(elementScanFab, 'tooltip.disabled.scan_in_progress');
-            elementScanFab.classList.add('fab-disabled');
-        }
 
         showNotification(t('scan.sessionStarted'), { type: 'info' });
         showTopCenterUI();
@@ -181,12 +167,6 @@ export function handleDynamicExtractClick(dynamicFab) {
                 updateFabTooltip(dynamicFab, 'tooltip.dynamic_scan');
                 hideTopCenterUI();
                 document.removeEventListener('keydown', handleEscForSessionScan, true);
-                if (elementScanFab) {
-                    elementScanFab.classList.remove('fab-disabled');
-                    if (elementScanFab.dataset.originalTooltipKey) {
-                        updateFabTooltip(elementScanFab, elementScanFab.dataset.originalTooltipKey);
-                    }
-                }
                 releaseScanMode(SCAN_MODES.DYNAMIC);
                 showNotification(t('notifications.scanFailed'), { type: 'error' });
             });
@@ -223,13 +203,6 @@ on('resumeScanSession', async (state) => {
                     dynamicFab.classList.remove('is-recording');
                     updateFabTooltip(dynamicFab, 'tooltip.dynamic_scan');
                     hideTopCenterUI();
-                    const elementScanFab = getElementScanFab();
-                    if (elementScanFab) {
-                        elementScanFab.classList.remove('fab-disabled');
-                        if (elementScanFab.dataset.originalTooltipKey) {
-                            updateFabTooltip(elementScanFab, elementScanFab.dataset.originalTooltipKey);
-                        }
-                    }
                     log(t('log.main.resumeFailed'), error);
                 });
 
@@ -238,14 +211,6 @@ on('resumeScanSession', async (state) => {
             dynamicFab.classList.add('is-recording');
             updateFabTooltip(dynamicFab, 'scan.stopSession');
             showTopCenterUI();
-
-            // 禁用“元素扫描”按钮
-            const elementScanFab = getElementScanFab();
-            if (elementScanFab) {
-                elementScanFab.dataset.originalTooltipKey = elementScanFab.dataset.tooltipKey;
-                updateFabTooltip(elementScanFab, 'tooltip.disabled.scan_in_progress');
-                elementScanFab.classList.add('fab-disabled');
-            }
 
             if (settings.sessionScan_persistData) {
                 showNotification(t('notifications.sessionScanResumed'), { type: 'info' });

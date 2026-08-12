@@ -17,8 +17,8 @@ import { loadSettings } from '../../services/settings.js';
 import { t } from '../../i18n/index.js';
 import { createSVGFromString } from '../../utils/dom/dom.js';
 import { uiContainer } from '../uiContainer.js';
-import { SCAN_MODES, subscribeScanMode } from '../../services/scanModeCoordinator.js';
-import { applyAiExclusiveFabState } from './fabExclusiveState.js';
+import { getActiveScanMode, subscribeScanMode } from '../../services/scanModeCoordinator.js';
+import { applyScanModeFabState } from './fabExclusiveState.js';
 
 let summaryFab, aiFab, dynamicFab, staticFab, elementScanFab;
 let unsubscribeScanMode = null;
@@ -34,6 +34,15 @@ function syncAiFabAvailability() {
           ? 'tooltip.ai_scan_stop'
           : 'tooltip.ai_scan';
     setFabDisabled(aiFab, !enabled, tooltipKey);
+}
+
+function syncScanModeFabState(activeMode) {
+    applyScanModeFabState(
+        { dynamic: dynamicFab, static: staticFab, element: elementScanFab },
+        activeMode,
+        setFabDisabled,
+        updateFabTooltip
+    );
 }
 
 /**
@@ -161,13 +170,9 @@ export function createFab({ callbacks, isVisible }) {
 
     if (unsubscribeScanMode) unsubscribeScanMode();
     unsubscribeScanMode = subscribeScanMode(({ activeMode }) => {
-        applyAiExclusiveFabState(
-            [dynamicFab, staticFab, elementScanFab],
-            activeMode === SCAN_MODES.AI,
-            setFabDisabled,
-            updateFabTooltip
-        );
+        syncScanModeFabState(activeMode);
     });
+    syncScanModeFabState(getActiveScanMode());
 }
 
 export function setFabDisabled(fabElement, disabled, tooltipKey = null) {

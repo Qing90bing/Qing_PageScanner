@@ -1,42 +1,74 @@
+import { SCAN_MODES } from '../../services/scanModeCoordinator.js';
+
 const snapshots = new Map();
 
+function getDisabledFabs(fabs, activeMode) {
+    if (activeMode === SCAN_MODES.AI) {
+        return new Map(
+            [fabs.dynamic, fabs.static, fabs.element]
+                .filter(Boolean)
+                .map((fab) => [fab, 'tooltip.disabled.ai_scan_active'])
+        );
+    }
+    if (activeMode === SCAN_MODES.DYNAMIC && fabs.element) {
+        return new Map([[fabs.element, 'tooltip.disabled.scan_in_progress']]);
+    }
+    if (activeMode === SCAN_MODES.ELEMENT && fabs.dynamic) {
+        return new Map([[fabs.dynamic, 'tooltip.disabled.scan_in_progress']]);
+    }
+    return new Map();
+}
+
+function captureFabState(fab) {
+    return {
+        disabled: Boolean(fab.disabled),
+        hadDisabledClass: fab.classList.contains('fab-disabled'),
+        ariaDisabled: fab.getAttribute('aria-disabled'),
+        tabIndex: fab.tabIndex,
+        tooltipKey: fab.dataset.tooltipKey,
+    };
+}
+
+function restoreFabState(fab, snapshot, setTooltip) {
+    fab.disabled = snapshot.disabled;
+    fab.classList.toggle('fab-disabled', snapshot.hadDisabledClass);
+    if (snapshot.ariaDisabled === null) {
+        fab.removeAttribute('aria-disabled');
+    } else {
+        fab.setAttribute('aria-disabled', snapshot.ariaDisabled);
+    }
+    fab.tabIndex = snapshot.tabIndex;
+    if (typeof snapshot.tooltipKey === 'undefined') {
+        delete fab.dataset.tooltipKey;
+    } else {
+        setTooltip(fab, snapshot.tooltipKey);
+    }
+}
+
 /**
- * 保存并恢复普通扫描 FAB 在 AI 独占锁前的完整禁用状态。
- * @param {HTMLElement[]} fabs
- * @param {boolean} isAiActive
+ * 根据扫描协调器状态保存、禁用并恢复存在冲突的普通扫描 FAB。
+ * @param {{dynamic?: HTMLElement, static?: HTMLElement, element?: HTMLElement}} fabs
+ * @param {string} activeMode
  * @param {(fab: HTMLElement, disabled: boolean, tooltipKey?: string) => void} setDisabled
  * @param {(fab: HTMLElement, tooltipKey: string) => void} setTooltip
  */
-export function applyAiExclusiveFabState(fabs, isAiActive, setDisabled, setTooltip) {
-    const ordinaryFabs = fabs.filter(Boolean);
-    if (isAiActive) {
-        ordinaryFabs.forEach((fab) => {
-            if (!snapshots.has(fab)) {
-                snapshots.set(fab, {
-                    disabled: Boolean(fab.disabled),
-                    hadDisabledClass: fab.classList.contains('fab-disabled'),
-                    ariaDisabled: fab.getAttribute('aria-disabled'),
-                    tabIndex: fab.tabIndex,
-                    tooltipKey: fab.dataset.tooltipKey,
-                });
-            }
-            setDisabled(fab, true, 'tooltip.disabled.ai_scan_active');
-        });
-        return;
-    }
+export function applyScanModeFabState(fabs, activeMode, setDisabled, setTooltip) {
+    const disabledFabs = getDisabledFabs(fabs, activeMode);
 
-    ordinaryFabs.forEach((fab) => {
-        const snapshot = snapshots.get(fab);
-        if (!snapshot) return;
-        fab.disabled = snapshot.disabled;
-        fab.classList.toggle('fab-disabled', snapshot.hadDisabledClass);
-        fab.setAttribute('aria-disabled', snapshot.ariaDisabled || String(snapshot.disabled));
-        fab.tabIndex = snapshot.tabIndex;
-        setTooltip(fab, snapshot.tooltipKey);
+    snapshots.forEach((snapshot, fab) => {
+        if (disabledFabs.has(fab)) return;
+        restoreFabState(fab, snapshot, setTooltip);
         snapshots.delete(fab);
+    });
+
+    disabledFabs.forEach((tooltipKey, fab) => {
+        if (!snapshots.has(fab)) {
+            snapshots.set(fab, captureFabState(fab));
+        }
+        setDisabled(fab, true, tooltipKey);
     });
 }
 
-export function resetAiExclusiveFabStateForTests() {
+export function resetFabScanModeStateForTests() {
     snapshots.clear();
 }

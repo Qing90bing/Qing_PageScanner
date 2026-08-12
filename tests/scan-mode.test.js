@@ -8,10 +8,7 @@ import {
     SCAN_MODES,
     subscribeScanMode,
 } from '../src/shared/services/scanModeCoordinator.js';
-import {
-    applyAiExclusiveFabState,
-    resetAiExclusiveFabStateForTests,
-} from '../src/shared/ui/components/fabExclusiveState.js';
+import { applyScanModeFabState, resetFabScanModeStateForTests } from '../src/shared/ui/components/fabExclusiveState.js';
 
 class FakeClassList {
     constructor(values = []) {
@@ -58,7 +55,7 @@ function setTooltip(fab, tooltip) {
 
 test.beforeEach(() => {
     resetScanModeForTests();
-    resetAiExclusiveFabStateForTests();
+    resetFabScanModeStateForTests();
 });
 
 test('AI lock blocks direct acquisition by every regular scan mode', () => {
@@ -79,21 +76,48 @@ test('AI mode disables all ordinary FABs and restores their exact previous state
     const dynamic = createFab();
     const staticFab = createFab({ disabled: true, tooltip: 'pre-disabled' });
     const element = createFab();
-    const fabs = [dynamic, staticFab, element];
+    const fabs = { dynamic, static: staticFab, element };
 
-    applyAiExclusiveFabState(fabs, true, setDisabled, setTooltip);
-    fabs.forEach((fab) => {
+    applyScanModeFabState(fabs, SCAN_MODES.AI, setDisabled, setTooltip);
+    Object.values(fabs).forEach((fab) => {
         assert.equal(fab.disabled, true);
         assert.equal(fab.getAttribute('aria-disabled'), 'true');
         assert.equal(fab.classList.contains('fab-disabled'), true);
         assert.equal(fab.tabIndex, -1);
     });
 
-    applyAiExclusiveFabState(fabs, false, setDisabled, setTooltip);
+    applyScanModeFabState(fabs, SCAN_MODES.IDLE, setDisabled, setTooltip);
     assert.equal(dynamic.disabled, false);
     assert.equal(element.disabled, false);
     assert.equal(staticFab.disabled, true);
     assert.equal(staticFab.dataset.tooltipKey, 'pre-disabled');
+});
+
+test('dynamic and element modes disable only their conflicting ordinary FAB', () => {
+    const dynamic = createFab({ tooltip: 'dynamic' });
+    const staticFab = createFab({ tooltip: 'static' });
+    const element = createFab({ tooltip: 'element' });
+    const fabs = { dynamic, static: staticFab, element };
+
+    applyScanModeFabState(fabs, SCAN_MODES.DYNAMIC, setDisabled, setTooltip);
+    assert.equal(dynamic.disabled, false);
+    assert.equal(staticFab.disabled, false);
+    assert.equal(element.disabled, true);
+    assert.equal(element.dataset.tooltipKey, 'tooltip.disabled.scan_in_progress');
+
+    applyScanModeFabState(fabs, SCAN_MODES.IDLE, setDisabled, setTooltip);
+    assert.equal(element.disabled, false);
+    assert.equal(element.dataset.tooltipKey, 'element');
+
+    applyScanModeFabState(fabs, SCAN_MODES.ELEMENT, setDisabled, setTooltip);
+    assert.equal(dynamic.disabled, true);
+    assert.equal(dynamic.dataset.tooltipKey, 'tooltip.disabled.scan_in_progress');
+    assert.equal(staticFab.disabled, false);
+    assert.equal(element.disabled, false);
+
+    applyScanModeFabState(fabs, SCAN_MODES.IDLE, setDisabled, setTooltip);
+    assert.equal(dynamic.disabled, false);
+    assert.equal(dynamic.dataset.tooltipKey, 'dynamic');
 });
 
 test('coordinator notifications make idempotent AI start and stop observable', () => {
