@@ -479,6 +479,7 @@ var TextExtractor = (() => {
       title: "Settings",
       theme: "Theme",
       language: "Language",
+      plugin_language: "Plugin Language",
       format: "Output Format",
       formats: {
         array: "Nested Array",
@@ -1045,6 +1046,7 @@ var TextExtractor = (() => {
       title: "\u8BBE\u7F6E",
       theme: "\u4E3B\u9898",
       language: "\u8BED\u8A00",
+      plugin_language: "\u63D2\u4EF6\u8BED\u8A00",
       format: "\u8F93\u51FA\u683C\u5F0F",
       formats: {
         array: "\u5D4C\u5957\u6570\u7EC4",
@@ -1613,6 +1615,7 @@ var TextExtractor = (() => {
       title: "\u8A2D\u5B9A",
       theme: "\u4E3B\u984C",
       language: "\u8A9E\u8A00",
+      plugin_language: "\u5916\u639B\u7A0B\u5F0F\u8A9E\u8A00",
       format: "\u8F38\u51FA\u683C\u5F0F",
       formats: {
         array: "\u5D4C\u5957\u9663\u5217",
@@ -2992,6 +2995,7 @@ ${result.join(",\n")}
       title: "Settings",
       theme: "Theme",
       language: "Language",
+      plugin_language: "Plugin Language",
       format: "Output Format",
       formats: {
         array: "Nested Array",
@@ -3558,6 +3562,7 @@ ${result.join(",\n")}
       title: "\\u8BBE\\u7F6E",
       theme: "\\u4E3B\\u9898",
       language: "\\u8BED\\u8A00",
+      plugin_language: "\\u63D2\\u4EF6\\u8BED\\u8A00",
       format: "\\u8F93\\u51FA\\u683C\\u5F0F",
       formats: {
         array: "\\u5D4C\\u5957\\u6570\\u7EC4",
@@ -4126,6 +4131,7 @@ ${result.join(",\n")}
       title: "\\u8A2D\\u5B9A",
       theme: "\\u4E3B\\u984C",
       language: "\\u8A9E\\u8A00",
+      plugin_language: "\\u5916\\u639B\\u7A0B\\u5F0F\\u8A9E\\u8A00",
       format: "\\u8F38\\u51FA\\u683C\\u5F0F",
       formats: {
         array: "\\u5D4C\\u5957\\u9663\\u5217",
@@ -8246,8 +8252,7 @@ ${result.join(",\n")}
     {
       id: "language-select",
       key: "language",
-      label: "settings.language",
-      icon: languageIcon_default,
+      label: "settings.plugin_language",
       options: getAvailableLanguages().map((lang) => ({
         ...lang,
         label: lang.value === "auto" ? "settings.languages.auto" : `settings.languages.${lang.value}`
