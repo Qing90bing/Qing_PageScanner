@@ -69,7 +69,7 @@ export function createToggleSwitch(id, title, description = '', checked = false,
     control.className = 'tc-toggle-control';
     control.setAttribute('aria-hidden', 'true');
     const element = document.createElement('label');
-    element.className = `tc-toggle-setting${description ? '' : ' tc-toggle-setting-compact'}`;
+    element.className = 'tc-toggle-setting';
     element.htmlFor = id;
     element.append(copy, input, control);
 

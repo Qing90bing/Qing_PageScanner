@@ -101,9 +101,9 @@
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    gap: 20px;
-    min-height: 72px;
-    padding: 14px 16px;
+    gap: 16px;
+    min-height: 52px;
+    padding: 10px 14px;
     border: 1px solid var(--main-border);
     border-radius: 12px;
     background: var(--main-bg);
@@ -123,12 +123,6 @@
 .tc-toggle-setting:focus-within {
     outline: 2px solid color-mix(in srgb, var(--main-primary) 72%, transparent);
     outline-offset: 2px;
-}
-
-.tc-toggle-setting-compact {
-    min-height: 52px;
-    gap: 16px;
-    padding: 10px 14px;
 }
 
 .tc-toggle-copy {
