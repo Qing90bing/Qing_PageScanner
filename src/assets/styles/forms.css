@@ -126,7 +126,9 @@
 }
 
 .tc-toggle-setting-compact {
-    min-height: 56px;
+    min-height: 52px;
+    gap: 16px;
+    padding: 10px 14px;
 }
 
 .tc-toggle-copy {
@@ -163,8 +165,8 @@
 
 .tc-toggle-control {
     position: relative;
-    width: 72px;
-    height: 38px;
+    width: 48px;
+    height: 26px;
     border-radius: 999px;
     background: var(--main-disabled);
     transition:
@@ -174,10 +176,10 @@
 
 .tc-toggle-control::after {
     position: absolute;
-    top: 4px;
-    left: 4px;
-    width: 30px;
-    height: 30px;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
     background: var(--main-primary-text);
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.28);
@@ -190,7 +192,7 @@
 }
 
 .tc-toggle-input:checked + .tc-toggle-control::after {
-    transform: translateX(34px);
+    transform: translateX(22px);
 }
 
 .tc-toggle-input:focus-visible + .tc-toggle-control {

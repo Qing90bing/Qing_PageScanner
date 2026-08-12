@@ -175,8 +175,12 @@ test('all settings booleans reuse the shared switch component', async () => {
     assert.match(toggle, /tooltipConfig\?\.text/);
     assert.match(panelBuilder, /createToggleSwitch/);
     assert.doesNotMatch(panelBuilder, /createCheckbox/);
-    assert.match(forms, /\.tc-toggle-control\s*\{[\s\S]*width: 72px[\s\S]*height: 38px/);
+    assert.match(forms, /\.tc-toggle-control\s*\{[\s\S]*width: 48px[\s\S]*height: 26px/);
+    assert.match(forms, /\.tc-toggle-setting-compact\s*\{[\s\S]*min-height: 52px[\s\S]*padding: 10px 14px/);
     assert.match(settingsStyles, /\.setting-item > \.tc-toggle-setting/);
+    assert.match(settingsStyles, /--settings-item-gap: 12px/);
+    assert.match(settingsStyles, /\.settings-tab-content > \.setting-item:last-child/);
+    assert.match(settingsStyles, /\.output-indent-setting\s*\{[\s\S]*margin: 0 0 var\(--settings-item-gap, 12px\)/);
     assert.doesNotMatch(settingsStyles, /checkbox-group|checkmark/);
 });
 

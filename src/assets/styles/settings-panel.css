@@ -220,6 +220,7 @@
     padding: 20px;
     overflow-y: auto;
     flex: 1;
+    --settings-item-gap: 12px;
 }
 
 .settings-tab-content.active {
@@ -246,7 +247,11 @@
 /* --- 现有样式调整 --- */
 
 .setting-item {
-    margin-bottom: 12px;
+    margin-bottom: var(--settings-item-gap, 12px);
+}
+
+.settings-tab-content > .setting-item:last-child {
+    margin-bottom: 0;
 }
 
 .setting-item > label {
@@ -658,7 +663,7 @@
     grid-template-columns: minmax(0, 1fr) minmax(150px, 220px);
     align-items: center;
     gap: 4px 16px;
-    margin: 14px 0 2px;
+    margin: 0 0 var(--settings-item-gap, 12px);
     padding: 10px 14px;
     border: 1px solid var(--main-border);
     border-radius: 12px;
