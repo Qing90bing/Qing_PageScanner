@@ -209,6 +209,38 @@ test('all settings booleans reuse the shared switch component', async () => {
     assert.doesNotMatch(settingsStyles, /checkbox-group|checkmark/);
 });
 
+test('settings form controls share one reusable height and radius', async () => {
+    const [settingsStyles, forms, customSelect] = await Promise.all([
+        readFile(SETTINGS_STYLES_PATH, 'utf8'),
+        readFile(FORMS_STYLES_PATH, 'utf8'),
+        readFile(CUSTOM_SELECT_STYLES_PATH, 'utf8'),
+    ]);
+
+    assert.match(settingsStyles, /--settings-control-height: 42px/);
+    assert.match(settingsStyles, /--settings-control-radius: 12px/);
+    assert.match(
+        settingsStyles,
+        /\.numeric-input\s*\{[\s\S]*min-height: var\(--settings-control-height, 42px\)[\s\S]*padding: 9px 12px[\s\S]*border-radius: var\(--settings-control-radius, 12px\)/
+    );
+    assert.match(
+        forms,
+        /\.tc-text-input\s*\{[\s\S]*min-height: var\(--settings-control-height, 42px\)[\s\S]*border-radius: var\(--settings-control-radius, 12px\)/
+    );
+    assert.match(
+        forms,
+        /\.tc-select\s*\{[\s\S]*min-height: var\(--settings-control-height, 42px\)[\s\S]*border-radius: var\(--settings-control-radius, 12px\)/
+    );
+    assert.match(
+        customSelect,
+        /\.custom-select-trigger\s*\{[\s\S]*min-height: var\(--settings-control-height, 42px\)[\s\S]*border-radius: var\(--settings-control-radius, 12px\)/
+    );
+    assert.match(
+        customSelect,
+        /\.custom-select-options\s*\{[\s\S]*border-radius: var\(--settings-control-radius, 12px\)/
+    );
+    assert.doesNotMatch(settingsStyles, /linked-numeric-input > \.numeric-input/);
+});
+
 test('plugin language setting keeps its icon in a separate section title', async () => {
     const [config, panelBuilder, settingsUi, ...localeContents] = await Promise.all([
         readFile(SETTINGS_CONFIG_PATH, 'utf8'),

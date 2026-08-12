@@ -222,6 +222,16 @@
     flex: 1;
     --settings-item-gap: 12px;
     --settings-item-background: color-mix(in srgb, var(--main-textarea-bg) 52%, var(--main-bg));
+    --settings-card-background: var(--main-bg);
+    --settings-card-selected-background: color-mix(in srgb, var(--main-primary) 5%, var(--settings-card-background));
+    --settings-card-label-selected-background: color-mix(
+        in srgb,
+        var(--main-primary) 7%,
+        var(--settings-card-background)
+    );
+    --settings-card-radius: 12px;
+    --settings-control-height: 42px;
+    --settings-control-radius: 12px;
 }
 
 .settings-tab-content.active {
@@ -367,8 +377,9 @@
 
 .numeric-input {
     width: 100px;
-    padding: 6px 8px;
-    border-radius: 8px;
+    min-height: var(--settings-control-height, 42px);
+    padding: 9px 12px;
+    border-radius: var(--settings-control-radius, 12px);
     font-family: 'Menlo', 'Monaco', 'Cascadia Code', 'PingFang SC';
     border: 1px solid var(--main-textarea-border);
     background-color: var(--main-textarea-bg);
@@ -409,8 +420,8 @@
     display: flex;
     flex-direction: column;
     border: 1px solid var(--main-border);
-    border-radius: 12px;
-    background-color: var(--main-bg);
+    border-radius: var(--settings-card-radius, 12px);
+    background-color: var(--settings-card-background, var(--main-bg));
     cursor: pointer;
     overflow: hidden;
     transition:
@@ -437,7 +448,7 @@
 
 .image-card-option.selected {
     border-color: var(--main-primary);
-    background-color: color-mix(in srgb, var(--main-primary) 5%, var(--main-bg));
+    background-color: var(--settings-card-selected-background, var(--main-bg));
     box-shadow: 0 0 0 2px color-mix(in srgb, var(--main-primary) 20%, transparent);
 }
 
@@ -576,7 +587,7 @@
     font-size: 14px;
     font-weight: 500;
     box-sizing: border-box;
-    background-color: var(--main-bg);
+    background-color: var(--settings-card-background, var(--main-bg));
 }
 
 .image-card-label > span {
@@ -586,7 +597,7 @@
 }
 
 .image-card-option.selected .image-card-label {
-    background-color: color-mix(in srgb, var(--main-primary) 7%, var(--main-bg));
+    background-color: var(--settings-card-label-selected-background, var(--main-bg));
 }
 
 .image-card-radio {
@@ -653,7 +664,7 @@
     margin: 0 0 var(--settings-item-gap, 12px);
     padding: 10px 14px;
     border: 1px solid var(--main-border);
-    border-radius: 12px;
+    border-radius: var(--settings-card-radius, 12px);
     background-color: var(--settings-item-background);
 }
 
@@ -695,13 +706,6 @@
 
 .setting-inline-card.linked-numeric-input {
     display: grid;
-}
-
-.setting-inline-card.linked-numeric-input > .numeric-input {
-    box-sizing: border-box;
-    min-height: 42px;
-    padding: 9px 12px;
-    border-radius: 12px;
 }
 
 /* --- Dynamic System Theme Behavior --- */

@@ -105,7 +105,7 @@
     min-height: 52px;
     padding: 10px 14px;
     border: 1px solid var(--main-border);
-    border-radius: 12px;
+    border-radius: var(--settings-card-radius, 12px);
     background: var(--settings-item-background, var(--main-bg));
     color: var(--main-text);
     cursor: pointer;
@@ -274,10 +274,10 @@
 
 .tc-text-input {
     width: 100%;
-    min-height: 42px;
+    min-height: var(--settings-control-height, 42px);
     padding: 9px 12px;
     border: 1px solid var(--main-textarea-border);
-    border-radius: 10px;
+    border-radius: var(--settings-control-radius, 12px);
     background-color: var(--main-textarea-bg);
     color: var(--main-text);
     font-family: inherit;
@@ -347,9 +347,10 @@
     /* Box model and appearance */
     display: block;
     width: 100%;
+    min-height: var(--settings-control-height, 42px);
     padding: 10px 36px 10px 12px; /* 右侧留出更多空间给箭头 */
     border: 1px solid var(--main-textarea-border);
-    border-radius: 8px;
+    border-radius: var(--settings-control-radius, 12px);
     background-color: var(--main-textarea-bg);
     color: var(--main-text);
     font-size: 14px;

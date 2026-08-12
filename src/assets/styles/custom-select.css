@@ -12,10 +12,10 @@
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    min-height: 42px;
+    min-height: var(--settings-control-height, 42px);
     padding: 7px 10px;
     border: 1px solid var(--main-textarea-border);
-    border-radius: 12px;
+    border-radius: var(--settings-control-radius, 12px);
     background-color: var(--main-textarea-bg);
     color: var(--main-text);
     font-size: 15px;
@@ -86,7 +86,7 @@
     right: 0;
     background-color: var(--main-bg);
     border: 1px solid var(--main-border);
-    border-radius: 12px;
+    border-radius: var(--settings-control-radius, 12px);
     box-shadow: 0 4px 12px var(--main-shadow);
     z-index: 2147483647; /* 确保它显示在所有其他UI元素之上 */
     max-height: 0;
