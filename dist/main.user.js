@@ -2680,8 +2680,13 @@ var TextExtractor = (() => {
     AI: "ai"
   });
   var activeMode = SCAN_MODES.IDLE;
+  var activeModes = /* @__PURE__ */ new Set();
   var listeners = /* @__PURE__ */ new Set();
   var supportedModes = new Set(Object.values(SCAN_MODES));
+  var primaryModeOrder = [SCAN_MODES.AI, SCAN_MODES.DYNAMIC, SCAN_MODES.ELEMENT, SCAN_MODES.STATIC];
+  function resolveActiveMode() {
+    return primaryModeOrder.find((mode) => activeModes.has(mode)) || SCAN_MODES.IDLE;
+  }
   function notify(previousMode) {
     listeners.forEach((listener) => {
       listener({ activeMode, previousMode });
@@ -2691,7 +2696,10 @@ var TextExtractor = (() => {
     return activeMode;
   }
   function canAcquireScanModeFrom(currentMode3, requestedMode) {
-    return supportedModes.has(currentMode3) && supportedModes.has(requestedMode) && requestedMode !== SCAN_MODES.IDLE && (currentMode3 === SCAN_MODES.IDLE || currentMode3 === requestedMode);
+    if (!supportedModes.has(currentMode3) || !supportedModes.has(requestedMode)) return false;
+    if (requestedMode === SCAN_MODES.IDLE) return false;
+    if (currentMode3 === SCAN_MODES.IDLE || currentMode3 === requestedMode) return true;
+    return requestedMode === SCAN_MODES.STATIC && (currentMode3 === SCAN_MODES.DYNAMIC || currentMode3 === SCAN_MODES.ELEMENT);
   }
   function canAcquireScanMode(mode) {
     return canAcquireScanModeFrom(activeMode, mode);
@@ -2704,17 +2712,16 @@ var TextExtractor = (() => {
       return true;
     }
     const previousMode = activeMode;
-    activeMode = mode;
-    notify(previousMode);
+    activeModes.add(mode);
+    activeMode = resolveActiveMode();
+    if (activeMode !== previousMode) notify(previousMode);
     return true;
   }
   function releaseScanMode(mode) {
-    if (activeMode !== mode) {
-      return false;
-    }
+    if (!activeModes.delete(mode)) return false;
     const previousMode = activeMode;
-    activeMode = SCAN_MODES.IDLE;
-    notify(previousMode);
+    activeMode = resolveActiveMode();
+    if (activeMode !== previousMode) notify(previousMode);
     return true;
   }
   function subscribeScanMode(listener) {
