@@ -321,12 +321,12 @@ var TextExtractor = (() => {
         topLayerMgr.rePromote();
       }
     };
-    const observer3 = new MutationObserver(observerCallback);
+    const observer = new MutationObserver(observerCallback);
     const onConnect = () => {
       attachToBody(container);
       const startObserver = () => {
         if (document.body) {
-          observer3.observe(document.body, {
+          observer.observe(document.body, {
             childList: true,
             subtree: true,
             attributes: true,
@@ -347,7 +347,7 @@ var TextExtractor = (() => {
       window.addEventListener("resize", resizeHandler);
     };
     const onDisconnect = () => {
-      observer3.disconnect();
+      observer.disconnect();
       isolator.detachGlobalListeners();
       window.removeEventListener("resize", resizeHandler);
     };
@@ -2475,8 +2475,8 @@ var TextExtractor = (() => {
   function getOutputTabIndent(tabSize) {
     return " ".repeat(normalizeOutputTabSize(tabSize));
   }
-  // src/shared/services/settings.js
-  var defaultSettings = {
+  // src/shared/services/settingsDefaults.js
+  var DEFAULT_SETTINGS = Object.freeze({
     language: "auto",
     outputFormat: "array",
     includeArrayBrackets: true,
@@ -2494,7 +2494,7 @@ var TextExtractor = (() => {
     elementScan_persistData: true,
     sessionScan_persistData: true,
     ai: AI_DEFAULT_SETTINGS,
-    filterRules: {
+    filterRules: Object.freeze({
       numbers: true,
       chinese: true,
       containsChinese: false,
@@ -2510,26 +2510,35 @@ var TextExtractor = (() => {
       gitCommitHash: true,
       websiteUrl: true,
       shorthandNumber: true
-    }
-  };
+    })
+  });
+  function createDefaultSettings() {
+    return {
+      ...DEFAULT_SETTINGS,
+      filterRules: { ...DEFAULT_SETTINGS.filterRules },
+      ai: mergeAiSettings(DEFAULT_SETTINGS.ai)
+    };
+  }
+  // src/shared/services/settings.js
   function loadSettings() {
     const savedSettings = getValue("script_settings", null);
-    if (!savedSettings) return defaultSettings;
+    if (!savedSettings) return createDefaultSettings();
     try {
       const parsedSettings = JSON.parse(savedSettings);
+      const baseSettings = createDefaultSettings();
       return {
-        ...defaultSettings,
+        ...baseSettings,
         ...parsedSettings,
         tabSize: normalizeOutputTabSize(parsedSettings.tabSize),
         filterRules: {
-          ...defaultSettings.filterRules,
+          ...baseSettings.filterRules,
           ...parsedSettings.filterRules || {}
         },
-        ai: mergeAiSettings(parsedSettings.ai)
+        ai: mergeAiSettings(parsedSettings.ai || baseSettings.ai)
       };
     } catch (error) {
       log(t("log.settings.parseError"), error);
-      return defaultSettings;
+      return createDefaultSettings();
     }
   }
   function saveSettings(newSettings) {
@@ -2946,13 +2955,13 @@ var TextExtractor = (() => {
     }
     const testWorkerBlob = new Blob(["/* test */"], { type: "application/javascript" });
     let objectURL;
-    let worker2;
+    let worker;
     try {
       objectURL = URL.createObjectURL(testWorkerBlob);
       const workerURL = createTrustedWorkerUrl(objectURL);
-      worker2 = new Worker(workerURL);
+      worker = new Worker(workerURL);
       isAllowed = true;
-      worker2.terminate();
+      worker.terminate();
     } catch (e) {
       isAllowed = false;
       console.error("[CSP Checker] Worker creation failed:", e);
@@ -5787,24 +5796,24 @@ ${result.join(",\n")}
     return new Promise((resolve) => {
       try {
         log(t("log.quickScan.worker.starting"));
-        const worker2 = new Worker(trustedWorkerUrl);
-        worker2.onmessage = (event) => {
+        const worker = new Worker(trustedWorkerUrl);
+        worker.onmessage = (event) => {
           const { type, payload } = event.data;
           if (type === "scanCompleted") {
             log(t("log.quickScan.worker.completed", { count: payload.count }));
             updateScanCount(payload.count, "static");
             resolve(payload);
-            worker2.terminate();
+            worker.terminate();
           }
         };
-        worker2.onerror = (error) => {
+        worker.onerror = (error) => {
           log(t("log.quickScan.worker.initFailed"), "warn");
           log(t("log.quickScan.worker.originalError", { error: error.message }), "debug");
-          worker2.terminate();
+          worker.terminate();
           resolve(runFallback2());
         };
         log(t("log.quickScan.worker.sendingData", { count: texts.length }));
-        worker2.postMessage({
+        worker.postMessage({
           type: "process-single",
           payload: {
             texts,
@@ -5924,9 +5933,9 @@ ${result.join(",\n")}
   function renderAiOutputTabs(activeType = getAiOutputType()) {
     if (!aiOutputTabs) return;
     aiOutputTabs.querySelectorAll("[data-ai-output-type]").forEach((button) => {
-      const isActive3 = button.dataset.aiOutputType === activeType;
-      button.classList.toggle("is-active", isActive3);
-      button.setAttribute("aria-selected", String(isActive3));
+      const isActive = button.dataset.aiOutputType === activeType;
+      button.classList.toggle("is-active", isActive);
+      button.setAttribute("aria-selected", String(isActive));
     });
   }
   function createAiOutputTabs() {
@@ -6906,70 +6915,6 @@ ${result.join(",\n")}
       releaseScanMode(SCAN_MODES.STATIC);
     }
   }
-  // src/shared/utils/dom/mutationRoots.js
-  var ELEMENT_NODE = 1;
-  function selectTopLevelMutationRoots(roots) {
-    const candidates2 = Array.from(roots);
-    const elementRoots = new Set(candidates2.filter((root) => root?.nodeType === ELEMENT_NODE));
-    return candidates2.filter((root) => {
-      if (root?.nodeType !== ELEMENT_NODE) return true;
-      let parent = root.parentElement;
-      while (parent) {
-        if (elementRoots.has(parent)) return false;
-        parent = parent.parentElement;
-      }
-      return true;
-    });
-  }
-  // src/features/session-scan/fallback.js
-  var sessionTexts = /* @__PURE__ */ new Set();
-  var filterRules = {};
-  function initFallback(rules) {
-    filterRules = rules || {};
-    log(t("log.sessionScan.fallback.initialized"));
-  }
-  function processTextsInFallback(texts, logPrefix = "") {
-    const originalSize = sessionTexts.size;
-    const logFiltered = (text, reason) => {
-      const prefix = logPrefix ? `${logPrefix} ` : "";
-      log(prefix + t("log.textProcessor.filtered", { text, reason }));
-    };
-    const processedTexts = filterAndNormalizeTexts(texts, filterRules, true, logFiltered);
-    processedTexts.forEach((text) => sessionTexts.add(text));
-    return sessionTexts.size > originalSize;
-  }
-  function getCountInFallback() {
-    return sessionTexts.size;
-  }
-  function getSummaryInFallback() {
-    const textsArray = Array.from(sessionTexts);
-    const { outputFormat, includeArrayBrackets, tabSize } = loadSettings();
-    return formatTextsForTranslation(textsArray, outputFormat, { includeArrayBrackets, tabSize });
-  }
-  function clearInFallback() {
-    sessionTexts.clear();
-    log(t("log.sessionScan.fallback.cleared"));
-  }
-  // src/features/session-scan/startup.js
-  async function prepareSessionStart({
-    waitForTranslationIdle,
-    extractInitialTexts,
-    readSettings,
-    checkWorkerAllowed,
-    isCurrent
-  }) {
-    const initialTextsPromise = waitForTranslationIdle().then(() => {
-      if (!isCurrent()) return null;
-      return extractInitialTexts();
-    });
-    const [initialTexts, settings, workerAllowed] = await Promise.all([
-      initialTextsPromise,
-      readSettings(),
-      checkWorkerAllowed()
-    ]);
-    if (!isCurrent() || initialTexts === null) return null;
-    return { initialTexts, settings, workerAllowed };
-  }
   // src/shared/services/sessionPersistence.js
   var SESSION_KEY = "qing_pagescanner_session";
   var RESUME_TIMEOUT_MS = 3e5;
@@ -7000,12 +6945,12 @@ ${result.join(",\n")}
     }
     await deleteValue(SESSION_KEY);
     try {
-      const state = JSON.parse(savedSessionJSON);
-      if (Date.now() - state.timestamp > RESUME_TIMEOUT_MS) {
+      const state4 = JSON.parse(savedSessionJSON);
+      if (Date.now() - state4.timestamp > RESUME_TIMEOUT_MS) {
         log(t("log.persistence.staleSession"));
         return;
       }
-      fire("resumeScanSession", state);
+      fire("resumeScanSession", state4);
     } catch (e) {
       log(t("log.persistence.parseError"), e);
       await clearActiveSession();
@@ -7027,8 +6972,8 @@ ${result.join(",\n")}
     return getTranslationBridgeState() !== null;
   }
   function isTranslationBridgeIdle() {
-    const state = getTranslationBridgeState();
-    return state === null || state === TRANSLATION_IDLE_STATE;
+    const state4 = getTranslationBridgeState();
+    return state4 === null || state4 === TRANSLATION_IDLE_STATE;
   }
   function registerTranslationBridgeClient() {
     const root = document.documentElement;
@@ -7079,228 +7024,282 @@ ${result.join(",\n")}
       timeoutId = setTimeout(() => finish(true), timeoutMs);
     });
   }
-  // src/features/session-scan/logic.js
-  var isRecording = false;
-  var isPaused = false;
-  var observer = null;
-  var worker = null;
-  var useFallback = false;
-  var onSummaryCallback = null;
-  var onUpdateCallback = null;
-  var currentCount = 0;
-  var sessionTextsMirror = /* @__PURE__ */ new Set();
-  var autoSaveInterval = null;
-  var AUTO_SAVE_INTERVAL_MS = 5e3;
-  var pendingDynamicRoots = /* @__PURE__ */ new Set();
-  var pendingDynamicFlushTimeout = null;
-  var pendingDynamicWaitStartedAt = null;
-  var sessionStartGeneration = 0;
-  function saveSessionState() {
-    return saveActiveSession("session-scan", Array.from(sessionTextsMirror));
-  }
-  function clearPendingDynamicRoots() {
-    pendingDynamicRoots.clear();
-    pendingDynamicWaitStartedAt = null;
-    if (pendingDynamicFlushTimeout !== null) {
-      clearTimeout(pendingDynamicFlushTimeout);
-      pendingDynamicFlushTimeout = null;
-    }
-  }
-  function processDynamicTexts(textsBatch) {
-    if (textsBatch.length === 0) return;
-    const logPrefix = "\u52A8\u6001\u65B0\u53D1\u73B0";
-    if (useFallback) {
-      if (processTextsInFallback(textsBatch, logPrefix)) {
-        const count = getCountInFallback();
-        if (onUpdateCallback) onUpdateCallback(count);
-        updateScanCount(count, "session");
-        saveSessionState();
-      }
-    } else if (worker) {
-      worker.postMessage({
-        type: "session-add-texts",
-        payload: { texts: textsBatch }
-      });
-    }
-  }
-  function flushPendingDynamicRoots() {
-    if (!isRecording || pendingDynamicRoots.size === 0) return;
-    const pendingRoots2 = Array.from(pendingDynamicRoots);
-    const roots = selectTopLevelMutationRoots(pendingRoots2);
-    clearPendingDynamicRoots();
-    const textsBatch = [];
-    const ignoredSelectorString2 = scannerConfig.ignoredSelectors.join(", ");
-    roots.forEach((root) => {
-      if (!root.isConnected || root.closest(ignoredSelectorString2)) return;
-      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
-      while (walker.nextNode()) {
-        if (walker.currentNode.nodeValue) {
-          textsBatch.push(walker.currentNode.nodeValue);
-        }
-      }
+  // src/features/session-scan/startup.js
+  async function prepareSessionStart({
+    waitForTranslationIdle,
+    extractInitialTexts,
+    readSettings,
+    checkWorkerAllowed,
+    isCurrent
+  }) {
+    const initialTextsPromise = waitForTranslationIdle().then(() => {
+      if (!isCurrent()) return null;
+      return extractInitialTexts();
     });
-    processDynamicTexts(textsBatch);
+    const [initialTexts, settings, workerAllowed] = await Promise.all([
+      initialTextsPromise,
+      readSettings(),
+      checkWorkerAllowed()
+    ]);
+    if (!isCurrent() || initialTexts === null) return null;
+    return { initialTexts, settings, workerAllowed };
   }
-  function scheduleDynamicFlushFallback() {
-    if (pendingDynamicFlushTimeout !== null) return;
-    if (pendingDynamicWaitStartedAt === null) {
-      pendingDynamicWaitStartedAt = performance.now();
-    }
-    pendingDynamicFlushTimeout = setTimeout(() => {
-      pendingDynamicFlushTimeout = null;
-      const bridgeStillBusy = isTranslationBridgeActive() && !isTranslationBridgeIdle();
-      const waitedTooLong = pendingDynamicWaitStartedAt !== null && performance.now() - pendingDynamicWaitStartedAt >= TRANSLATION_BRIDGE_MAX_WAIT_MS;
-      if (!bridgeStillBusy || waitedTooLong) {
-        flushPendingDynamicRoots();
-      } else {
-        scheduleDynamicFlushFallback();
-      }
-    }, TRANSLATION_BRIDGE_WAIT_TIMEOUT_MS);
-  }
-  function handleTranslationBridgeStateChange(state) {
-    if (state === TRANSLATION_IDLE_STATE) {
-      flushPendingDynamicRoots();
-    }
-  }
-  onTranslationBridgeStateChange(handleTranslationBridgeStateChange);
-  on("clearSessionScan", () => {
-    clearSessionData();
-  });
-  on("settingsSaved", () => {
-    if (!isRecording) return;
-    const settings = loadSettings();
-    if (worker) {
-      worker.postMessage({
-        type: "update-settings",
-        payload: {
-          outputFormat: settings.outputFormat,
-          includeArrayBrackets: settings.includeArrayBrackets,
-          tabSize: settings.tabSize
-        }
-      });
-      log(t("log.settings.changed", { key: "outputFormat", oldValue: "", newValue: settings.outputFormat }));
-    }
-  });
-  var handleMutations = (mutations) => {
-    if (!isRecording) return;
-    const ignoredSelectorString2 = scannerConfig.ignoredSelectors.join(", ");
-    mutations.forEach((mutation) => {
-      mutation.addedNodes.forEach((node) => {
-        if (node.nodeType !== Node.ELEMENT_NODE || node.closest(ignoredSelectorString2)) return;
-        pendingDynamicRoots.add(node);
-      });
-    });
-    if (pendingDynamicRoots.size === 0) return;
-    if (isTranslationBridgeActive()) {
-      scheduleDynamicFlushFallback();
-    } else {
-      flushPendingDynamicRoots();
-    }
-  };
-  function clearSessionData() {
-    currentCount = 0;
-    sessionTextsMirror.clear();
-    clearPendingDynamicRoots();
-    saveSessionState();
-    if (useFallback) {
-      clearInFallback();
-      if (onUpdateCallback) onUpdateCallback(0);
-      updateScanCount(0, "session");
-      fire("sessionCleared");
-    } else if (worker) {
-      worker.postMessage({ type: "session-clear" });
-      log(t("log.sessionScan.worker.clearCommandSent"));
-    }
-  }
-  var start = async (onUpdate, resumedData = null) => {
-    if (isRecording) return;
-    const startGeneration = ++sessionStartGeneration;
-    const isCurrentStart = () => isRecording && sessionStartGeneration === startGeneration;
-    registerTranslationBridgeClient();
-    isPaused = false;
-    if (worker) {
-      worker.terminate();
-      worker = null;
-    }
-    if (observer) {
-      observer.disconnect();
-      observer = null;
-    }
-    currentCount = 0;
-    sessionTextsMirror.clear();
-    clearPendingDynamicRoots();
-    onUpdateCallback = onUpdate;
-    useFallback = false;
-    isRecording = true;
-    let preparation;
-    try {
-      preparation = await prepareSessionStart({
-        waitForTranslationIdle: waitForTranslationBridgeIdle,
-        extractInitialTexts: extractAndProcessText,
-        readSettings: loadSettings,
-        checkWorkerAllowed: isWorkerAllowed,
-        isCurrent: isCurrentStart
-      });
-    } catch (error) {
-      if (!isCurrentStart()) return false;
-      sessionStartGeneration += 1;
-      isRecording = false;
-      isPaused = false;
-      onUpdateCallback = null;
-      unregisterTranslationBridgeClient();
-      throw error;
-    }
-    if (!preparation) return false;
-    const { initialTexts, settings, workerAllowed } = preparation;
-    enablePersistence();
-    if (resumedData && Array.isArray(resumedData)) {
-      resumedData.forEach((text) => {
-        initialTexts.push(text);
-        sessionTextsMirror.add(text);
-      });
-    }
-    const { filterRules: filterRules2, enableDebugLogging, outputFormat, includeArrayBrackets, tabSize } = settings;
-    const activateFallbackMode = () => {
-      log(t("log.sessionScan.switchToFallback"), "warn");
-      if (worker) {
-        worker.terminate();
-        worker = null;
-      }
-      useFallback = true;
-      initFallback(filterRules2);
-      if (initialTexts.length > 0) {
-        processTextsInFallback(initialTexts);
-        const count = getCountInFallback();
-        if (onUpdateCallback) onUpdateCallback(count);
-        updateScanCount(count, "session");
-        saveSessionState();
-      }
+  // src/features/session-scan/state.js
+  function createSessionScanState() {
+    return {
+      isRecording: false,
+      isPaused: false,
+      useFallback: false,
+      currentCount: 0,
+      sessionStartGeneration: 0,
+      onUpdate: null
     };
-    if (workerAllowed) {
+  }
+  // src/features/session-scan/sessionStore.js
+  function createSessionStore(state4) {
+    const runtime3 = {
+      autoSaveInterval: null,
+      texts: /* @__PURE__ */ new Set()
+    };
+    function save() {
+      return saveActiveSession("session-scan", Array.from(runtime3.texts));
+    }
+    function addTexts(texts) {
+      texts.forEach((text) => runtime3.texts.add(text));
+    }
+    function clearTexts() {
+      runtime3.texts.clear();
+    }
+    function startAutoSave() {
+      stopAutoSave();
+      runtime3.autoSaveInterval = setInterval(() => {
+        if (state4.isRecording) save();
+      }, 5e3);
+    }
+    function stopAutoSave() {
+      if (runtime3.autoSaveInterval === null) return;
+      clearInterval(runtime3.autoSaveInterval);
+      runtime3.autoSaveInterval = null;
+    }
+    return {
+      addTexts,
+      clearPersistedSession: () => clearActiveSession(),
+      clearTexts,
+      getTexts: () => runtime3.texts,
+      save,
+      startAutoSave,
+      stopAutoSave
+    };
+  }
+  // src/shared/utils/dom/mutationRoots.js
+  var ELEMENT_NODE = 1;
+  function selectTopLevelMutationRoots(roots) {
+    const candidates = Array.from(roots);
+    const elementRoots = new Set(candidates.filter((root) => root?.nodeType === ELEMENT_NODE));
+    return candidates.filter((root) => {
+      if (root?.nodeType !== ELEMENT_NODE) return true;
+      let parent = root.parentElement;
+      while (parent) {
+        if (elementRoots.has(parent)) return false;
+        parent = parent.parentElement;
+      }
+      return true;
+    });
+  }
+  // src/features/session-scan/dynamicObserver.js
+  function createSessionDynamicObserver({ isRecording, processTexts }) {
+    const runtime3 = {
+      observer: null,
+      pendingRoots: /* @__PURE__ */ new Set(),
+      flushTimeout: null,
+      unsubscribeBridge: null,
+      waitStartedAt: null
+    };
+    function clearPendingRoots() {
+      runtime3.pendingRoots.clear();
+      runtime3.waitStartedAt = null;
+      if (runtime3.flushTimeout !== null) {
+        clearTimeout(runtime3.flushTimeout);
+        runtime3.flushTimeout = null;
+      }
+    }
+    function flushPendingRoots() {
+      if (!isRecording() || runtime3.pendingRoots.size === 0) return;
+      const pendingRoots = Array.from(runtime3.pendingRoots);
+      const roots = selectTopLevelMutationRoots(pendingRoots);
+      clearPendingRoots();
+      const textsBatch = [];
+      const ignoredSelectorString2 = scannerConfig.ignoredSelectors.join(", ");
+      roots.forEach((root) => {
+        if (!root.isConnected || root.closest(ignoredSelectorString2)) return;
+        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+        while (walker.nextNode()) {
+          if (walker.currentNode.nodeValue) textsBatch.push(walker.currentNode.nodeValue);
+        }
+      });
+      processTexts(textsBatch);
+    }
+    function scheduleFlushFallback() {
+      if (runtime3.flushTimeout !== null) return;
+      if (runtime3.waitStartedAt === null) runtime3.waitStartedAt = performance.now();
+      runtime3.flushTimeout = setTimeout(() => {
+        runtime3.flushTimeout = null;
+        const bridgeStillBusy = isTranslationBridgeActive() && !isTranslationBridgeIdle();
+        const waitedTooLong = runtime3.waitStartedAt !== null && performance.now() - runtime3.waitStartedAt >= TRANSLATION_BRIDGE_MAX_WAIT_MS;
+        if (!bridgeStillBusy || waitedTooLong) flushPendingRoots();
+        else scheduleFlushFallback();
+      }, TRANSLATION_BRIDGE_WAIT_TIMEOUT_MS);
+    }
+    function handleTranslationBridgeStateChange(bridgeState) {
+      if (bridgeState === TRANSLATION_IDLE_STATE) flushPendingRoots();
+    }
+    function handleMutations(mutations) {
+      if (!isRecording()) return;
+      const ignoredSelectorString2 = scannerConfig.ignoredSelectors.join(", ");
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+          if (node.nodeType !== Node.ELEMENT_NODE || node.closest(ignoredSelectorString2)) return;
+          runtime3.pendingRoots.add(node);
+        });
+      });
+      if (runtime3.pendingRoots.size === 0) return;
+      if (isTranslationBridgeActive()) scheduleFlushFallback();
+      else flushPendingRoots();
+    }
+    function subscribeBridge() {
+      if (runtime3.unsubscribeBridge === null) {
+        runtime3.unsubscribeBridge = onTranslationBridgeStateChange(handleTranslationBridgeStateChange);
+      }
+    }
+    function unsubscribeBridge() {
+      if (runtime3.unsubscribeBridge === null) return;
+      runtime3.unsubscribeBridge();
+      runtime3.unsubscribeBridge = null;
+    }
+    function start2() {
+      subscribeBridge();
+      runtime3.observer = new MutationObserver(handleMutations);
+      runtime3.observer.observe(document.body, { childList: true, subtree: true });
+    }
+    function stop2() {
+      if (runtime3.observer) {
+        runtime3.observer.disconnect();
+        runtime3.observer = null;
+      }
+      clearPendingRoots();
+      unsubscribeBridge();
+    }
+    function pause() {
+      clearPendingRoots();
+      if (runtime3.observer) runtime3.observer.disconnect();
+      unsubscribeBridge();
+    }
+    function resume() {
+      if (runtime3.observer && document.body) {
+        subscribeBridge();
+        runtime3.observer.observe(document.body, { childList: true, subtree: true });
+      }
+    }
+    return {
+      clearPendingRoots,
+      dispose: stop2,
+      pause,
+      resume,
+      start: start2,
+      stop: stop2
+    };
+  }
+  // src/features/session-scan/fallback.js
+  var sessionTexts = /* @__PURE__ */ new Set();
+  var filterRules = {};
+  function initFallback(rules) {
+    filterRules = rules || {};
+    log(t("log.sessionScan.fallback.initialized"));
+  }
+  function processTextsInFallback(texts, logPrefix = "") {
+    const originalSize = sessionTexts.size;
+    const logFiltered = (text, reason) => {
+      const prefix = logPrefix ? `${logPrefix} ` : "";
+      log(prefix + t("log.textProcessor.filtered", { text, reason }));
+    };
+    const processedTexts = filterAndNormalizeTexts(texts, filterRules, true, logFiltered);
+    processedTexts.forEach((text) => sessionTexts.add(text));
+    return sessionTexts.size > originalSize;
+  }
+  function getCountInFallback() {
+    return sessionTexts.size;
+  }
+  function getSummaryInFallback() {
+    const textsArray = Array.from(sessionTexts);
+    const { outputFormat, includeArrayBrackets, tabSize } = loadSettings();
+    return formatTextsForTranslation(textsArray, outputFormat, { includeArrayBrackets, tabSize });
+  }
+  function clearInFallback() {
+    sessionTexts.clear();
+    log(t("log.sessionScan.fallback.cleared"));
+  }
+  // src/features/session-scan/workerController.js
+  function createSessionWorkerController({ state: state4, sessionStore: sessionStore3 }) {
+    const runtime3 = {
+      worker: null,
+      summaryCallback: null
+    };
+    function emitCount(count) {
+      state4.currentCount = count;
+      if (state4.onUpdate) state4.onUpdate(count);
+      updateScanCount(count, "session");
+    }
+    function terminateWorker(workerToTerminate = runtime3.worker) {
+      if (!workerToTerminate) return;
+      workerToTerminate.terminate();
+      if (runtime3.worker === workerToTerminate) runtime3.worker = null;
+      runtime3.summaryCallback = null;
+    }
+    function activateFallbackMode(filterRules2, initialTexts) {
+      if (runtime3.worker) terminateWorker();
+      state4.useFallback = true;
+      initFallback(filterRules2);
+      if (initialTexts.length === 0) return;
+      processTextsInFallback(initialTexts);
+      emitCount(getCountInFallback());
+      sessionStore3.save();
+    }
+    function handleWorkerMessage(event) {
+      const { type, payload } = event.data;
+      if (type === "countUpdated") {
+        emitCount(payload.count);
+        if (payload.newTexts && Array.isArray(payload.newTexts)) {
+          sessionStore3.addTexts(payload.newTexts);
+        }
+      } else if (type === "summaryReady" && runtime3.summaryCallback) {
+        runtime3.summaryCallback(payload, state4.currentCount);
+        runtime3.summaryCallback = null;
+      }
+    }
+    function handleWorkerError(error, filterRules2, initialTexts) {
+      if (!state4.isRecording) return;
+      logWorkerFailure(error);
+      showNotification(t("notifications.cspWorkerWarning"), { type: "info", duration: 5e3 });
+      activateFallbackMode(filterRules2, initialTexts);
+    }
+    function logWorkerFailure(error) {
+      log(t("log.sessionScan.worker.initFailed"), "warn");
+      if (error?.message) log(t("log.sessionScan.worker.originalError", { error: error.message }), "debug");
+    }
+    function start2({ initialTexts, settings, workerAllowed }) {
+      const { filterRules: filterRules2, enableDebugLogging, outputFormat, includeArrayBrackets, tabSize } = settings;
+      state4.useFallback = false;
+      if (!workerAllowed) {
+        logWorkerFailure({ message: t("log.sessionScan.worker.cspBlocked") });
+        showNotification(t("notifications.cspWorkerWarning"), { type: "info", duration: 5e3 });
+        activateFallbackMode(filterRules2, initialTexts);
+        return;
+      }
       try {
-        log(t("log.sessionScan.worker.starting"));
-        worker = new Worker(trustedWorkerUrl);
-        worker.onmessage = (event) => {
-          const { type, payload } = event.data;
-          if (type === "countUpdated") {
-            currentCount = payload.count;
-            if (onUpdateCallback) onUpdateCallback(payload.count);
-            updateScanCount(payload.count, "session");
-            if (payload.newTexts && Array.isArray(payload.newTexts)) {
-              payload.newTexts.forEach((text) => sessionTextsMirror.add(text));
-            }
-          } else if (type === "summaryReady" && onSummaryCallback) {
-            onSummaryCallback(payload, currentCount);
-            onSummaryCallback = null;
-          }
-        };
-        worker.onerror = (error) => {
-          log(t("log.sessionScan.worker.initFailed"), "warn");
-          log(t("log.sessionScan.worker.originalError", { error: error.message }), "debug");
-          showNotification(t("notifications.cspWorkerWarning"), { type: "info", duration: 5e3 });
-          activateFallbackMode();
-        };
-        worker.postMessage({
+        runtime3.worker = new Worker(trustedWorkerUrl);
+        runtime3.worker.onmessage = handleWorkerMessage;
+        runtime3.worker.onerror = (error) => handleWorkerError(error, filterRules2, initialTexts);
+        runtime3.worker.postMessage({
           type: "session-start",
           payload: {
             filterRules: filterRules2,
@@ -7316,106 +7315,225 @@ ${result.join(",\n")}
             initialData: initialTexts
           }
         });
-        log(t("log.sessionScan.worker.initialized", { count: initialTexts.length }));
-      } catch (e) {
-        log(t("log.sessionScan.worker.initSyncError", { error: e.message }), "error");
+      } catch (error) {
+        logWorkerFailure(error);
         showNotification(t("notifications.cspWorkerWarning"), { type: "info", duration: 5e3 });
-        activateFallbackMode();
+        activateFallbackMode(filterRules2, initialTexts);
       }
-    } else {
-      log(t("log.sessionScan.worker.cspBlocked"), "warn");
-      showNotification(t("notifications.cspWorkerWarning"), { type: "info", duration: 5e3 });
-      activateFallbackMode();
     }
-    observer = new MutationObserver(handleMutations);
-    observer.observe(document.body, { childList: true, subtree: true });
-    window.addEventListener("beforeunload", handleSessionScanUnload);
-    if (autoSaveInterval) clearInterval(autoSaveInterval);
-    autoSaveInterval = setInterval(() => {
-      if (isRecording) {
-        saveSessionState();
+    function processTexts(textsBatch) {
+      if (textsBatch.length === 0) return;
+      const logPrefix = "\u52A8\u6001\u65B0\u53D1\u73B0";
+      if (state4.useFallback) {
+        if (!processTextsInFallback(textsBatch, logPrefix)) return;
+        const count = getCountInFallback();
+        emitCount(count);
+        sessionStore3.addTexts(textsBatch);
+        sessionStore3.save();
+      } else if (runtime3.worker) {
+        runtime3.worker.postMessage({
+          type: "session-add-texts",
+          payload: { texts: textsBatch }
+        });
       }
-    }, AUTO_SAVE_INTERVAL_MS);
-    saveSessionState();
+    }
+    function updateSettings(settings) {
+      if (!runtime3.worker) return;
+      runtime3.worker.postMessage({
+        type: "update-settings",
+        payload: {
+          outputFormat: settings.outputFormat,
+          includeArrayBrackets: settings.includeArrayBrackets,
+          tabSize: settings.tabSize
+        }
+      });
+    }
+    function clear() {
+      if (state4.useFallback) {
+        clearInFallback();
+        emitCount(0);
+        return;
+      }
+      if (runtime3.worker) runtime3.worker.postMessage({ type: "session-clear" });
+    }
+    function requestSummary2(onReady) {
+      if (!onReady) return;
+      if (state4.useFallback) {
+        onReady(getSummaryInFallback(), getCountInFallback());
+      } else if (runtime3.worker) {
+        runtime3.summaryCallback = onReady;
+        runtime3.worker.postMessage({ type: "session-get-summary" });
+      } else {
+        onReady("[]", 0);
+      }
+    }
+    function stop2(onStopped) {
+      if (state4.useFallback) {
+        const finalCount = getCountInFallback();
+        state4.useFallback = false;
+        runtime3.summaryCallback = null;
+        if (onStopped) onStopped(finalCount);
+        return;
+      }
+      const workerToStop = runtime3.worker;
+      if (!workerToStop) {
+        if (onStopped) onStopped(0);
+        return;
+      }
+      if (!onStopped) {
+        terminateWorker(workerToStop);
+        return;
+      }
+      const finish = (count) => {
+        workerToStop.removeEventListener("message", handleFinalCount);
+        workerToStop.removeEventListener("error", handleFinalError);
+        workerToStop.terminate();
+        if (runtime3.worker === workerToStop) runtime3.worker = null;
+        runtime3.summaryCallback = null;
+        state4.currentCount = count;
+        state4.useFallback = false;
+        onStopped(count);
+      };
+      const handleFinalCount = (event) => {
+        const { type, payload } = event.data;
+        if (type === "countUpdated" && typeof payload.count !== "undefined") finish(payload.count);
+      };
+      const handleFinalError = () => finish(state4.currentCount);
+      workerToStop.addEventListener("message", handleFinalCount);
+      workerToStop.addEventListener("error", handleFinalError);
+      workerToStop.postMessage({ type: "session-get-count" });
+    }
+    return {
+      clear,
+      dispose: () => terminateWorker(),
+      isFallback: () => state4.useFallback,
+      processTexts,
+      requestSummary: requestSummary2,
+      start: start2,
+      stop: stop2,
+      updateSettings
+    };
+  }
+  // src/features/session-scan/logic.js
+  var state = createSessionScanState();
+  var sessionStore = createSessionStore(state);
+  var workerController = createSessionWorkerController({ state, sessionStore });
+  var dynamicObserver = createSessionDynamicObserver({
+    isRecording: () => state.isRecording,
+    processTexts: workerController.processTexts
+  });
+  function clearSessionData() {
+    const wasFallback = workerController.isFallback();
+    state.currentCount = 0;
+    sessionStore.clearTexts();
+    dynamicObserver.clearPendingRoots();
+    sessionStore.save();
+    workerController.clear();
+    if (wasFallback) fire("sessionCleared");
+  }
+  function handleClearSessionScan() {
+    clearSessionData();
+  }
+  function handleSettingsSaved() {
+    if (!state.isRecording) return;
+    const settings = loadSettings();
+    workerController.updateSettings(settings);
+    log(t("log.settings.changed", { key: "outputFormat", oldValue: "", newValue: settings.outputFormat }));
+  }
+  on("clearSessionScan", handleClearSessionScan);
+  on("settingsSaved", handleSettingsSaved);
+  function completeStart(preparation, resumedData) {
+    const { initialTexts: preparedTexts, settings, workerAllowed } = preparation;
+    const initialTexts = [...preparedTexts];
+    enablePersistence();
+    if (resumedData && Array.isArray(resumedData)) {
+      initialTexts.push(...resumedData);
+      sessionStore.addTexts(resumedData);
+    }
+    workerController.start({ initialTexts, settings, workerAllowed });
+    dynamicObserver.start();
+    window.addEventListener("beforeunload", handleSessionScanUnload);
+    sessionStore.startAutoSave();
+    sessionStore.save();
     log(t("log.sessionScan.domObserver.started"));
     return true;
-  };
-  var handleSessionScanUnload = () => {
-    saveSessionState();
-  };
-  var stop = (onStopped) => {
-    sessionStartGeneration += 1;
-    if (!isRecording) {
+  }
+  async function start(onUpdate, resumedData = null) {
+    if (state.isRecording) return;
+    const startGeneration = ++state.sessionStartGeneration;
+    const isCurrentStart = () => state.isRecording && state.sessionStartGeneration === startGeneration;
+    registerTranslationBridgeClient();
+    state.isPaused = false;
+    workerController.dispose();
+    dynamicObserver.stop();
+    state.currentCount = 0;
+    sessionStore.clearTexts();
+    state.onUpdate = onUpdate;
+    state.useFallback = false;
+    state.isRecording = true;
+    try {
+      const preparation = await prepareSessionStart({
+        waitForTranslationIdle: waitForTranslationBridgeIdle,
+        extractInitialTexts: extractAndProcessText,
+        readSettings: loadSettings,
+        checkWorkerAllowed: isWorkerAllowed,
+        isCurrent: isCurrentStart
+      });
+      if (!preparation) return false;
+      return completeStart(preparation, resumedData);
+    } catch (error) {
+      if (!isCurrentStart()) return false;
+      state.sessionStartGeneration += 1;
+      state.isRecording = false;
+      state.isPaused = false;
+      state.onUpdate = null;
+      dynamicObserver.stop();
+      workerController.dispose();
       unregisterTranslationBridgeClient();
-      if (onStopped) onStopped(0);
+      throw error;
+    }
+  }
+  function handleSessionScanUnload() {
+    sessionStore.save();
+  }
+  function stop(onStopped) {
+    state.sessionStartGeneration += 1;
+    if (!state.isRecording) {
+      dynamicObserver.stop();
+      workerController.stop(onStopped);
+      unregisterTranslationBridgeClient();
       return;
     }
     log(t("log.sessionScan.domObserver.stopped"));
-    if (observer) {
-      observer.disconnect();
-      observer = null;
-    }
+    dynamicObserver.stop();
     window.removeEventListener("beforeunload", handleSessionScanUnload);
-    if (autoSaveInterval) {
-      clearInterval(autoSaveInterval);
-      autoSaveInterval = null;
-    }
-    clearPendingDynamicRoots();
+    sessionStore.stopAutoSave();
     unregisterTranslationBridgeClient();
-    clearActiveSession();
-    isRecording = false;
-    isPaused = false;
-    sessionTextsMirror.clear();
-    onUpdateCallback = null;
-    if (onStopped) {
-      if (useFallback) {
-        onStopped(getCountInFallback());
-      } else if (worker) {
-        const finalCountListener = (event) => {
-          const { type, payload } = event.data;
-          if (type === "countUpdated" && typeof payload.count !== "undefined") {
-            onStopped(payload.count);
-            worker.removeEventListener("message", finalCountListener);
-          }
-        };
-        worker.addEventListener("message", finalCountListener);
-        worker.postMessage({ type: "session-get-count" });
-      } else {
-        onStopped(0);
-      }
-    }
-  };
-  var requestSummary = (onReady) => {
-    if (!onReady) return;
-    if (useFallback) {
-      const summaryText = getSummaryInFallback();
-      const summaryCount = getCountInFallback();
-      onReady(summaryText, summaryCount);
-    } else if (worker) {
-      onSummaryCallback = onReady;
-      worker.postMessage({ type: "session-get-summary" });
-    } else {
-      onReady("[]", 0);
-    }
-  };
-  var isSessionRecording = () => isRecording;
-  var pauseSessionScan = () => {
-    if (!isRecording || isPaused) return;
-    isPaused = true;
-    clearPendingDynamicRoots();
+    sessionStore.clearPersistedSession();
+    state.isRecording = false;
+    state.isPaused = false;
+    sessionStore.clearTexts();
+    state.onUpdate = null;
+    workerController.stop(onStopped);
+  }
+  function requestSummary(onReady) {
+    workerController.requestSummary(onReady);
+  }
+  function isSessionRecording() {
+    return state.isRecording;
+  }
+  function pauseSessionScan() {
+    if (!state.isRecording || state.isPaused) return;
+    state.isPaused = true;
+    dynamicObserver.pause();
     showNotification(t("notifications.sessionScanPaused"), { type: "info" });
-    if (observer) {
-      observer.disconnect();
-    }
-  };
-  var resumeSessionScan = () => {
-    if (!isRecording || !isPaused) return;
-    isPaused = false;
+  }
+  function resumeSessionScan() {
+    if (!state.isRecording || !state.isPaused) return;
+    state.isPaused = false;
+    dynamicObserver.resume();
     showNotification(t("notifications.sessionScanContinued"), { type: "success" });
-    if (observer) {
-      observer.observe(document.body, { childList: true, subtree: true });
-    }
-  };
+  }
   // src/assets/icons/questionMarkIcon.js
   var questionMarkIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M478-240q21 0 35.5-14.5T528-290q0-21-14.5-35.5T478-340q-21 0-35.5 14.5T428-290q0 21 14.5 35.5T478-240Zm-36-154h74q0-33 7.5-52t42.5-52q26-26 41-49.5t15-56.5q0-56-41-86t-97-30q-57 0-92.5 30T342-618l66 26q5-18 22.5-39t53.5-21q32 0 48 17.5t16 38.5q0 20-12 37.5T506-526q-44 39-54 59t-10 73Zm38 314q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>`;
   // src/shared/ui/components/infoTooltip.js
@@ -7552,8 +7670,8 @@ ${result.join(",\n")}
       const elapsedTime = currentTime - startTime;
       const progress = Math.min(elapsedTime / duration, 1);
       const easedProgress = easing(progress);
-      const currentCount2 = Math.round(start2 + (end - start2) * easedProgress);
-      element.textContent = currentCount2;
+      const currentCount = Math.round(start2 + (end - start2) * easedProgress);
+      element.textContent = currentCount;
       if (progress < 1) {
         requestAnimationFrame(frame);
       }
@@ -7629,7 +7747,7 @@ ${result.join(",\n")}
     pauseResumeButton.click();
   }
   function createCounterWithHelp({ counterKey, helpKey, onPause, onResume, scanType, onSettingsClick }) {
-    let isPaused4 = false;
+    let isPaused = false;
     counterWithHelpContainer = document.createElement("div");
     counterWithHelpContainer.className = "counter-with-help-container";
     counterWithHelpContainer.style.pointerEvents = "auto";
@@ -7647,8 +7765,8 @@ ${result.join(",\n")}
         iconOnly: true,
         tooltipKey: `tooltip.pause${scanType}`,
         onClick: () => {
-          isPaused4 = !isPaused4;
-          if (isPaused4) {
+          isPaused = !isPaused;
+          if (isPaused) {
             onPause();
             pauseResumeButton.updateIcon(resumeIcon);
             pauseResumeButton.updateText(`tooltip.resume${scanType}`);
@@ -8840,10 +8958,10 @@ ${result.join(",\n")}
     modal.appendChild(body);
     return modal;
   }
-  function createTabContent(id, isActive3) {
+  function createTabContent(id, isActive) {
     const div = document.createElement("div");
     div.id = id;
-    div.className = `settings-tab-content ${isActive3 ? "active" : ""}`;
+    div.className = `settings-tab-content ${isActive ? "active" : ""}`;
     return div;
   }
   function createSelectSettingDOM(definition) {
@@ -9057,13 +9175,13 @@ ${result.join(",\n")}
     await setValue(CACHE_KEY, JSON.stringify({ version: 1, entries }));
   }
   async function clearAiCacheForSite(siteKey, targetLanguage) {
-    const cache2 = await loadAiCache();
-    for (const [fingerprint, entry] of cache2.entries()) {
+    const cache = await loadAiCache();
+    for (const [fingerprint, entry] of cache.entries()) {
       if (entry.siteKey === siteKey && entry.targetLanguage === targetLanguage) {
-        cache2.delete(fingerprint);
+        cache.delete(fingerprint);
       }
     }
-    await saveAiCache(cache2);
+    await saveAiCache(cache);
   }
   function currentDayKey(now = /* @__PURE__ */ new Date()) {
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
@@ -9103,10 +9221,10 @@ ${result.join(",\n")}
   function estimateCandidateResponseTokens(candidate) {
     return Math.max(48, String(candidate?.sourceText || "").length + 48);
   }
-  function estimateBatchResponseTokens(candidates2) {
-    return candidates2.reduce((total, candidate) => total + estimateCandidateResponseTokens(candidate), 32);
+  function estimateBatchResponseTokens(candidates) {
+    return candidates.reduce((total, candidate) => total + estimateCandidateResponseTokens(candidate), 32);
   }
-  function selectBatch(candidates2, limits) {
+  function selectBatch(candidates, limits) {
     const selected = [];
     const oversized = [];
     const invalid = [];
@@ -9116,7 +9234,7 @@ ${result.join(",\n")}
       AI_RESPONSE_TOKEN_LIMIT,
       Math.max(256, Number(limits.maxEstimatedOutputTokens) || AI_BATCH_RESPONSE_TOKEN_BUDGET)
     );
-    for (const candidate of candidates2) {
+    for (const candidate of candidates) {
       if (selected.length >= limits.maxItems) break;
       if (!isSubmittableAiCandidate(candidate)) {
         invalid.push(candidate);
@@ -9136,12 +9254,12 @@ ${result.join(",\n")}
     }
     return { candidates: selected, oversized, invalid, characters, estimatedOutputTokens };
   }
-  function checkBudget({ settings, sessionUsage: sessionUsage2, dailyUsage, requestPayload, nextCharacters = 0 }) {
+  function checkBudget({ settings, sessionUsage, dailyUsage, requestPayload, nextCharacters = 0 }) {
     const estimatedTokens = estimateTokens(JSON.stringify(requestPayload)) * 2;
-    if (sessionUsage2.requests >= settings.maxRequestsPerSession) {
+    if (sessionUsage.requests >= settings.maxRequestsPerSession) {
       return { allowed: false, reason: "session-requests", estimatedTokens };
     }
-    if (sessionUsage2.characters + nextCharacters > settings.maxCharactersPerSession) {
+    if (sessionUsage.characters + nextCharacters > settings.maxCharactersPerSession) {
       return { allowed: false, reason: "session-characters", estimatedTokens };
     }
     if (dailyUsage.tokens + estimatedTokens > settings.maxEstimatedTokensPerDay) {
@@ -9594,9 +9712,9 @@ ${entries.join("\n")}
     "zh-TW": "Traditional Chinese"
   };
   var REGEX_HINT_LIMIT = 24;
-  function buildRegexCandidateGroups(candidates2) {
+  function buildRegexCandidateGroups(candidates) {
     const groupsByShape = /* @__PURE__ */ new Map();
-    candidates2.forEach((candidate, index) => {
+    candidates.forEach((candidate, index) => {
       const shape = createDynamicRegexShape(candidate.sourceText);
       if (!shape) return;
       const group = groupsByShape.get(shape) || { shape, sourceIds: [], firstIndex: index };
@@ -9604,7 +9722,7 @@ ${entries.join("\n")}
       groupsByShape.set(shape, group);
     });
     return Array.from(groupsByShape.values()).filter(
-      (group) => group.sourceIds.length >= 2 || isSingleSampleRegexCandidate(candidates2[group.firstIndex]?.sourceText)
+      (group) => group.sourceIds.length >= 2 || isSingleSampleRegexCandidate(candidates[group.firstIndex]?.sourceText)
     ).sort((left, right) => right.sourceIds.length - left.sourceIds.length || left.firstIndex - right.firstIndex).slice(0, REGEX_HINT_LIMIT).map((group, index) => ({
       id: `regex-candidate-${index + 1}`,
       sourceIds: group.sourceIds,
@@ -9644,9 +9762,9 @@ ${entries.join("\n")}
       targetLanguage: limitText(page.targetLanguage, 16)
     };
   }
-  function buildTranslationRequest({ provider, candidates: candidates2, targetLanguage, styleProfile, pageContext }) {
-    const validCandidates = candidates2.filter(isSubmittableAiCandidate);
-    if (validCandidates.length === 0 || validCandidates.length !== candidates2.length) {
+  function buildTranslationRequest({ provider, candidates, targetLanguage, styleProfile, pageContext }) {
+    const validCandidates = candidates.filter(isSubmittableAiCandidate);
+    if (validCandidates.length === 0 || validCandidates.length !== candidates.length) {
       throw new TypeError("empty-candidate-batch");
     }
     const targetLabel = TARGET_LABELS[targetLanguage] || TARGET_LABELS["zh-CN"];
@@ -9809,7 +9927,7 @@ ${entries.join("\n")}
   function isRegexItemForRule(item, ruleId, confidenceThreshold) {
     return normalizeAction(item) === AI_ACTIONS.TRANSLATE && normalizeTranslationType(item) === AI_TRANSLATION_TYPES.REGEX && normalizeRegexReference(item?.regexRuleId) === ruleId && isConfidentTranslation(item, confidenceThreshold);
   }
-  function validateRegexResponseRule(rawRule, candidates2, responseById, confidenceThreshold, assignedSourceIds) {
+  function validateRegexResponseRule(rawRule, candidates, responseById, confidenceThreshold, assignedSourceIds) {
     const ruleId = normalizeRegexReference(rawRule?.id);
     const rawSourceIds = Array.isArray(rawRule?.sourceIds) ? rawRule.sourceIds.map(normalizeResponseId) : [];
     const sourceIds = rawSourceIds.filter(Boolean);
@@ -9828,7 +9946,7 @@ ${entries.join("\n")}
     if (sourceIds.some((id) => !isRegexItemForRule(responseById.get(id), ruleId, confidenceThreshold))) {
       return { valid: false, ruleId, sourceIds, reason: "regex-item-mismatch" };
     }
-    const candidatesById = new Map(candidates2.map((candidate) => [candidate.id, candidate]));
+    const candidatesById = new Map(candidates.map((candidate) => [candidate.id, candidate]));
     const sourceTexts = sourceIds.map((id) => candidatesById.get(id)?.sourceText || "");
     const singleSample = sourceIds.length === 1;
     if (singleSample && !hasDynamicRegexValue(sourceTexts[0])) {
@@ -9847,8 +9965,8 @@ ${entries.join("\n")}
     sourceIds.forEach((id) => assignedSourceIds.add(id));
     return { valid: true, ruleId, sourceIds, rule: validated.rule };
   }
-  function validateTranslationResponse(payload, candidates2, confidenceThreshold) {
-    const candidateMap = new Map(candidates2.map((candidate) => [candidate.id, candidate]));
+  function validateTranslationResponse(payload, candidates, confidenceThreshold) {
+    const candidateMap = new Map(candidates.map((candidate) => [candidate.id, candidate]));
     const rawItems = Array.isArray(payload?.items) ? payload.items : [];
     const responseById = /* @__PURE__ */ new Map();
     rawItems.forEach((item) => {
@@ -9876,7 +9994,7 @@ ${entries.join("\n")}
       seenRuleIds.add(ruleId);
       const result = validateRegexResponseRule(
         rawRule,
-        candidates2,
+        candidates,
         responseById,
         confidenceThreshold,
         assignedSourceIds
@@ -9891,7 +10009,7 @@ ${entries.join("\n")}
         });
       }
     });
-    const decisions2 = candidates2.map((candidate) => {
+    const decisions = candidates.map((candidate) => {
       const item = responseById.get(candidate.id);
       if (!item) return createReview(candidate, "missing-result", item);
       const action = normalizeAction(item);
@@ -9980,7 +10098,7 @@ ${entries.join("\n")}
         status
       };
     });
-    const decisionById = new Map(decisions2.map((decision) => [decision.id, decision]));
+    const decisionById = new Map(decisions.map((decision) => [decision.id, decision]));
     const invalidValidatedRuleIds = new Set(
       Array.from(validRegexRules.entries()).filter(
         ([, rule]) => !rule.sourceIds.every((sourceId) => {
@@ -9989,7 +10107,7 @@ ${entries.join("\n")}
         })
       ).map(([id]) => id)
     );
-    const finalDecisions = decisions2.map((decision) => {
+    const finalDecisions = decisions.map((decision) => {
       if (!invalidValidatedRuleIds.has(decision.regexRuleId)) return decision;
       const candidate = candidateMap.get(decision.id);
       return createReview(
@@ -10799,9 +10917,9 @@ ${entries.join("\n")}
     providerTestDescription.classList.add("settings-info-notice", "ai-provider-test-description");
     providerTestDescription.setAttribute("role", "note");
     providerTestDescription.firstElementChild?.classList.add("settings-info-notice-icon");
-    function setProviderStatus(message = "", state = "") {
+    function setProviderStatus(message = "", state4 = "") {
       providerStatus.textContent = message;
-      providerStatus.dataset.state = state;
+      providerStatus.dataset.state = state4;
       providerFooter.hidden = !message;
     }
     function activeProvider() {
@@ -11557,8 +11675,8 @@ ${entries.join("\n")}
       document.addEventListener("keydown", handleEscForSessionScan, true);
     }
   }
-  on("resumeScanSession", async (state) => {
-    if (state.mode === "session-scan") {
+  on("resumeScanSession", async (state4) => {
+    if (state4.mode === "session-scan") {
       log(t("log.sessionScan.resuming"));
       const dynamicFab2 = getDynamicFab();
       const settings = await loadSettings();
@@ -11567,7 +11685,7 @@ ${entries.join("\n")}
           showNotification(t("notifications.scanModeConflict"), { type: "info" });
           return;
         }
-        const resumedData = settings.sessionScan_persistData && state.data ? state.data : null;
+        const resumedData = settings.sessionScan_persistData && state4.data ? state4.data : null;
         void start((count) => {
           updateCounterValue(count);
           currentSessionCount = count;
@@ -11591,6 +11709,68 @@ ${entries.join("\n")}
       }
     }
   });
+  // src/features/element-scan/state.js
+  function createElementScanState() {
+    return {
+      isActive: false,
+      isPaused: false,
+      isAdjusting: false,
+      currentTarget: null,
+      elementPath: [],
+      stagedTexts: /* @__PURE__ */ new Set(),
+      shouldResumeAfterModalClose: false
+    };
+  }
+  // src/features/element-scan/stagedTextStore.js
+  function createStagedTextStore(state4) {
+    const runtime3 = {
+      autoSaveInterval: null
+    };
+    function save() {
+      saveActiveSession("element-scan", Array.from(state4.stagedTexts));
+    }
+    function emitCount() {
+      fire("stagedCountChanged", state4.stagedTexts.size);
+      if (state4.isActive) save();
+    }
+    function add(texts) {
+      texts.forEach((text) => state4.stagedTexts.add(text));
+      emitCount();
+    }
+    function clear() {
+      state4.stagedTexts.clear();
+      emitCount();
+    }
+    function restore(texts) {
+      texts.forEach((text) => state4.stagedTexts.add(text));
+    }
+    function startAutoSave() {
+      stopAutoSave();
+      runtime3.autoSaveInterval = setInterval(() => {
+        if (state4.isActive) save();
+      }, 5e3);
+    }
+    function stopAutoSave() {
+      if (runtime3.autoSaveInterval === null) return;
+      clearInterval(runtime3.autoSaveInterval);
+      runtime3.autoSaveInterval = null;
+    }
+    function clearPersistedSession() {
+      clearActiveSession();
+    }
+    return {
+      add,
+      clear,
+      clearPersistedSession,
+      emitCount,
+      getAll: () => Array.from(state4.stagedTexts),
+      getSet: () => state4.stagedTexts,
+      restore,
+      save,
+      startAutoSave,
+      stopAutoSave
+    };
+  }
   // src/assets/icons/reselectIcon.js
   var reselectIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v280h-80v-200H160v400h320v80H160ZM760 0q-73 0-127.5-45.5T564-160h62q13 44 49.5 72T760-60q58 0 99-41t41-99q0-58-41-99t-99-41q-29 0-54 10.5T662-300h58v60H560v-160h60v57q27-26 63-41.5t77-15.5q83 0 141.5 58.5T960-200q0 83-58.5 141.5T760 0Z"/></svg>`;
   // src/assets/icons/stashIcon.js
@@ -11613,14 +11793,14 @@ ${entries.join("\n")}
     }
     initOnVisible() {
       this.observer = new IntersectionObserver(
-        (entries, observer3) => {
+        (entries, observer) => {
           entries.forEach((entry) => {
             if (entry.isIntersecting) {
               if (!this.isInitialized) {
                 this.performInitialMeasurement();
                 this.isInitialized = true;
               }
-              observer3.unobserve(this.element);
+              observer.unobserve(this.element);
             }
           });
         },
@@ -11853,7 +12033,7 @@ ${entries.join("\n")}
       toolbarTag.style.opacity = "1";
     }, 100);
   }
-  function createAdjustmentToolbar(elementPath2, offset = { x: 0, y: 0 }, actions) {
+  function createAdjustmentToolbar(elementPath, offset = { x: 0, y: 0 }, actions) {
     const { onSelectionLevelChange, onReselect, onStage, onConfirm } = actions;
     if (toolbar) cleanupToolbar();
     log(t("log.elementScanUI.creatingToolbar"));
@@ -11866,7 +12046,7 @@ ${entries.join("\n")}
     const toolbarTag = document.createElement("div");
     toolbarTag.id = "element-scan-toolbar-tag";
     toolbarTag.title = t("tooltip.dragHint");
-    toolbarTag.textContent = getElementSelector(elementPath2[0]);
+    toolbarTag.textContent = getElementSelector(elementPath[0]);
     const sliderContainer = document.createElement("div");
     sliderContainer.id = "element-scan-slider-container";
     const actionsContainer = document.createElement("div");
@@ -11874,7 +12054,7 @@ ${entries.join("\n")}
     toolbar.append(toolbarTitle, toolbarTag, sliderContainer, actionsContainer);
     sliderInstance = new CustomSlider({
       min: 0,
-      max: elementPath2.length - 1,
+      max: elementPath.length - 1,
       value: 0,
       onChange: (newValue) => {
         log(simpleTemplate(t("log.elementScanUI.sliderChanged"), { level: newValue }));
@@ -11913,7 +12093,7 @@ ${entries.join("\n")}
     actionsContainer.appendChild(reselectBtn);
     actionsContainer.appendChild(stageBtn);
     actionsContainer.appendChild(confirmBtn);
-    const initialRect = elementPath2[0].getBoundingClientRect();
+    const initialRect = elementPath[0].getBoundingClientRect();
     const toolbarRect = toolbar.getBoundingClientRect();
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
@@ -12097,70 +12277,6 @@ ${entries.join("\n")}
       if (scanContainer) scanContainer.classList.remove("is-locked");
     }, 500);
   }
-  // src/features/element-scan/textFilter.js
-  var workerInstance = null;
-  var fallbackNotificationShown = false;
-  function runFallback(texts, settings) {
-    log(t("log.elementScan.worker.fallback"), "info");
-    if (!fallbackNotificationShown) {
-      showNotification(t("notifications.cspWorkerWarning"), { type: "info", duration: 5e3 });
-      fallbackNotificationShown = true;
-    }
-    const logFiltered = (text, reason) => {
-      log(t("log.textProcessor.filtered", { text, reason }));
-    };
-    return filterAndNormalizeTexts(texts, settings.filterRules, settings.enableDebugLogging, logFiltered);
-  }
-  function resetTextFilterState() {
-    fallbackNotificationShown = false;
-  }
-  function terminateTextFilterWorker() {
-    if (!workerInstance) return;
-    workerInstance.terminate();
-    workerInstance = null;
-    log(t("log.elementScan.worker.terminated"));
-  }
-  async function filterTextsWithWorker(texts, settings) {
-    const workerAllowed = await isWorkerAllowed();
-    if (!workerAllowed) {
-      log(t("log.elementScan.worker.cspBlocked"), "warn");
-      return runFallback(texts, settings);
-    }
-    return new Promise((resolve) => {
-      try {
-        if (!workerInstance) {
-          log(t("log.elementScan.worker.initializing"), "info");
-          workerInstance = new Worker(trustedWorkerUrl);
-        }
-        workerInstance.onmessage = (event) => {
-          const { type, payload } = event.data;
-          if (type === "textsFiltered") resolve(payload.texts);
-        };
-        workerInstance.onerror = () => {
-          log(t("log.elementScan.worker.runtimeError"), "warn");
-          workerInstance.terminate();
-          workerInstance = null;
-          resolve(runFallback(texts, settings));
-        };
-        workerInstance.postMessage({
-          type: "filter-texts",
-          payload: {
-            texts,
-            filterRules: settings.filterRules,
-            enableDebugLogging: settings.enableDebugLogging,
-            translations: {
-              workerLogPrefix: t("log.elementScan.worker.logPrefix"),
-              textFiltered: t("log.textProcessor.filtered"),
-              filterReasons: getTranslationObject("filterReasons")
-            }
-          }
-        });
-      } catch (error) {
-        log(t("log.elementScan.worker.initSyncError", { error: error.message }), "error");
-        resolve(runFallback(texts, settings));
-      }
-    });
-  }
   // src/features/element-scan/iframeListenerRegistry.js
   function createIframeListenerRegistry({ canAttach, onAttach, onDetach }) {
     const pendingLoadHandlers = /* @__PURE__ */ new Map();
@@ -12251,114 +12367,475 @@ ${entries.join("\n")}
     }
     return Object.freeze({ watch, unwatch, detachAll, reset, getFrameElement });
   }
-  // src/features/element-scan/logic.js
-  var isActive = false;
-  var isPaused2 = false;
-  var isAdjusting = false;
-  var currentTarget = null;
-  var elementPath = [];
-  var stagedTexts = /* @__PURE__ */ new Set();
-  var shouldResumeAfterModalClose = false;
-  var isHighlightUpdateQueued = false;
-  var autoSaveInterval2 = null;
-  var AUTO_SAVE_INTERVAL_MS2 = 5e3;
-  var scrollableParents = [];
-  var scrollUpdateQueued = false;
-  var iframeObserver = null;
-  var reselectTimer = null;
-  var iframeListenerRegistry = createIframeListenerRegistry({
-    canAttach: () => isActive && !isPaused2,
-    onAttach: addListenersToDocument,
-    onDetach: removeListenersFromDocument
-  });
-  on("clearElementScan", () => {
-    stagedTexts.clear();
-    updateStagedCount();
-  });
-  on("resumeScanSession", async (state) => {
-    if (state.mode === "element-scan") {
-      const elementScanFab2 = getElementScanFab();
-      const settings = await loadSettings();
-      if (elementScanFab2 && !isElementScanActive()) {
-        if (state && state.mode === "element-scan" && state.data && Array.isArray(state.data)) {
-          log(t("log.elementScan.resuming"));
-          if (settings.elementScan_persistData) {
-            state.data.forEach((item) => stagedTexts.add(item));
-            log(t("log.elementScan.restored", { count: stagedTexts.size }));
-          } else {
-            stagedTexts.clear();
-            log(t("log.elementScan.skipRestore"));
-          }
-        } else {
-          log(t("log.elementScan.startingNewSession"));
-        }
-        const started = startElementScan(elementScanFab2, { silent: true });
-        if (!started) return;
-        updateStagedCount();
-        saveSessionState2();
-        if (settings.elementScan_persistData) {
-          showNotification(t("notifications.elementScanResumed"), { type: "info" });
-        } else {
-          showNotification(t("notifications.elementScanStarted"), { type: "info" });
-        }
-      }
-    }
-  });
-  on("modalClosed", () => {
-    if (isElementScanActive() && getShouldResumeAfterModalClose()) {
-      setShouldResumeAfterModalClose(false);
-      reselectElement();
-    }
-  });
-  function handleScroll() {
-    if (!scrollUpdateQueued) {
-      scrollUpdateQueued = true;
+  // src/features/element-scan/selectionController.js
+  function createElementSelectionController({ state: state4, onStop, onStage, onConfirm }) {
+    const runtime3 = {
+      iframeObserver: null,
+      scrollableParents: [],
+      scrollUpdateQueued: false,
+      highlightUpdateQueued: false
+    };
+    function handleScroll() {
+      if (runtime3.scrollUpdateQueued) return;
+      runtime3.scrollUpdateQueued = true;
       requestAnimationFrame(() => {
-        if (currentTarget && isAdjusting) {
-          updateHighlight(currentTarget);
-        }
-        scrollUpdateQueued = false;
+        if (state4.currentTarget && state4.isAdjusting) updateHighlight(state4.currentTarget);
+        runtime3.scrollUpdateQueued = false;
       });
     }
-  }
-  function addScrollListeners() {
-    let parent = currentTarget.parentElement;
-    while (parent) {
-      if (parent.scrollHeight > parent.clientHeight || parent.scrollWidth > parent.clientWidth) {
-        scrollableParents.push(parent);
-        parent.addEventListener("scroll", handleScroll, { passive: true });
+    function addScrollListeners() {
+      if (!state4.currentTarget) return;
+      const cursor = { parent: state4.currentTarget.parentElement };
+      while (cursor.parent) {
+        if (cursor.parent.scrollHeight > cursor.parent.clientHeight || cursor.parent.scrollWidth > cursor.parent.clientWidth) {
+          runtime3.scrollableParents.push(cursor.parent);
+          cursor.parent.addEventListener("scroll", handleScroll, { passive: true });
+        }
+        cursor.parent = cursor.parent.parentElement;
       }
-      parent = parent.parentElement;
+      window.addEventListener("scroll", handleScroll, { passive: true });
+      log(simpleTemplate(t("log.elementScan.scrollListenersAdded"), { count: runtime3.scrollableParents.length }));
     }
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    log(simpleTemplate(t("log.elementScan.scrollListenersAdded"), { count: scrollableParents.length }));
-  }
-  function removeScrollListeners() {
-    scrollableParents.forEach((parent) => {
-      parent.removeEventListener("scroll", handleScroll);
+    function removeScrollListeners() {
+      runtime3.scrollableParents.forEach((parent) => parent.removeEventListener("scroll", handleScroll));
+      window.removeEventListener("scroll", handleScroll);
+      runtime3.scrollableParents = [];
+      log(t("log.elementScan.scrollListenersRemoved"));
+    }
+    function getDocumentOffset(doc) {
+      if (!doc || doc === document) return { x: 0, y: 0 };
+      const frameElement = iframeListenerRegistry.getFrameElement(doc);
+      if (!frameElement) return { x: 0, y: 0 };
+      const rect = frameElement.getBoundingClientRect();
+      return { x: rect.left, y: rect.top };
+    }
+    function scheduledHighlightUpdate() {
+      if (state4.currentTarget) {
+        updateHighlight(state4.currentTarget, getDocumentOffset(state4.currentTarget.ownerDocument));
+      }
+      runtime3.highlightUpdateQueued = false;
+    }
+    function handleMouseOver(event) {
+      if (!state4.isActive || state4.isAdjusting || state4.isPaused) return;
+      const target = event.target;
+      if (target.ownerDocument === document) {
+        if (target.closest(".text-extractor-fab-container") || target.closest("#text-extractor-container")) {
+          if (state4.currentTarget) {
+            cleanupUI();
+            state4.currentTarget = null;
+          }
+          return;
+        }
+      }
+      if (target !== state4.currentTarget) {
+        state4.currentTarget = target;
+        log(simpleTemplate(t("log.elementScan.hovering"), { tagName: state4.currentTarget.tagName }));
+        if (!runtime3.highlightUpdateQueued) {
+          runtime3.highlightUpdateQueued = true;
+          requestAnimationFrame(scheduledHighlightUpdate);
+        }
+      }
+    }
+    function handleMouseOut(event) {
+      if (event.target === state4.currentTarget) cleanupUI();
+    }
+    function handleElementScanKeyDown(event) {
+      if (!state4.isActive || event.key !== "Escape") return;
+      const isSettingsPanelOpen = uiContainer.querySelector(".settings-panel-overlay.is-visible");
+      const isHelpTooltipOpen = uiContainer.querySelector(".info-tooltip-overlay.is-visible");
+      if (isSettingsPanelOpen || isHelpTooltipOpen) {
+        log(t("log.elementScan.escapeIgnoredForModal"));
+        return;
+      }
+      if (state4.isAdjusting) {
+        log(t("log.elementScan.escapePressedInAdjust"));
+        reselect();
+        return;
+      }
+      log(t("log.elementScan.escapePressed"));
+      onStop();
+    }
+    function handleContextMenu(event) {
+      if (!state4.isActive || state4.isAdjusting) return;
+      event.preventDefault();
+      log(t("log.elementScan.rightClickExit"));
+      onStop();
+    }
+    function handleElementClick(event) {
+      if (event.detail === 0) return;
+      if (!state4.isActive || state4.isAdjusting || !state4.currentTarget || state4.isPaused) return;
+      event.preventDefault();
+      event.stopPropagation();
+      const tagName = state4.currentTarget.tagName.toLowerCase();
+      log(simpleTemplate(t("log.elementScan.clickedEnteringAdjust"), { tagName }));
+      state4.isAdjusting = true;
+      removeListenersFromDocument(document);
+      removeListenersFromIframes();
+      const path = [];
+      const cursor = { element: state4.currentTarget };
+      const ownerDoc = state4.currentTarget.ownerDocument;
+      const body = ownerDoc.body;
+      while (cursor.element && cursor.element !== body) {
+        path.push(cursor.element);
+        cursor.element = cursor.element.parentElement;
+      }
+      path.push(body);
+      state4.elementPath = path;
+      log(simpleTemplate(t("log.elementScan.pathBuilt"), { depth: state4.elementPath.length }));
+      createAdjustmentToolbar(state4.elementPath, getDocumentOffset(ownerDoc), {
+        onSelectionLevelChange: updateSelectionLevel2,
+        onReselect: reselect,
+        onStage,
+        onConfirm
+      });
+      addScrollListeners();
+    }
+    function addListenersToDocument(doc) {
+      try {
+        doc.addEventListener("mouseover", handleMouseOver);
+        doc.addEventListener("mouseout", handleMouseOut);
+        doc.addEventListener("click", handleElementClick, true);
+        doc.addEventListener("keydown", handleElementScanKeyDown);
+        doc.addEventListener("contextmenu", handleContextMenu, true);
+      } catch (error) {
+        log(t("log.elementScan.addListenersFailed", { error: error.message }), "warn");
+      }
+    }
+    function removeListenersFromDocument(doc) {
+      try {
+        doc.removeEventListener("mouseover", handleMouseOver);
+        doc.removeEventListener("mouseout", handleMouseOut);
+        doc.removeEventListener("click", handleElementClick, true);
+        doc.removeEventListener("keydown", handleElementScanKeyDown);
+        doc.removeEventListener("contextmenu", handleContextMenu, true);
+      } catch {
+      }
+    }
+    function collectIframeElements(nodes, target) {
+      nodes.forEach((node) => {
+        if (node.tagName === "IFRAME") {
+          target.add(node);
+        } else if (node.nodeType === Node.ELEMENT_NODE && node.querySelectorAll) {
+          node.querySelectorAll("iframe").forEach((iframe) => target.add(iframe));
+        }
+      });
+    }
+    function attachIframeListeners(iframe) {
+      iframeListenerRegistry.watch(iframe);
+    }
+    function addListenersToIframes() {
+      document.querySelectorAll("iframe").forEach(attachIframeListeners);
+    }
+    function setupIframeObserver() {
+      if (runtime3.iframeObserver) return;
+      runtime3.iframeObserver = new MutationObserver((mutations) => {
+        const removedIframes = /* @__PURE__ */ new Set();
+        const addedIframes = /* @__PURE__ */ new Set();
+        mutations.forEach((mutation) => {
+          collectIframeElements(mutation.removedNodes, removedIframes);
+          collectIframeElements(mutation.addedNodes, addedIframes);
+        });
+        removedIframes.forEach((iframe) => iframeListenerRegistry.unwatch(iframe));
+        addedIframes.forEach(attachIframeListeners);
+      });
+      runtime3.iframeObserver.observe(document.body, { childList: true, subtree: true });
+      log(t("log.elementScan.iframeObserverStarted"));
+    }
+    function removeListenersFromIframes({ reset = false } = {}) {
+      if (runtime3.iframeObserver) {
+        runtime3.iframeObserver.disconnect();
+        runtime3.iframeObserver = null;
+      }
+      if (reset) iframeListenerRegistry.reset();
+      else iframeListenerRegistry.detachAll();
+    }
+    const iframeListenerRegistry = createIframeListenerRegistry({
+      canAttach: () => state4.isActive && !state4.isPaused,
+      onAttach: addListenersToDocument,
+      onDetach: removeListenersFromDocument
     });
-    window.removeEventListener("scroll", handleScroll);
-    scrollableParents = [];
-    log(t("log.elementScan.scrollListenersRemoved"));
+    function reselect() {
+      if (state4.isPaused) return;
+      log(t("log.elementScan.reselecting"));
+      state4.isAdjusting = false;
+      cleanupUI();
+      cleanupToolbar();
+      removeScrollListeners();
+      addListenersToDocument(document);
+      addListenersToIframes();
+      setupIframeObserver();
+    }
+    function updateSelectionLevel2(level) {
+      const targetElement = state4.elementPath[level];
+      if (!targetElement) return;
+      state4.currentTarget = targetElement;
+      const tagName = targetElement.tagName.toLowerCase();
+      log(simpleTemplate(t("log.elementScan.adjustingLevel"), { level, tagName }));
+      updateHighlight(targetElement, getDocumentOffset(targetElement.ownerDocument));
+    }
+    function start2() {
+      addListenersToDocument(document);
+      addListenersToIframes();
+      setupIframeObserver();
+    }
+    function stop2() {
+      removeListenersFromDocument(document);
+      removeListenersFromIframes({ reset: true });
+      cleanupUI();
+      cleanupToolbar();
+      hideTopCenterUI2();
+      removeScrollListeners();
+      state4.currentTarget = null;
+      state4.elementPath = [];
+      state4.isAdjusting = false;
+    }
+    function pause() {
+      cleanupUI();
+      cleanupToolbar();
+      removeScrollListeners();
+      removeListenersFromDocument(document);
+      removeListenersFromIframes();
+    }
+    function resume() {
+      reselect();
+    }
+    function prepareForModal() {
+      removeListenersFromDocument(document);
+      removeListenersFromIframes();
+      cleanupUI();
+      cleanupToolbar();
+      removeScrollListeners();
+    }
+    return {
+      getCurrentTarget: () => state4.currentTarget,
+      getDocumentOffset,
+      getShouldResumeAfterModalClose: () => state4.shouldResumeAfterModalClose,
+      pause,
+      prepareForModal,
+      reselect,
+      resume,
+      setAdjusting: (value) => {
+        state4.isAdjusting = value;
+      },
+      setShouldResumeAfterModalClose: (value) => {
+        state4.shouldResumeAfterModalClose = value;
+      },
+      showTopCenterControls: (actions) => showTopCenterUI2(actions),
+      start: start2,
+      stop: stop2,
+      updateSelectionLevel: updateSelectionLevel2
+    };
   }
+  // src/features/element-scan/textFilter.js
+  var workerInstance = null;
+  var fallbackNotificationShown = false;
+  function runFallback(texts, settings) {
+    log(t("log.elementScan.worker.fallback"), "info");
+    if (!fallbackNotificationShown) {
+      showNotification(t("notifications.cspWorkerWarning"), { type: "info", duration: 5e3 });
+      fallbackNotificationShown = true;
+    }
+    const logFiltered = (text, reason) => {
+      log(t("log.textProcessor.filtered", { text, reason }));
+    };
+    return filterAndNormalizeTexts(texts, settings.filterRules, settings.enableDebugLogging, logFiltered);
+  }
+  function resetTextFilterState() {
+    fallbackNotificationShown = false;
+  }
+  function terminateTextFilterWorker() {
+    if (!workerInstance) return;
+    workerInstance.terminate();
+    workerInstance = null;
+    log(t("log.elementScan.worker.terminated"));
+  }
+  async function filterTextsWithWorker(texts, settings) {
+    const workerAllowed = await isWorkerAllowed();
+    if (!workerAllowed) {
+      log(t("log.elementScan.worker.cspBlocked"), "warn");
+      return runFallback(texts, settings);
+    }
+    return new Promise((resolve) => {
+      try {
+        if (!workerInstance) {
+          log(t("log.elementScan.worker.initializing"), "info");
+          workerInstance = new Worker(trustedWorkerUrl);
+        }
+        workerInstance.onmessage = (event) => {
+          const { type, payload } = event.data;
+          if (type === "textsFiltered") resolve(payload.texts);
+        };
+        workerInstance.onerror = () => {
+          log(t("log.elementScan.worker.runtimeError"), "warn");
+          workerInstance.terminate();
+          workerInstance = null;
+          resolve(runFallback(texts, settings));
+        };
+        workerInstance.postMessage({
+          type: "filter-texts",
+          payload: {
+            texts,
+            filterRules: settings.filterRules,
+            enableDebugLogging: settings.enableDebugLogging,
+            translations: {
+              workerLogPrefix: t("log.elementScan.worker.logPrefix"),
+              textFiltered: t("log.textProcessor.filtered"),
+              filterReasons: getTranslationObject("filterReasons")
+            }
+          }
+        });
+      } catch (error) {
+        log(t("log.elementScan.worker.initSyncError", { error: error.message }), "error");
+        resolve(runFallback(texts, settings));
+      }
+    });
+  }
+  // src/features/element-scan/stagingController.js
+  function createElementStagingController({ state: state4, selectionController: selectionController2, textStore: textStore2, onStop }) {
+    async function stageCurrentElement2() {
+      const currentTarget = selectionController2.getCurrentTarget();
+      if (!currentTarget) return;
+      log(t("log.elementScan.stagingStarted", { tagName: currentTarget.tagName }));
+      const rawTexts = extractRawTextFromElement(currentTarget);
+      const settings = await loadSettings();
+      try {
+        const filteredTexts = await filterTextsWithWorker(rawTexts, settings);
+        if (filteredTexts.length > 0) {
+          textStore2.add(filteredTexts);
+          log(t("log.elementScan.staged", { count: filteredTexts.length, total: state4.stagedTexts.size }));
+          playScanPulseAnimation();
+        } else {
+          log(t("log.elementScan.stagedNothingNew"));
+          playScanErrorAnimation();
+        }
+      } catch (error) {
+        log(t("log.elementScan.processingError", { error: error.message }), "error");
+        showNotification(t("notifications.scanFailed"), { type: "error" });
+      }
+      log(t("log.elementScan.stagingFinished"));
+      selectionController2.reselect();
+    }
+    async function confirmSelectionAndExtract2() {
+      const currentTarget = selectionController2.getCurrentTarget();
+      if (!currentTarget) {
+        log(t("log.elementScan.confirmFailedNoTarget"));
+        return;
+      }
+      log(t("log.elementScan.confirmStarted"));
+      selectionController2.setAdjusting(true);
+      const rawTexts = extractRawTextFromElement(currentTarget);
+      const settings = await loadSettings();
+      try {
+        const filteredTexts = await filterTextsWithWorker(rawTexts, settings);
+        textStore2.add(filteredTexts);
+      } catch (error) {
+        log(t("log.elementScan.processingError", { error: error.message }), "error");
+        showNotification(t("notifications.scanFailed"), { type: "error" });
+        onStop();
+        return;
+      }
+      const totalToProcess = state4.stagedTexts.size;
+      log(simpleTemplate(t("log.elementScan.confirmingStaged"), { count: totalToProcess }));
+      playScanConfirmationAnimation(() => {
+        selectionController2.setAdjusting(true);
+        selectionController2.prepareForModal();
+        selectionController2.setShouldResumeAfterModalClose(true);
+        try {
+          const allTexts = textStore2.getAll();
+          log(simpleTemplate(t("log.elementScan.extractedCount"), { count: allTexts.length }));
+          const { outputFormat, includeArrayBrackets, tabSize } = settings;
+          const formattedText = formatTextsForTranslation(allTexts, outputFormat, {
+            includeArrayBrackets,
+            tabSize
+          });
+          const count = allTexts.length;
+          updateModalContent(formattedText, true, "element-scan");
+          updateScanCount(count, "element");
+          showNotification(simpleTemplate(t("scan.elementFinished"), { count }), { type: "success" });
+          log(t("log.elementScan.confirmFinished"));
+        } catch (error) {
+          log(t("log.elementScan.confirmFailed", { error: error.message }), "error");
+          showNotification(t("notifications.scanFailed"), { type: "error" });
+          onStop();
+        }
+      });
+    }
+    return {
+      confirmSelectionAndExtract: confirmSelectionAndExtract2,
+      resetWorker: () => {
+        terminateTextFilterWorker();
+        resetTextFilterState();
+      },
+      stageCurrentElement: stageCurrentElement2
+    };
+  }
+  // src/features/element-scan/logic.js
+  var state2 = createElementScanState();
+  var textStore = createStagedTextStore(state2);
+  var runtime = {
+    stagingController: null
+  };
+  var selectionController = createElementSelectionController({
+    state: state2,
+    onConfirm: () => runtime.stagingController?.confirmSelectionAndExtract(),
+    onStage: () => runtime.stagingController?.stageCurrentElement(),
+    onStop: () => stopElementScan(getElementScanFab())
+  });
+  runtime.stagingController = createElementStagingController({
+    onStop: () => stopElementScan(getElementScanFab()),
+    selectionController,
+    state: state2,
+    textStore
+  });
+  function saveSessionOnUnload() {
+    if (state2.isActive) textStore.save();
+  }
+  async function handleResumeScanSession(session) {
+    if (session.mode !== "element-scan") return;
+    const elementScanFab2 = getElementScanFab();
+    const settings = await loadSettings();
+    if (!elementScanFab2 || isElementScanActive()) return;
+    if (session.data && Array.isArray(session.data)) {
+      log(t("log.elementScan.resuming"));
+      if (settings.elementScan_persistData) {
+        textStore.restore(session.data);
+        log(t("log.elementScan.restored", { count: textStore.getSet().size }));
+      } else {
+        textStore.clear();
+        log(t("log.elementScan.skipRestore"));
+      }
+    } else {
+      log(t("log.elementScan.startingNewSession"));
+    }
+    const started = startElementScan(elementScanFab2, { silent: true });
+    if (!started) return;
+    textStore.emitCount();
+    textStore.save();
+    showNotification(
+      settings.elementScan_persistData ? t("notifications.elementScanResumed") : t("notifications.elementScanStarted"),
+      { type: "info" }
+    );
+  }
+  function handleModalClosed() {
+    if (!isElementScanActive() || !selectionController.getShouldResumeAfterModalClose()) return;
+    selectionController.setShouldResumeAfterModalClose(false);
+    selectionController.reselect();
+  }
+  function handleClearElementScan() {
+    textStore.clear();
+  }
+  on("clearElementScan", handleClearElementScan);
+  on("resumeScanSession", handleResumeScanSession);
+  on("modalClosed", handleModalClosed);
   function isElementScanActive() {
-    return isActive;
+    return state2.isActive;
   }
   function getStagedTexts() {
-    return stagedTexts;
-  }
-  function getShouldResumeAfterModalClose() {
-    return shouldResumeAfterModalClose;
-  }
-  function setShouldResumeAfterModalClose(value) {
-    shouldResumeAfterModalClose = value;
+    return textStore.getSet();
   }
   function handleElementScanClick(fabElement) {
-    if (isActive) {
-      stopElementScan(fabElement);
-    } else {
-      startElementScan(fabElement);
-    }
+    if (state2.isActive) stopElementScan(fabElement);
+    else startElementScan(fabElement);
   }
   function startElementScan(fabElement, options = {}) {
     if (!acquireScanMode(SCAN_MODES.ELEMENT)) {
@@ -12373,365 +12850,252 @@ ${entries.join("\n")}
     if (!options.silent) {
       showNotification(t("notifications.elementScanStarted"), { type: "info" });
     }
-    isActive = true;
-    isAdjusting = false;
-    resetTextFilterState();
-    fabElement.classList.add("is-recording");
-    updateFabTooltip(fabElement, "scan.stopSession");
-    showTopCenterUI2({
+    state2.isActive = true;
+    state2.isPaused = false;
+    state2.isAdjusting = false;
+    runtime.stagingController.resetWorker();
+    selectionController.showTopCenterControls({
       onPause: pauseElementScan,
       onResume: resumeElementScan
     });
-    addListenersToDocument(document);
-    addListenersToIframes();
-    setupIframeObserver();
-    window.addEventListener("beforeunload", handleElementScanUnload);
-    if (autoSaveInterval2) clearInterval(autoSaveInterval2);
-    autoSaveInterval2 = setInterval(() => {
-      if (isElementScanActive()) {
-        saveSessionState2();
-      }
-    }, AUTO_SAVE_INTERVAL_MS2);
+    selectionController.start();
+    fabElement.classList.add("is-recording");
+    updateFabTooltip(fabElement, "scan.stopSession");
+    window.addEventListener("beforeunload", saveSessionOnUnload);
+    textStore.startAutoSave();
     log(t("log.elementScan.listenersAdded"));
     return true;
   }
-  function addListenersToDocument(doc) {
-    try {
-      doc.addEventListener("mouseover", handleMouseOver);
-      doc.addEventListener("mouseout", handleMouseOut);
-      doc.addEventListener("click", handleElementClick, true);
-      doc.addEventListener("keydown", handleElementScanKeyDown);
-      doc.addEventListener("contextmenu", handleContextMenu, true);
-    } catch (e) {
-      log(t("log.elementScan.addListenersFailed", { error: e.message }), "warn");
-    }
-  }
-  function removeListenersFromDocument(doc) {
-    try {
-      doc.removeEventListener("mouseover", handleMouseOver);
-      doc.removeEventListener("mouseout", handleMouseOut);
-      doc.removeEventListener("click", handleElementClick, true);
-      doc.removeEventListener("keydown", handleElementScanKeyDown);
-      doc.removeEventListener("contextmenu", handleContextMenu, true);
-    } catch (e) {
-    }
-  }
-  function addListenersToIframes() {
-    const iframes = document.querySelectorAll("iframe");
-    iframes.forEach((iframe) => {
-      attachIframeListeners(iframe);
-    });
-  }
-  function attachIframeListeners(iframe) {
-    iframeListenerRegistry.watch(iframe);
-  }
-  function collectIframeElements(nodes, target) {
-    nodes.forEach((node) => {
-      if (node.tagName === "IFRAME") {
-        target.add(node);
-      } else if (node.nodeType === Node.ELEMENT_NODE && node.querySelectorAll) {
-        node.querySelectorAll("iframe").forEach((iframe) => target.add(iframe));
-      }
-    });
-  }
-  function setupIframeObserver() {
-    if (iframeObserver) return;
-    iframeObserver = new MutationObserver((mutations) => {
-      const removedIframes = /* @__PURE__ */ new Set();
-      const addedIframes = /* @__PURE__ */ new Set();
-      mutations.forEach((mutation) => {
-        collectIframeElements(mutation.removedNodes, removedIframes);
-        collectIframeElements(mutation.addedNodes, addedIframes);
-      });
-      removedIframes.forEach((iframe) => iframeListenerRegistry.unwatch(iframe));
-      addedIframes.forEach(attachIframeListeners);
-    });
-    iframeObserver.observe(document.body, { childList: true, subtree: true });
-    log(t("log.elementScan.iframeObserverStarted"));
-  }
-  function removeListenersFromIframes({ reset = false } = {}) {
-    if (iframeObserver) {
-      iframeObserver.disconnect();
-      iframeObserver = null;
-    }
-    if (reset) iframeListenerRegistry.reset();
-    else iframeListenerRegistry.detachAll();
-  }
-  function saveSessionState2() {
-    saveActiveSession("element-scan", Array.from(stagedTexts));
-  }
-  function handleElementScanUnload() {
-    if (isElementScanActive()) {
-      saveSessionState2();
-    }
-  }
   function stopElementScan(fabElement) {
-    if (!isActive) {
+    if (!state2.isActive) {
       releaseScanMode(SCAN_MODES.ELEMENT);
       return;
     }
     log(t("log.elementScan.stopping"));
-    isActive = false;
-    isAdjusting = false;
-    isPaused2 = false;
+    state2.isActive = false;
+    state2.isPaused = false;
+    state2.isAdjusting = false;
+    state2.shouldResumeAfterModalClose = false;
     if (fabElement) {
       fabElement.classList.remove("is-recording");
       updateFabTooltip(fabElement, "tooltip.element_scan");
     }
-    removeListenersFromDocument(document);
-    removeListenersFromIframes({ reset: true });
-    window.removeEventListener("beforeunload", handleElementScanUnload);
-    if (autoSaveInterval2) {
-      clearInterval(autoSaveInterval2);
-      autoSaveInterval2 = null;
-    }
-    clearActiveSession();
+    selectionController.stop();
+    window.removeEventListener("beforeunload", saveSessionOnUnload);
+    textStore.stopAutoSave();
+    textStore.clearPersistedSession();
+    runtime.stagingController.resetWorker();
+    textStore.clear();
     log(t("log.elementScan.listenersRemoved"));
-    cleanupUI();
-    cleanupToolbar();
-    hideTopCenterUI2();
-    removeScrollListeners();
-    if (reselectTimer) {
-      clearTimeout(reselectTimer);
-      reselectTimer = null;
-    }
-    terminateTextFilterWorker();
-    elementPath = [];
-    currentTarget = null;
-    stagedTexts.clear();
-    resetTextFilterState();
-    updateStagedCount();
     log(t("log.elementScan.stateReset"));
     uiLifecycle.release();
     releaseScanMode(SCAN_MODES.ELEMENT);
   }
   function pauseElementScan() {
-    if (!isActive || isPaused2) return;
-    isPaused2 = true;
+    if (!state2.isActive || state2.isPaused) return;
+    state2.isPaused = true;
     showNotification(t("notifications.elementScanPaused"), { type: "info" });
-    cleanupUI();
-    cleanupToolbar();
-    removeScrollListeners();
-    removeListenersFromDocument(document);
-    removeListenersFromIframes();
+    selectionController.pause();
   }
   function resumeElementScan() {
-    if (!isActive || !isPaused2) return;
-    isPaused2 = false;
+    if (!state2.isActive || !state2.isPaused) return;
+    state2.isPaused = false;
     showNotification(t("notifications.elementScanContinued"), { type: "success" });
-    reselectElement();
+    selectionController.resume();
   }
-  function reselectElement() {
-    if (isPaused2) return;
-    if (reselectTimer) {
-      clearTimeout(reselectTimer);
-      reselectTimer = null;
-    }
-    log(t("log.elementScan.reselecting"));
-    isAdjusting = false;
-    cleanupUI();
-    cleanupToolbar();
-    removeScrollListeners();
-    addListenersToDocument(document);
-    addListenersToIframes();
-    setupIframeObserver();
+  // src/features/ai-scan/resultView.js
+  var HIDDEN_OUTPUT_STATUSES = /* @__PURE__ */ new Set([AI_CANDIDATE_STATUS.KEEP, AI_CANDIDATE_STATUS.REMOVED]);
+  function isHiddenOutputStatus(status) {
+    return HIDDEN_OUTPUT_STATUSES.has(status);
   }
-  async function stageCurrentElement() {
-    if (!currentTarget) return;
-    log(t("log.elementScan.stagingStarted", { tagName: currentTarget.tagName }));
-    const rawTexts = extractRawTextFromElement(currentTarget);
-    const settings = await loadSettings();
-    try {
-      const filteredTexts = await filterTextsWithWorker(rawTexts, settings);
-      const newlyStagedCount = filteredTexts.length;
-      if (newlyStagedCount > 0) {
-        filteredTexts.forEach((text) => stagedTexts.add(text));
-        log(t("log.elementScan.staged", { count: newlyStagedCount, total: stagedTexts.size }));
-        updateStagedCount();
-        playScanPulseAnimation();
-        if (reselectTimer) clearTimeout(reselectTimer);
-        reselectTimer = setTimeout(() => {
-          reselectElement();
-          reselectTimer = null;
-        }, 500);
-      } else {
-        log(t("log.elementScan.stagedNothingNew"));
-        playScanErrorAnimation();
-        if (reselectTimer) clearTimeout(reselectTimer);
-        reselectTimer = setTimeout(() => {
-          reselectElement();
-          reselectTimer = null;
-        }, 500);
-      }
-    } catch (error) {
-      log(t("log.elementScan.processingError", { error: error.message }), "error");
-      showNotification(t("notifications.scanFailed"), { type: "error" });
-    }
-    log(t("log.elementScan.stagingFinished"));
-    reselectElement();
+  function buildAiDisplayData(candidateItems, decisionItems, regexRules = []) {
+    const decisionById = new Map(decisionItems.map((decision) => [decision.id, decision]));
+    const visibleRegexRules = Array.isArray(regexRules) ? regexRules.filter((rule) => typeof rule?.id === "string" && rule.id.trim() && Array.isArray(rule.sourceIds)) : [];
+    const regexCandidateIds = new Set(visibleRegexRules.flatMap((rule) => rule.sourceIds));
+    const textPairs = candidateItems.filter(
+      (candidate) => hasMeaningfulAiSourceText(candidate.sourceText) && !HIDDEN_OUTPUT_STATUSES.has(candidate.status) && !regexCandidateIds.has(candidate.id)
+    ).map((candidate) => {
+      const decision = decisionById.get(candidate.id);
+      const hasValidatedTranslation = candidate.status === AI_CANDIDATE_STATUS.TRANSLATED && decision?.action === AI_ACTIONS.TRANSLATE && decision?.translationType !== AI_TRANSLATION_TYPES.REGEX && typeof decision.translation === "string";
+      return {
+        sourceText: candidate.sourceText,
+        translation: hasValidatedTranslation ? decision.translation : ""
+      };
+    });
+    return { textPairs, regexRules: visibleRegexRules };
   }
-  function updateStagedCount() {
-    fire("stagedCountChanged", stagedTexts.size);
-    if (isActive) {
-      saveSessionState2();
-    }
+  // src/features/ai-scan/summaryEdits.js
+  var MAX_MANUAL_SOURCE_LENGTH = 1e5;
+  function normalizeSourceList(sourceTexts) {
+    return Array.from(
+      new Set(
+        sourceTexts.map((sourceText) => normalizeAiSourceText(sourceText).slice(0, MAX_MANUAL_SOURCE_LENGTH)).filter(Boolean)
+      )
+    );
   }
-  function getDocumentOffset(doc) {
-    if (!doc || doc === document) return { x: 0, y: 0 };
-    const frameElement = iframeListenerRegistry.getFrameElement(doc);
-    if (!frameElement) return { x: 0, y: 0 };
-    const rect = frameElement.getBoundingClientRect();
-    return { x: rect.left, y: rect.top };
+  function createManualSummaryCandidate(sourceText, { siteKey, targetLanguage }) {
+    const normalizedSourceText = normalizeAiSourceText(sourceText).slice(0, MAX_MANUAL_SOURCE_LENGTH);
+    if (!normalizedSourceText) return null;
+    const fingerprint = createCandidateFingerprint(siteKey, targetLanguage, normalizedSourceText);
+    return {
+      id: `ai-manual-${fingerprint}-${normalizedSourceText.length}`,
+      sourceText: normalizedSourceText,
+      siteKey,
+      targetLanguage,
+      fingerprint,
+      context: {},
+      status: AI_CANDIDATE_STATUS.PENDING,
+      origin: "summary-editor"
+    };
   }
-  function scheduledHighlightUpdate() {
-    if (currentTarget) {
-      const offset = getDocumentOffset(currentTarget.ownerDocument);
-      updateHighlight(currentTarget, offset);
-    }
-    isHighlightUpdateQueued = false;
-  }
-  function handleMouseOver(event) {
-    if (!isActive || isAdjusting || isPaused2) return;
-    const target = event.target;
-    if (target.ownerDocument === document) {
-      if (target.closest(".text-extractor-fab-container") || target.closest("#text-extractor-container")) {
-        if (currentTarget) {
-          cleanupUI();
-          currentTarget = null;
-        }
+  function reconcileAiSummarySources(sourceTexts, currentCandidates, protectedCandidateIds = []) {
+    const remainingSourceTexts = normalizeSourceList(Array.isArray(sourceTexts) ? sourceTexts : []);
+    const remaining = new Set(remainingSourceTexts);
+    const protectedIds = new Set(protectedCandidateIds);
+    const candidatesBySource = /* @__PURE__ */ new Map();
+    currentCandidates.forEach((candidate) => {
+      const sourceText = normalizeAiSourceText(candidate?.sourceText);
+      if (!sourceText) return;
+      const matches = candidatesBySource.get(sourceText) || [];
+      matches.push(candidate);
+      candidatesBySource.set(sourceText, matches);
+    });
+    const addedSourceTexts = [];
+    const revivedCandidateIds = [];
+    remainingSourceTexts.forEach((sourceText) => {
+      const matches = candidatesBySource.get(sourceText) || [];
+      if (matches.some((candidate) => protectedIds.has(candidate.id) || !isHiddenOutputStatus(candidate.status))) {
         return;
       }
-    }
-    if (target !== currentTarget) {
-      currentTarget = target;
-      log(simpleTemplate(t("log.elementScan.hovering"), { tagName: currentTarget.tagName }));
-      if (!isHighlightUpdateQueued) {
-        isHighlightUpdateQueued = true;
-        requestAnimationFrame(scheduledHighlightUpdate);
-      }
-    }
-  }
-  function handleMouseOut(event) {
-    if (event.target === currentTarget) {
-      cleanupUI();
-    }
-  }
-  function handleElementScanKeyDown(event) {
-    if (!isActive || event.key !== "Escape") {
-      return;
-    }
-    const isSettingsPanelOpen = uiContainer.querySelector(".settings-panel-overlay.is-visible");
-    const isHelpTooltipOpen = uiContainer.querySelector(".info-tooltip-overlay.is-visible");
-    if (isSettingsPanelOpen || isHelpTooltipOpen) {
-      log(t("log.elementScan.escapeIgnoredForModal"));
-      return;
-    }
-    if (isAdjusting) {
-      log(t("log.elementScan.escapePressedInAdjust"));
-      reselectElement();
-    } else {
-      log(t("log.elementScan.escapePressed"));
-      const fabElement = uiContainer.querySelector(".fab-element-scan");
-      stopElementScan(fabElement);
-    }
-  }
-  function handleContextMenu(event) {
-    if (isActive && !isAdjusting) {
-      event.preventDefault();
-      log(t("log.elementScan.rightClickExit"));
-      const fabElement = uiContainer.querySelector(".fab-element-scan");
-      stopElementScan(fabElement);
-    }
-  }
-  function handleElementClick(event) {
-    if (event.detail === 0) {
-      return;
-    }
-    if (!isActive || isAdjusting || !currentTarget || isPaused2) return;
-    event.preventDefault();
-    event.stopPropagation();
-    const tagName = currentTarget.tagName.toLowerCase();
-    log(simpleTemplate(t("log.elementScan.clickedEnteringAdjust"), { tagName }));
-    isAdjusting = true;
-    removeListenersFromDocument(document);
-    removeListenersFromIframes();
-    elementPath = [];
-    let el = currentTarget;
-    const ownerDoc = currentTarget.ownerDocument;
-    const body = ownerDoc.body;
-    while (el && el !== body) {
-      elementPath.push(el);
-      el = el.parentElement;
-    }
-    elementPath.push(body);
-    log(simpleTemplate(t("log.elementScan.pathBuilt"), { depth: elementPath.length }));
-    const offset = getDocumentOffset(ownerDoc);
-    createAdjustmentToolbar(elementPath, offset, {
-      onSelectionLevelChange: updateSelectionLevel,
-      onReselect: reselectElement,
-      onStage: stageCurrentElement,
-      onConfirm: confirmSelectionAndExtract
+      const hiddenCandidate = matches.find((candidate) => isHiddenOutputStatus(candidate.status));
+      if (hiddenCandidate) revivedCandidateIds.push(hiddenCandidate.id);
+      else addedSourceTexts.push(sourceText);
     });
-    addScrollListeners();
+    const removedCandidateIds = currentCandidates.filter(
+      (candidate) => !protectedIds.has(candidate.id) && !isHiddenOutputStatus(candidate.status) && !remaining.has(normalizeAiSourceText(candidate.sourceText))
+    ).map((candidate) => candidate.id);
+    return { addedSourceTexts, revivedCandidateIds, removedCandidateIds };
   }
-  function updateSelectionLevel(level) {
-    const targetElement = elementPath[level];
-    if (targetElement) {
-      currentTarget = targetElement;
-      const tagName = targetElement.tagName.toLowerCase();
-      log(simpleTemplate(t("log.elementScan.adjustingLevel"), { level, tagName }));
-      const offset = getDocumentOffset(targetElement.ownerDocument);
-      updateHighlight(targetElement, offset);
+  // src/features/ai-scan/summaryState.js
+  function removeAiSummaryCandidate(state4, id) {
+    const candidate = state4.candidates.get(id);
+    if (!candidate) return { changed: false, cacheChanged: false };
+    state4.candidates.delete(id);
+    state4.decisions.delete(id);
+    let cacheChanged = false;
+    if (candidate.fingerprint) {
+      state4.candidateFingerprints.delete(candidate.fingerprint);
+      state4.userRemovedFingerprints.add(candidate.fingerprint);
+      cacheChanged = state4.cache.delete(candidate.fingerprint);
     }
+    return { changed: true, cacheChanged };
   }
-  async function confirmSelectionAndExtract() {
-    if (!currentTarget) {
-      log(t("log.elementScan.confirmFailedNoTarget"));
-      return;
-    }
-    log(t("log.elementScan.confirmStarted"));
-    isAdjusting = true;
-    const rawTexts = extractRawTextFromElement(currentTarget);
-    const settings = await loadSettings();
-    try {
-      const filteredTexts = await filterTextsWithWorker(rawTexts, settings);
-      filteredTexts.forEach((text) => stagedTexts.add(text));
-      updateStagedCount();
-    } catch (error) {
-      log(t("log.elementScan.processingError", { error: error.message }), "error");
-      showNotification(t("notifications.scanFailed"), { type: "error" });
-      const fabElement = uiContainer.querySelector(".fab-element-scan");
-      stopElementScan(fabElement);
-      return;
-    }
-    const totalToProcess = stagedTexts.size;
-    log(simpleTemplate(t("log.elementScan.confirmingStaged"), { count: totalToProcess }));
-    playScanConfirmationAnimation(() => {
-      isAdjusting = true;
-      removeListenersFromDocument(document);
-      removeListenersFromIframes();
-      cleanupUI();
-      cleanupToolbar();
-      removeScrollListeners();
-      setShouldResumeAfterModalClose(true);
-      try {
-        const allTexts = Array.from(stagedTexts);
-        log(simpleTemplate(t("log.elementScan.extractedCount"), { count: allTexts.length }));
-        const { outputFormat, includeArrayBrackets, tabSize } = settings;
-        const formattedText = formatTextsForTranslation(allTexts, outputFormat, { includeArrayBrackets, tabSize });
-        const count = allTexts.length;
-        updateModalContent(formattedText, true, "element-scan");
-        updateScanCount(count, "element");
-        const notificationText = simpleTemplate(t("scan.elementFinished"), { count });
-        showNotification(notificationText, { type: "success" });
-        log(t("log.elementScan.confirmFinished"));
-      } catch (error) {
-        log(t("log.elementScan.confirmFailed", { error: error.message }), "error");
-        showNotification(t("notifications.scanFailed"), { type: "error" });
-        const fabElement = uiContainer.querySelector(".fab-element-scan");
-        stopElementScan(fabElement);
+  function applyAiSummaryEditsToState(state4, { remainingSourceTexts = null, editedRegexRules = null } = {}) {
+    const hasTextEdits = Array.isArray(remainingSourceTexts);
+    let changed = false;
+    let cacheChanged = false;
+    let regexRules = state4.regexRules;
+    if (Array.isArray(editedRegexRules)) {
+      const existingRules = Array.from(regexRules.values());
+      const matchedRules = matchEditedRegexRulesToExisting(editedRegexRules, existingRules);
+      if (!matchedRules.valid) return { changed: false, error: matchedRules.error };
+      const nextRegexRules = /* @__PURE__ */ new Map();
+      const assignedSourceIds = /* @__PURE__ */ new Set();
+      for (let index = 0; index < editedRegexRules.length; index += 1) {
+        const editedRule = editedRegexRules[index];
+        const requestedId = String(editedRule?.id || "").trim();
+        const existingRule = matchedRules.matches[index];
+        const ruleId = requestedId || existingRule?.id || createRegexRuleId(
+          editedRule?.pattern || "",
+          editedRule?.flags || "",
+          editedRule?.replacement || "",
+          index
+        );
+        let uniqueRuleId = ruleId;
+        let suffix = 0;
+        while (!requestedId && !existingRule && (regexRules.has(uniqueRuleId) || nextRegexRules.has(uniqueRuleId))) {
+          suffix += 1;
+          uniqueRuleId = `${ruleId}-${suffix}`;
+        }
+        if (nextRegexRules.has(uniqueRuleId)) return { changed: false, error: "duplicate-regex-rule-id" };
+        const sourceIds = existingRule ? [...existingRule.sourceIds] : Array.isArray(editedRule?.sourceIds) ? editedRule.sourceIds.map((id) => String(id || "").trim()).filter(Boolean) : [];
+        if (sourceIds.some((id) => assignedSourceIds.has(id))) {
+          return { changed: false, error: "overlapping-regex-rules" };
+        }
+        if (sourceIds.some((id) => !state4.candidates.has(id))) {
+          return { changed: false, error: "unknown-regex-source" };
+        }
+        const candidateSourceTexts = sourceIds.map((id) => state4.candidates.get(id).sourceText);
+        const validated = validateRegexRuleDefinition(
+          {
+            ...existingRule || {},
+            ...editedRule,
+            id: uniqueRuleId,
+            sourceIds,
+            confidence: existingRule?.confidence ?? (Number.isFinite(Number(editedRule?.confidence)) ? Number(editedRule.confidence) : 1),
+            origin: existingRule ? "user-edited" : editedRule?.origin || "manual"
+          },
+          { sourceTexts: candidateSourceTexts, requireSourceMatch: false }
+        );
+        if (!validated.valid) return { changed: false, error: validated.reason };
+        sourceIds.forEach((id) => assignedSourceIds.add(id));
+        nextRegexRules.set(uniqueRuleId, validated.rule);
       }
-    });
+      regexRules.forEach((rule, ruleId) => {
+        if (nextRegexRules.has(ruleId)) return;
+        rule.sourceIds.forEach((id) => {
+          const removed = removeAiSummaryCandidate(state4, id);
+          cacheChanged = cacheChanged || removed.cacheChanged;
+        });
+        changed = true;
+      });
+      if (nextRegexRules.size !== regexRules.size) changed = true;
+      else {
+        nextRegexRules.forEach((rule, ruleId) => {
+          const previous = regexRules.get(ruleId);
+          if (!previous || previous.pattern !== rule.pattern || previous.flags !== rule.flags || previous.replacement !== rule.replacement) {
+            changed = true;
+          }
+        });
+      }
+      regexRules = nextRegexRules;
+    }
+    const regexCandidateIds = new Set(
+      Array.from(regexRules.values()).flatMap((rule) => Array.isArray(rule.sourceIds) ? rule.sourceIds : [])
+    );
+    if (hasTextEdits) {
+      const reconciliation = reconcileAiSummarySources(
+        remainingSourceTexts,
+        Array.from(state4.candidates.values()),
+        regexCandidateIds
+      );
+      reconciliation.revivedCandidateIds.forEach((id) => {
+        const candidate = state4.candidates.get(id);
+        if (!candidate) return;
+        candidate.status = AI_CANDIDATE_STATUS.PENDING;
+        state4.decisions.delete(id);
+        if (candidate.fingerprint) state4.userRemovedFingerprints.delete(candidate.fingerprint);
+        changed = true;
+      });
+      reconciliation.addedSourceTexts.forEach((sourceText) => {
+        const candidate = createManualSummaryCandidate(sourceText, {
+          siteKey: state4.siteKey,
+          targetLanguage: state4.targetLanguage
+        });
+        if (!candidate || state4.candidateFingerprints.has(candidate.fingerprint)) return;
+        state4.candidates.set(candidate.id, candidate);
+        state4.candidateFingerprints.add(candidate.fingerprint);
+        state4.userRemovedFingerprints.delete(candidate.fingerprint);
+        changed = true;
+      });
+      reconciliation.removedCandidateIds.forEach((id) => {
+        const removed = removeAiSummaryCandidate(state4, id);
+        cacheChanged = cacheChanged || removed.cacheChanged;
+        changed = removed.changed || changed;
+      });
+    }
+    state4.regexRules = regexRules;
+    return { changed, cacheChanged, error: null };
   }
   // src/shared/services/ai/candidateExtractor.js
   var CONTEXT_BLOCK_SELECTOR = "article, main, nav, header, footer, aside, form, dialog, section";
@@ -12909,7 +13273,7 @@ ${entries.join("\n")}
     }
   }
   function extractAiCandidates(root, { filterRules: filterRules2, targetLanguage, scannerConfig: scannerConfig2, siteKey = window.location.origin }) {
-    const candidates2 = /* @__PURE__ */ new Map();
+    const candidates = /* @__PURE__ */ new Map();
     const isDocumentRoot = root?.nodeType === Node.DOCUMENT_NODE;
     const attributesToExtract = Array.isArray(scannerConfig2?.attributesToExtract) ? scannerConfig2.attributesToExtract : [];
     const ignoredSelectors = Array.isArray(scannerConfig2?.ignoredSelectors) ? scannerConfig2.ignoredSelectors : [];
@@ -12918,8 +13282,8 @@ ${entries.join("\n")}
       const sourceText = normalizeText(rawText).slice(0, MAX_LOCAL_TEXT_LENGTH);
       if (!sourceText || shouldFilter(sourceText, filterRules2)) return;
       const candidate = createCandidate(element, sourceText, targetLanguage, siteKey);
-      if (!candidates2.has(candidate.fingerprint)) {
-        candidates2.set(candidate.fingerprint, candidate);
+      if (!candidates.has(candidate.fingerprint)) {
+        candidates.set(candidate.fingerprint, candidate);
       }
     };
     const rootNode = isDocumentRoot ? root.body : root;
@@ -12930,10 +13294,451 @@ ${entries.join("\n")}
     if (rootNode.nodeType === Node.TEXT_NODE) {
       const parent = rootNode.parentElement;
       if (parent && !isIgnoredElement(parent, ignoredSelector)) addCandidate(parent, rootNode.nodeValue);
-      return Array.from(candidates2.values());
+      return Array.from(candidates.values());
     }
     extractSubtree(rootNode, { attributesToExtract, ignoredSelector, addCandidate });
-    return Array.from(candidates2.values());
+    return Array.from(candidates.values());
+  }
+  // src/features/ai-scan/collectionController.js
+  var AI_COLLECTION_FLUSH_DELAY_MS = 200;
+  var AI_OBSERVER_OPTIONS = Object.freeze({
+    childList: true,
+    subtree: true,
+    characterData: true,
+    attributes: true,
+    attributeFilter: ["placeholder", "alt", "title", "aria-label"]
+  });
+  function createAiCollectionController({ state: state4, persistState, emitState: emitState2, submitPending: submitPending2, hasRequest }) {
+    const runtime3 = {
+      observer: null,
+      rootFlushTimer: null,
+      autoSubmitTimer: null,
+      pendingRoots: /* @__PURE__ */ new Set()
+    };
+    function scheduleAutoSubmit(delayMs) {
+      if (!state4.isActive || state4.isPaused || hasRequest()) return;
+      if (runtime3.autoSubmitTimer !== null) clearTimeout(runtime3.autoSubmitTimer);
+      const runGeneration = state4.generation;
+      runtime3.autoSubmitTimer = setTimeout(() => {
+        runtime3.autoSubmitTimer = null;
+        if (state4.isActive && !state4.isPaused && runGeneration === state4.generation) {
+          void submitPending2();
+        }
+      }, delayMs);
+    }
+    function hydrateCachedDecision(candidate, cacheEntry) {
+      const cachedDecision = cacheEntry?.decision;
+      if (!cachedDecision || cachedDecision.translationType === AI_TRANSLATION_TYPES.REGEX) return false;
+      const decision = {
+        ...cachedDecision,
+        id: candidate.id,
+        sourceText: candidate.sourceText
+      };
+      if (decision.action === AI_ACTIONS.KEEP) {
+        decision.action = AI_ACTIONS.REMOVE;
+        decision.status = AI_CANDIDATE_STATUS.REMOVED;
+      }
+      if (decision.action === AI_ACTIONS.TRANSLATE && decision.translationType !== AI_TRANSLATION_TYPES.REGEX && isUnchangedTranslation(candidate.sourceText, decision.translation)) {
+        decision.action = AI_ACTIONS.REMOVE;
+        decision.translation = "";
+        decision.translationType = AI_TRANSLATION_TYPES.TEXT;
+        decision.reason = "unchanged-translation";
+        decision.status = AI_CANDIDATE_STATUS.REMOVED;
+      }
+      state4.decisions.set(candidate.id, decision);
+      candidate.status = decision.status;
+      return true;
+    }
+    function addCandidateBatch(newCandidates) {
+      const result = { added: 0 };
+      newCandidates.forEach((candidate) => {
+        if (!isSubmittableAiCandidate(candidate) || state4.candidateFingerprints.has(candidate.fingerprint) || state4.userRemovedFingerprints.has(candidate.fingerprint)) {
+          return;
+        }
+        hydrateCachedDecision(candidate, state4.cache.get(candidate.fingerprint));
+        state4.candidates.set(candidate.id, candidate);
+        state4.candidateFingerprints.add(candidate.fingerprint);
+        result.added += 1;
+      });
+      if (result.added > 0) {
+        void persistState().catch(() => {
+          state4.lastError = { code: "storage" };
+          emitState2();
+        });
+        emitState2();
+        const aiSettings = mergeAiSettings(loadSettings().ai);
+        if (state4.isActive && aiSettings.processingMode === AI_PROCESSING_MODES.AUTO && !state4.budgetBlockedReason) {
+          scheduleAutoSubmit(aiSettings.batch.debounceMs);
+        }
+      }
+      return result.added;
+    }
+    function collectFromRoot(root) {
+      const settings = loadSettings();
+      const extracted = extractAiCandidates(root, {
+        filterRules: settings.filterRules,
+        targetLanguage: state4.currentTargetLanguage,
+        siteKey: state4.currentSiteKey,
+        scannerConfig
+      });
+      return addCandidateBatch(extracted);
+    }
+    async function flushPendingRoots(runGeneration = state4.generation) {
+      if (!state4.isActive || state4.isPaused || runGeneration !== state4.generation || runtime3.pendingRoots.size === 0) {
+        return;
+      }
+      if (isTranslationBridgeActive() && !isTranslationBridgeIdle()) {
+        await waitForTranslationBridgeIdle();
+      }
+      if (!state4.isActive || state4.isPaused || runGeneration !== state4.generation) return;
+      const roots = Array.from(runtime3.pendingRoots);
+      runtime3.pendingRoots = /* @__PURE__ */ new Set();
+      const topLevelRoots = selectTopLevelMutationRoots(roots);
+      topLevelRoots.forEach(collectFromRoot);
+    }
+    function scheduleRootFlush() {
+      if (state4.isPaused) return;
+      if (runtime3.rootFlushTimer !== null) return;
+      const runGeneration = state4.generation;
+      runtime3.rootFlushTimer = setTimeout(() => {
+        runtime3.rootFlushTimer = null;
+        void flushPendingRoots(runGeneration);
+      }, AI_COLLECTION_FLUSH_DELAY_MS);
+    }
+    function handleMutations(mutations) {
+      if (!state4.isActive || state4.isPaused) return;
+      mutations.forEach((mutation) => {
+        if (mutation.type === "characterData" || mutation.type === "attributes") {
+          runtime3.pendingRoots.add(mutation.target);
+          return;
+        }
+        mutation.addedNodes.forEach((node) => runtime3.pendingRoots.add(node));
+      });
+      if (runtime3.pendingRoots.size > 0) scheduleRootFlush();
+    }
+    function start2() {
+      collectFromRoot(document);
+      runtime3.observer = new MutationObserver(handleMutations);
+      runtime3.observer.observe(document.body, AI_OBSERVER_OPTIONS);
+    }
+    function stop2() {
+      if (runtime3.observer) {
+        runtime3.observer.disconnect();
+        runtime3.observer = null;
+      }
+      if (runtime3.rootFlushTimer !== null) {
+        clearTimeout(runtime3.rootFlushTimer);
+        runtime3.rootFlushTimer = null;
+      }
+      if (runtime3.autoSubmitTimer !== null) {
+        clearTimeout(runtime3.autoSubmitTimer);
+        runtime3.autoSubmitTimer = null;
+      }
+      runtime3.pendingRoots.clear();
+    }
+    function pause() {
+      if (runtime3.observer) runtime3.observer.disconnect();
+      if (runtime3.rootFlushTimer !== null) {
+        clearTimeout(runtime3.rootFlushTimer);
+        runtime3.rootFlushTimer = null;
+      }
+      if (runtime3.autoSubmitTimer !== null) {
+        clearTimeout(runtime3.autoSubmitTimer);
+        runtime3.autoSubmitTimer = null;
+      }
+      runtime3.pendingRoots.clear();
+    }
+    function resume() {
+      if (runtime3.observer && document.body) runtime3.observer.observe(document.body, AI_OBSERVER_OPTIONS);
+      const aiSettings = mergeAiSettings(loadSettings().ai);
+      if (aiSettings.processingMode === AI_PROCESSING_MODES.AUTO && Array.from(state4.candidates.values()).some(
+        (candidate) => candidate.status === AI_CANDIDATE_STATUS.PENDING
+      ) && !state4.budgetBlockedReason) {
+        scheduleAutoSubmit(aiSettings.batch.debounceMs);
+      }
+    }
+    return {
+      collectFromRoot,
+      pause,
+      resume,
+      start: start2,
+      stop: stop2
+    };
+  }
+  // src/features/ai-scan/session.js
+  var DEFAULT_SESSION_USAGE = Object.freeze({ requests: 0, characters: 0 });
+  function createEmptyAiSessionState() {
+    return {
+      candidates: /* @__PURE__ */ new Map(),
+      candidateFingerprints: /* @__PURE__ */ new Set(),
+      decisions: /* @__PURE__ */ new Map(),
+      regexRules: /* @__PURE__ */ new Map(),
+      sessionUsage: { ...DEFAULT_SESSION_USAGE }
+    };
+  }
+  function serializeAiSession({
+    candidates,
+    decisions,
+    regexRules,
+    siteKey,
+    targetLanguage,
+    sessionUsage,
+    maxItems = 5e3
+  }) {
+    const persistedCandidates = Array.from(candidates.values()).slice(-maxItems);
+    const persistedIds = new Set(persistedCandidates.map((candidate) => candidate.id));
+    return {
+      siteKey,
+      targetLanguage,
+      candidates: persistedCandidates,
+      decisions: Array.from(decisions.values()).filter((decision) => persistedIds.has(decision.id)),
+      regexRules: Array.from(regexRules.values()).filter(
+        (rule) => rule.sourceIds.length === 0 || rule.sourceIds.every((id) => persistedIds.has(id))
+      ),
+      sessionUsage
+    };
+  }
+  function normalizeCandidate(candidate) {
+    if (candidate.status === AI_CANDIDATE_STATUS.KEEP) {
+      candidate.status = AI_CANDIDATE_STATUS.REMOVED;
+    }
+    if (candidate.status === AI_CANDIDATE_STATUS.IN_FLIGHT) {
+      candidate.status = AI_CANDIDATE_STATUS.PENDING;
+    }
+    return candidate;
+  }
+  function normalizeDecision(decision, candidate) {
+    if (decision.action === AI_ACTIONS.KEEP) {
+      return { ...decision, action: AI_ACTIONS.REMOVE, status: AI_CANDIDATE_STATUS.REMOVED };
+    }
+    if (decision.action === AI_ACTIONS.TRANSLATE && decision.translationType !== AI_TRANSLATION_TYPES.REGEX && isUnchangedTranslation(candidate.sourceText, decision.translation)) {
+      return {
+        ...decision,
+        action: AI_ACTIONS.REMOVE,
+        translation: "",
+        translationType: AI_TRANSLATION_TYPES.TEXT,
+        reason: "unchanged-translation",
+        status: AI_CANDIDATE_STATUS.REMOVED
+      };
+    }
+    return decision;
+  }
+  function restoreRegexRules(savedRules, candidates) {
+    const restoredRules = /* @__PURE__ */ new Map();
+    const restoredRuleIds = /* @__PURE__ */ new Set();
+    const restoredRegexRules = Array.isArray(savedRules) ? savedRules : [];
+    restoredRegexRules.forEach((rawRule) => {
+      const ruleId = String(rawRule?.id || "").trim();
+      if (!ruleId || restoredRuleIds.has(ruleId)) return;
+      const sourceIds = Array.isArray(rawRule?.sourceIds) ? rawRule.sourceIds.map((id) => String(id || "").trim()).filter(Boolean) : [];
+      if (new Set(sourceIds).size !== sourceIds.length) return;
+      if (sourceIds.some((id) => !candidates.has(id))) return;
+      const origin = rawRule?.origin === "manual" || rawRule?.origin === "user-edited" ? rawRule.origin : "ai";
+      if (origin === "ai" && sourceIds.length < 1) return;
+      const sourceTexts = sourceIds.map((id) => candidates.get(id).sourceText);
+      const singleSample = origin === "ai" && sourceIds.length === 1;
+      if (singleSample && !hasDynamicRegexValue(sourceTexts[0])) return;
+      const validated = validateRegexRuleDefinition(
+        { ...rawRule, id: ruleId, sourceIds, origin },
+        {
+          sourceTexts,
+          requireSourceMatch: origin === "ai",
+          requireAnchors: singleSample,
+          requireDynamicCapture: singleSample
+        }
+      );
+      if (!validated.valid) return;
+      restoredRuleIds.add(ruleId);
+      restoredRules.set(ruleId, validated.rule);
+    });
+    return restoredRules;
+  }
+  function reconcileRestoredStatuses(candidates, decisions, regexRules) {
+    decisions.forEach((decision, id) => {
+      const candidate = candidates.get(id);
+      if (!candidate) return;
+      if (decision.translationType !== AI_TRANSLATION_TYPES.REGEX) {
+        candidate.status = decision.status;
+        return;
+      }
+      if (!regexRules.has(decision.regexRuleId)) {
+        candidate.status = AI_CANDIDATE_STATUS.PENDING;
+        decisions.delete(id);
+        return;
+      }
+      candidate.status = decision.status;
+    });
+    regexRules.forEach((rule, ruleId) => {
+      const isConsistent = rule.sourceIds.length === 0 || rule.sourceIds.every((sourceId) => {
+        const decision = decisions.get(sourceId);
+        return decision?.translationType === AI_TRANSLATION_TYPES.REGEX && decision.status === AI_CANDIDATE_STATUS.TRANSLATED && decision.regexRuleId === ruleId;
+      });
+      if (isConsistent) return;
+      regexRules.delete(ruleId);
+      rule.sourceIds.forEach((sourceId) => {
+        const decision = decisions.get(sourceId);
+        if (decision?.translationType !== AI_TRANSLATION_TYPES.REGEX) return;
+        const candidate = candidates.get(sourceId);
+        if (candidate) candidate.status = AI_CANDIDATE_STATUS.PENDING;
+        decisions.delete(sourceId);
+      });
+    });
+  }
+  function restoreAiSession(saved, { siteKey, targetLanguage } = {}) {
+    if (!saved || saved.siteKey !== siteKey || saved.targetLanguage !== targetLanguage) {
+      return createEmptyAiSessionState();
+    }
+    const restoredCandidates = Array.isArray(saved.candidates) ? saved.candidates.filter(isSubmittableAiCandidate).map(normalizeCandidate) : [];
+    const candidates = new Map(restoredCandidates.map((candidate) => [candidate.id, candidate]));
+    const candidateFingerprints = new Set(restoredCandidates.map((candidate) => candidate.fingerprint).filter(Boolean));
+    const restoredDecisions = Array.isArray(saved.decisions) ? saved.decisions : [];
+    const decisions = new Map(
+      restoredDecisions.filter((decision) => candidates.has(decision.id)).map((decision) => [decision.id, normalizeDecision(decision, candidates.get(decision.id))])
+    );
+    const regexRules = restoreRegexRules(saved.regexRules, candidates);
+    reconcileRestoredStatuses(candidates, decisions, regexRules);
+    return {
+      candidates,
+      candidateFingerprints,
+      decisions,
+      regexRules,
+      sessionUsage: {
+        requests: Math.max(0, Number(saved.sessionUsage?.requests) || 0),
+        characters: Math.max(0, Number(saved.sessionUsage?.characters) || 0)
+      }
+    };
+  }
+  // src/features/ai-scan/state.js
+  function createAiScanState() {
+    return {
+      ...createEmptyAiSessionState(),
+      isActive: false,
+      isPaused: false,
+      cache: /* @__PURE__ */ new Map(),
+      generation: 0,
+      currentSiteKey: "",
+      currentTargetLanguage: "zh-CN",
+      lastError: null,
+      budgetBlockedReason: null,
+      isClearing: false,
+      userRemovedFingerprints: /* @__PURE__ */ new Set()
+    };
+  }
+  function getAiCounts(state4) {
+    const counts = {
+      total: state4.candidates.size,
+      pending: 0,
+      inflight: 0,
+      translated: 0,
+      keep: 0,
+      removed: 0,
+      review: 0,
+      failed: 0,
+      textRules: 0,
+      regexRules: state4.regexRules.size
+    };
+    state4.candidates.forEach((candidate) => {
+      if (Object.prototype.hasOwnProperty.call(counts, candidate.status)) {
+        counts[candidate.status] += 1;
+      }
+    });
+    state4.decisions.forEach((decision) => {
+      if (decision.status !== AI_CANDIDATE_STATUS.TRANSLATED || decision.action !== AI_ACTIONS.TRANSLATE) return;
+      if (decision.translationType === AI_TRANSLATION_TYPES.REGEX) return;
+      counts.textRules += 1;
+    });
+    return counts;
+  }
+  function getAiStateSnapshot(state4, isProcessing) {
+    return {
+      active: state4.isActive,
+      paused: state4.isPaused,
+      processing: Boolean(isProcessing),
+      counts: getAiCounts(state4),
+      sessionUsage: { ...state4.sessionUsage },
+      lastErrorCode: state4.lastError?.code || null,
+      budgetBlockedReason: state4.budgetBlockedReason
+    };
+  }
+  function markInFlightAsPending(state4, candidateIds) {
+    candidateIds.forEach((id) => {
+      const candidate = state4.candidates.get(id);
+      if (candidate && candidate.status === AI_CANDIDATE_STATUS.IN_FLIGHT) {
+        candidate.status = AI_CANDIDATE_STATUS.PENDING;
+      }
+    });
+  }
+  function resetAiDataState(state4) {
+    state4.candidates.clear();
+    state4.candidateFingerprints.clear();
+    state4.decisions.clear();
+    state4.regexRules.clear();
+    state4.sessionUsage = { requests: 0, characters: 0 };
+    state4.lastError = null;
+    state4.budgetBlockedReason = null;
+    state4.userRemovedFingerprints.clear();
+  }
+  function getAiSummaryState(state4, defaultSiteKey = "") {
+    return {
+      candidates: state4.candidates,
+      candidateFingerprints: state4.candidateFingerprints,
+      decisions: state4.decisions,
+      regexRules: state4.regexRules,
+      cache: state4.cache,
+      userRemovedFingerprints: state4.userRemovedFingerprints,
+      siteKey: state4.currentSiteKey || defaultSiteKey,
+      targetLanguage: state4.currentTargetLanguage
+    };
+  }
+  // src/features/ai-scan/sessionStore.js
+  function createAiSessionStore(state4) {
+    const runtime3 = {
+      persistenceChain: Promise.resolve()
+    };
+    function serialize() {
+      return serializeAiSession({
+        candidates: state4.candidates,
+        decisions: state4.decisions,
+        regexRules: state4.regexRules,
+        siteKey: state4.currentSiteKey,
+        targetLanguage: state4.currentTargetLanguage,
+        sessionUsage: state4.sessionUsage
+      });
+    }
+    async function persist() {
+      const snapshot = serialize();
+      runtime3.persistenceChain = runtime3.persistenceChain.catch(() => void 0).then(() => saveAiSession(snapshot));
+      await runtime3.persistenceChain;
+    }
+    async function loadCache() {
+      state4.cache = await loadAiCache();
+      return state4.cache;
+    }
+    async function restore() {
+      const restored = restoreAiSession(await loadAiSession(), {
+        siteKey: state4.currentSiteKey,
+        targetLanguage: state4.currentTargetLanguage
+      });
+      state4.candidates = restored.candidates;
+      state4.candidateFingerprints = restored.candidateFingerprints;
+      state4.decisions = restored.decisions;
+      state4.regexRules = restored.regexRules;
+      state4.sessionUsage = restored.sessionUsage;
+    }
+    async function clear() {
+      await runtime3.persistenceChain.catch(() => void 0);
+      await Promise.all([
+        clearAiSession(),
+        clearAiCacheForSite(state4.currentSiteKey || window.location.origin, state4.currentTargetLanguage)
+      ]);
+    }
+    return {
+      clear,
+      loadCache,
+      persist,
+      restore,
+      saveCache: () => saveAiCache(state4.cache)
+    };
   }
   // src/shared/services/ai/pageContextBuilder.js
   var MAX_SITE_NAME = 120;
@@ -13005,544 +13810,301 @@ ${entries.join("\n")}
       targetLanguage
     };
   }
-  // src/features/ai-scan/resultView.js
-  var HIDDEN_OUTPUT_STATUSES = /* @__PURE__ */ new Set([AI_CANDIDATE_STATUS.KEEP, AI_CANDIDATE_STATUS.REMOVED]);
-  function isHiddenOutputStatus(status) {
-    return HIDDEN_OUTPUT_STATUSES.has(status);
-  }
-  function buildAiDisplayData(candidateItems, decisionItems, regexRules2 = []) {
-    const decisionById = new Map(decisionItems.map((decision) => [decision.id, decision]));
-    const visibleRegexRules = Array.isArray(regexRules2) ? regexRules2.filter((rule) => typeof rule?.id === "string" && rule.id.trim() && Array.isArray(rule.sourceIds)) : [];
-    const regexCandidateIds = new Set(visibleRegexRules.flatMap((rule) => rule.sourceIds));
-    const textPairs = candidateItems.filter(
-      (candidate) => hasMeaningfulAiSourceText(candidate.sourceText) && !HIDDEN_OUTPUT_STATUSES.has(candidate.status) && !regexCandidateIds.has(candidate.id)
-    ).map((candidate) => {
-      const decision = decisionById.get(candidate.id);
-      const hasValidatedTranslation = candidate.status === AI_CANDIDATE_STATUS.TRANSLATED && decision?.action === AI_ACTIONS.TRANSLATE && decision?.translationType !== AI_TRANSLATION_TYPES.REGEX && typeof decision.translation === "string";
-      return {
-        sourceText: candidate.sourceText,
-        translation: hasValidatedTranslation ? decision.translation : ""
-      };
-    });
-    return { textPairs, regexRules: visibleRegexRules };
-  }
-  // src/features/ai-scan/session.js
-  var DEFAULT_SESSION_USAGE = Object.freeze({ requests: 0, characters: 0 });
-  function createEmptyAiSessionState() {
-    return {
-      candidates: /* @__PURE__ */ new Map(),
-      candidateFingerprints: /* @__PURE__ */ new Set(),
-      decisions: /* @__PURE__ */ new Map(),
-      regexRules: /* @__PURE__ */ new Map(),
-      sessionUsage: { ...DEFAULT_SESSION_USAGE }
+  // src/features/ai-scan/submissionController.js
+  function createAiSubmissionController({ state: state4, sessionStore: sessionStore3, emitState: emitState2 }) {
+    const runtime3 = {
+      currentRequest: null,
+      inFlightCandidateIds: [],
+      submissionInProgress: false
     };
-  }
-  function serializeAiSession({
-    candidates: candidates2,
-    decisions: decisions2,
-    regexRules: regexRules2,
-    siteKey,
-    targetLanguage,
-    sessionUsage: sessionUsage2,
-    maxItems = 5e3
-  }) {
-    const persistedCandidates = Array.from(candidates2.values()).slice(-maxItems);
-    const persistedIds = new Set(persistedCandidates.map((candidate) => candidate.id));
-    return {
-      siteKey,
-      targetLanguage,
-      candidates: persistedCandidates,
-      decisions: Array.from(decisions2.values()).filter((decision) => persistedIds.has(decision.id)),
-      regexRules: Array.from(regexRules2.values()).filter(
-        (rule) => rule.sourceIds.length === 0 || rule.sourceIds.every((id) => persistedIds.has(id))
-      ),
-      sessionUsage: sessionUsage2
-    };
-  }
-  function normalizeCandidate(candidate) {
-    if (candidate.status === AI_CANDIDATE_STATUS.KEEP) {
-      candidate.status = AI_CANDIDATE_STATUS.REMOVED;
+    function hasRequest() {
+      return runtime3.currentRequest !== null;
     }
-    if (candidate.status === AI_CANDIDATE_STATUS.IN_FLIGHT) {
-      candidate.status = AI_CANDIDATE_STATUS.PENDING;
+    function isProcessing() {
+      return hasRequest() || runtime3.submissionInProgress;
     }
-    return candidate;
-  }
-  function normalizeDecision(decision, candidate) {
-    if (decision.action === AI_ACTIONS.KEEP) {
-      return { ...decision, action: AI_ACTIONS.REMOVE, status: AI_CANDIDATE_STATUS.REMOVED };
+    function cancel() {
+      const request = runtime3.currentRequest;
+      if (request) request.abort();
+      runtime3.currentRequest = null;
+      return request;
     }
-    if (decision.action === AI_ACTIONS.TRANSLATE && decision.translationType !== AI_TRANSLATION_TYPES.REGEX && isUnchangedTranslation(candidate.sourceText, decision.translation)) {
-      return {
-        ...decision,
-        action: AI_ACTIONS.REMOVE,
-        translation: "",
-        translationType: AI_TRANSLATION_TYPES.TEXT,
-        reason: "unchanged-translation",
-        status: AI_CANDIDATE_STATUS.REMOVED
-      };
+    function resetRequestState() {
+      runtime3.currentRequest = null;
+      runtime3.inFlightCandidateIds = [];
     }
-    return decision;
-  }
-  function restoreRegexRules(savedRules, candidates2) {
-    const restoredRules = /* @__PURE__ */ new Map();
-    const restoredRuleIds = /* @__PURE__ */ new Set();
-    const restoredRegexRules = Array.isArray(savedRules) ? savedRules : [];
-    restoredRegexRules.forEach((rawRule) => {
-      const ruleId = String(rawRule?.id || "").trim();
-      if (!ruleId || restoredRuleIds.has(ruleId)) return;
-      const sourceIds = Array.isArray(rawRule?.sourceIds) ? rawRule.sourceIds.map((id) => String(id || "").trim()).filter(Boolean) : [];
-      if (new Set(sourceIds).size !== sourceIds.length) return;
-      if (sourceIds.some((id) => !candidates2.has(id))) return;
-      const origin = rawRule?.origin === "manual" || rawRule?.origin === "user-edited" ? rawRule.origin : "ai";
-      if (origin === "ai" && sourceIds.length < 1) return;
-      const sourceTexts = sourceIds.map((id) => candidates2.get(id).sourceText);
-      const singleSample = origin === "ai" && sourceIds.length === 1;
-      if (singleSample && !hasDynamicRegexValue(sourceTexts[0])) return;
-      const validated = validateRegexRuleDefinition(
-        { ...rawRule, id: ruleId, sourceIds, origin },
-        {
-          sourceTexts,
-          requireSourceMatch: origin === "ai",
-          requireAnchors: singleSample,
-          requireDynamicCapture: singleSample
-        }
+    function resetInFlightCandidates() {
+      markInFlightAsPending(state4, runtime3.inFlightCandidateIds);
+      runtime3.inFlightCandidateIds = [];
+    }
+    async function performSubmitPending() {
+      if (hasRequest() || state4.isClearing) return { submitted: false, reason: "inactive-or-busy" };
+      const submissionGeneration = state4.generation;
+      const settings = loadSettings();
+      const aiSettings = mergeAiSettings(settings.ai);
+      const provider = getActiveProvider(aiSettings);
+      if (!provider) return { submitted: false, reason: "missing-provider" };
+      const pending = Array.from(state4.candidates.values()).filter(
+        (candidate) => candidate.status === AI_CANDIDATE_STATUS.PENDING
       );
-      if (!validated.valid) return;
-      restoredRuleIds.add(ruleId);
-      restoredRules.set(ruleId, validated.rule);
-    });
-    return restoredRules;
-  }
-  function reconcileRestoredStatuses(candidates2, decisions2, regexRules2) {
-    decisions2.forEach((decision, id) => {
-      const candidate = candidates2.get(id);
-      if (!candidate) return;
-      if (decision.translationType !== AI_TRANSLATION_TYPES.REGEX) {
-        candidate.status = decision.status;
-        return;
-      }
-      if (!regexRules2.has(decision.regexRuleId)) {
-        candidate.status = AI_CANDIDATE_STATUS.PENDING;
-        decisions2.delete(id);
-        return;
-      }
-      candidate.status = decision.status;
-    });
-    regexRules2.forEach((rule, ruleId) => {
-      const isConsistent = rule.sourceIds.length === 0 || rule.sourceIds.every((sourceId) => {
-        const decision = decisions2.get(sourceId);
-        return decision?.translationType === AI_TRANSLATION_TYPES.REGEX && decision.status === AI_CANDIDATE_STATUS.TRANSLATED && decision.regexRuleId === ruleId;
+      const batch = selectBatch(pending, aiSettings.batch);
+      batch.invalid.forEach((candidate) => {
+        state4.candidates.delete(candidate.id);
+        state4.decisions.delete(candidate.id);
+        if (candidate.fingerprint) state4.candidateFingerprints.delete(candidate.fingerprint);
       });
-      if (isConsistent) return;
-      regexRules2.delete(ruleId);
-      rule.sourceIds.forEach((sourceId) => {
-        const decision = decisions2.get(sourceId);
-        if (decision?.translationType !== AI_TRANSLATION_TYPES.REGEX) return;
-        const candidate = candidates2.get(sourceId);
-        if (candidate) candidate.status = AI_CANDIDATE_STATUS.PENDING;
-        decisions2.delete(sourceId);
-      });
-    });
-  }
-  function restoreAiSession(saved, { siteKey, targetLanguage } = {}) {
-    if (!saved || saved.siteKey !== siteKey || saved.targetLanguage !== targetLanguage) {
-      return createEmptyAiSessionState();
-    }
-    const restoredCandidates = Array.isArray(saved.candidates) ? saved.candidates.filter(isSubmittableAiCandidate).map(normalizeCandidate) : [];
-    const candidates2 = new Map(restoredCandidates.map((candidate) => [candidate.id, candidate]));
-    const candidateFingerprints2 = new Set(restoredCandidates.map((candidate) => candidate.fingerprint).filter(Boolean));
-    const restoredDecisions = Array.isArray(saved.decisions) ? saved.decisions : [];
-    const decisions2 = new Map(
-      restoredDecisions.filter((decision) => candidates2.has(decision.id)).map((decision) => [decision.id, normalizeDecision(decision, candidates2.get(decision.id))])
-    );
-    const regexRules2 = restoreRegexRules(saved.regexRules, candidates2);
-    reconcileRestoredStatuses(candidates2, decisions2, regexRules2);
-    return {
-      candidates: candidates2,
-      candidateFingerprints: candidateFingerprints2,
-      decisions: decisions2,
-      regexRules: regexRules2,
-      sessionUsage: {
-        requests: Math.max(0, Number(saved.sessionUsage?.requests) || 0),
-        characters: Math.max(0, Number(saved.sessionUsage?.characters) || 0)
-      }
-    };
-  }
-  // src/features/ai-scan/summaryEdits.js
-  var MAX_MANUAL_SOURCE_LENGTH = 1e5;
-  function normalizeSourceList(sourceTexts) {
-    return Array.from(
-      new Set(
-        sourceTexts.map((sourceText) => normalizeAiSourceText(sourceText).slice(0, MAX_MANUAL_SOURCE_LENGTH)).filter(Boolean)
-      )
-    );
-  }
-  function createManualSummaryCandidate(sourceText, { siteKey, targetLanguage }) {
-    const normalizedSourceText = normalizeAiSourceText(sourceText).slice(0, MAX_MANUAL_SOURCE_LENGTH);
-    if (!normalizedSourceText) return null;
-    const fingerprint = createCandidateFingerprint(siteKey, targetLanguage, normalizedSourceText);
-    return {
-      id: `ai-manual-${fingerprint}-${normalizedSourceText.length}`,
-      sourceText: normalizedSourceText,
-      siteKey,
-      targetLanguage,
-      fingerprint,
-      context: {},
-      status: AI_CANDIDATE_STATUS.PENDING,
-      origin: "summary-editor"
-    };
-  }
-  function reconcileAiSummarySources(sourceTexts, currentCandidates, protectedCandidateIds = []) {
-    const remainingSourceTexts = normalizeSourceList(Array.isArray(sourceTexts) ? sourceTexts : []);
-    const remaining = new Set(remainingSourceTexts);
-    const protectedIds = new Set(protectedCandidateIds);
-    const candidatesBySource = /* @__PURE__ */ new Map();
-    currentCandidates.forEach((candidate) => {
-      const sourceText = normalizeAiSourceText(candidate?.sourceText);
-      if (!sourceText) return;
-      const matches = candidatesBySource.get(sourceText) || [];
-      matches.push(candidate);
-      candidatesBySource.set(sourceText, matches);
-    });
-    const addedSourceTexts = [];
-    const revivedCandidateIds = [];
-    remainingSourceTexts.forEach((sourceText) => {
-      const matches = candidatesBySource.get(sourceText) || [];
-      if (matches.some((candidate) => protectedIds.has(candidate.id) || !isHiddenOutputStatus(candidate.status))) {
-        return;
-      }
-      const hiddenCandidate = matches.find((candidate) => isHiddenOutputStatus(candidate.status));
-      if (hiddenCandidate) revivedCandidateIds.push(hiddenCandidate.id);
-      else addedSourceTexts.push(sourceText);
-    });
-    const removedCandidateIds = currentCandidates.filter(
-      (candidate) => !protectedIds.has(candidate.id) && !isHiddenOutputStatus(candidate.status) && !remaining.has(normalizeAiSourceText(candidate.sourceText))
-    ).map((candidate) => candidate.id);
-    return { addedSourceTexts, revivedCandidateIds, removedCandidateIds };
-  }
-  // src/features/ai-scan/summaryState.js
-  function removeAiSummaryCandidate(state, id) {
-    const candidate = state.candidates.get(id);
-    if (!candidate) return { changed: false, cacheChanged: false };
-    state.candidates.delete(id);
-    state.decisions.delete(id);
-    let cacheChanged = false;
-    if (candidate.fingerprint) {
-      state.candidateFingerprints.delete(candidate.fingerprint);
-      state.userRemovedFingerprints.add(candidate.fingerprint);
-      cacheChanged = state.cache.delete(candidate.fingerprint);
-    }
-    return { changed: true, cacheChanged };
-  }
-  function applyAiSummaryEditsToState(state, { remainingSourceTexts = null, editedRegexRules = null } = {}) {
-    const hasTextEdits = Array.isArray(remainingSourceTexts);
-    let changed = false;
-    let cacheChanged = false;
-    let regexRules2 = state.regexRules;
-    if (Array.isArray(editedRegexRules)) {
-      const existingRules = Array.from(regexRules2.values());
-      const matchedRules = matchEditedRegexRulesToExisting(editedRegexRules, existingRules);
-      if (!matchedRules.valid) return { changed: false, error: matchedRules.error };
-      const nextRegexRules = /* @__PURE__ */ new Map();
-      const assignedSourceIds = /* @__PURE__ */ new Set();
-      for (let index = 0; index < editedRegexRules.length; index += 1) {
-        const editedRule = editedRegexRules[index];
-        const requestedId = String(editedRule?.id || "").trim();
-        const existingRule = matchedRules.matches[index];
-        const ruleId = requestedId || existingRule?.id || createRegexRuleId(
-          editedRule?.pattern || "",
-          editedRule?.flags || "",
-          editedRule?.replacement || "",
-          index
-        );
-        let uniqueRuleId = ruleId;
-        let suffix = 0;
-        while (!requestedId && !existingRule && (regexRules2.has(uniqueRuleId) || nextRegexRules.has(uniqueRuleId))) {
-          suffix += 1;
-          uniqueRuleId = `${ruleId}-${suffix}`;
-        }
-        if (nextRegexRules.has(uniqueRuleId)) return { changed: false, error: "duplicate-regex-rule-id" };
-        const sourceIds = existingRule ? [...existingRule.sourceIds] : Array.isArray(editedRule?.sourceIds) ? editedRule.sourceIds.map((id) => String(id || "").trim()).filter(Boolean) : [];
-        if (sourceIds.some((id) => assignedSourceIds.has(id))) {
-          return { changed: false, error: "overlapping-regex-rules" };
-        }
-        if (sourceIds.some((id) => !state.candidates.has(id))) {
-          return { changed: false, error: "unknown-regex-source" };
-        }
-        const candidateSourceTexts = sourceIds.map((id) => state.candidates.get(id).sourceText);
-        const validated = validateRegexRuleDefinition(
-          {
-            ...existingRule || {},
-            ...editedRule,
-            id: uniqueRuleId,
-            sourceIds,
-            confidence: existingRule?.confidence ?? (Number.isFinite(Number(editedRule?.confidence)) ? Number(editedRule.confidence) : 1),
-            origin: existingRule ? "user-edited" : editedRule?.origin || "manual"
-          },
-          { sourceTexts: candidateSourceTexts, requireSourceMatch: false }
-        );
-        if (!validated.valid) return { changed: false, error: validated.reason };
-        sourceIds.forEach((id) => assignedSourceIds.add(id));
-        nextRegexRules.set(uniqueRuleId, validated.rule);
-      }
-      regexRules2.forEach((rule, ruleId) => {
-        if (nextRegexRules.has(ruleId)) return;
-        rule.sourceIds.forEach((id) => {
-          const removed = removeAiSummaryCandidate(state, id);
-          cacheChanged = cacheChanged || removed.cacheChanged;
+      batch.oversized.forEach((candidate) => {
+        candidate.status = AI_CANDIDATE_STATUS.REVIEW;
+        state4.decisions.set(candidate.id, {
+          id: candidate.id,
+          sourceText: candidate.sourceText,
+          action: AI_ACTIONS.REVIEW,
+          translation: "",
+          confidence: 0,
+          category: "local-validation",
+          reason: "source-too-long",
+          status: AI_CANDIDATE_STATUS.REVIEW
         });
-        changed = true;
       });
-      if (nextRegexRules.size !== regexRules2.size) changed = true;
-      else {
-        nextRegexRules.forEach((rule, ruleId) => {
-          const previous = regexRules2.get(ruleId);
-          if (!previous || previous.pattern !== rule.pattern || previous.flags !== rule.flags || previous.replacement !== rule.replacement) {
-            changed = true;
+      if (batch.invalid.length > 0 || batch.oversized.length > 0) {
+        await sessionStore3.persist();
+        emitState2();
+      }
+      if (state4.generation !== submissionGeneration || state4.isClearing) {
+        return { submitted: false, reason: "stale" };
+      }
+      if (batch.candidates.length === 0) return { submitted: false, reason: "empty" };
+      const [apiKey, styleProfile, dailyUsage] = await Promise.all([
+        loadProviderApiKey(provider.id),
+        matchStyleProfile(window.location, state4.currentTargetLanguage),
+        loadDailyUsage()
+      ]);
+      if (state4.generation !== submissionGeneration || state4.isClearing) {
+        return { submitted: false, reason: "stale" };
+      }
+      const pageContext = buildPageContext({ targetLanguage: state4.currentTargetLanguage });
+      const payload = buildTranslationRequest({
+        provider,
+        candidates: batch.candidates,
+        targetLanguage: state4.currentTargetLanguage,
+        styleProfile,
+        pageContext
+      });
+      try {
+        validateProviderConfiguration(provider, apiKey);
+      } catch (error) {
+        state4.lastError = error;
+        emitState2();
+        fire("aiRequestFailed", { code: error?.code || "invalid-provider" });
+        return { submitted: false, reason: error?.code || "invalid-provider" };
+      }
+      const budget = checkBudget({
+        settings: aiSettings.budget,
+        sessionUsage: state4.sessionUsage,
+        dailyUsage,
+        requestPayload: payload,
+        nextCharacters: batch.characters
+      });
+      if (!budget.allowed) {
+        state4.budgetBlockedReason = budget.reason;
+        emitState2();
+        fire("aiBudgetBlocked", budget.reason);
+        return { submitted: false, reason: budget.reason };
+      }
+      state4.budgetBlockedReason = null;
+      try {
+        await addDailyUsage(budget.estimatedTokens);
+      } catch {
+        state4.lastError = { code: "storage" };
+        emitState2();
+        return { submitted: false, reason: "storage" };
+      }
+      if (state4.generation !== submissionGeneration || state4.isClearing) {
+        return { submitted: false, reason: "stale" };
+      }
+      batch.candidates.forEach((candidate) => {
+        candidate.status = AI_CANDIDATE_STATUS.IN_FLIGHT;
+      });
+      const requestCandidateIds = batch.candidates.map((candidate) => candidate.id);
+      runtime3.inFlightCandidateIds = requestCandidateIds;
+      state4.sessionUsage.requests += 1;
+      state4.sessionUsage.characters += batch.characters;
+      state4.lastError = null;
+      emitState2();
+      const requestGeneration = submissionGeneration;
+      const requestRuntime = { handle: null };
+      try {
+        requestRuntime.handle = createChatCompletionRequest({
+          provider,
+          apiKey,
+          payload,
+          timeoutMs: aiSettings.requestTimeoutMs
+        });
+        runtime3.currentRequest = requestRuntime.handle;
+        const response = await requestRuntime.handle.promise;
+        if (requestGeneration !== state4.generation) {
+          return { submitted: false, reason: "stale" };
+        }
+        const parsed = parseJsonContent(response.content);
+        const validated = validateTranslationResponse(parsed, batch.candidates, aiSettings.confidenceThreshold);
+        const regexRuleIdMap = /* @__PURE__ */ new Map();
+        validated.regexRules.forEach((rule) => {
+          const ruleRuntime = { id: rule.id, suffix: 0 };
+          while (state4.regexRules.has(ruleRuntime.id)) {
+            ruleRuntime.suffix += 1;
+            ruleRuntime.id = `${rule.id}-${ruleRuntime.suffix}`;
+          }
+          regexRuleIdMap.set(rule.id, ruleRuntime.id);
+          state4.regexRules.set(ruleRuntime.id, { ...rule, id: ruleRuntime.id });
+        });
+        validated.decisions.forEach((decision) => {
+          const candidate = state4.candidates.get(decision.id);
+          if (!candidate) return;
+          const storedDecision = decision.translationType === AI_TRANSLATION_TYPES.REGEX && regexRuleIdMap.has(decision.regexRuleId) ? { ...decision, regexRuleId: regexRuleIdMap.get(decision.regexRuleId) } : decision;
+          candidate.status = storedDecision.status;
+          state4.decisions.set(decision.id, storedDecision);
+          if (storedDecision.translationType !== AI_TRANSLATION_TYPES.REGEX && [AI_ACTIONS.TRANSLATE, AI_ACTIONS.KEEP, AI_ACTIONS.REMOVE].includes(storedDecision.action)) {
+            state4.cache.set(candidate.fingerprint, {
+              fingerprint: candidate.fingerprint,
+              siteKey: candidate.siteKey,
+              targetLanguage: candidate.targetLanguage,
+              sourceText: candidate.sourceText,
+              providerId: provider.id,
+              model: provider.model,
+              styleVersion: styleProfile?.version || 0,
+              decision: storedDecision,
+              updatedAt: Date.now()
+            });
+          } else if (storedDecision.translationType === AI_TRANSLATION_TYPES.REGEX) {
+            state4.cache.delete(candidate.fingerprint);
           }
         });
+        await Promise.all([sessionStore3.saveCache(), sessionStore3.persist()]);
+        return { submitted: true, count: validated.decisions.length };
+      } catch (error) {
+        if (requestGeneration !== state4.generation) {
+          return { submitted: false, reason: "stale" };
+        }
+        if (error?.code !== "aborted") {
+          state4.lastError = error;
+          const validationFailure = error instanceof SyntaxError || error?.message === "empty-response" || ["truncated-response", "invalid-response"].includes(error?.code);
+          requestCandidateIds.forEach((id) => {
+            const candidate = state4.candidates.get(id);
+            if (!candidate) return;
+            candidate.status = validationFailure ? AI_CANDIDATE_STATUS.REVIEW : AI_CANDIDATE_STATUS.FAILED;
+            state4.decisions.set(id, {
+              id,
+              sourceText: candidate.sourceText,
+              action: AI_ACTIONS.REVIEW,
+              translation: "",
+              confidence: 0,
+              category: validationFailure ? "validation" : "request-error",
+              reason: validationFailure ? error?.code || error?.message || "invalid-response" : error?.code || "request-error",
+              status: candidate.status
+            });
+          });
+          await sessionStore3.persist();
+          fire("aiRequestFailed", { code: error?.code || "unknown" });
+        } else {
+          requestCandidateIds.forEach((id) => {
+            const candidate = state4.candidates.get(id);
+            if (candidate?.status === AI_CANDIDATE_STATUS.IN_FLIGHT) {
+              candidate.status = AI_CANDIDATE_STATUS.PENDING;
+            }
+          });
+        }
+        return { submitted: false, reason: error?.code || "unknown" };
+      } finally {
+        if (runtime3.currentRequest === requestRuntime.handle) {
+          runtime3.currentRequest = null;
+          runtime3.inFlightCandidateIds = [];
+        }
+        emitState2();
       }
-      regexRules2 = nextRegexRules;
     }
-    const regexCandidateIds = new Set(
-      Array.from(regexRules2.values()).flatMap((rule) => Array.isArray(rule.sourceIds) ? rule.sourceIds : [])
-    );
-    if (hasTextEdits) {
-      const reconciliation = reconcileAiSummarySources(
-        remainingSourceTexts,
-        Array.from(state.candidates.values()),
-        regexCandidateIds
+    async function submitPending2() {
+      if (hasRequest() || state4.isClearing || runtime3.submissionInProgress) {
+        return { submitted: false, reason: "inactive-or-busy" };
+      }
+      const pending = Array.from(state4.candidates.values()).filter(
+        (candidate) => candidate.status === AI_CANDIDATE_STATUS.PENDING
       );
-      reconciliation.revivedCandidateIds.forEach((id) => {
-        const candidate = state.candidates.get(id);
-        if (!candidate) return;
-        candidate.status = AI_CANDIDATE_STATUS.PENDING;
-        state.decisions.delete(id);
-        if (candidate.fingerprint) state.userRemovedFingerprints.delete(candidate.fingerprint);
-        changed = true;
+      const invalid = pending.filter((candidate) => !isSubmittableAiCandidate(candidate));
+      invalid.forEach((candidate) => {
+        state4.candidates.delete(candidate.id);
+        state4.decisions.delete(candidate.id);
+        if (candidate.fingerprint) state4.candidateFingerprints.delete(candidate.fingerprint);
       });
-      reconciliation.addedSourceTexts.forEach((sourceText) => {
-        const candidate = createManualSummaryCandidate(sourceText, {
-          siteKey: state.siteKey,
-          targetLanguage: state.targetLanguage
-        });
-        if (!candidate || state.candidateFingerprints.has(candidate.fingerprint)) return;
-        state.candidates.set(candidate.id, candidate);
-        state.candidateFingerprints.add(candidate.fingerprint);
-        state.userRemovedFingerprints.delete(candidate.fingerprint);
-        changed = true;
-      });
-      reconciliation.removedCandidateIds.forEach((id) => {
-        const removed = removeAiSummaryCandidate(state, id);
-        cacheChanged = cacheChanged || removed.cacheChanged;
-        changed = removed.changed || changed;
-      });
+      if (invalid.length > 0) {
+        await sessionStore3.persist();
+        emitState2();
+      }
+      if (!pending.some(isSubmittableAiCandidate)) {
+        return { submitted: false, reason: "empty" };
+      }
+      runtime3.submissionInProgress = true;
+      emitState2();
+      const submissionResult = { value: null };
+      try {
+        submissionResult.value = await performSubmitPending();
+        return submissionResult.value;
+      } finally {
+        runtime3.submissionInProgress = false;
+        emitState2();
+        const latestSettings = mergeAiSettings(loadSettings().ai);
+        if (submissionResult.value?.submitted && state4.isActive && !state4.isPaused && !state4.isClearing && latestSettings.processingMode === AI_PROCESSING_MODES.AUTO && Array.from(state4.candidates.values()).some(
+          (candidate) => candidate.status === AI_CANDIDATE_STATUS.PENDING
+        ) && !state4.budgetBlockedReason) {
+          queueMicrotask(() => void submitPending2());
+        }
+      }
     }
-    state.regexRules = regexRules2;
-    return { changed, cacheChanged, error: null };
+    async function retryReviewItems2() {
+      state4.decisions.forEach((decision, id) => {
+        if (decision.status === AI_CANDIDATE_STATUS.REVIEW || decision.status === AI_CANDIDATE_STATUS.FAILED) {
+          const candidate = state4.candidates.get(id);
+          if (candidate) candidate.status = AI_CANDIDATE_STATUS.PENDING;
+          state4.decisions.delete(id);
+        }
+      });
+      state4.budgetBlockedReason = null;
+      await sessionStore3.persist();
+      emitState2();
+      return submitPending2();
+    }
+    return {
+      cancel,
+      hasRequest,
+      isProcessing,
+      markInFlightAsPending: resetInFlightCandidates,
+      resetRequestState,
+      retryReviewItems: retryReviewItems2,
+      submitPending: submitPending2
+    };
   }
   // src/features/ai-scan/logic.js
-  var isActive2 = false;
-  var isPaused3 = false;
-  var observer2 = null;
-  var rootFlushTimer = null;
-  var autoSubmitTimer = null;
-  var pendingRoots = /* @__PURE__ */ new Set();
-  var candidates = /* @__PURE__ */ new Map();
-  var candidateFingerprints = /* @__PURE__ */ new Set();
-  var decisions = /* @__PURE__ */ new Map();
-  var regexRules = /* @__PURE__ */ new Map();
-  var cache = /* @__PURE__ */ new Map();
-  var currentRequest = null;
-  var inFlightCandidateIds = [];
-  var generation = 0;
-  var currentSiteKey = "";
-  var currentTargetLanguage = "zh-CN";
-  var sessionUsage = { requests: 0, characters: 0 };
-  var lastError = null;
-  var budgetBlockedReason = null;
-  var persistenceChain = Promise.resolve();
-  var isClearing = false;
-  var submissionInProgress = false;
-  var userRemovedFingerprints = /* @__PURE__ */ new Set();
-  var AI_COLLECTION_FLUSH_DELAY_MS = 200;
-  var AI_OBSERVER_OPTIONS = Object.freeze({
-    childList: true,
-    subtree: true,
-    characterData: true,
-    attributes: true,
-    attributeFilter: ["placeholder", "alt", "title", "aria-label"]
+  var state3 = createAiScanState();
+  var runtime2 = {
+    submissionController: null
+  };
+  var emitState = () => {
+    fire("aiStateChanged", getAiStateSnapshot(state3, runtime2.submissionController?.isProcessing()));
+  };
+  var sessionStore2 = createAiSessionStore(state3);
+  runtime2.submissionController = createAiSubmissionController({
+    state: state3,
+    sessionStore: sessionStore2,
+    emitState
   });
-  function getCounts() {
-    const counts = {
-      total: candidates.size,
-      pending: 0,
-      inflight: 0,
-      translated: 0,
-      keep: 0,
-      removed: 0,
-      review: 0,
-      failed: 0,
-      textRules: 0,
-      regexRules: regexRules.size
-    };
-    candidates.forEach((candidate) => {
-      if (Object.prototype.hasOwnProperty.call(counts, candidate.status)) {
-        counts[candidate.status] += 1;
-      }
-    });
-    decisions.forEach((decision) => {
-      if (decision.status !== AI_CANDIDATE_STATUS.TRANSLATED || decision.action !== AI_ACTIONS.TRANSLATE) return;
-      if (decision.translationType === AI_TRANSLATION_TYPES.REGEX) return;
-      counts.textRules += 1;
-    });
-    return counts;
-  }
-  function emitState() {
-    fire("aiStateChanged", getAiStateSnapshot());
-  }
-  function markInFlightAsPending() {
-    inFlightCandidateIds.forEach((id) => {
-      const candidate = candidates.get(id);
-      if (candidate && candidate.status === AI_CANDIDATE_STATUS.IN_FLIGHT) {
-        candidate.status = AI_CANDIDATE_STATUS.PENDING;
-      }
-    });
-    inFlightCandidateIds = [];
-  }
-  function serializeSession() {
-    return serializeAiSession({
-      candidates,
-      decisions,
-      regexRules,
-      siteKey: currentSiteKey,
-      targetLanguage: currentTargetLanguage,
-      sessionUsage
-    });
-  }
-  async function persistState() {
-    const snapshot = serializeSession();
-    persistenceChain = persistenceChain.catch(() => void 0).then(() => saveAiSession(snapshot));
-    await persistenceChain;
-  }
-  function hydrateCachedDecision(candidate, cacheEntry) {
-    const cachedDecision = cacheEntry?.decision;
-    if (!cachedDecision || cachedDecision.translationType === AI_TRANSLATION_TYPES.REGEX) return false;
-    const decision = {
-      ...cachedDecision,
-      id: candidate.id,
-      sourceText: candidate.sourceText
-    };
-    if (decision.action === AI_ACTIONS.KEEP) {
-      decision.action = AI_ACTIONS.REMOVE;
-      decision.status = AI_CANDIDATE_STATUS.REMOVED;
-    }
-    if (decision.action === AI_ACTIONS.TRANSLATE && decision.translationType !== AI_TRANSLATION_TYPES.REGEX && isUnchangedTranslation(candidate.sourceText, decision.translation)) {
-      decision.action = AI_ACTIONS.REMOVE;
-      decision.translation = "";
-      decision.translationType = AI_TRANSLATION_TYPES.TEXT;
-      decision.reason = "unchanged-translation";
-      decision.status = AI_CANDIDATE_STATUS.REMOVED;
-    }
-    decisions.set(candidate.id, decision);
-    candidate.status = decision.status;
-    return true;
-  }
-  function addCandidateBatch(newCandidates) {
-    let added = 0;
-    newCandidates.forEach((candidate) => {
-      if (!isSubmittableAiCandidate(candidate) || candidateFingerprints.has(candidate.fingerprint) || userRemovedFingerprints.has(candidate.fingerprint)) {
-        return;
-      }
-      const cacheEntry = cache.get(candidate.fingerprint);
-      hydrateCachedDecision(candidate, cacheEntry);
-      candidates.set(candidate.id, candidate);
-      candidateFingerprints.add(candidate.fingerprint);
-      added += 1;
-    });
-    if (added > 0) {
-      void persistState().catch(() => {
-        lastError = { code: "storage" };
-        emitState();
-      });
-      emitState();
-      const aiSettings = mergeAiSettings(loadSettings().ai);
-      if (isActive2 && aiSettings.processingMode === AI_PROCESSING_MODES.AUTO && !budgetBlockedReason) {
-        scheduleAutoSubmit(aiSettings.batch.debounceMs);
-      }
-    }
-    return added;
-  }
-  function collectFromRoot(root) {
-    const settings = loadSettings();
-    const extracted = extractAiCandidates(root, {
-      filterRules: settings.filterRules,
-      targetLanguage: currentTargetLanguage,
-      siteKey: currentSiteKey,
-      scannerConfig
-    });
-    return addCandidateBatch(extracted);
-  }
-  async function flushPendingRoots(runGeneration = generation) {
-    if (!isActive2 || isPaused3 || runGeneration !== generation || pendingRoots.size === 0) return;
-    if (isTranslationBridgeActive() && !isTranslationBridgeIdle()) {
-      await waitForTranslationBridgeIdle();
-    }
-    if (!isActive2 || isPaused3 || runGeneration !== generation) return;
-    const roots = Array.from(pendingRoots);
-    pendingRoots = /* @__PURE__ */ new Set();
-    const topLevelRoots = selectTopLevelMutationRoots(roots);
-    topLevelRoots.forEach(collectFromRoot);
-  }
-  function scheduleRootFlush() {
-    if (isPaused3) return;
-    if (rootFlushTimer !== null) return;
-    const runGeneration = generation;
-    rootFlushTimer = setTimeout(() => {
-      rootFlushTimer = null;
-      void flushPendingRoots(runGeneration);
-    }, AI_COLLECTION_FLUSH_DELAY_MS);
-  }
-  function handleMutations2(mutations) {
-    if (!isActive2 || isPaused3) return;
-    mutations.forEach((mutation) => {
-      if (mutation.type === "characterData") {
-        pendingRoots.add(mutation.target);
-        return;
-      }
-      if (mutation.type === "attributes") {
-        pendingRoots.add(mutation.target);
-        return;
-      }
-      mutation.addedNodes.forEach((node) => pendingRoots.add(node));
-    });
-    if (pendingRoots.size > 0) scheduleRootFlush();
-  }
-  function scheduleAutoSubmit(delayMs) {
-    if (!isActive2 || isPaused3 || currentRequest) return;
-    if (autoSubmitTimer !== null) clearTimeout(autoSubmitTimer);
-    const runGeneration = generation;
-    autoSubmitTimer = setTimeout(() => {
-      autoSubmitTimer = null;
-      if (isActive2 && !isPaused3 && runGeneration === generation) {
-        void submitPending();
-      }
-    }, delayMs);
-  }
-  async function restoreSession() {
-    const restored = restoreAiSession(await loadAiSession(), {
-      siteKey: currentSiteKey,
-      targetLanguage: currentTargetLanguage
-    });
-    candidates = restored.candidates;
-    candidateFingerprints = restored.candidateFingerprints;
-    decisions = restored.decisions;
-    regexRules = restored.regexRules;
-    sessionUsage = restored.sessionUsage;
-  }
+  var collectionController = createAiCollectionController({
+    state: state3,
+    emitState,
+    hasRequest: runtime2.submissionController.hasRequest,
+    persistState: sessionStore2.persist,
+    submitPending: runtime2.submissionController.submitPending
+  });
   async function startAiScan() {
-    if (isActive2) return { started: true };
+    if (state3.isActive) return { started: true };
     const aiSettings = mergeAiSettings(loadSettings().ai);
     if (!aiSettings.enabled) {
       return { started: false, reason: "disabled" };
@@ -13550,445 +14112,152 @@ ${entries.join("\n")}
     if (!acquireScanMode(SCAN_MODES.AI)) {
       return { started: false, reason: "mode-conflict" };
     }
-    isActive2 = true;
-    isPaused3 = false;
-    generation += 1;
-    lastError = null;
-    budgetBlockedReason = null;
-    userRemovedFingerprints = /* @__PURE__ */ new Set();
-    currentSiteKey = window.location.origin;
-    currentTargetLanguage = aiSettings.targetLanguage;
+    state3.isActive = true;
+    state3.isPaused = false;
+    state3.generation += 1;
+    state3.lastError = null;
+    state3.budgetBlockedReason = null;
+    state3.userRemovedFingerprints = /* @__PURE__ */ new Set();
+    state3.currentSiteKey = window.location.origin;
+    state3.currentTargetLanguage = aiSettings.targetLanguage;
     try {
       registerTranslationBridgeClient();
-      cache = await loadAiCache();
-      await restoreSession();
+      await sessionStore2.loadCache();
+      await sessionStore2.restore();
       await waitForTranslationBridgeIdle();
-      if (!isActive2) return { started: false, reason: "stopped" };
-      collectFromRoot(document);
-      observer2 = new MutationObserver(handleMutations2);
-      observer2.observe(document.body, AI_OBSERVER_OPTIONS);
+      if (!state3.isActive) return { started: false, reason: "stopped" };
+      collectionController.start();
       emitState();
       return { started: true };
     } catch (error) {
-      isActive2 = false;
-      isPaused3 = false;
+      state3.isActive = false;
+      state3.isPaused = false;
+      collectionController.stop();
+      runtime2.submissionController.cancel();
       unregisterTranslationBridgeClient();
       releaseScanMode(SCAN_MODES.AI);
-      lastError = error;
+      state3.lastError = error;
       emitState();
       throw error;
     }
   }
   async function stopAiScan() {
-    if (!isActive2) {
+    if (!state3.isActive) {
       releaseScanMode(SCAN_MODES.AI);
       return;
     }
-    isActive2 = false;
-    isPaused3 = false;
-    generation += 1;
-    if (observer2) {
-      observer2.disconnect();
-      observer2 = null;
-    }
-    if (rootFlushTimer !== null) {
-      clearTimeout(rootFlushTimer);
-      rootFlushTimer = null;
-    }
-    if (autoSubmitTimer !== null) {
-      clearTimeout(autoSubmitTimer);
-      autoSubmitTimer = null;
-    }
-    pendingRoots.clear();
-    if (currentRequest) {
-      currentRequest.abort();
-      currentRequest = null;
-    }
-    markInFlightAsPending();
+    state3.isActive = false;
+    state3.isPaused = false;
+    state3.generation += 1;
+    collectionController.stop();
+    runtime2.submissionController.cancel();
+    runtime2.submissionController.markInFlightAsPending();
     unregisterTranslationBridgeClient();
     releaseScanMode(SCAN_MODES.AI);
-    await persistState();
+    await sessionStore2.persist();
     emitState();
-  }
-  async function performSubmitPending() {
-    if (currentRequest || isClearing) return { submitted: false, reason: "inactive-or-busy" };
-    const submissionGeneration = generation;
-    const settings = loadSettings();
-    const aiSettings = mergeAiSettings(settings.ai);
-    const provider = getActiveProvider(aiSettings);
-    if (!provider) return { submitted: false, reason: "missing-provider" };
-    const pending = Array.from(candidates.values()).filter(
-      (candidate) => candidate.status === AI_CANDIDATE_STATUS.PENDING
-    );
-    const batch = selectBatch(pending, aiSettings.batch);
-    batch.invalid.forEach((candidate) => {
-      candidates.delete(candidate.id);
-      decisions.delete(candidate.id);
-      if (candidate.fingerprint) candidateFingerprints.delete(candidate.fingerprint);
-    });
-    batch.oversized.forEach((candidate) => {
-      candidate.status = AI_CANDIDATE_STATUS.REVIEW;
-      decisions.set(candidate.id, {
-        id: candidate.id,
-        sourceText: candidate.sourceText,
-        action: AI_ACTIONS.REVIEW,
-        translation: "",
-        confidence: 0,
-        category: "local-validation",
-        reason: "source-too-long",
-        status: AI_CANDIDATE_STATUS.REVIEW
-      });
-    });
-    if (batch.invalid.length > 0 || batch.oversized.length > 0) {
-      await persistState();
-      emitState();
-    }
-    if (generation !== submissionGeneration || isClearing) {
-      return { submitted: false, reason: "stale" };
-    }
-    if (batch.candidates.length === 0) return { submitted: false, reason: "empty" };
-    const [apiKey, styleProfile, dailyUsage] = await Promise.all([
-      loadProviderApiKey(provider.id),
-      matchStyleProfile(window.location, currentTargetLanguage),
-      loadDailyUsage()
-    ]);
-    if (generation !== submissionGeneration || isClearing) {
-      return { submitted: false, reason: "stale" };
-    }
-    const pageContext = buildPageContext({ targetLanguage: currentTargetLanguage });
-    const payload = buildTranslationRequest({
-      provider,
-      candidates: batch.candidates,
-      targetLanguage: currentTargetLanguage,
-      styleProfile,
-      pageContext
-    });
-    try {
-      validateProviderConfiguration(provider, apiKey);
-    } catch (error) {
-      lastError = error;
-      emitState();
-      fire("aiRequestFailed", { code: error?.code || "invalid-provider" });
-      return { submitted: false, reason: error?.code || "invalid-provider" };
-    }
-    const budget = checkBudget({
-      settings: aiSettings.budget,
-      sessionUsage,
-      dailyUsage,
-      requestPayload: payload,
-      nextCharacters: batch.characters
-    });
-    if (!budget.allowed) {
-      budgetBlockedReason = budget.reason;
-      emitState();
-      fire("aiBudgetBlocked", budget.reason);
-      return { submitted: false, reason: budget.reason };
-    }
-    budgetBlockedReason = null;
-    try {
-      await addDailyUsage(budget.estimatedTokens);
-    } catch {
-      lastError = { code: "storage" };
-      emitState();
-      return { submitted: false, reason: "storage" };
-    }
-    if (generation !== submissionGeneration || isClearing) {
-      return { submitted: false, reason: "stale" };
-    }
-    batch.candidates.forEach((candidate) => {
-      candidate.status = AI_CANDIDATE_STATUS.IN_FLIGHT;
-    });
-    const requestCandidateIds = batch.candidates.map((candidate) => candidate.id);
-    inFlightCandidateIds = requestCandidateIds;
-    sessionUsage.requests += 1;
-    sessionUsage.characters += batch.characters;
-    lastError = null;
-    emitState();
-    const requestGeneration = submissionGeneration;
-    let requestHandle = null;
-    try {
-      requestHandle = createChatCompletionRequest({
-        provider,
-        apiKey,
-        payload,
-        timeoutMs: aiSettings.requestTimeoutMs
-      });
-      currentRequest = requestHandle;
-      const response = await requestHandle.promise;
-      if (requestGeneration !== generation) {
-        return { submitted: false, reason: "stale" };
-      }
-      const parsed = parseJsonContent(response.content);
-      const validated = validateTranslationResponse(parsed, batch.candidates, aiSettings.confidenceThreshold);
-      const regexRuleIdMap = /* @__PURE__ */ new Map();
-      validated.regexRules.forEach((rule) => {
-        let ruleId = rule.id;
-        let suffix = 0;
-        while (regexRules.has(ruleId)) {
-          suffix += 1;
-          ruleId = `${rule.id}-${suffix}`;
-        }
-        regexRuleIdMap.set(rule.id, ruleId);
-        regexRules.set(ruleId, { ...rule, id: ruleId });
-      });
-      validated.decisions.forEach((decision) => {
-        const candidate = candidates.get(decision.id);
-        if (!candidate) return;
-        const storedDecision = decision.translationType === AI_TRANSLATION_TYPES.REGEX && regexRuleIdMap.has(decision.regexRuleId) ? { ...decision, regexRuleId: regexRuleIdMap.get(decision.regexRuleId) } : decision;
-        candidate.status = storedDecision.status;
-        decisions.set(decision.id, storedDecision);
-        if (storedDecision.translationType !== AI_TRANSLATION_TYPES.REGEX && [AI_ACTIONS.TRANSLATE, AI_ACTIONS.KEEP, AI_ACTIONS.REMOVE].includes(storedDecision.action)) {
-          cache.set(candidate.fingerprint, {
-            fingerprint: candidate.fingerprint,
-            siteKey: candidate.siteKey,
-            targetLanguage: candidate.targetLanguage,
-            sourceText: candidate.sourceText,
-            providerId: provider.id,
-            model: provider.model,
-            styleVersion: styleProfile?.version || 0,
-            decision: storedDecision,
-            updatedAt: Date.now()
-          });
-        } else if (storedDecision.translationType === AI_TRANSLATION_TYPES.REGEX) {
-          cache.delete(candidate.fingerprint);
-        }
-      });
-      await Promise.all([saveAiCache(cache), persistState()]);
-      return { submitted: true, count: validated.decisions.length };
-    } catch (error) {
-      if (requestGeneration !== generation) {
-        return { submitted: false, reason: "stale" };
-      }
-      if (error?.code !== "aborted") {
-        lastError = error;
-        const validationFailure = error instanceof SyntaxError || error?.message === "empty-response" || ["truncated-response", "invalid-response"].includes(error?.code);
-        requestCandidateIds.forEach((id) => {
-          const candidate = candidates.get(id);
-          if (!candidate) return;
-          candidate.status = validationFailure ? AI_CANDIDATE_STATUS.REVIEW : AI_CANDIDATE_STATUS.FAILED;
-          decisions.set(id, {
-            id,
-            sourceText: candidate.sourceText,
-            action: AI_ACTIONS.REVIEW,
-            translation: "",
-            confidence: 0,
-            category: validationFailure ? "validation" : "request-error",
-            reason: validationFailure ? error?.code || error?.message || "invalid-response" : error?.code || "request-error",
-            status: candidate.status
-          });
-        });
-        await persistState();
-        fire("aiRequestFailed", { code: error?.code || "unknown" });
-      } else {
-        requestCandidateIds.forEach((id) => {
-          const candidate = candidates.get(id);
-          if (candidate?.status === AI_CANDIDATE_STATUS.IN_FLIGHT) {
-            candidate.status = AI_CANDIDATE_STATUS.PENDING;
-          }
-        });
-      }
-      return { submitted: false, reason: error?.code || "unknown" };
-    } finally {
-      if (currentRequest === requestHandle) {
-        currentRequest = null;
-        inFlightCandidateIds = [];
-      }
-      emitState();
-    }
-  }
-  async function submitPending() {
-    if (currentRequest || isClearing || submissionInProgress) {
-      return { submitted: false, reason: "inactive-or-busy" };
-    }
-    const pending = Array.from(candidates.values()).filter(
-      (candidate) => candidate.status === AI_CANDIDATE_STATUS.PENDING
-    );
-    const invalid = pending.filter((candidate) => !isSubmittableAiCandidate(candidate));
-    invalid.forEach((candidate) => {
-      candidates.delete(candidate.id);
-      decisions.delete(candidate.id);
-      if (candidate.fingerprint) candidateFingerprints.delete(candidate.fingerprint);
-    });
-    if (invalid.length > 0) {
-      await persistState();
-      emitState();
-    }
-    if (!pending.some(isSubmittableAiCandidate)) {
-      return { submitted: false, reason: "empty" };
-    }
-    submissionInProgress = true;
-    emitState();
-    let result;
-    try {
-      result = await performSubmitPending();
-      return result;
-    } finally {
-      submissionInProgress = false;
-      emitState();
-      const latestSettings = mergeAiSettings(loadSettings().ai);
-      if (result?.submitted && isActive2 && !isPaused3 && !isClearing && latestSettings.processingMode === AI_PROCESSING_MODES.AUTO && Array.from(candidates.values()).some((candidate) => candidate.status === AI_CANDIDATE_STATUS.PENDING) && !budgetBlockedReason) {
-        queueMicrotask(() => void submitPending());
-      }
-    }
-  }
-  async function retryReviewItems() {
-    decisions.forEach((decision, id) => {
-      if (decision.status === AI_CANDIDATE_STATUS.REVIEW || decision.status === AI_CANDIDATE_STATUS.FAILED) {
-        const candidate = candidates.get(id);
-        if (candidate) candidate.status = AI_CANDIDATE_STATUS.PENDING;
-        decisions.delete(id);
-      }
-    });
-    budgetBlockedReason = null;
-    await persistState();
-    emitState();
-    return submitPending();
   }
   function isReviewDecision(decision) {
     return decision?.status === AI_CANDIDATE_STATUS.REVIEW || decision?.status === AI_CANDIDATE_STATUS.FAILED;
   }
   function persistReviewMutation(cacheChanged = false) {
-    const tasks = [persistState()];
-    if (cacheChanged) tasks.push(saveAiCache(cache));
+    const tasks = [sessionStore2.persist()];
+    if (cacheChanged) tasks.push(sessionStore2.saveCache());
     Promise.all(tasks).catch(() => {
-      lastError = { code: "storage" };
+      state3.lastError = { code: "storage" };
       emitState();
     });
     emitState();
   }
-  function getSummaryState() {
-    return {
-      candidates,
-      candidateFingerprints,
-      decisions,
-      regexRules,
-      cache,
-      userRemovedFingerprints,
-      siteKey: currentSiteKey || window.location.origin,
-      targetLanguage: currentTargetLanguage
-    };
-  }
   function removeAiReviewItem(candidateId) {
     const id = String(candidateId || "").trim();
-    const decision = decisions.get(id);
-    if (!isReviewDecision(decision) || !candidates.has(id)) return { changed: false };
-    const removed = removeAiSummaryCandidate(getSummaryState(), id);
+    const decision = state3.decisions.get(id);
+    if (!isReviewDecision(decision) || !state3.candidates.has(id)) return { changed: false };
+    const removed = removeAiSummaryCandidate(getAiSummaryState(state3, window.location.origin), id);
     if (!removed.changed) return { changed: false };
     persistReviewMutation(removed.cacheChanged);
     return { changed: true };
   }
   function restoreAiReviewItem(candidateId) {
     const id = String(candidateId || "").trim();
-    const candidate = candidates.get(id);
-    const decision = decisions.get(id);
+    const candidate = state3.candidates.get(id);
+    const decision = state3.decisions.get(id);
     if (!candidate || !isReviewDecision(decision)) return { changed: false };
     candidate.status = AI_CANDIDATE_STATUS.PENDING;
-    decisions.delete(id);
-    budgetBlockedReason = null;
+    state3.decisions.delete(id);
+    state3.budgetBlockedReason = null;
     persistReviewMutation();
     return { changed: true };
   }
   async function clearAiData() {
-    if (isClearing) return;
-    isClearing = true;
-    generation += 1;
+    if (state3.isClearing) return;
+    state3.isClearing = true;
+    state3.generation += 1;
     try {
-      const requestToCancel = currentRequest;
+      const requestToCancel = runtime2.submissionController.cancel();
       if (requestToCancel) {
-        requestToCancel.abort();
         await requestToCancel.promise.catch(() => void 0);
       }
-      currentRequest = null;
-      inFlightCandidateIds = [];
-      candidates.clear();
-      candidateFingerprints.clear();
-      decisions.clear();
-      regexRules.clear();
-      sessionUsage = { requests: 0, characters: 0 };
-      lastError = null;
-      budgetBlockedReason = null;
-      userRemovedFingerprints.clear();
-      await persistenceChain.catch(() => void 0);
-      await Promise.all([
-        clearAiSession(),
-        clearAiCacheForSite(currentSiteKey || window.location.origin, currentTargetLanguage)
-      ]);
+      runtime2.submissionController.resetRequestState();
+      resetAiDataState(state3);
+      await sessionStore2.clear();
       emitState();
     } finally {
-      isClearing = false;
+      state3.isClearing = false;
     }
   }
   function getAiDisplayData() {
     return buildAiDisplayData(
-      Array.from(candidates.values()),
-      Array.from(decisions.values()),
-      Array.from(regexRules.values())
+      Array.from(state3.candidates.values()),
+      Array.from(state3.decisions.values()),
+      Array.from(state3.regexRules.values())
     );
   }
   function getReviewItems() {
-    return Array.from(decisions.values()).filter(
+    return Array.from(state3.decisions.values()).filter(
       (decision) => decision.status === AI_CANDIDATE_STATUS.REVIEW || decision.status === AI_CANDIDATE_STATUS.FAILED
     );
   }
   function applyAiSummaryEdits({ remainingSourceTexts = null, editedRegexRules = null } = {}) {
-    const state = getSummaryState();
-    const result = applyAiSummaryEditsToState(state, { remainingSourceTexts, editedRegexRules });
-    regexRules = state.regexRules;
+    const summaryState = getAiSummaryState(state3, window.location.origin);
+    const result = applyAiSummaryEditsToState(summaryState, { remainingSourceTexts, editedRegexRules });
+    state3.regexRules = summaryState.regexRules;
     if (result.changed) {
-      const tasks = [persistState()];
-      if (result.cacheChanged) tasks.push(saveAiCache(cache));
+      const tasks = [sessionStore2.persist()];
+      if (result.cacheChanged) tasks.push(sessionStore2.saveCache());
       Promise.all(tasks).catch(() => {
-        lastError = { code: "storage" };
+        state3.lastError = { code: "storage" };
         emitState();
       });
       emitState();
     }
     return { changed: result.changed, error: result.error };
   }
-  function getAiStateSnapshot() {
-    return {
-      active: isActive2,
-      paused: isPaused3,
-      processing: Boolean(currentRequest) || submissionInProgress,
-      counts: getCounts(),
-      sessionUsage: { ...sessionUsage },
-      lastErrorCode: lastError?.code || null,
-      budgetBlockedReason
-    };
+  function getAiStateSnapshot2() {
+    return getAiStateSnapshot(state3, runtime2.submissionController.isProcessing());
   }
   function isAiScanActive() {
-    return isActive2;
+    return state3.isActive;
   }
   function pauseAiScan() {
-    if (!isActive2 || isPaused3) return false;
-    isPaused3 = true;
-    if (observer2) observer2.disconnect();
-    if (rootFlushTimer !== null) {
-      clearTimeout(rootFlushTimer);
-      rootFlushTimer = null;
-    }
-    if (autoSubmitTimer !== null) {
-      clearTimeout(autoSubmitTimer);
-      autoSubmitTimer = null;
-    }
-    pendingRoots.clear();
+    if (!state3.isActive || state3.isPaused) return false;
+    state3.isPaused = true;
+    collectionController.pause();
     emitState();
     return true;
   }
   function resumeAiScan() {
-    if (!isActive2 || !isPaused3) return false;
-    isPaused3 = false;
-    if (observer2 && document.body) observer2.observe(document.body, AI_OBSERVER_OPTIONS);
-    const aiSettings = mergeAiSettings(loadSettings().ai);
-    if (aiSettings.processingMode === AI_PROCESSING_MODES.AUTO && Array.from(candidates.values()).some((candidate) => candidate.status === AI_CANDIDATE_STATUS.PENDING) && !budgetBlockedReason) {
-      scheduleAutoSubmit(aiSettings.batch.debounceMs);
-    }
+    if (!state3.isActive || !state3.isPaused) return false;
+    state3.isPaused = false;
+    collectionController.resume();
     emitState();
     return true;
   }
   function hasAiData() {
-    return candidates.size > 0 || decisions.size > 0 || regexRules.size > 0;
+    return state3.candidates.size > 0 || state3.decisions.size > 0 || state3.regexRules.size > 0;
   }
+  var submitPending = runtime2.submissionController.submitPending;
+  var retryReviewItems = runtime2.submissionController.retryReviewItems;
   // src/shared/utils/text/summaryParser.js
   var ARRAY_ENTRY_PATTERN = /\[\s*("(?:\\.|[^"\\])*")\s*,\s*("(?:\\.|[^"\\])*")?\s*\]/g;
   var OBJECT_ENTRY_PATTERN = /("(?:\\.|[^"\\])*")\s*:\s*("(?:\\.|[^"\\])*")?/g;
@@ -14047,7 +14316,7 @@ ${entries.join("\n")}
     aiFab2.classList.remove("is-recording");
     updateFabTooltip(aiFab2, "tooltip.ai_scan");
   }
-  function showAiCounter(snapshot = getAiStateSnapshot()) {
+  function showAiCounter(snapshot = getAiStateSnapshot2()) {
     if (!aiCounterVisible) {
       createCounterWithHelp({
         counterKey: "common.discovered",
@@ -14102,7 +14371,7 @@ ${entries.join("\n")}
   function syncAiSummary(open = false, options = {}) {
     if (options.resetDrafts) resetAiDrafts();
     ensureTextareaEditSync();
-    const snapshot = getAiStateSnapshot();
+    const snapshot = getAiStateSnapshot2();
     const data = getAiDisplayData();
     const settings = loadSettings();
     if (lastAiOutputFormat !== settings.outputFormat) {
@@ -14144,7 +14413,7 @@ ${entries.join("\n")}
       const parsed = parseRegexRules(content);
       if (!parsed.valid) {
         aiSummaryEditError = parsed.error || "invalid-regex-output";
-        updateAiSummaryPanel(getAiStateSnapshot(), getReviewItems(), aiSummaryEditError);
+        updateAiSummaryPanel(getAiStateSnapshot2(), getReviewItems(), aiSummaryEditError);
         return;
       }
       let result2;
@@ -14156,7 +14425,7 @@ ${entries.join("\n")}
       }
       if (result2.error) {
         aiSummaryEditError = result2.error;
-        updateAiSummaryPanel(getAiStateSnapshot(), getReviewItems(), aiSummaryEditError);
+        updateAiSummaryPanel(getAiStateSnapshot2(), getReviewItems(), aiSummaryEditError);
         return;
       }
       aiSummaryEditError = "";
@@ -14286,14 +14555,14 @@ ${entries.join("\n")}
   function handleSummaryClick() {
     log(t("tooltip.summary"));
     if (isElementScanActive()) {
-      const stagedTexts2 = getStagedTexts();
+      const stagedTexts = getStagedTexts();
       const { outputFormat, includeArrayBrackets, tabSize } = loadSettings();
-      const formattedText = formatTextsForTranslation(Array.from(stagedTexts2), outputFormat, {
+      const formattedText = formatTextsForTranslation(Array.from(stagedTexts), outputFormat, {
         includeArrayBrackets,
         tabSize
       });
-      updateScanCount(stagedTexts2.size, "element-scan");
-      if (stagedTexts2.size === 0) {
+      updateScanCount(stagedTexts.size, "element-scan");
+      if (stagedTexts.size === 0) {
         updateModalContent(SHOW_PLACEHOLDER, true, "element-scan");
       } else {
         updateModalContent(formattedText, true, "element-scan");
