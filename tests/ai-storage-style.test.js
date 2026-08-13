@@ -8,8 +8,21 @@ globalThis.GM_deleteValue = (key) => memory.delete(key);
 
 const storage = await import('../src/shared/services/ai/storage.js');
 const styles = await import('../src/shared/services/ai/siteStyleStore.js');
+const settingsDefaults = await import('../src/shared/services/settingsDefaults.js');
 
 test.beforeEach(() => memory.clear());
+
+test('settings loads a fresh default object for each caller', () => {
+    const first = settingsDefaults.createDefaultSettings();
+    first.language = 'zh-TW';
+    first.filterRules.chinese = false;
+    first.ai.batch.maxItems = 1;
+
+    const second = settingsDefaults.createDefaultSettings();
+    assert.equal(second.language, 'auto');
+    assert.equal(second.filterRules.chinese, true);
+    assert.notEqual(second.ai.batch.maxItems, 1);
+});
 
 test('API keys use independent versioned storage and are never part of exported settings', async () => {
     await storage.saveProviderApiKey('provider-a', 'sk-test-secret');
