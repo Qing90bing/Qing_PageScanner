@@ -93,7 +93,7 @@ async function build() {
             .sort((a, b) => {
                 if (a === themeFile) return -1;
                 if (b === themeFile) return 1;
-                return 0;
+                return a.localeCompare(b);
             });
 
         for (const file of sortedCssFiles) {
