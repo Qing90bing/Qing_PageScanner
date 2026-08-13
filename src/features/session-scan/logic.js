@@ -1,457 +1,158 @@
-// src/features/session-scan/logic.js
-
-/**
- * @module sessionScan
- * @description 负责管理一个持续的文本提取“会话”，将繁重任务委托给 Web Worker。
- */
-
 import { extractAndProcessText } from '../../shared/utils/text/textProcessor.js';
 import { loadSettings } from '../../shared/services/settings.js';
-import { scannerConfig } from '../../shared/config/scannerConfig.js';
 import { log } from '../../shared/utils/core/logger.js';
 import { isWorkerAllowed } from '../../shared/utils/core/csp-checker.js';
 import { showNotification } from '../../shared/ui/components/notification.js';
-import { t, getTranslationObject } from '../../shared/i18n/index.js';
+import { t } from '../../shared/i18n/index.js';
 import { fire, on } from '../../shared/utils/core/eventBus.js';
-import { selectTopLevelMutationRoots } from '../../shared/utils/dom/mutationRoots.js';
-import * as fallback from './fallback.js';
-import { prepareSessionStart } from './startup.js';
-import { trustedWorkerUrl } from '../../shared/workers/worker-url.js';
-import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
-import { saveActiveSession, clearActiveSession, enablePersistence } from '../../shared/services/sessionPersistence.js';
+import { enablePersistence } from '../../shared/services/sessionPersistence.js';
 import {
-    isTranslationBridgeActive,
-    isTranslationBridgeIdle,
-    onTranslationBridgeStateChange,
     registerTranslationBridgeClient,
     unregisterTranslationBridgeClient,
     waitForTranslationBridgeIdle,
-    TRANSLATION_IDLE_STATE,
-    TRANSLATION_BRIDGE_MAX_WAIT_MS,
-    TRANSLATION_BRIDGE_WAIT_TIMEOUT_MS,
 } from '../../shared/services/translationBridge.js';
+import { prepareSessionStart } from './startup.js';
+import { createSessionScanState } from './state.js';
+import { createSessionStore } from './sessionStore.js';
+import { createSessionDynamicObserver } from './dynamicObserver.js';
+import { createSessionWorkerController } from './workerController.js';
 
-// --- 模块级变量 ---
-let isRecording = false;
-let isPaused = false;
-let observer = null;
-let worker = null;
-let useFallback = false;
-let onSummaryCallback = null;
-let onUpdateCallback = null;
-let currentCount = 0; // 主线程镜像中的当前文本数量。
-const sessionTextsMirror = new Set(); // 主线程数据镜像
-let autoSaveInterval = null; // 自动保存定时器
-const AUTO_SAVE_INTERVAL_MS = 5000;
-const pendingDynamicRoots = new Set();
-let pendingDynamicFlushTimeout = null;
-let pendingDynamicWaitStartedAt = null;
-let sessionStartGeneration = 0;
-
-function saveSessionState() {
-    return saveActiveSession('session-scan', Array.from(sessionTextsMirror));
-}
-
-function clearPendingDynamicRoots() {
-    pendingDynamicRoots.clear();
-    pendingDynamicWaitStartedAt = null;
-    if (pendingDynamicFlushTimeout !== null) {
-        clearTimeout(pendingDynamicFlushTimeout);
-        pendingDynamicFlushTimeout = null;
-    }
-}
-
-function processDynamicTexts(textsBatch) {
-    if (textsBatch.length === 0) return;
-
-    const logPrefix = '动态新发现';
-    if (useFallback) {
-        if (fallback.processTextsInFallback(textsBatch, logPrefix)) {
-            const count = fallback.getCountInFallback();
-            if (onUpdateCallback) onUpdateCallback(count);
-            updateScanCount(count, 'session');
-            saveSessionState();
-        }
-    } else if (worker) {
-        worker.postMessage({
-            type: 'session-add-texts',
-            payload: { texts: textsBatch },
-        });
-    }
-}
-
-function flushPendingDynamicRoots() {
-    if (!isRecording || pendingDynamicRoots.size === 0) return;
-
-    const pendingRoots = Array.from(pendingDynamicRoots);
-    const roots = selectTopLevelMutationRoots(pendingRoots);
-    clearPendingDynamicRoots();
-    const textsBatch = [];
-    const ignoredSelectorString = scannerConfig.ignoredSelectors.join(', ');
-
-    roots.forEach((root) => {
-        if (!root.isConnected || root.closest(ignoredSelectorString)) return;
-
-        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
-        while (walker.nextNode()) {
-            if (walker.currentNode.nodeValue) {
-                textsBatch.push(walker.currentNode.nodeValue);
-            }
-        }
-    });
-
-    processDynamicTexts(textsBatch);
-}
-
-function scheduleDynamicFlushFallback() {
-    if (pendingDynamicFlushTimeout !== null) return;
-    if (pendingDynamicWaitStartedAt === null) {
-        pendingDynamicWaitStartedAt = performance.now();
-    }
-
-    pendingDynamicFlushTimeout = setTimeout(() => {
-        pendingDynamicFlushTimeout = null;
-
-        // 正常翻译批次会以 idle 事件结束；不要因为兜底计时器触发就读取未完成的 DOM。
-        const bridgeStillBusy = isTranslationBridgeActive() && !isTranslationBridgeIdle();
-        const waitedTooLong =
-            pendingDynamicWaitStartedAt !== null &&
-            performance.now() - pendingDynamicWaitStartedAt >= TRANSLATION_BRIDGE_MAX_WAIT_MS;
-
-        if (!bridgeStillBusy || waitedTooLong) {
-            flushPendingDynamicRoots();
-        } else {
-            scheduleDynamicFlushFallback();
-        }
-    }, TRANSLATION_BRIDGE_WAIT_TIMEOUT_MS);
-}
-
-function handleTranslationBridgeStateChange(state) {
-    if (state === TRANSLATION_IDLE_STATE) {
-        flushPendingDynamicRoots();
-    }
-}
-
-onTranslationBridgeStateChange(handleTranslationBridgeStateChange);
-
-// --- 事件监听 ---
-on('clearSessionScan', () => {
-    clearSessionData();
+const state = createSessionScanState();
+const sessionStore = createSessionStore(state);
+const workerController = createSessionWorkerController({ state, sessionStore });
+const dynamicObserver = createSessionDynamicObserver({
+    isRecording: () => state.isRecording,
+    processTexts: workerController.processTexts,
 });
 
-// 监听设置保存事件，同步更新 Worker 中的输出格式设置
-on('settingsSaved', () => {
-    if (!isRecording) return; // 如果没有正在运行的扫描，则无需处理
-
-    const settings = loadSettings();
-    if (worker) {
-        // 向 Worker 发送更新消息，Worker 会在接收任何消息时更新这些设置
-        worker.postMessage({
-            type: 'update-settings',
-            payload: {
-                outputFormat: settings.outputFormat,
-                includeArrayBrackets: settings.includeArrayBrackets,
-                tabSize: settings.tabSize,
-            },
-        });
-        log(t('log.settings.changed', { key: 'outputFormat', oldValue: '', newValue: settings.outputFormat }));
-    }
-    // 注意：备选模式(fallback)不需要更新，因为它在每次请求 summary 时会重新读取设置
-});
-
-// --- MutationObserver 回调 ---
-const handleMutations = (mutations) => {
-    if (!isRecording) return; // 防止停止后处理残留的 mutation
-    const ignoredSelectorString = scannerConfig.ignoredSelectors.join(', ');
-
-    mutations.forEach((mutation) => {
-        mutation.addedNodes.forEach((node) => {
-            if (node.nodeType !== Node.ELEMENT_NODE || node.closest(ignoredSelectorString)) return;
-
-            pendingDynamicRoots.add(node);
-        });
-    });
-
-    if (pendingDynamicRoots.size === 0) return;
-
-    if (isTranslationBridgeActive()) {
-        // 翻译脚本的分片队列完成后会发出 idle 事件，此时再读取新增节点。
-        scheduleDynamicFlushFallback();
-    } else {
-        flushPendingDynamicRoots();
-    }
-};
-
-/**
- * @private
- * @description 清空会话期间收集的所有文本。
- */
 function clearSessionData() {
-    currentCount = 0; // 重置计数值
-    sessionTextsMirror.clear();
-    clearPendingDynamicRoots();
-    saveSessionState(); // 保存清空后的状态
-
-    if (useFallback) {
-        fallback.clearInFallback();
-        if (onUpdateCallback) onUpdateCallback(0);
-        updateScanCount(0, 'session');
-        fire('sessionCleared'); // 触发事件
-    } else if (worker) {
-        worker.postMessage({ type: 'session-clear' });
-        log(t('log.sessionScan.worker.clearCommandSent'));
-    }
+    const wasFallback = workerController.isFallback();
+    state.currentCount = 0;
+    sessionStore.clearTexts();
+    dynamicObserver.clearPendingRoots();
+    sessionStore.save();
+    workerController.clear();
+    if (wasFallback) fire('sessionCleared');
 }
 
-// --- 公开函数 ---
+function handleClearSessionScan() {
+    clearSessionData();
+}
 
-export const start = async (onUpdate, resumedData = null) => {
-    if (isRecording) return;
+function handleSettingsSaved() {
+    if (!state.isRecording) return;
+    const settings = loadSettings();
+    workerController.updateSettings(settings);
+    log(t('log.settings.changed', { key: 'outputFormat', oldValue: '', newValue: settings.outputFormat }));
+}
 
-    const startGeneration = ++sessionStartGeneration;
-    const isCurrentStart = () => isRecording && sessionStartGeneration === startGeneration;
+on('clearSessionScan', handleClearSessionScan);
+on('settingsSaved', handleSettingsSaved);
 
-    // 仅在动态扫描运行期间参与翻译状态协调。
+function completeStart(preparation, resumedData) {
+    const { initialTexts: preparedTexts, settings, workerAllowed } = preparation;
+    const initialTexts = [...preparedTexts];
+    enablePersistence();
+
+    if (resumedData && Array.isArray(resumedData)) {
+        initialTexts.push(...resumedData);
+        sessionStore.addTexts(resumedData);
+    }
+
+    workerController.start({ initialTexts, settings, workerAllowed });
+    dynamicObserver.start();
+    window.addEventListener('beforeunload', handleSessionScanUnload);
+    sessionStore.startAutoSave();
+    sessionStore.save();
+    log(t('log.sessionScan.domObserver.started'));
+    return true;
+}
+
+export async function start(onUpdate, resumedData = null) {
+    if (state.isRecording) return;
+
+    const startGeneration = ++state.sessionStartGeneration;
+    const isCurrentStart = () => state.isRecording && state.sessionStartGeneration === startGeneration;
+
     registerTranslationBridgeClient();
+    state.isPaused = false;
+    workerController.dispose();
+    dynamicObserver.stop();
+    state.currentCount = 0;
+    sessionStore.clearTexts();
+    state.onUpdate = onUpdate;
+    state.useFallback = false;
+    state.isRecording = true;
 
-    // --- 1. 彻底清理旧状态 ---
-    isPaused = false;
-    if (worker) {
-        worker.terminate();
-        worker = null;
-    }
-    if (observer) {
-        observer.disconnect();
-        observer = null;
-    }
-
-    // --- 2. 初始化本次会话的状态 ---
-    currentCount = 0;
-    sessionTextsMirror.clear();
-    clearPendingDynamicRoots();
-    onUpdateCallback = onUpdate;
-    useFallback = false;
-    isRecording = true;
-
-    // --- 3. 加载初始数据和设置 ---
-    let preparation;
     try {
-        preparation = await prepareSessionStart({
+        const preparation = await prepareSessionStart({
             waitForTranslationIdle: waitForTranslationBridgeIdle,
             extractInitialTexts: extractAndProcessText,
             readSettings: loadSettings,
             checkWorkerAllowed: isWorkerAllowed,
             isCurrent: isCurrentStart,
         });
+        if (!preparation) return false;
+        return completeStart(preparation, resumedData);
     } catch (error) {
         if (!isCurrentStart()) return false;
 
-        sessionStartGeneration += 1;
-        isRecording = false;
-        isPaused = false;
-        onUpdateCallback = null;
+        state.sessionStartGeneration += 1;
+        state.isRecording = false;
+        state.isPaused = false;
+        state.onUpdate = null;
+        dynamicObserver.stop();
+        workerController.dispose();
         unregisterTranslationBridgeClient();
         throw error;
     }
+}
 
-    // stop() 或更新的一次 start() 已让本次初始化过期，不再创建任何长期资源。
-    if (!preparation) return false;
+function handleSessionScanUnload() {
+    sessionStore.save();
+}
 
-    const { initialTexts, settings, workerAllowed } = preparation;
+export function stop(onStopped) {
+    state.sessionStartGeneration += 1;
 
-    // 在数据加载和初始保存之前，明确启用持久化
-    enablePersistence();
-
-    if (resumedData && Array.isArray(resumedData)) {
-        resumedData.forEach((text) => {
-            initialTexts.push(text);
-            sessionTextsMirror.add(text);
-        });
-    }
-    const { filterRules, enableDebugLogging, outputFormat, includeArrayBrackets, tabSize } = settings;
-
-    // --- 4. 定义后备模式激活函数 ---
-    const activateFallbackMode = () => {
-        log(t('log.sessionScan.switchToFallback'), 'warn');
-        if (worker) {
-            worker.terminate();
-            worker = null;
-        }
-        useFallback = true;
-
-        fallback.initFallback(filterRules);
-        if (initialTexts.length > 0) {
-            fallback.processTextsInFallback(initialTexts);
-            const count = fallback.getCountInFallback();
-            if (onUpdateCallback) onUpdateCallback(count);
-            updateScanCount(count, 'session');
-            saveSessionState(); // 初始化后保存
-        }
-    };
-
-    // --- 5. 尝试启动 Web Worker ---
-    if (workerAllowed) {
-        try {
-            log(t('log.sessionScan.worker.starting'));
-            worker = new Worker(trustedWorkerUrl);
-
-            worker.onmessage = (event) => {
-                const { type, payload } = event.data;
-                if (type === 'countUpdated') {
-                    currentCount = payload.count;
-                    if (onUpdateCallback) onUpdateCallback(payload.count);
-                    updateScanCount(payload.count, 'session');
-
-                    if (payload.newTexts && Array.isArray(payload.newTexts)) {
-                        payload.newTexts.forEach((text) => sessionTextsMirror.add(text));
-                    }
-                } else if (type === 'summaryReady' && onSummaryCallback) {
-                    onSummaryCallback(payload, currentCount);
-                    onSummaryCallback = null;
-                }
-            };
-
-            worker.onerror = (error) => {
-                log(t('log.sessionScan.worker.initFailed'), 'warn');
-                log(t('log.sessionScan.worker.originalError', { error: error.message }), 'debug');
-                showNotification(t('notifications.cspWorkerWarning'), { type: 'info', duration: 5000 });
-                activateFallbackMode();
-            };
-
-            worker.postMessage({
-                type: 'session-start',
-                payload: {
-                    filterRules,
-                    enableDebugLogging,
-                    outputFormat,
-                    includeArrayBrackets,
-                    tabSize,
-                    translations: {
-                        workerLogPrefix: t('log.sessionScan.worker.logPrefix'),
-                        textFiltered: t('log.textProcessor.filtered'),
-                        filterReasons: getTranslationObject('filterReasons'),
-                    },
-                    initialData: initialTexts,
-                },
-            });
-            log(t('log.sessionScan.worker.initialized', { count: initialTexts.length }));
-        } catch (e) {
-            log(t('log.sessionScan.worker.initSyncError', { error: e.message }), 'error');
-            showNotification(t('notifications.cspWorkerWarning'), { type: 'info', duration: 5000 });
-            activateFallbackMode();
-        }
-    } else {
-        log(t('log.sessionScan.worker.cspBlocked'), 'warn');
-        showNotification(t('notifications.cspWorkerWarning'), { type: 'info', duration: 5000 });
-        activateFallbackMode();
-    }
-
-    // --- 6. 统一启动 MutationObserver ---
-    // 无论之前的路径如何（成功、CSP阻塞、同步/异步失败），
-    // 都在这里统一、安全地启动 DOM 监听。
-    observer = new MutationObserver(handleMutations);
-    observer.observe(document.body, { childList: true, subtree: true });
-    window.addEventListener('beforeunload', handleSessionScanUnload);
-
-    // 启动自动保存心跳，确保时间戳刷新
-    if (autoSaveInterval) clearInterval(autoSaveInterval);
-    autoSaveInterval = setInterval(() => {
-        if (isRecording) {
-            saveSessionState();
-        }
-    }, AUTO_SAVE_INTERVAL_MS);
-
-    // 立即保存一次以初始化会话
-    saveSessionState();
-
-    log(t('log.sessionScan.domObserver.started'));
-    return true;
-};
-
-const handleSessionScanUnload = () => {
-    saveSessionState();
-};
-
-export const stop = (onStopped) => {
-    sessionStartGeneration += 1;
-
-    if (!isRecording) {
+    if (!state.isRecording) {
+        dynamicObserver.stop();
+        workerController.stop(onStopped);
         unregisterTranslationBridgeClient();
-        if (onStopped) onStopped(0);
         return;
     }
 
     log(t('log.sessionScan.domObserver.stopped'));
-    if (observer) {
-        observer.disconnect();
-        observer = null;
-    }
+    dynamicObserver.stop();
     window.removeEventListener('beforeunload', handleSessionScanUnload);
-
-    if (autoSaveInterval) {
-        clearInterval(autoSaveInterval);
-        autoSaveInterval = null;
-    }
-
-    clearPendingDynamicRoots();
+    sessionStore.stopAutoSave();
     unregisterTranslationBridgeClient();
-    clearActiveSession();
-    isRecording = false;
-    isPaused = false;
-    sessionTextsMirror.clear();
-    onUpdateCallback = null;
+    sessionStore.clearPersistedSession();
+    state.isRecording = false;
+    state.isPaused = false;
+    sessionStore.clearTexts();
+    state.onUpdate = null;
+    workerController.stop(onStopped);
+}
 
-    if (onStopped) {
-        if (useFallback) {
-            onStopped(fallback.getCountInFallback());
-        } else if (worker) {
-            const finalCountListener = (event) => {
-                const { type, payload } = event.data;
-                if (type === 'countUpdated' && typeof payload.count !== 'undefined') {
-                    onStopped(payload.count);
-                    worker.removeEventListener('message', finalCountListener);
-                }
-            };
-            worker.addEventListener('message', finalCountListener);
-            worker.postMessage({ type: 'session-get-count' });
-        } else {
-            onStopped(0);
-        }
-    }
-};
+export function requestSummary(onReady) {
+    workerController.requestSummary(onReady);
+}
 
-export const requestSummary = (onReady) => {
-    if (!onReady) return;
+export function isSessionRecording() {
+    return state.isRecording;
+}
 
-    if (useFallback) {
-        const summaryText = fallback.getSummaryInFallback();
-        const summaryCount = fallback.getCountInFallback();
-        onReady(summaryText, summaryCount);
-    } else if (worker) {
-        onSummaryCallback = onReady;
-        worker.postMessage({ type: 'session-get-summary' });
-    } else {
-        onReady('[]', 0); // Or "{}" depending on default but this is empty anyway
-    }
-};
-
-export const isSessionRecording = () => isRecording;
-
-export const pauseSessionScan = () => {
-    if (!isRecording || isPaused) return;
-    isPaused = true;
-    clearPendingDynamicRoots();
+export function pauseSessionScan() {
+    if (!state.isRecording || state.isPaused) return;
+    state.isPaused = true;
+    dynamicObserver.pause();
     showNotification(t('notifications.sessionScanPaused'), { type: 'info' });
-    if (observer) {
-        observer.disconnect();
-    }
-};
+}
 
-export const resumeSessionScan = () => {
-    if (!isRecording || !isPaused) return;
-    isPaused = false;
+export function resumeSessionScan() {
+    if (!state.isRecording || !state.isPaused) return;
+    state.isPaused = false;
+    dynamicObserver.resume();
     showNotification(t('notifications.sessionScanContinued'), { type: 'success' });
-    if (observer) {
-        observer.observe(document.body, { childList: true, subtree: true });
-    }
-};
+}

@@ -1,185 +1,106 @@
-// src/features/element-scan/logic.js
-
-import {
-    updateHighlight,
-    cleanupUI,
-    createAdjustmentToolbar,
-    cleanupToolbar,
-    showTopCenterUI,
-    hideTopCenterUI,
-    playScanConfirmationAnimation,
-    playScanPulseAnimation,
-    playScanErrorAnimation,
-} from './ui.js';
-import { extractRawTextFromElement } from '../../shared/utils/text/textProcessor.js';
-import { formatTextsForTranslation } from '../../shared/utils/text/formatting.js';
-import { updateModalContent } from '../../shared/ui/mainModal/index.js';
-import { uiContainer, uiLifecycle } from '../../shared/ui/uiContainer.js';
 import { getElementScanFab, updateFabTooltip } from '../../shared/ui/components/fab.js';
 import { showNotification } from '../../shared/ui/components/notification.js';
+import { uiLifecycle } from '../../shared/ui/uiContainer.js';
 import { t } from '../../shared/i18n/index.js';
-import { simpleTemplate } from '../../shared/utils/dom/templating.js';
 import { log } from '../../shared/utils/core/logger.js';
 import { loadSettings } from '../../shared/services/settings.js';
-import { updateScanCount } from '../../shared/ui/mainModal/modalHeader.js';
-import { on, fire } from '../../shared/utils/core/eventBus.js';
-import { saveActiveSession, clearActiveSession, enablePersistence } from '../../shared/services/sessionPersistence.js';
+import { enablePersistence } from '../../shared/services/sessionPersistence.js';
 import { acquireScanMode, releaseScanMode, SCAN_MODES } from '../../shared/services/scanModeCoordinator.js';
-import { filterTextsWithWorker, resetTextFilterState, terminateTextFilterWorker } from './textFilter.js';
-import { createIframeListenerRegistry } from './iframeListenerRegistry.js';
+import { on } from '../../shared/utils/core/eventBus.js';
+import { createElementScanState } from './state.js';
+import { createStagedTextStore } from './stagedTextStore.js';
+import { createElementSelectionController } from './selectionController.js';
+import { createElementStagingController } from './stagingController.js';
 
-// --- 模块级状态变量 ---
+const state = createElementScanState();
+const textStore = createStagedTextStore(state);
+const runtime = {
+    stagingController: null,
+};
 
-let isActive = false;
-let isPaused = false;
-let isAdjusting = false;
-let currentTarget = null;
-let elementPath = [];
-const stagedTexts = new Set();
-let shouldResumeAfterModalClose = false;
-let isHighlightUpdateQueued = false; // 用于 requestAnimationFrame 节流
-
-// 定期刷新持久化会话的时间戳，避免页面刷新或跳转时会话过期。
-let autoSaveInterval = null;
-const AUTO_SAVE_INTERVAL_MS = 5000;
-
-// 用于跟踪滚动监听
-let scrollableParents = [];
-let scrollUpdateQueued = false;
-
-// 观察动态加入的同源 iframe，以便为其文档补充事件监听器。
-let iframeObserver = null;
-// 暂存反馈期间延迟恢复选择模式；手动重选时会取消它。
-let reselectTimer = null;
-const iframeListenerRegistry = createIframeListenerRegistry({
-    canAttach: () => isActive && !isPaused,
-    onAttach: addListenersToDocument,
-    onDetach: removeListenersFromDocument,
+const selectionController = createElementSelectionController({
+    state,
+    onConfirm: () => runtime.stagingController?.confirmSelectionAndExtract(),
+    onStage: () => runtime.stagingController?.stageCurrentElement(),
+    onStop: () => stopElementScan(getElementScanFab()),
+});
+runtime.stagingController = createElementStagingController({
+    onStop: () => stopElementScan(getElementScanFab()),
+    selectionController,
+    state,
+    textStore,
 });
 
-// --- 事件监听 ---
-on('clearElementScan', () => {
-    stagedTexts.clear();
-    updateStagedCount();
-});
+function saveSessionOnUnload() {
+    if (state.isActive) textStore.save();
+}
 
-// 页面启动后恢复上一页保存的元素扫描会话。
-on('resumeScanSession', async (state) => {
-    if (state.mode === 'element-scan') {
-        const elementScanFab = getElementScanFab();
-        const settings = await loadSettings();
+async function handleResumeScanSession(session) {
+    if (session.mode !== 'element-scan') return;
 
-        // 确保按钮存在且当前未在扫描
-        if (elementScanFab && !isElementScanActive()) {
-            if (state && state.mode === 'element-scan' && state.data && Array.isArray(state.data)) {
-                log(t('log.elementScan.resuming'));
+    const elementScanFab = getElementScanFab();
+    const settings = await loadSettings();
+    if (!elementScanFab || isElementScanActive()) return;
 
-                // 只有当设置为 true 时才恢复数据
-                if (settings.elementScan_persistData) {
-                    state.data.forEach((item) => stagedTexts.add(item));
-                    log(t('log.elementScan.restored', { count: stagedTexts.size }));
-                } else {
-                    stagedTexts.clear();
-                    log(t('log.elementScan.skipRestore'));
-                }
-            } else {
-                log(t('log.elementScan.startingNewSession'));
-            }
-
-            // 自动启动扫描
-            const started = startElementScan(elementScanFab, { silent: true });
-            if (!started) return;
-
-            // 手动更新计数器UI
-            updateStagedCount();
-
-            // 立即保存状态以刷新时间戳
-            saveSessionState();
-
-            // 显示一个通知
-            if (settings.elementScan_persistData) {
-                showNotification(t('notifications.elementScanResumed'), { type: 'info' });
-            } else {
-                showNotification(t('notifications.elementScanStarted'), { type: 'info' });
-            }
+    if (session.data && Array.isArray(session.data)) {
+        log(t('log.elementScan.resuming'));
+        if (settings.elementScan_persistData) {
+            textStore.restore(session.data);
+            log(t('log.elementScan.restored', { count: textStore.getSet().size }));
+        } else {
+            textStore.clear();
+            log(t('log.elementScan.skipRestore'));
         }
+    } else {
+        log(t('log.elementScan.startingNewSession'));
     }
-});
 
-// 当模态框关闭后，如果需要，则恢复元素扫描模式
-on('modalClosed', () => {
-    if (isElementScanActive() && getShouldResumeAfterModalClose()) {
-        setShouldResumeAfterModalClose(false); // 重置标志
-        reselectElement();
-    }
-});
+    const started = startElementScan(elementScanFab, { silent: true });
+    if (!started) return;
+    textStore.emitCount();
 
-/**
- * 滚动事件处理函数。
- * 使用 requestAnimationFrame 优化性能，避免在高频滚动时重复渲染。
- */
-function handleScroll() {
-    if (!scrollUpdateQueued) {
-        scrollUpdateQueued = true;
-        requestAnimationFrame(() => {
-            if (currentTarget && isAdjusting) {
-                updateHighlight(currentTarget);
-            }
-            scrollUpdateQueued = false;
-        });
-    }
+    textStore.save();
+    showNotification(
+        settings.elementScan_persistData
+            ? t('notifications.elementScanResumed')
+            : t('notifications.elementScanStarted'),
+        { type: 'info' }
+    );
 }
 
-/**
- * 为当前选中元素的所有可滚动父级元素和 window 添加滚动监听。
- */
-function addScrollListeners() {
-    let parent = currentTarget.parentElement;
-    while (parent) {
-        if (parent.scrollHeight > parent.clientHeight || parent.scrollWidth > parent.clientWidth) {
-            scrollableParents.push(parent);
-            parent.addEventListener('scroll', handleScroll, { passive: true });
-        }
-        parent = parent.parentElement;
-    }
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    log(simpleTemplate(t('log.elementScan.scrollListenersAdded'), { count: scrollableParents.length }));
+function handleModalClosed() {
+    if (!isElementScanActive() || !selectionController.getShouldResumeAfterModalClose()) return;
+    selectionController.setShouldResumeAfterModalClose(false);
+    selectionController.reselect();
 }
 
-/**
- * 移除所有添加的滚动监听器。
- */
-function removeScrollListeners() {
-    scrollableParents.forEach((parent) => {
-        parent.removeEventListener('scroll', handleScroll);
-    });
-    window.removeEventListener('scroll', handleScroll);
-    scrollableParents = []; // 清空数组
-    log(t('log.elementScan.scrollListenersRemoved'));
+function handleClearElementScan() {
+    textStore.clear();
 }
+
+on('clearElementScan', handleClearElementScan);
+on('resumeScanSession', handleResumeScanSession);
+on('modalClosed', handleModalClosed);
 
 export function isElementScanActive() {
-    return isActive;
+    return state.isActive;
 }
 
 export function getStagedTexts() {
-    return stagedTexts;
+    return textStore.getSet();
 }
 
 export function getShouldResumeAfterModalClose() {
-    return shouldResumeAfterModalClose;
+    return selectionController.getShouldResumeAfterModalClose();
 }
 
 export function setShouldResumeAfterModalClose(value) {
-    shouldResumeAfterModalClose = value;
+    selectionController.setShouldResumeAfterModalClose(value);
 }
 
 export function handleElementScanClick(fabElement) {
-    if (isActive) {
-        stopElementScan(fabElement);
-    } else {
-        startElementScan(fabElement);
-    }
+    if (state.isActive) stopElementScan(fabElement);
+    else startElementScan(fabElement);
 }
 
 function startElementScan(fabElement, options = {}) {
@@ -189,536 +110,88 @@ function startElementScan(fabElement, options = {}) {
         }
         return false;
     }
+
     log(t('log.elementScan.starting'));
-
-    // 1. 激活 UI 容器的全局监听器
     uiLifecycle.acquire();
-
-    // 在启动流程开始时启用持久化
     enablePersistence();
-
     if (!options.silent) {
         showNotification(t('notifications.elementScanStarted'), { type: 'info' });
     }
-    isActive = true;
-    isAdjusting = false;
-    resetTextFilterState();
-    fabElement.classList.add('is-recording');
-    updateFabTooltip(fabElement, 'scan.stopSession'); // 更新自己的工具提示
-    showTopCenterUI({
+
+    state.isActive = true;
+    state.isPaused = false;
+    state.isAdjusting = false;
+    runtime.stagingController.resetWorker();
+    selectionController.showTopCenterControls({
         onPause: pauseElementScan,
         onResume: resumeElementScan,
     });
-
-    // 添加主文档监听器
-    addListenersToDocument(document);
-
-    // 添加 Iframe 监听器 (初始扫描)
-    addListenersToIframes();
-
-    // 启动动态 Iframe 监听
-    setupIframeObserver();
-
-    window.addEventListener('beforeunload', handleElementScanUnload);
-
-    // 启动自动保存心跳
-    if (autoSaveInterval) clearInterval(autoSaveInterval);
-    autoSaveInterval = setInterval(() => {
-        if (isElementScanActive()) {
-            saveSessionState();
-        }
-    }, AUTO_SAVE_INTERVAL_MS);
+    selectionController.start();
+    fabElement.classList.add('is-recording');
+    updateFabTooltip(fabElement, 'scan.stopSession');
+    window.addEventListener('beforeunload', saveSessionOnUnload);
+    textStore.startAutoSave();
 
     log(t('log.elementScan.listenersAdded'));
     return true;
 }
 
-/**
- * 为指定文档对象添加必要的事件监听器。
- * @param {Document} doc - 目标文档对象
- */
-function addListenersToDocument(doc) {
-    try {
-        doc.addEventListener('mouseover', handleMouseOver);
-        doc.addEventListener('mouseout', handleMouseOut);
-        doc.addEventListener('click', handleElementClick, true);
-        doc.addEventListener('keydown', handleElementScanKeyDown);
-        doc.addEventListener('contextmenu', handleContextMenu, true);
-    } catch (e) {
-        log(t('log.elementScan.addListenersFailed', { error: e.message }), 'warn');
-    }
-}
-
-/**
- * 移除指定文档对象的事件监听器。
- * @param {Document} doc - 目标文档对象
- */
-function removeListenersFromDocument(doc) {
-    try {
-        doc.removeEventListener('mouseover', handleMouseOver);
-        doc.removeEventListener('mouseout', handleMouseOut);
-        doc.removeEventListener('click', handleElementClick, true);
-        doc.removeEventListener('keydown', handleElementScanKeyDown);
-        doc.removeEventListener('contextmenu', handleContextMenu, true);
-    } catch (e) {
-        // 忽略移除时的错误（例如 iframe 已经卸载）
-    }
-}
-
-/**
- * 查找并为所有同源 Iframe 添加监听器。
- */
-function addListenersToIframes() {
-    const iframes = document.querySelectorAll('iframe');
-    iframes.forEach((iframe) => {
-        attachIframeListeners(iframe);
-    });
-}
-
-/**
- * 辅助函数：为单个 Iframe 绑定监听器
- * 包括处理尚未加载完成的情况
- * @param {HTMLIFrameElement} iframe
- */
-function attachIframeListeners(iframe) {
-    iframeListenerRegistry.watch(iframe);
-}
-
-function collectIframeElements(nodes, target) {
-    nodes.forEach((node) => {
-        if (node.tagName === 'IFRAME') {
-            target.add(node);
-        } else if (node.nodeType === Node.ELEMENT_NODE && node.querySelectorAll) {
-            node.querySelectorAll('iframe').forEach((iframe) => target.add(iframe));
-        }
-    });
-}
-
-/**
- * 设置 MutationObserver 以监听动态添加的 Iframe
- */
-function setupIframeObserver() {
-    if (iframeObserver) return;
-
-    iframeObserver = new MutationObserver((mutations) => {
-        const removedIframes = new Set();
-        const addedIframes = new Set();
-
-        mutations.forEach((mutation) => {
-            collectIframeElements(mutation.removedNodes, removedIframes);
-            collectIframeElements(mutation.addedNodes, addedIframes);
-        });
-
-        removedIframes.forEach((iframe) => iframeListenerRegistry.unwatch(iframe));
-        addedIframes.forEach(attachIframeListeners);
-    });
-
-    iframeObserver.observe(document.body, { childList: true, subtree: true });
-    log(t('log.elementScan.iframeObserverStarted'));
-}
-
-/**
- * 移除所有 Iframe 的监听器。
- */
-function removeListenersFromIframes({ reset = false } = {}) {
-    // 停止观察
-    if (iframeObserver) {
-        iframeObserver.disconnect();
-        iframeObserver = null;
-    }
-
-    if (reset) iframeListenerRegistry.reset();
-    else iframeListenerRegistry.detachAll();
-}
-
-/**
- * 保存当前会话状态的辅助函数。
- * 这确保了在页面刷新、跳转或意外关闭时，数据和时间戳都是最新的。
- */
-function saveSessionState() {
-    saveActiveSession('element-scan', Array.from(stagedTexts));
-}
-
-function handleElementScanUnload() {
-    if (isElementScanActive()) {
-        saveSessionState();
-    }
-}
-
 export function stopElementScan(fabElement) {
-    if (!isActive) {
+    if (!state.isActive) {
         releaseScanMode(SCAN_MODES.ELEMENT);
         return;
     }
+
     log(t('log.elementScan.stopping'));
-    isActive = false;
-    isAdjusting = false;
-    isPaused = false;
+    state.isActive = false;
+    state.isPaused = false;
+    state.isAdjusting = false;
+    state.shouldResumeAfterModalClose = false;
 
     if (fabElement) {
         fabElement.classList.remove('is-recording');
-        updateFabTooltip(fabElement, 'tooltip.element_scan'); // 恢复自己的工具提示
+        updateFabTooltip(fabElement, 'tooltip.element_scan');
     }
 
-    removeListenersFromDocument(document);
-    removeListenersFromIframes({ reset: true });
-    window.removeEventListener('beforeunload', handleElementScanUnload);
-
-    if (autoSaveInterval) {
-        clearInterval(autoSaveInterval);
-        autoSaveInterval = null;
-    }
-
-    clearActiveSession();
+    selectionController.stop();
+    window.removeEventListener('beforeunload', saveSessionOnUnload);
+    textStore.stopAutoSave();
+    textStore.clearPersistedSession();
+    runtime.stagingController.resetWorker();
+    textStore.clear();
     log(t('log.elementScan.listenersRemoved'));
-
-    cleanupUI();
-    cleanupToolbar();
-    hideTopCenterUI();
-    removeScrollListeners();
-
-    // 清理定时器
-    if (reselectTimer) {
-        clearTimeout(reselectTimer);
-        reselectTimer = null;
-    }
-
-    // 清理 Worker
-    terminateTextFilterWorker();
-
-    elementPath = [];
-    currentTarget = null;
-    stagedTexts.clear();
-    resetTextFilterState();
-    updateStagedCount();
     log(t('log.elementScan.stateReset'));
 
-    // 释放 UI 容器的全局监听器
     uiLifecycle.release();
     releaseScanMode(SCAN_MODES.ELEMENT);
 }
 
 export function pauseElementScan() {
-    if (!isActive || isPaused) return;
-    isPaused = true;
+    if (!state.isActive || state.isPaused) return;
+    state.isPaused = true;
     showNotification(t('notifications.elementScanPaused'), { type: 'info' });
-    cleanupUI();
-    cleanupToolbar();
-    removeScrollListeners();
-
-    removeListenersFromDocument(document);
-    removeListenersFromIframes();
+    selectionController.pause();
 }
 
 export function resumeElementScan() {
-    if (!isActive || !isPaused) return;
-    isPaused = false;
+    if (!state.isActive || !state.isPaused) return;
+    state.isPaused = false;
     showNotification(t('notifications.elementScanContinued'), { type: 'success' });
-    reselectElement();
+    selectionController.resume();
 }
 
 export function reselectElement() {
-    if (isPaused) return;
-
-    // 清除可能存在的延时重置，防止竞态条件
-    if (reselectTimer) {
-        clearTimeout(reselectTimer);
-        reselectTimer = null;
-    }
-
-    log(t('log.elementScan.reselecting'));
-    isAdjusting = false;
-    cleanupUI();
-    cleanupToolbar();
-    removeScrollListeners();
-
-    addListenersToDocument(document);
-    addListenersToIframes();
-    setupIframeObserver();
+    selectionController.reselect();
 }
 
-export async function stageCurrentElement() {
-    if (!currentTarget) return;
-
-    log(t('log.elementScan.stagingStarted', { tagName: currentTarget.tagName }));
-
-    const rawTexts = extractRawTextFromElement(currentTarget);
-    const settings = await loadSettings();
-
-    try {
-        const filteredTexts = await filterTextsWithWorker(rawTexts, settings);
-        const newlyStagedCount = filteredTexts.length;
-
-        if (newlyStagedCount > 0) {
-            filteredTexts.forEach((text) => stagedTexts.add(text));
-            log(t('log.elementScan.staged', { count: newlyStagedCount, total: stagedTexts.size }));
-            updateStagedCount();
-
-            // 播放脉冲动画作为成功反馈
-            playScanPulseAnimation();
-
-            // 延迟一点再恢复选择模式，让动画播放完（提升可视性）
-            // 保存 timer ID 以便在手动操作时取消
-            if (reselectTimer) clearTimeout(reselectTimer);
-            reselectTimer = setTimeout(() => {
-                reselectElement();
-                reselectTimer = null;
-            }, 500);
-        } else {
-            log(t('log.elementScan.stagedNothingNew'));
-            // 播放错误/虽然空动画
-            playScanErrorAnimation();
-
-            // 同样延迟一点再恢复，让用户看清错误反馈
-            if (reselectTimer) clearTimeout(reselectTimer);
-            reselectTimer = setTimeout(() => {
-                reselectElement();
-                reselectTimer = null;
-            }, 500); // 错误动画也是 400ms 左右，给 600ms 足够了
-        }
-    } catch (error) {
-        log(t('log.elementScan.processingError', { error: error.message }), 'error');
-        showNotification(t('notifications.scanFailed'), { type: 'error' });
-    }
-
-    log(t('log.elementScan.stagingFinished'));
-    reselectElement();
-}
-
-/**
- * @private
- * @function updateStagedCount
- * @description 更新暂存元素的计数值，并通过事件总线通知UI层。
- *              这种方式将业务逻辑（`logic.js`）与UI实现（`ui.js`）解耦。
- *              逻辑层只负责“通知”数量变化了，而UI层负责决定“如何”展示这个变化。
- */
-function updateStagedCount() {
-    // 通过全局事件总线发出事件，将新的计数值作为载荷传递出去。
-    fire('stagedCountChanged', stagedTexts.size);
-    // 每次计数变化（数据变化）时，触发保存
-    if (isActive) {
-        saveSessionState();
-    }
-}
-
-function getDocumentOffset(doc) {
-    if (!doc || doc === document) return { x: 0, y: 0 };
-
-    const frameElement = iframeListenerRegistry.getFrameElement(doc);
-    if (!frameElement) return { x: 0, y: 0 };
-
-    const rect = frameElement.getBoundingClientRect();
-    return { x: rect.left, y: rect.top };
-}
-
-/**
- * @private
- * @function scheduledHighlightUpdate
- * @description 在 animation frame 中更新高亮。
- *              这是被 requestAnimationFrame 调用的函数，确保UI更新平滑进行。
- */
-function scheduledHighlightUpdate() {
-    if (currentTarget) {
-        const offset = getDocumentOffset(currentTarget.ownerDocument);
-        updateHighlight(currentTarget, offset);
-    }
-    isHighlightUpdateQueued = false;
-}
-
-function handleMouseOver(event) {
-    if (!isActive || isAdjusting || isPaused) return;
-
-    const target = event.target;
-
-    // 忽略 FAB 容器内的元素 (需考虑 Shadow DOM 或不同 document 的情况)
-    // 简单检查类名或 ID，不使用 closest 跨越 document 边界（除非 polyfilled）
-    // 在 iframe 内部，这些 UI 元素通常不存在，所以这个检查主要针对主文档
-    if (target.ownerDocument === document) {
-        if (target.closest('.text-extractor-fab-container') || target.closest('#text-extractor-container')) {
-            if (currentTarget) {
-                cleanupUI();
-                currentTarget = null;
-            }
-            return;
-        }
-    }
-
-    // 只有当目标元素改变时才记录日志和请求更新
-    if (target !== currentTarget) {
-        currentTarget = target;
-        log(simpleTemplate(t('log.elementScan.hovering'), { tagName: currentTarget.tagName }));
-
-        if (!isHighlightUpdateQueued) {
-            isHighlightUpdateQueued = true;
-            requestAnimationFrame(scheduledHighlightUpdate);
-        }
-    }
-}
-
-function handleMouseOut(event) {
-    if (event.target === currentTarget) {
-        cleanupUI();
-    }
-}
-
-function handleElementScanKeyDown(event) {
-    if (!isActive || event.key !== 'Escape') {
-        return;
-    }
-
-    // 检查是否有任何设置面板（主面板或上下文面板）处于打开状态。
-    // 如果有，则不执行任何操作，让面板自己的 ESC 逻辑处理事件。
-    const isSettingsPanelOpen = uiContainer.querySelector('.settings-panel-overlay.is-visible');
-    const isHelpTooltipOpen = uiContainer.querySelector('.info-tooltip-overlay.is-visible');
-    if (isSettingsPanelOpen || isHelpTooltipOpen) {
-        log(t('log.elementScan.escapeIgnoredForModal'));
-        return;
-    }
-
-    // 如果调整工具栏是可见的 (isAdjusting is true),
-    // 按 ESC 应该返回到元素选择模式，而不是完全停止。
-    if (isAdjusting) {
-        log(t('log.elementScan.escapePressedInAdjust'));
-        reselectElement();
-    } else {
-        // 只有在既没有打开设置面板，也没有显示调整工具栏时，
-        // 按 ESC 才应停止整个元素扫描功能。
-        log(t('log.elementScan.escapePressed'));
-        const fabElement = uiContainer.querySelector('.fab-element-scan');
-        stopElementScan(fabElement);
-    }
-}
-
-function handleContextMenu(event) {
-    if (isActive && !isAdjusting) {
-        event.preventDefault();
-        log(t('log.elementScan.rightClickExit'));
-        const fabElement = uiContainer.querySelector('.fab-element-scan');
-        stopElementScan(fabElement);
-    }
-}
-
-function handleElementClick(event) {
-    // 只处理真实的鼠标点击；键盘触发的 click 不应打开调整工具栏。
-    if (event.detail === 0) {
-        return; // 忽略由键盘触发的 click 事件
-    }
-
-    if (!isActive || isAdjusting || !currentTarget || isPaused) return;
-    event.preventDefault();
-    event.stopPropagation();
-
-    const tagName = currentTarget.tagName.toLowerCase();
-    log(simpleTemplate(t('log.elementScan.clickedEnteringAdjust'), { tagName }));
-    isAdjusting = true;
-
-    removeListenersFromDocument(document);
-    removeListenersFromIframes();
-
-    elementPath = [];
-    let el = currentTarget;
-    // 元素路径只在所属文档内构建；iframe 内的选择不会跨越文档边界。
-
-    const ownerDoc = currentTarget.ownerDocument;
-    const body = ownerDoc.body;
-
-    while (el && el !== body) {
-        elementPath.push(el);
-        el = el.parentElement;
-    }
-    elementPath.push(body);
-    log(simpleTemplate(t('log.elementScan.pathBuilt'), { depth: elementPath.length }));
-
-    // 计算工具栏需要的初始偏移量
-    const offset = getDocumentOffset(ownerDoc);
-
-    createAdjustmentToolbar(elementPath, offset, {
-        onSelectionLevelChange: updateSelectionLevel,
-        onReselect: reselectElement,
-        onStage: stageCurrentElement,
-        onConfirm: confirmSelectionAndExtract,
-    });
-    addScrollListeners();
+export function stageCurrentElement() {
+    return runtime.stagingController.stageCurrentElement();
 }
 
 export function updateSelectionLevel(level) {
-    const targetElement = elementPath[level];
-    if (targetElement) {
-        currentTarget = targetElement;
-        const tagName = targetElement.tagName.toLowerCase();
-        log(simpleTemplate(t('log.elementScan.adjustingLevel'), { level, tagName }));
-
-        const offset = getDocumentOffset(targetElement.ownerDocument);
-
-        updateHighlight(targetElement, offset);
-    }
+    selectionController.updateSelectionLevel(level);
 }
 
-export async function confirmSelectionAndExtract() {
-    if (!currentTarget) {
-        log(t('log.elementScan.confirmFailedNoTarget'));
-        return;
-    }
-
-    log(t('log.elementScan.confirmStarted'));
-
-    // 1. 设置调整模式，防止鼠标悬停干扰动画
-    isAdjusting = true; // 关键锁定
-
-    // 1. 对最后选定的元素，提取并通过 Worker 过滤文本
-    const rawTexts = extractRawTextFromElement(currentTarget);
-    const settings = await loadSettings();
-
-    try {
-        const filteredTexts = await filterTextsWithWorker(rawTexts, settings);
-        filteredTexts.forEach((text) => stagedTexts.add(text));
-        updateStagedCount(); // 更新最终计数值
-    } catch (error) {
-        log(t('log.elementScan.processingError', { error: error.message }), 'error');
-        showNotification(t('notifications.scanFailed'), { type: 'error' });
-        const fabElement = uiContainer.querySelector('.fab-element-scan');
-        stopElementScan(fabElement);
-        return;
-    }
-
-    const totalToProcess = stagedTexts.size;
-    log(simpleTemplate(t('log.elementScan.confirmingStaged'), { count: totalToProcess }));
-
-    // --- 播放确认动画，等待动画这一视觉反馈完成后，再打开模态框 ---
-    // 这样做可以给用户一个清晰的“操作已完成，正在跳转”的心理预期
-    playScanConfirmationAnimation(() => {
-        // 2. 清理UI并为显示模态框做准备
-        isAdjusting = true;
-        removeListenersFromDocument(document);
-        removeListenersFromIframes();
-        cleanupUI();
-        cleanupToolbar();
-        removeScrollListeners();
-
-        setShouldResumeAfterModalClose(true);
-
-        // 3. 处理并显示结果
-        try {
-            const allTexts = Array.from(stagedTexts);
-            log(simpleTemplate(t('log.elementScan.extractedCount'), { count: allTexts.length }));
-
-            // 由于所有文本在暂存时已经过过滤，现在只需格式化即可
-            const { outputFormat, includeArrayBrackets, tabSize } = settings;
-            const formattedText = formatTextsForTranslation(allTexts, outputFormat, { includeArrayBrackets, tabSize });
-            const count = allTexts.length;
-
-            updateModalContent(formattedText, true, 'element-scan');
-            updateScanCount(count, 'element');
-
-            const notificationText = simpleTemplate(t('scan.elementFinished'), { count });
-            showNotification(notificationText, { type: 'success' });
-            log(t('log.elementScan.confirmFinished'));
-        } catch (error) {
-            log(t('log.elementScan.confirmFailed', { error: error.message }), 'error');
-            showNotification(t('notifications.scanFailed'), { type: 'error' });
-            // 即使出错，也要确保停止扫描以清理状态
-            const fabElement = uiContainer.querySelector('.fab-element-scan');
-            stopElementScan(fabElement);
-        }
-    });
+export function confirmSelectionAndExtract() {
+    return runtime.stagingController.confirmSelectionAndExtract();
 }

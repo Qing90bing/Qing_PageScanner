@@ -4,11 +4,11 @@ import { updateModalContent, SHOW_PLACEHOLDER } from './mainModal/index.js';
 import { updateScanCount } from './mainModal/modalHeader.js';
 import { t } from '../i18n/index.js';
 import { log } from '../utils/core/logger.js';
-import { isElementScanActive, getStagedTexts } from '../../features/element-scan/logic.js';
-import { showSessionSummary } from '../../features/session-scan/ui.js';
+import { isElementScanActive, getStagedTexts } from '../../features/element-scan/index.js';
+import { showSessionSummary } from '../../features/session-scan/index.js';
 import { formatTextsForTranslation } from '../utils/text/formatting.js';
 import { loadSettings } from '../services/settings.js';
-import { hasAiData, isAiScanActive, showAiSummary } from '../../features/ai-scan/ui.js';
+import { hasAiData, isAiScanActive, showAiSummary } from '../../features/ai-scan/index.js';
 import { SCAN_MODES, subscribeScanMode } from '../services/scanModeCoordinator.js';
 
 let preferAiSummary = false;

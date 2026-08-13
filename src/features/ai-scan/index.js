@@ -1,0 +1,23 @@
+export {
+    applyAiSummaryDeletions,
+    applyAiSummaryEdits,
+    clearAiData,
+    getAcceptedTranslationPairs,
+    getAiDisplayData,
+    getAiDisplayPairs,
+    getAiRegexRules,
+    getAiStateSnapshot,
+    getReviewItems,
+    hasAiData,
+    isAiScanActive,
+    isAiScanPaused,
+    pauseAiScan,
+    removeAiReviewItem,
+    restoreAiReviewItem,
+    resumeAiScan,
+    retryReviewItems,
+    startAiScan,
+    stopAiScan,
+    submitPending,
+} from './logic.js';
+export { handleAiScanClick, initializeAiScanUI, showAiSummary } from './ui.js';

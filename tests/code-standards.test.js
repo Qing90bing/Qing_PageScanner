@@ -7,6 +7,16 @@ const ESLINT_CONFIG_PATH = new URL('../eslint.config.js', import.meta.url);
 const SETTINGS_UI_PATH = new URL('../src/features/settings/ui.js', import.meta.url);
 const SETTINGS_LOGIC_PATH = new URL('../src/features/settings/logic.js', import.meta.url);
 const ELEMENT_SCAN_UI_PATH = new URL('../src/features/element-scan/ui.js', import.meta.url);
+const ELEMENT_SCAN_STAGING_PATH = new URL('../src/features/element-scan/stagingController.js', import.meta.url);
+const FEATURE_FACADE_PATHS = [
+    new URL('../src/features/ai-scan/logic.js', import.meta.url),
+    new URL('../src/features/element-scan/logic.js', import.meta.url),
+    new URL('../src/features/session-scan/logic.js', import.meta.url),
+];
+const SHARED_UI_ENTRY_PATHS = [
+    new URL('../src/shared/ui/entry.js', import.meta.url),
+    new URL('../src/shared/ui/summaryHandler.js', import.meta.url),
+];
 
 async function listJavaScriptFiles(directory) {
     const entries = await readdir(directory, { withFileTypes: true });
@@ -165,6 +175,32 @@ test('feature modules use another feature public entry instead of its internals'
     });
 
     assert.deepEqual(violations.sort(), []);
+});
+
+test('scan facades delegate external runtime lifecycles to controllers', async () => {
+    const sources = await Promise.all(FEATURE_FACADE_PATHS.map((path) => readFile(path, 'utf8')));
+
+    sources.forEach((source) => {
+        assert.doesNotMatch(source, /new MutationObserver\(/);
+        assert.doesNotMatch(source, /new Worker\(/);
+        assert.doesNotMatch(source, /set(?:Timeout|Interval)\(/);
+    });
+});
+
+test('shared UI assembly imports feature public entries', async () => {
+    const sources = await Promise.all(SHARED_UI_ENTRY_PATHS.map((path) => readFile(path, 'utf8')));
+
+    sources.forEach((source) => {
+        assert.doesNotMatch(source, /features\/(?:ai-scan|element-scan|session-scan)\/(?:logic|ui)\.js/);
+        assert.match(source, /features\/(?:ai-scan|element-scan|session-scan)\/index\.js/);
+    });
+});
+
+test('element scan returns to selection immediately after staging', async () => {
+    const source = await readFile(ELEMENT_SCAN_STAGING_PATH, 'utf8');
+
+    assert.match(source, /log\(t\('log\.elementScan\.stagingFinished'\)\);\s*selectionController\.reselect\(\);/);
+    assert.doesNotMatch(source, /selectionController\.scheduleReselect\(\)/);
 });
 
 test('source linting keeps the recommended ESLint rules active', async () => {

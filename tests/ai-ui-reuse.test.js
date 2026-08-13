@@ -26,6 +26,8 @@ const CUSTOM_SELECT_STYLES_PATH = new URL('../src/assets/styles/custom-select.cs
 const CUSTOM_SELECT_ANIMATION_PATH = new URL('../src/shared/ui/components/customSelectAnimation.js', import.meta.url);
 const CUSTOM_SELECT_PATH = new URL('../src/shared/ui/components/customSelect.js', import.meta.url);
 const AI_SCAN_LOGIC_PATH = new URL('../src/features/ai-scan/logic.js', import.meta.url);
+const AI_SCAN_COLLECTION_PATH = new URL('../src/features/ai-scan/collectionController.js', import.meta.url);
+const AI_SCAN_SUBMISSION_PATH = new URL('../src/features/ai-scan/submissionController.js', import.meta.url);
 const MODAL_CONTENT_PATH = new URL('../src/shared/ui/mainModal/modalContent.js', import.meta.url);
 const MAIN_MODAL_PATH = new URL('../src/shared/ui/mainModal/index.js', import.meta.url);
 const MODAL_FOOTER_PATH = new URL('../src/shared/ui/mainModal/modalFooter.js', import.meta.url);
@@ -294,33 +296,45 @@ test('AI scan reuses the shared top counter and the AI feature switch controls i
 });
 
 test('AI pause blocks collection but manual submission remains available', async () => {
-    const [logic, footer] = await Promise.all([
+    const [logic, collection, submission, footer] = await Promise.all([
         readFile(AI_SCAN_LOGIC_PATH, 'utf8'),
+        readFile(AI_SCAN_COLLECTION_PATH, 'utf8'),
+        readFile(AI_SCAN_SUBMISSION_PATH, 'utf8'),
         readFile(MODAL_FOOTER_PATH, 'utf8'),
     ]);
 
-    assert.match(logic, /export function pauseAiScan\(\)[\s\S]*observer\.disconnect\(\)/);
-    assert.match(logic, /export function resumeAiScan\(\)[\s\S]*observer\.observe\(document\.body/);
+    assert.match(logic, /collectionController\.pause\(\)/);
+    assert.match(logic, /collectionController\.resume\(\)/);
+    assert.match(collection, /function pause\(\)[\s\S]*runtime\.observer\.disconnect\(\)/);
+    assert.match(collection, /function resume\(\)[\s\S]*runtime\.observer\.observe\(document\.body/);
     assert.match(
-        logic,
-        /export async function submitPending\(\) \{\s*if \(currentRequest \|\| isClearing \|\| submissionInProgress\)/
+        submission,
+        /async function submitPending\(\) \{\s*if \(hasRequest\(\) \|\| state\.isClearing \|\| runtime\.submissionInProgress\)/
     );
-    assert.doesNotMatch(logic, /export async function submitPending\(\) \{\s*if \(isPaused\)/);
-    assert.doesNotMatch(logic, /async function performSubmitPending\(\) \{\s*if \(!isActive \|\| currentRequest/);
-    assert.match(logic, /function handleMutations\(mutations\) \{\s*if \(!isActive \|\| isPaused\) return/);
+    assert.doesNotMatch(submission, /async function submitPending\(\) \{\s*if \(state\.isPaused\)/);
+    assert.doesNotMatch(
+        submission,
+        /async function performSubmitPending\(\) \{\s*if \(!state\.isActive \|\| hasRequest\(\)/
+    );
+    assert.match(
+        collection,
+        /function handleMutations\(mutations\) \{\s*if \(!state\.isActive \|\| state\.isPaused\) return/
+    );
     assert.match(footer, /aiSubmitBtn\.disabled = snapshot\.processing \|\|/);
     assert.match(footer, /aiRetryBtn\.disabled = snapshot\.processing \|\|/);
 });
 
 test('AI collection feedback flushes quickly without changing request batching', async () => {
-    const logic = await readFile(AI_SCAN_LOGIC_PATH, 'utf8');
-    const rootFlush = logic.match(/function scheduleRootFlush\(\) \{([\s\S]*?)\n\}/)?.[1] || '';
+    const collection = await readFile(AI_SCAN_COLLECTION_PATH, 'utf8');
+    const rootFlush =
+        collection.match(/function scheduleRootFlush\(\) \{([\s\S]*?)\n\s*\}\n\n\s*function handleMutations/)?.[1] ||
+        '';
 
-    assert.match(logic, /const AI_COLLECTION_FLUSH_DELAY_MS = 200/);
-    assert.match(rootFlush, /if \(rootFlushTimer !== null\) return/);
-    assert.doesNotMatch(rootFlush, /clearTimeout\(rootFlushTimer\)/);
-    assert.match(logic, /scheduleAutoSubmit\(delayMs\)/);
-    assert.match(logic, /scheduleAutoSubmit\(aiSettings\.batch\.debounceMs\)/);
+    assert.match(collection, /AI_COLLECTION_FLUSH_DELAY_MS = 200/);
+    assert.match(rootFlush, /if \(runtime\.rootFlushTimer !== null\) return/);
+    assert.doesNotMatch(rootFlush, /clearTimeout\(runtime\.rootFlushTimer\)/);
+    assert.match(collection, /scheduleAutoSubmit\(delayMs\)/);
+    assert.match(collection, /scheduleAutoSubmit\(aiSettings\.batch\.debounceMs\)/);
 });
 
 test('AI review items expose remove and return-to-editor actions', async () => {
